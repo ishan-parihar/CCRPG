@@ -1,33 +1,79 @@
-# foundations/10 — Shadow, Pathology, and the 128-Shadow Model
+# foundations/10 — Shadow, Pathology, and the 256-Shadow Model
 
 ## 1. Purpose
 
-Specify how *unhealthy* development manifests across the full 64-module matrix (8 lines × 8 stages), how each module can produce exactly **2 shadow pathologies** (addiction and allergy), how the **4 drives** determine the health or pathology of each capacity, and how the game implements **holonic return** — the requirement that a player must always come back to heal earlier-stage shadows before advancing.
+Specify how *unhealthy* development manifests across the full 64-module matrix (8 lines × 8 stages), how each module can produce exactly **4 shadow pathologies** (dark-addiction, dark-allergy, golden-addiction, golden-allergy), how the **4 drives** determine the health or pathology of each capacity, and how the game implements **holonic return** — the requirement that a player must always come back to heal earlier-stage shadows before advancing.
+
+> **Theoretical substrate:** `foundations/13-architecture-of-consciousness.md` provides the full psychological/cosmological theory (5-layer topography, contact boundary mechanics, Matrix/Potentiator dynamics, Atman Project). This document translates that theory into game-design mechanics.
 
 Without this model, the game is a relentless ascent — which is itself a pathology (Eros without Agape; ascent without integration). Shadow material is what makes the game *honest about being human*.
 
 ---
 
-## 2. The Dual-Shadow Model: Addiction and Allergy
+## 2. The Four-Quadrant Shadow Model
 
-### 2.1 Scientific basis
+### 2.1 Scientific basis (per foundations/13)
 
-Every developmental capacity (a specific stage of a specific line) can fail in exactly two complementary ways:
+Every developmental capacity (a specific stage of a specific line) can fail in exactly **four** complementary ways, spanning two domains (submergent/emergent) × two pathologies (addiction/allergy):
 
-| Shadow type | Definition | Mechanism | Clinical analogue |
+| Shadow quadrant | Domain | Pathology | Definition | Drive correspondence |
+|---|---|---|---|---|
+| **Dark-Addiction** | Submergent (past) | Fixation | Clings to a lower capacity; cannot transcend it; uses it compulsively | Pathological Agency (domination via the capacity) |
+| **Dark-Allergy** | Submergent (past) | Aversion | Rejects a lower capacity; cannot include it; dissociates from it | Pathological Communion deficit (cannot connect through it) |
+| **Golden-Addiction** | Emergent (future) | Spiritual bypassing | Addicted to "higher" states; uses transcendence to avoid integration | Pathological Eros (ascends without including) |
+| **Golden-Allergy** | Emergent (future) | Terror of transcendence | Refuses the next stage; blocks emergence; Jonah Complex | Pathological Agape deficit (cannot surrender to growth) |
+
+This is the **four-quadrant shadow matrix** from `foundations/13`:
+- **Dark shadows** = pathologies of the submergent unconscious (the conditioned Matrix)
+- **Golden shadows** = pathologies of the emergent unconscious (the blocked Potentiator)
+
+### 2.2 The 256-shadow matrix
+
+```
+256 shadows = 8 lines × 8 stages × 4 pathologies (dark-addiction, dark-allergy, golden-addiction, golden-allergy)
+```
+
+However, for practical game design, we group these into **128 primary shadows** (64 modules × 2 dominant pathologies per module) because:
+- At any given module, the **dark shadows** relate to the player's relationship with THAT stage (clinging to it or rejecting it)
+- The **golden shadows** relate to the player's relationship with the NEXT stage (bypassing toward it or refusing it)
+- Each module's assessment reveals which quadrant is active
+
+### 2.3 The heal/evolve and evolve/heal vectors
+
+Per `foundations/13`, transformation operates in two directions:
+
+| Vector | Direction | Mechanism | Game implementation |
 |---|---|---|---|
-| **Addiction** | Over-identification with the capacity; cannot let go of it; uses it compulsively even when inappropriate | The capacity becomes the *only* tool; the person is *fused* with it | Fixation, compulsion, rigidity |
-| **Allergy** | Rejection/avoidance of the capacity; cannot access it; dissociates from it | The capacity is *repressed*; the person is *allergic* to it | Avoidance, denial, phobia |
+| **Heal/Evolve** | Bottom-up | Excavate and integrate dark shadows first, then advance | Shadow return encounters at earlier stages |
+| **Evolve/Heal** | Top-down | Integrate golden shadow (next stage), which automatically dissolves dark knots below | Advancement encounters that pull the player forward |
 
-This is drawn from Wilber's "transcend and include" principle: healthy development *transcends* a capacity (no longer identified with it) while *including* it (can still access it). Pathology is either:
-- **Failure to transcend** → addiction (stuck at, fused with)
-- **Failure to include** → allergy (dissociated from, cannot access)
+The game supports BOTH vectors simultaneously:
+- **Heal/evolve:** Holonic return encounters surface dark shadows for integration
+- **Evolve/heal:** When a player successfully integrates a golden shadow (accepts the next stage), their dark shadows at earlier stages automatically reduce in severity
 
-### 2.2 The 128-shadow matrix
+This dual-vector approach means: **advancing genuinely (not bypassing) heals the past; healing the past enables genuine advancement.**
 
-```
-128 shadows = 8 lines × 8 stages × 2 pathologies (addiction/allergy)
-```
+### 2.4 The Atman Project defenses (per foundations/13)
+
+Golden-allergies are maintained by specific ego defenses that the game must detect and address:
+
+| Defense | Mechanism | Game detection signal |
+|---|---|---|
+| **Rationalization** | Dismisses transcendence as impossible | Player avoids all non-deterministic game modalities; only engages psychometric tasks |
+| **Isolation** | Maintains rigid self-boundary | Player refuses all cooperative/social game modalities; never helps NPCs |
+| **Desacralizing** | Strips meaning from experience | Player rushes through narrative; skips all reflective prompts; treats game as "just a game" |
+| **Substitution** | Chases finite gratification instead of growth | Player optimises for score/XP rather than genuine engagement; games the system |
+
+These are detectable from behavioural telemetry and trigger golden-allergy shadow encounters.
+
+### 2.5 Examples across the four quadrants
+
+| Line | Stage | Dark-Addiction | Dark-Allergy | Golden-Addiction | Golden-Allergy |
+|---|---|---|---|---|---|
+| Cognitive | Red | Compulsive planning; cannot act without a plan | Cannot plan; acts purely on impulse | Uses "systems thinking" to avoid concrete action | Refuses abstract reasoning; "just do it" |
+| Emotional | Amber | Emotional conformity; suppresses deviant feelings | Cannot read group emotions; socially disconnected | Claims to be "beyond" emotions; spiritual bypassing | Refuses emotional complexity; "feelings are weakness" |
+| Moral | Orange | Rigid principles; applies rules without context | Moral relativism; "anything goes" | Uses "post-conventional" morality to avoid commitment | Refuses contextual ethics; "rules are rules" |
+| Willpower | Red | Cannot stop exerting effort; burnout | Cannot sustain any effort; collapses immediately | Uses "effortlessness" to avoid discipline | Refuses to try harder; "this is my limit" |
 
 Every module in the 64-module assessment system has a corresponding **addiction shadow** and **allergy shadow**. These are not abstract — they are specific, diagnosable patterns with specific gameplay manifestations.
 
