@@ -559,7 +559,12 @@ To advance from stage S to stage S+1:
 
 ## Part XIII — The Complete Module Contract
 
-Each of the 64 assessment modules must export:
+> **Full specifications:**
+> - Game modalities and multi-game architecture: `foundations/11-game-modalities.md`
+> - Per-module drive assessment mechanics: `foundations/12-drive-assessment-mechanics.md`
+> - Shadow/pathology model: `foundations/10-shadow-and-pathology.md`
+
+Each of the 64 assessment modules is a **game pool** (not a single game). Per `foundations/11`, each module must contain ≥ 5 games across ≥ 3 modalities, plus 4 dedicated drive-probe games. The complete contract:
 
 ```ts
 export interface CompleteStageModule {
@@ -567,30 +572,33 @@ export interface CompleteStageModule {
   readonly line: Line;
   readonly stage: Stage;
 
-  // Capacity assessment (Part II)
-  readonly capacityTasks: readonly AssessmentTask[];
+  // Game pool (foundations/11)
+  readonly games: readonly GameDefinition[];       // ≥ 5 games, ≥ 3 modalities
+  readonly minimumModalities: 3;
+
+  // Capacity assessment (Part II of this doc)
   readonly capacityScoringRubric: ScoringRubric;
   readonly minimumTrials: number;
   readonly estimatedDurationMs: number;
 
-  // Shadow assessment (Part XI)
+  // Drive-health probes (foundations/12)
   readonly driveProbes: {
-    agency: DriveProbe;
-    communion: DriveProbe;
-    eros: DriveProbe;
-    agape: DriveProbe;
+    agency: DriveProbe;       // task with optional help
+    communion: DriveProbe;    // cooperative variant
+    eros: DriveProbe;         // harder-level offer
+    agape: DriveProbe;        // return-to-easier offer
   };
   readonly shadowScoringRubric: ScoringRubric;
 
   // Content pool (anti-repetition)
-  readonly itemPool: readonly AssessmentItem[];  // ≥ 20 items per module
-  readonly itemSelector: (used: string[]) => AssessmentItem;  // draw without replacement
+  readonly itemPool: readonly AssessmentItem[];  // ≥ 20 items per game
+  readonly itemSelector: (used: string[]) => AssessmentItem;
 
   // LLM rubrics (for qualitative lines)
   readonly llmCapacityRubric?: string;
   readonly llmDriveHealthRubric?: string;
 
-  // Metadata
+  // Shadow archetypes (foundations/10)
   readonly addictionArchetype: string;   // "The Compulsive Planner"
   readonly allergyArchetype: string;     // "The Impulsive Actor"
   readonly healthyArchetype: string;     // "The Fluid Thinker"
