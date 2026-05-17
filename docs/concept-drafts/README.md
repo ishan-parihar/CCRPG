@@ -2,7 +2,7 @@
 
 > **Purpose:** First-principles concept designs for every game in the CCRPG assessment ecosystem. Each game is a self-contained developmental catalyst that implicitly diagnoses AND progressively heals/evolves the player across all drives and shadow-polarities for its line×stage module.
 > **Structure:** `{line}/{stage}/` — one directory per module (64 total).
-> **Each module contains:** 7 concept-draft files (one per game modality) + 1 shadow-diagnostics file.
+> **Each module contains:** 7 concept-draft files (one per game modality) + 1 shadow-diagnostics file + 1 scoring skeleton.
 
 ---
 
@@ -12,6 +12,8 @@
 concept-drafts/
 ├── cognitive/
 │   ├── 01-infrared/
+│   │   ├── scoring.md
+│   │   ├── shadow-diagnostics.md
 │   │   ├── deterministic.md
 │   │   ├── language-reflective.md
 │   │   ├── scenario-choice.md
@@ -32,7 +34,7 @@ concept-drafts/
 └── interpersonal/
 ```
 
-**Total files when complete:** 64 modules × 8 files = 512 concept documents.
+**Total files when complete:** 64 modules × 9 files = 576 concept documents.
 
 ---
 
