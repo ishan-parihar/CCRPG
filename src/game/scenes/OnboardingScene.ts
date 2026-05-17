@@ -1,42 +1,34 @@
+/**
+ * OnboardingScene — the adaptive calibration orchestrator.
+ *
+ * Runs 8 modular probes (one per line) sequentially, with proper
+ * transitions, instructions, and pacing between each. Each probe is
+ * its own module that uses the actual cognitive task engine for that line.
+ *
+ * Total expected duration: 10-20 minutes (not 12 seconds).
+ */
 import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
-import {
-  calibrate,
-  type ProbeResult,
-} from '@core/usecases/OnboardingCalibrator.js';
+import { calibrate } from '@core/usecases/OnboardingCalibrator.js';
 import { createInitialProfile } from '@core/domain/PlayerProfile.js';
-import type { Line } from '@core/domain/Line.js';
+import type { OnboardingProbe, ProbeResult } from '../onboarding/ProbeInterface.js';
 
-/**
- * OnboardingScene — the adaptive calibration sequence from MVP-BLUEPRINT Part III.
- *
- * Runs a short series of probes (one per line) to estimate the player's
- * developmental altitude. Each probe is a simple timed interaction:
- * - Tap accuracy → maps to accuracy score
- * - Reaction time → stored for staircase seeding
- *
- * After all probes complete, calibrates a PlayerProfile and transitions
- * to the main game.
- */
+// Import all 8 modular probes
+import { CognitiveProbe } from '../onboarding/probes/CognitiveProbe.js';
+import { EmotionalProbe } from '../onboarding/probes/EmotionalProbe.js';
+import { MoralProbe } from '../onboarding/probes/MoralProbe.js';
+import { IntrapersonalProbe } from '../onboarding/probes/IntrapersonalProbe.js';
+import { SpiritualProbe } from '../onboarding/probes/SpiritualProbe.js';
+import { SomaticProbe } from '../onboarding/probes/SomaticProbe.js';
+import { WillpowerProbe } from '../onboarding/probes/WillpowerProbe.js';
+import { InterpersonalProbe } from '../onboarding/probes/InterpersonalProbe.js';
+
 export class OnboardingScene extends Phaser.Scene {
+  private probes: OnboardingProbe[] = [];
   private probeResults: ProbeResult[] = [];
   private currentProbeIndex = 0;
-  private probeText!: Phaser.GameObjects.Text;
-  private instructionText!: Phaser.GameObjects.Text;
-  private probeStartMs = 0;
-  private probeActive = false;
-  private targetCircle: Phaser.GameObjects.Arc | null = null;
-
-  private readonly probeDescriptions: readonly { line: Line; instruction: string }[] = [
-    { line: 'Cognitive', instruction: 'Tap the symbol when it appears' },
-    { line: 'Emotional', instruction: 'Identify the feeling — tap the matching face' },
-    { line: 'Moral', instruction: 'Choose: save the ember or let it fall' },
-    { line: 'Intrapersonal', instruction: 'Hold still — resist the urge to tap' },
-    { line: 'Spiritual', instruction: 'Breathe in sync with the pulse' },
-    { line: 'Somatic', instruction: 'Tap the rhythm as it plays' },
-    { line: 'Willpower', instruction: 'Hold the circle until it fills' },
-    { line: 'Interpersonal', instruction: 'Mirror the companion\'s gesture' },
-  ];
+  private titleText!: Phaser.GameObjects.Text;
+  private progressText!: Phaser.GameObjects.Text;
 
   constructor() {
     super({ key: SceneKeys.Onboarding });
@@ -44,113 +36,211 @@ export class OnboardingScene extends Phaser.Scene {
 
   create(): void {
     const { width, height } = this.scale;
-    this.cameras.main.setBackgroundColor(0x0a0e1a);
+    this.cameras.main.setBackgroundColor(0x080c18);
 
-    this.add.text(width / 2, 60, 'The Dream Sequence', {
-      fontSize: '28px', color: '#c8b8e8', fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    // Instantiate all 8 probes in order
+    this.probes = [
+      new SomaticProbe(),        // Start with body — ground the player
+      new CognitiveProbe(),      // Then working memory
+      new EmotionalProbe(),      // Then affect recognition
+      new IntrapersonalProbe(),  // Then impulse awareness
+      new MoralProbe(),          // Then moral reasoning (needs time)
+      new SpiritualProbe(),      // Then breath coherence (needs calm)
+      new WillpowerProbe(),      // Then sustained effort
+      new InterpersonalProbe(),  // Finally, social attunement
+    ];
 
-    this.instructionText = this.add.text(width / 2, height / 2 - 100, '', {
-      fontSize: '20px', color: '#aaaacc', fontFamily: 'monospace',
-      wordWrap: { width: width - 80 },
-    }).setOrigin(0.5);
+    this.probeResults = [];
+    this.currentProbeIndex = 0;
 
-    this.probeText = this.add.text(width / 2, height - 80, '', {
-      fontSize: '16px', color: '#666688', fontFamily: 'monospace',
-    }).setOrigin(0.5);
+    // Persistent UI elements
+    this.titleText = this.add.text(width / 2, 30, '', {
+      fontSize: '22px', color: '#c8b8e8', fontFamily: 'monospace',
+    }).setOrigin(0.5).setDepth(200);
 
-    this.startNextProbe();
+    this.progressText = this.add.text(width / 2, height - 30, '', {
+      fontSize: '13px', color: '#555577', fontFamily: 'monospace',
+    }).setOrigin(0.5).setDepth(200);
+
+    // Opening sequence
+    this.showOpening();
+  }
+
+  private showOpening(): void {
+    const { width, height } = this.scale;
+
+    const openingText = this.add.text(width / 2, height / 2 - 40,
+      'The Dream Sequence\n\nYou are about to enter a series of\nshort challenges — one for each\nfacet of your being.\n\nThere is no pass or fail.\nJust be present, and respond honestly.',
+      {
+        fontSize: '16px', color: '#ccccee', fontFamily: 'monospace',
+        align: 'center', wordWrap: { width: width - 80 },
+        lineSpacing: 6,
+      }).setOrigin(0.5);
+
+    const beginBtn = this.add.text(width / 2, height / 2 + 160, '[ Begin ]', {
+      fontSize: '22px', color: '#88ccff', fontFamily: 'monospace',
+    }).setOrigin(0.5).setInteractive()
+      .on('pointerdown', () => {
+        openingText.destroy();
+        beginBtn.destroy();
+        this.startNextProbe();
+      })
+      .on('pointerover', () => beginBtn.setColor('#aaeeff'))
+      .on('pointerout', () => beginBtn.setColor('#88ccff'));
   }
 
   private startNextProbe(): void {
-    if (this.currentProbeIndex >= this.probeDescriptions.length) {
+    if (this.currentProbeIndex >= this.probes.length) {
       this.finishOnboarding();
       return;
     }
 
-    const probe = this.probeDescriptions[this.currentProbeIndex]!;
-    this.probeText.setText(`Probe ${this.currentProbeIndex + 1} / ${this.probeDescriptions.length}`);
-    this.instructionText.setText(probe.instruction);
+    const probe = this.probes[this.currentProbeIndex]!;
 
-    // Show a target after a brief delay
-    this.time.delayedCall(1000, () => {
-      this.showTarget();
-    });
+    // Update persistent UI
+    this.titleText.setText(probe.config.title);
+    this.progressText.setText(
+      `${this.currentProbeIndex + 1} of ${this.probes.length}  ·  ${probe.config.line}`
+    );
+
+    // Show transition screen before starting the probe
+    this.showProbeTransition(probe);
   }
 
-  private showTarget(): void {
+  private showProbeTransition(probe: OnboardingProbe): void {
     const { width, height } = this.scale;
-    const x = Phaser.Math.Between(100, width - 100);
-    const y = Phaser.Math.Between(height / 2 - 50, height / 2 + 150);
 
-    this.targetCircle = this.add.circle(x, y, 40, 0x44aaff, 0.8)
-      .setInteractive()
-      .on('pointerdown', () => this.onProbeResponse());
+    const transitionContainer = this.add.container(0, 0).setDepth(150);
 
-    this.probeStartMs = performance.now();
-    this.probeActive = true;
+    // Dim background
+    transitionContainer.add(
+      this.add.rectangle(width / 2, height / 2, width, height, 0x080c18, 0.95)
+    );
 
-    // Auto-fail after 3 seconds
-    this.time.delayedCall(3000, () => {
-      if (this.probeActive) {
-        this.onProbeTimeout();
-      }
+    // Probe title
+    transitionContainer.add(
+      this.add.text(width / 2, height / 2 - 60, probe.config.title, {
+        fontSize: '28px', color: '#e8e8ff', fontFamily: 'monospace',
+      }).setOrigin(0.5)
+    );
+
+    // Line name
+    transitionContainer.add(
+      this.add.text(width / 2, height / 2 - 20, `— ${probe.config.line} —`, {
+        fontSize: '14px', color: '#888899', fontFamily: 'monospace',
+      }).setOrigin(0.5)
+    );
+
+    // Brief description of what's about to happen
+    transitionContainer.add(
+      this.add.text(width / 2, height / 2 + 40, probe.config.instruction, {
+        fontSize: '15px', color: '#aaaacc', fontFamily: 'monospace',
+        align: 'center', wordWrap: { width: width - 80 },
+        lineSpacing: 4,
+      }).setOrigin(0.5)
+    );
+
+    // Ready button
+    const readyBtn = this.add.text(width / 2, height / 2 + 160, '[ Ready ]', {
+      fontSize: '20px', color: '#88ccff', fontFamily: 'monospace',
+    }).setOrigin(0.5).setInteractive()
+      .on('pointerdown', () => {
+        transitionContainer.destroy(true);
+        readyBtn.destroy();
+        this.launchProbe(probe);
+      })
+      .on('pointerover', () => readyBtn.setColor('#aaeeff'))
+      .on('pointerout', () => readyBtn.setColor('#88ccff'));
+    transitionContainer.add(readyBtn);
+  }
+
+  private launchProbe(probe: OnboardingProbe): void {
+    probe.start(this, (result: ProbeResult) => {
+      this.probeResults.push(result);
+      probe.destroy();
+      this.currentProbeIndex++;
+
+      // Brief pause between probes
+      this.showProbeComplete(result);
     });
   }
 
-  private onProbeResponse(): void {
-    if (!this.probeActive) return;
-    this.probeActive = false;
+  private showProbeComplete(result: ProbeResult): void {
+    const { width, height } = this.scale;
 
-    const reactionMs = performance.now() - this.probeStartMs;
-    // Map reaction time to accuracy: <300ms = 1.0, >2500ms = 0.1
-    const accuracy = Math.max(0.1, Math.min(1.0, 1.0 - (reactionMs - 300) / 2200));
+    const completeContainer = this.add.container(0, 0).setDepth(150);
+    completeContainer.add(
+      this.add.rectangle(width / 2, height / 2, width, height, 0x080c18, 0.9)
+    );
 
-    const probe = this.probeDescriptions[this.currentProbeIndex]!;
-    this.probeResults.push({ line: probe.line, accuracy, reactionMs });
+    // Result summary (qualitative, not numerical)
+    const qualityLabel = result.accuracy >= 0.8 ? 'Strong'
+      : result.accuracy >= 0.5 ? 'Developing'
+      : 'Emerging';
 
-    this.cleanupTarget();
-    this.currentProbeIndex++;
-    this.time.delayedCall(500, () => this.startNextProbe());
-  }
+    completeContainer.add(
+      this.add.text(width / 2, height / 2 - 20, `${result.line}: ${qualityLabel}`, {
+        fontSize: '20px', color: '#aaccaa', fontFamily: 'monospace',
+      }).setOrigin(0.5)
+    );
 
-  private onProbeTimeout(): void {
-    this.probeActive = false;
-    const probe = this.probeDescriptions[this.currentProbeIndex]!;
-    this.probeResults.push({ line: probe.line, accuracy: 0.1, reactionMs: 3000 });
-
-    this.cleanupTarget();
-    this.currentProbeIndex++;
-    this.time.delayedCall(500, () => this.startNextProbe());
-  }
-
-  private cleanupTarget(): void {
-    if (this.targetCircle) {
-      this.targetCircle.destroy();
-      this.targetCircle = null;
-    }
+    // Auto-advance after 2 seconds
+    this.time.delayedCall(2000, () => {
+      completeContainer.destroy(true);
+      this.startNextProbe();
+    });
   }
 
   private finishOnboarding(): void {
-    const result = calibrate(this.probeResults);
+    const { width, height } = this.scale;
+
+    // Clear everything
+    this.titleText.setText('');
+    this.progressText.setText('');
+
+    // Calibrate
+    const calibrationInput = this.probeResults.map(r => ({
+      line: r.line,
+      accuracy: r.accuracy,
+      reactionMs: r.medianReactionMs,
+    }));
+    const result = calibrate(calibrationInput);
     const baseProfile = createInitialProfile(
       crypto.randomUUID?.() ?? `player-${Date.now()}`,
       result.altitudes,
       result.stage,
       result.driveWeights,
     );
-
-    // Mark onboarding as complete so MainMenu doesn't loop back
     const profile = { ...baseProfile, onboardingComplete: true, totalSessionsPlayed: 1 };
 
-    // Store profile in game registry for other scenes
+    // Store
     this.registry.set(RegistryKeys.Profile, profile);
 
-    this.instructionText.setText('Calibration complete.\nYour journey begins...');
-    this.probeText.setText('');
+    // Final screen
+    this.add.text(width / 2, height / 2 - 80,
+      'Calibration Complete\n\nYour developmental profile has been mapped.\nThe world will meet you where you stand.',
+      {
+        fontSize: '16px', color: '#ccccee', fontFamily: 'monospace',
+        align: 'center', wordWrap: { width: width - 80 },
+        lineSpacing: 6,
+      }).setOrigin(0.5);
 
-    this.time.delayedCall(2000, () => {
-      this.scene.start(SceneKeys.MainMenu);
-    });
+    // Show summary
+    const summaryLines = Object.entries(result.altitudes)
+      .map(([line, stage]) => `  ${line}: ${stage}`)
+      .join('\n');
+    this.add.text(width / 2, height / 2 + 60, summaryLines, {
+      fontSize: '13px', color: '#888899', fontFamily: 'monospace',
+    }).setOrigin(0.5);
+
+    this.add.text(width / 2, height / 2 + 200, `Synthesised Stage: ${result.stage}`, {
+      fontSize: '18px', color: '#aaccff', fontFamily: 'monospace',
+    }).setOrigin(0.5);
+
+    // Continue button
+    this.add.text(width / 2, height - 80, '[ Enter the World ]', {
+      fontSize: '20px', color: '#88ccff', fontFamily: 'monospace',
+    }).setOrigin(0.5).setInteractive()
+      .on('pointerdown', () => this.scene.start(SceneKeys.MainMenu));
   }
 }
