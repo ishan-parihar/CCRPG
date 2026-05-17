@@ -16,37 +16,54 @@ This document answers: *For Cognitive/Red, what does healthy Agency look like? W
 
 ## 2. The Drive Assessment Framework
 
-### 2.1 Core principle: implicit measurement
+### 2.1 The two axes of drive operation
 
-Drives are NEVER measured by asking "how agentic are you?" They are measured by **observing behaviour in contexts where drives naturally express**:
+Drives operate on two orthogonal axes, each spanning both the dark (submergent) and golden (emergent) domains:
 
-| Drive | Observable in | Measured by |
+**Vertical axis (Eros/Agape) — within the holon, between stages:**
+- Eros and Agape govern the player's relationship to STAGE TRANSITIONS
+- They are measured by observing behaviour when the player is offered movement UP or DOWN the developmental ladder
+- Eros pathology = problems with ascending (compulsive or avoidant)
+- Agape pathology = problems with descending (regressive or dismissive)
+
+**Horizontal axis (Agency/Communion) — across holons, at a given stage:**
+- Agency and Communion govern the player's relationship to SELF↔OTHER at their current stage
+- They are measured by observing behaviour in contexts of independence vs. coordination
+- Agency pathology = problems with individuation (dominating or dependent)
+- Communion pathology = problems with joining (fusing or isolating)
+
+### 2.2 Core principle: implicit measurement across both domains
+
+Drives are NEVER measured by asking "how agentic are you?" They are measured by **observing behaviour in contexts where drives naturally express**, in BOTH the dark (submergent) and golden (emergent) domains:
+
+| Drive | Dark-domain probe (submergent) | Golden-domain probe (emergent) |
 |---|---|---|
-| **Agency** | Contexts where help is available but not required | Does the player use help? Do they perform differently alone vs. observed? |
-| **Communion** | Contexts where sharing/helping is possible but not required | Do they help NPCs? Do they share strategies? Do they coordinate? |
-| **Eros** | Contexts where harder challenges are available | Do they voluntarily attempt harder content? Do they seek growth? |
-| **Agape** | Contexts where returning to easier content is offered | Do they return with full engagement? Or do they dismiss/rush through? |
+| **Agency** | Can they use this capacity sovereignly without dominating? (at current/past stage) | Can they stand alone at the emergent edge without needing validation? (at next stage) |
+| **Communion** | Can they share this capacity without losing themselves? (at current/past stage) | Can they join with others at the new stage without premature fusion? (at next stage) |
+| **Eros** | Can they rest in this capacity without compulsive growth? (at current stage) | Can they reach for the next stage without bypassing integration? (toward next stage) |
+| **Agape** | Can they return to this capacity without regressing? (from current to past stage) | Can they embody the new capacity in lived reality, not just abstractly? (from next stage down) |
 
-### 2.2 The addiction/allergy diagnostic signals
+### 2.3 The dual-domain diagnostic signals
 
-For each drive at each module:
+Each drive has pathological signals in BOTH domains:
 
-| Drive state | Addiction signal (over-expression) | Allergy signal (under-expression) |
-|---|---|---|
-| **Agency** | Refuses all help even when struggling; isolates; dominates | Cannot act without external validation; freezes without guidance |
-| **Communion** | Loses self in helping others; cannot perform alone; codependent | Cannot coordinate; ignores NPC partners; socially disconnected |
-| **Eros** | Rushes past current level; skips content; impatient with mastery | Refuses harder challenges; stays in comfort zone; avoids growth |
-| **Agape** | Regresses into easier content; uses "returning" as avoidance | Cannot return to earlier stages; dismisses simpler tasks; spiritual bypassing |
+| Drive | Dark-Addiction signal | Dark-Allergy signal | Golden-Addiction signal | Golden-Allergy signal |
+|---|---|---|---|---|
+| **Agency** | Dominates; refuses help even when failing; controls others through the capacity | Cannot act alone; freezes without guidance; dissolves into others | Hyper-individuates at the edge; refuses to be vulnerable in growth | Cannot stand alone at the new stage; needs constant validation to grow |
+| **Communion** | Fuses; loses self in helping; cannot perform alone; codependent | Isolates; ignores partners; cannot coordinate; rejects belonging | Premature "oneness"; merges with the emergent without differentiation | Cannot join others at the new stage; grows alone; refuses relational demands |
+| **Eros** | Compulsive growth; rushes past mastery; impatient; Phobos | Refuses harder challenges; clings to comfort; developmental arrest | Addicted to transcendence; bypasses embodiment; uses "higher" to avoid "here" | Jonah Complex; terror of ascending; actively blocks emergence; desacralizes |
+| **Agape** | Regresses; uses "returning" as avoidance; Thanatos; stays below | Dismisses earlier stages; spiritual elitism; "I'm beyond that" | Smothers the emergent; tries to "hold" what needs freedom; premature inclusion | Cannot embody the new; stays abstract; refuses to incarnate the higher |
 
-### 2.3 The scoring formula (per module)
+### 2.4 The scoring formula (corrected)
 
 ```ts
 interface DriveHealthScore {
-  agency: number;      // 0-1: healthy autonomy without domination
-  communion: number;   // 0-1: healthy connection without fusion
-  eros: number;        // 0-1: healthy growth without bypassing
-  agape: number;       // 0-1: healthy return without regression
+  agency:    { dark: number; golden: number };  // 0-1 each domain
+  communion: { dark: number; golden: number };
+  eros:      { dark: number; golden: number };
+  agape:     { dark: number; golden: number };
 }
+
 
 // Addiction risk = high when Eros is low AND Agency is pathologically high
 // (cannot transcend + over-identifies with the capacity)
@@ -351,6 +368,54 @@ interface ModuleDriveProbes {
       healthy: 'returns_with_full_presence_and_care';
       addiction: 'stays_at_easier_level_too_long_avoids_returning_up';
       allergy: 'rushes_through_dismissively_or_refuses';
+    };
+  };
+}
+```
+
+### 5.2 Golden-domain probes (emergent edge)
+
+The probes above measure drives in the DARK (submergent) domain — the player's relationship to their current/past stages. Golden-domain probes measure the player's relationship to the NEXT stage:
+
+```ts
+interface GoldenDomainProbes {
+  // Agency-golden: can they individuate at the emergent edge?
+  agency_golden: {
+    task: GameDefinition;           // next-stage task, solo, no social cues
+    signals: {
+      healthy: 'engages_the_new_independently_tolerates_uncertainty';
+      addiction: 'hyper_individuates_refuses_any_support_in_growth';
+      allergy: 'cannot_engage_the_new_without_external_validation';
+    };
+  };
+
+  // Communion-golden: can they join with others at the new stage?
+  communion_golden: {
+    task: GameDefinition;           // next-stage cooperative task
+    signals: {
+      healthy: 'coordinates_at_the_new_level_while_maintaining_self';
+      addiction: 'premature_fusion_with_the_new_loses_differentiation';
+      allergy: 'refuses_relational_demands_of_growth_isolates';
+    };
+  };
+
+  // Eros-golden: can they reach without bypassing?
+  eros_golden: {
+    task: GameDefinition;           // next-stage challenge with integration check
+    signals: {
+      healthy: 'reaches_for_next_stage_while_honouring_current_mastery';
+      addiction: 'bypasses_integration_rushes_to_transcendence';
+      allergy: 'jonah_complex_actively_refuses_the_call_to_grow';
+    };
+  };
+
+  // Agape-golden: can they embody the new (not just know it abstractly)?
+  agape_golden: {
+    task: GameDefinition;           // next-stage capacity applied to concrete/embodied context
+    signals: {
+      healthy: 'incarnates_the_new_capacity_in_lived_reality';
+      addiction: 'smothers_the_new_with_premature_structure';
+      allergy: 'stays_abstract_refuses_to_embody_the_new';
     };
   };
 }

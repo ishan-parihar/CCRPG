@@ -12,68 +12,93 @@ Without this model, the game is a relentless ascent — which is itself a pathol
 
 ## 2. The Four-Quadrant Shadow Model
 
-### 2.1 Scientific basis (per foundations/13)
+### 2.1 The two axes of development
 
-Every developmental capacity (a specific stage of a specific line) can fail in exactly **four** complementary ways, spanning two domains (submergent/emergent) × two pathologies (addiction/allergy):
+Per `foundations/13`, consciousness develops along two orthogonal axes:
 
-| Shadow quadrant | Domain | Pathology | Definition | Drive correspondence |
+| Axis | Direction | Drives | Archetypal Mind | Domain |
 |---|---|---|---|---|
-| **Dark-Addiction** | Submergent (past) | Fixation | Clings to a lower capacity; cannot transcend it; uses it compulsively | Pathological Agency (domination via the capacity) |
-| **Dark-Allergy** | Submergent (past) | Aversion | Rejects a lower capacity; cannot include it; dissociates from it | Pathological Communion deficit (cannot connect through it) |
-| **Golden-Addiction** | Emergent (future) | Spiritual bypassing | Addicted to "higher" states; uses transcendence to avoid integration | Pathological Eros (ascends without including) |
-| **Golden-Allergy** | Emergent (future) | Terror of transcendence | Refuses the next stage; blocks emergence; Jonah Complex | Pathological Agape deficit (cannot surrender to growth) |
+| **Vertical** | Between stages within a holon (up/down the developmental ladder) | **Eros** (ascending) / **Agape** (descending) | Matrix ↔ Potentiator | The emergent↔submergent unconscious |
+| **Horizontal** | Across holons at a given stage (self↔other, interior↔exterior) | **Agency** (individuating) / **Communion** (joining) | Catalyst ↔ Experience | The contact boundary at a specific frequency |
 
-This is the **four-quadrant shadow matrix** from `foundations/13`:
-- **Dark shadows** = pathologies of the submergent unconscious (the conditioned Matrix)
-- **Golden shadows** = pathologies of the emergent unconscious (the blocked Potentiator)
+- **Vertical (Eros/Agape):** Spans the entire spectrum of the emergent and submergent unconscious WITHIN the holon. Eros reaches from Matrix toward Potentiator (ascending to the next stage). Agape reaches from Potentiator back to Matrix (descending to embrace and integrate what's below).
+- **Horizontal (Agency/Communion):** Operates ACROSS holons at a specific stage — between the self and the environment, between interior and exterior. Agency individuates (Catalyst is processed through sovereign will). Communion joins (Experience is shared, relational, co-created).
 
-### 2.2 The 256-shadow matrix
+### 2.2 All four drives have BOTH dark and golden shadow expressions
+
+The previous model incorrectly mapped drives 1:1 to shadow quadrants. The correct model: **every drive can be pathological in BOTH the submergent (dark) and emergent (golden) domains.**
+
+| Drive | Dark-Addiction (submergent fixation) | Dark-Allergy (submergent aversion) | Golden-Addiction (emergent fixation) | Golden-Allergy (emergent aversion) |
+|---|---|---|---|---|
+| **Agency** | Domination; rigid autonomy at a lower stage; uses sovereignty to control others | Cannot access sovereignty; codependent at a lower stage; dissolves self into others | Hyper-individualism at the emergent edge; refuses communion with the new stage's demands | Terror of standing alone at the next stage; cannot individuate into the unknown |
+| **Communion** | Fusion; herd-mind at a lower stage; loses self in group belonging | Isolation; cannot connect at a lower stage; rejects belonging entirely | Premature merging with the emergent ("we are all one" as bypassing); dissolves into transcendence without integration | Terror of joining/belonging at the next stage; refuses relational demands of growth |
+| **Eros** | Compulsive growth; cannot rest in what IS; Phobos (fear of stillness); uses "growth" to avoid being present | Refuses to grow; clings to current stage; developmental arrest; "this is enough" | Addicted to transcendence; spiritual bypassing; rushes past integration; uses higher states to avoid embodiment | Jonah Complex; terror of ascending; actively blocks emergence; desacralizes the call to grow |
+| **Agape** | Regression disguised as "embrace"; Thanatos (death-drive); uses "returning" to avoid the demands of the present | Cannot return to lower stages; spiritual elitism; dismisses earlier capacities as "beneath me" | Smothering the emergent with premature inclusion; tries to "hold" what needs to be released into freedom | Refuses to descend and embody the new capacity; stays abstract; cannot incarnate the higher into the lower |
+
+### 2.3 The 256-shadow matrix
 
 ```
-256 shadows = 8 lines × 8 stages × 4 pathologies (dark-addiction, dark-allergy, golden-addiction, golden-allergy)
+256 shadows = 8 lines × 8 stages × 4 drives × 2 domains (dark/golden)
 ```
 
-However, for practical game design, we group these into **128 primary shadows** (64 modules × 2 dominant pathologies per module) because:
-- At any given module, the **dark shadows** relate to the player's relationship with THAT stage (clinging to it or rejecting it)
-- The **golden shadows** relate to the player's relationship with the NEXT stage (bypassing toward it or refusing it)
-- Each module's assessment reveals which quadrant is active
+Practically, at any given module (line × stage), the assessment must detect:
+- How each of the 4 drives is functioning at that stage (healthy or pathological)
+- Whether the pathology is submergent (dark — relating to the past/below) or emergent (golden — relating to the future/above)
 
-### 2.3 The heal/evolve and evolve/heal vectors
+For game design, we focus on the **dominant pathology pattern** — which drive is most distorted and in which domain.
+
+### 2.4 The vertical and horizontal shadow dynamics
+
+**Vertical shadows (Eros/Agape pathologies):**
+These manifest as problems with STAGE TRANSITIONS — the player's relationship to ascending or descending within the developmental ladder.
+
+- Eros dark-addiction: "I must always be growing" → cannot rest, cannot integrate, cannot be present
+- Eros golden-allergy: "I refuse to grow" → Jonah Complex, terror of the next stage
+- Agape dark-addiction: "I must always return" → regression, uses "integration" as avoidance of challenge
+- Agape golden-allergy: "I refuse to embody" → stays abstract, cannot bring the higher into lived reality
+
+**Horizontal shadows (Agency/Communion pathologies):**
+These manifest as problems with RELATING AT A GIVEN STAGE — the player's relationship to self↔other at their current developmental frequency.
+
+- Agency dark-addiction: "I dominate through this capacity" → uses the stage's power to control
+- Agency golden-allergy: "I cannot stand alone at the new stage" → needs others to validate the emergent
+- Communion dark-addiction: "I lose myself in others at this stage" → fusion, herd-mind
+- Communion golden-allergy: "I cannot join others at the new stage" → isolation at the emergent edge
+
+### 2.5 The heal/evolve and evolve/heal vectors
 
 Per `foundations/13`, transformation operates in two directions:
 
-| Vector | Direction | Mechanism | Game implementation |
-|---|---|---|---|
-| **Heal/Evolve** | Bottom-up | Excavate and integrate dark shadows first, then advance | Shadow return encounters at earlier stages |
-| **Evolve/Heal** | Top-down | Integrate golden shadow (next stage), which automatically dissolves dark knots below | Advancement encounters that pull the player forward |
+| Vector | Direction | Mechanism | Drives involved | Game implementation |
+|---|---|---|---|---|
+| **Heal/Evolve** | Bottom-up | Excavate and integrate dark shadows first, then advance | Agape (descend to heal) + Agency (sovereign self-examination) | Shadow return encounters at earlier stages |
+| **Evolve/Heal** | Top-down | Integrate golden shadow (next stage), which automatically dissolves dark knots below | Eros (ascend to grow) + Communion (join with the emergent) | Advancement encounters that pull the player forward |
 
 The game supports BOTH vectors simultaneously:
-- **Heal/evolve:** Holonic return encounters surface dark shadows for integration
-- **Evolve/heal:** When a player successfully integrates a golden shadow (accepts the next stage), their dark shadows at earlier stages automatically reduce in severity
+- **Heal/evolve:** Holonic return encounters surface dark shadows for integration (Agape + Agency)
+- **Evolve/heal:** When a player successfully integrates a golden shadow (Eros + Communion), their dark shadows at earlier stages automatically reduce in severity
 
 This dual-vector approach means: **advancing genuinely (not bypassing) heals the past; healing the past enables genuine advancement.**
 
-### 2.4 The Atman Project defenses (per foundations/13)
+### 2.6 The Atman Project defenses (per foundations/13)
 
-Golden-allergies are maintained by specific ego defenses that the game must detect and address:
+Golden-allergies (across ALL four drives) are maintained by specific ego defenses:
 
-| Defense | Mechanism | Game detection signal |
-|---|---|---|
-| **Rationalization** | Dismisses transcendence as impossible | Player avoids all non-deterministic game modalities; only engages psychometric tasks |
-| **Isolation** | Maintains rigid self-boundary | Player refuses all cooperative/social game modalities; never helps NPCs |
-| **Desacralizing** | Strips meaning from experience | Player rushes through narrative; skips all reflective prompts; treats game as "just a game" |
-| **Substitution** | Chases finite gratification instead of growth | Player optimises for score/XP rather than genuine engagement; games the system |
+| Defense | Mechanism | Which drive it blocks | Game detection signal |
+|---|---|---|---|
+| **Rationalization** | Dismisses transcendence as impossible | Blocks Eros (golden-allergy) | Player avoids non-deterministic modalities; only engages psychometric tasks |
+| **Isolation** | Maintains rigid self-boundary | Blocks Communion (golden-allergy) | Player refuses cooperative/social modalities; never helps NPCs |
+| **Desacralizing** | Strips meaning from experience | Blocks Agape (golden-allergy) | Player rushes through narrative; skips reflective prompts |
+| **Substitution** | Chases finite gratification instead of growth | Blocks Eros (golden-addiction of Agency) | Player optimises for score/XP rather than genuine engagement |
 
-These are detectable from behavioural telemetry and trigger golden-allergy shadow encounters.
+### 2.7 Examples across the four quadrants
 
-### 2.5 Examples across the four quadrants
-
-| Line | Stage | Dark-Addiction | Dark-Allergy | Golden-Addiction | Golden-Allergy |
-|---|---|---|---|---|---|
-| Cognitive | Red | Compulsive planning; cannot act without a plan | Cannot plan; acts purely on impulse | Uses "systems thinking" to avoid concrete action | Refuses abstract reasoning; "just do it" |
-| Emotional | Amber | Emotional conformity; suppresses deviant feelings | Cannot read group emotions; socially disconnected | Claims to be "beyond" emotions; spiritual bypassing | Refuses emotional complexity; "feelings are weakness" |
-| Moral | Orange | Rigid principles; applies rules without context | Moral relativism; "anything goes" | Uses "post-conventional" morality to avoid commitment | Refuses contextual ethics; "rules are rules" |
-| Willpower | Red | Cannot stop exerting effort; burnout | Cannot sustain any effort; collapses immediately | Uses "effortlessness" to avoid discipline | Refuses to try harder; "this is my limit" |
+| Line | Stage | Dark shadow (submergent) | Golden shadow (emergent) |
+|---|---|---|---|
+| Cognitive | Red | Agency-addiction: compulsive planning to dominate. Communion-allergy: cannot think collaboratively | Eros-allergy: refuses abstract reasoning (Jonah Complex for formal operations). Agape-allergy: cannot return to simple thinking without dismissal |
+| Emotional | Amber | Communion-addiction: emotional conformity, suppresses deviant feelings. Agency-allergy: cannot feel differently from group | Eros-allergy: refuses emotional complexity ("feelings are simple"). Agape-addiction: regresses into group-feeling to avoid individual emotional depth |
+| Moral | Orange | Agency-addiction: rigid principles applied without context. Communion-allergy: cannot consider others' moral frameworks | Eros-allergy: refuses contextual/post-conventional ethics. Communion-addiction: premature "all perspectives are valid" without commitment |
+| Willpower | Red | Agency-addiction: cannot stop exerting effort; burnout. Eros-addiction: compulsive growth, never rests | Agape-allergy: refuses to return to easy tasks with presence. Eros-allergy: refuses longer/harder challenges ("this is my limit") |
 
 Every module in the 64-module assessment system has a corresponding **addiction shadow** and **allergy shadow**. These are not abstract — they are specific, diagnosable patterns with specific gameplay manifestations.
 
@@ -94,56 +119,70 @@ Every module in the 64-module assessment system has a corresponding **addiction 
 
 ## 3. The Four Drives as Health Determinants
 
-### 3.1 How drives determine shadow health
+### 3.1 The two drive-pairs and their domains
 
-Per `foundations/05`, the four drives are:
-- **Agency** — self-preservation, sovereignty, autonomy
-- **Communion** — joining, connection, belonging
-- **Eros** — ascending, growth, transcendence
-- **Agape** — descending, embracing, immanence
+Per `foundations/05`, the four drives form two complementary pairs operating on orthogonal axes:
 
-The **health** of any capacity (line × stage) is determined by how the four drives operate *within that capacity*:
+**Vertical pair (Eros/Agape) — within the holon, between stages:**
+- **Eros** = the ascending impulse. Reaches from Matrix toward Potentiator. Drives growth, transcendence, evolution. Pathology: Phobos (compulsive ascent, fear of stillness, spiritual bypassing).
+- **Agape** = the descending impulse. Reaches from Potentiator back to Matrix. Drives embrace, inclusion, embodiment. Pathology: Thanatos (compulsive descent, regression, smothering).
 
-| Drive state | Healthy expression | Pathological expression |
-|---|---|---|
-| Agency healthy | Appropriate boundaries; can say no; sovereign use of the capacity | — |
-| Agency pathological | Domination via the capacity; uses it to control/exclude others | → Addiction shadow |
-| Communion healthy | Can share the capacity; uses it in service of connection | — |
-| Communion pathological | Loses self in others' use of the capacity; codependent | → Allergy shadow (of Agency) |
-| Eros healthy | Uses the capacity to grow; reaches for the next level | — |
-| Eros pathological | Bypasses the capacity; rushes past it without integration | → Allergy shadow |
-| Agape healthy | Returns to the capacity with compassion; integrates it fully | — |
-| Agape pathological | Regresses into the capacity; uses it to avoid growth | → Addiction shadow |
+**Horizontal pair (Agency/Communion) — across holons, at a given stage:**
+- **Agency** = the individuating impulse. Processes Catalyst through sovereign will. Drives autonomy, boundaries, self-preservation. Pathology: domination, alienation, hyper-individualism.
+- **Communion** = the joining impulse. Transforms Catalyst into shared Experience. Drives connection, belonging, mutual adaptation. Pathology: fusion, herd-mind, loss of self.
 
-### 3.2 The drive-health formula
+### 3.2 How drives determine shadow health
 
-For any module (line L, stage S), the shadow state is determined by:
+The **health** of any capacity (line × stage) is determined by how ALL FOUR drives operate within that capacity. Each drive can be healthy or pathological in BOTH the dark (submergent) and golden (emergent) domains:
+
+| Drive | Healthy expression | Dark pathology (submergent) | Golden pathology (emergent) |
+|---|---|---|---|
+| **Agency** | Sovereign use of the capacity; appropriate boundaries; can say no | Domination via the capacity; uses it to control/exclude (dark-addiction) | Cannot individuate at the next stage; needs validation to grow (golden-allergy) |
+| **Communion** | Shares the capacity; uses it in service of connection; co-creates | Loses self in others' use of the capacity; fusion (dark-addiction) | Premature merging with the emergent; "oneness" as bypassing (golden-addiction) |
+| **Eros** | Reaches for the next level; willingness to grow; aspiration | Compulsive growth; cannot rest; uses "progress" to avoid being present (dark-addiction) | Addicted to transcendence; bypasses integration; rushes past embodiment (golden-addiction) |
+| **Agape** | Returns to earlier capacities with compassion; integrates fully; embodies | Regresses into earlier capacity; uses "embrace" to avoid challenge (dark-addiction) | Refuses to descend and embody the new; stays abstract; cannot incarnate (golden-allergy) |
+
+### 3.3 The drive-health formula (corrected)
+
+For any module (line L, stage S), the shadow state is a function of all 4 drives across both domains:
 
 ```
-shadow_state(L, S) = f(
-  agency_health(L, S),      // 0-1: can they use this capacity autonomously?
-  communion_health(L, S),   // 0-1: can they share/connect through this capacity?
-  eros_health(L, S),        // 0-1: can they grow beyond this capacity?
-  agape_health(L, S),       // 0-1: can they return to this capacity with compassion?
+drive_health(L, S) = {
+  agency:    { dark: 0-1, golden: 0-1 },
+  communion: { dark: 0-1, golden: 0-1 },
+  eros:      { dark: 0-1, golden: 0-1 },
+  agape:     { dark: 0-1, golden: 0-1 },
+}
+
+// Dark shadow severity = how pathological are the drives in the submergent domain?
+dark_shadow_severity(L, S) = max(
+  agency_dark_pathology,
+  communion_dark_pathology,
+  eros_dark_pathology,
+  agape_dark_pathology,
 )
 
-addiction_risk(L, S) = (1 - eros_health) × agency_pathology
-  // Cannot transcend + over-identifies = addiction
-
-allergy_risk(L, S) = (1 - agape_health) × (1 - communion_health)
-  // Cannot return + cannot connect through it = allergy
+// Golden shadow severity = how pathological are the drives in the emergent domain?
+golden_shadow_severity(L, S) = max(
+  agency_golden_pathology,
+  communion_golden_pathology,
+  eros_golden_pathology,
+  agape_golden_pathology,
+)
 ```
 
-### 3.3 Drive-health assessment per module
+The dominant pathology pattern reveals WHICH drive is most distorted and in WHICH domain, guiding the shadow encounter design.
 
-Each of the 64 assessment modules must measure not just *capacity* (can they do it?) but also *drive-health* (how do they relate to doing it?):
+### 3.4 Drive-health assessment per module
 
-| Dimension | What it reveals | How to measure |
+Each of the 64 assessment modules must measure all 4 drives in BOTH domains:
+
+| Drive | Dark-domain probe | Golden-domain probe |
 |---|---|---|
-| **Agency** | Can they use this capacity independently, without external validation? | Do they perform differently when observed vs. alone? Do they need prompting? |
-| **Communion** | Can they use this capacity in service of others, not just self? | Do they help others in cooperative tasks? Do they share strategies? |
-| **Eros** | Can they let go of this capacity when a higher one is needed? | Do they over-rely on familiar strategies? Can they switch to a new approach? |
-| **Agape** | Can they return to this capacity without shame or regression? | When asked to use an "easier" version, do they resist (allergy) or embrace it? |
+| **Agency** | Can they use this capacity sovereignly without dominating? | Can they stand alone at the emergent edge without needing validation? |
+| **Communion** | Can they share this capacity without losing themselves? | Can they join with others at the new stage without premature fusion? |
+| **Eros** | Can they rest in this capacity without compulsive growth? | Can they reach for the next stage without bypassing integration? |
+| **Agape** | Can they return to this capacity without regressing? | Can they embody the new capacity in lived reality (not just abstractly)? |
 
 ---
 

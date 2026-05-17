@@ -506,14 +506,18 @@ After running in shadow mode, the module produces:
 ```ts
 export interface ShadowAssessmentResult extends AssessmentResult {
   readonly driveHealth: {
-    readonly agency: number;      // 0-1
-    readonly communion: number;   // 0-1
-    readonly eros: number;        // 0-1
-    readonly agape: number;       // 0-1
+    readonly agency:    { dark: number; golden: number };  // 0-1 each domain
+    readonly communion: { dark: number; golden: number };
+    readonly eros:      { dark: number; golden: number };
+    readonly agape:     { dark: number; golden: number };
   };
-  readonly addictionRisk: number;   // computed from (1-eros) × (1-communion)
-  readonly allergyRisk: number;     // computed from (1-agape) × (1-agency)
-  readonly shadowDiagnosis: 'addiction' | 'allergy' | 'healthy';
+  readonly darkShadowSeverity: number;    // max pathology across drives in submergent domain
+  readonly goldenShadowSeverity: number;  // max pathology across drives in emergent domain
+  readonly dominantPathology: {
+    drive: Drive;
+    domain: 'dark' | 'golden';
+    type: 'addiction' | 'allergy';
+  } | null;
 }
 ```
 
