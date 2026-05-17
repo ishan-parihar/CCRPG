@@ -1,10 +1,10 @@
 /**
  * WillpowerProbe — measures sustained effort and impulse resistance.
- * Player must hold a button for a target duration. Perturbations (visual
- * distractions) tempt early release.
+ * Player holds a button for a target duration. Uses FastStaircase:
+ * success → targetMs *= 1.4, failure → targetMs /= 1.4.
  */
 import Phaser from 'phaser';
-import { generateHeldInputTrial, scoreHeldInput } from '@core/usecases/HeldInputTask.js';
+import { FastStaircase } from '@core/usecases/FastStaircase.js';
 import type { OnboardingProbe, ProbeConfig, ProbeResult, ProbeTrialResult } from '../ProbeInterface.js';
 
 export class WillpowerProbe implements OnboardingProbe {
@@ -14,7 +14,7 @@ export class WillpowerProbe implements OnboardingProbe {
     instruction: 'Press and HOLD the circle.\nKeep holding until it fills completely.\nDo not release early — even when distracted.',
     trials: 4,
     hasPractice: true,
-    trialTimeoutMs: 5000,
+    trialTimeoutMs: 15000,
     interTrialDelayMs: 1200,
   };
 
@@ -22,18 +22,20 @@ export class WillpowerProbe implements OnboardingProbe {
   private onComplete!: (result: ProbeResult) => void;
   private container!: Phaser.GameObjects.Container;
   private results: ProbeTrialResult[] = [];
+  private staircase = new FastStaircase({ startLevel: 2000, stepUp: 1.4, stepDown: 1.4, maxReversals: 2, maxTrials: 4 });
   private currentTrial = 0;
   private practiceTrials = 1;
   private holdStartMs = 0;
   private holding = false;
   private fillBar!: Phaser.GameObjects.Rectangle;
-  private targetMs = 3000;
+  private targetMs = 2000;
   private fillTween: Phaser.Tweens.Tween | null = null;
 
   start(scene: Phaser.Scene, onComplete: (result: ProbeResult) => void): void {
     this.scene = scene;
     this.onComplete = onComplete;
     this.container = scene.add.container(0, 0);
+    this.targetMs = 2000;
     this.runTrial();
   }
 
@@ -48,34 +50,33 @@ export class WillpowerProbe implements OnboardingProbe {
     const { width, height } = this.scene.scale;
     const isPractice = this.currentTrial < this.practiceTrials;
 
-    const trial = generateHeldInputTrial(Math.random, this.targetMs, 0.5);
-
-    // Status
     const status = isPractice ? 'Practice' : `Hold ${this.currentTrial - this.practiceTrials + 1} / ${this.config.trials}`;
     this.container.add(this.scene.add.text(width / 2, 80, status, {
-      fontSize: '14px', color: '#666688', fontFamily: 'monospace',
+      fontSize: '16px', color: '#666688', fontFamily: 'monospace',
     }).setOrigin(0.5));
 
     if (this.currentTrial === 0) {
       this.container.add(this.scene.add.text(width / 2, 130, this.config.instruction, {
-        fontSize: '15px', color: '#aaaacc', fontFamily: 'monospace',
+        fontSize: '20px', color: '#aaaacc', fontFamily: 'monospace',
         align: 'center', wordWrap: { width: width - 60 },
       }).setOrigin(0.5));
     }
 
-    // Hold target (large circle)
+    // Target duration display
+    this.container.add(this.scene.add.text(width / 2, height / 2 - 130, `Hold for: ${(this.targetMs / 1000).toFixed(1)}s`, {
+      fontSize: '18px', color: '#aaccee', fontFamily: 'monospace',
+    }).setOrigin(0.5));
+
     const holdBtn = this.scene.add.circle(width / 2, height / 2, 80, 0x223344, 1)
       .setStrokeStyle(4, 0x446688)
       .setInteractive();
     this.container.add(holdBtn);
 
-    // Fill bar (inside the circle, grows as you hold)
     this.fillBar = this.scene.add.rectangle(width / 2, height / 2 + 40, 0, 12, 0x44ff88);
     this.container.add(this.fillBar);
 
-    // Label
     this.container.add(this.scene.add.text(width / 2, height / 2, 'HOLD', {
-      fontSize: '20px', color: '#88aacc', fontFamily: 'monospace',
+      fontSize: '22px', color: '#88aacc', fontFamily: 'monospace',
     }).setOrigin(0.5));
 
     holdBtn.on('pointerdown', () => {
@@ -84,21 +85,24 @@ export class WillpowerProbe implements OnboardingProbe {
       this.fillTween = this.scene.tweens.add({
         targets: this.fillBar,
         width: 140,
-        duration: trial.targetMs,
+        duration: this.targetMs,
         ease: 'Linear',
+        onComplete: () => {
+          if (this.holding) {
+            this.holding = false;
+            this.recordHold(true, this.targetMs);
+          }
+        },
       });
 
-      // Perturbation (visual distraction)
-      if (trial.hasPerturbation) {
-        this.scene.time.delayedCall(trial.perturbationAtMs, () => {
-          if (this.holding) {
-            // Flash the screen red briefly
-            const flash = this.scene.add.rectangle(width / 2, height / 2, width, height, 0xff0000, 0.3);
-            this.container.add(flash);
-            this.scene.time.delayedCall(200, () => flash.destroy());
-          }
-        });
-      }
+      // Perturbation at 60% of target
+      this.scene.time.delayedCall(this.targetMs * 0.6, () => {
+        if (this.holding) {
+          const flash = this.scene.add.rectangle(width / 2, height / 2, width, height, 0xff0000, 0.3);
+          this.container.add(flash);
+          this.scene.time.delayedCall(200, () => flash.destroy());
+        }
+      });
     });
 
     holdBtn.on('pointerup', () => {
@@ -106,32 +110,40 @@ export class WillpowerProbe implements OnboardingProbe {
       this.holding = false;
       this.fillTween?.stop();
       const heldMs = performance.now() - this.holdStartMs;
-      const result = scoreHeldInput(trial, { heldMs, releasedDuringPerturbation: heldMs < trial.perturbationAtMs });
-
-      if (!isPractice) {
-        this.results.push({ correct: result.success, reactionMs: heldMs });
-      }
-
-      // Feedback
-      const fb = result.success ? '✓ Held!' : `Released at ${Math.round(heldMs)}ms / ${trial.targetMs}ms`;
-      this.container.add(this.scene.add.text(width / 2, height / 2 + 140, fb, {
-        fontSize: '14px', color: result.success ? '#44ff88' : '#ff8844', fontFamily: 'monospace',
-      }).setOrigin(0.5));
-
-      this.currentTrial++;
-      this.scene.time.delayedCall(this.config.interTrialDelayMs, () => this.runTrial());
+      const success = heldMs >= this.targetMs * 0.95;
+      this.recordHold(success, heldMs);
     });
 
-    // Timeout (if they never press)
-    this.scene.time.delayedCall(this.config.trialTimeoutMs + 2000, () => {
-      if (!this.holding && this.currentTrial < total) {
-        if (!isPractice) {
-          this.results.push({ correct: false, reactionMs: 0 });
-        }
-        this.currentTrial++;
-        this.runTrial();
+    // Timeout if never pressed
+    this.scene.time.delayedCall(this.config.trialTimeoutMs, () => {
+      if (!this.holding && this.currentTrial < total && this.fillBar.width === 0) {
+        this.recordHold(false, 0);
       }
     });
+  }
+
+  private recordHold(success: boolean, heldMs: number): void {
+    const isPractice = this.currentTrial < this.practiceTrials;
+    const { width, height } = this.scene.scale;
+
+    if (!isPractice) {
+      this.results.push({ correct: success, reactionMs: heldMs });
+      const { done, currentLevel } = this.staircase.recordResult(success);
+      this.targetMs = currentLevel;
+      if (done) {
+        this.currentTrial = this.config.trials + this.practiceTrials; // force finish
+        this.scene.time.delayedCall(500, () => this.finish());
+        return;
+      }
+    }
+
+    const fb = success ? '✓ Held!' : `Released at ${(heldMs / 1000).toFixed(1)}s / ${(this.targetMs / 1000).toFixed(1)}s`;
+    this.container.add(this.scene.add.text(width / 2, height / 2 + 140, fb, {
+      fontSize: '18px', color: success ? '#44ff88' : '#ff8844', fontFamily: 'monospace',
+    }).setOrigin(0.5));
+
+    this.currentTrial++;
+    this.scene.time.delayedCall(this.config.interTrialDelayMs, () => this.runTrial());
   }
 
   private finish(): void {
@@ -141,7 +153,16 @@ export class WillpowerProbe implements OnboardingProbe {
       ? this.results.map(r => r.reactionMs).sort((a, b) => a - b)[Math.floor(this.results.length / 2)]!
       : 0;
 
-    this.onComplete({ line: 'Willpower', accuracy, medianReactionMs: medianRT, trials: this.results });
+    // Threshold in seconds for the willpower map
+    const thresholdSec = this.staircase.getThreshold() / 1000;
+
+    this.onComplete({
+      line: 'Willpower',
+      accuracy,
+      medianReactionMs: medianRT,
+      threshold: thresholdSec,
+      trials: this.results,
+    });
   }
 
   destroy(): void {

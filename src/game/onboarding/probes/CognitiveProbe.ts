@@ -1,9 +1,11 @@
 /**
- * CognitiveProbe — measures working memory via a simplified n-back (n=1).
- * Shows a sequence of colored symbols; player taps when current matches previous.
+ * CognitiveProbe — measures working memory via adaptive n-back.
+ * Starts at n=1, uses FastStaircase to converge on the player's n-level.
+ * After 2 consecutive correct: step up. After 1 incorrect: step down.
  */
 import Phaser from 'phaser';
 import { generateNBackSequence } from '@core/usecases/NBackTask.js';
+import { FastStaircase } from '@core/usecases/FastStaircase.js';
 import type { OnboardingProbe, ProbeConfig, ProbeResult, ProbeTrialResult } from '../ProbeInterface.js';
 
 const COLORS = [0xff4d6d, 0x4ecdc4, 0xffd700, 0x7b68ee, 0x4a90d9];
@@ -13,7 +15,7 @@ export class CognitiveProbe implements OnboardingProbe {
   readonly config: ProbeConfig = {
     line: 'Cognitive',
     title: 'Memory Echo',
-    instruction: 'A sequence of symbols will appear.\nTap when the current symbol matches the PREVIOUS one.',
+    instruction: 'A sequence of symbols will appear.\nTap when the current symbol matches\nthe one N positions back.',
     trials: 8,
     hasPractice: true,
     trialTimeoutMs: 3000,
@@ -24,14 +26,17 @@ export class CognitiveProbe implements OnboardingProbe {
   private onComplete!: (result: ProbeResult) => void;
   private container!: Phaser.GameObjects.Container;
   private results: ProbeTrialResult[] = [];
+  private staircase = new FastStaircase({ startLevel: 1, stepUp: 1.4, stepDown: 1.4, maxReversals: 2, maxTrials: 6 });
   private sequence: ReturnType<typeof generateNBackSequence> = [];
-  private currentTrial = 0;
+  private currentN = 1;
+  private currentTrialIdx = 0;
   private trialStartMs = 0;
   private responded = false;
   private practiceMode = true;
+  private consecutiveCorrect = 0;
   private feedbackText!: Phaser.GameObjects.Text;
   private symbolDisplay!: Phaser.GameObjects.Rectangle;
-  private tapZone!: Phaser.GameObjects.Rectangle;
+  private statusText!: Phaser.GameObjects.Text;
 
   start(scene: Phaser.Scene, onComplete: (result: ProbeResult) => void): void {
     this.scene = scene;
@@ -40,62 +45,63 @@ export class CognitiveProbe implements OnboardingProbe {
 
     this.container = scene.add.container(0, 0);
 
-    // Generate n-back sequence (n=1, 8 trials + 2 practice)
-    const totalTrials = this.config.trials + (this.config.hasPractice ? 2 : 0);
-    this.sequence = generateNBackSequence({
-      n: 1,
-      trials: totalTrials,
-      alphabetSize: COLORS.length,
-      targetRatio: 0.3,
-    });
-
-    // Instruction
-    const instrText = scene.add.text(width / 2, 120, this.config.instruction, {
-      fontSize: '16px', color: '#ccccee', fontFamily: 'monospace',
+    this.container.add(scene.add.text(width / 2, 100, this.config.instruction, {
+      fontSize: '20px', color: '#ccccee', fontFamily: 'monospace',
       align: 'center', wordWrap: { width: width - 60 },
-    }).setOrigin(0.5);
-    this.container.add(instrText);
+    }).setOrigin(0.5));
 
-    // Symbol display area
     this.symbolDisplay = scene.add.rectangle(width / 2, height / 2 - 40, SYMBOL_SIZE, SYMBOL_SIZE, 0x333355)
       .setStrokeStyle(3, 0x666688);
     this.container.add(this.symbolDisplay);
 
-    // Tap zone (large, below the symbol)
-    this.tapZone = scene.add.rectangle(width / 2, height / 2 + 120, 200, 80, 0x223344, 0.8)
+    const tapZone = scene.add.rectangle(width / 2, height / 2 + 120, 200, 80, 0x223344, 0.8)
       .setInteractive()
       .on('pointerdown', () => this.onTap());
     const tapLabel = scene.add.text(width / 2, height / 2 + 120, 'TAP if MATCH', {
-      fontSize: '16px', color: '#88aacc', fontFamily: 'monospace',
+      fontSize: '18px', color: '#88aacc', fontFamily: 'monospace',
     }).setOrigin(0.5);
-    this.container.add([this.tapZone, tapLabel]);
+    this.container.add([tapZone, tapLabel]);
 
-    // Feedback text
     this.feedbackText = scene.add.text(width / 2, height / 2 + 220, '', {
-      fontSize: '14px', color: '#888888', fontFamily: 'monospace',
+      fontSize: '16px', color: '#888888', fontFamily: 'monospace',
     }).setOrigin(0.5);
     this.container.add(this.feedbackText);
 
-    // Practice label
-    if (this.config.hasPractice) {
-      this.feedbackText.setText('Practice round — get a feel for it');
-    }
+    this.statusText = scene.add.text(width / 2, 50, '', {
+      fontSize: '16px', color: '#666688', fontFamily: 'monospace',
+    }).setOrigin(0.5);
+    this.container.add(this.statusText);
 
-    this.currentTrial = 0;
-    this.practiceMode = this.config.hasPractice;
+    this.generateSequenceForN(this.currentN);
+    this.feedbackText.setText('Practice round — get a feel for it');
     this.showNextTrial();
   }
 
+  private generateSequenceForN(n: number): void {
+    this.sequence = generateNBackSequence({
+      n: Math.max(1, Math.round(n)),
+      trials: 10,
+      alphabetSize: COLORS.length,
+      targetRatio: 0.3,
+    });
+    this.currentTrialIdx = 0;
+  }
+
   private showNextTrial(): void {
-    if (this.currentTrial >= this.sequence.length) {
+    if (this.currentTrialIdx >= this.sequence.length) {
+      // Need more trials at current level — regenerate
+      this.generateSequenceForN(this.currentN);
+    }
+
+    if (!this.practiceMode && this.results.length >= this.config.trials) {
       this.finish();
       return;
     }
 
-    // Transition from practice to scored
-    if (this.practiceMode && this.currentTrial === 2) {
+    if (this.practiceMode && this.results.length === 0 && this.currentTrialIdx >= 4) {
       this.practiceMode = false;
       this.feedbackText.setText('Now for real — results count');
+      this.generateSequenceForN(this.currentN);
       this.scene.time.delayedCall(1500, () => {
         this.feedbackText.setText('');
         this.presentStimulus();
@@ -107,14 +113,14 @@ export class CognitiveProbe implements OnboardingProbe {
   }
 
   private presentStimulus(): void {
-    const trial = this.sequence[this.currentTrial]!;
+    const trial = this.sequence[this.currentTrialIdx]!;
     const color = COLORS[trial.stimulus % COLORS.length]!;
 
     this.symbolDisplay.setFillStyle(color);
     this.responded = false;
     this.trialStartMs = performance.now();
+    this.statusText.setText(this.practiceMode ? 'Practice' : `N=${Math.round(this.currentN)} · Trial ${this.results.length + 1}/${this.config.trials}`);
 
-    // Timeout
     this.scene.time.delayedCall(this.config.trialTimeoutMs, () => {
       if (!this.responded) {
         this.recordResponse(false);
@@ -125,33 +131,42 @@ export class CognitiveProbe implements OnboardingProbe {
   private onTap(): void {
     if (this.responded) return;
     this.responded = true;
-    const reactionMs = performance.now() - this.trialStartMs;
-    const trial = this.sequence[this.currentTrial]!;
-    const correct = trial.isTarget; // Tapping is correct only if it's a target
-    this.recordResponse(correct, reactionMs);
+    const trial = this.sequence[this.currentTrialIdx]!;
+    const correct = trial.isTarget;
+    this.recordResponse(correct, performance.now() - this.trialStartMs);
   }
 
   private recordResponse(tapped: boolean, reactionMs?: number): void {
-    const trial = this.sequence[this.currentTrial]!;
-
-    let correct: boolean;
-    if (tapped) {
-      correct = trial.isTarget;
-    } else {
-      correct = !trial.isTarget; // Not tapping on non-target is correct
-    }
+    const trial = this.sequence[this.currentTrialIdx]!;
+    const correct = tapped ? trial.isTarget : !trial.isTarget;
 
     if (!this.practiceMode) {
       this.results.push({ correct, reactionMs: reactionMs ?? this.config.trialTimeoutMs });
+
+      if (correct) {
+        this.consecutiveCorrect++;
+        if (this.consecutiveCorrect >= 2) {
+          this.consecutiveCorrect = 0;
+          const { done } = this.staircase.recordResult(true);
+          this.currentN = this.staircase.getThreshold();
+          this.generateSequenceForN(this.currentN);
+          if (done) { this.finish(); return; }
+        }
+      } else {
+        this.consecutiveCorrect = 0;
+        const { done } = this.staircase.recordResult(false);
+        this.currentN = this.staircase.getThreshold();
+        this.generateSequenceForN(this.currentN);
+        if (done) { this.finish(); return; }
+      }
     }
 
-    // Brief feedback
     if (this.practiceMode) {
       this.feedbackText.setText(correct ? '✓' : '✗');
     }
 
-    this.symbolDisplay.setFillStyle(0x333355); // Reset
-    this.currentTrial++;
+    this.symbolDisplay.setFillStyle(0x333355);
+    this.currentTrialIdx++;
 
     this.scene.time.delayedCall(this.config.interTrialDelayMs, () => {
       this.feedbackText.setText('');
@@ -171,6 +186,7 @@ export class CognitiveProbe implements OnboardingProbe {
       line: 'Cognitive',
       accuracy,
       medianReactionMs: medianRT,
+      threshold: this.staircase.getThreshold(),
       trials: this.results,
     });
   }

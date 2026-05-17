@@ -1,44 +1,55 @@
 /**
  * OnboardingCalibrator — converts onboarding probe results into initial altitudes.
- * Uses fast staircase (larger steps, 2 reversals → seat at midpoint).
+ * Uses per-line threshold maps from FastStaircase convergence levels.
  */
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
+import type { StaircaseState } from '../domain/PlayerProfile.js';
 import { ALL_STAGES } from '../domain/Stage.js';
+import { thresholdToStage } from './ThresholdMaps.js';
 
 export interface ProbeResult {
   readonly line: Line;
-  /** Accuracy in [0, 1]. */
   readonly accuracy: number;
-  /** Reaction time in ms (optional). */
-  readonly reactionMs?: number;
+  readonly medianReactionMs: number;
+  readonly threshold: number;
+  readonly trials: readonly ProbeTrialResult[];
+}
+
+export interface ProbeTrialResult {
+  readonly correct: boolean;
+  readonly reactionMs: number;
 }
 
 export interface CalibrationOutput {
   readonly altitudes: Record<Line, Stage>;
   readonly driveWeights: Record<Drive, number>;
   readonly stage: Stage;
+  readonly taskStaircases: Partial<Record<string, StaircaseState>>;
 }
 
 /**
  * Calibrate initial altitudes from onboarding probes.
- * Maps accuracy bands to stages:
- *   0.0–0.2 → Infrared, 0.2–0.35 → Magenta, 0.35–0.5 → Red,
- *   0.5–0.65 → Amber, 0.65–0.75 → Orange, 0.75–0.85 → Green,
- *   0.85–0.95 → Turquoise, 0.95–1.0 → White
+ * Maps each line's FastStaircase threshold to a stage via per-line maps.
  */
 export function calibrate(
   probes: readonly ProbeResult[],
   driveSignals?: Partial<Record<Drive, number>>,
 ): CalibrationOutput {
   const altitudes = {} as Record<Line, Stage>;
+  const taskStaircases: Partial<Record<string, StaircaseState>> = {};
 
   for (const probe of probes) {
-    altitudes[probe.line] = accuracyToStage(probe.accuracy);
+    altitudes[probe.line] = thresholdToStage(probe.line, probe.threshold);
+    taskStaircases[probe.line] = {
+      level: probe.threshold,
+      reversals: 0,
+      lastDirection: null,
+      history: [],
+    };
   }
 
-  // Fill missing lines with Infrared
   const allLines: Line[] = [
     'Cognitive', 'Emotional', 'Moral', 'Intrapersonal',
     'Spiritual', 'Somatic', 'Willpower', 'Interpersonal',
@@ -56,7 +67,6 @@ export function calibrate(
     Agape: driveSignals?.Agape ?? 0.25,
   };
 
-  // Synthesise: lowest altitude
   let minIdx = 7;
   for (const line of allLines) {
     const idx = ALL_STAGES.indexOf(altitudes[line]);
@@ -67,16 +77,6 @@ export function calibrate(
     altitudes,
     driveWeights,
     stage: ALL_STAGES[minIdx]!,
+    taskStaircases,
   };
-}
-
-function accuracyToStage(accuracy: number): Stage {
-  if (accuracy >= 0.95) return 'White';
-  if (accuracy >= 0.85) return 'Turquoise';
-  if (accuracy >= 0.75) return 'Green';
-  if (accuracy >= 0.65) return 'Orange';
-  if (accuracy >= 0.5) return 'Amber';
-  if (accuracy >= 0.35) return 'Red';
-  if (accuracy >= 0.2) return 'Magenta';
-  return 'Infrared';
 }

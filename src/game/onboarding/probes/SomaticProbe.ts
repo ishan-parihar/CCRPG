@@ -1,7 +1,7 @@
 /**
  * SomaticProbe — measures reaction time and motor control.
  * Uses variable foreperiods; player must tap a target the instant it appears.
- * Anticipation errors (tapping before stimulus) are penalised.
+ * Reports median RT as threshold (lower = better).
  */
 import Phaser from 'phaser';
 import { generateReactionTimeTrial, scoreReactionTime } from '@core/usecases/ReactionTimeTask.js';
@@ -38,22 +38,20 @@ export class SomaticProbe implements OnboardingProbe {
 
     this.container = scene.add.container(0, 0);
 
-    scene.add.text(width / 2, 100, this.config.instruction, {
-      fontSize: '15px', color: '#ccccee', fontFamily: 'monospace',
+    this.container.add(scene.add.text(width / 2, 100, this.config.instruction, {
+      fontSize: '20px', color: '#ccccee', fontFamily: 'monospace',
       align: 'center', wordWrap: { width: width - 60 },
-    }).setOrigin(0.5).setDepth(0);
-    // (added to scene directly, not container, so it persists)
+    }).setOrigin(0.5));
 
     this.target = scene.add.circle(width / 2, height / 2, 50, 0x333355, 1)
       .setStrokeStyle(3, 0x555577);
     this.container.add(this.target);
 
     this.feedbackText = scene.add.text(width / 2, height / 2 + 120, '', {
-      fontSize: '16px', color: '#888888', fontFamily: 'monospace',
+      fontSize: '18px', color: '#888888', fontFamily: 'monospace',
     }).setOrigin(0.5);
     this.container.add(this.feedbackText);
 
-    // Full-screen tap zone
     const tapZone = scene.add.rectangle(width / 2, height / 2, width, height, 0x000000, 0)
       .setInteractive()
       .on('pointerdown', () => this.onTap());
@@ -86,24 +84,23 @@ export class SomaticProbe implements OnboardingProbe {
 
   private startForeperiod(): void {
     const trial = generateReactionTimeTrial(Math.random, 800, 2500);
-    this.target.setFillStyle(0x333355); // Grey — waiting
+    this.target.setFillStyle(0x333355);
     this.waitingForStimulus = true;
     this.stimulusShown = false;
     this.anticipationDetected = false;
 
     this.scene.time.delayedCall(trial.foreperiodMs, () => {
-      if (this.anticipationDetected) return; // Already failed
+      if (this.anticipationDetected) return;
       this.showStimulus();
     });
   }
 
   private showStimulus(): void {
-    this.target.setFillStyle(0x44ff88); // Green — GO!
+    this.target.setFillStyle(0x44ff88);
     this.stimulusShown = true;
     this.waitingForStimulus = false;
     this.trialStartMs = performance.now();
 
-    // Timeout
     this.scene.time.delayedCall(this.config.trialTimeoutMs, () => {
       if (this.stimulusShown) {
         this.recordResult(false, this.config.trialTimeoutMs);
@@ -113,10 +110,9 @@ export class SomaticProbe implements OnboardingProbe {
 
   private onTap(): void {
     if (this.waitingForStimulus) {
-      // Anticipation error
       this.anticipationDetected = true;
       this.waitingForStimulus = false;
-      this.target.setFillStyle(0xff4444); // Red — too early
+      this.target.setFillStyle(0xff4444);
       this.feedbackText.setText('Too early!');
       this.recordResult(false, 0);
       return;
@@ -147,7 +143,7 @@ export class SomaticProbe implements OnboardingProbe {
   private finish(): void {
     const correctCount = this.results.filter(r => r.correct).length;
     const accuracy = this.results.length > 0 ? correctCount / this.results.length : 0;
-    const correctRTs = this.results.filter(r => r.correct).map(r => r.reactionMs);
+    const correctRTs = this.results.filter(r => r.correct && r.reactionMs > 0).map(r => r.reactionMs);
     const medianRT = correctRTs.length > 0
       ? correctRTs.sort((a, b) => a - b)[Math.floor(correctRTs.length / 2)]!
       : 2000;
@@ -156,6 +152,7 @@ export class SomaticProbe implements OnboardingProbe {
       line: 'Somatic',
       accuracy,
       medianReactionMs: medianRT,
+      threshold: medianRT, // RT in ms is the threshold for somatic
       trials: this.results,
     });
   }

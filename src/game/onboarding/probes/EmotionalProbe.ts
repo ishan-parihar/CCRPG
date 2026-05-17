@@ -1,9 +1,11 @@
 /**
  * EmotionalProbe — measures affect recognition (Ekman 6).
  * Shows an emotion word/emoji and 4 options; player picks the matching one.
+ * Uses FastStaircase to adapt difficulty.
  */
 import Phaser from 'phaser';
 import { ALL_EMOTIONS, generateAffectTrial, type Emotion } from '@core/usecases/AffectRecognitionTask.js';
+import { FastStaircase } from '@core/usecases/FastStaircase.js';
 import type { OnboardingProbe, ProbeConfig, ProbeResult, ProbeTrialResult } from '../ProbeInterface.js';
 
 const EMOTION_DISPLAY: Record<Emotion, { emoji: string; color: number }> = {
@@ -30,6 +32,7 @@ export class EmotionalProbe implements OnboardingProbe {
   private onComplete!: (result: ProbeResult) => void;
   private container!: Phaser.GameObjects.Container;
   private results: ProbeTrialResult[] = [];
+  private staircase = new FastStaircase({ startLevel: 1, maxTrials: 6, maxReversals: 2 });
   private currentTrial = 0;
   private practiceTrials = 1;
   private trialActive = false;
@@ -53,30 +56,25 @@ export class EmotionalProbe implements OnboardingProbe {
     const { width, height } = this.scene.scale;
     const isPractice = this.currentTrial < this.practiceTrials;
 
-    // Generate trial
     const trial = generateAffectTrial();
     const display = EMOTION_DISPLAY[trial.correctEmotion];
 
-    // Status
     const statusText = isPractice ? 'Practice' : `Trial ${this.currentTrial - this.practiceTrials + 1} / ${this.config.trials}`;
     this.container.add(this.scene.add.text(width / 2, 80, statusText, {
-      fontSize: '14px', color: '#666688', fontFamily: 'monospace',
+      fontSize: '16px', color: '#666688', fontFamily: 'monospace',
     }).setOrigin(0.5));
 
-    // Instruction (first time only)
     if (this.currentTrial === 0) {
       this.container.add(this.scene.add.text(width / 2, 120, this.config.instruction, {
-        fontSize: '15px', color: '#aaaacc', fontFamily: 'monospace',
+        fontSize: '20px', color: '#aaaacc', fontFamily: 'monospace',
         align: 'center', wordWrap: { width: width - 60 },
       }).setOrigin(0.5));
     }
 
-    // Show the emotion stimulus (large emoji)
     this.container.add(this.scene.add.text(width / 2, height / 2 - 80, display.emoji, {
       fontSize: '72px',
     }).setOrigin(0.5));
 
-    // Show 4 options (correct + 3 distractors)
     const options = this.getOptions(trial.correctEmotion);
     const btnWidth = 150;
     const btnHeight = 50;
@@ -100,18 +98,18 @@ export class EmotionalProbe implements OnboardingProbe {
         .on('pointerout', () => btn.setFillStyle(0x1a2a4a));
 
       const label = this.scene.add.text(x + btnWidth / 2, y + btnHeight / 2, emotion, {
-        fontSize: '14px', color: '#ccccee', fontFamily: 'monospace',
+        fontSize: '18px', color: '#ccccee', fontFamily: 'monospace',
       }).setOrigin(0.5);
 
       this.container.add([btn, label]);
     });
 
-    // Timeout
     this.scene.time.delayedCall(this.config.trialTimeoutMs, () => {
       if (this.trialActive) {
         this.trialActive = false;
         if (!isPractice) {
           this.results.push({ correct: false, reactionMs: this.config.trialTimeoutMs });
+          this.staircase.recordResult(false);
         }
         this.currentTrial++;
         this.scene.time.delayedCall(500, () => this.runTrial());
@@ -127,12 +125,12 @@ export class EmotionalProbe implements OnboardingProbe {
 
     if (!isPractice) {
       this.results.push({ correct: isCorrect, reactionMs });
+      this.staircase.recordResult(isCorrect);
     }
 
-    // Brief feedback
-    const { width, height } = this.scene.scale;
-    const fb = this.scene.add.text(width / 2, height - 100, isCorrect ? '✓ Correct' : `✗ It was: ${correct}`, {
-      fontSize: '16px', color: isCorrect ? '#44ff88' : '#ff6666', fontFamily: 'monospace',
+    const { width } = this.scene.scale;
+    const fb = this.scene.add.text(width / 2, this.scene.scale.height - 100, isCorrect ? '✓ Correct' : `✗ It was: ${correct}`, {
+      fontSize: '18px', color: isCorrect ? '#44ff88' : '#ff6666', fontFamily: 'monospace',
     }).setOrigin(0.5);
     this.container.add(fb);
 
@@ -143,8 +141,7 @@ export class EmotionalProbe implements OnboardingProbe {
   private getOptions(correct: Emotion): Emotion[] {
     const others = ALL_EMOTIONS.filter(e => e !== correct);
     const shuffled = others.sort(() => Math.random() - 0.5).slice(0, 3);
-    const options = [correct, ...shuffled].sort(() => Math.random() - 0.5);
-    return options;
+    return [correct, ...shuffled].sort(() => Math.random() - 0.5);
   }
 
   private finish(): void {
@@ -155,7 +152,13 @@ export class EmotionalProbe implements OnboardingProbe {
       ? correctRTs.sort((a, b) => a - b)[Math.floor(correctRTs.length / 2)]!
       : this.config.trialTimeoutMs;
 
-    this.onComplete({ line: 'Emotional', accuracy, medianReactionMs: medianRT, trials: this.results });
+    this.onComplete({
+      line: 'Emotional',
+      accuracy,
+      medianReactionMs: medianRT,
+      threshold: this.staircase.getThreshold(),
+      trials: this.results,
+    });
   }
 
   destroy(): void {

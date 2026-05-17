@@ -1,133 +1,203 @@
 /**
- * InterpersonalProbe — measures attunement to another's signals.
- * A "companion" NPC shows directional cues (left/right arrows).
- * Player must mirror the companion's direction, ignoring the position
- * of the cue on screen (Simon-task variant framed as social attunement).
+ * InterpersonalProbe — measures attunement via pattern prediction.
+ * An NPC companion performs a sequence of actions (colored arrows).
+ * Player must predict the NEXT action before it's revealed.
+ * Uses FastStaircase on pattern complexity.
  */
 import Phaser from 'phaser';
-import { generateSimonTrial, type SimonDirection } from '@core/usecases/SimonTask.js';
+import { FastStaircase } from '@core/usecases/FastStaircase.js';
 import type { OnboardingProbe, ProbeConfig, ProbeResult, ProbeTrialResult } from '../ProbeInterface.js';
+
+type Direction = 'left' | 'right' | 'up';
+
+const DIR_DISPLAY: Record<Direction, { symbol: string; color: number }> = {
+  left: { symbol: '◀', color: 0x4ecdc4 },
+  right: { symbol: '▶', color: 0xff4d6d },
+  up: { symbol: '▲', color: 0xffd700 },
+};
+
+const DIRECTIONS: Direction[] = ['left', 'right', 'up'];
+
+function generatePattern(level: number): Direction[] {
+  if (level <= 1) return ['left', 'right', 'left', 'right', 'left', 'right', 'left', 'right'];
+  if (level <= 2) return ['left', 'left', 'right', 'left', 'left', 'right', 'left', 'left'];
+  if (level <= 3) return ['left', 'right', 'up', 'left', 'right', 'up', 'left', 'right'];
+  // Level 4: deceptive — pattern breaks
+  return ['left', 'right', 'left', 'right', 'left', 'up', 'right', 'left'];
+}
 
 export class InterpersonalProbe implements OnboardingProbe {
   readonly config: ProbeConfig = {
     line: 'Interpersonal',
-    title: 'Mirror the Companion',
-    instruction: 'Your companion will point a direction.\nTap the SAME direction they point —\nignore WHERE on screen the arrow appears.',
-    trials: 8,
+    title: 'Read the Companion',
+    instruction: 'Your companion acts in a pattern.\nWatch, then PREDICT their next move\nbefore it\'s revealed.',
+    trials: 6,
     hasPractice: true,
-    trialTimeoutMs: 2500,
-    interTrialDelayMs: 800,
+    trialTimeoutMs: 5000,
+    interTrialDelayMs: 1000,
   };
 
   private scene!: Phaser.Scene;
   private onComplete!: (result: ProbeResult) => void;
   private container!: Phaser.GameObjects.Container;
   private results: ProbeTrialResult[] = [];
+  private staircase = new FastStaircase({ startLevel: 1, stepUp: 1.4, stepDown: 1.4, maxReversals: 2, maxTrials: 6 });
+  private pattern: Direction[] = [];
   private currentTrial = 0;
   private practiceTrials = 2;
-  private trialActive = false;
   private trialStartMs = 0;
-  private currentCorrectDir: SimonDirection = 'left';
-  private leftBtn!: Phaser.GameObjects.Rectangle;
-  private rightBtn!: Phaser.GameObjects.Rectangle;
+  private trialActive = false;
 
   start(scene: Phaser.Scene, onComplete: (result: ProbeResult) => void): void {
     this.scene = scene;
     this.onComplete = onComplete;
-    const { width, height } = scene.scale;
-
     this.container = scene.add.container(0, 0);
 
-    // Instruction
-    this.container.add(scene.add.text(width / 2, 100, this.config.instruction, {
-      fontSize: '15px', color: '#aaaacc', fontFamily: 'monospace',
+    const { width } = scene.scale;
+    this.container.add(scene.add.text(width / 2, 80, this.config.instruction, {
+      fontSize: '20px', color: '#aaaacc', fontFamily: 'monospace',
       align: 'center', wordWrap: { width: width - 60 },
     }).setOrigin(0.5));
 
-    // Response buttons (always visible at bottom)
-    this.leftBtn = scene.add.rectangle(width / 4, height - 120, 140, 80, 0x1a3a4a, 0.9)
-      .setStrokeStyle(2, 0x446688)
-      .setInteractive()
-      .on('pointerdown', () => this.onChoice('left'));
-    this.rightBtn = scene.add.rectangle(3 * width / 4, height - 120, 140, 80, 0x1a3a4a, 0.9)
-      .setStrokeStyle(2, 0x446688)
-      .setInteractive()
-      .on('pointerdown', () => this.onChoice('right'));
-
-    this.container.add([this.leftBtn, this.rightBtn]);
-    this.container.add(scene.add.text(width / 4, height - 120, '← LEFT', {
-      fontSize: '16px', color: '#88aacc', fontFamily: 'monospace',
-    }).setOrigin(0.5));
-    this.container.add(scene.add.text(3 * width / 4, height - 120, 'RIGHT →', {
-      fontSize: '16px', color: '#88aacc', fontFamily: 'monospace',
-    }).setOrigin(0.5));
-
-    this.scene.time.delayedCall(2000, () => this.runTrial());
+    this.pattern = generatePattern(1);
+    this.scene.time.delayedCall(2000, () => this.showSequenceThenPredict());
   }
 
-  private runTrial(): void {
+  private showSequenceThenPredict(): void {
     const total = this.config.trials + this.practiceTrials;
     if (this.currentTrial >= total) {
       this.finish();
       return;
     }
 
+    // Update pattern for current level
+    const level = Math.max(1, Math.min(4, Math.round(this.staircase.getThreshold())));
+    this.pattern = generatePattern(level);
+
+    // Show 3 items of the pattern, then ask for prediction of the 4th
+    this.showPatternItem(0);
+  }
+
+  private showPatternItem(idx: number): void {
+    if (idx >= 3) {
+      // Now ask for prediction
+      this.askPrediction();
+      return;
+    }
+
+    this.clearStimulus();
     const { width, height } = this.scene.scale;
+    const dir = this.pattern[idx]!;
+    const display = DIR_DISPLAY[dir];
+
     const isPractice = this.currentTrial < this.practiceTrials;
+    const status = isPractice ? 'Watch the pattern...' : `Trial ${this.currentTrial - this.practiceTrials + 1} / ${this.config.trials}`;
+    this.setStatus(status);
 
-    // Generate Simon trial (50% incongruent for interpersonal challenge)
-    const trial = generateSimonTrial(Math.random, 0.5);
-    this.currentCorrectDir = trial.direction;
-
-    // Clear previous arrow
-    this.container.getAll().forEach(obj => {
-      if ((obj as Phaser.GameObjects.GameObject).getData?.('arrow')) obj.destroy();
-    });
-
-    // Show companion's arrow at the POSITION (which may be incongruent)
-    const arrowX = trial.position === 'left' ? width / 4 : 3 * width / 4;
-    const arrowText = trial.direction === 'left' ? '◀' : '▶';
-    const arrow = this.scene.add.text(arrowX, height / 2, arrowText, {
-      fontSize: '64px', color: '#ffcc44',
-    }).setOrigin(0.5).setData('arrow', true);
+    const arrow = this.scene.add.text(width / 2, height / 2 - 40, display.symbol, {
+      fontSize: '64px', color: `#${display.color.toString(16).padStart(6, '0')}`,
+    }).setOrigin(0.5).setData('stimulus', true);
     this.container.add(arrow);
 
-    // Companion label
-    const companionLabel = this.scene.add.text(width / 2, height / 2 - 80,
-      isPractice ? '(Practice) Companion points:' : 'Companion points:', {
-        fontSize: '14px', color: '#666688', fontFamily: 'monospace',
-      }).setOrigin(0.5).setData('arrow', true);
-    this.container.add(companionLabel);
+    // History display
+    const history = this.pattern.slice(0, idx + 1).map(d => DIR_DISPLAY[d].symbol).join(' ');
+    const histText = this.scene.add.text(width / 2, height / 2 + 40, history, {
+      fontSize: '28px', color: '#888899', fontFamily: 'monospace',
+    }).setOrigin(0.5).setData('stimulus', true);
+    this.container.add(histText);
+
+    this.scene.time.delayedCall(800, () => this.showPatternItem(idx + 1));
+  }
+
+  private askPrediction(): void {
+    this.clearStimulus();
+    const { width, height } = this.scene.scale;
+
+    // Show history
+    const history = this.pattern.slice(0, 3).map(d => DIR_DISPLAY[d].symbol).join(' ');
+    const histText = this.scene.add.text(width / 2, height / 2 - 80, `${history}  ?`, {
+      fontSize: '28px', color: '#ccccee', fontFamily: 'monospace',
+    }).setOrigin(0.5).setData('stimulus', true);
+    this.container.add(histText);
+
+    this.container.add(this.scene.add.text(width / 2, height / 2 - 30, 'What comes next?', {
+      fontSize: '20px', color: '#aaccee', fontFamily: 'monospace',
+    }).setOrigin(0.5).setData('stimulus', true));
 
     this.trialStartMs = performance.now();
     this.trialActive = true;
+
+    // Direction buttons
+    DIRECTIONS.forEach((dir, i) => {
+      const x = width / 2 + (i - 1) * 120;
+      const y = height / 2 + 60;
+      const display = DIR_DISPLAY[dir];
+      const btn = this.scene.add.rectangle(x, y, 100, 80, 0x1a3a4a, 0.9)
+        .setStrokeStyle(2, 0x446688)
+        .setInteractive()
+        .setData('stimulus', true)
+        .on('pointerdown', () => this.onChoice(dir))
+        .on('pointerover', () => btn.setFillStyle(0x2a4a5a))
+        .on('pointerout', () => btn.setFillStyle(0x1a3a4a));
+      const lbl = this.scene.add.text(x, y, display.symbol, {
+        fontSize: '28px', color: `#${display.color.toString(16).padStart(6, '0')}`,
+      }).setOrigin(0.5).setData('stimulus', true);
+      this.container.add([btn, lbl]);
+    });
 
     // Timeout
     this.scene.time.delayedCall(this.config.trialTimeoutMs, () => {
       if (this.trialActive) {
         this.trialActive = false;
-        if (!isPractice) {
-          this.results.push({ correct: false, reactionMs: this.config.trialTimeoutMs });
-        }
-        this.currentTrial++;
-        this.scene.time.delayedCall(this.config.interTrialDelayMs, () => this.runTrial());
+        this.recordResult(false, this.config.trialTimeoutMs);
       }
     });
   }
 
-  private onChoice(chosen: SimonDirection): void {
+  private onChoice(chosen: Direction): void {
     if (!this.trialActive) return;
     this.trialActive = false;
     const reactionMs = performance.now() - this.trialStartMs;
-    const correct = chosen === this.currentCorrectDir;
+    const expected = this.pattern[3]!;
+    const correct = chosen === expected;
+    this.recordResult(correct, reactionMs);
+  }
+
+  private recordResult(correct: boolean, reactionMs: number): void {
     const isPractice = this.currentTrial < this.practiceTrials;
 
     if (!isPractice) {
       this.results.push({ correct, reactionMs });
+      this.staircase.recordResult(correct);
     }
 
+    // Show answer
+    this.clearStimulus();
+    const { width, height } = this.scene.scale;
+    const expected = this.pattern[3]!;
+    const fb = correct ? '✓ Correct!' : `✗ It was: ${DIR_DISPLAY[expected].symbol}`;
+    this.container.add(this.scene.add.text(width / 2, height / 2, fb, {
+      fontSize: '20px', color: correct ? '#44ff88' : '#ff6666', fontFamily: 'monospace',
+    }).setOrigin(0.5).setData('stimulus', true));
+
     this.currentTrial++;
-    this.scene.time.delayedCall(this.config.interTrialDelayMs, () => this.runTrial());
+    this.scene.time.delayedCall(this.config.interTrialDelayMs, () => this.showSequenceThenPredict());
+  }
+
+  private setStatus(text: string): void {
+    this.container.getAll().forEach(obj => {
+      if ((obj as Phaser.GameObjects.GameObject).getData?.('status')) obj.destroy();
+    });
+    const { width } = this.scene.scale;
+    this.container.add(this.scene.add.text(width / 2, 50, text, {
+      fontSize: '16px', color: '#666688', fontFamily: 'monospace',
+    }).setOrigin(0.5).setData('status', true));
+  }
+
+  private clearStimulus(): void {
+    this.container.getAll().forEach(obj => {
+      if ((obj as Phaser.GameObjects.GameObject).getData?.('stimulus')) obj.destroy();
+    });
   }
 
   private finish(): void {
@@ -138,7 +208,13 @@ export class InterpersonalProbe implements OnboardingProbe {
       ? correctRTs.sort((a, b) => a - b)[Math.floor(correctRTs.length / 2)]!
       : this.config.trialTimeoutMs;
 
-    this.onComplete({ line: 'Interpersonal', accuracy, medianReactionMs: medianRT, trials: this.results });
+    this.onComplete({
+      line: 'Interpersonal',
+      accuracy,
+      medianReactionMs: medianRT,
+      threshold: this.staircase.getThreshold(),
+      trials: this.results,
+    });
   }
 
   destroy(): void {
