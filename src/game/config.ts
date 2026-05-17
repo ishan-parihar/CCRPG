@@ -2,15 +2,18 @@ import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene.js';
 import { PreloaderScene } from './scenes/PreloaderScene.js';
 import { MainMenuScene } from './scenes/MainMenuScene.js';
+import { OnboardingScene } from './scenes/OnboardingScene.js';
 import { BattleScene } from './scenes/BattleScene.js';
 import { UIOverlayScene } from './scenes/UIOverlayScene.js';
+import { RadialChartScene } from './scenes/RadialChartScene.js';
+import { CodexScene } from './scenes/CodexScene.js';
 
 /** Logical resolution. Phaser.Scale.FIT scales this to the device. */
 export const VIEWPORT = { width: 720, height: 1280 } as const;
 
 export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameConfig {
   return {
-    type: Phaser.AUTO, // Try WebGL first; Phaser falls back to Canvas.
+    type: Phaser.AUTO,
     parent,
     backgroundColor: '#05070b',
     scale: {
@@ -30,6 +33,15 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
       forceSetTimeOut: false,
     },
     physics: { default: 'arcade', arcade: { gravity: { x: 0, y: 0 }, debug: false } },
-    scene: [BootScene, PreloaderScene, MainMenuScene, BattleScene, UIOverlayScene],
+    scene: [
+      BootScene,
+      PreloaderScene,
+      MainMenuScene,
+      OnboardingScene,
+      BattleScene,
+      UIOverlayScene,
+      RadialChartScene,
+      CodexScene,
+    ],
   };
 }

@@ -4,8 +4,11 @@ export const SceneKeys = {
   Boot: 'BootScene',
   Preloader: 'PreloaderScene',
   MainMenu: 'MainMenuScene',
+  Onboarding: 'OnboardingScene',
   Battle: 'BattleScene',
   UIOverlay: 'UIOverlayScene',
+  RadialChart: 'RadialChartScene',
+  Codex: 'CodexScene',
 } as const;
 
 export const TextureKeys = {
@@ -20,6 +23,7 @@ export const RegistryKeys = {
   SaveRepo: 'svc:save',
   Native: 'svc:native',
   Save: 'state:save',
+  Profile: 'state:profile',
 } as const;
 
 export const GameEvents = {
@@ -31,6 +35,10 @@ export const GameEvents = {
   RequestStroop: 'task:stroop:request',
   /** UI → Battle: Stroop resolved with defensive outcome. */
   ResolvedStroop: 'task:stroop:resolved',
+  /** Battle → UI: open generic cognitive task overlay. */
+  RequestCognitiveTask: 'task:cognitive:request',
+  /** UI → Battle: generic cognitive task resolved. */
+  ResolvedCognitiveTask: 'task:cognitive:resolved',
   /** Any → all: pause the battle. */
   Pause: 'app:pause',
   /** Any → all: resume the battle. */

@@ -4,9 +4,11 @@ import {
   type CognitiveProfile,
   type CombatStats,
 } from '@core/domain/Stats.js';
+import type { PlayerProfile } from '@core/domain/PlayerProfile.js';
 import type { KeyValueStore } from './KeyValueStore.js';
 
 const SAVE_KEY = 'save:v1';
+const PROFILE_KEY = 'profile:v1';
 const CURRENT_VERSION = 1;
 
 /** The root persisted save document. */
@@ -66,6 +68,26 @@ export class SaveRepository {
 
   async reset(): Promise<void> {
     await this.store.remove(SAVE_KEY);
+  }
+
+  // --- PlayerProfile persistence ---
+
+  async loadProfile(): Promise<PlayerProfile | null> {
+    const raw = await this.store.get(PROFILE_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as PlayerProfile;
+    } catch {
+      return null;
+    }
+  }
+
+  async saveProfile(profile: PlayerProfile): Promise<void> {
+    await this.store.set(PROFILE_KEY, JSON.stringify(profile));
+  }
+
+  async resetProfile(): Promise<void> {
+    await this.store.remove(PROFILE_KEY);
   }
 }
 

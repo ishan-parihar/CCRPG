@@ -1,5 +1,6 @@
 import type { NBackResult } from '@core/usecases/NBackTask.js';
 import type { StroopOutcome } from '@core/usecases/StroopTask.js';
+import type { TaskSlug } from '@core/domain/PlayerProfile.js';
 
 /**
  * Strongly-typed event payloads shared between BattleScene and
@@ -31,4 +32,18 @@ export interface StroopResolvedPayload {
   readonly outcome: StroopOutcome;
   readonly damageMultiplier: number;
   readonly quality: StroopOutcome['quality'];
+}
+
+/** Generic cognitive task overlay request/response. */
+export interface CognitiveTaskRequestPayload {
+  readonly taskSlug: TaskSlug;
+  readonly level: number;
+  readonly params?: Record<string, unknown>;
+}
+
+export interface CognitiveTaskResolvedPayload {
+  readonly taskSlug: TaskSlug;
+  readonly accuracy: number;
+  readonly reactionMs: number;
+  readonly damageMultiplier: number;
 }

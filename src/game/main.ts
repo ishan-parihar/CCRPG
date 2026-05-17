@@ -4,6 +4,8 @@ import { RegistryKeys, SceneKeys } from './keys.js';
 import { SaveRepository } from '@infra/persistence/SaveRepository.js';
 import { createKeyValueStore } from '@infra/persistence/createKeyValueStore.js';
 import { NativeBridge } from '@infra/native/NativeBridge.js';
+import { bootRegistries } from '@core/registries/boot.js';
+import { initI18n } from '@infra/i18n/I18n.js';
 
 /**
  * Boot the Phaser game and attach it to the given parent. Wires up
@@ -12,6 +14,12 @@ import { NativeBridge } from '@infra/native/NativeBridge.js';
  * Android hardware back-button intercept per the blueprint.
  */
 export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
+  // Boot core registries (lines, stages, rays, drives, tasks, abilities, encounters, narrative)
+  bootRegistries();
+
+  // Initialise i18n
+  initI18n();
+
   const game = new Phaser.Game(createPhaserConfig(parent));
 
   const saveRepo = new SaveRepository(createKeyValueStore());
@@ -21,20 +29,20 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
   game.registry.set(RegistryKeys.Native, native);
 
   // ── Android hardware back button ─────────────────────────────────
-  // From the blueprint: "accidentally pressing the back button during
-  // an intense cognitive combat scenario [should pause] the game …
-  // rather than unceremoniously terminating the software."
   await native.registerBackHandler(() => {
     const battle = game.scene.getScene(SceneKeys.Battle);
     if (battle && game.scene.isActive(SceneKeys.Battle)) {
-      // Mid-combat: drop back to the main menu and stop the overlay.
       game.scene.stop(SceneKeys.UIOverlay);
       game.scene.start(SceneKeys.MainMenu);
-      return true; // consumed
+      return true;
+    }
+    const onboarding = game.scene.getScene(SceneKeys.Onboarding);
+    if (onboarding && game.scene.isActive(SceneKeys.Onboarding)) {
+      game.scene.start(SceneKeys.MainMenu);
+      return true;
     }
     const menu = game.scene.getScene(SceneKeys.MainMenu);
     if (menu && game.scene.isActive(SceneKeys.MainMenu)) {
-      // From the menu, allow the OS to exit (return false → default).
       return false;
     }
     return true;
@@ -49,7 +57,7 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
     };
   }
 
-  // Keep the canvas in step with viewport changes (rotation, keyboard, etc.).
+  // Keep the canvas in step with viewport changes.
   if (typeof window !== 'undefined') {
     const onResize = () => game.scale.refresh();
     window.addEventListener('resize', onResize);
