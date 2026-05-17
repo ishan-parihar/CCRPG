@@ -133,12 +133,15 @@ export class OnboardingScene extends Phaser.Scene {
 
   private finishOnboarding(): void {
     const result = calibrate(this.probeResults);
-    const profile = createInitialProfile(
+    const baseProfile = createInitialProfile(
       crypto.randomUUID?.() ?? `player-${Date.now()}`,
       result.altitudes,
       result.stage,
       result.driveWeights,
     );
+
+    // Mark onboarding as complete so MainMenu doesn't loop back
+    const profile = { ...baseProfile, onboardingComplete: true, totalSessionsPlayed: 1 };
 
     // Store profile in game registry for other scenes
     this.registry.set(RegistryKeys.Profile, profile);

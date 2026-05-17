@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { SceneKeys } from '../keys.js';
+import { SceneKeys, RegistryKeys } from '../keys.js';
 import { ALL_LINES } from '@core/domain/Line.js';
 import { ALL_STAGES, stageOrdinal } from '@core/domain/Stage.js';
 import { STAGE_RAY_MAP } from '@core/domain/Ray.js';
@@ -63,8 +63,8 @@ export class RadialChartScene extends Phaser.Scene {
       }).setOrigin(0.5);
     }
 
-    // Draw player profile polygon if provided
-    const profile = data?.profile;
+    // Draw player profile polygon
+    const profile = data?.profile ?? this.registry.get(RegistryKeys.Profile) as PlayerProfile | undefined;
     if (profile) {
       const points: { x: number; y: number }[] = [];
       for (let s = 0; s < spokes; s++) {

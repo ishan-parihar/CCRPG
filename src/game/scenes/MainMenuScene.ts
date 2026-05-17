@@ -1,13 +1,12 @@
 import Phaser from 'phaser';
 import { RegistryKeys, SceneKeys } from '../keys.js';
 import { makeButton } from '../ui/Button.js';
-import type { SaveData, SaveRepository } from '@infra/persistence/SaveRepository.js';
+import type { PlayerProfile } from '@core/domain/PlayerProfile.js';
 
 /**
- * MainMenu — primary navigation surface. Shows the player's level, XP,
- * the cognitive profile (n-back level / accuracy, Stroop accuracy), and
- * launches battles. Per the blueprint this scene is also where the
- * "stats screen" lives so the player sees their cognitive growth.
+ * MainMenu — primary navigation surface.
+ * Routes new players to Onboarding; returning players see their profile
+ * and can enter battle, view radial chart, or browse codex.
  */
 export class MainMenuScene extends Phaser.Scene {
   constructor() {
@@ -16,146 +15,135 @@ export class MainMenuScene extends Phaser.Scene {
 
   create(): void {
     const { width, height } = this.scale;
-    const save = this.registry.get(RegistryKeys.Save) as SaveData | undefined;
-
     this.cameras.main.setBackgroundColor(0x05070b);
+
+    const profile = this.registry.get(RegistryKeys.Profile) as PlayerProfile | undefined;
+
+    // If no profile exists, route to onboarding
+    if (!profile || !profile.onboardingComplete) {
+      this.scene.start(SceneKeys.Onboarding);
+      return;
+    }
+
     this.drawBackdrop();
 
-    // Title.
-    this.add
-      .text(width / 2, 140, 'CCRPG', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '72px',
-        color: '#e7eaf2',
-      })
-      .setOrigin(0.5);
-    this.add
-      .text(width / 2, 210, 'Cognitive Combat', {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '24px',
-        color: '#9bd9ff',
-      })
-      .setOrigin(0.5);
+    // Title
+    this.add.text(width / 2, 100, 'CCRPG', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '64px',
+      color: '#e7eaf2',
+    }).setOrigin(0.5);
 
-    // Stats card.
-    if (save) this.drawStatsCard(width / 2, 410, save);
+    this.add.text(width / 2, 160, 'Cognitive Combat RPG', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '20px',
+      color: '#9bd9ff',
+    }).setOrigin(0.5);
 
-    // Buttons.
-    makeButton(this, width / 2, 820, {
-      label: 'Begin Battle',
-      width: 360,
-      height: 80,
-      fill: 0x223a5e,
-      hoverFill: 0x2f4f80,
+    // Profile summary
+    this.drawProfileSummary(width / 2, 340, profile);
+
+    // Navigation buttons
+    let btnY = 620;
+    makeButton(this, width / 2, btnY, {
+      label: '⚔️  Enter Battle',
+      width: 380,
+      height: 72,
+      fill: 0x1a3a2a,
+      hoverFill: 0x2a5a3a,
       onClick: () => this.scene.start(SceneKeys.Battle),
     });
-    makeButton(this, width / 2, 920, {
-      label: 'Reset Progress',
-      width: 280,
-      height: 64,
-      fill: 0x2a0a14,
-      hoverFill: 0x4a1421,
-      onClick: () => this.confirmReset(),
+
+    btnY += 90;
+    makeButton(this, width / 2, btnY, {
+      label: '📊  Developmental Profile',
+      width: 380,
+      height: 72,
+      fill: 0x1a2a4a,
+      hoverFill: 0x2a3a6a,
+      onClick: () => this.scene.start(SceneKeys.RadialChart),
     });
 
-    // Footer / hint.
-    this.add
-      .text(
-        width / 2,
-        height - 60,
-        'Tip: spell power scales with your N-back accuracy.\nDefend by inhibiting the word — match the INK color.',
-        {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          color: '#6c7794',
-          align: 'center',
-        },
-      )
-      .setOrigin(0.5);
+    btnY += 90;
+    makeButton(this, width / 2, btnY, {
+      label: '📖  Codex',
+      width: 380,
+      height: 72,
+      fill: 0x2a1a3a,
+      hoverFill: 0x3a2a5a,
+      onClick: () => this.scene.start(SceneKeys.Codex),
+    });
+
+    btnY += 90;
+    makeButton(this, width / 2, btnY, {
+      label: '🔄  New Journey (Reset)',
+      width: 300,
+      height: 56,
+      fill: 0x2a0a14,
+      hoverFill: 0x4a1421,
+      onClick: () => this.resetProfile(),
+    });
+
+    // Footer
+    this.add.text(width / 2, height - 40, `Stage: ${profile.stage}  ·  Sessions: ${profile.totalSessionsPlayed}`, {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: '#6c7794',
+    }).setOrigin(0.5);
   }
 
   private drawBackdrop(): void {
     const { width, height } = this.scale;
-    // Subtle grid lines for visual interest.
     const g = this.add.graphics();
-    g.lineStyle(1, 0x15233a, 0.5);
-    for (let x = 0; x < width; x += 64) {
-      g.lineBetween(x, 0, x, height);
-    }
-    for (let y = 0; y < height; y += 64) {
-      g.lineBetween(0, y, width, y);
-    }
+    g.lineStyle(1, 0x15233a, 0.3);
+    for (let x = 0; x < width; x += 64) g.lineBetween(x, 0, x, height);
+    for (let y = 0; y < height; y += 64) g.lineBetween(0, y, width, y);
   }
 
-  private drawStatsCard(cx: number, cy: number, save: SaveData): void {
+  private drawProfileSummary(cx: number, cy: number, profile: PlayerProfile): void {
     const w = 560;
-    const h = 320;
+    const h = 220;
+    this.add.rectangle(cx, cy, w, h, 0x0c1322, 1).setStrokeStyle(2, 0x223a5e, 0.9);
 
-    this.add
-      .rectangle(cx, cy, w, h, 0x0c1322, 1)
-      .setStrokeStyle(2, 0x223a5e, 0.9);
+    const left = cx - w / 2 + 24;
+    let y = cy - h / 2 + 20;
 
-    const left = cx - w / 2 + 28;
-    let y = cy - h / 2 + 28;
-
-    const heading = (text: string, color: string = '#9bd9ff') =>
-      this.add.text(left, y, text, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '18px',
-        color,
-      });
-
-    heading(`${save.playerName}  ·  Level ${save.level}`, '#e7eaf2');
-    y += 30;
-    heading(`XP: ${save.xp}  ·  Wins: ${save.battlesWon}`);
-    y += 36;
-
-    heading('— Combat —', '#9bd9ff');
-    y += 26;
-    const stat = (label: string, value: number) => {
-      this.add.text(left, y, label, {
-        fontFamily: 'system-ui, sans-serif',
-        fontSize: '16px',
-        color: '#a8b3c7',
-      });
-      this.add
-        .text(left + 320, y, String(value), {
-          fontFamily: 'system-ui, sans-serif',
-          fontSize: '16px',
-          color: '#e7eaf2',
-        })
-        .setOrigin(0, 0);
-      y += 22;
-    };
-    stat('HP (Endurance)', save.stats.maxHp);
-    stat('Mana (Working Memory)', save.stats.maxMana);
-    stat('Agility (Processing Speed)', save.stats.agility);
-    stat('Defense (Inhibition)', save.stats.defense);
-    stat('Precision (Attention)', save.stats.precision);
-
-    y += 12;
-    heading('— Cognitive —', '#9bd9ff');
-    y += 26;
-    const pct = (n: number) => `${Math.round(n * 100)}%`;
-    stat('N-back level', save.cognitive.nBackLevel);
-    this.add.text(left, y, 'N-back accuracy', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '16px',
-      color: '#a8b3c7',
+    this.add.text(left, y, `Current Stage: ${profile.stage}`, {
+      fontSize: '20px', color: '#e7eaf2', fontFamily: 'monospace',
     });
-    this.add.text(left + 320, y, pct(save.cognitive.nBackAccuracy), {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '16px',
-      color: '#e7eaf2',
+    y += 32;
+
+    this.add.text(left, y, 'Line Altitudes:', {
+      fontSize: '14px', color: '#9bd9ff', fontFamily: 'monospace',
+    });
+    y += 22;
+
+    const lines = Object.entries(profile.altitudes) as [string, string][];
+    const col1 = lines.slice(0, 4);
+    const col2 = lines.slice(4);
+
+    col1.forEach(([line, alt], i) => {
+      this.add.text(left, y + i * 20, `${line}: ${alt}`, {
+        fontSize: '13px', color: '#a8b3c7', fontFamily: 'monospace',
+      });
+    });
+    col2.forEach(([line, alt], i) => {
+      this.add.text(left + 260, y + i * 20, `${line}: ${alt}`, {
+        fontSize: '13px', color: '#a8b3c7', fontFamily: 'monospace',
+      });
+    });
+
+    y += 90;
+    const driveStr = Object.entries(profile.drives.weights)
+      .map(([d, w]) => `${d}: ${Math.round((w as number) * 100)}%`)
+      .join('  ');
+    this.add.text(left, y, `Drives: ${driveStr}`, {
+      fontSize: '12px', color: '#666688', fontFamily: 'monospace',
     });
   }
 
-  private async confirmReset(): Promise<void> {
-    const repo = this.registry.get(RegistryKeys.SaveRepo) as SaveRepository | undefined;
-    if (!repo) return;
-    await repo.reset();
-    const fresh = await repo.load();
-    this.registry.set(RegistryKeys.Save, fresh);
-    this.scene.restart();
+  private resetProfile(): void {
+    this.registry.remove(RegistryKeys.Profile);
+    this.scene.start(SceneKeys.Onboarding);
   }
 }

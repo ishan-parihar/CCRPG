@@ -73,7 +73,22 @@ export class PreloaderScene extends Phaser.Scene {
 
   private transition(save: SaveData): void {
     this.registry.set(RegistryKeys.Save, save);
-    this.scene.start(SceneKeys.MainMenu);
+
+    // Try to load a persisted PlayerProfile for returning players
+    const repo = this.registry.get(RegistryKeys.SaveRepo) as SaveRepository | undefined;
+    if (repo) {
+      repo.loadProfile?.().then(
+        (profile) => {
+          if (profile) {
+            this.registry.set(RegistryKeys.Profile, profile);
+          }
+          this.scene.start(SceneKeys.MainMenu);
+        },
+        () => this.scene.start(SceneKeys.MainMenu),
+      );
+    } else {
+      this.scene.start(SceneKeys.MainMenu);
+    }
   }
 
   private fallbackSave(): SaveData {
