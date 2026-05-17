@@ -148,20 +148,62 @@ export class OnboardingScene extends Phaser.Scene {
     const { width, height } = this.scale;
     const completeContainer = this.add.container(0, 0).setDepth(150);
     completeContainer.add(
-      this.add.rectangle(width / 2, height / 2, width, height, 0x080c18, 0.9)
+      this.add.rectangle(width / 2, height / 2, width, height, 0x080c18, 0.92)
     );
 
-    const qualityLabel = result.accuracy >= 0.8 ? 'Strong'
-      : result.accuracy >= 0.5 ? 'Developing'
-      : 'Emerging';
+    // Compute per-dimension scores
+    const correctCount = result.trials.filter(t => t.correct).length;
+    const accuracy = result.trials.length > 0 ? correctCount / result.trials.length : 0;
+    const rts = result.trials.filter(t => t.correct).map(t => t.reactionMs);
+    const avgRT = rts.length > 0 ? rts.reduce((a, b) => a + b, 0) / rts.length : 5000;
+    const speedScore = Math.max(0, Math.min(1, 1 - (avgRT - 300) / 4700));
+    const rtVariance = rts.length > 1
+      ? rts.reduce((a, v) => a + (v - avgRT) ** 2, 0) / rts.length : 0;
+    const consistencyScore = Math.max(0, Math.min(1, 1 - Math.sqrt(rtVariance) / 2000));
 
+    // Title
     completeContainer.add(
-      this.add.text(width / 2, height / 2 - 20, `${result.line}: ${qualityLabel}`, {
-        fontSize: '20px', color: '#aaccaa', fontFamily: 'monospace',
+      this.add.text(width / 2, height / 2 - 100, result.line, {
+        fontSize: '24px', color: '#e8e8ff', fontFamily: 'monospace',
       }).setOrigin(0.5)
     );
 
-    this.time.delayedCall(2000, () => {
+    // Dimension bars
+    const dims = [
+      { label: 'Accuracy', value: accuracy },
+      { label: 'Speed', value: speedScore },
+      { label: 'Consistency', value: consistencyScore },
+    ];
+    const barY = height / 2 - 50;
+    dims.forEach((dim, i) => {
+      const y = barY + i * 40;
+      const barWidth = 200;
+      const filled = dim.value * barWidth;
+      // Label
+      completeContainer.add(this.add.text(width / 2 - 140, y, dim.label, {
+        fontSize: '16px', color: '#888899', fontFamily: 'monospace',
+      }).setOrigin(0, 0.5));
+      // Background bar
+      completeContainer.add(this.add.rectangle(width / 2 + 40, y, barWidth, 14, 0x222244));
+      // Filled bar
+      const color = dim.value >= 0.7 ? 0x44cc88 : dim.value >= 0.4 ? 0xccaa44 : 0xcc5544;
+      if (filled > 0) {
+        completeContainer.add(this.add.rectangle(width / 2 + 40 - (barWidth - filled) / 2, y, filled, 14, color));
+      }
+      // Percentage
+      completeContainer.add(this.add.text(width / 2 + 155, y, `${Math.round(dim.value * 100)}%`, {
+        fontSize: '14px', color: '#aaaacc', fontFamily: 'monospace',
+      }).setOrigin(0, 0.5));
+    });
+
+    // Threshold info
+    completeContainer.add(
+      this.add.text(width / 2, height / 2 + 80, `Threshold: ${result.threshold.toFixed(1)}`, {
+        fontSize: '16px', color: '#666688', fontFamily: 'monospace',
+      }).setOrigin(0.5)
+    );
+
+    this.time.delayedCall(3000, () => {
       completeContainer.destroy(true);
       this.startNextProbe();
     });
@@ -227,11 +269,11 @@ export class OnboardingScene extends Phaser.Scene {
       Cognitive: 'n_back',
       Emotional: 'affect_recognition',
       Moral: 'dilemma_choice',
-      Intrapersonal: 'go_no_go',
-      Spiritual: 'breath_rhythm',
+      Intrapersonal: 'self_report',
+      Spiritual: 'value_coherence',
       Somatic: 'reaction_time',
       Willpower: 'held_input',
-      Interpersonal: 'simon',
+      Interpersonal: 'pattern_prediction',
     };
     return map[line];
   }

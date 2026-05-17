@@ -30,6 +30,9 @@ export class WillpowerProbe implements OnboardingProbe {
   private fillBar!: Phaser.GameObjects.Rectangle;
   private targetMs = 2000;
   private fillTween: Phaser.Tweens.Tween | null = null;
+  private phase: 'hold' | 'delay' | 'impulse' = 'hold';
+  private delayResults: { waited: boolean }[] = [];
+  private impulseResults: { resisted: boolean }[] = [];
 
   start(scene: Phaser.Scene, onComplete: (result: ProbeResult) => void): void {
     this.scene = scene;
@@ -147,21 +150,154 @@ export class WillpowerProbe implements OnboardingProbe {
   }
 
   private finish(): void {
-    const correctCount = this.results.filter(r => r.correct).length;
-    const accuracy = this.results.length > 0 ? correctCount / this.results.length : 0;
+    if (this.phase === 'hold') {
+      // Move to delay-of-gratification phase
+      this.phase = 'delay';
+      this.currentTrial = 0;
+      this.runDelayTrial();
+      return;
+    }
+    if (this.phase === 'delay') {
+      // Move to impulse-resistance phase
+      this.phase = 'impulse';
+      this.currentTrial = 0;
+      this.runImpulseTrial();
+      return;
+    }
+
+    // Final scoring: combine all three dimensions
+    const holdCorrect = this.results.filter(r => r.correct).length;
+    const holdAccuracy = this.results.length > 0 ? holdCorrect / this.results.length : 0;
+    const delayScore = this.delayResults.length > 0
+      ? this.delayResults.filter(d => d.waited).length / this.delayResults.length : 0;
+    const impulseScore = this.impulseResults.length > 0
+      ? this.impulseResults.filter(i => i.resisted).length / this.impulseResults.length : 0;
+
+    // Composite accuracy: weighted average of all three dimensions
+    const compositeAccuracy = holdAccuracy * 0.4 + delayScore * 0.3 + impulseScore * 0.3;
+
     const medianRT = this.results.length > 0
       ? this.results.map(r => r.reactionMs).sort((a, b) => a - b)[Math.floor(this.results.length / 2)]!
       : 0;
 
-    // Threshold in seconds for the willpower map
     const thresholdSec = this.staircase.getThreshold() / 1000;
 
     this.onComplete({
       line: 'Willpower',
-      accuracy,
+      accuracy: compositeAccuracy,
       medianReactionMs: medianRT,
       threshold: thresholdSec,
       trials: this.results,
+    });
+  }
+
+  private runDelayTrial(): void {
+    if (this.currentTrial >= 3) {
+      this.phase = 'impulse';
+      this.currentTrial = 0;
+      this.runImpulseTrial();
+      return;
+    }
+
+    this.container.removeAll(true);
+    const { width, height } = this.scene.scale;
+    const waitSec = 3 + this.currentTrial * 2; // 3s, 5s, 7s
+
+    this.container.add(this.scene.add.text(width / 2, 80, `Delay Challenge ${this.currentTrial + 1} / 3`, {
+      fontSize: '16px', color: '#666688', fontFamily: 'monospace',
+    }).setOrigin(0.5));
+
+    this.container.add(this.scene.add.text(width / 2, height / 2 - 80, `Tap NOW for 1 point\nor WAIT ${waitSec} seconds for 3 points`, {
+      fontSize: '20px', color: '#e8e8ff', fontFamily: 'monospace',
+      align: 'center',
+    }).setOrigin(0.5));
+
+    let waited = false;
+    const nowBtn = this.scene.add.rectangle(width / 2 - 100, height / 2 + 40, 160, 60, 0x4a2020, 0.9)
+      .setStrokeStyle(2, 0x884444).setInteractive()
+      .on('pointerdown', () => {
+        if (waited) return;
+        waited = true;
+        this.delayResults.push({ waited: false });
+        this.currentTrial++;
+        this.scene.time.delayedCall(800, () => this.runDelayTrial());
+      });
+    this.container.add(nowBtn);
+    this.container.add(this.scene.add.text(width / 2 - 100, height / 2 + 40, 'Take 1 now', {
+      fontSize: '18px', color: '#ff8888', fontFamily: 'monospace',
+    }).setOrigin(0.5));
+
+    // Auto-reward after wait
+    this.scene.time.delayedCall(waitSec * 1000, () => {
+      if (!waited) {
+        waited = true;
+        this.delayResults.push({ waited: true });
+        this.container.removeAll(true);
+        this.container.add(this.scene.add.text(width / 2, height / 2, '✓ +3 points — patience rewarded', {
+          fontSize: '20px', color: '#44ff88', fontFamily: 'monospace',
+        }).setOrigin(0.5));
+        this.currentTrial++;
+        this.scene.time.delayedCall(1000, () => this.runDelayTrial());
+      }
+    });
+
+    // Countdown display
+    let remaining = waitSec;
+    const countText = this.scene.add.text(width / 2 + 100, height / 2 + 40, `${remaining}s`, {
+      fontSize: '28px', color: '#88ccaa', fontFamily: 'monospace',
+    }).setOrigin(0.5);
+    this.container.add(countText);
+    const timer = this.scene.time.addEvent({
+      delay: 1000, repeat: waitSec - 1,
+      callback: () => { remaining--; countText.setText(`${remaining}s`); },
+    });
+    this.container.add({ destroy: () => timer.destroy() } as unknown as Phaser.GameObjects.GameObject);
+  }
+
+  private runImpulseTrial(): void {
+    if (this.currentTrial >= 6) {
+      this.finish();
+      return;
+    }
+
+    this.container.removeAll(true);
+    const { width, height } = this.scene.scale;
+    const isGo = Math.random() > 0.4; // 60% go, 40% no-go
+
+    this.container.add(this.scene.add.text(width / 2, 80, `Impulse ${this.currentTrial + 1} / 6 — Tap GREEN only!`, {
+      fontSize: '16px', color: '#666688', fontFamily: 'monospace',
+    }).setOrigin(0.5));
+
+    const color = isGo ? 0x44ff88 : 0xff4444;
+    const circle = this.scene.add.circle(width / 2, height / 2, 60, color)
+      .setInteractive();
+    this.container.add(circle);
+
+    let responded = false;
+    circle.on('pointerdown', () => {
+      if (responded) return;
+      responded = true;
+      if (isGo) {
+        this.impulseResults.push({ resisted: true }); // correctly tapped green
+      } else {
+        this.impulseResults.push({ resisted: false }); // incorrectly tapped red
+      }
+      this.currentTrial++;
+      this.scene.time.delayedCall(600, () => this.runImpulseTrial());
+    });
+
+    // Timeout: if they don't tap
+    this.scene.time.delayedCall(1500, () => {
+      if (!responded) {
+        responded = true;
+        if (isGo) {
+          this.impulseResults.push({ resisted: false }); // missed green (low engagement)
+        } else {
+          this.impulseResults.push({ resisted: true }); // correctly resisted red
+        }
+        this.currentTrial++;
+        this.scene.time.delayedCall(400, () => this.runImpulseTrial());
+      }
     });
   }
 

@@ -116,15 +116,23 @@ export class CognitiveProbe implements OnboardingProbe {
     const trial = this.sequence[this.currentTrialIdx]!;
     const color = COLORS[trial.stimulus % COLORS.length]!;
 
-    this.symbolDisplay.setFillStyle(color);
-    this.responded = false;
-    this.trialStartMs = performance.now();
-    this.statusText.setText(this.practiceMode ? 'Practice' : `N=${Math.round(this.currentN)} · Trial ${this.results.length + 1}/${this.config.trials}`);
+    // Clear visual gap: hide symbol first, show "..." briefly
+    this.symbolDisplay.setFillStyle(0x080c18);
+    this.symbolDisplay.setStrokeStyle(3, 0x666688);
 
-    this.scene.time.delayedCall(this.config.trialTimeoutMs, () => {
-      if (!this.responded) {
-        this.recordResponse(false);
-      }
+    this.scene.time.delayedCall(400, () => {
+      // Now show the actual stimulus
+      this.symbolDisplay.setFillStyle(color);
+      this.symbolDisplay.setStrokeStyle(3, 0xffffff);
+      this.responded = false;
+      this.trialStartMs = performance.now();
+      this.statusText.setText(this.practiceMode ? 'Practice' : `N=${Math.round(this.currentN)} · Trial ${this.results.length + 1}/${this.config.trials}`);
+
+      this.scene.time.delayedCall(this.config.trialTimeoutMs, () => {
+        if (!this.responded) {
+          this.recordResponse(false);
+        }
+      });
     });
   }
 

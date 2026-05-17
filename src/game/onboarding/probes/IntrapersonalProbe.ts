@@ -15,6 +15,7 @@ interface Scenario {
 }
 
 const SCENARIOS: readonly Scenario[] = [
+  // Level 1 — basic emotions
   {
     text: 'A friend cancels plans at the last minute without explanation.',
     level: 1,
@@ -27,6 +28,40 @@ const SCENARIOS: readonly Scenario[] = [
     reveal: 'They had a family emergency they couldn\'t share yet.',
   },
   {
+    text: 'You receive unexpected praise from someone you respect.',
+    level: 1,
+    options: [
+      { text: 'Proud', score: 0.7 },
+      { text: 'Embarrassed', score: 0.5 },
+      { text: 'Suspicious', score: 0.3 },
+      { text: 'Grateful', score: 1 },
+    ],
+    reveal: 'The praise was specific and genuine — they noticed something real.',
+  },
+  {
+    text: 'You make a mistake in front of people you want to impress.',
+    level: 1,
+    options: [
+      { text: 'Ashamed', score: 0.7 },
+      { text: 'Amused at yourself', score: 1 },
+      { text: 'Angry at yourself', score: 0.5 },
+      { text: 'Numb', score: 0.3 },
+    ],
+    reveal: 'Nobody noticed as much as you thought they did.',
+  },
+  {
+    text: 'Someone you barely know asks for a significant favour.',
+    level: 1,
+    options: [
+      { text: 'Annoyed', score: 0.5 },
+      { text: 'Flattered they asked', score: 0.7 },
+      { text: 'Pressured', score: 1 },
+      { text: 'Curious why they chose you', score: 0.8 },
+    ],
+    reveal: 'They asked because they genuinely believed you were the right person.',
+  },
+  // Level 2 — mixed emotions
+  {
     text: 'You succeed at something you worked hard on, but a close friend fails the same task.',
     level: 2,
     options: [
@@ -37,6 +72,40 @@ const SCENARIOS: readonly Scenario[] = [
     ],
     reveal: 'Your friend congratulates you warmly despite their own disappointment.',
   },
+  {
+    text: 'You finally leave a situation that was comfortable but stagnant.',
+    level: 2,
+    options: [
+      { text: 'Excited', score: 0.5 },
+      { text: 'Scared', score: 0.5 },
+      { text: 'Both liberated and grieving', score: 1 },
+      { text: 'Regretful', score: 0.3 },
+    ],
+    reveal: 'The first week is harder than expected, but something new is growing.',
+  },
+  {
+    text: 'A person you admire reveals a serious flaw you hadn\'t seen.',
+    level: 2,
+    options: [
+      { text: 'Disillusioned', score: 0.5 },
+      { text: 'Compassionate', score: 0.7 },
+      { text: 'Disappointed and relieved simultaneously', score: 1 },
+      { text: 'Angry at being deceived', score: 0.3 },
+    ],
+    reveal: 'Their flaw makes them more human, not less worthy of respect.',
+  },
+  {
+    text: 'You help someone who never acknowledges it.',
+    level: 2,
+    options: [
+      { text: 'Resentful', score: 0.4 },
+      { text: 'Satisfied anyway', score: 0.7 },
+      { text: 'Torn between wanting recognition and knowing it shouldn\'t matter', score: 1 },
+      { text: 'Indifferent', score: 0.2 },
+    ],
+    reveal: 'Months later, they mention it quietly to someone else as something that mattered.',
+  },
+  // Level 3 — nuanced/paradoxical
   {
     text: 'Someone you dislike does something genuinely kind for a stranger.',
     level: 3,
@@ -60,6 +129,18 @@ const SCENARIOS: readonly Scenario[] = [
     reveal: 'They never asked for help — you noticed on your own.',
   },
   {
+    text: 'You realise you\'ve been wrong about something you argued passionately for.',
+    level: 3,
+    options: [
+      { text: 'Humiliated', score: 0.4 },
+      { text: 'Grateful for the correction alongside grief for lost certainty', score: 1 },
+      { text: 'Defensive', score: 0.2 },
+      { text: 'Curious about what else you might be wrong about', score: 0.8 },
+    ],
+    reveal: 'Being wrong opened a door you couldn\'t have found otherwise.',
+  },
+  // Level 4 — paradoxical/existential
+  {
     text: 'You achieve a lifelong goal and feel... empty.',
     level: 4,
     options: [
@@ -80,6 +161,28 @@ const SCENARIOS: readonly Scenario[] = [
       { text: 'Relieved', score: 0.4 },
     ],
     reveal: 'Their admission opens a door to deeper understanding between you.',
+  },
+  {
+    text: 'You notice that the person you\'ve become is unrecognisable to who you were five years ago.',
+    level: 4,
+    options: [
+      { text: 'Proud of the growth', score: 0.5 },
+      { text: 'A strange tenderness for both versions, without preferring either', score: 1 },
+      { text: 'Nostalgic for the old self', score: 0.4 },
+      { text: 'Anxious about who you\'ll be next', score: 0.6 },
+    ],
+    reveal: 'Both selves are you. Neither is the whole story.',
+  },
+  {
+    text: 'You sit in complete silence with nothing to do and nowhere to be.',
+    level: 4,
+    options: [
+      { text: 'Restless', score: 0.3 },
+      { text: 'Peaceful', score: 0.6 },
+      { text: 'Aware of awareness itself — neither comfortable nor uncomfortable', score: 1 },
+      { text: 'Bored', score: 0.2 },
+    ],
+    reveal: 'The silence has nothing to say. That is enough.',
   },
 ];
 
@@ -110,13 +213,28 @@ export class IntrapersonalProbe implements OnboardingProbe {
     this.runTrial();
   }
 
+  private usedScenarioIndices: Set<number> = new Set();
+
   private getScenarioForLevel(level: number): Scenario {
     const clamped = Math.max(1, Math.min(4, Math.round(level)));
-    const matching = SCENARIOS.filter(s => s.level === clamped);
+    const matching = SCENARIOS.map((s, i) => ({ s, i })).filter(({ s, i }) => s.level === clamped && !this.usedScenarioIndices.has(i));
     if (matching.length > 0) {
-      return matching[this.currentTrial % matching.length]!;
+      const pick = matching[Math.floor(Math.random() * matching.length)]!;
+      this.usedScenarioIndices.add(pick.i);
+      return pick.s;
     }
-    return SCENARIOS[this.currentTrial % SCENARIOS.length]!;
+    // Fallback: any unused scenario
+    const unused = SCENARIOS.map((s, i) => ({ s, i })).filter(({ i }) => !this.usedScenarioIndices.has(i));
+    if (unused.length > 0) {
+      const pick = unused[Math.floor(Math.random() * unused.length)]!;
+      this.usedScenarioIndices.add(pick.i);
+      return pick.s;
+    }
+    // All used — reset and pick randomly
+    this.usedScenarioIndices.clear();
+    const idx = Math.floor(Math.random() * SCENARIOS.length);
+    this.usedScenarioIndices.add(idx);
+    return SCENARIOS[idx]!;
   }
 
   private runTrial(): void {

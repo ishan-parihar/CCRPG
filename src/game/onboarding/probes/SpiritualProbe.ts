@@ -71,6 +71,7 @@ export class SpiritualProbe implements OnboardingProbe {
   private rankedValues: string[] = [];
   private temptationIndex = 0;
   private trialStartMs = 0;
+  private usedTemptationLevels: Set<number> = new Set();
 
   start(scene: Phaser.Scene, onComplete: (result: ProbeResult) => void): void {
     this.scene = scene;
@@ -147,7 +148,16 @@ export class SpiritualProbe implements OnboardingProbe {
     const topValue = this.rankedValues[0]!;
     const temptations = getTemptations(topValue);
     const level = Math.max(1, Math.min(4, Math.round(this.staircase.getThreshold())));
-    const temptation = temptations.find(t => t.level === level) ?? temptations[this.temptationIndex % temptations.length]!;
+    // Find an unused temptation, preferring the target level
+    let temptation = temptations.find(t => t.level === level && !this.usedTemptationLevels.has(t.level * 10 + temptations.indexOf(t)));
+    if (!temptation) {
+      // Fallback: any unused temptation
+      temptation = temptations.find(t => !this.usedTemptationLevels.has(t.level * 10 + temptations.indexOf(t)));
+    }
+    if (!temptation) {
+      temptation = temptations[this.temptationIndex % temptations.length]!;
+    }
+    this.usedTemptationLevels.add(temptation.level * 10 + temptations.indexOf(temptation));
 
     // Status
     this.container.add(this.scene.add.text(width / 2, 50, `Trial ${this.temptationIndex + 1} / ${this.config.trials}`, {
