@@ -18,7 +18,10 @@ export type TaskSlug =
   | 'dilemma_choice'
   | 'reaction_time'
   | 'held_input'
-  | 'breath_rhythm';
+  | 'breath_rhythm'
+  | 'self_report'
+  | 'value_coherence'
+  | 'pattern_prediction';
 
 export interface StaircaseState {
   readonly level: number;
@@ -65,6 +68,9 @@ export interface PlayerProfile {
     readonly fixationRisk: Record<Drive, number>;
   };
   readonly taskStaircases: Record<TaskSlug, StaircaseState>;
+  readonly quadrantCoverage: Partial<Record<Stage, Quadrant[]>>;
+  readonly altitudeHistory: readonly { readonly line: Line; readonly stage: Stage; readonly atMs: number }[];
+  readonly bossesCleared: readonly Stage[];
   readonly vows: readonly Vow[];
   readonly shadows: readonly ShadowSignal[];
   readonly codexEntries: readonly CodexEntry[];
@@ -112,7 +118,13 @@ export function createInitialProfile(
       reaction_time: zeroStaircase,
       held_input: zeroStaircase,
       breath_rhythm: zeroStaircase,
+      self_report: zeroStaircase,
+      value_coherence: zeroStaircase,
+      pattern_prediction: zeroStaircase,
     },
+    quadrantCoverage: {},
+    altitudeHistory: [],
+    bossesCleared: [],
     vows: [],
     shadows: [],
     codexEntries: [],

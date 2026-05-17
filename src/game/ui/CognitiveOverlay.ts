@@ -135,6 +135,9 @@ export class CognitiveOverlay {
       reaction_time: 'Reaction Time',
       held_input: 'Sustained Control',
       breath_rhythm: 'Breath Rhythm',
+      self_report: 'Self-Report',
+      value_coherence: 'Value Coherence',
+      pattern_prediction: 'Pattern Prediction',
     };
     return labels[slug] ?? slug;
   }

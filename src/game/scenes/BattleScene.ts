@@ -10,6 +10,8 @@ import {
   type Spell,
   type CombatStats,
 } from '@core/index.js';
+import { updateProfile, type EncounterResult } from '@core/usecases/ProfileUpdater.js';
+import type { PlayerProfile } from '@core/domain/PlayerProfile.js';
 import { GameEvents, RegistryKeys, SceneKeys, TextureKeys } from '../keys.js';
 import { makeButton } from '../ui/Button.js';
 import { StatBar } from '../ui/StatBar.js';
@@ -415,6 +417,20 @@ export class BattleScene extends Phaser.Scene {
       };
       this.registry.set(RegistryKeys.Save, updated);
       await repo.save(updated);
+    }
+
+    // Update developmental profile via ProfileUpdater
+    if (outcome === 'victory') {
+      const profile = this.registry.get(RegistryKeys.Profile) as PlayerProfile | undefined;
+      if (profile) {
+        const encounterResult: EncounterResult = {
+          line: 'Cognitive',
+          taskSlug: 'n_back',
+          trials: this.nBackHistory.map(acc => ({ correct: acc >= 0.7 })),
+        };
+        const updatedProfile = updateProfile(profile, encounterResult);
+        this.registry.set(RegistryKeys.Profile, updatedProfile);
+      }
     }
 
     this.bannerText.setText(outcome === 'victory' ? 'Victory!' : 'Defeat');
