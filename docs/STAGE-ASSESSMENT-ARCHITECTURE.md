@@ -448,3 +448,202 @@ The system is complete when:
 6. **No single assessment can be spoofed** — multiple dimensions cross-validate each other
 7. **The player never sees the same content twice** in a single session (large item pools per module)
 8. **Confidence is tracked** — the system knows when it's uncertain and schedules more assessment
+
+---
+
+## Part XI — Shadow Diagnostics Within Assessment Modules
+
+> Full shadow theory is in `foundations/10-shadow-and-pathology.md`. This section specifies how the 64 assessment modules implement shadow detection.
+
+### 11.1 Dual-mode operation
+
+Every assessment module operates in two modes:
+
+| Mode | Scoring focus | When triggered |
+|---|---|---|
+| **Capacity mode** | Can the player perform at this stage? (accuracy, speed, depth) | Onboarding, advancement testing, combat |
+| **Shadow mode** | Does the player have a healthy *relationship* to this capacity? (drive-health) | Holonic return encounters, shadow encounters |
+
+The same tasks are used in both modes — only the scoring rubric changes.
+
+### 11.2 Drive-health probes embedded in every module
+
+Each of the 64 modules includes 4 drive-health probes alongside its capacity tasks:
+
+```ts
+export interface StageAssessment {
+  // ... existing fields from Part II ...
+  readonly driveProbes: {
+    readonly agency: DriveProbe;      // "Can you do this independently?"
+    readonly communion: DriveProbe;   // "Can you share/teach this?"
+    readonly eros: DriveProbe;        // "Can you let go and try harder?"
+    readonly agape: DriveProbe;       // "Can you return to easier without shame?"
+  };
+}
+
+export interface DriveProbe {
+  readonly description: string;
+  readonly task: AssessmentTask;
+  readonly healthyResponse: string;
+  readonly addictionSignal: string;   // what addiction looks like here
+  readonly allergySignal: string;     // what allergy looks like here
+}
+```
+
+### 11.3 Per-line drive-probe examples
+
+| Line | Stage | Agency probe | Communion probe | Eros probe | Agape probe |
+|---|---|---|---|---|---|
+| Cognitive | Red | n=2 without hints | Explain your strategy to NPC | Try n=3 (risk failure) | Do n=1 again fully (not dismissively) |
+| Emotional | Amber | Identify emotion without group consensus | Help NPC identify their emotion | Attempt complex/mixed emotion | Return to basic emotion naming with care |
+| Moral | Orange | Make principled choice alone (no social cues) | Justify your choice to someone who disagrees | Consider a dilemma with no clear principle | Revisit a simple fairness scenario with full engagement |
+| Willpower | Red | Hold without encouragement | Hold while supporting NPC's hold | Attempt longer hold (risk failure) | Do a short easy hold with full presence |
+
+### 11.4 Shadow scoring output
+
+After running in shadow mode, the module produces:
+
+```ts
+export interface ShadowAssessmentResult extends AssessmentResult {
+  readonly driveHealth: {
+    readonly agency: number;      // 0-1
+    readonly communion: number;   // 0-1
+    readonly eros: number;        // 0-1
+    readonly agape: number;       // 0-1
+  };
+  readonly addictionRisk: number;   // computed from (1-eros) × (1-communion)
+  readonly allergyRisk: number;     // computed from (1-agape) × (1-agency)
+  readonly shadowDiagnosis: 'addiction' | 'allergy' | 'healthy';
+}
+```
+
+---
+
+## Part XII — Holonic Return: Always Coming Back
+
+### 12.1 The principle
+
+A player at Orange with an unresolved Red-stage shadow cannot fully function at Orange. The game must always bring the player back to earlier stages where shadows exist. Advancement is not escape — it is deeper integration.
+
+### 12.2 The return schedule
+
+```
+After every 3 encounters at the player's current stage:
+  1. Scan all earlier stages for shadows with severity > 0.3
+  2. If found: surface a "return encounter" at that (line, stage)
+  3. Run the assessment module in SHADOW MODE
+  4. Score drive-health, not capacity
+  5. If drive-health exceeds threshold → shadow resolved → integration bonus
+  6. If not → severity increases by 0.05 (shadow grows if ignored)
+```
+
+### 12.3 The return encounter experience
+
+The player experiences a return encounter as:
+1. **Narrative framing:** "Something from your past calls to you..." (not "you failed")
+2. **Familiar tasks:** The same mechanics they've seen before, at an easier difficulty
+3. **Different scoring:** The game watches HOW they engage, not WHETHER they succeed
+4. **Resolution feedback:** "You've integrated this. It's part of you now, not a prison."
+
+### 12.4 Advancement blocking (refined)
+
+```
+To advance from stage S to stage S+1:
+  - All shadows at stages ≤ S must have severity < 0.3
+  - OR: player must have attempted resolution (engagement counts)
+  - Unresolved shadows manifest as debuffs in advancement encounters
+  - The game NEVER permanently blocks — but makes advancement honestly harder
+```
+
+---
+
+## Part XIII — The Complete Module Contract
+
+Each of the 64 assessment modules must export:
+
+```ts
+export interface CompleteStageModule {
+  // Identity
+  readonly line: Line;
+  readonly stage: Stage;
+
+  // Capacity assessment (Part II)
+  readonly capacityTasks: readonly AssessmentTask[];
+  readonly capacityScoringRubric: ScoringRubric;
+  readonly minimumTrials: number;
+  readonly estimatedDurationMs: number;
+
+  // Shadow assessment (Part XI)
+  readonly driveProbes: {
+    agency: DriveProbe;
+    communion: DriveProbe;
+    eros: DriveProbe;
+    agape: DriveProbe;
+  };
+  readonly shadowScoringRubric: ScoringRubric;
+
+  // Content pool (anti-repetition)
+  readonly itemPool: readonly AssessmentItem[];  // ≥ 20 items per module
+  readonly itemSelector: (used: string[]) => AssessmentItem;  // draw without replacement
+
+  // LLM rubrics (for qualitative lines)
+  readonly llmCapacityRubric?: string;
+  readonly llmDriveHealthRubric?: string;
+
+  // Metadata
+  readonly addictionArchetype: string;   // "The Compulsive Planner"
+  readonly allergyArchetype: string;     // "The Impulsive Actor"
+  readonly healthyArchetype: string;     // "The Fluid Thinker"
+}
+```
+
+### 13.1 Implementation priority (updated)
+
+| Phase | Modules | What's built |
+|---|---|---|
+| **Phase 1** | Red × all 8 lines (8 modules) | Capacity tasks + drive probes + shadow archetypes |
+| **Phase 2** | Amber + Magenta × all 8 lines (16 modules) | Adjacent stages for calibration |
+| **Phase 3** | Orange + Green × all 8 lines (16 modules) | Mid-range stages |
+| **Phase 4** | Infrared + Turquoise + White × all 8 lines (24 modules) | Edge stages |
+| **Phase 5** | Composite onboarding + holonic return system | The orchestration layer |
+
+Each phase delivers **playable, testable modules** that work in isolation before being composed.
+
+---
+
+## Part XIV — How This Replaces "Combat-Only" Progression
+
+### 14.1 The old model (combat-centric)
+
+```
+Player → Combat encounter → Win/Lose → XP → Level up
+```
+
+This is a single-axis progression that measures nothing developmental.
+
+### 14.2 The new model (integrative)
+
+```
+Player → Assessment encounter (capacity OR shadow mode)
+  → Multi-dimensional scoring (accuracy, speed, depth, drive-health)
+    → Profile update (altitude, ray, shadow, drive)
+      → Encounter scheduler (what to surface next: advancement, shadow, variety)
+        → Next encounter (tailored to the player's developmental edge)
+```
+
+Every encounter is:
+- A **game** (fun, engaging, has stakes)
+- An **assessment** (measures something real about the player)
+- A **developmental catalyst** (pushes the player's edge, surfaces shadows, rewards integration)
+
+### 14.3 The encounter types
+
+| Type | Purpose | Frequency | Module mode |
+|---|---|---|---|
+| **Advancement** | Test capacity at current stage boundary | ~40% of encounters | Capacity mode |
+| **Shadow return** | Heal earlier-stage shadows | ~20% of encounters | Shadow mode |
+| **Variety** | Exercise under-used lines | ~20% of encounters | Capacity mode |
+| **Integration** | Multi-line tasks that require coordination | ~10% of encounters | Both modes |
+| **Boss synthesis** | Stage-gate exam requiring all lines + drives | ~10% of encounters | Both modes |
+
+This replaces the "battle → XP → level" loop with a **developmental loop** where every encounter serves the player's actual growth.
