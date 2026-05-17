@@ -1,0 +1,8 @@
+{
+  "appId": "com.cognitiverpg.game",
+  "appName": "CCRPG",
+  "webDir": "dist",
+  "android": {
+    "allowMixedContent": false
+  }
+}

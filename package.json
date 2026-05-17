@@ -1,0 +1,30 @@
+{
+  "name": "ccrpg",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Cognitive Capacity-Driven Role-Playing Fighting Game (Phaser 3 + TypeScript + Vite + Capacitor)",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview --port 4173",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "cap:sync": "npm run build && cap sync",
+    "cap:android": "npm run build && cap sync android && cap open android"
+  },
+  "dependencies": {
+    "@capacitor/android": "^6.1.2",
+    "@capacitor/app": "^6.0.1",
+    "@capacitor/core": "^6.1.2",
+    "@capacitor/preferences": "^6.0.2",
+    "phaser": "^3.80.1"
+  },
+  "devDependencies": {
+    "@capacitor/cli": "^6.1.2",
+    "typescript": "^5.4.5",
+    "vite": "^5.4.10",
+    "vitest": "^2.1.4"
+  }
+}

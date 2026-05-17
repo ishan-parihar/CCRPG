@@ -1,0 +1,23 @@
+node_modules/
+dist/
+.vite/
+.cache/
+
+# Capacitor / Android
+android/
+ios/
+.gradle/
+local.properties
+
+# Logs
+*.log
+npm-debug.log*
+
+# Editor / OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+
+# Tests
+coverage/
