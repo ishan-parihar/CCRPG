@@ -194,22 +194,198 @@ without contradicting Principle 6 (honest engagement).
 The *intent* for each is established here and in `foundations/*` and
 `lines/*`. Implementation can proceed.
 
-## 11. Open questions
+## 11. Theta-Decay: The Holonic Maintenance Mechanic
 
-- **Pacing variance.** Some players will outpace the design (powering
-  through Red); some will lag (lingering at Amber). Both are valid;
-  the progression must not penalise either. The encounter scheduler
-  must adapt.
-- **Multi-character runs.** A player who wants to experience
-  different drive profiles starts a new character. Should some
-  progression be cross-character (e.g., codex entries)? Default: no
-  — each character is a *fresh life*.
-- **Multiplayer-only altitudes.** Some line altitudes (Interpersonal
-  ≥ Green) can only be earned in multiplayer. This is a deliberate
-  honesty; for solo-only players, the progression view shows the
-  cap explicitly.
+### 11.1 Purpose
 
-## 12. Principles served
+Theta-decay ensures that lower-stage health is MAINTAINED, not just achieved once and forgotten. It is the game-mechanical expression of the holonic principle: a holon that is not maintained degrades, and a degraded foundation cannot support higher development.
+
+### 11.2 The two components
+
+Theta-decay is a combination of **performance-based** (primary) and **time-based** (secondary, capped) decay:
+
+#### Performance-based decay (primary)
+
+Shadow signals accumulate when the player's behaviour reveals pathological drive patterns WITHOUT resolution. This is the dominant decay mechanism:
+
+| Signal type | What it means | How it accumulates |
+|---|---|---|
+| **Avoidance patterns** | Player consistently avoids certain catalyst types | Each avoidance event adds to the module's decay counter |
+| **Drive-health regression** | Drive scores in a module decline across sessions | Declining trend triggers decay proportional to regression rate |
+| **Compensatory over-expression** | One drive hyper-dominates while others weaken | Imbalance severity contributes to decay of the weak-drive modules |
+| **Stagnation at checkpoint** | Player engages but integration scores plateau | Prolonged plateau (no growth despite engagement) signals unresolved shadow |
+
+**Key:** The player never sees "your shadow is accumulating." They experience it as: the game starts presenting more lower-stage catalyst, their consciousness index dips, and higher-stage content becomes slightly less accessible. The architecture is implicit.
+
+#### Time-based decay (secondary, capped)
+
+| Parameter | Value | Rationale |
+|---|---|---|
+| **Onset delay** | 2 weeks of absence | No decay for short breaks |
+| **Maximum decay** | 20-30% of peak health | Player never loses more than ~30% from pure absence |
+| **Decay curve** | Asymptotic (half-life model) | Fast initial decay, then slows — never reaches zero |
+| **Recovery rate** | 3-5× faster than decay | A few sessions restore what weeks of absence degraded |
+
+### 11.3 The combined formula (conceptual)
+
+```
+total_decay(module) = min(
+  performance_decay(module) + time_decay(module),
+  MAX_DECAY_CAP  // floor: never below 40% of peak health
+)
+
+performance_decay(module) = f(
+  avoidance_frequency,        // how often they skip this module's catalyst
+  drive_imbalance_severity,   // how skewed the 4 drives are at this module
+  shadow_signal_persistence,  // how long a shadow pattern persists without shift
+  stagnation_duration,        // how long since integration score improved
+)
+
+time_decay(module) = min(
+  decay_rate × days_since_last_engagement,
+  TIME_DECAY_CAP  // never more than 20-30% from time alone
+)
+```
+
+### 11.4 What theta-decay is NOT
+
+- NOT punishment for taking breaks (capped, easily recoverable)
+- NOT visible as a "decay meter" (implicit — player feels it through game behaviour)
+- NOT diagnostic to the user (the system adjusts silently)
+- NOT a motivation hack (it's a developmental truth: unused capacities atrophy)
+
+---
+
+## 12. The Consciousness Index
+
+### 12.1 Definition
+
+A single number representing the player's overall developmental health across all 64 line-stage modules. It is derived from the multi-dimensional profile but presented as one cumulative score.
+
+### 12.2 What it accounts for
+
+| Factor | Contribution | Weight |
+|---|---|---|
+| **Stage health per line** | Each line-stage's capacity + drive-health + shadow-state | Positive |
+| **Lower-stage integrity** | Health of stages BELOW the player's current altitude | Higher weight (foundation matters more) |
+| **Shadow severity** | Unresolved shadows at any stage | Negative (subtracts from index) |
+| **Integration quality** | Stages that are genuinely integrated vs. merely "passed" | Multiplier on positive contribution |
+| **Drive balance** | How balanced the 4 drives are across the profile | Bonus for balance, penalty for extreme skew |
+
+### 12.3 The unlock threshold mechanic
+
+To access higher-stage content, the consciousness index must meet a threshold:
+
+```
+unlock_threshold(stage_N) = f(
+  sum of all lower-stage health scores,
+  minimum per-line health at all lower stages,
+  shadow resolution rate,
+  drive balance across the profile,
+)
+```
+
+**Implication:** A player cannot simply grind the highest stage they can access. They must:
+- Maintain lower-stage health (holonic return)
+- Resolve shadows at earlier stages (heal/evolve)
+- Keep drives balanced across the profile
+- Demonstrate genuine integration (not just capacity)
+
+### 12.4 How the consciousness index is computed (R&D required)
+
+The exact scoring formula is an area of R&D that must be developed as part of the concept-draft process. Each of the 64 line-stage modules needs:
+1. A health score formula (capacity × drive-health × shadow-state)
+2. A weighting relative to other modules (how much does this module contribute to the index?)
+3. A threshold definition (what score at this module is "healthy enough" to support higher stages?)
+
+This scoring architecture forms the BASIS of what each game is trying to achieve — it defines what "success" means at each module.
+
+### 12.5 Presentation to the player
+
+The consciousness index is IMPLICIT in the game experience:
+- Higher index = more content accessible, richer game world, deeper encounters
+- Lower index = game gently redirects toward maintenance, lower-stage catalyst appears more
+- The player FEELS their index through the game's behaviour, not through a number on screen
+
+Whether to show the actual number is a UX decision deferred to implementation. The architecture supports both implicit (felt) and explicit (shown) presentation.
+
+---
+
+## 13. The Infinite Checkpoint Architecture
+
+### 13.1 The session model
+
+Each game is an infinite checkpoint game with variable session length:
+
+```
+Game Session (any line-stage module, any modality axis)
+│
+├── Checkpoint 0: Entry (player's current position in this module)
+│   └── Catalyst presented at current mastery level
+│   └── Profile updated with engagement signal
+│
+├── Checkpoint 1: First integration gate
+│   └── Rubric evaluation: did the player meet criteria for this checkpoint?
+│   └── YES → deeper catalyst, progression toward next mastery level
+│   └── NO → same-level catalyst, different angle/axis
+│   └── Profile updated with drive-health + shadow signals
+│   └── CHOICE: Continue or explore another vibration?
+│
+├── Checkpoint N: Nth integration gate
+│   └── Same structure, deeper mastery
+│   └── Eventually: stage-transition threshold approached
+│   └── CHOICE: Continue or explore?
+│
+└── ∞ (mastery deepens infinitely — the game never "ends")
+```
+
+### 13.2 Checkpoint properties
+
+| Property | Specification |
+|---|---|
+| **Save granularity** | Every checkpoint saves full state — player can leave and return exactly here |
+| **Profile update** | Drive-health, shadow-state, and consciousness index update at EVERY checkpoint |
+| **Player choice** | At every checkpoint, the player can continue OR switch to any other module |
+| **No punishment for leaving** | Leaving mid-session loses nothing — the last checkpoint is preserved |
+| **Session length** | Determined entirely by the player — 2 minutes or 2 hours |
+
+### 13.3 The rubric at each checkpoint
+
+Each checkpoint evaluates against a rubric that includes:
+- Capacity demonstration (can they do it at this level?)
+- Drive-health signals (how are they relating to doing it?)
+- Shadow-state signals (which quadrant is active?)
+- Integration quality (are they growing or just performing?)
+
+The rubric determines whether the player advances to deeper catalyst or receives the same-level catalyst from a different angle.
+
+### 13.4 The "addictive but free" design
+
+The game creates engagement through:
+- **Felt-sense of growth** (not dopamine manipulation)
+- **Micro-revelations** (each session reveals something about yourself)
+- **Mystery/unfolding** (the game reveals depth gradually)
+- **Flow state** (difficulty calibration keeps you in the zone)
+- **The shadow hook** (when a shadow surfaces, there's a natural pull to resolve it)
+
+The game creates freedom through:
+- **Checkpoint saves** (leave anytime, lose nothing)
+- **Multiple modules available** (bored? switch vibrations)
+- **No streaks or guilt** (the game welcomes you back without judgment)
+- **Player-determined session length** (the game adapts to whatever time you give it)
+
+---
+
+## 14. Open questions (updated)
+
+- **Pacing variance.** Some players will outpace the design; some will lag. Both are valid.
+- **Consciousness index formula.** The exact computation is R&D that must be developed per-module during concept-draft phase.
+- **Theta-decay tuning.** The exact rates and caps need playtesting to calibrate.
+- **Checkpoint rubric architecture.** The infinite array of rubrics for all checkpoints needs to be specified per-module — this is part of the concept-draft work.
+- **Multi-character runs.** Should progression be cross-character? Default: no.
+- **Multiplayer-only altitudes.** Some line altitudes can only be earned in multiplayer.
+
+## 15. Principles served
 
 Principles **3, 4, 6** — the staircase keeps the player at the
 growth edge, every advancement is earned and demonstrated, the

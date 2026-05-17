@@ -1,0 +1,240 @@
+# AGENTS.md — R&D Process and Development Protocol
+
+> This document defines how the CCRPG project is researched, documented, and developed. It is the operating manual for any AI agent (or human collaborator) working on this project.
+
+---
+
+## 1. Project Overview
+
+CCRPG is a Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness, with Law-of-One cosmology as canon. The game is designed for psychological, neurological, sociological, and biological healing and evolution.
+
+**The game is two things at once:**
+1. A real action RPG with combat, narrative, and immersive gameplay
+2. A literal developmental practice — every game mechanic IS a validated assessment that simultaneously diagnoses AND heals/evolves the player
+
+---
+
+## 2. The R&D Documentation Set
+
+### 2.1 Structure
+
+```
+docs/
+├── foundations/          ← Theoretical substrate (pure theory + game-design translation)
+│   ├── 00-integral-theory.md
+│   ├── 01-aqal-framework.md
+│   ├── 02-stages-of-consciousness.md
+│   ├── 03-lines-of-intelligence.md
+│   ├── 04-states-and-state-stages.md
+│   ├── 05-drives-and-polarities.md
+│   ├── 06-law-of-one-correspondence.md
+│   ├── 07-neuroscience-of-assessment.md
+│   ├── 08-psychophysics-and-adaptive-testing.md
+│   ├── 09-flow-and-engagement.md
+│   ├── 10-shadow-and-pathology.md          ← 4-quadrant shadow model, drive-health, holonic return
+│   ├── 11-game-modalities.md               ← 7 game types, modality×line affinity
+│   ├── 12-drive-assessment-mechanics.md    ← Per-module drive probes, dual-domain scoring
+│   ├── 13-architecture-of-consciousness.md ← 5-layer topography, contact boundary, Matrix/Potentiator
+│   └── 14-game-as-developmental-catalyst.md← Catalyst→experience→integration mechanics
+├── concept-drafts/      ← 512 game concept documents (64 modules × 8 files)
+│   ├── README.md        ← Templates and requirements for each file
+│   ├── ROADMAP.md       ← Development phases and process
+│   └── {line}/{stage}/  ← 64 module directories
+├── lines/               ← Per-line documentation
+├── stages/              ← Per-stage documentation
+├── combat/              ← Combat philosophy
+├── enemies/             ← Enemy taxonomy
+├── progression/         ← Progression overview
+└── narrative/           ← Narrative architecture
+```
+
+### 2.2 The Uniqueness Principle
+
+**Every document in the R&D set must be unique.** No redundancies. Each document covers a specific lateral that no other document covers. If two documents overlap, one must be refactored or merged.
+
+| Document | Unique lateral |
+|---|---|
+| foundations/10 | WHAT shadows are and how they map to game mechanics |
+| foundations/11 | WHAT types of games exist and what each measures |
+| foundations/12 | HOW drives are measured (concrete probe specifications) |
+| foundations/13 | The THEORETICAL substrate (pure psychology/cosmology) |
+| foundations/14 | HOW a game becomes a developmental catalyst (the bridge) |
+| STAGE-ASSESSMENT-ARCHITECTURE | The MODULE CONTRACT (composition rules, interfaces) |
+| concept-drafts/README | TEMPLATES for what each concept-draft file must contain |
+| concept-drafts/ROADMAP | The TRAJECTORY for developing all 512 concept-drafts |
+
+### 2.3 Document Relationships (No Circular Dependencies)
+
+```
+foundations/13 (PURE THEORY: topography, contact boundary, Matrix/Potentiator)
+    ↓ provides theoretical substrate to
+foundations/10 (GAME DESIGN: 4-quadrant shadow model, drive-health formulas)
+foundations/12 (MECHANICS: dual-domain drive probes, scoring)
+foundations/14 (BRIDGE: how games become catalysts)
+    ↓ all inform
+concept-drafts/ (CONCRETE DESIGNS: 512 game concepts)
+    ↓ implemented by
+src/ (CODE: the actual game)
+```
+
+---
+
+## 3. How the R&D Doc Set Is Managed
+
+### 3.1 The Feedback Loop
+
+The R&D documentation is a LIVING system. It is updated based on:
+
+1. **User feedback/correction:** When the user provides new understanding, corrects a misunderstanding, or introduces new context, the relevant documents are updated IMMEDIATELY. The user's understanding is always authoritative on matters of theory.
+
+2. **Development insights:** When writing concept-drafts reveals gaps or contradictions in the foundations, the foundations are updated to resolve them.
+
+3. **Implementation feedback:** When coding reveals that a documented design doesn't work in practice, the documentation is updated to reflect the working design.
+
+### 3.2 The Update Protocol
+
+When updating the R&D doc set:
+
+1. **Identify which document owns the concept** — never add content to the wrong document
+2. **Check for uniqueness** — does this update create redundancy with another document? If so, refactor.
+3. **Check for consistency** — does this update contradict anything in other documents? If so, update all affected documents.
+4. **Preserve the document's lateral** — each document has a specific purpose. Updates must stay within that purpose.
+5. **Reference, don't duplicate** — if document A needs to mention something that document B covers, reference B rather than duplicating the content.
+
+### 3.3 When to Create a New Document
+
+A new foundations document is created ONLY when:
+- A genuinely new lateral emerges that no existing document covers
+- The new lateral is substantial enough to warrant its own document (not just a section)
+- The new document would be referenced by multiple other documents
+
+### 3.4 When to Refactor an Existing Document
+
+An existing document is refactored when:
+- The user corrects a fundamental misunderstanding (e.g., the drive↔shadow mapping correction)
+- New theoretical understanding changes the document's core model
+- The document has grown beyond its original lateral and needs splitting
+
+---
+
+## 4. How We Develop the Project
+
+### 4.1 The Development Cycle
+
+```
+R&D Documentation (theory + design)
+    ↓ grounds
+Concept-Drafts (concrete game designs)
+    ↓ specifies
+Implementation (code)
+    ↓ reveals
+Feedback (what works, what doesn't)
+    ↓ updates
+R&D Documentation (refined theory + design)
+```
+
+### 4.2 Current Phase: Concept-Draft Development
+
+We are currently in the concept-draft phase. The process:
+
+1. **Start with shadow-diagnostics** for each module (the anchor)
+2. **Then design 7 games** per module, each self-contained and all-inclusive
+3. **Each game must be a developmental catalyst** — not just a test
+4. **Phase order:** Red → Amber+Magenta → Orange+Green → Infrared+Turquoise+White
+
+### 4.3 The Grounding Principle
+
+All development is grounded in the R&D documentation. No code is written without a concept-draft. No concept-draft is written without the foundations being correct and complete. If the foundations are wrong, we fix them FIRST.
+
+---
+
+## 5. Key Theoretical Commitments
+
+These are non-negotiable and must be reflected in all work:
+
+### 5.1 The Two Axes
+
+| Axis | Drives | Domain | Archetypal Mind |
+|---|---|---|---|
+| **Vertical** | Eros ↕ Agape | Within the holon, between stages | Matrix ↔ Potentiator |
+| **Horizontal** | Agency ↔ Communion | Across holons, at a given stage | Catalyst ↔ Experience |
+
+### 5.2 The 4-Quadrant Shadow Model
+
+- **Dark-Addiction:** Submergent fixation (clings to lower capacity)
+- **Dark-Allergy:** Submergent aversion (rejects lower capacity)
+- **Golden-Addiction:** Emergent fixation (bypasses toward higher without integration)
+- **Golden-Allergy:** Emergent aversion (refuses the call to grow)
+
+ALL 4 drives can be pathological in BOTH domains. There is NO 1:1 mapping between drives and shadow quadrants.
+
+### 5.3 The Dual Vectors
+
+- **Heal/Evolve (bottom-up):** Agape + Agency integrate dark shadows
+- **Evolve/Heal (top-down):** Eros + Communion dissolve golden shadows
+
+### 5.4 Game as Catalyst
+
+Every game follows: Catalyst → Experience → Integration. The game is not a test — it is a developmental practice that simultaneously diagnoses AND heals/evolves. The game is NEVER diagnostic to the user — everything happens implicitly in the background.
+
+### 5.5 Self-Contained and All-Inclusive
+
+Each game at a given line×stage must probe the ENTIRE span of drives × shadow-polarities for that module. It must have its own internal progression from diagnosis → healing → evolution.
+
+### 5.6 The Holon Is Never Outgrown
+
+Lower stages must remain healthy. Games at earlier stages are never "completed" — they become shadow-mode encounters that maintain holonic integrity. Theta-decay ensures neglected stages degrade, and the consciousness index requires lower-stage health for upper-stage unlocks.
+
+### 5.7 The Infinite Checkpoint Model
+
+Every game is an infinite checkpoint game. Players can leave at any checkpoint. Progress is saved continuously. Session length is player-determined. The game is addictive through felt-sense of growth, not dopamine manipulation.
+
+### 5.8 The 7 Modalities as Catalyst Axes
+
+The 7 game modalities are 7 AXES through which catalyst of a particular frequency (line×stage) is delivered. They are not just different game types — they probe different dimensions of the same shadow in different manners. The LLM operates WITHIN each modality using rubrics. Fixed mechanics + adaptive content.
+
+---
+
+## 6. AQAL Quadrants (Deferred)
+
+The 4 AQAL quadrants (UL/UR/LL/LR) are implicitly present in the line taxonomy. Explicit quadrant integration into the game architecture is deferred until:
+1. The core drive×shadow model is stable through Phase 1 concept-drafts
+2. We have clarity on how quadrant dynamics ADD to the existing architecture
+3. The user decides it's time to integrate them
+
+---
+
+## 7. For AI Agents Working on This Project
+
+### 7.1 Before writing anything
+
+1. Read the relevant foundations documents
+2. Read the concept-drafts README and ROADMAP
+3. Understand the uniqueness principle — don't create redundant content
+4. Understand the theoretical commitments (§5) — don't violate them
+
+### 7.2 When writing concept-drafts
+
+1. Start with shadow-diagnostics (the anchor for the module)
+2. Follow the templates in concept-drafts/README.md exactly
+3. Each game must be self-contained, all-inclusive, and progressive
+4. Each game must follow the catalyst→experience→integration flow
+5. Each game must probe all 4 drives in both domains
+6. Each game must surface all 4 shadow quadrants
+7. Each game must support both heal/evolve and evolve/heal vectors
+
+### 7.3 When updating documentation
+
+1. Follow the update protocol (§3.2)
+2. Never create redundancy
+3. Always check consistency across documents
+4. The user's theoretical understanding is authoritative
+5. If unsure, ask — don't guess
+
+### 7.4 When writing code
+
+1. The concept-draft must exist before code is written
+2. Code must implement the concept-draft faithfully
+3. If implementation reveals design problems, update the concept-draft first
+4. Follow the existing architecture (core/infra/game layers, registries)
+5. All code must pass build + tests before being committed
