@@ -36,19 +36,13 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(
-      ellipse at center,
-      #0e1320 0%,
-      #05070b 70%,
-      #020306 100%
-    );
+  background: #05070b;
 }
 
 #game-root canvas {
   display: block;
-  image-rendering: pixelated;
-  image-rendering: -moz-crisp-edges;
-  image-rendering: crisp-edges;
+  /* DO NOT use pixelated — it destroys text rendering on non-integer scales */
+  image-rendering: auto;
   outline: none;
 }
 

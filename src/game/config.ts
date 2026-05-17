@@ -8,7 +8,7 @@ import { UIOverlayScene } from './scenes/UIOverlayScene.js';
 import { RadialChartScene } from './scenes/RadialChartScene.js';
 import { CodexScene } from './scenes/CodexScene.js';
 
-/** Logical resolution. Phaser.Scale.FIT scales this to the device. */
+/** Logical resolution — designed for portrait mobile (9:16). */
 export const VIEWPORT = { width: 720, height: 1280 } as const;
 
 export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameConfig {
@@ -21,11 +21,14 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
       autoCenter: Phaser.Scale.CENTER_BOTH,
       width: VIEWPORT.width,
       height: VIEWPORT.height,
+      // Multiply canvas resolution by devicePixelRatio for crisp text on HiDPI
+      zoom: 1 / (typeof window !== 'undefined' ? window.devicePixelRatio : 1),
     },
     render: {
       antialias: true,
       pixelArt: false,
-      roundPixels: false,
+      // Round pixel positions so text doesn't blur at sub-pixel coords
+      roundPixels: true,
       powerPreference: 'high-performance',
     },
     fps: {
