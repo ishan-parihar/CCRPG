@@ -64,7 +64,7 @@ The Naming-Game: a verbal-symbolic space where the player names, describes, and 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Naming prompts:** Symbols requiring names (varied complexity)

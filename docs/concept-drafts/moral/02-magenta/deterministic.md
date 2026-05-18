@@ -66,7 +66,7 @@ The Sacred-Sense: a moral detection space. Objects and actions are presented. So
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **High-contrast sacred:** Obviously sacred objects (altar items, ritual objects)

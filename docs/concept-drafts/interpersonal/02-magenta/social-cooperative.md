@@ -66,7 +66,7 @@ The Moving-Together: a synchrony space where player and phantom-ally move in sha
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Simple rhythms:** Easy to match (slow, clear, repetitive)

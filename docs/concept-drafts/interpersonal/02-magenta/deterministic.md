@@ -66,7 +66,7 @@ The Presence-Sense: a detection space where phantom-allies appear and the player
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear presences:** Obvious, strong, easy to detect

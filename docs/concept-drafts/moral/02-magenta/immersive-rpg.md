@@ -63,7 +63,7 @@ An open Magenta-stage world with moral content woven throughout. Sacred groves, 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Sacred objects:** Things to sense and honour

@@ -63,7 +63,7 @@ The player enters a fortress training ground. Visual: Red-stage aesthetic (saffr
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **n-back sequences:** Rune-symbol sets (8 distinct symbols, combinatorial sequences)

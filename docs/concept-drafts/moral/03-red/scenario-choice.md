@@ -65,7 +65,7 @@ The Bandit-Lord's Bargain: a Red-stage world of deals, trades, and competing int
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Risk/reward dilemmas:** Clear trade-offs between safety and gain

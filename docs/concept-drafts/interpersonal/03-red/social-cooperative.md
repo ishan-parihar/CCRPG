@@ -64,7 +64,7 @@ The War-Band: a live alliance in a Red-stage world. The player and 1-2 NPC allie
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Coordination challenges:** Timed joint actions with allies

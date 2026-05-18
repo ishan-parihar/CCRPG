@@ -1,6 +1,6 @@
 # Somatic / Amber — Module Specification
 
-## §1 Capacity Definition
+## 1. Capacity Definition
 
 **Line:** Somatic — the capacity to inhabit and skilfully use the body
 **Stage:** Amber (conformist/mythic) — the DISCIPLINED BODY
@@ -21,7 +21,7 @@ The FORM-BODY: coordinated forms, sustained posture under load, group rhythm, br
 
 ---
 
-## §2 Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### Dark-Addiction: "The Rigid Driller"
 - **Core pattern:** Body CLINGS to form obsessively. Cannot stop drilling. Cannot adapt when form changes. Form becomes compulsion.
@@ -53,7 +53,7 @@ The FORM-BODY: coordinated forms, sustained posture under load, group rhythm, br
 
 ---
 
-## §3 Drive-Health Landscape
+## 3. Drive-Health Landscape
 
 | Drive | Dark-domain healthy | Dark-domain pathological | Golden-domain healthy | Golden-domain pathological |
 |---|---|---|---|---|
@@ -64,7 +64,7 @@ The FORM-BODY: coordinated forms, sustained posture under load, group rhythm, br
 
 ---
 
-## §4 Healing Vectors
+## 4. Healing Vectors
 
 ### Heal/Evolve (Agape + Agency → Dark Shadows)
 
@@ -102,7 +102,7 @@ The FORM-BODY: coordinated forms, sustained posture under load, group rhythm, br
 
 ---
 
-## §5 Scoring Parameters
+## 5. Scoring Parameters
 
 | Parameter | Value | Rationale |
 |---|---|---|
@@ -132,7 +132,7 @@ The FORM-BODY: coordinated forms, sustained posture under load, group rhythm, br
 
 ---
 
-## §6 Compound Shadows & Cross-Module Relationships
+## 6. Compound Shadows & Cross-Module Relationships
 
 | Compound | Lines | Pattern | Detection |
 |---|---|---|---|
@@ -143,7 +143,7 @@ The FORM-BODY: coordinated forms, sustained posture under load, group rhythm, br
 
 ---
 
-## §7 Shadow Surfacing Sequence
+## 7. Shadow Surfacing Sequence
 
 ### Progressive Revelation
 1. **Sustained posture** → Dark-allergy surfaces first (cannot hold = immediately visible)

@@ -66,7 +66,7 @@ The Mood-Sense: an atmospheric sensing space. Scenes with distinct emotional ton
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Single-mood scenes:** Clear emotional atmosphere (5 basic moods × multiple variants)

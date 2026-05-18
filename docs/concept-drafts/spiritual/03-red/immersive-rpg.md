@@ -63,7 +63,7 @@ An open Red-stage world where the sacred is REAL and POWERFUL. Sacred spaces gra
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Sacred space configurations:** Altars, shrines, boundaries with varied spiritual dynamics

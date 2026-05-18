@@ -66,7 +66,7 @@ The Sacred Sense: a numinous detection space. Pairs or groups of stimuli are pre
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Visual stimuli:** Objects, scenes, creatures with/without numinous quality

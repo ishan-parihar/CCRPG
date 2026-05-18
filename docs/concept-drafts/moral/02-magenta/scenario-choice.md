@@ -66,7 +66,7 @@ The Sacred-Path: a moral choice space. Paths diverge. One honours the sacred; on
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear dilemmas:** Obvious sacred vs. profane (high contrast)

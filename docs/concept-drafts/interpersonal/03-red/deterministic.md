@@ -71,7 +71,7 @@ The Intent-Reader: a war-camp where NPCs arrive with intentions. Some want to he
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **NPC behavioural profiles:** Defined cue-sets that signal specific intents

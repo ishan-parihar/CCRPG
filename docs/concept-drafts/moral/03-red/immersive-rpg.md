@@ -63,7 +63,7 @@ An open Red-stage world where consequences are REAL. Resources can be taken, tra
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Resource configurations:** Takeable, tradeable, shareable resources with varied consequences

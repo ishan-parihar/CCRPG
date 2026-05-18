@@ -64,7 +64,7 @@ An open Magenta-stage world saturated with sacred content. Shrines at crossroads
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Shrines:** Sacred places for engagement/offering

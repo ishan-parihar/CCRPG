@@ -66,7 +66,7 @@ The Body-Self: a somatic self-exploration space. A body-outline is presented. Th
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Neutral contexts:** Basic "where are you?" prompts

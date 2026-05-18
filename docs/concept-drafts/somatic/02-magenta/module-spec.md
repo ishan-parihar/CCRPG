@@ -31,7 +31,7 @@ Somatic intelligence at Magenta is **body-fantasy capacity** — the body is exp
 
 ## 2. Shadow Archetypes
 
-### 1.1 Dark-Addiction: "The Body-Magician"
+### 2.1 Dark-Addiction: "The Body-Magician"
 
 **Core pattern:** Believes the body literally has magical powers. Posture CONTROLS reality. Gesture FORCES outcomes. The body is an instrument of omnipotence — "If I hold this pose, I'm invincible." Body-fantasy as magical control rather than felt-sense awareness.
 
@@ -60,7 +60,7 @@ Somatic intelligence at Magenta is **body-fantasy capacity** — the body is exp
 
 ---
 
-### 1.2 Dark-Allergy: "The Disembodied"
+### 2.2 Dark-Allergy: "The Disembodied"
 
 **Core pattern:** Refuses body-awareness entirely. Lives "in the head." The body is ignored, neglected, or feared. No felt-sense, no postural awareness, no rhythm engagement. The body is a vehicle that carries the mind, nothing more.
 
@@ -90,7 +90,7 @@ Somatic intelligence at Magenta is **body-fantasy capacity** — the body is exp
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Athlete"
+### 2.3 Golden-Addiction: "The Premature Athlete"
 
 **Core pattern:** Rushes toward power-body (Red) without establishing felt-sense. Performs physical feats — speed, strength, intensity — without body-AWARENESS. The body is used but not INHABITED. Athletic performance without somatic intelligence.
 
@@ -120,7 +120,7 @@ Somatic intelligence at Magenta is **body-fantasy capacity** — the body is exp
 
 ---
 
-### 1.4 Golden-Allergy: "The Sensation-Refuser"
+### 2.4 Golden-Allergy: "The Sensation-Refuser"
 
 **Core pattern:** Fears body-sensation. The felt-sense is threatening — if they feel the body, something overwhelming might surface. Approach-withdrawal with somatic experience. Can engage the body mechanically but AVOIDS feeling it.
 
@@ -182,7 +182,7 @@ Somatic intelligence at Magenta is **body-fantasy capacity** — the body is exp
 
 ## 4. Healing Vectors
 
-### 3.1 Heal/Evolve Vector (Agape + Agency → Dark Shadows)
+### 4.1 Heal/Evolve Vector (Agape + Agency → Dark Shadows)
 
 **For The Body-Magician (dark-addiction):**
 1. Present body-tasks where posture DOESN'T produce magical effects
@@ -198,7 +198,7 @@ Somatic intelligence at Magenta is **body-fantasy capacity** — the body is exp
 4. Reward ANY body-awareness; celebrate first felt-sense identification
 5. Build: gradual comfort with body-as-experienced
 
-### 3.2 Evolve/Heal Vector (Eros + Communion → Golden Shadows)
+### 4.2 Evolve/Heal Vector (Eros + Communion → Golden Shadows)
 
 **For The Premature Athlete (golden-addiction):**
 1. Present tasks that REQUIRE felt-sense (not just motor output)
@@ -217,7 +217,7 @@ Somatic intelligence at Magenta is **body-fantasy capacity** — the body is exp
 ---
 
 ### Integration Criteria
-### 6.1 What "healed" looks like at Somatic/Magenta
+### 4.1 What "healed" looks like at Somatic/Magenta
 
 The player demonstrates:
 1. **Feeling-tone awareness:** Can identify body-state (pleasant/unpleasant/neutral) accurately
@@ -228,7 +228,7 @@ The player demonstrates:
 6. **Drive health:** All 4 drives expressing healthily in somatic context
 7. **Shadow resolution:** No dominant shadow quadrant; flexible relationship to body
 
-### 6.2 Readiness for Red
+### 4.2 Readiness for Red
 
 Integration at Magenta means the player can:
 - Inhabit the body with felt-sense (not just use it mechanically)
@@ -243,14 +243,14 @@ This is the FOUNDATION for Red's power-body, where the body becomes an instrumen
 
 ## 5. Scoring Parameters
 
-### 2.1 Theta (capacity estimate)
+### 5.1 Theta (capacity estimate)
 
 **Model:** 1PL IRT with Bayesian updating
 - **Prior:** N(0, 1) at first encounter
 - **Item difficulty:** Calibrated per feeling-tone, postural-holding, gross-motor-rhythm, body-boundary, arousal-state
 - **Update:** After each response (accuracy + timing as secondary)
 
-### 2.2 Composite score
+### 5.2 Composite score
 
 ```
 somatic_magenta = weighted_aggregate(
@@ -262,13 +262,13 @@ somatic_magenta = weighted_aggregate(
 )
 ```
 
-### 2.3 Theta-decay
+### 5.3 Theta-decay
 
 - **Half-life:** 12 days (somatic is fast-moving; body-sense needs regular engagement)
 - **Max decay:** 20% of peak theta
 - **Rationale:** Body-awareness at Magenta is use-it-or-lose-it; without regular somatic engagement, felt-sense regresses to Infrared reflex
 
-### 2.4 Stage-transition threshold
+### 5.4 Stage-transition threshold
 
 - **Magenta → Red unlock:** Theta ≥ 0.7 on postural-holding AND gross-motor-rhythm ≥ 0.5
 - **Confirmation:** Must demonstrate across ≥ 3 sessions
@@ -280,7 +280,7 @@ somatic_magenta = weighted_aggregate(
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 4.1 The Enchanted Body (Somatic dark-addiction ↔ Cognitive dark-addiction)
+### 6.1 The Enchanted Body (Somatic dark-addiction ↔ Cognitive dark-addiction)
 
 **Loop:** Body AND mind both trapped in magical thinking. The body is magical AND symbols are magical. Total fusion of fantasy and physicality — "My gesture-spell literally changes reality."
 
@@ -290,7 +290,7 @@ somatic_magenta = weighted_aggregate(
 
 **Breaking the loop:** Address through Willpower line (build sustained effort that produces REAL results) → demonstrates that outcomes come from effort, not magic → both magical-thinking patterns weaken.
 
-### 4.2 The Ghost (Somatic dark-allergy ↔ Intrapersonal dark-allergy)
+### 6.2 The Ghost (Somatic dark-allergy ↔ Intrapersonal dark-allergy)
 
 **Loop:** No body-sense AND no self-sense. Without the body as ground, there's no felt-self. Without self-sense, there's no motivation to inhabit the body. Floating without ground or identity.
 
@@ -300,7 +300,7 @@ somatic_magenta = weighted_aggregate(
 
 **Breaking the loop:** Address Somatic first (body as ground) → as body-sense returns, self-sense has something to anchor to → Intrapersonal dark-allergy weakens.
 
-### 4.3 The Performing Athlete (Somatic golden-addiction ↔ Willpower golden-addiction)
+### 6.3 The Performing Athlete (Somatic golden-addiction ↔ Willpower golden-addiction)
 
 **Loop:** Rushes to physical performance (Somatic) AND rushes to sustained effort (Willpower) without establishing felt-sense or genuine commitment. All show, no ground. Performs athleticism without inhabiting it.
 
@@ -310,7 +310,7 @@ somatic_magenta = weighted_aggregate(
 
 **Breaking the loop:** Address through Emotional line (felt-sense of effort and body) → as feeling returns, performance becomes grounded → both golden-addictions weaken.
 
-### 4.4 The Frozen Dreamer (Somatic golden-allergy ↔ Emotional dark-allergy)
+### 6.4 The Frozen Dreamer (Somatic golden-allergy ↔ Emotional dark-allergy)
 
 **Loop:** Fears body-sensation (Somatic) AND refuses emotional experience (Emotional). Trapped in cognitive-only mode because both body and emotion feel threatening.
 

@@ -64,7 +64,7 @@ The Value-Tongue: a verbal mirror for spiritual intelligence. The player articul
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Value-naming prompts:** "What matters most?" with verification

@@ -64,7 +64,7 @@ The Vow-Speaker's circle: a ritual space where warriors speak their vows aloud. 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Volitional prompts:** Questions about the player's will-experience (post-task reflections)

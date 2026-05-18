@@ -66,7 +66,7 @@ The Weight-Body: a somatic-moral space. Sacred and profane content is presented.
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **High-weight sacred:** Strong moral weight (easy body-response)

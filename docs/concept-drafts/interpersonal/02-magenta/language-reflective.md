@@ -66,7 +66,7 @@ The Other-Word: a naming space where presences appear and the player finds words
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear presences:** Obvious qualities, easy to name

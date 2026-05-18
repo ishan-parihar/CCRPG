@@ -66,7 +66,7 @@ The Body-Between: a somatic-relational space where presences approach and the pl
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Close presences:** Strong proximity, easy body-response

@@ -66,7 +66,7 @@ The Future-Self: a temporal self-exploration space. The player predicts their ow
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Immediate prompts:** "What will you feel in 5 seconds?"

@@ -66,7 +66,7 @@ The Sacred-Word: a moral vocabulary space. Sacred/profane content is presented a
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **High-weight items:** Obviously sacred (require naming)

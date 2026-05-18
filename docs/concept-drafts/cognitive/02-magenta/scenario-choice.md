@@ -65,7 +65,7 @@ The Rune-Chooser: a magical choice-space where symbols lead to outcomes. The pla
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Binary choices:** Two runes, clear outcomes

@@ -64,7 +64,7 @@ An open Red-stage world: fortresses, war-camps, resource nodes, rival territorie
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **World areas:** Procedurally generated territories with varied cognitive demands

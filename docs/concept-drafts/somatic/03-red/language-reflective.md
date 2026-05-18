@@ -65,7 +65,7 @@ The player sits with the Body-Speaker — an NPC who is both warrior and sage. T
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Body-state prompts:** "What does X feel like right now?" (varied body-parts, states, contexts)

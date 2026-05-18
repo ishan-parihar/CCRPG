@@ -63,7 +63,7 @@ The War-Tongue: a council fire where the player speaks about others. NPCs arrive
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **NPC scenarios for naming:** Behavioural vignettes requiring intent identification

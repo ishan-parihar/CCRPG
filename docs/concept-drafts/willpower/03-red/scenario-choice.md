@@ -65,7 +65,7 @@ The Vow-Breaker's Trial: a ritual judgment space where warriors face volitional 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Binary scenarios:** Two-option volitional choices with clear trade-offs

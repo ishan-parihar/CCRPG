@@ -63,7 +63,7 @@ An open Red-stage world where self-knowledge produces NATURAL ADVANTAGE. Challen
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Challenge configurations:** Tasks with varied demands (strength, patience, precision, endurance)

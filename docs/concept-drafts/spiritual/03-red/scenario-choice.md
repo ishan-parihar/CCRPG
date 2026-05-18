@@ -64,7 +64,7 @@ The Power-Priest's Trial: a series of value-dilemmas where the player must prior
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Simple priority dilemmas:** Obvious which matters more

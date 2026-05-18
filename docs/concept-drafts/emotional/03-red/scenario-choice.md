@@ -63,7 +63,7 @@ The Wroth-Chooser's Trial: emotional dilemmas in a Red-stage context. Warriors f
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Binary dilemmas:** Two emotional options with clear contexts

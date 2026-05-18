@@ -63,7 +63,7 @@ The Bandit's Circle: a Red-stage war-band where moral choices happen IN COMMUNIT
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Audience-variation scenarios:** Same dilemma in different social contexts

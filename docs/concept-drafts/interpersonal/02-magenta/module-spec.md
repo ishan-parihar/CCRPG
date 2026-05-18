@@ -24,7 +24,7 @@
 
 ## 2. Shadow Archetypes
 
-### 1.1 Dark-Addiction: "The Fusion-Addict"
+### 2.1 Dark-Addiction: "The Fusion-Addict"
 
 **Core pattern:** Cannot exist without the other. Dissolves completely into every sensed presence. No self remains during connection. The other IS the self. Total relational dissolution.
 
@@ -54,7 +54,7 @@
 
 ---
 
-### 1.2 Dark-Allergy: "The Phantom-Denier"
+### 2.2 Dark-Allergy: "The Phantom-Denier"
 
 **Core pattern:** Cannot sense other presences. Relationally blind. Alone in a populated world. Others are invisible — not rejected, simply not perceived. The interpersonal channel is closed.
 
@@ -84,7 +84,7 @@
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Coordinator"
+### 2.3 Golden-Addiction: "The Premature Coordinator"
 
 **Core pattern:** Performs sophisticated relational behaviour without genuine other-sensing. Coordinates, communicates, "relates" — but the other is not actually sensed as a presence. Relational performance without relational contact.
 
@@ -114,7 +114,7 @@
 
 ---
 
-### 1.4 Golden-Allergy: "The Bond-Refuser"
+### 2.4 Golden-Allergy: "The Bond-Refuser"
 
 **Core pattern:** Senses the other — genuinely perceives presence — but refuses the call to connect. The bond is available but actively refused. Approach-withdrawal at the relational threshold.
 
@@ -161,7 +161,7 @@
 
 ## 4. Healing Vectors
 
-### 6.1 Heal/Evolve (Agape + Agency → dark shadows)
+### 4.1 Heal/Evolve (Agape + Agency → dark shadows)
 
 **For Fusion-Addict:**
 - Build MICRO-SEPARATIONS: "You are here. They are there. Two beings. Can you feel BOTH?"
@@ -175,7 +175,7 @@
 - Frame: "Something is there. Not you. Something else. Can you feel it?"
 - Goal: First other-sensing (detecting presence at all)
 
-### 6.2 Evolve/Heal (Eros + Communion → golden shadows)
+### 4.2 Evolve/Heal (Eros + Communion → golden shadows)
 
 **For Premature Coordinator:**
 - Block performance; require SENSING: "Don't coordinate. Just BE WITH. What do you sense?"
@@ -221,7 +221,7 @@
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 4.1 The Enchanted Bond (Interpersonal × Cognitive)
+### 6.1 The Enchanted Bond (Interpersonal × Cognitive)
 
 **Loop:** Magical thinking about relationships reinforces relational fantasy; relational fantasy reinforces magical thinking.
 - Cognitive/Magenta shadow (magical attribution) feeds interpersonal fantasy
@@ -230,7 +230,7 @@
 
 **Break point:** Ground connection in SENSORY evidence (do they respond? do they move with you?) rather than imagination alone.
 
-### 4.2 The Numb Pair (Interpersonal × Somatic)
+### 6.2 The Numb Pair (Interpersonal × Somatic)
 
 **Loop:** Cannot feel connection in the body; body-numbness prevents relational sensing; relational absence reinforces somatic shutdown.
 - Somatic/Magenta shadow (body-numbness) prevents feeling the other's presence
@@ -239,7 +239,7 @@
 
 **Break point:** Start with PHYSICAL proximity effects (does your body change when they're near?) before relational engagement.
 
-### 4.3 The Wish-Bond (Interpersonal × Willpower)
+### 6.3 The Wish-Bond (Interpersonal × Willpower)
 
 **Loop:** Wills connection into existence without genuine sensing; willpower substitutes for relational capacity.
 - Willpower/Magenta shadow (wish-force) creates "connection" through desire alone
@@ -248,7 +248,7 @@
 
 **Break point:** Distinguish between WANTING connection and SENSING connection. Can they sense without willing?
 
-### 4.4 The Lonely Feeler (Interpersonal × Emotional)
+### 6.4 The Lonely Feeler (Interpersonal × Emotional)
 
 **Loop:** Feels intensely but cannot share feeling; emotional richness without relational channel; isolation despite emotional capacity.
 - Emotional/Magenta shadow (mood-flooding) creates intense feeling without relational outlet

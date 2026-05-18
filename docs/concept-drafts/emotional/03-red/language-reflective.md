@@ -64,7 +64,7 @@ The Wroth-Tongue: a Red-stage verbal-emotional training ground. The player speak
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Naming prompts:** Face/voice stimuli requiring emotion labels

@@ -62,7 +62,7 @@ A sequence of challenges requiring different emotional states. The player must P
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Sequence challenges:** Multi-step situations requiring planned emotional responses

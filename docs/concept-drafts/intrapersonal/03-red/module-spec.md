@@ -187,7 +187,7 @@ Intrapersonal is the META-LINE — it enables honest self-knowledge across all o
 
 ## 4. Healing Vectors
 
-### 5.1 For Dark-Addiction (The Narcissist)
+### 4.1 For Dark-Addiction (The Narcissist)
 
 **Vector:** Agape + Agency (return to honest self-examination with sovereign courage)
 
@@ -197,7 +197,7 @@ Intrapersonal is the META-LINE — it enables honest self-knowledge across all o
 3. Reward ACCURATE self-assessment over inflated self-assessment
 4. Gradually: accurate self-knowledge → better predictions → better outcomes → the narcissist sees that truth is more powerful than fantasy
 
-### 5.2 For Dark-Allergy (The Unexamined)
+### 4.2 For Dark-Allergy (The Unexamined)
 
 **Vector:** Agape + Agency (return to self-examination with sovereign will)
 
@@ -207,7 +207,7 @@ Intrapersonal is the META-LINE — it enables honest self-knowledge across all o
 3. Start with TINY self-knowledge demands (name ONE state; predict ONE action)
 4. Gradually: small self-knowledge → practical advantage → more self-knowledge → the unexamined sees that looking inward is a weapon
 
-### 5.3 For Golden-Addiction (The Premature Witness)
+### 4.3 For Golden-Addiction (The Premature Witness)
 
 **Vector:** Eros + Communion (reach for genuine capacity through honest joining)
 
@@ -217,7 +217,7 @@ Intrapersonal is the META-LINE — it enables honest self-knowledge across all o
 3. Frame: "The witness who doesn't know what it's witnessing is blind. First KNOW yourself. Then witness."
 4. Gradually: concrete self-knowledge → accurate witness → genuine intrapersonal capacity (not performed)
 
-### 5.4 For Golden-Allergy (The Identity-Clinger)
+### 4.4 For Golden-Allergy (The Identity-Clinger)
 
 **Vector:** Eros + Communion (reach for the witness-pause through safe joining)
 
@@ -252,7 +252,7 @@ Intrapersonal is the META-LINE — it enables honest self-knowledge across all o
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 4.1 The Blind Warrior (Intrapersonal + Willpower)
+### 6.1 The Blind Warrior (Intrapersonal + Willpower)
 
 **Loop:** Intrapersonal dark-allergy (won't look) + Willpower dark-addiction (compulsive action) = massive force with zero self-knowledge. They ACT without knowing WHY they act. The will drives them but they cannot name what drives the will.
 
@@ -260,7 +260,7 @@ Intrapersonal is the META-LINE — it enables honest self-knowledge across all o
 
 **Breaking the loop:** Willpower tasks that REQUIRE self-knowledge to succeed (predict your fatigue point; name what drives this goal). Make self-knowledge a POWER tool.
 
-### 4.2 The Self-Absorbed (Intrapersonal + Interpersonal)
+### 6.2 The Self-Absorbed (Intrapersonal + Interpersonal)
 
 **Loop:** Intrapersonal dark-addiction (narcissistic self-focus) + Interpersonal dark-allergy (cannot see others) = obsessed with self-image, blind to others. All attention is inward (but inaccurately) and none is outward.
 
@@ -268,7 +268,7 @@ Intrapersonal is the META-LINE — it enables honest self-knowledge across all o
 
 **Breaking the loop:** Self-knowledge tasks that REQUIRE others' input (how do others see you? Does their perception match yours?). Make accurate self-knowledge dependent on interpersonal data.
 
-### 4.3 The Spiritual Bypasser (Intrapersonal + Spiritual)
+### 6.3 The Spiritual Bypasser (Intrapersonal + Spiritual)
 
 **Loop:** Intrapersonal golden-addiction (premature witness) + Spiritual golden-addiction (premature transcendence) = performs "enlightened self-awareness" without genuine Red grounding. Claims to have transcended ego without ever having a healthy ego.
 
@@ -276,7 +276,7 @@ Intrapersonal is the META-LINE — it enables honest self-knowledge across all o
 
 **Breaking the loop:** Require CONCRETE Red demonstrations before accepting "transcendent" claims. "Before you witness your anger, BE angry. Before you transcend ego, HAVE an ego."
 
-### 4.4 The Emotional Stranger (Intrapersonal + Emotional)
+### 6.4 The Emotional Stranger (Intrapersonal + Emotional)
 
 **Loop:** Intrapersonal dark-allergy (won't look inward) + Emotional dark-allergy (won't feel) = disconnected from entire interior. Cannot name states because they refuse to look AND refuse to feel.
 

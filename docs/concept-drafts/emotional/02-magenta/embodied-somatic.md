@@ -66,7 +66,7 @@ The Feeling-Body: a somatic-emotional mapping space. Emotional atmospheres are p
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Location items:** Emotions with clear body-locations (anger→chest, fear→stomach, etc.)

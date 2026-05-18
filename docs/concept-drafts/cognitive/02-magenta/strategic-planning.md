@@ -65,7 +65,7 @@ The Spell-Planner: a cause-effect space where single symbolic actions produce ou
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Immediate cause-effect:** Place rune → outcome (no delay)

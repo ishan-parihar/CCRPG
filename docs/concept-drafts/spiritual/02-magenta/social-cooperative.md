@@ -66,7 +66,7 @@ The Sacred Circle: a communal sacred space. Player and companions participate in
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Harmonious circles:** Easy shared sacred (similar companions)

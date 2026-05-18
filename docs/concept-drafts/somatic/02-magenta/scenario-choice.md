@@ -65,7 +65,7 @@ The Body-Chooser: a choice-space where the body provides guidance. Two or more p
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Pull items:** Choices with obvious body-pull toward correct option

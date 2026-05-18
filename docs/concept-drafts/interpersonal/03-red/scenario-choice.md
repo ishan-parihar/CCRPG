@@ -64,7 +64,7 @@ The War-Chief's Dilemma: the player sits in judgement. Situations arise requirin
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Trust dilemmas:** Trust/distrust decisions with varied risk profiles

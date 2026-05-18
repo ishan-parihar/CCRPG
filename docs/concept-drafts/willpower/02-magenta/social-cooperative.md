@@ -66,7 +66,7 @@ The Wish-Together: a shared wishing space where player and companion form collec
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Shared wish prompts:** Contexts for finding wish-overlap

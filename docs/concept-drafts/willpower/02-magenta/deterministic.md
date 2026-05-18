@@ -67,7 +67,7 @@ The Wish-Holder: a wish-holding space where the player chooses a desired outcome
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Wish options:** Attractive outcomes to choose between (visual, tangible)

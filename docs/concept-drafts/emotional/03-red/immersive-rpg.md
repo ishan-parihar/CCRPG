@@ -63,7 +63,7 @@ An open Red-stage world where emotions are ALIVE. NPCs have emotional states tha
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **NPC emotional configurations:** Characters with varied emotional states and behaviours

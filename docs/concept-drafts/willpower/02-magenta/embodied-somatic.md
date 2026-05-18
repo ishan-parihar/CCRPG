@@ -66,7 +66,7 @@ The Wish-Body: a somatic wish-holding space where the body carries the intention
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Hold postures:** Various positions with wish-connection

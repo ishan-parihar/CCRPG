@@ -63,7 +63,7 @@ An open Magenta-stage world where the body is ALIVE and the world RESPONDS. Post
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Posture-doors:** Objects requiring stable holds to activate

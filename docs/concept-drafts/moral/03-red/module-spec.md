@@ -42,7 +42,7 @@ The player demonstrates:
 
 ## 2. Shadow Archetypes
 
-### 1.1 Dark-Addiction: "The Predator"
+### 2.1 Dark-Addiction: "The Predator"
 
 **Core pattern:** Cannot interact with moral content without EXPLOITING it. Every situation is an opportunity to take. Moral reasoning = "how do I get away with it?" The consequence-logic is OVER-developed — not in service of healthy self-interest but in service of predation.
 
@@ -72,7 +72,7 @@ The player demonstrates:
 
 ---
 
-### 1.2 Dark-Allergy: "The Paralysed"
+### 2.2 Dark-Allergy: "The Paralysed"
 
 **Core pattern:** Cannot make moral choices because consequence-awareness produces PARALYSIS. Every action might be punished. Every choice might be wrong. The consequence-logic is FEARED — not engaged. The player freezes at moral decision points.
 
@@ -103,7 +103,7 @@ The player demonstrates:
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Saint"
+### 2.3 Golden-Addiction: "The Premature Saint"
 
 **Core pattern:** Performs moral sophistication (altruism, principle, universal ethics) WITHOUT genuine Red consequence-logic underneath. Bypasses self-interest entirely. Claims to act "for the good of all" but cannot calculate basic risk/reward. The moral performance is ABOVE their actual capacity.
 
@@ -134,7 +134,7 @@ The player demonstrates:
 
 ---
 
-### 1.4 Golden-Allergy: "The Cynic"
+### 2.4 Golden-Allergy: "The Cynic"
 
 **Core pattern:** Can calculate consequences perfectly but REFUSES moral engagement. "Morality is just power dressed up." "Right and wrong are just words people use to control you." The capacity is PRESENT but the player desacralises all moral content — refuses to take it seriously.
 

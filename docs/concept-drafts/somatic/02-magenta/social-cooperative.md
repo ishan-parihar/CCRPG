@@ -65,7 +65,7 @@ The Body-Circle: a shared somatic space where player and companion move together
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Rhythm synchronisation items:** Shared beats at various tempos

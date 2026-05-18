@@ -6,7 +6,7 @@
 
 ---
 
-## §1 Game Identity
+## 1. Game Identity
 
 - **Title:** "The Body's Testimony"
 - **Core mechanic:** The player must ARTICULATE their somatic experience — describe what their body is doing, name the form, explain the discipline, report felt-sense during movement. Not just DO the form but SPEAK the form.
@@ -15,7 +15,7 @@
 
 ---
 
-## §2 Catalyst Delivery
+## 2. Catalyst Delivery
 
 **What it uniquely presents:** The demand to put WORDS to body-experience. The verbal-metacognitive dimension of embodied discipline.
 
@@ -27,7 +27,7 @@
 
 ---
 
-## §3 Game Design
+## 3. Game Design
 
 ### Setup
 A reflective space where the player articulates somatic experience. After performing a form (or during a hold), the player describes what their body is experiencing. Aesthetic: Amber-stage confessional/testimony space — quiet, intimate, the body's voice honoured.
@@ -64,7 +64,7 @@ A reflective space where the player articulates somatic experience. After perfor
 
 ---
 
-## §4 Item Pool
+## 4. Item Pool
 
 | Type | Pool size |
 |---|---|
@@ -76,7 +76,7 @@ A reflective space where the player articulates somatic experience. After perfor
 
 ---
 
-## §5 Technical Requirements
+## 5. Technical Requirements
 
 - **Inputs:** Voice/text (somatic descriptions); tap (body-map location); selection (scaffolded vocabulary)
 - **Timing:** Response latency tracked (time to articulate); no time pressure but spontaneity noted

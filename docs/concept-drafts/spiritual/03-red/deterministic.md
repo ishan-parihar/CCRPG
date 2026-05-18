@@ -64,7 +64,7 @@ The Value-Reader: a behavioural coherence game. The player declares a value, the
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Low-cost coherence tests:** Situations where value-maintenance is easy

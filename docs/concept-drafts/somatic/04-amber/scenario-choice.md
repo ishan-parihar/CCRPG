@@ -6,7 +6,7 @@
 
 ---
 
-## §1 Game Identity
+## 1. Game Identity
 
 - **Title:** "The Body's Dilemma"
 - **Core mechanic:** The player faces SOMATIC DILEMMAS — situations where body-discipline conflicts with body-wisdom, where two forms compete, where the code demands and the body resists. Not just following form but CHOOSING wisely about form.
@@ -15,7 +15,7 @@
 
 ---
 
-## §2 Catalyst Delivery
+## 2. Catalyst Delivery
 
 **What it uniquely presents:** Somatic DILEMMAS requiring wisdom — not just capacity but JUDGEMENT about the body within a rule-system.
 
@@ -27,7 +27,7 @@
 
 ---
 
-## §3 Game Design
+## 3. Game Design
 
 ### Setup
 A decision-space where somatic dilemmas are presented. Each dilemma has a context (body-state, form-demand, social situation) and options. Aesthetic: Amber-stage council-chamber — the body's wisdom honoured as a form of knowing.
@@ -64,7 +64,7 @@ A decision-space where somatic dilemmas are presented. Each dilemma has a contex
 
 ---
 
-## §4 Item Pool
+## 4. Item Pool
 
 | Type | Pool size |
 |---|---|
@@ -76,7 +76,7 @@ A decision-space where somatic dilemmas are presented. Each dilemma has a contex
 
 ---
 
-## §5 Technical Requirements
+## 5. Technical Requirements
 
 - **Inputs:** Selection (choose between options); text/voice (explain reasoning — optional); tap (indicate body-state)
 - **Timing:** Decision latency tracked; no time pressure but deliberation time noted

@@ -63,7 +63,7 @@ The Consequence-Tongue: a space where moral reasoning is SPOKEN. After actions (
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Consequence-naming prompts:** "What happened when X?"

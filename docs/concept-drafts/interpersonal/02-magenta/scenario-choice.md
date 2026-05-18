@@ -66,7 +66,7 @@ The Presence-Path: a relational choice space where presences appear at various l
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear presences:** Obvious warm/cold quality (easy approach/avoid)

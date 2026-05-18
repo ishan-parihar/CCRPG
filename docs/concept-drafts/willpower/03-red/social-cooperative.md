@@ -63,7 +63,7 @@ The Vow-Band: a war-band of 2-3 NPC allies with distinct volitional styles (Burs
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Shared vow configurations:** Coordinated commitments at varied difficulties

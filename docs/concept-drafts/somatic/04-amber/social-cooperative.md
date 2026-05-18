@@ -6,7 +6,7 @@
 
 ---
 
-## §1 Game Identity
+## 1. Game Identity
 
 - **Title:** "The Shared Form"
 - **Core mechanic:** The player and companions must MOVE TOGETHER — synchronised forms, shared rhythm, coordinated sequences. Not solo discipline but GROUP discipline. The form is: hold together, move together, breathe together. One body, many limbs.
@@ -15,7 +15,7 @@
 
 ---
 
-## §2 Catalyst Delivery
+## 2. Catalyst Delivery
 
 **What it uniquely presents:** The demand to be disciplined TOGETHER — individual form maintained within group synchrony.
 
@@ -27,7 +27,7 @@
 
 ---
 
-## §3 Game Design
+## 3. Game Design
 
 ### Setup
 A group movement space. Player and companions move together — synchronised forms, shared rhythm, coordinated sequences. Aesthetic: Amber-stage monastery courtyard — practitioners moving in unison, the group-body as sacred form.
@@ -64,7 +64,7 @@ A group movement space. Player and companions move together — synchronised for
 
 ---
 
-## §4 Item Pool
+## 4. Item Pool
 
 | Type | Pool size |
 |---|---|
@@ -76,7 +76,7 @@ A group movement space. Player and companions move together — synchronised for
 
 ---
 
-## §5 Technical Requirements
+## 5. Technical Requirements
 
 - **Inputs:** Rhythm-tap (synchrony); sequence-tap (coordinated forms); hold (sustained group posture)
 - **Timing:** Millisecond precision for synchrony measurement; group-timing comparison (player vs. companions vs. target beat)

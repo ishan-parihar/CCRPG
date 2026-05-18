@@ -64,7 +64,7 @@ The Self-Tongue: a verbal mirror where the player must put their inner life into
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **State-naming prompts:** "What do you feel?" with verification options

@@ -31,7 +31,7 @@ Cognitive intelligence at Magenta is **pre-operational symbolic capacity** — t
 
 ## 2. Shadow Archetypes
 
-### 1.1 Dark-Addiction: "The Magical Thinker"
+### 2.1 Dark-Addiction: "The Magical Thinker"
 
 **Core pattern:** Clings to symbolic power as LITERAL CONTROL. Believes symbols change reality directly. Cannot distinguish the symbol from its referent. The rune IS fire, not a representation of fire. Magical thinking as cognitive fixation.
 
@@ -60,7 +60,7 @@ Cognitive intelligence at Magenta is **pre-operational symbolic capacity** — t
 
 ---
 
-### 1.2 Dark-Allergy: "The Concrete-Bound"
+### 2.2 Dark-Allergy: "The Concrete-Bound"
 
 **Core pattern:** Refuses symbolic engagement entirely. Stays in sensorimotor mode. "Symbols are meaningless — only what I can touch is real." The world remains literal; imagination is rejected.
 
@@ -90,7 +90,7 @@ Cognitive intelligence at Magenta is **pre-operational symbolic capacity** — t
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Reasoner"
+### 2.3 Golden-Addiction: "The Premature Reasoner"
 
 **Core pattern:** Rushes toward logical/concrete operations without mastering symbolic foundations. Performs "reasoning" that is actually rote pattern-matching. Skips the magical-symbolic stage to appear advanced. The symbols are never truly INHABITED — they're used as stepping stones to "real thinking."
 
@@ -120,7 +120,7 @@ Cognitive intelligence at Magenta is **pre-operational symbolic capacity** — t
 
 ---
 
-### 1.4 Golden-Allergy: "The Wonder-Refuser"
+### 2.4 Golden-Allergy: "The Wonder-Refuser"
 
 **Core pattern:** Fears the expansion into symbolic life. The imagination is threatening — if symbols can mean things, the world becomes unpredictable. Refuses the magic not from concretism (dark-allergy) but from FEAR of what symbolic capacity opens up.
 
@@ -182,7 +182,7 @@ Cognitive intelligence at Magenta is **pre-operational symbolic capacity** — t
 
 ## 4. Healing Vectors
 
-### 3.1 Heal/Evolve Vector (Agape + Agency → Dark Shadows)
+### 4.1 Heal/Evolve Vector (Agape + Agency → Dark Shadows)
 
 **For The Magical Thinker (dark-addiction):**
 1. Present tasks where symbols FAIL to produce magical effects
@@ -198,7 +198,7 @@ Cognitive intelligence at Magenta is **pre-operational symbolic capacity** — t
 4. Reward ANY symbolic engagement; celebrate the first symbol-recognition
 5. Build: gradual comfort with symbolic mediation
 
-### 3.2 Evolve/Heal Vector (Eros + Communion → Golden Shadows)
+### 4.2 Evolve/Heal Vector (Eros + Communion → Golden Shadows)
 
 **For The Premature Reasoner (golden-addiction):**
 1. Present tasks that REQUIRE genuine symbolic capacity (not rote logic)
@@ -217,7 +217,7 @@ Cognitive intelligence at Magenta is **pre-operational symbolic capacity** — t
 ---
 
 ### Integration Criteria
-### 6.1 What "healed" looks like at Cognitive/Magenta
+### 4.1 What "healed" looks like at Cognitive/Magenta
 
 The player demonstrates:
 1. **Symbol-recognition:** Recognises symbols as representations (not literal forces)
@@ -228,7 +228,7 @@ The player demonstrates:
 6. **Drive health:** All 4 drives expressing healthily in symbolic context
 7. **Shadow resolution:** No dominant shadow quadrant; flexible relationship to symbolic capacity
 
-### 6.2 Readiness for Red
+### 4.2 Readiness for Red
 
 Integration at Magenta means the player can:
 - Hold one symbol stably and use it as a tool
@@ -243,14 +243,14 @@ This is the FOUNDATION for Red's n=2, where two symbols must be held simultaneou
 
 ## 5. Scoring Parameters
 
-### 2.1 Theta (capacity estimate)
+### 5.1 Theta (capacity estimate)
 
 **Model:** 1PL IRT with Bayesian updating
 - **Prior:** N(0, 1) at first encounter
 - **Item difficulty:** Calibrated per symbol-recognition, symbol-holding, symbol-substitution, pattern-echo, inhibitory-seed
 - **Update:** After each response (correct/incorrect + latency as secondary)
 
-### 2.2 Composite score
+### 5.2 Composite score
 
 ```
 cognitive_magenta = weighted_aggregate(
@@ -262,13 +262,13 @@ cognitive_magenta = weighted_aggregate(
 )
 ```
 
-### 2.3 Theta-decay
+### 5.3 Theta-decay
 
 - **Half-life:** 14 days (cognitive is the fastest-moving line; decays faster than spiritual/moral)
 - **Max decay:** 20% of peak theta
 - **Rationale:** Cognitive capacity at Magenta is fragile — symbolic thinking needs regular exercise or it regresses to sensorimotor
 
-### 2.4 Stage-transition threshold
+### 5.4 Stage-transition threshold
 
 - **Magenta → Red unlock:** Theta ≥ 0.7 on symbol-holding (n=1 stable) AND inhibitory-seed ≥ 0.5
 - **Confirmation:** Must demonstrate across ≥ 3 sessions (not a single spike)
@@ -280,7 +280,7 @@ cognitive_magenta = weighted_aggregate(
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 4.1 The Enchanted Fool (Cognitive dark-addiction ↔ Willpower dark-allergy)
+### 6.1 The Enchanted Fool (Cognitive dark-addiction ↔ Willpower dark-allergy)
 
 **Loop:** Believes symbols have power (Cognitive) but cannot sustain effort to master them (Willpower). Result: magical thinking without skill development. "I believe in the rune but I can't hold it in mind long enough to cast."
 
@@ -290,7 +290,7 @@ cognitive_magenta = weighted_aggregate(
 
 **Breaking the loop:** Address Willpower first (build minimal sustained effort) → then Cognitive dark-addiction dissolves as symbols become SKILLS rather than magic.
 
-### 4.2 The Frozen Literalist (Cognitive dark-allergy ↔ Spiritual dark-allergy)
+### 6.2 The Frozen Literalist (Cognitive dark-allergy ↔ Spiritual dark-allergy)
 
 **Loop:** Refuses symbolic thought (Cognitive) AND refuses animistic engagement (Spiritual). Trapped in pure sensation with no symbolic or spiritual life. The world is dead matter.
 
@@ -300,7 +300,7 @@ cognitive_magenta = weighted_aggregate(
 
 **Breaking the loop:** Address through Somatic line (body-felt engagement that doesn't require symbolic mediation) → then introduce symbols through body (gesture-spells) → then spiritual engagement follows.
 
-### 4.3 The Precocious Mimic (Cognitive golden-addiction ↔ Emotional dark-allergy)
+### 6.3 The Precocious Mimic (Cognitive golden-addiction ↔ Emotional dark-allergy)
 
 **Loop:** Performs advanced reasoning (Cognitive) while emotionally stuck in pre-symbolic (Emotional). Uses intellect to bypass emotional development. "I think therefore I don't need to feel."
 
@@ -310,7 +310,7 @@ cognitive_magenta = weighted_aggregate(
 
 **Breaking the loop:** Address Emotional line directly (safe emotional-symbolic engagement) → as emotions become symbolically accessible, the rush to logic loses its defensive function.
 
-### 4.4 The Fantasy-Drowner (Cognitive dark-addiction ↔ Intrapersonal dark-addiction)
+### 6.4 The Fantasy-Drowner (Cognitive dark-addiction ↔ Intrapersonal dark-addiction)
 
 **Loop:** Fused with symbolic fantasy (Cognitive) AND fused with fantasy-self (Intrapersonal). Cannot distinguish imagination from reality OR fantasy-self from actual self. Total symbolic fusion.
 

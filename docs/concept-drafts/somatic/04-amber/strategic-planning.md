@@ -6,7 +6,7 @@
 
 ---
 
-## §1 Game Identity
+## 1. Game Identity
 
 - **Title:** "The Drill-Master's Path"
 - **Core mechanic:** The player must PLAN multi-step body-sequences — anticipate fatigue, sequence movements efficiently, prepare the body for upcoming demands. Not just executing form but STRATEGISING about form.
@@ -15,7 +15,7 @@
 
 ---
 
-## §2 Catalyst Delivery
+## 2. Catalyst Delivery
 
 **What it uniquely presents:** The demand to PLAN the body's path — sequencing, fatigue-anticipation, strategic ordering of movement.
 
@@ -27,7 +27,7 @@
 
 ---
 
-## §3 Game Design
+## 3. Game Design
 
 ### Setup
 A planning space where the player sequences body-movements strategically. Forms are available; the player must ORDER them wisely — considering fatigue, difficulty, body-state, and constraints. Aesthetic: Amber-stage war-room/dojo — the drill laid out, the body's path planned before execution.
@@ -64,7 +64,7 @@ A planning space where the player sequences body-movements strategically. Forms 
 
 ---
 
-## §4 Item Pool
+## 4. Item Pool
 
 | Type | Pool size |
 |---|---|
@@ -76,7 +76,7 @@ A planning space where the player sequences body-movements strategically. Forms 
 
 ---
 
-## §5 Technical Requirements
+## 5. Technical Requirements
 
 - **Inputs:** Drag (sequence forms in order); tap (confirm plan); reorder (mid-execution replan)
 - **Timing:** Planning time tracked; execution success measured; fatigue-point prediction accuracy

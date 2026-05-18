@@ -64,7 +64,7 @@ The Self-Body: a physical self-knowledge game where the player reads their own b
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Energy assessments:** Binary and scaled energy-level self-reports

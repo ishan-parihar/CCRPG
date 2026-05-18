@@ -4,7 +4,7 @@
 
 ---
 
-## §1 Capacity Definition
+## 1. Capacity Definition
 
 **What this module measures:** Can the player (a) accurately recognise basic emotions in self and other, (b) USE emotion as power (channel rage, deploy pride), and (c) perform first-pass self-management (override fear, contain rage when it would destroy)?
 
@@ -26,7 +26,7 @@
 
 ---
 
-## §2 Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### Dark-Addiction: "The Rage-Addict"
 Cannot stop feeling. Emotion IS identity. Intensity is the only proof of aliveness. Clings to affect — especially rage and pride — because without intense feeling, they experience existential emptiness. Atman Project defence: fixation at the emotional-body level; letting go of emotion = letting go of self.
@@ -50,7 +50,7 @@ Treats emotional subtlety as weakness. Has mastered Red-level emotional power bu
 
 ---
 
-## §3 Drive-Health Landscape
+## 3. Drive-Health Landscape
 
 | Drive | Dark-domain (healthy) | Dark-domain (pathological) | Golden-domain (healthy) | Golden-domain (pathological) |
 |---|---|---|---|---|
@@ -63,7 +63,7 @@ Treats emotional subtlety as weakness. Has mastered Red-level emotional power bu
 
 ---
 
-## §4 Healing Vectors
+## 4. Healing Vectors
 
 ### Heal/Evolve (Agape + Agency) — for dark shadows
 
@@ -79,7 +79,7 @@ Treats emotional subtlety as weakness. Has mastered Red-level emotional power bu
 
 ---
 
-## §5 Scoring Parameters
+## 5. Scoring Parameters
 
 ### Staircase parameters
 
@@ -128,7 +128,7 @@ Each quadrant scored 0–1 (0 = resolved, 1 = maximally active). Cross-validated
 
 ---
 
-## §6 Compound Shadows & Cross-Module
+## 6. Compound Shadows & Cross-Module Relationships
 
 ### Cross-module dependencies
 
@@ -147,7 +147,7 @@ Each quadrant scored 0–1 (0 = resolved, 1 = maximally active). Cross-validated
 
 ---
 
-## §7 Shadow Surfacing Sequence
+## 7. Shadow Surfacing Sequence
 
 ### Diagnostic progression
 

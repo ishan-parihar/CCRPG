@@ -65,7 +65,7 @@ The Wroth-Reader: a Red-stage emotional training ground. NPC faces appear — wa
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Face stimuli:** NPC faces displaying emotions at varied intensities (culturally diverse)

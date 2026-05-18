@@ -64,7 +64,7 @@ The Consequence-Reader: a world of visible cause-and-effect. Actions produce res
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Consequence-chains:** Action→result sequences of varying length and complexity

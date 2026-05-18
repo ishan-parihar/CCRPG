@@ -66,7 +66,7 @@ The Vow-Forge: a ritual space where warriors temper their will. The player stand
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Goal templates:** Specific vow-types (duration holds, temptation resistance, completion targets)

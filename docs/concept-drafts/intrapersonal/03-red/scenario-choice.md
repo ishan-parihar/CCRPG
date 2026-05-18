@@ -64,7 +64,7 @@ The Self-Knower's Dilemma: a branching path where each fork requires self-knowle
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Capacity-matching dilemmas:** Choose path based on actual strength/weakness

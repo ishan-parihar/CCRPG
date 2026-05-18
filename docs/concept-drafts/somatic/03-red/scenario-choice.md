@@ -64,7 +64,7 @@ The player faces physical crossroads — moments in a warrior's journey where th
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Physical dilemma scenarios:** Narrative vignettes with body-choice points

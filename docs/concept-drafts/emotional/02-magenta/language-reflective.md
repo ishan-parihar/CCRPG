@@ -66,7 +66,7 @@ The Feeling-Word: a verbal affect-labelling space. Emotional atmospheres are pre
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear-mood scenes:** Obvious emotional atmospheres requiring basic labels

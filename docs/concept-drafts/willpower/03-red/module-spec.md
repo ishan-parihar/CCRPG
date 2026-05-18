@@ -2,7 +2,7 @@
 
 ---
 
-## §1 Capacity Definition
+## 1. Capacity Definition
 
 **Power-will:** The capacity to set a short-horizon goal and pursue it with full intensity until fatigue ends the burst. At Red, willpower is NOT sustained discipline (Amber) or rational long-arc pursuit (Orange) — it is the raw "I WILL take this hill" energy that burns hot and brief. The will as weapon: a single-pointed burst of volitional force directed at a concrete, immediate goal.
 
@@ -18,7 +18,7 @@
 
 ---
 
-## §2 Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### The Compulsive Willer (Dark-Addiction)
 
@@ -70,7 +70,7 @@ Actively refuses any extension of volitional capacity. Treats the call to longer
 
 ---
 
-## §3 Drive-Health Landscape
+## 3. Drive-Health Landscape
 
 ### Healthy Expression (4×2)
 
@@ -92,7 +92,7 @@ Actively refuses any extension of volitional capacity. Treats the call to longer
 
 ---
 
-## §4 Healing Vectors
+## 4. Healing Vectors
 
 ### Dark-Addiction → Agape + Agency (return with sovereignty)
 
@@ -140,7 +140,7 @@ The game must make LONGER WILL feel like MORE POWER, not less freedom. Not by fo
 
 ---
 
-## §5 Scoring Parameters
+## 5. Scoring Parameters
 
 ### Capacity Dimensions
 
@@ -185,7 +185,7 @@ The game must make LONGER WILL feel like MORE POWER, not less freedom. Not by fo
 
 ---
 
-## §6 Compound Shadows & Cross-Module
+## 6. Compound Shadows & Cross-Module Relationships
 
 ### Compound Patterns
 
@@ -223,7 +223,7 @@ The game must make LONGER WILL feel like MORE POWER, not less freedom. Not by fo
 
 ---
 
-## §7 Shadow Surfacing Sequence
+## 7. Shadow Surfacing Sequence
 
 ### The Sequence
 

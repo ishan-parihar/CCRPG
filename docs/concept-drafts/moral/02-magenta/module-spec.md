@@ -17,7 +17,7 @@
 
 ## 2. Shadow Archetypes
 
-### 1.1 Dark-Addiction: "The Taboo-Slave"
+### 2.1 Dark-Addiction: "The Taboo-Slave"
 
 **Core pattern:** Paralysed by magical prohibitions. EVERYTHING is forbidden. Cannot act because every action might violate some sacred law. The moral sense has become a prison — not a guide but a cage.
 
@@ -42,7 +42,7 @@
 
 ---
 
-### 1.2 Dark-Allergy: "The Profane-Breaker"
+### 2.2 Dark-Allergy: "The Profane-Breaker"
 
 **Core pattern:** Cannot sense taboo AT ALL. The sacred is invisible. Violates without registering that anything sacred has been touched. Not rebellion (Red) — genuine BLINDNESS to moral weight.
 
@@ -67,7 +67,7 @@
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Rule-Maker"
+### 2.3 Golden-Addiction: "The Premature Rule-Maker"
 
 **Core pattern:** Imposes RIGID RULES without genuine magical sensing. Jumps to Amber-style rule-following without having developed Magenta-stage taboo-sensing. Performs morality through structure rather than feeling it through sacred weight.
 
@@ -92,7 +92,7 @@
 
 ---
 
-### 1.4 Golden-Allergy: "The Ritual-Refuser"
+### 2.4 Golden-Allergy: "The Ritual-Refuser"
 
 **Core pattern:** SENSES the sacred but REFUSES to participate. Feels taboo, feels reciprocity, feels the weight — but will not perform the ritual. The call to moral participation is felt and rejected.
 
@@ -128,7 +128,7 @@
 | Eros | 0.20 | Reaching toward "the good" (magical aspiration) |
 | Agape | 0.20 | Returning to maintain sacred order (ritual maintenance) |
 
-### 2.1 Healthy Drive Expression at Moral/Magenta
+### 3.1 Healthy Drive Expression at Moral/Magenta
 
 | Drive | Dark-domain (healthy) | Golden-domain (healthy) |
 |---|---|---|
@@ -137,7 +137,7 @@
 | **Eros** | Can rest in current moral sensing without compulsive growth | Can reach toward deeper sacred understanding without bypassing felt-sense |
 | **Agape** | Can return to basic moral practices without regression | Can embody moral sensing in lived action (not just feeling) |
 
-### 2.2 Pathological Drive Expression at Moral/Magenta
+### 3.2 Pathological Drive Expression at Moral/Magenta
 
 | Drive | Dark-domain (pathological) | Golden-domain (pathological) |
 |---|---|---|
@@ -179,7 +179,7 @@
 ---
 
 ### Integration Criteria
-### 7.1 Shadow resolution markers
+### 4.1 Shadow resolution markers
 
 | Shadow | Resolution marker |
 |---|---|
@@ -188,7 +188,7 @@
 | Premature Rule-Maker | Uses felt-sense language; navigates rule-free moral territory |
 | Ritual-Refuser | Acts on moral sensing; performs reciprocity willingly |
 
-### 7.2 Capacity integration markers
+### 4.2 Capacity integration markers
 
 | Capacity | Integrated when... |
 |---|---|
@@ -198,7 +198,7 @@
 | Sacred-profane | Discrimination — can tell the difference reliably |
 | Proto-fairness | Balance-sensing — takes AND gives without compulsion or blindness |
 
-### 7.3 Drive-health markers
+### 4.3 Drive-health markers
 
 All 4 drives expressing healthily in both domains simultaneously:
 - Agency: Sovereign moral sensing AND sovereign moral action
@@ -239,7 +239,7 @@ shadow_penalty = 1.0 - (dominant_shadow_intensity × 0.4)
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 5.1 Enchanted Law (Moral × Cognitive)
+### 6.1 Enchanted Law (Moral × Cognitive)
 
 **Bidirectional loop:**
 - Moral/Magenta shadow → Cognitive: Magical thinking about moral consequences distorts cognitive clarity
@@ -249,7 +249,7 @@ shadow_penalty = 1.0 - (dominant_shadow_intensity × 0.4)
 
 **Resolution:** Separate moral sensing (felt) from cognitive categorisation (thought). They inform each other but are not the same.
 
-### 5.2 Numb Conscience (Moral × Somatic)
+### 6.2 Numb Conscience (Moral × Somatic)
 
 **Bidirectional loop:**
 - Moral/Magenta shadow → Somatic: Moral paralysis creates somatic freezing
@@ -259,7 +259,7 @@ shadow_penalty = 1.0 - (dominant_shadow_intensity × 0.4)
 
 **Resolution:** Reconnect moral sensing to body. "Where in your body do you feel that this matters?" Build somatic-moral channel.
 
-### 5.3 Wish-Ethics (Moral × Willpower)
+### 6.3 Wish-Ethics (Moral × Willpower)
 
 **Bidirectional loop:**
 - Moral/Magenta shadow → Willpower: Moral paralysis prevents willed action
@@ -269,7 +269,7 @@ shadow_penalty = 1.0 - (dominant_shadow_intensity × 0.4)
 
 **Resolution:** Bridge sensing to action. "You feel it. Now: one small action. Just one. The smallest moral act."
 
-### 5.4 Lonely Goodness (Moral × Interpersonal)
+### 6.4 Lonely Goodness (Moral × Interpersonal)
 
 **Bidirectional loop:**
 - Moral/Magenta shadow → Interpersonal: Moral rigidity isolates from others
@@ -311,7 +311,7 @@ taboo-sensing → ritual-reciprocity → magical-consequence → sacred-profane 
 ---
 
 ### Detection Methodology
-### 6.1 Primary signals (within Moral/Magenta games)
+### 7.1 Primary signals (within Moral/Magenta games)
 
 | Signal | Shadow indicated | Confidence |
 |---|---|---|
@@ -324,7 +324,7 @@ taboo-sensing → ritual-reciprocity → magical-consequence → sacred-profane 
 | Mechanical moral language | Premature Rule-Maker | Medium |
 | "I know but I won't" pattern | Ritual-Refuser | High |
 
-### 6.2 Cross-module validation
+### 7.2 Cross-module validation
 
 | Moral shadow | Validated by | How |
 |---|---|---|
@@ -333,7 +333,7 @@ taboo-sensing → ritual-reciprocity → magical-consequence → sacred-profane 
 | Premature Rule-Maker | Cognitive/Magenta | If also magical-categorical → compound confirmed |
 | Ritual-Refuser | Interpersonal/Magenta | If also bond-refusing → compound confirmed |
 
-### 6.3 Longitudinal tracking
+### 7.3 Longitudinal tracking
 
 - Taboo-Slave: Does paralysis decrease over sessions? (healing indicator)
 - Profane-Breaker: Does sacred recognition increase? (healing indicator)

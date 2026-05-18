@@ -6,7 +6,7 @@
 
 ---
 
-## §1 Game Identity
+## 1. Game Identity
 
 - **Title:** "The Living Stance"
 - **Core mechanic:** The player's body IS the game. Not reproducing external forms but INHABITING them — feeling the stance from inside, sensing the form as lived experience, knowing the discipline as body-knowledge. Interoceptive awareness during disciplined movement.
@@ -15,7 +15,7 @@
 
 ---
 
-## §2 Catalyst Delivery
+## 2. Catalyst Delivery
 
 **What it uniquely presents:** The demand to INHABIT the body — not execute form but FEEL it from inside. Interoceptive awareness as the primary measure.
 
@@ -27,7 +27,7 @@
 
 ---
 
-## §3 Game Design
+## 3. Game Design
 
 ### Setup
 An interoceptive practice space. The player holds forms and is guided to FEEL them from inside. Not measuring accuracy (that's deterministic) but measuring INHABITATION — the quality of body-awareness during discipline. Aesthetic: Amber-stage inner sanctum — quiet, warm, the body honoured as a knowing entity.
@@ -64,7 +64,7 @@ An interoceptive practice space. The player holds forms and is guided to FEEL th
 
 ---
 
-## §4 Item Pool
+## 4. Item Pool
 
 | Type | Pool size |
 |---|---|
@@ -76,7 +76,7 @@ An interoceptive practice space. The player holds forms and is guided to FEEL th
 
 ---
 
-## §5 Technical Requirements
+## 5. Technical Requirements
 
 - **Inputs:** Voice/text (interoceptive reports); body-map tap (sensation location); selection (scaffolded sensation vocabulary); hold (sustained form during reporting)
 - **Timing:** Report timing tracked (latency between prompt and response); form-duration during reporting; no time pressure

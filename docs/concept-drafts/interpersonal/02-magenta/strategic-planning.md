@@ -66,7 +66,7 @@ The Other-Guess: a relational prediction space. Presences behave in response to 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Simple presences:** Predictable behaviour (always approaches, always flees)

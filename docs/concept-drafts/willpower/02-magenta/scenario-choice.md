@@ -66,7 +66,7 @@ The Wish-Path: a choice-space where the player's wish guides decisions. The aest
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Simple choices:** Clear wish-aligned vs. non-aligned paths

@@ -65,7 +65,7 @@ The Body-Planner: a body-sequencing space where the player plans and executes tr
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Single transitions:** A → B posture changes

@@ -66,7 +66,7 @@ The Iron Hold: a physical trial space where warriors prove their embodied will. 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Hold configurations:** Duration × intensity × interference combinations

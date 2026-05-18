@@ -65,7 +65,7 @@ The Body-Vessel: a direct somatic engagement space where the player inhabits the
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Hold postures:** Various positions with increasing duration/awareness demands

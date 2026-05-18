@@ -66,7 +66,7 @@ The Feeling-Path: a choice-space where emotional atmosphere is the only navigati
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear-contrast items:** Obvious mood differences between paths

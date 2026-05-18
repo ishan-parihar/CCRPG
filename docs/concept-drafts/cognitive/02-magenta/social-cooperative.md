@@ -65,7 +65,7 @@ The Rune-Sharing: a shared symbolic space where player and companion engage in c
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Recognition items:** Companion shows symbol; player identifies

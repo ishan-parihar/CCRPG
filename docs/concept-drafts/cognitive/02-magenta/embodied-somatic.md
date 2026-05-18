@@ -64,7 +64,7 @@ The Gesture-Caster: a somatic-symbolic space where the body produces magic. The 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Copy gestures:** Shapes to reproduce immediately

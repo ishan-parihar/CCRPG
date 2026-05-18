@@ -66,7 +66,7 @@ The Self-Path: branching paths in a magical landscape. Each branch is labelled w
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Binary forks:** Two clearly labelled self-paths

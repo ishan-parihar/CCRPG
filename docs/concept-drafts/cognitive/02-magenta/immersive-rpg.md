@@ -63,7 +63,7 @@ An open Magenta-stage world where symbols are ALIVE and RESPONSIVE. Painted cave
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Environmental runes:** Symbols on walls, floors, objects (varied visibility)

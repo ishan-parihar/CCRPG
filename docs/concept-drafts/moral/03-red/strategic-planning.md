@@ -64,7 +64,7 @@ The Consequence-Planner: a campaign of moral choices across time. The player mus
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Delayed-gratification sequences:** Now vs. later trade-offs across steps

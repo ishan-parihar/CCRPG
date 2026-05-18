@@ -63,7 +63,7 @@ An open Magenta-stage world with self-relevant content woven throughout. Mirror-
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Mirror-pools:** Self-recognition opportunities

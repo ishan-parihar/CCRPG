@@ -64,7 +64,7 @@ The Wroth-Body: a physical-emotional training ground. The player's body IS the i
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Emotional stimuli:** Provocations designed to trigger specific body-emotions

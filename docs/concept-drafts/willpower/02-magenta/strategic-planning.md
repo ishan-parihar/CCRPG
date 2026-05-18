@@ -66,7 +66,7 @@ The Wish-Step: a planning space where wishes become steps. The aesthetic: Magent
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Direct links:** Obvious wish→action connections

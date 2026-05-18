@@ -6,7 +6,7 @@
 
 ---
 
-## §1 Game Identity
+## 1. Game Identity
 
 - **Title:** "The Stance Trials"
 - **Core mechanic:** Objective measurement of disciplined body capacity — sustained holds, form reproduction, breath-gated timing, group synchrony, coordination under load. Pure psychophysics. No narrative, no interpretation — just the body's measurable capacity.
@@ -15,7 +15,7 @@
 
 ---
 
-## §2 Catalyst Delivery
+## 2. Catalyst Delivery
 
 **What it uniquely presents:** Raw somatic challenge with zero narrative or interpretive layer. The body meets the form directly.
 
@@ -27,7 +27,7 @@
 
 ---
 
-## §3 Game Design
+## 3. Game Design
 
 ### Setup
 A clean measurement space. No narrative — just the body and the form. Stances demonstrated; player reproduces. Beats played; player synchronises. Breath cadence set; player couples. Aesthetic: Amber-stage training ground — clean stone floor, form-master demonstrating, player's body-outline responding.
@@ -64,7 +64,7 @@ A clean measurement space. No narrative — just the body and the form. Stances 
 
 ---
 
-## §4 Item Pool
+## 4. Item Pool
 
 | Type | Pool size |
 |---|---|
@@ -76,7 +76,7 @@ A clean measurement space. No narrative — just the body and the form. Stances 
 
 ---
 
-## §5 Technical Requirements
+## 5. Technical Requirements
 
 - **Inputs:** Hold (sustained touch/press); sequence-tap (form reproduction); rhythm-tap (synchrony); breath-paced-tap (breath-gating)
 - **Timing:** Millisecond precision for synchrony; sub-second for hold duration; breath-rate calibration at session start

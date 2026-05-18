@@ -64,7 +64,7 @@ The Self-Reader: a mirror-game where the player's self-knowledge is tested again
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **State-labelling tasks:** Name current state from options (verified against behavioural indicators)

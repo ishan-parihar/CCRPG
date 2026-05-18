@@ -64,7 +64,7 @@ The player enters a war-drum circle in the Red-stage fortress. War-drums of diff
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Rhythm sequences:** Beat patterns at various tempos (procedurally generated)

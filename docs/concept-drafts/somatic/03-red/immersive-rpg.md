@@ -65,7 +65,7 @@ An open Red-stage physical world: fortress walls to climb, chasms to cross, enem
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Terrain configurations:** Physical environments with varied movement demands

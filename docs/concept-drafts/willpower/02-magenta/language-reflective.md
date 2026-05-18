@@ -65,7 +65,7 @@ The Wish-Speaker: a verbal wish-articulation space where the player names their 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Wish-prompts:** Contexts that invite wish-articulation

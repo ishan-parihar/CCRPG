@@ -24,7 +24,7 @@
 
 ## 2. Shadow Archetypes
 
-### 1.1 Dark-Addiction: "The Mood-Flooder"
+### 2.1 Dark-Addiction: "The Mood-Flooder"
 
 **Core pattern:** Drowns in environmental emotion. Cannot separate from the affect-field. Every feeling in the environment becomes their feeling. Emotional overwhelm as identity.
 
@@ -50,7 +50,7 @@
 
 ---
 
-### 1.2 Dark-Allergy: "The Affect-Denier"
+### 2.2 Dark-Allergy: "The Affect-Denier"
 
 **Core pattern:** Cannot sense emotional tone. The world is flat, dead, emotionally silent. Not suppression (that's later) — genuine inability to detect the affect-field. Emotional numbness projected as "nothing is happening."
 
@@ -76,7 +76,7 @@
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Empath"
+### 2.3 Golden-Addiction: "The Premature Empath"
 
 **Core pattern:** Claims to read individual emotions before self-other split exists. Performs empathy without genuine sensing. "I know exactly how you feel" — but this is projection, not perception. Bypasses the fusion stage by pretending to already have differentiation.
 
@@ -102,7 +102,7 @@
 
 ---
 
-### 1.4 Golden-Allergy: "The Feeling-Refuser"
+### 2.4 Golden-Allergy: "The Feeling-Refuser"
 
 **Core pattern:** Senses the call to feel more deeply but refuses. Retreats from emotional richness into cognitive safety. The world offers emotional depth and the player turns away. Not numbness (that's dark-allergy) — active REFUSAL of available feeling.
 
@@ -140,7 +140,7 @@
 
 ## 4. Healing Vectors
 
-### 5.1 Heal/Evolve (Agape + Agency → Dark Shadows)
+### 4.1 Heal/Evolve (Agape + Agency → Dark Shadows)
 
 **For The Mood-Flooder:**
 - Agape: Return to emotional baseline with compassion (not suppression)
@@ -152,7 +152,7 @@
 - Agency: Choose to notice ONE feeling (not all at once)
 - Mechanism: Gradual affect-awakening through safe, low-intensity stimuli
 
-### 5.2 Evolve/Heal (Eros + Communion → Golden Shadows)
+### 4.2 Evolve/Heal (Eros + Communion → Golden Shadows)
 
 **For The Premature Empath:**
 - Eros: Accept the invitation to feel GENUINELY (not perform)
@@ -198,7 +198,7 @@
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 4.1 The Enchanted Feeler (Emotional × Cognitive/Magenta)
+### 6.1 The Enchanted Feeler (Emotional × Cognitive/Magenta)
 
 **Loop:** Magical thinking ABOUT emotions reinforces emotional flooding. "If I feel it, it must be true" → more feeling → more magical attribution → more feeling.
 
@@ -207,7 +207,7 @@
 
 **Break point:** Introduce the possibility that feeling ≠ reality. "You feel something. But is the forest ACTUALLY angry? Or do you just feel something?"
 
-### 4.2 The Numb Body (Emotional × Somatic/Magenta)
+### 6.2 The Numb Body (Emotional × Somatic/Magenta)
 
 **Loop:** Body-unawareness prevents emotional sensing. Emotions are felt IN the body first — if the body is numb, emotions are invisible.
 
@@ -216,7 +216,7 @@
 
 **Break point:** Re-establish body-emotion link. "Where in your body do you feel it? Even a tiny sensation. That's the feeling."
 
-### 4.3 The Wish-Storm (Emotional × Willpower/Magenta)
+### 6.3 The Wish-Storm (Emotional × Willpower/Magenta)
 
 **Loop:** Emotions become wishes without differentiation. "I feel angry" immediately becomes "I wish for destruction." Feeling and wanting are fused.
 
@@ -225,7 +225,7 @@
 
 **Break point:** Separate feeling from wanting. "You feel angry. That's real. But what do you WISH? Is it the same as what you feel?"
 
-### 4.4 The Lonely Feeler (Emotional × Interpersonal/Magenta)
+### 6.4 The Lonely Feeler (Emotional × Interpersonal/Magenta)
 
 **Loop:** Feels everything but cannot share feelings. Emotional richness without relational expression creates isolation.
 
@@ -254,7 +254,7 @@ mood-holding (can you stay with a feeling?)
 proto-empathy (can you sense another's feeling?)
 ```
 
-### 3.1 Surfacing Logic
+### 7.1 Surfacing Logic
 
 | Capacity tested | Dark-Addiction signal | Dark-Allergy signal | Golden-Addiction signal | Golden-Allergy signal |
 |---|---|---|---|---|

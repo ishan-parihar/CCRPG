@@ -64,7 +64,7 @@ An open Red-stage world: territories to claim, enemies to defeat, resources to g
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Territory configurations:** Areas requiring varied commitment levels

@@ -112,13 +112,23 @@ At Magenta, willpower is PRE-VOLITIONAL. The child can WISH but cannot COMMIT. G
 
 ## 3. Drive-Health Landscape
 
+| Drive | Weight | Dark-domain healthy | Dark-domain pathological | Golden-domain healthy | Golden-domain pathological |
+|---|---|---|---|---|---|
+| **Agency** | 0.30 | Holds wishes independently; owns desire without demanding | Magical Demander (demands aggressively; tantrum when world doesn't comply) | Stands in wish without needing external validation | Wish-Abandoner (cannot form independent wishes; "I don't want anything") |
+| **Communion** | 0.25 | Wishes with others; shares desire-space without fusion | Magical Demander (others exist only as wish-granters; transactional demand) | Joins effortful activities as a self | Wish-Abandoner (cannot wish for or with others; motivational void) |
+| **Eros** | 0.25 | Reaches toward new wishes with curiosity; desire is alive | Magical Demander (compulsive desire-generation; new wishes pile on old) | Reaches toward effort-as-growth without bypassing wish-foundation | Premature Disciplinarian (reaches for Red power-will without Magenta wish-ground) |
+| **Agape** | 0.20 | Returns to held wishes with patience; tolerates delay | Magical Demander (cannot wait; delay = betrayal) | Embodies effort in lived reality; effort grows from desire | Effort-Refuser (cannot embody effort; effort remains theoretical) |
 
+**Drive-health modifier formula:**
+```
+drive_health_modifier = agency × 0.30 + communion × 0.25 + eros × 0.25 + agape × 0.20
+```
 
 ---
 
 ## 4. Healing Vectors
 
-### 5.1 Heal/Evolve (Agape + Agency → Dark Shadows)
+### 4.1 Heal/Evolve (Agape + Agency → Dark Shadows)
 
 **For The Magical Demander:**
 - Agape: Return to the wish with PATIENCE. "You can want it. And wait."
@@ -130,7 +140,7 @@ At Magenta, willpower is PRE-VOLITIONAL. The child can WISH but cannot COMMIT. G
 - Agency: Form a wish independently. "What do YOU want? Even something tiny."
 - Mechanism: Present ultra-low-stakes wish-opportunities. Reward ANY wish-formation.
 
-### 5.2 Evolve/Heal (Eros + Communion → Golden Shadows)
+### 4.2 Evolve/Heal (Eros + Communion → Golden Shadows)
 
 **For The Premature Disciplinarian:**
 - Eros: Reach toward PLAYFUL effort (not rigid). "Effort can be fun."
@@ -159,7 +169,7 @@ At Magenta, willpower is PRE-VOLITIONAL. The child can WISH but cannot COMMIT. G
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 3.1 The Enchanted Demander (Willpower DA ↔ Cognitive/Magenta DA)
+### 6.1 The Enchanted Demander (Willpower DA ↔ Cognitive/Magenta DA)
 
 **Loop:** Magical thinking (Cognitive) FUELS magical demanding (Willpower). "If I think it hard enough, it will happen" → compulsive wishing. And compulsive wishing REINFORCES magical thinking: "My wishes have power because they sometimes come true."
 
@@ -171,7 +181,7 @@ At Magenta, willpower is PRE-VOLITIONAL. The child can WISH but cannot COMMIT. G
 
 ---
 
-### 3.2 The Collapsed Wisher (Willpower DAll ↔ Emotional/Magenta DAll)
+### 6.2 The Collapsed Wisher (Willpower DAll ↔ Emotional/Magenta DAll)
 
 **Loop:** Cannot wish (Willpower) because cannot feel desire (Emotional). And cannot feel desire because there's nothing to wish for. Motivational void feeds emotional flatness feeds motivational void.
 
@@ -183,7 +193,7 @@ At Magenta, willpower is PRE-VOLITIONAL. The child can WISH but cannot COMMIT. G
 
 ---
 
-### 3.3 The Rigid Child (Willpower GA ↔ Somatic/Magenta GA)
+### 6.3 The Rigid Child (Willpower GA ↔ Somatic/Magenta GA)
 
 **Loop:** Premature discipline (Willpower) drives premature athleticism (Somatic). "I must control my body" without inhabiting it. And forced body-control reinforces the belief that effort = force.
 
@@ -195,7 +205,7 @@ At Magenta, willpower is PRE-VOLITIONAL. The child can WISH but cannot COMMIT. G
 
 ---
 
-### 3.4 The Entitled Dreamer (Willpower GAll ↔ Intrapersonal/Magenta DA)
+### 6.4 The Entitled Dreamer (Willpower GAll ↔ Intrapersonal/Magenta DA)
 
 **Loop:** Refuses effort (Willpower) because self-image says "I deserve without doing" (Intrapersonal). And the refusal of effort reinforces the entitled self-image: "I'm special; special people don't have to try."
 
@@ -211,7 +221,7 @@ At Magenta, willpower is PRE-VOLITIONAL. The child can WISH but cannot COMMIT. G
 
 ## 7. Shadow Surfacing Sequence
 
-### 4.1 Surfacing Sequence (Capacity-Gated)
+### 7.1 Surfacing Sequence (Capacity-Gated)
 
 The shadows surface in order of the capacities that reveal them:
 
@@ -223,7 +233,7 @@ The shadows surface in order of the capacities that reveal them:
 | Frustration-tolerance | Can they persist past first obstacle? | DA (tantrum) vs DAll (collapse) |
 | Goal-memory | Can they remember the wish? | DAll (forgets) vs DA (remembers obsessively) |
 
-### 4.2 Diagnostic Decision Tree
+### 7.2 Diagnostic Decision Tree
 
 ```
 Player declares a wish?
@@ -237,7 +247,7 @@ Player declares a wish?
     └─ Wishes beautifully but won't take first step
 ```
 
-### 4.3 Severity Indicators
+### 7.3 Severity Indicators
 
 | Severity | Indicators |
 |---|---|

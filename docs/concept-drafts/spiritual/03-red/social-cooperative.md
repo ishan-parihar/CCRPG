@@ -64,7 +64,7 @@ The Sacred Circle: a social spiritual space where values are shared, challenged,
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Value-challenge scenarios:** Allies question player's value with varying intensity

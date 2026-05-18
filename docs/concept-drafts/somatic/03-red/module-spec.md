@@ -4,7 +4,7 @@
 
 ---
 
-## §1 Capacity Definition
+## 1. Capacity Definition
 
 Somatic/Red is the emergence of **body-as-power-instrument**. The player can:
 - React to stimuli within a tight window (simple RT ≤ 350ms, choice RT ≤ 500ms)
@@ -17,7 +17,7 @@ Somatic/Red is the emergence of **body-as-power-instrument**. The player can:
 
 ---
 
-## §2 Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### Dark-Addiction: "The Compulsive Mover"
 The body cannot stop. Movement avoids inner states. Reacts to EVERYTHING physically. Developmental origin: hypervigilant household or athletic identity as sole self-worth. Manifests as: commission errors on Go/No-Go, fidgeting during holds, rushed rhythm, fast-but-sloppy sequences, intolerance of rest phases.
@@ -33,7 +33,7 @@ Refuses physical discipline or externally-imposed form. Freedom confused with ch
 
 ---
 
-## §3 Drive-Health Landscape
+## 3. Drive-Health Landscape
 
 | Drive | Dark-Domain (submergent health) | Golden-Domain (emergent health) |
 |---|---|---|
@@ -44,7 +44,7 @@ Refuses physical discipline or externally-imposed form. Freedom confused with ch
 
 ---
 
-## §4 Healing Vectors
+## 4. Healing Vectors
 
 ### Heal/Evolve (Agape + Agency) — for dark shadows
 
@@ -60,7 +60,7 @@ Refuses physical discipline or externally-imposed form. Freedom confused with ch
 
 ---
 
-## §5 Scoring Parameters
+## 5. Scoring Parameters
 
 ### Core Tasks & Thresholds
 
@@ -100,7 +100,7 @@ capacity_score = weighted_mean([
 
 ---
 
-## §6 Compound Shadows & Cross-Module
+## 6. Compound Shadows & Cross-Module Relationships
 
 ### Modules that SUPPORT this one
 - **Willpower/Red:** Burst-will enables sustained physical effort under fatigue
@@ -131,7 +131,7 @@ capacity_score = weighted_mean([
 
 ---
 
-## §7 Shadow Surfacing Sequence
+## 7. Shadow Surfacing Sequence
 
 ### Conditions Each Game Must Create
 1. **Stillness is possible** → surfaces dark-addiction (can they stop?)

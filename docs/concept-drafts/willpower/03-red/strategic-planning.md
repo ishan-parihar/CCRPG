@@ -64,7 +64,7 @@ A campaign map — territories to conquer through sequential vows. Each territor
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Campaign configurations:** Territory challenges requiring specific vow-sequences

@@ -64,7 +64,7 @@ The player enters the War-Tongue chamber — a space where warriors articulate t
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Naming prompts:** Post-action reflection ("Name what you just did") — tied to deterministic task outcomes

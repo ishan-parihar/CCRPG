@@ -66,7 +66,7 @@ The Self-With: a relational self-exploration space. Player and companion interac
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Similar companions:** Easy to maintain self (clearly different)

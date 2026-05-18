@@ -41,7 +41,7 @@ The player demonstrates:
 
 ## 2. Shadow Archetypes
 
-### 1.1 Dark-Addiction: "The Dominator"
+### 2.1 Dark-Addiction: "The Dominator"
 
 **Core distortion:** Cannot interact without controlling. Every relationship is a dominance hierarchy. Others exist ONLY as objects to be manipulated, commanded, or broken. Intent-reading is weaponised exclusively for control.
 
@@ -65,7 +65,7 @@ The player demonstrates:
 
 ---
 
-### 1.2 Dark-Allergy: "The Isolate"
+### 2.2 Dark-Allergy: "The Isolate"
 
 **Core distortion:** Cannot engage others at all. Treats ALL other agents as threats. Refuses all alliance, all coordination, all reading. "I need no one. Others are dangerous. Alone is safe."
 
@@ -89,7 +89,7 @@ The player demonstrates:
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Diplomat"
+### 2.3 Golden-Addiction: "The Premature Diplomat"
 
 **Core distortion:** Performs sophisticated social behaviour (negotiation, empathy-language, conflict resolution, "I hear you" statements) WITHOUT genuine Red-level intent-reading. The FORM of advanced interpersonal capacity without the SUBSTANCE of basic Red mastery.
 
@@ -113,7 +113,7 @@ The player demonstrates:
 
 ---
 
-### 1.4 Golden-Allergy: "The Loyalty-Refuser"
+### 2.4 Golden-Allergy: "The Loyalty-Refuser"
 
 **Core distortion:** Can read others accurately and coordinate effectively but REFUSES loyalty, bonding, or any form of relational commitment. Treats all bonds as weakness. "Caring about allies is a vulnerability I won't accept."
 
@@ -179,7 +179,7 @@ The player demonstrates:
 
 ## 4. Healing Vectors
 
-### 3.1 Heal/Evolve (Agape + Agency → dark shadows)
+### 4.1 Heal/Evolve (Agape + Agency → dark shadows)
 
 **For The Dominator:**
 - Agape: Return to BASIC coordination (not dominance). "Can you simply coordinate? Not command — coordinate."
@@ -193,7 +193,7 @@ The player demonstrates:
 - Mechanism: Present ultra-safe interpersonal contexts (NPC who CANNOT betray; stakes are zero)
 - Integration marker: Can read one NPC's intent; can accept one alliance; can tolerate another's presence
 
-### 3.2 Evolve/Heal (Eros + Communion → golden shadows)
+### 4.2 Evolve/Heal (Eros + Communion → golden shadows)
 
 **For The Premature Diplomat:**
 - Eros: Reach toward GENUINE reading (not performed). "What do they ACTUALLY want? Not what you think they should want."
@@ -253,7 +253,7 @@ If the player can do ALL FIVE in a single scenario with healthy drive expression
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 4.1 The Puppet-Master (Interpersonal dark-addiction × Cognitive healthy)
+### 6.1 The Puppet-Master (Interpersonal dark-addiction × Cognitive healthy)
 
 ```
 High cognitive capacity → reads others perfectly
@@ -265,7 +265,7 @@ High cognitive capacity → reads others perfectly
 
 **Breaking the loop:** Cognitive capacity must be redirected toward MUTUAL benefit. Present problems that require genuine coordination (not manipulation) to solve. Make manipulation produce diminishing returns.
 
-### 4.2 The Feral (Interpersonal dark-allergy × Emotional dark-allergy)
+### 6.2 The Feral (Interpersonal dark-allergy × Emotional dark-allergy)
 
 ```
 Cannot read others (interpersonal dark-allergy)
@@ -277,7 +277,7 @@ Cannot read others (interpersonal dark-allergy)
 
 **Breaking the loop:** Start with NON-HUMAN interpersonal (animal companions, simple NPCs with unmistakable signals). Build the reading muscle in safe contexts before introducing human-complexity.
 
-### 4.3 The Charmer (Interpersonal golden-addiction × Emotional golden-addiction)
+### 6.3 The Charmer (Interpersonal golden-addiction × Emotional golden-addiction)
 
 ```
 Performs sophisticated social behaviour (interpersonal golden-addiction)
@@ -289,7 +289,7 @@ Performs sophisticated social behaviour (interpersonal golden-addiction)
 
 **Breaking the loop:** Require MEASURABLE accuracy (deterministic tasks) not just performed sophistication. Ground both lines in objective measurement. Simple + accurate > elaborate + inaccurate.
 
-### 4.4 The Lone Wolf (Interpersonal golden-allergy × Willpower dark-addiction)
+### 6.4 The Lone Wolf (Interpersonal golden-allergy × Willpower dark-addiction)
 
 ```
 Refuses all bonds (interpersonal golden-allergy)
@@ -307,7 +307,7 @@ Refuses all bonds (interpersonal golden-allergy)
 
 ## 7. Shadow Surfacing Sequence
 
-### 2.1 The diagnostic progression
+### 7.1 The diagnostic progression
 
 Each game surfaces shadows through a specific sequence:
 
@@ -348,7 +348,7 @@ PHASE 5: LOYALTY
   → Do they refuse loyalty as weakness? (golden-allergy)
 ```
 
-### 2.2 Cross-modality validation
+### 7.2 Cross-modality validation
 
 | Signal | Modality A | Modality B | If A >> B |
 |---|---|---|---|

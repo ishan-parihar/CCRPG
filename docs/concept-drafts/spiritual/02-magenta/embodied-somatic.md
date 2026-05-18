@@ -66,7 +66,7 @@ The Sacred Body: a somatic sacred-exploration space. Sacred content is presented
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Strong sacred stimuli:** Obviously numinous content (easy to feel in body)

@@ -66,7 +66,7 @@ The Shared-Sacred: a moral cooperation space. Player and companion maintain sacr
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Simple exchanges:** Clear give/receive pairs

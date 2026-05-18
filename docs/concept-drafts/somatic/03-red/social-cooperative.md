@@ -66,7 +66,7 @@ The player is part of a war-pack — 2-3 NPC allies with distinct physical style
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Rhythm patterns:** Shared rhythms at varied tempos and complexities

@@ -66,7 +66,7 @@ The Feeling-Together: a shared emotional space where player and companion feel t
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear contagion items:** Companion with obvious emotions to catch

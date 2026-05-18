@@ -63,7 +63,7 @@ An open Magenta-stage world where EVERYTHING has emotional texture. Zones with d
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Mood-zones:** Areas with distinct emotional atmospheres

@@ -65,7 +65,7 @@ A physical obstacle course — walls to breach, gaps to cross, enemies to defeat
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Obstacle configurations:** Physical challenges requiring specific action sequences

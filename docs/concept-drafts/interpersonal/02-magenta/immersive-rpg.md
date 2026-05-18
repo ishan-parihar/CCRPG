@@ -63,7 +63,7 @@ An open Magenta-stage world populated with phantom-allies, spirit-presences, and
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Presences:** Beings to sense and approach

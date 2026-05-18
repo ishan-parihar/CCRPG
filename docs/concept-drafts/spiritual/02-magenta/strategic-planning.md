@@ -66,7 +66,7 @@ The Sacred Preparation: a ritual-planning space. The player must organise steps 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Simple offerings:** One-step sacred actions

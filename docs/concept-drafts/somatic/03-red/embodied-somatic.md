@@ -66,7 +66,7 @@ A sacred training space — not the Forge (that's deterministic) but the DOJO: a
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Movement invitations:** Prompts for specific qualities of movement (powerful, gentle, fast, slow, alive, still)

@@ -66,7 +66,7 @@ The Sacred-Consequence: a moral prediction space. Actions are presented (honouri
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear violations:** Obvious taboo-breaks with predictable consequences

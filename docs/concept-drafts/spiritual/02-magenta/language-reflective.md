@@ -66,7 +66,7 @@ The Spirit-Words: a sacred articulation space. The player encounters numinous co
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Naming prompts:** "What do you call this?" (sacred stimuli requiring names)

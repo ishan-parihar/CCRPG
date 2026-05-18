@@ -64,7 +64,7 @@ The Self-in-the-Circle: a coordination game where self-knowledge must be COMMUNI
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Self-representation tasks:** Communicate capacity to ally for coordination

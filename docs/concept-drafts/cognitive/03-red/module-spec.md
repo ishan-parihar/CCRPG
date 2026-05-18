@@ -4,7 +4,7 @@
 
 ---
 
-## §1 Capacity Definition
+## 1. Capacity Definition
 
 ### What this module measures
 
@@ -31,7 +31,7 @@ Not formal-operational. The player cannot yet: hold abstract hypotheticals (Oran
 
 ---
 
-## §2 Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### Dark-Addiction: "The Compulsive Strategist"
 
@@ -67,7 +67,7 @@ Not formal-operational. The player cannot yet: hold abstract hypotheticals (Oran
 
 ---
 
-## §3 Drive-Health Landscape
+## 3. Drive-Health Landscape
 
 | Drive | Domain | Healthy expression (→1.0) | Pathological pole (→0.0) |
 |---|---|---|---|
@@ -82,7 +82,7 @@ Not formal-operational. The player cannot yet: hold abstract hypotheticals (Oran
 
 ---
 
-## §4 Healing Vectors
+## 4. Healing Vectors
 
 ### Heal/Evolve (bottom-up): Agape + Agency integrate dark shadows
 
@@ -109,7 +109,7 @@ Module-level resolution: All 4 quadrant severities < 0.2 for 10+ sessions; no co
 
 ---
 
-## §5 Scoring Parameters
+## 5. Scoring Parameters
 
 ### Capacity score computation
 
@@ -154,7 +154,7 @@ The MAX function: the worst shadow determines the score.
 
 ---
 
-## §6 Compound Shadows & Cross-Module Relationships
+## 6. Compound Shadows & Cross-Module Relationships
 
 ### Compound shadow patterns
 
@@ -203,7 +203,7 @@ The MAX function: the worst shadow determines the score.
 
 ---
 
-## §7 Shadow Surfacing Sequence
+## 7. Shadow Surfacing Sequence
 
 ### Progressive revelation
 

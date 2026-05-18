@@ -67,7 +67,7 @@ A Red-stage training ground: stone floor, weapon racks, striking posts, a war-dr
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **RT stimuli:** Visual targets with varied positions, colours, sizes (simple and choice variants)

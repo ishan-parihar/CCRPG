@@ -66,7 +66,7 @@ The Mood-Map: an emotional forecasting space. Situations are presented (visually
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Obvious situations:** Clear emotional valence (dark cave, sunny meadow)

@@ -64,7 +64,7 @@ The Self-Strategist: a multi-task campaign where the player must ORDER and APPRO
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Fatigue-ordering tasks:** Sequence tasks knowing energy depletes

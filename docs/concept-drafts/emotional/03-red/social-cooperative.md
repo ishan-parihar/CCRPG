@@ -63,7 +63,7 @@ The Wroth-Pack: a war-band where emotional intelligence is TACTICAL. Reading all
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Reading scenarios:** NPCs displaying emotions at varied clarity levels

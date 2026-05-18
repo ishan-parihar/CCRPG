@@ -65,7 +65,7 @@ The player commands a siege operation from a war-table. A miniature fortress is 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Fortress configurations:** Wall/gate/tower arrangements (procedurally generated from templates)

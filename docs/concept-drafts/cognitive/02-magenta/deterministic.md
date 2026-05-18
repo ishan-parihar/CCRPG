@@ -64,7 +64,7 @@ The Glimmer-Catcher: rune-symbols appear in a magical space (painted cave, totem
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Target symbols:** Runes/glyphs the player must track (varied complexity)

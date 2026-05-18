@@ -64,7 +64,7 @@ The Value-Strategist: a campaign-planning game where every step must serve the p
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Simple value-alignment tasks:** 2-step plans serving stated value

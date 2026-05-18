@@ -65,7 +65,7 @@ The Body-Tongue: a verbal-somatic space where the player names body-experience. 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Open naming prompts:** "What does X feel like?"

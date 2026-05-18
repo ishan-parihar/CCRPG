@@ -6,7 +6,7 @@
 
 ---
 
-## §1 Game Identity
+## 1. Game Identity
 
 - **Title:** "The Embodied World"
 - **Core mechanic:** An open Amber-stage world saturated with embodied-discipline content. Dojos with open practice. Processions to join. Rhythmic environments. Breath-gated passages. The player's spontaneous engagement with disciplined movement — how they inhabit a body-honouring world without being prompted — reveals genuine somatic intelligence.
@@ -15,7 +15,7 @@
 
 ---
 
-## §2 Catalyst Delivery
+## 2. Catalyst Delivery
 
 **What it uniquely presents:** An ECOLOGICAL context — embodied-discipline content embedded in a living world, not presented as tasks.
 
@@ -27,7 +27,7 @@
 
 ---
 
-## §3 Game Design
+## 3. Game Design
 
 ### Setup
 An open Amber-stage world saturated with embodied-discipline content. Dojos with open practice. Processions through streets. Breath-gated passages. Rhythmic environments. Posture-locked doors. Every zone has body-honouring content — opportunities to hold, synchronise, breathe, and move with discipline.
@@ -62,7 +62,7 @@ An open Amber-stage world saturated with embodied-discipline content. Dojos with
 
 ---
 
-## §4 Item Pool
+## 4. Item Pool
 
 | Type | Pool size |
 |---|---|
@@ -74,7 +74,7 @@ An open Amber-stage world saturated with embodied-discipline content. Dojos with
 
 ---
 
-## §5 Technical Requirements
+## 5. Technical Requirements
 
 - **Inputs:** Navigation (exploration); hold (posture-locks); rhythm-tap (rhythmic zones); breath-tap (breath-gates); sequence-tap (dojo practice)
 - **Timing:** Session-level tracking (engagement patterns, body-challenge success); millisecond precision for synchrony in rhythmic zones; breath-rate tracking for breath-gates

@@ -65,7 +65,7 @@ The Body-Reader: objective somatic measurement in a magical space. The player ho
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Postural holds:** Various postures with increasing duration/stability demands

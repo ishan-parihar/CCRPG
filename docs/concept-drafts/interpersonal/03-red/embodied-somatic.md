@@ -64,7 +64,7 @@ The War-Body's Eye: a training ground where bodies speak. NPCs approach with phy
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Body-signal profiles:** NPC posture/movement configurations signalling specific intents

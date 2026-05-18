@@ -66,7 +66,7 @@ The Mirror-Pool: a magical reflecting surface. Images appear — some are the pl
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Clear self-images:** Obviously the player's magical self

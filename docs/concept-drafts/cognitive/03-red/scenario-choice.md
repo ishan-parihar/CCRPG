@@ -64,7 +64,7 @@ The player sits in a war-room with a tactical map. A "War-Council" of NPCs prese
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Resource dilemmas:** Allocate limited resources between competing needs (gold, soldiers, time)

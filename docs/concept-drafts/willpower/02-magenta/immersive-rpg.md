@@ -63,7 +63,7 @@ An open Magenta-stage world where wishes have VISIBLE POWER. Wishing-wells that 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Wishing-wells:** Objects requiring stable wishes to activate

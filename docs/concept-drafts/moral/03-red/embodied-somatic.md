@@ -64,7 +64,7 @@ The Consequence-Body: a physical training ground where actions have moral weight
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Moral-physical actions:** Strike/give/take/share/defend with varying moral weight

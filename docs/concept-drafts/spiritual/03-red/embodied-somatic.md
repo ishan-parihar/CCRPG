@@ -64,7 +64,7 @@ The Sacred-Body: a physical space where value-charged actions are measured somat
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Value-aligned physical actions:** Actions in service of stated value

@@ -63,7 +63,7 @@ The War-Planner: a campaign map where alliances are MOVES. The player must plan 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Campaign scenarios:** Multi-step situations requiring planned alliances

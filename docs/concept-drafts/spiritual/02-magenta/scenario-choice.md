@@ -66,7 +66,7 @@ The Sacred Path: a choice-space where paths diverge. One path glows (sacred); on
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Low-cost forks:** Sacred slightly harder (entry-level)

@@ -15,7 +15,7 @@ Key distinction from Red: Red has TRANSACTIONAL spiritual capacity ("I pray for 
 
 ## 2. Shadow Archetypes
 
-### 1.1 Dark-Addiction: "The Spirit-Addict"
+### 2.1 Dark-Addiction: "The Spirit-Addict"
 
 **Core pattern:** Clings to numinous experience. Cannot function without sacred signs. Every event must be "meaningful." Magical dependency on the sacred — the world MUST be enchanted or existence is unbearable.
 
@@ -46,7 +46,7 @@ Key distinction from Red: Red has TRANSACTIONAL spiritual capacity ("I pray for 
 
 ---
 
-### 1.2 Dark-Allergy: "The Spirit-Denier"
+### 2.2 Dark-Allergy: "The Spirit-Denier"
 
 **Core pattern:** Cannot sense the sacred. The world is flat, dead, mechanical. Numinous blindness — not rational scepticism (that's Orange) but pre-rational inability to FEEL the sacred. The numinous is repressed, not transcended.
 
@@ -77,7 +77,7 @@ Key distinction from Red: Red has TRANSACTIONAL spiritual capacity ("I pray for 
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Priest"
+### 2.3 Golden-Addiction: "The Premature Priest"
 
 **Core pattern:** Bypasses to Red transactional faith. Uses the sacred for POWER. "I pray so the gods give me strength." The sacred is not participated in — it is EXPLOITED. Spiritual capacity becomes a tool for ego-amplification.
 
@@ -108,7 +108,7 @@ Key distinction from Red: Red has TRANSACTIONAL spiritual capacity ("I pray for 
 
 ---
 
-### 1.4 Golden-Allergy: "The Sacred-Refuser"
+### 2.4 Golden-Allergy: "The Sacred-Refuser"
 
 **Core pattern:** Senses the sacred but WON'T participate. Feels the numinous pull but retreats. The call to spiritual engagement is felt but refused — not from inability (that's dark-allergy) but from FEAR. The sacred is too big, too overwhelming, too demanding.
 
@@ -150,19 +150,19 @@ Key distinction from Red: Red has TRANSACTIONAL spiritual capacity ("I pray for 
 | Agency | 0.20 | Some sovereign capacity to invoke/participate independently |
 | Agape | 0.20 | Maintaining sacred relationship over time |
 
-### 2.1 Agency (healthy)
+### 3.1 Agency (healthy)
 - **Dark-domain:** Can sense and participate in the sacred INDEPENDENTLY — doesn't need others to validate numinous experience
 - **Golden-domain:** Can stand at the edge of deeper sacred experience without needing confirmation
 
-### 2.2 Communion (healthy)
+### 3.2 Communion (healthy)
 - **Dark-domain:** Can share sacred experience without losing own relationship to the numinous
 - **Golden-domain:** Can participate in GROUP ritual without fusion or isolation
 
-### 2.3 Eros (healthy)
+### 3.3 Eros (healthy)
 - **Dark-domain:** Can rest in current sacred relationship without compulsive seeking of MORE
 - **Golden-domain:** Can sense the call to deeper spiritual capacity without rushing or bypassing
 
-### 2.4 Agape (healthy)
+### 3.4 Agape (healthy)
 - **Dark-domain:** Can return to sacred awareness after absence without panic or loss
 - **Golden-domain:** Can embody sacred relationship in ordinary life (not just in ritual)
 
@@ -172,7 +172,7 @@ Key distinction from Red: Red has TRANSACTIONAL spiritual capacity ("I pray for 
 
 ## 4. Healing Vectors
 
-### 6.1 Heal/Evolve (Agape + Agency → integrate dark shadows)
+### 4.1 Heal/Evolve (Agape + Agency → integrate dark shadows)
 
 **For Spirit-Addict:**
 - Agape: Return to sacred relationship with BOUNDARIES. The sacred is real AND you can function without constant signs.
@@ -184,7 +184,7 @@ Key distinction from Red: Red has TRANSACTIONAL spiritual capacity ("I pray for 
 - Agency: Choose to NOTICE. Not believe — just notice. "Something more" is a feeling, not a belief.
 - Integration: "The world has depth. You can feel it. Just a little. That's enough. It's real."
 
-### 6.2 Evolve/Heal (Eros + Communion → dissolve golden shadows)
+### 4.2 Evolve/Heal (Eros + Communion → dissolve golden shadows)
 
 **For Premature Priest:**
 - Eros: Reach for genuine sacred RELATIONSHIP, not sacred POWER. The spirits are not servants.
@@ -231,22 +231,22 @@ final_score = spiritual_magenta_health × drive_health_modifier × shadow_penalt
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 4.1 Enchanted Believer (Spiritual + Cognitive)
+### 6.1 Enchanted Believer (Spiritual + Cognitive)
 **Pattern:** Magical thinking fused with numinous sense. Cannot separate sacred from fantasy. "The spirits told me 2+2=5." Cognitive capacity is colonised by spiritual inflation.
 - **Direction:** Spiritual dark-addiction amplifies Cognitive dark-addiction (magical thinking)
 - **Resolution:** Differentiate sacred FEELING from cognitive KNOWING. Both valid, different domains.
 
-### 4.2 Numb Sacred (Spiritual + Somatic)
+### 6.2 Numb Sacred (Spiritual + Somatic)
 **Pattern:** Senses sacred cognitively but cannot FEEL it in body. "I know the spirits are there but I can't feel them." Disembodied spirituality.
 - **Direction:** Somatic dark-allergy blocks Spiritual embodiment
 - **Resolution:** Ground sacred experience in body-feeling. Where do you feel the sacred?
 
-### 4.3 Power-Prayer (Spiritual + Willpower)
+### 6.3 Power-Prayer (Spiritual + Willpower)
 **Pattern:** Uses spiritual capacity exclusively for will-amplification. "I pray to be stronger." Sacred relationship reduced to willpower fuel.
 - **Direction:** Willpower dark-addiction exploits Spiritual capacity
 - **Resolution:** Differentiate sacred RELATIONSHIP from power TOOL. Sacred is not fuel.
 
-### 4.4 Lonely Sacred (Spiritual + Interpersonal)
+### 6.4 Lonely Sacred (Spiritual + Interpersonal)
 **Pattern:** Cannot share sacred experience with others. Numinous isolation. "I feel the spirits but I can't tell anyone." Sacred experience is private/shameful.
 - **Direction:** Interpersonal dark-allergy isolates Spiritual experience
 - **Resolution:** Sacred experience can be shared. Others feel it too. You're not alone in the numinous.

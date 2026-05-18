@@ -66,7 +66,7 @@ The Name-Self: a verbal self-exploration space. The player is invited to name wh
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Context prompts:** Situations requiring self-naming ("Who are you when…?")

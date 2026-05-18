@@ -64,7 +64,7 @@ The player leads a war-band of 2-4 NPC allies. Each ally has visible traits (str
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **Coordination challenges:** Timing/sequencing tasks requiring 2+ agents

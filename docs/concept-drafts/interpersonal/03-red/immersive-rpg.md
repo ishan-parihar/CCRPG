@@ -63,7 +63,7 @@ An open Red-stage world populated with agents. NPCs have intentions, form their 
 
 ---
 
-## 4. Item Pool Specification
+## 4. Item Pool
 
 ### Item types
 - **NPC agent configurations:** Characters with varied intentions, alliance preferences, and betrayal thresholds

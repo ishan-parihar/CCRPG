@@ -188,7 +188,7 @@ Spiritual is the "why" line — it organises all other lines around ultimate con
 
 ## 4. Healing Vectors
 
-### 5.1 For Dark-Addiction (The Zealot)
+### 4.1 For Dark-Addiction (The Zealot)
 
 **Vector:** Agape + Agency (return to simple value-identification with sovereign honesty)
 
@@ -198,7 +198,7 @@ Spiritual is the "why" line — it organises all other lines around ultimate con
 3. Reward value-coherence that serves alignment over domination
 4. Gradually: the sacred becomes a source of MEANING, not just a weapon
 
-### 5.2 For Dark-Allergy (The Nihilist)
+### 4.2 For Dark-Allergy (The Nihilist)
 
 **Vector:** Agape + Agency (return to value-identification with sovereign courage)
 
@@ -208,7 +208,7 @@ Spiritual is the "why" line — it organises all other lines around ultimate con
 3. Start with TINY value-commitments ("For this ONE fight, what matters?")
 4. Gradually: small values → sustained values → the nihilist discovers that meaning is power
 
-### 5.3 For Golden-Addiction (The Premature Mystic)
+### 4.3 For Golden-Addiction (The Premature Mystic)
 
 **Vector:** Eros + Communion (reach for genuine capacity through honest grounding)
 
@@ -218,7 +218,7 @@ Spiritual is the "why" line — it organises all other lines around ultimate con
 3. Frame: "Before you transcend values, HAVE one. Name it. Hold it. THEN transcend."
 4. Gradually: concrete value → sustained coherence → genuine depth → THEN transcendence is real
 
-### 5.4 For Golden-Allergy (The Sacred-Refuser)
+### 4.4 For Golden-Allergy (The Sacred-Refuser)
 
 **Vector:** Eros + Communion (reach for commitment through safe joining)
 
@@ -254,7 +254,7 @@ Spiritual is the "why" line — it organises all other lines around ultimate con
 
 ## 6. Compound Shadows & Cross-Module Relationships
 
-### 4.1 The Holy Warrior (Spiritual + Willpower)
+### 6.1 The Holy Warrior (Spiritual + Willpower)
 
 **Loop:** Spiritual dark-addiction (zealotry) + Willpower dark-addiction (compulsive pursuit) = fanatical, unstoppable pursuit of sacred goal. The will serves the weaponised sacred without question. Crusade-mode.
 
@@ -262,7 +262,7 @@ Spiritual is the "why" line — it organises all other lines around ultimate con
 
 **Breaking the loop:** Present situations where the sacred goal REQUIRES restraint. "Your god demands you WAIT. Your god demands you show mercy. Can your will serve THAT?"
 
-### 4.2 The Meaning-Void (Spiritual + Intrapersonal)
+### 6.2 The Meaning-Void (Spiritual + Intrapersonal)
 
 **Loop:** Spiritual dark-allergy (nihilism) + Intrapersonal dark-allergy (unexamined) = no values AND no self-knowledge. Drifting without anchor or mirror. Cannot say what matters because they don't know themselves, and don't know themselves because nothing matters enough to look.
 
@@ -270,7 +270,7 @@ Spiritual is the "why" line — it organises all other lines around ultimate con
 
 **Breaking the loop:** Start with the BODY (somatic entry). The body has preferences even when the mind refuses. "Your body chose to protect that. Something matters. What?"
 
-### 4.3 The Spiritual Bypasser (Spiritual + Intrapersonal)
+### 6.3 The Spiritual Bypasser (Spiritual + Intrapersonal)
 
 **Loop:** Spiritual golden-addiction (premature transcendence) + Intrapersonal golden-addiction (premature witness) = performs "enlightened awareness" without Red grounding in either line. Claims transcendence of both self and values without ever having either.
 
@@ -278,7 +278,7 @@ Spiritual is the "why" line — it organises all other lines around ultimate con
 
 **Breaking the loop:** Require CONCRETE Red demonstrations. "Before you transcend values, HAVE a value. Before you witness the self, KNOW the self. Ground first."
 
-### 4.4 The Power-Atheist (Spiritual + Cognitive)
+### 6.4 The Power-Atheist (Spiritual + Cognitive)
 
 **Loop:** Spiritual dark-allergy (nihilism) + Cognitive dark-addiction (intellectualisation) = uses cognitive power to JUSTIFY spiritual emptiness. "Values are irrational. Meaning is a construct. I'm too smart for faith." Intelligence weaponised against the sacred.
 
