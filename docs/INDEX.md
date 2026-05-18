@@ -12,16 +12,19 @@
 4. `01-first-principles.md`
 5. `02-glossary.md`
 6. `03-research-methodology.md`
-7. `foundations/00-…10-…` (in order)
+7. `foundations/00-…22-…` (in order — **00–09 substrate, 10–14 lesser cycle, 15–22 greater cycle**)
 8. `lines/00-overview-multi-line.md` then `01-…08-…` (any order)
 9. `stages/00-overview-eight-stages.md` then `01-…08-…` (in order)
 10. `combat/00-combat-philosophy.md`
 11. `enemies/00-enemy-taxonomy.md`
 12. `progression/00-progression-overview.md`
 13. `narrative/00-narrative-architecture.md`
-14. `CHANGELOG.md` — what changed, and when.
+14. `concept-drafts/README.md` then a sampled module to see the lesser-cycle design briefs in concrete form
+15. `CHANGELOG.md` — what changed, and when.
 
-## The 38 foundational documents
+> **For the impatient:** read `00-vision.md`, then `foundations/15` and `foundations/21`. That gives you the world's metaphysics and the master architectural synthesis. Everything else fills in detail.
+
+## The 50 foundational documents
 
 ### Meta layer (5)
 
@@ -31,7 +34,9 @@
 - `02-glossary.md`
 - `03-research-methodology.md`
 
-### `foundations/` (11)
+### `foundations/` (23)
+
+#### Theoretical substrate (00–09)
 
 - `00-integral-theory.md`
 - `01-aqal-quadrants.md`
@@ -43,7 +48,27 @@
 - `07-neuroscience-of-development.md`
 - `08-psychophysics-and-staircase.md`
 - `09-flow-and-engagement-theory.md`
-- `10-shadow-and-pathology.md`
+
+#### Lesser-cycle game design (10–14)
+> Mechanises the **Matrix → Potentiator → Catalyst → Experience** archetypes — the per-encounter metabolic engine.
+
+- `10-shadow-and-pathology.md` — 4-quadrant shadow model
+- `11-game-modalities.md` — the 7 modalities, modality×line affinity
+- `12-drive-assessment-mechanics.md` — per-module drive probes, dual-domain scoring
+- `13-architecture-of-consciousness.md` — 5-layer topography, contact boundary, Matrix/Potentiator
+- `14-game-as-developmental-catalyst.md` — catalyst→experience→integration mechanics
+
+#### Greater-cycle game design (15–22)
+> Mechanises the **Significator → Transformation → Great Way → Choice** archetypes — the per-incarnation evolutionary engine. The Veil of Forgetting governs all of it. `21` is the master synthesis.
+
+- `15-macro-scale-archetypal-mind.md` — pure theoretical substrate (the Logos blueprint)
+- `16-significator-architecture.md` — player-as-persistent-soul-pattern, distortion ledger
+- `17-transformation-mechanics.md` — frame-change at stage thresholds, the Lovers crucible
+- `18-great-way-world-architecture.md` — world as PESTLE-mapped collective holons
+- `19-choice-and-polarity-engine.md` — STO/STS vectors, consequence propagation
+- `20-veil-of-forgetting.md` — the implicit-operation principle
+- `21-incarnation-architecture.md` ← **master synthesis (Option C)**
+- `22-holon-context-engine.md` — LLM-driven world implementation
 
 ### `lines/` (9) — one per line of intelligence
 

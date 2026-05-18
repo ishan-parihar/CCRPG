@@ -21,6 +21,7 @@ CCRPG is a Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified
 ```
 docs/
 ├── foundations/          ← Theoretical substrate (pure theory + game-design translation)
+│   │
 │   ├── 00-integral-theory.md
 │   ├── 01-aqal-framework.md
 │   ├── 02-stages-of-consciousness.md
@@ -31,11 +32,24 @@ docs/
 │   ├── 07-neuroscience-of-assessment.md
 │   ├── 08-psychophysics-and-adaptive-testing.md
 │   ├── 09-flow-and-engagement.md
+│   │
+│   │  ── Lesser-cycle: Matrix / Potentiator / Catalyst / Experience ──
 │   ├── 10-shadow-and-pathology.md          ← 4-quadrant shadow model, drive-health, holonic return
 │   ├── 11-game-modalities.md               ← 7 game types, modality×line affinity
 │   ├── 12-drive-assessment-mechanics.md    ← Per-module drive probes, dual-domain scoring
 │   ├── 13-architecture-of-consciousness.md ← 5-layer topography, contact boundary, Matrix/Potentiator
-│   └── 14-game-as-developmental-catalyst.md← Catalyst→experience→integration mechanics
+│   ├── 14-game-as-developmental-catalyst.md← Catalyst→experience→integration mechanics
+│   │
+│   │  ── Greater-cycle: Significator / Transformation / Great Way / Choice ──
+│   ├── 15-macro-scale-archetypal-mind.md   ← Pure theory of the macro-archetypes (the Logos blueprint)
+│   ├── 16-significator-architecture.md     ← Player as persistent soul-pattern; PlayerProfile-as-Significator
+│   ├── 17-transformation-mechanics.md      ← Frame-change at stage thresholds; Lovers crucible
+│   ├── 18-great-way-world-architecture.md  ← World as PESTLE-mapped collective holons
+│   ├── 19-choice-and-polarity-engine.md    ← STO/STS vectors, consequence propagation
+│   ├── 20-veil-of-forgetting.md            ← The implicit-operation principle
+│   ├── 21-incarnation-architecture.md      ← MASTER SYNTHESIS (Option C: layered-world incarnation)
+│   └── 22-holon-context-engine.md          ← LLM-driven world implementation spec
+│
 ├── concept-drafts/      ← 512 game concept documents (64 modules × 8 files)
 │   ├── README.md        ← Templates and requirements for each file
 │   ├── ROADMAP.md       ← Development phases and process
@@ -54,28 +68,75 @@ docs/
 
 | Document | Unique lateral |
 |---|---|
-| foundations/10 | WHAT shadows are and how they map to game mechanics |
-| foundations/11 | WHAT types of games exist and what each measures |
+| **— Theoretical substrate (00–09) —** ||
+| foundations/00–09 | Pure theory: integral, AQAL, stages, lines, states, drives, Law-of-One, neuroscience, psychophysics, flow |
+| **— Lesser-cycle game design (10–14) —** ||
+| foundations/10 | WHAT shadows are and how they map to game mechanics (4-quadrant shadow model) |
+| foundations/11 | WHAT types of games exist and what each measures (the 7 modalities) |
 | foundations/12 | HOW drives are measured (concrete probe specifications) |
-| foundations/13 | The THEORETICAL substrate (pure psychology/cosmology) |
-| foundations/14 | HOW a game becomes a developmental catalyst (the bridge) |
+| foundations/13 | The THEORETICAL substrate of consciousness (5-layer topography, contact boundary, Matrix/Potentiator) |
+| foundations/14 | HOW a game becomes a developmental catalyst (catalyst → experience → integration) |
+| **— Greater-cycle game design (15–22) —** ||
+| foundations/15 | PURE THEORY of the macro-archetypes (Significator/Transformation/Great Way/Choice + Veil) |
+| foundations/16 | The Significator: player as persistent soul-pattern; PlayerProfile-as-Significator; the distortion ledger |
+| foundations/17 | Transformation: frame-change at stage thresholds; the Lovers crucible; ego-dissolution mechanics |
+| foundations/18 | The Great Way: world as PESTLE-mapped collective holons; layered perception; macro-catalyst engine |
+| foundations/19 | The Choice & polarity engine: STO/STS vectors, micro-choice aggregation, consequence propagation |
+| foundations/20 | The Veil of Forgetting: the implicit-operation principle; what the game reveals vs withholds |
+| foundations/21 | **MASTER SYNTHESIS** (Option C): how all greater-cycle archetypes + concept-drafts + modalities compose into a playable game |
+| foundations/22 | The Holon Context Engine: LLM-driven world implementation spec (data model, pipeline, generation, consequences) |
+| **— Architecture / process docs —** ||
 | STAGE-ASSESSMENT-ARCHITECTURE | The MODULE CONTRACT (composition rules, interfaces) |
 | concept-drafts/README | TEMPLATES for what each concept-draft file must contain |
 | concept-drafts/ROADMAP | The TRAJECTORY for developing all 512 concept-drafts |
+| MVP-BLUEPRINT.md | The actionable build plan (the *how* and the *when*) |
 
 ### 2.3 Document Relationships (No Circular Dependencies)
 
 ```
-foundations/13 (PURE THEORY: topography, contact boundary, Matrix/Potentiator)
-    ↓ provides theoretical substrate to
-foundations/10 (GAME DESIGN: 4-quadrant shadow model, drive-health formulas)
-foundations/12 (MECHANICS: dual-domain drive probes, scoring)
-foundations/14 (BRIDGE: how games become catalysts)
-    ↓ all inform
-concept-drafts/ (CONCRETE DESIGNS: 512 game concepts)
-    ↓ implemented by
-src/ (CODE: the actual game)
+            ┌───────────────────────────────────────────────────────────┐
+            │  Theoretical substrate (foundations 00–09)                 │
+            │  Integral, AQAL, stages, lines, states, drives, Law-of-One,│
+            │  neuroscience, psychophysics, flow                          │
+            └─────────────────────────┬─────────────────────────────────┘
+                                      │ informs both cycles
+            ┌─────────────────────────┴─────────────────────────────────┐
+            ↓                                                            ↓
+┌───────────────────────────────┐                  ┌────────────────────────────────────┐
+│  LESSER CYCLE (foundations 10–14)               │  GREATER CYCLE (foundations 15–22)  │
+│  Matrix → Potentiator → Catalyst → Experience   │  Significator / Transformation /    │
+│                                                  │  Great Way / Choice / Veil          │
+│  10 — shadow model (theoretical)                │  15 — macro archetypes (pure theory)│
+│  11 — 7 modalities                               │  16 — Significator (player vessel) │
+│  12 — drive probes (mechanics)                  │  17 — Transformation (frame-change) │
+│  13 — consciousness topography (theoretical)    │  18 — Great Way (world architecture)│
+│  14 — catalyst→experience→integration (bridge)  │  19 — Choice/polarity engine        │
+│                                                  │  20 — Veil of Forgetting (principle)│
+└──────────────────┬───────────────────────────────┘                  ↓                  │
+                   │                                  ┌───────────────┴────────────────┐ │
+                   │                                  │  21 — Incarnation Architecture │ │
+                   │                                  │       (MASTER SYNTHESIS, Option C)│
+                   │                                  │  22 — Holon Context Engine     │ │
+                   │                                  │       (LLM-driven world impl)  │ │
+                   │                                  └───────────────┬────────────────┘ │
+                   │                                                  │                  │
+                   ↓                                                  ↓                  │
+            ┌──────────────────────────────────────────────────────────────────────┐    │
+            │  concept-drafts/ — 512 game concept documents (64 modules × 8 files) │    │
+            │  Module-spec defines the lesser-cycle anchor; the 7 game files       │    │
+            │  define the lesser-cycle catalyst at each modality.                  │    │
+            └──────────────────────────────────┬───────────────────────────────────┘    │
+                                               ↓                                         │
+            ┌────────────────────────────────────────────────────────────────────┐      │
+            │  src/ — the actual game (driven by 21's encounter scheduler &      │      │
+            │  22's holon context engine, consuming concept-drafts as templates) │      │
+            └────────────────────────────────────────────────────────────────────┘      │
+                                                                                         │
+            (narrative/, lines/, stages/, combat/, enemies/, progression/ documents     │
+             provide per-domain detail consumed by both cycles ←─────────────────────────┘
 ```
+
+**The two-cycle insight:** The lesser cycle (10–14) mechanises a single moment of catalyst → experience for a single capacity. The greater cycle (15–22) mechanises the eternal lifecycle of the soul across all capacities. Document 21 is the keystone where they meet: every encounter (lesser-cycle) is delivered by a holon (greater-cycle) within a stage-layer (greater-cycle), with consequences tracked through the polarity engine (greater-cycle), all under the Veil (greater-cycle).
 
 ---
 
