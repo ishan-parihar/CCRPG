@@ -1,0 +1,232 @@
+# Willpower / Magenta — Shadow Diagnostics
+
+## 1. Module Identity
+
+- **Line:** Willpower (goal-setting, effort, follow-through)
+- **Stage:** Magenta (pre-operational, magical-symbolic)
+- **Core capacity:** Magical wishing — "I want" as declaration; the seed of volition before effort exists
+- **Contact boundary:** The threshold between wish and effort — can the wish survive its first obstacle?
+
+---
+
+## 2. The Four Shadow Archetypes
+
+### 2.1 Dark-Addiction: "The Magical Demander"
+
+**Core pattern:** Compulsive wishing without any effort. The wish IS the action. "I want it" = "I should have it." The world exists to grant wishes. Wishing is fused with having.
+
+**Drive pathology:**
+- Agency: Demands aggressively; tantrums when world doesn't comply; "I SAID I want it!"
+- Communion: Others exist only as wish-granters; relationships are transactional demand
+- Eros: Cannot stop wishing; new wishes pile on old ones; compulsive desire-generation
+- Agape: Cannot wait; "now" is the only time; delay = betrayal by the world
+
+**Behavioural signatures:**
+- Rapid wish-declaration without any effort toward fulfilment
+- Escalating demand when wish isn't immediately granted
+- Tantrum/collapse cycle: demand → not granted → rage → new demand
+- Cannot distinguish between "I want" and "I deserve"
+- Wishes multiply without any being pursued
+
+**Atman Project defenses:** Magical omnipotence ("wishing makes it so"), narcissistic demand ("the world owes me"), fusion of desire and reality
+
+**What "healed" looks like:** Can wish AND accept that wishing alone doesn't produce results. Can tolerate the gap between wanting and having. Wishes become seeds of intention rather than demands on reality.
+
+---
+
+### 2.2 Dark-Allergy: "The Wish-Abandoner"
+
+**Core pattern:** Cannot form or hold wishes. Gives up before starting. Learned helplessness at the pre-volitional level. "There's no point in wanting." The wish-function is suppressed.
+
+**Drive pathology:**
+- Agency: Cannot form independent wishes; "I don't want anything"
+- Communion: Cannot wish for others or with others; motivational void
+- Eros: No reaching toward anything; flat desire landscape
+- Agape: Cannot return to abandoned wishes; once dropped, gone forever
+
+**Behavioural signatures:**
+- No wish-declarations; passive in goal-contexts
+- Immediate abandonment at first obstacle (or before any obstacle)
+- "I don't care" / "It doesn't matter" as default response to desire-prompts
+- Cannot recall previous wishes; goal-memory absent
+- Flat affect in contexts where wishing would be natural
+
+**Atman Project defenses:** Premature resignation, dissociation from desire, learned helplessness, wish-suppression (often from repeated wish-frustration)
+
+**What "healed" looks like:** Can form a wish. Can say "I want X" and mean it. Can hold the wish for even a few seconds. The wish-function is alive, even if fragile.
+
+---
+
+### 2.3 Golden-Addiction: "The Premature Disciplinarian"
+
+**Core pattern:** Bypasses magical wishing entirely and forces rigid effort. "Just DO it. Stop wishing and WORK." Effort without desire-foundation. Discipline imposed from above without the organic wish-seed beneath it.
+
+**Drive pathology:**
+- Agency: Forces effort through sheer will; no joy in the doing
+- Communion: Imposes discipline on others; "Stop wishing, start working"
+- Eros: Reaches for Red/Amber-level effort without Magenta foundation
+- Agape: Cannot return to wishing; sees it as weakness; "Wishing is for babies"
+
+**Behavioural signatures:**
+- Effortful action without underlying desire (going through motions)
+- Rigid goal-pursuit without flexibility or joy
+- Contempt for wishing, dreaming, or magical thinking
+- Premature seriousness; cannot play with goals
+- Effort that collapses because there's no wish-fuel beneath it
+
+**Atman Project defenses:** Premature transcendence of Magenta, identification with higher-stage capacity (Red power-will or Amber duty-will), spiritual bypassing of the wish-function
+
+**What "healed" looks like:** Can wish BEFORE efforting. Can dream before doing. Can let the wish be magical and playful before it becomes a commitment. Effort grows FROM desire, not despite it.
+
+---
+
+### 2.4 Golden-Allergy: "The Effort-Refuser"
+
+**Core pattern:** Senses that effort is possible (the call to Red) but refuses it. "Wishing should be enough. If I have to TRY, it's not meant to be." The terror of effort — because effort means the wish alone isn't sufficient.
+
+**Drive pathology:**
+- Agency: Refuses to exert effort; "If it requires work, I don't want it"
+- Communion: Cannot join effortful activities; withdraws when effort is required
+- Eros: Refuses the call to grow beyond wishing; "I'm fine just wanting"
+- Agape: Cannot embody effort in lived reality; effort remains theoretical
+
+**Behavioural signatures:**
+- Approaches effort-requiring tasks then withdraws
+- "If I have to try, it's not for me" as operating principle
+- Romanticises effortlessness; "It should just happen"
+- Anxiety or avoidance when effort is required
+- Can wish beautifully but cannot take the first step
+
+**Atman Project defenses:** Refusal of the emergent (Red), terror of effort-as-loss-of-magic, desacralisation anxiety ("If I have to work for it, the magic is gone")
+
+**What "healed" looks like:** Can take the first effortful step toward a wish. Can tolerate that effort doesn't destroy the magic. Can begin to bridge wishing and doing.
+
+---
+
+## 3. Bidirectional Shadow Loops (Cross-Module)
+
+### 3.1 The Enchanted Demander (Willpower DA ↔ Cognitive/Magenta DA)
+
+**Loop:** Magical thinking (Cognitive) FUELS magical demanding (Willpower). "If I think it hard enough, it will happen" → compulsive wishing. And compulsive wishing REINFORCES magical thinking: "My wishes have power because they sometimes come true."
+
+**Bidirectional mechanism:**
+- Cognitive magical thinking → "Wishes are real forces" → more demanding
+- Willpower demanding → occasional coincidental fulfilment → "See, my thinking made it happen" → more magical thinking
+
+**Break point:** Introduce the concept of EFFORT as the bridge between wish and reality. Not destroying magic, but adding a step: wish → effort → result.
+
+---
+
+### 3.2 The Collapsed Wisher (Willpower DAll ↔ Emotional/Magenta DAll)
+
+**Loop:** Cannot wish (Willpower) because cannot feel desire (Emotional). And cannot feel desire because there's nothing to wish for. Motivational void feeds emotional flatness feeds motivational void.
+
+**Bidirectional mechanism:**
+- Emotional allergy → "I don't feel wanting" → no wishes form
+- No wishes → no motivation → no emotional engagement → deeper emotional allergy
+
+**Break point:** Introduce TINY desires through sensory pleasure (not cognitive goals). "Do you like this colour? This sound? This feeling?" Desire re-emerges through sensation, not through goal-setting.
+
+---
+
+### 3.3 The Rigid Child (Willpower GA ↔ Somatic/Magenta GA)
+
+**Loop:** Premature discipline (Willpower) drives premature athleticism (Somatic). "I must control my body" without inhabiting it. And forced body-control reinforces the belief that effort = force.
+
+**Bidirectional mechanism:**
+- Premature discipline → "I must make my body obey" → forced body-control
+- Forced body-control → "See, effort works through force" → more rigid discipline
+
+**Break point:** Introduce GENTLE effort. Effort that doesn't require force. Wishing that leads to soft action. The body moving because it WANTS to, not because it's forced.
+
+---
+
+### 3.4 The Entitled Dreamer (Willpower GAll ↔ Intrapersonal/Magenta DA)
+
+**Loop:** Refuses effort (Willpower) because self-image says "I deserve without doing" (Intrapersonal). And the refusal of effort reinforces the entitled self-image: "I'm special; special people don't have to try."
+
+**Bidirectional mechanism:**
+- Intrapersonal dark-addiction → "I am special" → "Special people don't need effort"
+- Effort-refusal → "I got things without trying" → "See, I AM special" → deeper entitlement
+
+**Break point:** Introduce effort that ENHANCES specialness rather than threatening it. "Special people can ALSO try. Trying makes you MORE magical, not less."
+
+---
+
+## 4. Shadow Surfacing Protocol
+
+### 4.1 Surfacing Sequence (Capacity-Gated)
+
+The shadows surface in order of the capacities that reveal them:
+
+| Capacity | What it reveals | Shadow most visible |
+|---|---|---|
+| Wish-holding | Can they hold a wish at all? | DAll (no wish) vs DA (compulsive wishes) |
+| Delay-tolerance | Can they wait? | DA (cannot wait) vs GAll (won't try if delayed) |
+| Effort-seed | Can they exert minimal effort? | GAll (refuses effort) vs GA (forces effort) |
+| Frustration-tolerance | Can they persist past first obstacle? | DA (tantrum) vs DAll (collapse) |
+| Goal-memory | Can they remember the wish? | DAll (forgets) vs DA (remembers obsessively) |
+
+### 4.2 Diagnostic Decision Tree
+
+```
+Player declares a wish?
+├─ NO → Wish-Abandoner (DAll) pathway
+│   └─ Cannot form wishes; motivational void
+├─ YES, compulsively (many wishes, no effort) → Magical Demander (DA) pathway
+│   └─ Wishes without effort; demands without doing
+├─ YES, then immediately forces effort → Premature Disciplinarian (GA) pathway
+│   └─ Bypasses wishing; goes straight to rigid effort
+└─ YES, then refuses first effort-step → Effort-Refuser (GAll) pathway
+    └─ Wishes beautifully but won't take first step
+```
+
+### 4.3 Severity Indicators
+
+| Severity | Indicators |
+|---|---|
+| Mild | Shadow appears in novel/stressful contexts only |
+| Moderate | Shadow is default pattern; healthy wishing requires prompting |
+| Severe | Shadow dominates; cannot access healthy wish-function at all |
+| Compound | Shadow interlocks with another module's shadow (see §3) |
+
+---
+
+## 5. Healing Vectors
+
+### 5.1 Heal/Evolve (Agape + Agency → Dark Shadows)
+
+**For The Magical Demander:**
+- Agape: Return to the wish with PATIENCE. "You can want it. And wait."
+- Agency: Own the wish without demanding. "This is YOUR wish. You hold it."
+- Mechanism: Introduce delay between wish and fulfilment. Reward HOLDING the wish, not getting the thing.
+
+**For The Wish-Abandoner:**
+- Agape: Return to desire with compassion. "It's safe to want things."
+- Agency: Form a wish independently. "What do YOU want? Even something tiny."
+- Mechanism: Present ultra-low-stakes wish-opportunities. Reward ANY wish-formation.
+
+### 5.2 Evolve/Heal (Eros + Communion → Golden Shadows)
+
+**For The Premature Disciplinarian:**
+- Eros: Reach toward PLAYFUL effort (not rigid). "Effort can be fun."
+- Communion: Join with others in wishing. "We wish together before we work."
+- Mechanism: Require wishing BEFORE effort. Make effort that skips wishing produce worse results.
+
+**For The Effort-Refuser:**
+- Eros: Reach toward the FIRST STEP. "Just one tiny effort. The magic stays."
+- Communion: See others effort AND keep their magic. "They tried AND they're still magical."
+- Mechanism: Make first-effort ultra-small. Show that effort doesn't destroy magic.
+
+---
+
+## 6. Cross-Validation Points
+
+| This module's signal | Cross-validates with | What agreement means |
+|---|---|---|
+| Compulsive wishing (DA) | Cognitive/Magenta DA (magical thinking) | Enchanted Demander compound confirmed |
+| No wishes (DAll) | Emotional/Magenta DAll (flat affect) | Collapsed Wisher compound confirmed |
+| Forced effort (GA) | Somatic/Magenta GA (forced body-control) | Rigid Child compound confirmed |
+| Effort-refusal (GAll) | Intrapersonal/Magenta DA (entitled self) | Entitled Dreamer compound confirmed |
+| Wish-holding duration | Cognitive/Magenta symbol-holding | Shared pre-operational holding capacity |
+| Delay-tolerance | Emotional/Magenta frustration-tolerance | Shared affect-regulation substrate |
