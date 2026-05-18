@@ -8,7 +8,7 @@
 
 ---
 
-## 1. Capacities Measured
+## 1. Capacity Definition
 
 | # | Capacity | What it means at Magenta | Measurement |
 |---|---|---|---|
@@ -20,79 +20,9 @@
 
 ---
 
-## 2. Theta-Decay Parameters
-
-| Parameter | Value | Rationale |
-|---|---|---|
-| Half-life | 12 days | Emotional capacity at Magenta is more stable than willpower (affect-sensing is partly constitutional) |
-| Max decay | 18% | Floor preserves basic affect-sensing |
-| Recovery rate | 1.2× per session | Emotional engagement recovers quickly at this stage |
-
 ---
 
-## 3. Drive-Health Weight
-
-**0.30** — Emotional health at Magenta is foundational but less differentiating than at later stages (most players have basic affect-sensing).
-
----
-
-## 4. Shadow Archetypes
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| Dark-Addiction | **The Mood-Flooder** | Drowns in environmental emotion; cannot separate from affect-field; emotional overwhelm as identity |
-| Dark-Allergy | **The Affect-Denier** | Cannot sense emotional tone; world is flat/dead; emotional numbness projected as "nothing is happening" |
-| Golden-Addiction | **The Premature Empath** | Claims to read individual emotions before self-other split exists; performs empathy without genuine sensing |
-| Golden-Allergy | **The Feeling-Refuser** | Senses the call to feel more deeply but refuses; retreats from emotional richness into cognitive safety |
-
----
-
-## 5. Compound Shadows (Cross-Module)
-
-| Compound | Modules involved | Pattern |
-|---|---|---|
-| **The Enchanted Feeler** | Emotional + Cognitive/Magenta | Magical thinking ABOUT emotions — "if I feel it, it's true" |
-| **The Numb Body** | Emotional + Somatic/Magenta | Cannot sense emotions because body-awareness is absent |
-| **The Wish-Storm** | Emotional + Willpower/Magenta | Emotions become wishes without differentiation — "I feel angry so I wish for destruction" |
-| **The Lonely Feeler** | Emotional + Interpersonal/Magenta | Feels everything but cannot share feelings; emotional isolation |
-
----
-
-## 6. Scoring Formula
-
-```
-emotional_magenta_score = (
-  affect_sensing × 0.30 +
-  emotional_attribution × 0.20 +
-  affect_contagion × 0.20 +
-  mood_holding × 0.15 +
-  proto_empathy × 0.15
-) × drive_health_modifier × shadow_penalty
-
-drive_health_modifier = mean(agency_health, communion_health, eros_health, agape_health)
-shadow_penalty = 1.0 - (dominant_shadow_intensity × 0.25)
-```
-
----
-
-## 7. Stage-Transition Indicators
-
-**Magenta → Red transition readiness:**
-- Affect-sensing consistently accurate (>0.7)
-- First signs of self-attribution ("I feel..." not just "it feels...")
-- Beginning of self-other emotional differentiation
-- Can hold affect without flooding OR denying
-- Proto-empathy shows first signs of perspective-taking (not just contagion)
-
----
-
-> **Module anchor:** This document defines the complete shadow landscape for emotional intelligence at the Magenta (magical-symbolic) stage. All 7 game concepts in this module use these archetypes as their diagnostic and healing targets.
->
-> **Stage essence:** Emotional fusion with environment. Feelings are projected onto the world. Self-other emotional boundaries do not exist. "The forest is angry" — not "I am angry." The player FEELS but cannot yet differentiate, regulate, or act on feelings.
-
----
-
-## 1. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 1.1 Dark-Addiction: "The Mood-Flooder"
 
@@ -198,57 +128,75 @@ shadow_penalty = 1.0 - (dominant_shadow_intensity × 0.25)
 
 ---
 
-## 2. Drive-Health Specifications
+---
 
-### 2.1 Healthy Drive Expression (All 4 × Both Domains)
+## 3. Drive-Health Landscape
 
-| Drive | Dark-domain (submergent) healthy | Golden-domain (emergent) healthy |
-|---|---|---|
-| **Agency** | Can sense environmental emotion without being swept away; maintains some stability | Can begin to notice "this feeling might be mine" — first flicker of emotional sovereignty |
-| **Communion** | Can feel WITH the environment without losing all boundary; participatory feeling | Can share emotional space with companion; mutual feeling without total fusion |
-| **Eros** | Can rest in current emotional capacity without seeking more intensity | Can sense the invitation to feel more deeply and lean toward it gently |
-| **Agape** | Can return to emotional baseline after intense feeling; recovery | Can embody emotional sensing in daily engagement; feelings are lived, not just experienced in tasks |
-
-### 2.2 Pathological Drive Expression (All 4 × Both Domains)
-
-| Drive | Dark-domain pathological | Golden-domain pathological |
-|---|---|---|
-| **Agency** | Swept by every mood; zero emotional stability; OR: rigid emotional shutdown | Claims emotional sovereignty that doesn't exist; OR: refuses emotional engagement entirely |
-| **Communion** | Total emotional fusion; cannot distinguish own feeling from environment's; OR: complete emotional isolation | Performs emotional joining without genuine contact; OR: refuses all emotional sharing |
-| **Eros** | Addicted to emotional intensity; seeks overwhelm; OR: emotional flatness, no pull | Bypasses to sophisticated empathy without foundation; OR: refuses deeper feeling |
-| **Agape** | Cannot recover from emotional episodes; stuck in mood; OR: never enters mood at all | Lives in abstract emotional concepts without embodied feeling; OR: refuses to embody emotional capacity |
+**0.30** — Emotional health at Magenta is foundational but less differentiating than at later stages (most players have basic affect-sensing).
 
 ---
 
-## 3. Shadow Surfacing Sequence
+---
 
-The games surface shadows in this order (each capacity builds on the previous):
+## 4. Healing Vectors
 
-```
-affect-sensing (can you detect emotion at all?)
-    ↓
-emotional-attribution (who/what is feeling?)
-    ↓
-affect-contagion (do you catch feelings? too much? too little?)
-    ↓
-mood-holding (can you stay with a feeling?)
-    ↓
-proto-empathy (can you sense another's feeling?)
-```
+### 5.1 Heal/Evolve (Agape + Agency → Dark Shadows)
 
-### 3.1 Surfacing Logic
+**For The Mood-Flooder:**
+- Agape: Return to emotional baseline with compassion (not suppression)
+- Agency: Develop first flicker of "I am feeling this" (not "everything is this")
+- Mechanism: Gentle boundary-formation within the affect-field
 
-| Capacity tested | Dark-Addiction signal | Dark-Allergy signal | Golden-Addiction signal | Golden-Allergy signal |
-|---|---|---|---|---|
-| Affect-sensing | Overwhelmed by every emotional cue | Misses emotional cues entirely | Claims to sense subtle emotions that aren't there | Detects cue then avoids/retreats |
-| Emotional-attribution | Attributes all emotion to self (fusion) | Cannot attribute emotion to anything | Attributes with false precision ("they feel X because Y") | Refuses to attribute; "I don't want to know" |
-| Affect-contagion | Maximum contagion; drowns in others' feelings | Zero contagion; emotionally impervious | Performs contagion without genuine feeling | Senses contagion beginning then blocks it |
-| Mood-holding | Cannot leave a mood; stuck in affect | Cannot enter a mood; flat | Claims to hold complex moods beyond capacity | Enters mood briefly then retreats |
-| Proto-empathy | Fuses with companion's emotion entirely | Cannot sense companion's emotion at all | Performs sophisticated empathy without genuine sensing | Senses companion's feeling then withdraws |
+**For The Affect-Denier:**
+- Agape: Return to the body where feelings live (somatic re-entry)
+- Agency: Choose to notice ONE feeling (not all at once)
+- Mechanism: Gradual affect-awakening through safe, low-intensity stimuli
+
+### 5.2 Evolve/Heal (Eros + Communion → Golden Shadows)
+
+**For The Premature Empath:**
+- Eros: Accept the invitation to feel GENUINELY (not perform)
+- Communion: Join with actual emotional reality (not projected)
+- Mechanism: Strip away false precision; return to "I feel something" (honest fusion)
+
+**For The Feeling-Refuser:**
+- Eros: Accept the pull toward deeper feeling (not retreat)
+- Communion: Allow emotional joining (not cognitive distance)
+- Mechanism: Make emotional engagement safe, brief, rewarding
 
 ---
 
-## 4. Bidirectional Shadow Loops (Cross-Module)
+### Integration Criteria
+**Module integration (Emotional/Magenta healthy):**
+- Affect-sensing accurate (>0.7 on mood-identification)
+- Emotional attribution present (even if projected onto world)
+- Affect-contagion moderate (neither flooding nor flat)
+- Mood-holding stable (can stay with feeling 10-30s without fleeing or drowning)
+- Proto-empathy active (responds to companion's emotional state)
+- All 4 drives expressing in healthy range
+- No dominant shadow quadrant (all <0.3 intensity)
+
+**Transition readiness (Magenta → Red):**
+- First signs of self-attribution ("I feel..." emerging)
+- Beginning of self-other emotional differentiation
+- Can hold affect without flooding OR denying
+- Proto-empathy shows perspective-taking seeds (not just contagion)
+
+---
+
+## 5. Scoring Parameters
+
+| Parameter | Value | Rationale |
+|---|---|---|
+| Half-life | 12 days | Emotional capacity at Magenta is more stable than willpower (affect-sensing is partly constitutional) |
+| Max decay | 18% | Floor preserves basic affect-sensing |
+| Recovery rate | 1.2× per session | Emotional engagement recovers quickly at this stage |
+
+---
+
+---
+
+## 6. Compound Shadows & Cross-Module Relationships
 
 ### 4.1 The Enchanted Feeler (Emotional × Cognitive/Magenta)
 
@@ -288,47 +236,32 @@ proto-empathy (can you sense another's feeling?)
 
 ---
 
-## 5. Healing Vectors
-
-### 5.1 Heal/Evolve (Agape + Agency → Dark Shadows)
-
-**For The Mood-Flooder:**
-- Agape: Return to emotional baseline with compassion (not suppression)
-- Agency: Develop first flicker of "I am feeling this" (not "everything is this")
-- Mechanism: Gentle boundary-formation within the affect-field
-
-**For The Affect-Denier:**
-- Agape: Return to the body where feelings live (somatic re-entry)
-- Agency: Choose to notice ONE feeling (not all at once)
-- Mechanism: Gradual affect-awakening through safe, low-intensity stimuli
-
-### 5.2 Evolve/Heal (Eros + Communion → Golden Shadows)
-
-**For The Premature Empath:**
-- Eros: Accept the invitation to feel GENUINELY (not perform)
-- Communion: Join with actual emotional reality (not projected)
-- Mechanism: Strip away false precision; return to "I feel something" (honest fusion)
-
-**For The Feeling-Refuser:**
-- Eros: Accept the pull toward deeper feeling (not retreat)
-- Communion: Allow emotional joining (not cognitive distance)
-- Mechanism: Make emotional engagement safe, brief, rewarding
-
 ---
 
-## 6. Integration Criteria
+## 7. Shadow Surfacing Sequence
 
-**Module integration (Emotional/Magenta healthy):**
-- Affect-sensing accurate (>0.7 on mood-identification)
-- Emotional attribution present (even if projected onto world)
-- Affect-contagion moderate (neither flooding nor flat)
-- Mood-holding stable (can stay with feeling 10-30s without fleeing or drowning)
-- Proto-empathy active (responds to companion's emotional state)
-- All 4 drives expressing in healthy range
-- No dominant shadow quadrant (all <0.3 intensity)
+The games surface shadows in this order (each capacity builds on the previous):
 
-**Transition readiness (Magenta → Red):**
-- First signs of self-attribution ("I feel..." emerging)
-- Beginning of self-other emotional differentiation
-- Can hold affect without flooding OR denying
-- Proto-empathy shows perspective-taking seeds (not just contagion)
+```
+affect-sensing (can you detect emotion at all?)
+    ↓
+emotional-attribution (who/what is feeling?)
+    ↓
+affect-contagion (do you catch feelings? too much? too little?)
+    ↓
+mood-holding (can you stay with a feeling?)
+    ↓
+proto-empathy (can you sense another's feeling?)
+```
+
+### 3.1 Surfacing Logic
+
+| Capacity tested | Dark-Addiction signal | Dark-Allergy signal | Golden-Addiction signal | Golden-Allergy signal |
+|---|---|---|---|---|
+| Affect-sensing | Overwhelmed by every emotional cue | Misses emotional cues entirely | Claims to sense subtle emotions that aren't there | Detects cue then avoids/retreats |
+| Emotional-attribution | Attributes all emotion to self (fusion) | Cannot attribute emotion to anything | Attributes with false precision ("they feel X because Y") | Refuses to attribute; "I don't want to know" |
+| Affect-contagion | Maximum contagion; drowns in others' feelings | Zero contagion; emotionally impervious | Performs contagion without genuine feeling | Senses contagion beginning then blocks it |
+| Mood-holding | Cannot leave a mood; stuck in affect | Cannot enter a mood; flat | Claims to hold complex moods beyond capacity | Enters mood briefly then retreats |
+| Proto-empathy | Fuses with companion's emotion entirely | Cannot sense companion's emotion at all | Performs sophisticated empathy without genuine sensing | Senses companion's feeling then withdraws |
+
+---

@@ -6,7 +6,7 @@
 
 ---
 
-## 1. Capacities Measured (Magenta-altitude interpersonal)
+## 1. Capacity Definition
 
 | # | Capacity | Description | Magenta expression |
 |---|---|---|---|
@@ -20,91 +20,9 @@
 
 ---
 
-## 2. Theta-Decay Parameters
-
-| Parameter | Value | Rationale |
-|---|---|---|
-| Half-life | 14 days | Relational capacity degrades slowly; social bonds persist |
-| Max score | 18% of line total | Magenta is pre-relational; most interpersonal capacity is later |
-| Floor | 0% | Complete absence possible (pre-social isolation) |
-| Decay curve | Exponential | Standard theta-decay |
-
 ---
 
-## 3. Drive-Health Weight
-
-| Drive | Weight | Rationale |
-|---|---|---|
-| Agency | 0.20 | Some self needed even in fusion (not total dissolution) |
-| Communion | 0.40 | Interpersonal IS communion at Magenta — fusion-bonding dominant |
-| Eros | 0.15 | Minimal upward pull at this stage |
-| Agape | 0.25 | Return to connection; maintaining relational presence |
-
----
-
-## 4. Shadow Archetypes
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| Dark-Addiction | **The Fusion-Addict** | Cannot exist without other; dissolves into every presence; no self remains |
-| Dark-Allergy | **The Phantom-Denier** | Cannot sense other presences; relational blindness; alone in a populated world |
-| Golden-Addiction | **The Premature Coordinator** | Performs sophisticated relating without genuine other-sensing; coordinates without connection |
-| Golden-Allergy | **The Bond-Refuser** | Senses the other but refuses fusion; the call to connect is refused |
-
----
-
-## 5. Compound Shadows (Cross-Line)
-
-| Compound | Lines involved | Pattern |
-|---|---|---|
-| **The Enchanted Bond** | Interpersonal + Cognitive | Magical thinking about relationships; "we are connected because I imagined it" |
-| **The Numb Pair** | Interpersonal + Somatic | Connected but cannot feel the connection in the body |
-| **The Wish-Bond** | Interpersonal + Willpower | Wills connection into existence without genuine other-sensing |
-| **The Lonely Feeler** | Interpersonal + Emotional | Feels intensely but cannot share feeling with another |
-
----
-
-## 6. Scoring Formula
-
-```
-interpersonal_magenta_score = (
-  other_sensing × 0.25 +
-  presence_engagement × 0.25 +
-  fusion_bonding × 0.20 +
-  mood_sharing × 0.15 +
-  proto_coordination × 0.15
-) × drive_health_modifier × theta_decay_factor
-```
-
-**Drive-health modifier:** Geometric mean of 4 drive-health scores weighted per §3.
-
----
-
-## 7. Stage-Transition Indicators
-
-### Readiness for Red (interpersonal)
-- Other-sensing stable (can detect presence reliably)
-- Presence-engagement consistent (engages phantom-ally naturally)
-- Fusion-bonding present but NOT total dissolution
-- Beginning to sense OTHER as SEPARATE (the seed of Red's "others as instruments")
-- Proto-coordination emerging (can move with another)
-
-### Regression indicators (from Red back to Magenta)
-- Loss of self-other boundary in relationships
-- Return to fusion-bonding without differentiation
-- Others become phantoms again (not separate minds)
-- Coordination collapses into undifferentiated merging
-
----
-
-> **Module:** Interpersonal × Magenta
-> **Core capacity:** Magical-others — sensing, engaging, and fusing with other presences at the pre-differentiated level. Others are not yet separate minds; they are felt presences, phantom-allies, imagined companions.
-> **Key distinction from Infrared:** Infrared has co-presence only (others as backdrop). Magenta ENGAGES the other — but as a magical/imagined presence, not a separate mind.
-> **Key distinction from Red:** Red has others as SEPARATE instruments ("I use you"). Magenta has others as FUSED presences ("we are one" / "you are part of me").
-
----
-
-## 1. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 1.1 Dark-Addiction: "The Fusion-Addict"
 
@@ -226,32 +144,82 @@ interpersonal_magenta_score = (
 
 ---
 
-## 2. Healthy Drive Expression at Interpersonal/Magenta
+---
 
-| Drive | Dark-domain (healthy) | Golden-domain (healthy) |
+## 3. Drive-Health Landscape
+
+| Drive | Weight | Rationale |
 |---|---|---|
-| **Agency** | Can sense and engage others while maintaining SOME self-stability | Can initiate connection without needing the other to initiate first |
-| **Communion** | Can fuse partially without total dissolution; some self remains | Can join with another at the felt-sense level; genuine presence-sharing |
-| **Eros** | Can rest in current connection without compulsive deepening | Can reach toward more complex relating (seed of Red) without bypassing |
-| **Agape** | Can return to connection after separation without distress | Can embody relational presence in lived reality (not just in tasks) |
+| Agency | 0.20 | Some self needed even in fusion (not total dissolution) |
+| Communion | 0.40 | Interpersonal IS communion at Magenta — fusion-bonding dominant |
+| Eros | 0.15 | Minimal upward pull at this stage |
+| Agape | 0.25 | Return to connection; maintaining relational presence |
 
 ---
 
-## 3. The Surfacing Sequence
+---
 
-The 5 capacities surface shadows in order:
+## 4. Healing Vectors
 
-| Capacity | What it reveals | Shadow most likely surfaced |
-|---|---|---|
-| **Other-sensing** | Can they detect presence at all? | Phantom-Denier (nothing detected) vs. Fusion-Addict (overwhelmed by presence) |
-| **Presence-engagement** | Can they engage without dissolving? | Fusion-Addict (dissolves) vs. Bond-Refuser (won't engage) |
-| **Fusion-bonding** | Can they bond without total loss of self? | Fusion-Addict (total loss) vs. Premature Coordinator (performs without feeling) |
-| **Mood-sharing** | Can they share feeling with another? | Fusion-Addict (drowns in shared mood) vs. Phantom-Denier (no sharing) |
-| **Proto-coordination** | Can they move together? | Premature Coordinator (mechanical) vs. Bond-Refuser (won't synchronise) |
+### 6.1 Heal/Evolve (Agape + Agency → dark shadows)
+
+**For Fusion-Addict:**
+- Build MICRO-SEPARATIONS: "You are here. They are there. Two beings. Can you feel BOTH?"
+- Reward moments of self-stability DURING connection
+- Frame: "You can be WITH them and still be YOU. Both at once."
+- Goal: Partial fusion (connected but not dissolved)
+
+**For Phantom-Denier:**
+- Start with UNDENIABLE presence: companion does something that REQUIRES response
+- Make other-presence NECESSARY for progression
+- Frame: "Something is there. Not you. Something else. Can you feel it?"
+- Goal: First other-sensing (detecting presence at all)
+
+### 6.2 Evolve/Heal (Eros + Communion → golden shadows)
+
+**For Premature Coordinator:**
+- Block performance; require SENSING: "Don't coordinate. Just BE WITH. What do you sense?"
+- Penalise sophisticated behaviour; reward simple presence-contact
+- Frame: "Not what you DO together. What you FEEL together. Just that."
+- Goal: Genuine other-sensing beneath the performance
+
+**For Bond-Refuser:**
+- Make connection BRIEF and SAFE: "Just 3 seconds of being-with. Then you can separate."
+- Reduce threat of fusion; make connection time-limited
+- Frame: "Not forever. Just a moment. Feel them there. Then done."
+- Goal: Brief genuine connection (approach without withdrawal)
 
 ---
 
-## 4. Bidirectional Shadow Loops (Cross-Line Compounds)
+### Integration Criteria
+**Interpersonal/Magenta is integrated when:**
+1. Other-sensing is reliable (detects presence consistently)
+2. Presence-engagement is genuine (not performed, not refused)
+3. Fusion-bonding is PARTIAL (connected but not dissolved)
+4. Mood-sharing occurs naturally (emotional contagion as bond)
+5. Proto-coordination emerges (moving together through felt-sense)
+6. All 4 drives express healthily in both domains
+7. No shadow quadrant dominates chronically
+8. Cross-line compounds are not reinforcing
+
+**The player is ready for Red interpersonal when:** They can sense another as a PRESENCE (Magenta achievement) and are beginning to sense the other as SEPARATE (Red threshold). The fusion is loosening. "We" is starting to differentiate into "I" and "you."
+
+---
+
+## 5. Scoring Parameters
+
+| Parameter | Value | Rationale |
+|---|---|---|
+| Half-life | 14 days | Relational capacity degrades slowly; social bonds persist |
+| Max score | 18% of line total | Magenta is pre-relational; most interpersonal capacity is later |
+| Floor | 0% | Complete absence possible (pre-social isolation) |
+| Decay curve | Exponential | Standard theta-decay |
+
+---
+
+---
+
+## 6. Compound Shadows & Cross-Module Relationships
 
 ### 4.1 The Enchanted Bond (Interpersonal × Cognitive)
 
@@ -291,84 +259,18 @@ The 5 capacities surface shadows in order:
 
 ---
 
-## 5. Detection Methodology
+---
 
-### 5.1 Primary signals (across all 7 modalities)
+## 7. Shadow Surfacing Sequence
 
-| Signal | Indicates | Confidence |
+The 5 capacities surface shadows in order:
+
+| Capacity | What it reveals | Shadow most likely surfaced |
 |---|---|---|
-| Total dissolution on companion-presence | Dark-addiction (Fusion-Addict) | High |
-| Zero response to companion-presence | Dark-allergy (Phantom-Denier) | High |
-| Perfect coordination without presence-sensing | Golden-addiction (Premature Coordinator) | Medium-High |
-| Sensing demonstrated then engagement refused | Golden-allergy (Bond-Refuser) | Medium-High |
-| Moderate engagement with some self-stability | Healthy | High |
-
-### 5.2 Cross-modality validation
-
-| Modality | Best at detecting |
-|---|---|
-| Deterministic | Phantom-Denier (objective presence-detection failure) |
-| Language-reflective | Premature Coordinator (sophisticated language without sensing) |
-| Scenario-choice | Bond-Refuser (chooses isolation despite sensing) |
-| Embodied-somatic | Numb Pair compound (body doesn't register other) |
-| Strategic-planning | Wish-Bond compound (plans connection without sensing) |
-| Social-cooperative | Fusion-Addict (dissolves in shared tasks) |
-| Immersive-RPG | All shadows in ecological context |
-
-### 5.3 Temporal patterns
-
-| Pattern | Indicates |
-|---|---|
-| Immediate dissolution on any companion contact | Fusion-Addict (chronic) |
-| Consistent zero-response across sessions | Phantom-Denier (chronic) |
-| Performance quality without sensing quality | Premature Coordinator (structural) |
-| Approach-withdrawal cycling | Bond-Refuser (active conflict) |
-| Gradual engagement building | Healthy development |
+| **Other-sensing** | Can they detect presence at all? | Phantom-Denier (nothing detected) vs. Fusion-Addict (overwhelmed by presence) |
+| **Presence-engagement** | Can they engage without dissolving? | Fusion-Addict (dissolves) vs. Bond-Refuser (won't engage) |
+| **Fusion-bonding** | Can they bond without total loss of self? | Fusion-Addict (total loss) vs. Premature Coordinator (performs without feeling) |
+| **Mood-sharing** | Can they share feeling with another? | Fusion-Addict (drowns in shared mood) vs. Phantom-Denier (no sharing) |
+| **Proto-coordination** | Can they move together? | Premature Coordinator (mechanical) vs. Bond-Refuser (won't synchronise) |
 
 ---
-
-## 6. Healing Vectors
-
-### 6.1 Heal/Evolve (Agape + Agency → dark shadows)
-
-**For Fusion-Addict:**
-- Build MICRO-SEPARATIONS: "You are here. They are there. Two beings. Can you feel BOTH?"
-- Reward moments of self-stability DURING connection
-- Frame: "You can be WITH them and still be YOU. Both at once."
-- Goal: Partial fusion (connected but not dissolved)
-
-**For Phantom-Denier:**
-- Start with UNDENIABLE presence: companion does something that REQUIRES response
-- Make other-presence NECESSARY for progression
-- Frame: "Something is there. Not you. Something else. Can you feel it?"
-- Goal: First other-sensing (detecting presence at all)
-
-### 6.2 Evolve/Heal (Eros + Communion → golden shadows)
-
-**For Premature Coordinator:**
-- Block performance; require SENSING: "Don't coordinate. Just BE WITH. What do you sense?"
-- Penalise sophisticated behaviour; reward simple presence-contact
-- Frame: "Not what you DO together. What you FEEL together. Just that."
-- Goal: Genuine other-sensing beneath the performance
-
-**For Bond-Refuser:**
-- Make connection BRIEF and SAFE: "Just 3 seconds of being-with. Then you can separate."
-- Reduce threat of fusion; make connection time-limited
-- Frame: "Not forever. Just a moment. Feel them there. Then done."
-- Goal: Brief genuine connection (approach without withdrawal)
-
----
-
-## 7. Integration Criteria
-
-**Interpersonal/Magenta is integrated when:**
-1. Other-sensing is reliable (detects presence consistently)
-2. Presence-engagement is genuine (not performed, not refused)
-3. Fusion-bonding is PARTIAL (connected but not dissolved)
-4. Mood-sharing occurs naturally (emotional contagion as bond)
-5. Proto-coordination emerges (moving together through felt-sense)
-6. All 4 drives express healthily in both domains
-7. No shadow quadrant dominates chronically
-8. Cross-line compounds are not reinforcing
-
-**The player is ready for Red interpersonal when:** They can sense another as a PRESENCE (Magenta achievement) and are beginning to sense the other as SEPARATE (Red threshold). The fusion is loosening. "We" is starting to differentiate into "I" and "you."

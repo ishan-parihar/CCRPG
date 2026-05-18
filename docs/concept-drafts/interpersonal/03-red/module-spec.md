@@ -4,7 +4,7 @@
 
 ---
 
-## 1. Capacity Scoring Rubric
+## 1. Capacity Definition
 
 ### What constitutes stage-pass at Interpersonal/Red
 
@@ -37,147 +37,9 @@ The player demonstrates:
 
 ---
 
-## 2. Drive-Health Rubric
-
-### Agency (dark-domain)
-- **Healthy:** Uses interpersonal intelligence to pursue own goals; reads others to gain advantage; asserts boundaries
-- **Pathological:** Dominates all interactions; cannot allow others to have agency; every relationship is a power contest; "I must control them"
-
-### Agency (golden-domain)
-- **Healthy:** Initiates alliances; proposes coordinated action; leads when appropriate
-- **Pathological:** Cannot initiate interpersonal engagement; waits for others to approach; "They should come to me"
-
-### Communion (dark-domain)
-- **Healthy:** Joins alliances that serve mutual interest; coordinates without losing sovereignty
-- **Pathological:** Merges with stronger ally; loses own goals in service of another's; "I'll do whatever they want so they don't leave"
-
-### Communion (golden-domain)
-- **Healthy:** Shares resources/information with allies when it serves the alliance
-- **Pathological:** Cannot share; hoards all advantage; "Why would I help them?"
-
-### Eros (dark-domain)
-- **Healthy:** Satisfied with current alliance quality; deepens existing relationships
-- **Pathological:** Constantly seeks new/better allies; discards current allies for upgrades; "There must be someone more useful"
-
-### Eros (golden-domain)
-- **Healthy:** Curious about more complex coordination; attempts 3-step sequences
-- **Pathological:** Claims sophisticated interpersonal capacity without demonstration; "I already understand people"
-
-### Agape (dark-domain)
-- **Healthy:** Returns to basic interpersonal tasks with full engagement; maintains simple alliances
-- **Pathological:** Dismisses basic coordination; "I'm beyond needing allies for this"
-
-### Agape (golden-domain)
-- **Healthy:** Interpersonal intelligence appears spontaneously in non-task contexts
-- **Pathological:** Reads others only when explicitly prompted; no spontaneous social intelligence
-
 ---
 
-## 3. Shadow Integration Criteria
-
-### Dark-Addiction: "The Dominator"
-- **Active:** Cannot interact without controlling; every relationship is a dominance hierarchy; reads others ONLY to manipulate
-- **Resolving:** Begins to allow others to lead sometimes; discovers that non-dominant positions have advantages
-- **Resolved:** Can occupy any position in a relational dynamic (lead, follow, coordinate) based on context
-
-### Dark-Allergy: "The Isolate"
-- **Active:** Cannot engage others at all; treats all others as threats; refuses all alliance; "I need no one"
-- **Resolving:** Begins to accept transactional alliance when advantage is clear; tolerates others' presence
-- **Resolved:** Can form and maintain alliances; reads others accurately; engages the interpersonal field
-
-### Golden-Addiction: "The Premature Diplomat"
-- **Active:** Performs sophisticated social behaviour (negotiation, empathy-language, conflict resolution) without genuine Red-level intent-reading; style over substance
-- **Resolving:** Begins to ground social behaviour in accurate intent-reading; simplifies
-- **Resolved:** Social behaviour matches actual interpersonal capacity; no performance beyond competence
-
-### Golden-Allergy: "The Loyalty-Refuser"
-- **Active:** Can read others and coordinate but REFUSES loyalty; treats all bonds as weakness; "Caring about allies is a vulnerability"
-- **Resolving:** Begins to discover that loyalty produces tactical advantage (reliable allies > new ones)
-- **Resolved:** Can maintain loyalty bonds while retaining sovereignty; loyalty as strength, not weakness
-
----
-
-## 4. Theta-Decay Sensitivity
-
-### Decay rate: MEDIUM-HIGH
-- **Half-life:** 18 days without interpersonal engagement
-- **Max decay:** 25%
-- **Rationale:** Interpersonal skills atrophy faster than cognitive skills but slower than somatic. The "reading others" capacity requires ongoing practice — social intelligence that isn't exercised becomes stale. But the STRUCTURES (intent-reading, coordination patterns) persist longer than body-skills.
-
-### Decay triggers
-- No interpersonal game engagement for >7 days → decay begins
-- No coordinated action with allies for >14 days → accelerated decay
-- No intent-reading tasks for >21 days → maximum decay rate
-
-### Recovery
-- Single interpersonal session recovers ~40% of decayed capacity
-- Full recovery requires 3-5 sessions across 7 days
-- Recovery is FASTER than initial acquisition (the structures remain; only sharpness decays)
-
----
-
-## 5. Cross-Module Dependencies
-
-### Modules that SUPPORT Interpersonal/Red
-
-| Module | How it supports |
-|---|---|
-| **Cognitive/Red** | Strategic reasoning enables intent-prediction; "If I were them, what would I want?" |
-| **Emotional/Red** | Affect-reading feeds intent-reading; "They're angry, so they want to fight" |
-| **Somatic/Red** | Body-reading (posture, tension) provides interpersonal cues |
-| **Willpower/Red** | Sustained alliance maintenance requires will; boundary assertion requires will |
-
-### Modules that Interpersonal/Red SUPPORTS
-
-| Module | How it's supported |
-|---|---|
-| **Moral/Red** | Interpersonal reading enables moral reasoning about others' needs |
-| **Emotional/Red** | Reading others' emotions requires interpersonal modelling |
-| **Strategic-Planning (all lines)** | Multi-agent planning requires interpersonal modelling |
-| **Willpower/Red** | Alliance accountability strengthens will (external commitment) |
-
-### Compound shadows (cross-module pathologies)
-
-| Compound | Modules involved | Manifestation |
-|---|---|---|
-| **The Puppet-Master** | Interpersonal/Red dark-addiction + Cognitive/Red healthy | Reads others perfectly but ONLY to manipulate; intelligence in service of domination |
-| **The Feral** | Interpersonal/Red dark-allergy + Emotional/Red dark-allergy | Cannot read others AND cannot feel; total social isolation |
-| **The Charmer** | Interpersonal/Red golden-addiction + Emotional/Red golden-addiction | Performs sophisticated social-emotional behaviour without genuine capacity in either |
-| **The Lone Wolf** | Interpersonal/Red golden-allergy + Willpower/Red dark-addiction | Refuses all bonds; channels all energy into solo power; "I don't need anyone" |
-
----
-
-## 6. Scoring Weights (Module-Specific Tuning)
-
-| Component | Weight | Rationale |
-|---|---|---|
-| Capacity | 0.25 | Intent-reading accuracy is necessary but insufficient |
-| Drive-health | 0.45 | HOW they relate to others matters more than accuracy |
-| Shadow-integration | 0.30 | Shadow resolution is critical — interpersonal shadows are socially destructive |
-
-**Rationale for elevated drive-health weight:** Interpersonal intelligence is uniquely dangerous when drives are pathological. A high-capacity interpersonal player with dark-addiction Agency is a MANIPULATOR. Drive-health must weigh more here than in most modules.
-
----
-
-## 7. Measurement Sources (Which Games Feed This Score)
-
-| Game | Primary signal | Secondary signal |
-|---|---|---|
-| **Deterministic** | Intent-reading accuracy, coordination timing | Betrayal detection speed |
-| **Language-Reflective** | Verbal modelling of others' minds | Metacognitive awareness of own social patterns |
-| **Scenario-Choice** | Alliance decisions under pressure | Boundary assertion quality |
-| **Embodied-Somatic** | Body-based social cues (posture-reading, proximity) | Physical coordination with allies |
-| **Strategic-Planning** | Multi-agent planning quality | Alliance management across time |
-| **Social-Cooperative** | Live coordination quality | Loyalty maintenance |
-| **Immersive-RPG** | Spontaneous interpersonal behaviour | Ecological social intelligence |
-
----
-
-> **Module vibration:** Egocentric-others — others as instruments. At Red, the interpersonal shadow landscape is about HOW the self relates to the existence of other selves. The healthy Red interpersonal player reads others accurately, coordinates transactionally, detects betrayal, asserts boundaries, and forms first loyalty bonds. The shadows distort this in four directions.
-
----
-
-## 1. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 1.1 Dark-Addiction: "The Dominator"
 
@@ -275,7 +137,175 @@ The player demonstrates:
 
 ---
 
-## 2. Shadow Surfacing Sequence
+---
+
+## 3. Drive-Health Landscape
+
+### Agency (dark-domain)
+- **Healthy:** Uses interpersonal intelligence to pursue own goals; reads others to gain advantage; asserts boundaries
+- **Pathological:** Dominates all interactions; cannot allow others to have agency; every relationship is a power contest; "I must control them"
+
+### Agency (golden-domain)
+- **Healthy:** Initiates alliances; proposes coordinated action; leads when appropriate
+- **Pathological:** Cannot initiate interpersonal engagement; waits for others to approach; "They should come to me"
+
+### Communion (dark-domain)
+- **Healthy:** Joins alliances that serve mutual interest; coordinates without losing sovereignty
+- **Pathological:** Merges with stronger ally; loses own goals in service of another's; "I'll do whatever they want so they don't leave"
+
+### Communion (golden-domain)
+- **Healthy:** Shares resources/information with allies when it serves the alliance
+- **Pathological:** Cannot share; hoards all advantage; "Why would I help them?"
+
+### Eros (dark-domain)
+- **Healthy:** Satisfied with current alliance quality; deepens existing relationships
+- **Pathological:** Constantly seeks new/better allies; discards current allies for upgrades; "There must be someone more useful"
+
+### Eros (golden-domain)
+- **Healthy:** Curious about more complex coordination; attempts 3-step sequences
+- **Pathological:** Claims sophisticated interpersonal capacity without demonstration; "I already understand people"
+
+### Agape (dark-domain)
+- **Healthy:** Returns to basic interpersonal tasks with full engagement; maintains simple alliances
+- **Pathological:** Dismisses basic coordination; "I'm beyond needing allies for this"
+
+### Agape (golden-domain)
+- **Healthy:** Interpersonal intelligence appears spontaneously in non-task contexts
+- **Pathological:** Reads others only when explicitly prompted; no spontaneous social intelligence
+
+---
+
+---
+
+## 4. Healing Vectors
+
+### 3.1 Heal/Evolve (Agape + Agency → dark shadows)
+
+**For The Dominator:**
+- Agape: Return to BASIC coordination (not dominance). "Can you simply coordinate? Not command — coordinate."
+- Agency: Use sovereign will to CHOOSE non-dominance. "You are strong enough to let another lead."
+- Mechanism: Present situations where non-dominant positions produce MORE power than dominant ones
+- Integration marker: Can occupy follower position without distress; can coordinate without commanding
+
+**For The Isolate:**
+- Agape: Return to the SIMPLEST interpersonal act (reading one obvious intention). "Just look. What do they want?"
+- Agency: Use sovereign will to APPROACH despite fear. "You choose to engage. No one forces you."
+- Mechanism: Present ultra-safe interpersonal contexts (NPC who CANNOT betray; stakes are zero)
+- Integration marker: Can read one NPC's intent; can accept one alliance; can tolerate another's presence
+
+### 3.2 Evolve/Heal (Eros + Communion → golden shadows)
+
+**For The Premature Diplomat:**
+- Eros: Reach toward GENUINE reading (not performed). "What do they ACTUALLY want? Not what you think they should want."
+- Communion: Join at the REAL level (transactional honesty, not performed empathy). "Be direct. What's the deal?"
+- Mechanism: Lock advancement behind ACCURACY, not sophistication. Simple correct > elaborate wrong.
+- Integration marker: Intent-reading accuracy matches verbal sophistication; can do simple transactions
+
+**For The Loyalty-Refuser:**
+- Eros: Reach toward the BOND (not just the coordination). "What if you stayed? What if this alliance MATTERED?"
+- Communion: Join at the COMMITMENT level (not just the transactional). "They're your war-band. Not just your tools."
+- Mechanism: Make loyalty produce UNIQUE rewards unavailable to solo players or alliance-rotators
+- Integration marker: Maintains alliance across 5+ interactions; experiences loss when ally is threatened
+
+---
+
+### Integration Criteria
+### What "healed Interpersonal/Red" looks like
+
+The player demonstrates ALL of the following:
+
+1. **Accurate intent-reading:** Identifies what 2-3 agents want from behavioural cues (≥70% accuracy)
+2. **Flexible positioning:** Can lead, follow, or coordinate based on context (not fixed in one position)
+3. **Transactional honesty:** Engages alliances with clear mutual benefit; doesn't manipulate OR avoid
+4. **Betrayal detection without paranoia:** Detects actual betrayal signals; doesn't project betrayal onto neutral behaviour
+5. **Boundary assertion without isolation:** Says no when appropriate; says yes when appropriate
+6. **First loyalty:** Maintains at least one alliance across 5+ interactions; experiences the alliance as meaningful (not just useful)
+7. **Sovereignty within connection:** Engages the interpersonal field without losing self OR dominating others
+
+### The integration test
+
+Present a scenario requiring: read an ally's intent + coordinate a 2-step action + detect a third party's betrayal attempt + assert a boundary + maintain the alliance.
+
+If the player can do ALL FIVE in a single scenario with healthy drive expression across all four drives, Interpersonal/Red is integrated.
+
+---
+
+## 5. Scoring Parameters
+
+### Decay rate: MEDIUM-HIGH
+- **Half-life:** 18 days without interpersonal engagement
+- **Max decay:** 25%
+- **Rationale:** Interpersonal skills atrophy faster than cognitive skills but slower than somatic. The "reading others" capacity requires ongoing practice — social intelligence that isn't exercised becomes stale. But the STRUCTURES (intent-reading, coordination patterns) persist longer than body-skills.
+
+### Decay triggers
+- No interpersonal game engagement for >7 days → decay begins
+- No coordinated action with allies for >14 days → accelerated decay
+- No intent-reading tasks for >21 days → maximum decay rate
+
+### Recovery
+- Single interpersonal session recovers ~40% of decayed capacity
+- Full recovery requires 3-5 sessions across 7 days
+- Recovery is FASTER than initial acquisition (the structures remain; only sharpness decays)
+
+---
+
+---
+
+## 6. Compound Shadows & Cross-Module Relationships
+
+### 4.1 The Puppet-Master (Interpersonal dark-addiction × Cognitive healthy)
+
+```
+High cognitive capacity → reads others perfectly
+  → uses readings ONLY for manipulation (interpersonal dark-addiction)
+  → manipulation success reinforces cognitive-as-weapon
+  → cognitive development serves domination exclusively
+  → LOOP: smarter = more manipulative = more isolated from genuine connection
+```
+
+**Breaking the loop:** Cognitive capacity must be redirected toward MUTUAL benefit. Present problems that require genuine coordination (not manipulation) to solve. Make manipulation produce diminishing returns.
+
+### 4.2 The Feral (Interpersonal dark-allergy × Emotional dark-allergy)
+
+```
+Cannot read others (interpersonal dark-allergy)
+  → cannot feel others' emotions (emotional dark-allergy)
+  → total social isolation reinforces both allergies
+  → isolation confirms "others are dangerous/irrelevant"
+  → LOOP: more isolated = less practice = less capacity = more isolation
+```
+
+**Breaking the loop:** Start with NON-HUMAN interpersonal (animal companions, simple NPCs with unmistakable signals). Build the reading muscle in safe contexts before introducing human-complexity.
+
+### 4.3 The Charmer (Interpersonal golden-addiction × Emotional golden-addiction)
+
+```
+Performs sophisticated social behaviour (interpersonal golden-addiction)
+  → performs sophisticated emotional attunement (emotional golden-addiction)
+  → both performances reinforce each other
+  → "I'm so emotionally intelligent and socially skilled" (without genuine capacity in either)
+  → LOOP: more performance = less genuine development = more performance needed
+```
+
+**Breaking the loop:** Require MEASURABLE accuracy (deterministic tasks) not just performed sophistication. Ground both lines in objective measurement. Simple + accurate > elaborate + inaccurate.
+
+### 4.4 The Lone Wolf (Interpersonal golden-allergy × Willpower dark-addiction)
+
+```
+Refuses all bonds (interpersonal golden-allergy)
+  → channels all energy into solo power (willpower dark-addiction)
+  → solo success reinforces "I don't need anyone"
+  → willpower becomes the substitute for connection
+  → LOOP: more solo power = less relational need = more isolation = more solo power
+```
+
+**Breaking the loop:** Present challenges that CANNOT be solved solo regardless of willpower. Make the Lone Wolf's solo power INSUFFICIENT. The only path forward requires an ally. Not as punishment — as reality.
+
+---
+
+---
+
+## 7. Shadow Surfacing Sequence
 
 ### 2.1 The diagnostic progression
 
@@ -329,107 +359,3 @@ PHASE 5: LOYALTY
 | Loyalty maintenance | Social-cooperative | Immersive-RPG | Structured > ecological = not integrated |
 
 ---
-
-## 3. Healing Vectors
-
-### 3.1 Heal/Evolve (Agape + Agency → dark shadows)
-
-**For The Dominator:**
-- Agape: Return to BASIC coordination (not dominance). "Can you simply coordinate? Not command — coordinate."
-- Agency: Use sovereign will to CHOOSE non-dominance. "You are strong enough to let another lead."
-- Mechanism: Present situations where non-dominant positions produce MORE power than dominant ones
-- Integration marker: Can occupy follower position without distress; can coordinate without commanding
-
-**For The Isolate:**
-- Agape: Return to the SIMPLEST interpersonal act (reading one obvious intention). "Just look. What do they want?"
-- Agency: Use sovereign will to APPROACH despite fear. "You choose to engage. No one forces you."
-- Mechanism: Present ultra-safe interpersonal contexts (NPC who CANNOT betray; stakes are zero)
-- Integration marker: Can read one NPC's intent; can accept one alliance; can tolerate another's presence
-
-### 3.2 Evolve/Heal (Eros + Communion → golden shadows)
-
-**For The Premature Diplomat:**
-- Eros: Reach toward GENUINE reading (not performed). "What do they ACTUALLY want? Not what you think they should want."
-- Communion: Join at the REAL level (transactional honesty, not performed empathy). "Be direct. What's the deal?"
-- Mechanism: Lock advancement behind ACCURACY, not sophistication. Simple correct > elaborate wrong.
-- Integration marker: Intent-reading accuracy matches verbal sophistication; can do simple transactions
-
-**For The Loyalty-Refuser:**
-- Eros: Reach toward the BOND (not just the coordination). "What if you stayed? What if this alliance MATTERED?"
-- Communion: Join at the COMMITMENT level (not just the transactional). "They're your war-band. Not just your tools."
-- Mechanism: Make loyalty produce UNIQUE rewards unavailable to solo players or alliance-rotators
-- Integration marker: Maintains alliance across 5+ interactions; experiences loss when ally is threatened
-
----
-
-## 4. Bidirectional Compound Loops
-
-### 4.1 The Puppet-Master (Interpersonal dark-addiction × Cognitive healthy)
-
-```
-High cognitive capacity → reads others perfectly
-  → uses readings ONLY for manipulation (interpersonal dark-addiction)
-  → manipulation success reinforces cognitive-as-weapon
-  → cognitive development serves domination exclusively
-  → LOOP: smarter = more manipulative = more isolated from genuine connection
-```
-
-**Breaking the loop:** Cognitive capacity must be redirected toward MUTUAL benefit. Present problems that require genuine coordination (not manipulation) to solve. Make manipulation produce diminishing returns.
-
-### 4.2 The Feral (Interpersonal dark-allergy × Emotional dark-allergy)
-
-```
-Cannot read others (interpersonal dark-allergy)
-  → cannot feel others' emotions (emotional dark-allergy)
-  → total social isolation reinforces both allergies
-  → isolation confirms "others are dangerous/irrelevant"
-  → LOOP: more isolated = less practice = less capacity = more isolation
-```
-
-**Breaking the loop:** Start with NON-HUMAN interpersonal (animal companions, simple NPCs with unmistakable signals). Build the reading muscle in safe contexts before introducing human-complexity.
-
-### 4.3 The Charmer (Interpersonal golden-addiction × Emotional golden-addiction)
-
-```
-Performs sophisticated social behaviour (interpersonal golden-addiction)
-  → performs sophisticated emotional attunement (emotional golden-addiction)
-  → both performances reinforce each other
-  → "I'm so emotionally intelligent and socially skilled" (without genuine capacity in either)
-  → LOOP: more performance = less genuine development = more performance needed
-```
-
-**Breaking the loop:** Require MEASURABLE accuracy (deterministic tasks) not just performed sophistication. Ground both lines in objective measurement. Simple + accurate > elaborate + inaccurate.
-
-### 4.4 The Lone Wolf (Interpersonal golden-allergy × Willpower dark-addiction)
-
-```
-Refuses all bonds (interpersonal golden-allergy)
-  → channels all energy into solo power (willpower dark-addiction)
-  → solo success reinforces "I don't need anyone"
-  → willpower becomes the substitute for connection
-  → LOOP: more solo power = less relational need = more isolation = more solo power
-```
-
-**Breaking the loop:** Present challenges that CANNOT be solved solo regardless of willpower. Make the Lone Wolf's solo power INSUFFICIENT. The only path forward requires an ally. Not as punishment — as reality.
-
----
-
-## 5. Integration Criteria
-
-### What "healed Interpersonal/Red" looks like
-
-The player demonstrates ALL of the following:
-
-1. **Accurate intent-reading:** Identifies what 2-3 agents want from behavioural cues (≥70% accuracy)
-2. **Flexible positioning:** Can lead, follow, or coordinate based on context (not fixed in one position)
-3. **Transactional honesty:** Engages alliances with clear mutual benefit; doesn't manipulate OR avoid
-4. **Betrayal detection without paranoia:** Detects actual betrayal signals; doesn't project betrayal onto neutral behaviour
-5. **Boundary assertion without isolation:** Says no when appropriate; says yes when appropriate
-6. **First loyalty:** Maintains at least one alliance across 5+ interactions; experiences the alliance as meaningful (not just useful)
-7. **Sovereignty within connection:** Engages the interpersonal field without losing self OR dominating others
-
-### The integration test
-
-Present a scenario requiring: read an ally's intent + coordinate a 2-step action + detect a third party's betrayal attempt + assert a boundary + maintain the alliance.
-
-If the player can do ALL FIVE in a single scenario with healthy drive expression across all four drives, Interpersonal/Red is integrated.

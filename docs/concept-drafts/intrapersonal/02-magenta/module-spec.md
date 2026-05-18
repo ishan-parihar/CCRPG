@@ -1,372 +1,202 @@
-# Intrapersonal / Magenta — Module Specification Skeleton
+# Intrapersonal / Magenta — Module Specification
 
-## Module Identity
-
-- **Line:** Intrapersonal (self-knowledge, introspection, subject→object)
-- **Stage:** Magenta (magical-symbolic, pre-operational, participation mystique)
-- **Core capacity:** Magical self-concept — the fantasy-image of self. "I am the one who…" as imagined identity, not yet felt/reflected. Self-as-character in a magical narrative.
-- **Key distinction from Infrared:** Infrared has NO self-concept (pure reaction, pre-introspective). Magenta has a MAGICAL self-concept (fantasy-image, imagined identity).
-- **Key distinction from Red:** Red has EGOCENTRIC self-identification ("I am the will, I am my power"). Magenta has MAGICAL self-identification ("I am the one the spirits chose, I am the dream-character").
+> **Line:** Intrapersonal (self-knowledge, introspection, subject→object)
+> **Stage:** Magenta / Magic (magical-symbolic, pre-operational, participation mystique)
+> **Vibration:** The first "I am" — a magical self-concept. "I am the one the spirits chose." Self as dream-character, not yet reflected or role-based.
 
 ---
 
-## Capacities Measured
+## 1. Capacity Definition
 
-| # | Capacity | Description |
-|---|---|---|
-| 1 | **Self-image recognition** | Can identify own fantasy-self-image when presented |
-| 2 | **Self-other distinction** | Can distinguish "me" from "not-me" at magical level (participation mystique boundary) |
-| 3 | **Self-narrative** | Can hold a story about who "I am" (magical narrative identity) |
-| 4 | **Self-constancy** | Maintains self-image across contexts (proto-identity stability) |
-| 5 | **Self-feeling** | Can report basic internal states ("I feel big/small/strong/scared") |
+Intrapersonal intelligence at Magenta is **magical self-concept capacity** — the ability to hold a fantasy-image of self, distinguish self from not-self, maintain a self-narrative, and feel oneself from within. The birth of "I am someone" in the game.
 
----
+**Key distinction from Infrared:** Infrared has NO self-concept (pure reaction, pre-introspective). Magenta has a MAGICAL self-concept (fantasy-image, imagined identity).
+**Key distinction from Red:** Red has EGOCENTRIC self-identification ("I am my will, my power"). Magenta has MAGICAL self-identification ("I am the one the spirits chose, I am the dream-character").
 
-## Theta-Decay Parameters
+### Core capacity dimensions
 
-| Parameter | Value | Rationale |
-|---|---|---|
-| Half-life | 16 days | Self-concept is more stable than moral sensing; slower decay |
-| Max decay | 15% | Magical self-image is foundational; cannot fully degrade |
-| Reactivation threshold | 40% | Below this, self-image becomes unstable |
+| Capacity | Definition | Assessment vehicle | Ceiling |
+|---|---|---|---|
+| **Self-image recognition** | Identifies own fantasy-self-image when presented | Image-matching, self-portrait selection | Stable recognition across contexts |
+| **Self-other distinction** | Distinguishes "me" from "not-me" at magical level | Boundary tasks; participation mystique probes | Consistent self-other boundary |
+| **Self-narrative** | Holds a story about who "I am" (magical narrative identity) | Story-completion, self-description | Flexible narrative (not fixed myth) |
+| **Self-constancy** | Maintains self-image across contexts | Cross-context self-recognition | Stable without rigidity |
+| **Self-feeling** | Reports basic internal states ("I feel big/small/strong/scared") | Interoceptive self-report | Accurate felt-sense reporting |
 
 ---
 
-## Drive-Health Weights
+## 2. Shadow Archetypes
 
-| Drive | Weight | Rationale |
-|---|---|---|
-| Agency | 0.35 | Self-concept requires "I am" — strong agency component |
-| Communion | 0.20 | Self-concept at Magenta is less relational than later stages |
-| Eros | 0.25 | Self-image reaches toward "who I could be" (magical aspiration) |
-| Agape | 0.20 | Self-constancy requires returning to "who I am" (grounding) |
+### Dark-Addiction: "The Fantasy-Prisoner"
 
----
-
-## Shadow Archetypes
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| Dark-Addiction | **Fantasy-Prisoner** | Trapped in inflated magical self-image; cannot see actual self |
-| Dark-Allergy | **Self-Stranger** | No self-image at all; cannot answer "who am I?"; dissolved into environment |
-| Golden-Addiction | **Premature Ego** | Jumps to Red-stage "I am my will" without magical self-grounding |
-| Golden-Allergy | **Identity-Refuser** | Senses emerging self but refuses to claim it; stays merged |
-
----
-
-## Compound Shadows (Cross-Module)
-
-| Compound | Modules | Pattern |
-|---|---|---|
-| **Enchanted Self** | Intrapersonal + Cognitive | Fantasy-self reinforced by magical thinking; cannot reality-test self-image |
-| **Numb Identity** | Intrapersonal + Somatic | Self-image disconnected from body; "I am" without embodiment |
-| **Wish-Self** | Intrapersonal + Willpower | Self-concept = what I wish to be, not what I am; will-driven fantasy |
-| **Lonely Self** | Intrapersonal + Interpersonal | Self-image that cannot include others; isolated magical identity |
-
----
-
-## Scoring Formula
-
-```
-intrapersonal_magenta_score = weighted_mean(
-  self_image_recognition × 0.25,
-  self_other_distinction × 0.25,
-  self_narrative × 0.20,
-  self_constancy × 0.15,
-  self_feeling × 0.15
-)
-
-drive_health_modifier = (
-  agency_health × 0.35 +
-  communion_health × 0.20 +
-  eros_health × 0.25 +
-  agape_health × 0.20
-)
-
-final_score = intrapersonal_magenta_score × drive_health_modifier
-```
-
----
-
-## Stage-Unlock Dependencies
-
-- **Requires:** Infrared intrapersonal ≥ 0.3 (basic reactivity present)
-- **Unlocks:** Red intrapersonal (egocentric self-identification) at ≥ 0.5
-- **Shadow-mode trigger:** Score drops below 0.4 → shadow-mode encounters activate
-
----
-
-## Module Anchor
-
-This document defines the complete shadow landscape for **intrapersonal intelligence at the Magenta (magical-symbolic) stage**. All 7 game concepts in this module use this as their diagnostic foundation.
-
-**Core developmental task:** Establish a magical self-concept — "I am someone." Not yet reflective (Red+), not yet role-based (Amber), but IMAGINED. The fantasy-self. The dream-character. "I am the one the spirits chose."
-
-**What healthy looks like:** A stable, flexible magical self-image that can be recognised, named, maintained across contexts, and felt from within — without being inflated (Fantasy-Prisoner) or absent (Self-Stranger).
-
----
-
-## 1. The Four Shadow Archetypes
-
-### 1.1 Dark-Addiction: "The Fantasy-Prisoner"
-
-**Core pattern:** Trapped in an INFLATED magical self-image. The fantasy-self has become a prison. Cannot see actual self because the imagined self is too compelling. "I am the greatest, the chosen one, the special one" — but this is fantasy, not felt reality.
-
-**How it manifests:**
-- Self-image is grandiose and fixed
-- Cannot update self-concept when reality contradicts
-- Defends fantasy-self against all evidence
-- "I am" statements are inflated, rigid, unchanging
-- Cannot distinguish imagined self from actual self
-- Self-narrative is a fixed myth that cannot be revised
+**Core pattern:** Trapped in an INFLATED magical self-image. The fantasy-self has become a prison. Cannot see actual self because the imagined self is too compelling. "I am the greatest, the chosen one" — but this is fantasy, not felt reality.
 
 **Drive pathology:**
-| Drive | Dark-domain | Golden-domain |
-|---|---|---|
-| Agency | Uses self-image to dominate; "I am special therefore I rule" | Cannot stand alone WITHOUT the fantasy; needs the inflation |
-| Communion | Cannot share self-image; others must validate the fantasy | Cannot join others as equals; always "the special one" |
-| Eros | Cannot grow because growth would change the fantasy | Reaches for higher self-image but only to inflate further |
-| Agape | Cannot return to simpler self; inflation is all | Cannot embody actual self; only the fantasy is acceptable |
+- Agency: Uses self-image to dominate; "I am special therefore I rule"
+- Communion: Cannot share self-image; others must validate the fantasy
+- Eros: Cannot grow because growth would change the fantasy
+- Agape: Cannot return to simpler self; inflation is all
 
-**Atman Project defenses:** Inflation, grandiosity, magical omnipotence, denial of limitation.
+**Behavioural signatures:** Grandiose, fixed self-descriptions; cannot update self-concept when reality contradicts; defends fantasy-self against all evidence; cannot distinguish imagined self from actual self.
 
-**What healing looks like:** The fantasy-self becomes ONE image among many. "Sometimes I am the brave one. Sometimes I am the scared one. Both are me." Flexibility without collapse.
+**Protects against:** The terror of being ordinary. If the fantasy collapses, there is nothing.
+
+**Atman Project defense:** Inflation, grandiosity, magical omnipotence, denial of limitation.
 
 ---
 
-### 1.2 Dark-Allergy: "The Self-Stranger"
+### Dark-Allergy: "The Self-Stranger"
 
-**Core pattern:** NO self-image. Cannot answer "who am I?" Dissolved into the environment. Participation mystique without a participant. The self is absent — not merged (that's communion), but simply MISSING.
-
-**How it manifests:**
-- Cannot identify own image when presented
-- Cannot distinguish self from environment
-- "Who are you?" produces blank or confusion
-- No self-narrative; no "I am" statements
-- Cannot report internal states
-- Others' identities are clear; own identity is fog
+**Core pattern:** NO self-image. Cannot answer "who am I?" Dissolved into the environment. Participation mystique without a participant. The self is absent — not merged, but simply MISSING.
 
 **Drive pathology:**
-| Drive | Dark-domain | Golden-domain |
-|---|---|---|
-| Agency | No "I" to be sovereign; cannot act from self | Cannot stand alone because there is no self to stand |
-| Communion | Merges with others' identities; becomes them | Cannot join because there is no self to bring |
-| Eros | Cannot grow because there is no self to grow | Cannot reach upward because there is no one reaching |
-| Agape | Cannot return to self because there is no self to return to | Cannot embody because there is no one to embody |
+- Agency: No "I" to be sovereign; cannot act from self
+- Communion: Merges with others' identities; becomes them
+- Eros: Cannot grow because there is no self to grow
+- Agape: Cannot return to self because there is no self to return to
 
-**Atman Project defenses:** Dissolution, depersonalisation, identity diffusion, environmental merger.
+**Behavioural signatures:** Cannot identify own image; no self-narrative; "who are you?" produces blank or confusion; others' identities are clear, own identity is fog.
 
-**What healing looks like:** A self-image EMERGES. "I am… something. I am here. I am the one looking." The first "I am" — however tentative.
+**Protects against:** The anxiety of individuation. If there is no self, there is nothing to lose.
+
+**Atman Project defense:** Dissolution, depersonalisation, identity diffusion, environmental merger.
 
 ---
 
-### 1.3 Golden-Addiction: "The Premature Ego"
+### Golden-Addiction: "The Premature Ego"
 
-**Core pattern:** Jumps to Red-stage egocentric self ("I am my WILL, I am my POWER") without establishing the magical self-ground. Bypasses the fantasy-image stage. Has a self-concept, but it's borrowed from the next stage — willful, power-based, not grounded in magical imagination.
-
-**How it manifests:**
-- Self-concept is all will and power (Red-stage language)
-- No magical self-narrative; no dream-character
-- "I am" = "I can" (capacity-based, not image-based)
-- Cannot play with self-image; self is serious, functional
-- Lacks the imaginative flexibility of healthy Magenta self
-- Self-concept is rigid and achievement-oriented (premature)
+**Core pattern:** Jumps to Red-stage egocentric self ("I am my WILL, my POWER") without establishing the magical self-ground. Bypasses the fantasy-image stage. Self-concept is borrowed from the next stage — willful, power-based, not grounded in magical imagination.
 
 **Drive pathology:**
-| Drive | Dark-domain | Golden-domain |
-|---|---|---|
-| Agency | Over-identified with will; "I am what I do" | Cannot rest in being; must always be doing/achieving |
-| Communion | Cannot share playful self; only the achieving self | Cannot join in imaginative play; too serious |
-| Eros | Growth = more power; no imaginative exploration | Reaches for Orange rationality without Red grounding |
-| Agape | Cannot return to playful self; play = weakness | Cannot embody imagination; only function is acceptable |
+- Agency: Over-identified with will; "I am what I do"
+- Communion: Cannot share playful self; only the achieving self
+- Eros: Growth = more power; no imaginative exploration
+- Agape: Cannot return to playful self; play = weakness
 
-**Atman Project defenses:** Premature translation, spiritual bypassing (of the magical stage), functional fixation.
+**Behavioural signatures:** Self-concept is all will and power (Red-stage language); no magical self-narrative; "I am" = "I can"; cannot play with self-image; self is serious and functional.
 
-**What healing looks like:** The will-self RELAXES into imagination. "I am not just what I do. I am also what I dream. I am the character in my own story." Recovery of magical self-play.
+**Protects against:** The "childishness" of magical self-play. Imagination feels weak.
+
+**Atman Project defense:** Premature translation, functional fixation, bypassing of the magical stage.
 
 ---
 
-### 1.4 Golden-Allergy: "The Identity-Refuser"
+### Golden-Allergy: "The Identity-Refuser"
 
-**Core pattern:** SENSES the emerging self but REFUSES to claim it. Stays merged with the collective/environment. The self is knocking but the door stays closed. "I could be someone, but I won't." Fear of individuation.
-
-**How it manifests:**
-- Approaches self-identification then retreats
-- "I am…" begins then stops; cannot complete
-- Prefers "we" to "I"; collective identity over individual
-- Senses own uniqueness but refuses to claim it
-- Fear of standing out; fear of being "someone"
-- Self-image flickers then dissolves back into group
+**Core pattern:** SENSES the emerging self but REFUSES to claim it. Stays merged with the collective. The self is knocking but the door stays closed. "I could be someone, but I won't." Fear of individuation.
 
 **Drive pathology:**
-| Drive | Dark-domain | Golden-domain |
-|---|---|---|
-| Agency | Cannot claim "I"; sovereignty feels dangerous | Cannot stand alone; individuation = exile |
-| Communion | Over-merged; uses communion to avoid self | Cannot join AS a self; only as dissolved member |
-| Eros | Cannot grow toward self; growth = separation | Refuses the call to individuate; stays merged |
-| Agape | Returns to merger whenever self emerges | Cannot embody individual self; only collective is safe |
+- Agency: Cannot claim "I"; sovereignty feels dangerous
+- Communion: Over-merged; uses communion to avoid self
+- Eros: Cannot grow toward self; growth = separation
+- Agape: Returns to merger whenever self emerges
 
-**Atman Project defenses:** Fusion, pre-personal merger, individuation terror, collective hiding.
+**Behavioural signatures:** "I am…" begins then stops; prefers "we" to "I"; senses own uniqueness but refuses to claim it; self-image flickers then dissolves back into group.
 
-**What healing looks like:** The self is CLAIMED. "I am. I am someone. I am different from you. And that's okay." First individuation — however brief.
+**Protects against:** The terror of standing out. Individuation = exile.
 
----
-
-## 2. Compound Shadow Relationships
-
-### 2.1 Enchanted Self (Intrapersonal × Cognitive)
-
-**Pattern:** Fantasy-self reinforced by magical thinking. The cognitive line provides magical explanations for the inflated self-image. "I am special BECAUSE the spirits chose me" (cognitive magical reasoning supports intrapersonal inflation).
-
-**Bidirectional loop:**
-- Intrapersonal Fantasy-Prisoner → Cognitive magical thinking provides "evidence" for inflation
-- Cognitive magical thinking → Intrapersonal inflation provides motivation for magical reasoning
-- **Break point:** Reality-test the self-image (intrapersonal) OR reality-test the magical reasoning (cognitive)
-
-### 2.2 Numb Identity (Intrapersonal × Somatic)
-
-**Pattern:** Self-image disconnected from body. "I am" without embodiment. The self exists as pure fantasy with no somatic grounding. Cannot feel self in the body.
-
-**Bidirectional loop:**
-- Intrapersonal Fantasy-Prisoner → body is irrelevant to the fantasy-self
-- Somatic disconnection → self-image has no bodily anchor
-- **Break point:** Ground self-image in body ("Where in your body do you feel 'you'?")
-
-### 2.3 Wish-Self (Intrapersonal × Willpower)
-
-**Pattern:** Self-concept = what I wish to be, not what I am. Will-driven fantasy identity. "I am the brave one" (wish) rather than "I am sometimes brave, sometimes scared" (actual).
-
-**Bidirectional loop:**
-- Intrapersonal Fantasy-Prisoner → willpower maintains the wished-for self
-- Willpower fixation → intrapersonal self-image becomes will-driven
-- **Break point:** Distinguish "who I wish to be" from "who I am right now"
-
-### 2.4 Lonely Self (Intrapersonal × Interpersonal)
-
-**Pattern:** Self-image that cannot include others. Isolated magical identity. "I am" but "I am alone." Self-concept that excludes relationship.
-
-**Bidirectional loop:**
-- Intrapersonal inflation → others cannot be equals; self is too special
-- Interpersonal isolation → self-image has no relational context
-- **Break point:** Include others in self-narrative ("I am someone who has friends/companions")
+**Atman Project defense:** Fusion, pre-personal merger, individuation terror, collective hiding.
 
 ---
 
-## 3. Shadow Surfacing Sequence
+## 3. Drive-Health Landscape
 
-The 5 capacities surface shadows in this order:
-
-```
-self-image recognition (can you see yourself?)
-    ↓ reveals Fantasy-Prisoner (inflated image) or Self-Stranger (no image)
-self-other distinction (can you tell you from not-you?)
-    ↓ reveals Identity-Refuser (merged) or Fantasy-Prisoner (isolated in fantasy)
-self-narrative (can you tell your story?)
-    ↓ reveals Premature Ego (will-story) or Self-Stranger (no story)
-self-constancy (does your self persist?)
-    ↓ reveals Fantasy-Prisoner (rigid) or Identity-Refuser (flickering)
-self-feeling (can you feel yourself from within?)
-    ↓ reveals all 4 shadows in their somatic dimension
-```
+| Drive | Dark-domain healthy | Dark-domain pathological | Golden-domain healthy | Golden-domain pathological |
+|---|---|---|---|---|
+| **Agency** (0.35) | Claims "I am" without dominating; self-image is sovereign but not inflated | Fantasy-Prisoner (inflated sovereignty) OR Self-Stranger (no sovereignty) | Stands as "I" without needing validation | Cannot stand alone without the fantasy; needs inflation |
+| **Communion** (0.20) | Shares self-image without losing it; "I am me AND I am with you" | Identity-Refuser (dissolved into group) OR Fantasy-Prisoner (cannot share) | Joins others while maintaining self | Cannot join AS a self; only as dissolved member |
+| **Eros** (0.25) | Rests in current self-image without compulsive growth | Fantasy-Prisoner (cannot grow) OR Premature Ego (bypasses to Red) | Imagines "who I might become" without bypassing who I am now | Compulsive upward movement; always reaching for next self |
+| **Agape** (0.20) | Returns to simpler self-states without regression | Self-Stranger (nothing to return to) OR Fantasy-Prisoner (only fantasy acceptable) | Embodies self-image in daily life (not just fantasy) | Cannot embody; stays in fantasy; OR smothers emerging self |
 
 ---
 
-## 4. Healthy Drive Expression at This Module
+## 4. Healing Vectors
 
-### 4.1 Agency (weight: 0.35)
-
-**Healthy dark-domain:** Can claim "I am" without dominating. Self-image is sovereign but not inflated.
-**Healthy golden-domain:** Can stand as "I" without needing validation. Self-image is self-sustaining.
-**Pathological:** Fantasy-Prisoner (inflated sovereignty) or Self-Stranger (no sovereignty).
-
-### 4.2 Communion (weight: 0.20)
-
-**Healthy dark-domain:** Can share self-image without losing it. "I am me AND I am with you."
-**Healthy golden-domain:** Can join others while maintaining self. Participation without dissolution.
-**Pathological:** Identity-Refuser (dissolved into group) or Fantasy-Prisoner (cannot share).
-
-### 4.3 Eros (weight: 0.25)
-
-**Healthy dark-domain:** Can rest in current self-image without compulsive growth.
-**Healthy golden-domain:** Can imagine "who I might become" without bypassing who I am now.
-**Pathological:** Premature Ego (bypasses to Red) or Fantasy-Prisoner (cannot grow).
-
-### 4.4 Agape (weight: 0.20)
-
-**Healthy dark-domain:** Can return to simpler self-states without regression.
-**Healthy golden-domain:** Can embody self-image in daily life (not just in fantasy).
-**Pathological:** Self-Stranger (nothing to return to) or Fantasy-Prisoner (only fantasy is acceptable).
-
----
-
-## 5. Heal/Evolve and Evolve/Heal Vectors
-
-### 5.1 Heal/Evolve (bottom-up): Agape + Agency
-
-**Target:** Dark shadows (Fantasy-Prisoner, Self-Stranger)
+### Heal/Evolve (Agape + Agency → dark shadows)
 
 **For Fantasy-Prisoner:**
 - Agape: Return to ACTUAL self with compassion. "The real you is enough."
 - Agency: Sovereign examination of the fantasy. "Is this really you? Or is this a story?"
-- Integration: Fantasy-self becomes one image among many; actual self is acceptable.
+- Build: Fantasy-self becomes one image among many; actual self is acceptable.
 
 **For Self-Stranger:**
 - Agape: Return to the body, to the present, to "here I am."
 - Agency: Claim the first "I am." Sovereign self-declaration.
-- Integration: A self-image emerges; however tentative, it is CLAIMED.
+- Build: A self-image emerges; however tentative, it is CLAIMED.
 
-### 5.2 Evolve/Heal (top-down): Eros + Communion
-
-**Target:** Golden shadows (Premature Ego, Identity-Refuser)
+### Evolve/Heal (Eros + Communion → golden shadows)
 
 **For Premature Ego:**
-- Eros: Reach for IMAGINATIVE self (not just functional self). "Who are you in your dreams?"
+- Eros: Reach for IMAGINATIVE self (not just functional). "Who are you in your dreams?"
 - Communion: Join in playful self-exploration with others. Self as shared imagination.
-- Integration: Will-self relaxes into imagination; play recovers.
+- Build: Will-self relaxes into imagination; play recovers.
 
 **For Identity-Refuser:**
 - Eros: Reach for individuation. "You are becoming someone. That's beautiful."
 - Communion: Join others AS a self (not dissolved). "You can be with them AND be you."
-- Integration: Self is claimed; individuation begins; merger releases.
+- Build: Self is claimed; individuation begins; merger releases.
+
+### Integration criteria
+
+The player demonstrates: stable flexible self-image (not inflated, not absent); self-other distinction without rigid boundary; flexible self-narrative (not fixed myth, not blank); self-constancy across contexts; accurate felt-sense reporting; all 4 drives healthy in both domains; no dominant shadow quadrant.
 
 ---
 
-## 6. Detection Methodology
+## 5. Scoring Parameters
 
-### 6.1 Primary signals
+### Theta model
+- **Half-life:** 16 days (self-concept is more stable than moral sensing; slower decay)
+- **Max decay:** 15% (magical self-image is foundational; cannot fully degrade)
+- **Composite weights:** self-image-recognition 0.25, self-other-distinction 0.25, self-narrative 0.20, self-constancy 0.15, self-feeling 0.15
 
-| Shadow | Primary signal | Secondary signal |
+### Drive-health weights: Agency 0.35, Communion 0.20, Eros 0.25, Agape 0.20
+
+### Stage-transition thresholds
+- **Magenta → Red:** Score ≥ 0.5; stable self-image across ≥ 3 sessions; ≥ 1 other line at Magenta
+- **Regression trigger:** Score drops below 0.4 → shadow-mode encounters activate
+
+---
+
+## 6. Compound Shadows & Cross-Module Relationships
+
+| Compound | Modules | Pattern |
 |---|---|---|
-| Fantasy-Prisoner | Inflated, rigid self-descriptions | Cannot update self-image; defends fantasy |
-| Self-Stranger | Blank/confused self-descriptions | Cannot distinguish self from environment |
-| Premature Ego | Will/power-based self-descriptions | No imaginative play; self is functional only |
-| Identity-Refuser | Approach-withdrawal in self-identification | "We" language; collective hiding |
+| **Enchanted Self** | Intrapersonal + Cognitive | Fantasy-self reinforced by magical thinking; cognitive magical reasoning supports intrapersonal inflation |
+| **Numb Identity** | Intrapersonal + Somatic | Self-image disconnected from body; "I am" without embodiment |
+| **Wish-Self** | Intrapersonal + Willpower | Self-concept = what I wish to be, not what I am; will-driven fantasy identity |
+| **Lonely Self** | Intrapersonal + Interpersonal | Self-image that cannot include others; isolated magical identity |
 
-### 6.2 Cross-validation across modalities
-
-| Modality | What it reveals |
-|---|---|
-| Deterministic | Can they identify their own image? (objective) |
-| Language-reflective | Can they NAME themselves? (verbal) |
-| Scenario-choice | Can they CHOOSE as a self? (decisional) |
-| Embodied-somatic | Can they FEEL themselves? (somatic) |
-| Strategic-planning | Can they PLAN as a self? (temporal) |
-| Social-cooperative | Can they BE a self WITH others? (relational) |
-| Immersive-RPG | Does self-concept appear SPONTANEOUSLY? (ecological) |
+### Bidirectional loops
+- **Enchanted Self:** Cognitive magical thinking provides "evidence" for inflation ↔ intrapersonal inflation motivates magical reasoning. Break: reality-test either the self-image or the magical reasoning.
+- **Numb Identity:** Fantasy-self has no somatic anchor ↔ somatic disconnection leaves self-image ungrounded. Break: ground self-image in body ("Where in your body do you feel 'you'?").
+- **Wish-Self:** Willpower maintains wished-for self ↔ intrapersonal self-image becomes will-driven. Break: distinguish "who I wish to be" from "who I am right now."
+- **Lonely Self:** Inflated self cannot include equals ↔ interpersonal isolation leaves self-image without relational context. Break: include others in self-narrative.
 
 ---
 
-## 7. Integration Criteria
+## 7. Shadow Surfacing Sequence
 
-The module is "integrated" when:
+### Progressive revelation order
+1. **Self-image recognition** → Fantasy-Prisoner (inflated image) or Self-Stranger (no image) surfaces first
+2. **Self-other distinction** → Identity-Refuser (merged) or Fantasy-Prisoner (isolated in fantasy)
+3. **Self-narrative** → Premature Ego (will-story) or Self-Stranger (no story)
+4. **Self-constancy** → Fantasy-Prisoner (rigid) or Identity-Refuser (flickering)
+5. **Self-feeling** → All 4 shadows in their somatic dimension
 
-1. **Self-image recognition:** Can identify own fantasy-self-image accurately (not inflated, not absent)
-2. **Self-other distinction:** Can distinguish "me" from "not-me" without rigid boundary or no boundary
-3. **Self-narrative:** Can tell a flexible story about "who I am" (not fixed myth, not blank)
-4. **Self-constancy:** Maintains self-image across contexts without rigidity
-5. **Self-feeling:** Can report internal states from within (not performed, not absent)
-6. **Drive health:** All 4 drives express healthily in both domains
-7. **Shadow resolution:** No dominant shadow quadrant; all 4 are manageable
-8. **Compound resolution:** Cross-module shadows are not reinforcing
+### Per-modality surfacing
 
-**Theta-decay note:** Integration is never permanent. The magical self-concept must be MAINTAINED through periodic engagement. Neglect → decay → shadow-mode activation.
+| Modality | Fantasy-Prisoner | Self-Stranger | Premature Ego | Identity-Refuser |
+|---|---|---|---|---|
+| Deterministic | Inflated self-image selection | Cannot identify own image | Will/power-based self-selection | Approach-withdrawal on self-tasks |
+| Language-reflective | Grandiose self-descriptions | Blank/confused self-descriptions | Functional-only self-language | "We" language; cannot say "I am" |
+| Scenario-choice | Chooses as "the special one" | Cannot choose as self | Chooses as will/power | Defers choice to group |
+| Embodied-somatic | Body is vehicle for fantasy | No felt sense of self in body | Body = instrument of will | Body dissolves into environment |
+| Strategic-planning | Plans for fantasy-self | Cannot plan as self | Plans as achiever only | Plans for group, not self |
+| Social-cooperative | Cannot be equal; must be special | Becomes others; no self in group | Competes rather than cooperates | Disappears into group |
+| Immersive-rpg | Seeks "chosen one" roles | No self-directed navigation | Achievement-only engagement | Follows others; no self-initiated action |
+
+### Cross-validation rules
+- Language-reflective high + Deterministic low = verbal self-performance without actual self-recognition (golden-addiction)
+- Embodied-somatic high + Language-reflective low = felt self without verbal self (normal early; watch for dissociation)
+- Social-cooperative high + Deterministic low = relational self without individual self (communion-dependence)
+- Immersive-rpg low + all others moderate = ecological self-absence (compartmentalised capacity)

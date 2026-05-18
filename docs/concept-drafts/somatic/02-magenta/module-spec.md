@@ -27,117 +27,9 @@ Somatic intelligence at Magenta is **body-fantasy capacity** — the body is exp
 
 ---
 
-## 2. Scoring Architecture
-
-### 2.1 Theta (capacity estimate)
-
-**Model:** 1PL IRT with Bayesian updating
-- **Prior:** N(0, 1) at first encounter
-- **Item difficulty:** Calibrated per feeling-tone, postural-holding, gross-motor-rhythm, body-boundary, arousal-state
-- **Update:** After each response (accuracy + timing as secondary)
-
-### 2.2 Composite score
-
-```
-somatic_magenta = weighted_aggregate(
-  feeling_tone_awareness: 0.25,
-  postural_holding:       0.25,   ← tied heaviest — body-as-vessel IS Magenta somatic
-  gross_motor_rhythm:     0.20,
-  body_boundary_sense:    0.15,
-  arousal_state_recognition: 0.15
-)
-```
-
-### 2.3 Theta-decay
-
-- **Half-life:** 12 days (somatic is fast-moving; body-sense needs regular engagement)
-- **Max decay:** 20% of peak theta
-- **Rationale:** Body-awareness at Magenta is use-it-or-lose-it; without regular somatic engagement, felt-sense regresses to Infrared reflex
-
-### 2.4 Stage-transition threshold
-
-- **Magenta → Red unlock:** Theta ≥ 0.7 on postural-holding AND gross-motor-rhythm ≥ 0.5
-- **Confirmation:** Must demonstrate across ≥ 3 sessions
-- **Cross-line requirement:** At least 1 other line at Magenta
-
 ---
 
-## 3. Drive-Health Integration
-
-### 3.1 Drive-health weight for Somatic/Magenta
-
-**Weight: 0.35** (moderate-high — somatic is a primary line; at Magenta the body is the primary mode of being)
-
-### 3.2 Healthy drive expression at Somatic/Magenta
-
-| Drive | Healthy expression |
-|---|---|
-| **Agency** | Inhabits body independently; holds posture by own will; moves with autonomy |
-| **Communion** | Shares body-space with others; moves in rhythm with companion; receives touch/proximity |
-| **Eros** | Reaches toward new body-experiences with curiosity; wants to feel more |
-| **Agape** | Returns to familiar body-states with care; maintains body-awareness; embodies felt-sense |
-
-### 3.3 Pathological drive expression at Somatic/Magenta
-
-| Drive | Dark-domain pathology | Golden-domain pathology |
-|---|---|---|
-| **Agency** | Uses body to dominate space (takes up all room; pushes) | Cannot inhabit body without external permission |
-| **Communion** | Loses body-boundary in others' presence (fusion) | Cannot share body-space (rigid isolation) |
-| **Eros** | Refuses new body-experiences; clings to familiar states | Rushes past body-awareness toward "mind" |
-| **Agape** | Cannot return to simple body-states; always seeking intensity | Cannot embody; stays in fantasy about the body |
-
----
-
-## 4. Shadow Summary
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| **Dark-Addiction** | The Body-Magician | Believes the body literally has magical powers — posture CONTROLS reality; gesture FORCES outcomes; body-fantasy as omnipotence |
-| **Dark-Allergy** | The Disembodied | Refuses body-awareness; lives "in the head"; body is ignored, neglected, or feared |
-| **Golden-Addiction** | The Premature Athlete | Rushes toward power-body (Red) without establishing felt-sense; performs physical feats without body-awareness |
-| **Golden-Allergy** | The Sensation-Refuser | Fears body-sensation; the felt-sense is threatening; approach-withdrawal with somatic experience |
-
-### 4.1 Compound shadows (cross-module)
-
-| Compound | Modules involved | Pattern |
-|---|---|---|
-| **The Enchanted Body** | Somatic/Magenta dark-addiction + Cognitive/Magenta dark-addiction | Body AND mind both trapped in magical thinking; total fusion of fantasy and physicality |
-| **The Ghost** | Somatic/Magenta dark-allergy + Intrapersonal/Magenta dark-allergy | No body-sense AND no self-sense; floating without ground or identity |
-| **The Performing Athlete** | Somatic/Magenta golden-addiction + Willpower/Magenta golden-addiction | Rushes to physical performance without felt-sense or sustained effort; all show, no ground |
-| **The Frozen Dreamer** | Somatic/Magenta golden-allergy + Emotional/Magenta dark-allergy | Fears body-sensation AND emotional experience; trapped in cognitive-only mode |
-
----
-
-## 5. Modality Affinity
-
-| Modality | Affinity | Rationale |
-|---|---|---|
-| Deterministic | ★★★★☆ | Postural holding and rhythm are objectively measurable |
-| Language-reflective | ★★☆☆☆ | Limited — body-sense at Magenta is pre-verbal; hard to articulate |
-| Scenario-choice | ★★★☆☆ | Body-choices (posture selection, movement choice) |
-| Embodied-somatic | ★★★★★ | This IS the somatic line — maximum affinity |
-| Strategic-planning | ★★☆☆☆ | Minimal — body at Magenta doesn't plan; it feels |
-| Social-cooperative | ★★★★☆ | Shared rhythm, coordinated movement, body-proximity |
-| Immersive-rpg | ★★★★★ | The body navigates the magical world; ecological somatic engagement |
-
----
-
-## 6. Cross-Validation Rules
-
-- **Deterministic × Embodied-somatic:** If deterministic shows poor postural holding but embodied-somatic shows high engagement → dark-addiction (body-fantasy without actual capacity)
-- **Language-reflective × Deterministic:** If language shows sophisticated body-talk but deterministic shows poor body-sense → golden-addiction (talking about the body without inhabiting it)
-- **Immersive-rpg × Deterministic:** If ecological engagement is high but structured body-tasks fail → engagement without capacity (possible dark-addiction)
-- **Social-cooperative × Deterministic:** If shared rhythm works but solo rhythm fails → communion-dependent somatic capacity (possible communion dark-domain issue)
-
----
-
-> **Line:** Somatic (body-awareness, proprioception, rhythm, coordination)
-> **Stage:** Magenta / Magic (body-fantasy, feeling-tone, "my body is magic")
-> **Purpose:** Define the complete shadow landscape — what goes wrong with somatic intelligence at the magical-symbolic stage, how to detect it, and how to heal it.
-
----
-
-## 1. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 1.1 Dark-Addiction: "The Body-Magician"
 
@@ -258,37 +150,37 @@ somatic_magenta = weighted_aggregate(
 
 ---
 
-## 2. Shadow Surfacing Sequence
+---
 
-### Level 1: Feeling-Tone Awareness (surface)
-**What's tested:** Can the player sense the body's overall state?
-- Dark-allergy surfaces HERE first (no body-sense at all)
-- Detection: engagement rate with body-state identification tasks
+## 3. Drive-Health Landscape
 
-### Level 2: Postural Holding (core capacity)
-**What's tested:** Can the player hold a posture stably?
-- Dark-addiction surfaces HERE (holds posture as magical ritual)
-- Golden-addiction surfaces HERE (holds forcefully, not gently)
-- Detection: hold quality; ritual additions; force level
+### 3.1 Drive-health weight for Somatic/Magenta
 
-### Level 3: Gross-Motor Rhythm (coordination)
-**What's tested:** Can the player move in time with a beat?
-- All shadows visible at this level
-- Detection: rhythm accuracy; engagement quality; force appropriateness
+**Weight: 0.35** (moderate-high — somatic is a primary line; at Magenta the body is the primary mode of being)
 
-### Level 4: Body-Boundary Sense (spatial)
-**What's tested:** Can the player sense where their body ends?
-- Golden-allergy surfaces HERE (fears body-boundary awareness)
-- Detection: boundary-identification accuracy; anxiety markers
+### 3.2 Healthy drive expression at Somatic/Magenta
 
-### Level 5: Integration
-**What's tested:** Can the player inhabit the body naturally?
-- Full shadow landscape visible
-- Detection: spontaneous body-awareness quality; drive-health across all 4
+| Drive | Healthy expression |
+|---|---|
+| **Agency** | Inhabits body independently; holds posture by own will; moves with autonomy |
+| **Communion** | Shares body-space with others; moves in rhythm with companion; receives touch/proximity |
+| **Eros** | Reaches toward new body-experiences with curiosity; wants to feel more |
+| **Agape** | Returns to familiar body-states with care; maintains body-awareness; embodies felt-sense |
+
+### 3.3 Pathological drive expression at Somatic/Magenta
+
+| Drive | Dark-domain pathology | Golden-domain pathology |
+|---|---|---|
+| **Agency** | Uses body to dominate space (takes up all room; pushes) | Cannot inhabit body without external permission |
+| **Communion** | Loses body-boundary in others' presence (fusion) | Cannot share body-space (rigid isolation) |
+| **Eros** | Refuses new body-experiences; clings to familiar states | Rushes past body-awareness toward "mind" |
+| **Agape** | Cannot return to simple body-states; always seeking intensity | Cannot embody; stays in fantasy about the body |
 
 ---
 
-## 3. Healing Architecture
+---
+
+## 4. Healing Vectors
 
 ### 3.1 Heal/Evolve Vector (Agape + Agency → Dark Shadows)
 
@@ -324,7 +216,69 @@ somatic_magenta = weighted_aggregate(
 
 ---
 
-## 4. Bidirectional Shadow Loops (Cross-Module)
+### Integration Criteria
+### 6.1 What "healed" looks like at Somatic/Magenta
+
+The player demonstrates:
+1. **Feeling-tone awareness:** Can identify body-state (pleasant/unpleasant/neutral) accurately
+2. **Postural holding:** Holds postures stably and GENTLY (not forcefully or ritually)
+3. **Gross-motor rhythm:** Moves in time with simple beats naturally
+4. **Body-boundary sense:** Knows where their body is in space
+5. **Arousal-state recognition:** Can identify activation level accurately
+6. **Drive health:** All 4 drives expressing healthily in somatic context
+7. **Shadow resolution:** No dominant shadow quadrant; flexible relationship to body
+
+### 6.2 Readiness for Red
+
+Integration at Magenta means the player can:
+- Inhabit the body with felt-sense (not just use it mechanically)
+- Hold postures without magical attribution or avoidance
+- Move rhythmically without intensity-addiction or sensation-fear
+- Sense body-boundaries without fusion or rigid isolation
+- Return to simple body-awareness without feeling "regressed"
+
+This is the FOUNDATION for Red's power-body, where the body becomes an instrument of will and strength — but only if it's first INHABITED at Magenta.
+
+---
+
+## 5. Scoring Parameters
+
+### 2.1 Theta (capacity estimate)
+
+**Model:** 1PL IRT with Bayesian updating
+- **Prior:** N(0, 1) at first encounter
+- **Item difficulty:** Calibrated per feeling-tone, postural-holding, gross-motor-rhythm, body-boundary, arousal-state
+- **Update:** After each response (accuracy + timing as secondary)
+
+### 2.2 Composite score
+
+```
+somatic_magenta = weighted_aggregate(
+  feeling_tone_awareness: 0.25,
+  postural_holding:       0.25,   ← tied heaviest — body-as-vessel IS Magenta somatic
+  gross_motor_rhythm:     0.20,
+  body_boundary_sense:    0.15,
+  arousal_state_recognition: 0.15
+)
+```
+
+### 2.3 Theta-decay
+
+- **Half-life:** 12 days (somatic is fast-moving; body-sense needs regular engagement)
+- **Max decay:** 20% of peak theta
+- **Rationale:** Body-awareness at Magenta is use-it-or-lose-it; without regular somatic engagement, felt-sense regresses to Infrared reflex
+
+### 2.4 Stage-transition threshold
+
+- **Magenta → Red unlock:** Theta ≥ 0.7 on postural-holding AND gross-motor-rhythm ≥ 0.5
+- **Confirmation:** Must demonstrate across ≥ 3 sessions
+- **Cross-line requirement:** At least 1 other line at Magenta
+
+---
+
+---
+
+## 6. Compound Shadows & Cross-Module Relationships
 
 ### 4.1 The Enchanted Body (Somatic dark-addiction ↔ Cognitive dark-addiction)
 
@@ -368,61 +322,47 @@ somatic_magenta = weighted_aggregate(
 
 ---
 
-## 5. Detection Methodology
+---
 
-### 5.1 Primary signals (within Somatic/Magenta games)
+## 7. Shadow Surfacing Sequence
 
-| Signal | Shadow indicated | Confidence |
-|---|---|---|
-| High postural engagement + low awareness accuracy | Dark-addiction | High |
-| Near-zero somatic engagement | Dark-allergy | High |
-| High motor output + low body-awareness | Golden-addiction | High |
-| Approach-withdrawal on body-awareness tasks | Golden-allergy | High |
-| Ritual body-behaviours | Dark-addiction | Medium |
-| Cognitive-only preference | Dark-allergy | Medium |
-| Intensity-seeking without awareness | Golden-addiction | Medium |
-| Mechanical performance without felt-sense | Golden-allergy | Medium |
+### Level 1: Feeling-Tone Awareness (surface)
+**What's tested:** Can the player sense the body's overall state?
+- Dark-allergy surfaces HERE first (no body-sense at all)
+- Detection: engagement rate with body-state identification tasks
 
-### 5.2 Cross-modality validation
+### Level 2: Postural Holding (core capacity)
+**What's tested:** Can the player hold a posture stably?
+- Dark-addiction surfaces HERE (holds posture as magical ritual)
+- Golden-addiction surfaces HERE (holds forcefully, not gently)
+- Detection: hold quality; ritual additions; force level
 
-| Modality pair | What discrepancy reveals |
-|---|---|
-| Deterministic vs. Embodied-somatic | Dark-addiction (engages body magically, fails structurally) |
-| Language-reflective vs. Deterministic | Golden-addiction (talks about body without inhabiting it) |
-| Immersive-rpg vs. Deterministic | Engagement without capacity (ecological vs. structured) |
-| Social-cooperative vs. Deterministic | Communion-dependent capacity (shared rhythm vs. solo) |
+### Level 3: Gross-Motor Rhythm (coordination)
+**What's tested:** Can the player move in time with a beat?
+- All shadows visible at this level
+- Detection: rhythm accuracy; engagement quality; force appropriateness
 
-### 5.3 Temporal patterns
+### Level 4: Body-Boundary Sense (spatial)
+**What's tested:** Can the player sense where their body ends?
+- Golden-allergy surfaces HERE (fears body-boundary awareness)
+- Detection: boundary-identification accuracy; anxiety markers
 
-| Pattern | Shadow indicated |
-|---|---|
-| Engagement drops after initial body-contact | Golden-allergy (approach then withdraw) |
-| Engagement increases but awareness plateaus | Dark-addiction (more ritual ≠ more awareness) |
-| Rapid intensity gains then awareness stagnation | Golden-addiction (performance without inhabitation) |
-| Steady low engagement, steady low awareness | Dark-allergy (consistent avoidance) |
+### Level 5: Integration
+**What's tested:** Can the player inhabit the body naturally?
+- Full shadow landscape visible
+- Detection: spontaneous body-awareness quality; drive-health across all 4
 
 ---
 
-## 6. Integration Criteria
+### Cross-Validation Rules
+| Modality | Affinity | Rationale |
+|---|---|---|
+| Deterministic | ★★★★☆ | Postural holding and rhythm are objectively measurable |
+| Language-reflective | ★★☆☆☆ | Limited — body-sense at Magenta is pre-verbal; hard to articulate |
+| Scenario-choice | ★★★☆☆ | Body-choices (posture selection, movement choice) |
+| Embodied-somatic | ★★★★★ | This IS the somatic line — maximum affinity |
+| Strategic-planning | ★★☆☆☆ | Minimal — body at Magenta doesn't plan; it feels |
+| Social-cooperative | ★★★★☆ | Shared rhythm, coordinated movement, body-proximity |
+| Immersive-rpg | ★★★★★ | The body navigates the magical world; ecological somatic engagement |
 
-### 6.1 What "healed" looks like at Somatic/Magenta
-
-The player demonstrates:
-1. **Feeling-tone awareness:** Can identify body-state (pleasant/unpleasant/neutral) accurately
-2. **Postural holding:** Holds postures stably and GENTLY (not forcefully or ritually)
-3. **Gross-motor rhythm:** Moves in time with simple beats naturally
-4. **Body-boundary sense:** Knows where their body is in space
-5. **Arousal-state recognition:** Can identify activation level accurately
-6. **Drive health:** All 4 drives expressing healthily in somatic context
-7. **Shadow resolution:** No dominant shadow quadrant; flexible relationship to body
-
-### 6.2 Readiness for Red
-
-Integration at Magenta means the player can:
-- Inhabit the body with felt-sense (not just use it mechanically)
-- Hold postures without magical attribution or avoidance
-- Move rhythmically without intensity-addiction or sensation-fear
-- Sense body-boundaries without fusion or rigid isolation
-- Return to simple body-awareness without feeling "regressed"
-
-This is the FOUNDATION for Red's power-body, where the body becomes an instrument of will and strength — but only if it's first INHABITED at Magenta.
+---

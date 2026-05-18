@@ -1,6 +1,9 @@
-# Spiritual / Magenta — Module Specification Skeleton
+# Spiritual / Magenta — Module Specification
+> **Vibration:** Animistic numinosity — the world is alive with sacred power. "The spirits protect me. I participate in the numinous through ritual, talisman, and offering."
 
-## Stage-specific capacity
+---
+
+## 1. Capacity Definition
 
 **Animistic numinosity** — the capacity to sense the sacred in the world, participate in magical-protective relationship with spirit-forces, and orient behaviour around what is "most important" at the pre-rational level. At Magenta, "ultimate concern" is: **the spirits protect me; the world is alive with sacred power; I participate in the numinous through ritual, talisman, and offering.**
 
@@ -8,90 +11,9 @@ Key distinction from Infrared: Infrared has NO spiritual capacity (survival IS t
 
 Key distinction from Red: Red has TRANSACTIONAL spiritual capacity ("I pray for power; the gods serve ME"). Magenta has PARTICIPATORY spiritual capacity ("I am part of the sacred world; the spirits and I are in relationship").
 
-## Sub-capacities measured
-
-| Sub-capacity | What it means at Magenta |
-|---|---|
-| Numinous recognition | Can they sense "something sacred" in the world? |
-| Spirit-relationship | Can they relate to the sacred (not just sense it)? |
-| Ritual participation | Can they engage in sacred action (offering, invocation)? |
-| Sacred constancy | Does the sacred remain present across contexts? |
-| Value-from-sacred | Does the sacred orient their behaviour (proto-values)? |
-
-## Theta-decay parameters
-
-| Parameter | Value | Rationale |
-|---|---|---|
-| Half-life | 18 days | Spiritual sense is slow to decay but fragile at Magenta |
-| Max decay | 12% | Numinous recognition is partially constitutional |
-| Reactivation threshold | 3 sessions | Requires repeated sacred contact to reactivate |
-
-## Drive-health weighting
-
-| Drive | Weight | Rationale |
-|---|---|---|
-| Communion | 0.30 | Spiritual at Magenta is fundamentally RELATIONAL (with spirits) |
-| Eros | 0.30 | Spiritual at Magenta is fundamentally about REACHING toward the sacred |
-| Agency | 0.20 | Some sovereign capacity to invoke/participate independently |
-| Agape | 0.20 | Maintaining sacred relationship over time |
-
-## Shadow archetypes (summary)
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| Dark-addiction | Spirit-Addict | Clings to numinous experience; cannot function without sacred signs; magical dependency |
-| Dark-allergy | Spirit-Denier | Cannot sense the sacred; world is flat/dead; numinous blindness |
-| Golden-addiction | Premature Priest | Bypasses to Red transactional faith; uses sacred for power |
-| Golden-allergy | Sacred-Refuser | Senses the sacred but won't participate; fears the numinous |
-
-## Compound shadows (cross-line)
-
-| Compound | Lines involved | Pattern |
-|---|---|---|
-| Enchanted Believer | Spiritual + Cognitive | Magical thinking fused with numinous sense; cannot separate sacred from fantasy |
-| Numb Sacred | Spiritual + Somatic | Senses sacred cognitively but cannot FEEL it in body |
-| Power-Prayer | Spiritual + Willpower | Uses spiritual capacity for will-amplification only |
-| Lonely Sacred | Spiritual + Interpersonal | Cannot share sacred experience; numinous isolation |
-
-## Scoring formula
-
-```
-spiritual_magenta_health =
-  (numinous_recognition × 0.25) +
-  (spirit_relationship × 0.25) +
-  (ritual_participation × 0.20) +
-  (sacred_constancy × 0.15) +
-  (value_from_sacred × 0.15)
-
-drive_health_modifier =
-  (communion_health × 0.30) +
-  (eros_health × 0.30) +
-  (agency_health × 0.20) +
-  (agape_health × 0.20)
-
-final_score = spiritual_magenta_health × drive_health_modifier × shadow_penalty
-```
-
-## Integration criteria (what "healed" looks like)
-
-A healthy Spiritual/Magenta player can:
-1. Sense the sacred in the world without dependency or inflation
-2. Relate to spirit-forces without transactional manipulation
-3. Participate in ritual without compulsion or avoidance
-4. Maintain sacred awareness across contexts without it consuming all attention
-5. Allow the sacred to orient behaviour without rigid rule-following (that's Amber)
-
 ---
 
-## Overview
-
-The Spiritual line at Magenta is **animistic numinosity** — the capacity to sense the sacred in the world and participate in magical-protective relationship with spirit-forces. The shadow landscape here concerns the player's relationship to the NUMINOUS — can they sense it, relate to it, participate in it, without dependency, denial, exploitation, or avoidance?
-
-At Magenta, "ultimate concern" is pre-rational: the world is alive with sacred power, and the player's relationship to that power defines their spiritual health. This is NOT theology — it is the felt-sense of "something more" and the capacity to orient toward it.
-
----
-
-## 1. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 1.1 Dark-Addiction: "The Spirit-Addict"
 
@@ -217,7 +139,16 @@ At Magenta, "ultimate concern" is pre-rational: the world is alive with sacred p
 
 ---
 
-## 2. Healthy Drive Expression at Spiritual/Magenta
+---
+
+## 3. Drive-Health Landscape
+
+| Drive | Weight | Rationale |
+|---|---|---|
+| Communion | 0.30 | Spiritual at Magenta is fundamentally RELATIONAL (with spirits) |
+| Eros | 0.30 | Spiritual at Magenta is fundamentally about REACHING toward the sacred |
+| Agency | 0.20 | Some sovereign capacity to invoke/participate independently |
+| Agape | 0.20 | Maintaining sacred relationship over time |
 
 ### 2.1 Agency (healthy)
 - **Dark-domain:** Can sense and participate in the sacred INDEPENDENTLY — doesn't need others to validate numinous experience
@@ -237,63 +168,9 @@ At Magenta, "ultimate concern" is pre-rational: the world is alive with sacred p
 
 ---
 
-## 3. Pathological Drive Expression at Spiritual/Magenta
-
-### 3.1 Agency (pathological)
-- **Dark-domain:** Cannot act without sacred permission; OR: uses sacred for ego-power
-- **Golden-domain:** Cannot stand alone in sacred space; overwhelmed without support
-
-### 3.2 Communion (pathological)
-- **Dark-domain:** Fuses with the sacred (no boundary); OR: cannot share sacred experience
-- **Golden-domain:** Cannot participate in group ritual; OR: loses self in group ritual
-
-### 3.3 Eros (pathological)
-- **Dark-domain:** Compulsive numinous seeking; OR: no upward pull at all
-- **Golden-domain:** Rushes to higher spiritual capacity for power; OR: refuses the call
-
-### 3.4 Agape (pathological)
-- **Dark-domain:** Cannot rest without sacred confirmation; OR: sacred awareness degrades completely
-- **Golden-domain:** Cannot embody sacred in ordinary life; OR: overwhelmed by embodiment
-
 ---
 
-## 4. Compound Shadow Relationships
-
-### 4.1 Enchanted Believer (Spiritual + Cognitive)
-**Pattern:** Magical thinking fused with numinous sense. Cannot separate sacred from fantasy. "The spirits told me 2+2=5." Cognitive capacity is colonised by spiritual inflation.
-- **Direction:** Spiritual dark-addiction amplifies Cognitive dark-addiction (magical thinking)
-- **Resolution:** Differentiate sacred FEELING from cognitive KNOWING. Both valid, different domains.
-
-### 4.2 Numb Sacred (Spiritual + Somatic)
-**Pattern:** Senses sacred cognitively but cannot FEEL it in body. "I know the spirits are there but I can't feel them." Disembodied spirituality.
-- **Direction:** Somatic dark-allergy blocks Spiritual embodiment
-- **Resolution:** Ground sacred experience in body-feeling. Where do you feel the sacred?
-
-### 4.3 Power-Prayer (Spiritual + Willpower)
-**Pattern:** Uses spiritual capacity exclusively for will-amplification. "I pray to be stronger." Sacred relationship reduced to willpower fuel.
-- **Direction:** Willpower dark-addiction exploits Spiritual capacity
-- **Resolution:** Differentiate sacred RELATIONSHIP from power TOOL. Sacred is not fuel.
-
-### 4.4 Lonely Sacred (Spiritual + Interpersonal)
-**Pattern:** Cannot share sacred experience with others. Numinous isolation. "I feel the spirits but I can't tell anyone." Sacred experience is private/shameful.
-- **Direction:** Interpersonal dark-allergy isolates Spiritual experience
-- **Resolution:** Sacred experience can be shared. Others feel it too. You're not alone in the numinous.
-
----
-
-## 5. Shadow Surfacing Order
-
-The game surfaces shadows in this order (from most accessible to deepest):
-
-1. **Numinous recognition** — Can they sense the sacred at all? (Spirit-Denier surfaces here)
-2. **Spirit-relationship** — Can they relate to what they sense? (Spirit-Addict surfaces here — over-relating)
-3. **Ritual participation** — Can they ACT in sacred space? (Premature Priest surfaces here — acting for power)
-4. **Sacred constancy** — Does the sacred remain present? (Sacred-Refuser surfaces here — flickering)
-5. **Value-from-sacred** — Does the sacred orient behaviour? (All shadows visible at this depth)
-
----
-
-## 6. Heal/Evolve and Evolve/Heal Vectors
+## 4. Healing Vectors
 
 ### 6.1 Heal/Evolve (Agape + Agency → integrate dark shadows)
 
@@ -321,8 +198,76 @@ The game surfaces shadows in this order (from most accessible to deepest):
 
 ---
 
-## 7. Detection Methodology
+---
 
+## 5. Scoring Parameters
+
+### Theta model
+| Parameter | Value | Rationale |
+|---|---|---|
+| Half-life | 18 days | Spiritual sense is slow to decay but fragile at Magenta |
+| Max decay | 12% | Numinous recognition is partially constitutional |
+| Reactivation threshold | 3 sessions | Requires repeated sacred contact to reactivate |
+
+### Scoring formula
+```
+spiritual_magenta_health =
+  (numinous_recognition × 0.25) +
+  (spirit_relationship × 0.25) +
+  (ritual_participation × 0.20) +
+  (sacred_constancy × 0.15) +
+  (value_from_sacred × 0.15)
+
+drive_health_modifier =
+  (communion_health × 0.30) +
+  (eros_health × 0.30) +
+  (agency_health × 0.20) +
+  (agape_health × 0.20)
+
+final_score = spiritual_magenta_health × drive_health_modifier × shadow_penalty
+```
+
+---
+
+## 6. Compound Shadows & Cross-Module Relationships
+
+### 4.1 Enchanted Believer (Spiritual + Cognitive)
+**Pattern:** Magical thinking fused with numinous sense. Cannot separate sacred from fantasy. "The spirits told me 2+2=5." Cognitive capacity is colonised by spiritual inflation.
+- **Direction:** Spiritual dark-addiction amplifies Cognitive dark-addiction (magical thinking)
+- **Resolution:** Differentiate sacred FEELING from cognitive KNOWING. Both valid, different domains.
+
+### 4.2 Numb Sacred (Spiritual + Somatic)
+**Pattern:** Senses sacred cognitively but cannot FEEL it in body. "I know the spirits are there but I can't feel them." Disembodied spirituality.
+- **Direction:** Somatic dark-allergy blocks Spiritual embodiment
+- **Resolution:** Ground sacred experience in body-feeling. Where do you feel the sacred?
+
+### 4.3 Power-Prayer (Spiritual + Willpower)
+**Pattern:** Uses spiritual capacity exclusively for will-amplification. "I pray to be stronger." Sacred relationship reduced to willpower fuel.
+- **Direction:** Willpower dark-addiction exploits Spiritual capacity
+- **Resolution:** Differentiate sacred RELATIONSHIP from power TOOL. Sacred is not fuel.
+
+### 4.4 Lonely Sacred (Spiritual + Interpersonal)
+**Pattern:** Cannot share sacred experience with others. Numinous isolation. "I feel the spirits but I can't tell anyone." Sacred experience is private/shameful.
+- **Direction:** Interpersonal dark-allergy isolates Spiritual experience
+- **Resolution:** Sacred experience can be shared. Others feel it too. You're not alone in the numinous.
+
+---
+
+---
+
+## 7. Shadow Surfacing Sequence
+
+The game surfaces shadows in this order (from most accessible to deepest):
+
+1. **Numinous recognition** — Can they sense the sacred at all? (Spirit-Denier surfaces here)
+2. **Spirit-relationship** — Can they relate to what they sense? (Spirit-Addict surfaces here — over-relating)
+3. **Ritual participation** — Can they ACT in sacred space? (Premature Priest surfaces here — acting for power)
+4. **Sacred constancy** — Does the sacred remain present? (Sacred-Refuser surfaces here — flickering)
+5. **Value-from-sacred** — Does the sacred orient behaviour? (All shadows visible at this depth)
+
+---
+
+### Detection Methodology
 ### 7.1 Primary signals
 
 | Signal | What it indicates |

@@ -27,117 +27,9 @@ Cognitive intelligence at Magenta is **pre-operational symbolic capacity** — t
 
 ---
 
-## 2. Scoring Architecture
-
-### 2.1 Theta (capacity estimate)
-
-**Model:** 1PL IRT with Bayesian updating
-- **Prior:** N(0, 1) at first encounter
-- **Item difficulty:** Calibrated per symbol-recognition, symbol-holding, symbol-substitution, pattern-echo, inhibitory-seed
-- **Update:** After each response (correct/incorrect + latency as secondary)
-
-### 2.2 Composite score
-
-```
-cognitive_magenta = weighted_aggregate(
-  symbol_recognition:  0.20,
-  symbol_holding:      0.30,   ← heaviest — this IS the Magenta cognitive capacity
-  symbol_substitution: 0.20,
-  pattern_echo:        0.15,
-  inhibitory_seed:     0.15
-)
-```
-
-### 2.3 Theta-decay
-
-- **Half-life:** 14 days (cognitive is the fastest-moving line; decays faster than spiritual/moral)
-- **Max decay:** 20% of peak theta
-- **Rationale:** Cognitive capacity at Magenta is fragile — symbolic thinking needs regular exercise or it regresses to sensorimotor
-
-### 2.4 Stage-transition threshold
-
-- **Magenta → Red unlock:** Theta ≥ 0.7 on symbol-holding (n=1 stable) AND inhibitory-seed ≥ 0.5
-- **Confirmation:** Must demonstrate across ≥ 3 sessions (not a single spike)
-- **Cross-line requirement:** At least 1 other line at Magenta (per stage-advancement rules)
-
 ---
 
-## 3. Drive-Health Integration
-
-### 3.1 Drive-health weight for Cognitive/Magenta
-
-**Weight: 0.35** (moderate-high — cognitive is a primary line but at Magenta the drives are still diffuse)
-
-### 3.2 Healthy drive expression at Cognitive/Magenta
-
-| Drive | Healthy expression |
-|---|---|
-| **Agency** | Uses symbols independently; casts spells without needing permission; explores symbolic space |
-| **Communion** | Shares symbolic discoveries; engages with others' symbols; participates in shared ritual |
-| **Eros** | Reaches toward new symbols with curiosity; wants to learn the next rune |
-| **Agape** | Returns to familiar symbols with care; maintains mastered symbols; embodies symbolic capacity |
-
-### 3.3 Pathological drive expression at Cognitive/Magenta
-
-| Drive | Dark-domain pathology | Golden-domain pathology |
-|---|---|---|
-| **Agency** | Uses symbols to dominate (hoards runes, refuses to share) | Cannot use symbols without external validation |
-| **Communion** | Loses own symbolic capacity in others' systems (fusion) | Cannot engage others' symbols (isolation) |
-| **Eros** | Refuses new symbols; clings to first-learned runes | Rushes past symbol-mastery toward abstract reasoning |
-| **Agape** | Cannot return to basic symbols; "too advanced" | Cannot embody symbols in action; stays in fantasy |
-
----
-
-## 4. Shadow Summary
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| **Dark-Addiction** | The Magical Thinker | Clings to symbolic power as CONTROL — believes symbols literally change reality; cannot distinguish symbol from referent |
-| **Dark-Allergy** | The Concrete-Bound | Refuses symbolic engagement entirely; stays in sensorimotor; "symbols are meaningless" |
-| **Golden-Addiction** | The Premature Reasoner | Rushes toward logical operations without mastering symbolic foundations; performs reasoning without genuine symbolic capacity |
-| **Golden-Allergy** | The Wonder-Refuser | Fears the expansion into symbolic life; refuses the magic; "I don't want to imagine" |
-
-### 4.1 Compound shadows (cross-module)
-
-| Compound | Modules involved | Pattern |
-|---|---|---|
-| **The Enchanted Fool** | Cognitive/Magenta dark-addiction + Willpower/Magenta dark-allergy | Believes symbols have power but cannot sustain effort to master them |
-| **The Frozen Literalist** | Cognitive/Magenta dark-allergy + Spiritual/Magenta dark-allergy | Refuses both symbolic thought AND animistic engagement; trapped in pure sensation |
-| **The Precocious Mimic** | Cognitive/Magenta golden-addiction + Emotional/Magenta dark-allergy | Performs advanced reasoning while emotionally stuck in pre-symbolic |
-| **The Fantasy-Drowner** | Cognitive/Magenta dark-addiction + Intrapersonal/Magenta dark-addiction | Fused with symbolic fantasy-self; cannot distinguish imagination from identity |
-
----
-
-## 5. Modality Affinity
-
-| Modality | Affinity | Rationale |
-|---|---|---|
-| Deterministic | ★★★★★ | Core measurement — symbol-holding is objective and measurable |
-| Language-reflective | ★★★☆☆ | Limited at Magenta — language is still emerging; symbols precede words |
-| Scenario-choice | ★★★☆☆ | Simple symbolic choices; not yet complex dilemmas |
-| Embodied-somatic | ★★★★☆ | Symbols are GESTURAL at Magenta — the body makes the spell |
-| Strategic-planning | ★★☆☆☆ | Minimal — planning requires holding multiple steps (n>1) |
-| Social-cooperative | ★★★☆☆ | Shared ritual; symbolic coordination with fantasy-allies |
-| Immersive-rpg | ★★★★★ | The magical world IS the cognitive environment — symbols everywhere |
-
----
-
-## 6. Cross-Validation Rules
-
-- **Deterministic × Language-reflective:** If language-reflective shows sophisticated symbol-talk but deterministic shows n=1 failure → golden-addiction (performing without capacity)
-- **Embodied-somatic × Deterministic:** If body produces correct gestures but deterministic shows no symbol-holding → procedural memory without symbolic understanding
-- **Immersive-rpg × Deterministic:** If ecological engagement is high but structured n=1 fails → engagement without capacity (possible dark-addiction — magical thinking without actual symbolic skill)
-- **Strategic-planning × Symbol-holding:** If planning attempts exceed n=1 capacity → golden-addiction signal (attempting Red-level planning without Magenta mastery)
-
----
-
-> **Line:** Cognitive (executive function, perspective-taking, reasoning)
-> **Stage:** Magenta / Magic (pre-operational, symbolic substitution, magical thinking)
-> **Purpose:** Define the complete shadow landscape — what goes wrong with cognitive intelligence at the magical-symbolic stage, how to detect it, and how to heal it.
-
----
-
-## 1. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 1.1 Dark-Addiction: "The Magical Thinker"
 
@@ -258,39 +150,37 @@ cognitive_magenta = weighted_aggregate(
 
 ---
 
-## 2. Shadow Surfacing Sequence
+---
 
-The game surfaces shadows in a specific developmental order, from most accessible to deepest:
+## 3. Drive-Health Landscape
 
-### Level 1: Symbol-Recognition (surface)
-**What's tested:** Can the player recognise that symbols exist and have meaning?
-- Dark-allergy surfaces HERE first (refuses to recognise symbols)
-- Detection: engagement rate with symbolic content; recognition accuracy
+### 3.1 Drive-health weight for Cognitive/Magenta
 
-### Level 2: Symbol-Holding (core capacity)
-**What's tested:** Can the player hold one symbol in mind?
-- Dark-addiction surfaces HERE (holds symbols but confuses them with reality)
-- Golden-addiction surfaces HERE (attempts to hold multiple before one is stable)
-- Detection: n=1 accuracy; magical-thinking indicators; premature n=2 attempts
+**Weight: 0.35** (moderate-high — cognitive is a primary line but at Magenta the drives are still diffuse)
 
-### Level 3: Symbol-Substitution (application)
-**What's tested:** Can the player USE symbols to act?
-- All shadows visible at this level
-- Detection: quality of symbolic action; whether action is magical-control vs. genuine use
+### 3.2 Healthy drive expression at Cognitive/Magenta
 
-### Level 4: Pattern-Echo (temporal)
-**What's tested:** Can the player recognise symbol-return across time?
-- Golden-allergy surfaces HERE (fears the implications of symbolic patterns)
-- Detection: whether pattern-recognition produces curiosity or anxiety
+| Drive | Healthy expression |
+|---|---|
+| **Agency** | Uses symbols independently; casts spells without needing permission; explores symbolic space |
+| **Communion** | Shares symbolic discoveries; engages with others' symbols; participates in shared ritual |
+| **Eros** | Reaches toward new symbols with curiosity; wants to learn the next rune |
+| **Agape** | Returns to familiar symbols with care; maintains mastered symbols; embodies symbolic capacity |
 
-### Level 5: Integration
-**What's tested:** Can the player inhabit symbolic life naturally?
-- Full shadow landscape visible
-- Detection: spontaneous symbolic engagement quality; drive-health across all 4
+### 3.3 Pathological drive expression at Cognitive/Magenta
+
+| Drive | Dark-domain pathology | Golden-domain pathology |
+|---|---|---|
+| **Agency** | Uses symbols to dominate (hoards runes, refuses to share) | Cannot use symbols without external validation |
+| **Communion** | Loses own symbolic capacity in others' systems (fusion) | Cannot engage others' symbols (isolation) |
+| **Eros** | Refuses new symbols; clings to first-learned runes | Rushes past symbol-mastery toward abstract reasoning |
+| **Agape** | Cannot return to basic symbols; "too advanced" | Cannot embody symbols in action; stays in fantasy |
 
 ---
 
-## 3. Healing Architecture
+---
+
+## 4. Healing Vectors
 
 ### 3.1 Heal/Evolve Vector (Agape + Agency → Dark Shadows)
 
@@ -326,7 +216,69 @@ The game surfaces shadows in a specific developmental order, from most accessibl
 
 ---
 
-## 4. Bidirectional Shadow Loops (Cross-Module)
+### Integration Criteria
+### 6.1 What "healed" looks like at Cognitive/Magenta
+
+The player demonstrates:
+1. **Symbol-recognition:** Recognises symbols as representations (not literal forces)
+2. **Symbol-holding:** Stable n=1 across sessions (not spiky)
+3. **Symbol-substitution:** Uses symbols as tools (not magical controls)
+4. **Pattern-echo:** Recognises symbol-return with curiosity (not anxiety or magical attribution)
+5. **Inhibitory seed:** Can NOT-respond to non-targets (basic impulse control in symbolic context)
+6. **Drive health:** All 4 drives expressing healthily in symbolic context
+7. **Shadow resolution:** No dominant shadow quadrant; flexible relationship to symbolic capacity
+
+### 6.2 Readiness for Red
+
+Integration at Magenta means the player can:
+- Hold one symbol stably and use it as a tool
+- Engage symbolic content without magical fusion OR concrete refusal
+- Approach new symbols with curiosity (not anxiety or compulsion)
+- Share symbolic activity with others without losing sovereignty
+- Return to sensorimotor when appropriate without feeling "regressed"
+
+This is the FOUNDATION for Red's n=2, where two symbols must be held simultaneously and related to each other.
+
+---
+
+## 5. Scoring Parameters
+
+### 2.1 Theta (capacity estimate)
+
+**Model:** 1PL IRT with Bayesian updating
+- **Prior:** N(0, 1) at first encounter
+- **Item difficulty:** Calibrated per symbol-recognition, symbol-holding, symbol-substitution, pattern-echo, inhibitory-seed
+- **Update:** After each response (correct/incorrect + latency as secondary)
+
+### 2.2 Composite score
+
+```
+cognitive_magenta = weighted_aggregate(
+  symbol_recognition:  0.20,
+  symbol_holding:      0.30,   ← heaviest — this IS the Magenta cognitive capacity
+  symbol_substitution: 0.20,
+  pattern_echo:        0.15,
+  inhibitory_seed:     0.15
+)
+```
+
+### 2.3 Theta-decay
+
+- **Half-life:** 14 days (cognitive is the fastest-moving line; decays faster than spiritual/moral)
+- **Max decay:** 20% of peak theta
+- **Rationale:** Cognitive capacity at Magenta is fragile — symbolic thinking needs regular exercise or it regresses to sensorimotor
+
+### 2.4 Stage-transition threshold
+
+- **Magenta → Red unlock:** Theta ≥ 0.7 on symbol-holding (n=1 stable) AND inhibitory-seed ≥ 0.5
+- **Confirmation:** Must demonstrate across ≥ 3 sessions (not a single spike)
+- **Cross-line requirement:** At least 1 other line at Magenta (per stage-advancement rules)
+
+---
+
+---
+
+## 6. Compound Shadows & Cross-Module Relationships
 
 ### 4.1 The Enchanted Fool (Cognitive dark-addiction ↔ Willpower dark-allergy)
 
@@ -370,61 +322,49 @@ The game surfaces shadows in a specific developmental order, from most accessibl
 
 ---
 
-## 5. Detection Methodology
+---
 
-### 5.1 Primary signals (within Cognitive/Magenta games)
+## 7. Shadow Surfacing Sequence
 
-| Signal | Shadow indicated | Confidence |
-|---|---|---|
-| High symbolic engagement + low accuracy | Dark-addiction | High |
-| Near-zero symbolic engagement | Dark-allergy | High |
-| Premature n=2 attempts + unstable n=1 | Golden-addiction | High |
-| Approach-withdrawal on symbolic tasks | Golden-allergy | High |
-| Talisman-hoarding + ritual over-reliance | Dark-addiction | Medium |
-| Physical-only solutions | Dark-allergy | Medium |
-| "Advanced" language + poor performance | Golden-addiction | Medium |
-| Capacity present but engagement absent | Golden-allergy | Medium |
+The game surfaces shadows in a specific developmental order, from most accessible to deepest:
 
-### 5.2 Cross-modality validation
+### Level 1: Symbol-Recognition (surface)
+**What's tested:** Can the player recognise that symbols exist and have meaning?
+- Dark-allergy surfaces HERE first (refuses to recognise symbols)
+- Detection: engagement rate with symbolic content; recognition accuracy
 
-| Modality pair | What discrepancy reveals |
-|---|---|
-| Deterministic vs. Language-reflective | Golden-addiction (talks advanced, performs basic) |
-| Deterministic vs. Immersive-rpg | Dark-addiction (engages magically, fails structurally) |
-| Embodied-somatic vs. Deterministic | Procedural vs. symbolic (body knows, mind doesn't) |
-| Social-cooperative vs. Deterministic | Social symbolic capacity vs. individual (communion vs. agency) |
+### Level 2: Symbol-Holding (core capacity)
+**What's tested:** Can the player hold one symbol in mind?
+- Dark-addiction surfaces HERE (holds symbols but confuses them with reality)
+- Golden-addiction surfaces HERE (attempts to hold multiple before one is stable)
+- Detection: n=1 accuracy; magical-thinking indicators; premature n=2 attempts
 
-### 5.3 Temporal patterns
+### Level 3: Symbol-Substitution (application)
+**What's tested:** Can the player USE symbols to act?
+- All shadows visible at this level
+- Detection: quality of symbolic action; whether action is magical-control vs. genuine use
 
-| Pattern | Shadow indicated |
-|---|---|
-| Engagement drops after initial curiosity | Golden-allergy (approach then withdraw) |
-| Engagement increases but accuracy plateaus | Dark-addiction (more engagement ≠ more skill) |
-| Rapid early gains then stagnation | Golden-addiction (hit ceiling of premature advancement) |
-| Steady low engagement, steady low accuracy | Dark-allergy (consistent avoidance) |
+### Level 4: Pattern-Echo (temporal)
+**What's tested:** Can the player recognise symbol-return across time?
+- Golden-allergy surfaces HERE (fears the implications of symbolic patterns)
+- Detection: whether pattern-recognition produces curiosity or anxiety
+
+### Level 5: Integration
+**What's tested:** Can the player inhabit symbolic life naturally?
+- Full shadow landscape visible
+- Detection: spontaneous symbolic engagement quality; drive-health across all 4
 
 ---
 
-## 6. Integration Criteria
+### Cross-Validation Rules
+| Modality | Affinity | Rationale |
+|---|---|---|
+| Deterministic | ★★★★★ | Core measurement — symbol-holding is objective and measurable |
+| Language-reflective | ★★★☆☆ | Limited at Magenta — language is still emerging; symbols precede words |
+| Scenario-choice | ★★★☆☆ | Simple symbolic choices; not yet complex dilemmas |
+| Embodied-somatic | ★★★★☆ | Symbols are GESTURAL at Magenta — the body makes the spell |
+| Strategic-planning | ★★☆☆☆ | Minimal — planning requires holding multiple steps (n>1) |
+| Social-cooperative | ★★★☆☆ | Shared ritual; symbolic coordination with fantasy-allies |
+| Immersive-rpg | ★★★★★ | The magical world IS the cognitive environment — symbols everywhere |
 
-### 6.1 What "healed" looks like at Cognitive/Magenta
-
-The player demonstrates:
-1. **Symbol-recognition:** Recognises symbols as representations (not literal forces)
-2. **Symbol-holding:** Stable n=1 across sessions (not spiky)
-3. **Symbol-substitution:** Uses symbols as tools (not magical controls)
-4. **Pattern-echo:** Recognises symbol-return with curiosity (not anxiety or magical attribution)
-5. **Inhibitory seed:** Can NOT-respond to non-targets (basic impulse control in symbolic context)
-6. **Drive health:** All 4 drives expressing healthily in symbolic context
-7. **Shadow resolution:** No dominant shadow quadrant; flexible relationship to symbolic capacity
-
-### 6.2 Readiness for Red
-
-Integration at Magenta means the player can:
-- Hold one symbol stably and use it as a tool
-- Engage symbolic content without magical fusion OR concrete refusal
-- Approach new symbols with curiosity (not anxiety or compulsion)
-- Share symbolic activity with others without losing sovereignty
-- Return to sensorimotor when appropriate without feeling "regressed"
-
-This is the FOUNDATION for Red's n=2, where two symbols must be held simultaneously and related to each other.
+---

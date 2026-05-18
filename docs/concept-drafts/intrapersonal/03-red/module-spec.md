@@ -1,6 +1,8 @@
 # Intrapersonal / Red — Module Specification Skeleton
 
-## 1. What This Module Measures
+---
+
+## 1. Capacity Definition
 
 **Egocentric self-identification** — the first stable "I" that can be grasped, named, and (primitively) reported on. At Red, the self is KNOWN but not yet EXAMINED. The player can say "I am angry" but cannot yet ask "why am I angry?" or "is this anger serving me?"
 
@@ -28,144 +30,9 @@ The self is GRASPED but not EXAMINED. The player identifies AS the self ("I AM t
 
 ---
 
-## 2. Theta-Decay Parameters
-
-| Parameter | Value | Rationale |
-|---|---|---|
-| Half-life | 19 days | Moderate-slow. Self-knowledge is relatively stable once established but degrades without practice. Faster than Moral (21d) because Red intrapersonal is simpler (labelling vs. consequence-chains). |
-| Max decay | 20% | Cannot lose more than 20% of demonstrated capacity |
-| Decay curve | Exponential | Standard |
-| Recovery rate | 1.3× | Faster recovery than initial acquisition (self-knowledge re-emerges quickly) |
-| Practice sensitivity | HIGH | Even brief self-labelling practice arrests decay |
-
-### Decay-arrest conditions
-- Any self-labelling activity (even in other modules) arrests intrapersonal decay
-- Witness-pause use in combat arrests decay
-- Self-prediction attempts (even inaccurate) arrest decay
-
 ---
 
-## 3. Drive-Health Weights
-
-| Drive | Weight | Rationale |
-|---|---|---|
-| Agency | 0.35 | Self-knowledge at Red is primarily SOVEREIGN — "I know what I am" |
-| Communion | 0.15 | Minimal relational self-knowledge at Red (self-in-relation comes later) |
-| Eros | 0.30 | The developmental edge — can they reach toward self-examination? |
-| Agape | 0.20 | Can they return to simple self-labelling without dismissing it? |
-
-**Total drive-health weight for consciousness index:** 0.35
-
-### Rationale for 0.35
-Intrapersonal is the META-LINE — it enables honest self-knowledge across all other lines. But at Red, its contribution is modest because the capacity is primitive (labelling, not examining). Its weight increases dramatically at Orange+ where reflective self-knowledge becomes the engine of all development.
-
----
-
-## 4. Shadow Landscape (Summary)
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| Dark-Addiction | **The Narcissist** | Over-identified with self-image; "I am the greatest" without accuracy |
-| Dark-Allergy | **The Unexamined** | Refuses all self-knowledge; "I don't need to know myself, I just act" |
-| Golden-Addiction | **The Premature Witness** | Performs self-examination without genuine Red self-identification |
-| Golden-Allergy | **The Identity-Clinger** | Refuses the witness-pause; terrified of seeing self as object |
-
-### Compound shadows (cross-module)
-
-| Compound | Modules | Pattern |
-|---|---|---|
-| **The Blind Warrior** | Intrapersonal + Willpower (both dark-allergy) | Massive will-force with zero self-knowledge; acts without knowing why |
-| **The Self-Absorbed** | Intrapersonal + Interpersonal (dark-addiction + dark-allergy) | Obsessed with self-image; cannot see others at all |
-| **The Spiritual Bypasser** | Intrapersonal + Spiritual (golden-addiction + golden-addiction) | Performs "witness consciousness" and "transcendence" without genuine Red self-identification |
-| **The Emotional Stranger** | Intrapersonal + Emotional (dark-allergy + dark-allergy) | Cannot label own emotions; disconnected from interior |
-
----
-
-## 5. Scoring Architecture
-
-### 5.1 Capacity dimensions
-
-| Dimension | Measurement | Weight |
-|---|---|---|
-| Self-identification accuracy | Does self-label match behavioural evidence? | 0.25 |
-| State-labelling range | How many distinct states can they name? | 0.20 |
-| State-labelling accuracy | Does named state match observable indicators? | 0.25 |
-| Self-prediction accuracy | Does predicted behaviour match actual? | 0.20 |
-| Witness-pause capacity | Can they step back from identification briefly? | 0.10 |
-
-### 5.2 Cross-modality validation
-
-| Signal | Interpretation |
-|---|---|
-| Self-report matches behaviour (deterministic confirms language-reflective) | Genuine self-knowledge |
-| Self-report exceeds behaviour (language-reflective >> deterministic) | Golden-addiction (performing self-knowledge) |
-| Behaviour exceeds self-report (deterministic >> language-reflective) | Dark-allergy (has capacity but won't examine it) |
-| Self-report inflated + behaviour poor | Dark-addiction (narcissistic self-image) |
-
-### 5.3 Altitude assignment
-
-| Checkpoint range | Altitude descriptor |
-|---|---|
-| 0-10 | Pre-intrapersonal: no stable self-label |
-| 10-25 | Early Red: "I am X" (single, rigid self-label) |
-| 25-45 | Mid Red: multiple state-labels; basic self-prediction |
-| 45-65 | Late Red: self-pattern recognition; brief witness-pauses |
-| 65-80 | Red ceiling: consistent self-knowledge; stable witness capacity |
-| 80+ | Approaching Amber: self-in-role; identity = function |
-
----
-
-## 6. Session Scoring
-
-### 6.1 Per-session metrics
-
-- Self-label accuracy (% of labels confirmed by behaviour)
-- State-label vocabulary (distinct states named this session)
-- Self-prediction hit rate (% of predictions confirmed)
-- Witness-pause duration (total seconds of genuine stepping-back)
-- Self-report honesty (correlation between report and observable indicators)
-
-### 6.2 Cross-session metrics
-
-- Self-knowledge consistency (do they know the same things about themselves across sessions?)
-- Pattern-recognition growth (new patterns identified over time)
-- Witness-pause stability (duration and frequency trends)
-- Self-prediction improvement (accuracy trend)
-
----
-
-## 7. Integration with Other Modules
-
-### 7.1 Intrapersonal as meta-line
-
-Intrapersonal VALIDATES other lines' self-report data. If intrapersonal is unhealthy:
-- Emotional self-report is unreliable
-- Moral self-report is unreliable
-- Willpower self-assessment is unreliable
-- All self-report-dependent scoring is discounted
-
-### 7.2 Bidirectional relationships
-
-| Other line | Relationship |
-|---|---|
-| Emotional | Intrapersonal enables emotional self-labelling; emotional awareness feeds intrapersonal data |
-| Cognitive | Cognitive capacity enables more complex self-models; intrapersonal provides honest data for cognitive self-strategies |
-| Willpower | Intrapersonal enables "I know my limits"; willpower enables sustained self-examination |
-| Interpersonal | Self-knowledge enables accurate self-presentation; others' feedback feeds self-knowledge |
-
----
-
-## 1. The Intrapersonal/Red Shadow Landscape
-
-At Red, the self is GRASPED but not EXAMINED. The developmental achievement is: "I AM." The shadow landscape revolves around the relationship to this first stable self-identification — clinging to a grandiose image, refusing to look inward at all, performing self-examination without genuine Red grounding, or refusing the first witness-pause that would make the self an object.
-
-### The core tension
-
-The self at Red is SUBJECT — the player IS the warrior, IS the will, IS the power. The developmental edge is the first moment where the self becomes OBJECT — "I notice that I am angry" rather than "I AM angry." This subject→object shift is the crack that enables all later intrapersonal development. The shadows cluster around this crack.
-
----
-
-## 2. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 2.1 Dark-Addiction: "The Narcissist"
 
@@ -298,76 +165,27 @@ The self at Red is SUBJECT — the player IS the warrior, IS the will, IS the po
 
 ---
 
-## 3. The Surfacing Sequence
+---
 
-The game surfaces shadows in a specific developmental order:
+## 3. Drive-Health Landscape
 
-```
-1. Self-identification → Does a stable "I am X" exist?
-   ├─ If inflated → Narcissist pathway
-   ├─ If absent/refused → Unexamined pathway
-   └─ If present and accurate → proceed
+| Drive | Weight | Rationale |
+|---|---|---|
+| Agency | 0.35 | Self-knowledge at Red is primarily SOVEREIGN — "I know what I am" |
+| Communion | 0.15 | Minimal relational self-knowledge at Red (self-in-relation comes later) |
+| Eros | 0.30 | The developmental edge — can they reach toward self-examination? |
+| Agape | 0.20 | Can they return to simple self-labelling without dismissing it? |
 
-2. State-labelling → Can they name current states?
-   ├─ If abstract/performed → Premature Witness pathway
-   ├─ If refused → Unexamined pathway
-   └─ If concrete and accurate → proceed
+**Total drive-health weight for consciousness index:** 0.35
 
-3. Self-prediction → Can they predict own behaviour?
-   ├─ If grandiose → Narcissist pathway
-   ├─ If absent → Unexamined pathway
-   ├─ If sophisticated but inaccurate → Premature Witness pathway
-   └─ If calibrated → proceed
-
-4. Witness-pause → Can they step back briefly?
-   ├─ If refused with hostility → Identity-Clinger pathway
-   ├─ If performed without accuracy → Premature Witness pathway
-   ├─ If refused with dismissal → Unexamined pathway
-   └─ If brief and genuine → healthy
-
-5. Integration → Can they hold self-as-object AND self-as-subject?
-   └─ This is the Red ceiling / Amber threshold
-```
+### Rationale for 0.35
+Intrapersonal is the META-LINE — it enables honest self-knowledge across all other lines. But at Red, its contribution is modest because the capacity is primitive (labelling, not examining). Its weight increases dramatically at Orange+ where reflective self-knowledge becomes the engine of all development.
 
 ---
 
-## 4. Bidirectional Shadow Loops (Cross-Module)
-
-### 4.1 The Blind Warrior (Intrapersonal + Willpower)
-
-**Loop:** Intrapersonal dark-allergy (won't look) + Willpower dark-addiction (compulsive action) = massive force with zero self-knowledge. They ACT without knowing WHY they act. The will drives them but they cannot name what drives the will.
-
-**Detection:** High willpower scores + zero intrapersonal engagement. Action without reflection. Cannot answer "why did you do that?"
-
-**Breaking the loop:** Willpower tasks that REQUIRE self-knowledge to succeed (predict your fatigue point; name what drives this goal). Make self-knowledge a POWER tool.
-
-### 4.2 The Self-Absorbed (Intrapersonal + Interpersonal)
-
-**Loop:** Intrapersonal dark-addiction (narcissistic self-focus) + Interpersonal dark-allergy (cannot see others) = obsessed with self-image, blind to others. All attention is inward (but inaccurately) and none is outward.
-
-**Detection:** High intrapersonal engagement (but inflated) + zero interpersonal engagement. Talks about self constantly but cannot describe others.
-
-**Breaking the loop:** Self-knowledge tasks that REQUIRE others' input (how do others see you? Does their perception match yours?). Make accurate self-knowledge dependent on interpersonal data.
-
-### 4.3 The Spiritual Bypasser (Intrapersonal + Spiritual)
-
-**Loop:** Intrapersonal golden-addiction (premature witness) + Spiritual golden-addiction (premature transcendence) = performs "enlightened self-awareness" without genuine Red grounding. Claims to have transcended ego without ever having a healthy ego.
-
-**Detection:** Sophisticated intrapersonal + spiritual language + LOW accuracy on concrete self-knowledge tasks + LOW Red-stage capacity scores.
-
-**Breaking the loop:** Require CONCRETE Red demonstrations before accepting "transcendent" claims. "Before you witness your anger, BE angry. Before you transcend ego, HAVE an ego."
-
-### 4.4 The Emotional Stranger (Intrapersonal + Emotional)
-
-**Loop:** Intrapersonal dark-allergy (won't look inward) + Emotional dark-allergy (won't feel) = disconnected from entire interior. Cannot name states because they refuse to look AND refuse to feel.
-
-**Detection:** Zero intrapersonal engagement + zero emotional engagement. Flat affect + no self-report. "I'm fine" to everything.
-
-**Breaking the loop:** Somatic entry point — the body feels even when the mind refuses. Use embodied-somatic modality to surface states that bypass the refusal to look/feel.
-
 ---
 
-## 5. The Healing Architecture
+## 4. Healing Vectors
 
 ### 5.1 For Dark-Addiction (The Narcissist)
 
@@ -411,44 +229,94 @@ The game surfaces shadows in a specific developmental order:
 
 ---
 
-## 6. Detection Confidence Thresholds
+---
 
-| Shadow | Minimum sessions | Minimum signals | Confidence for diagnosis |
-|---|---|---|---|
-| The Narcissist | 3 | 5+ inflated self-assessments confirmed by behaviour | 0.70 |
-| The Unexamined | 2 | 4+ refused/skipped self-knowledge opportunities | 0.75 |
-| The Premature Witness | 4 | Language-reflective >> deterministic gap sustained | 0.65 |
-| The Identity-Clinger | 3 | 3+ hostile/anxious responses to witness-pause prompts | 0.70 |
+## 5. Scoring Parameters
 
-### False-positive guards
+| Parameter | Value | Rationale |
+|---|---|---|
+| Half-life | 19 days | Moderate-slow. Self-knowledge is relatively stable once established but degrades without practice. Faster than Moral (21d) because Red intrapersonal is simpler (labelling vs. consequence-chains). |
+| Max decay | 20% | Cannot lose more than 20% of demonstrated capacity |
+| Decay curve | Exponential | Standard |
+| Recovery rate | 1.3× | Faster recovery than initial acquisition (self-knowledge re-emerges quickly) |
+| Practice sensitivity | HIGH | Even brief self-labelling practice arrests decay |
 
-- Narcissist vs. genuinely high capacity: check ACCURACY, not just confidence
-- Unexamined vs. task-unfamiliarity: offer multiple modalities before diagnosing
-- Premature Witness vs. genuinely advanced: check if concrete tasks ALSO score high
-- Identity-Clinger vs. healthy Red identification: check if witness-pause produces ANXIETY (not just preference for action)
+### Decay-arrest conditions
+- Any self-labelling activity (even in other modules) arrests intrapersonal decay
+- Witness-pause use in combat arrests decay
+- Self-prediction attempts (even inaccurate) arrest decay
 
 ---
 
-## 7. Progression Through the Shadow Landscape
+---
 
-### 7.1 The healthy developmental path
+## 6. Compound Shadows & Cross-Module Relationships
+
+### 4.1 The Blind Warrior (Intrapersonal + Willpower)
+
+**Loop:** Intrapersonal dark-allergy (won't look) + Willpower dark-addiction (compulsive action) = massive force with zero self-knowledge. They ACT without knowing WHY they act. The will drives them but they cannot name what drives the will.
+
+**Detection:** High willpower scores + zero intrapersonal engagement. Action without reflection. Cannot answer "why did you do that?"
+
+**Breaking the loop:** Willpower tasks that REQUIRE self-knowledge to succeed (predict your fatigue point; name what drives this goal). Make self-knowledge a POWER tool.
+
+### 4.2 The Self-Absorbed (Intrapersonal + Interpersonal)
+
+**Loop:** Intrapersonal dark-addiction (narcissistic self-focus) + Interpersonal dark-allergy (cannot see others) = obsessed with self-image, blind to others. All attention is inward (but inaccurately) and none is outward.
+
+**Detection:** High intrapersonal engagement (but inflated) + zero interpersonal engagement. Talks about self constantly but cannot describe others.
+
+**Breaking the loop:** Self-knowledge tasks that REQUIRE others' input (how do others see you? Does their perception match yours?). Make accurate self-knowledge dependent on interpersonal data.
+
+### 4.3 The Spiritual Bypasser (Intrapersonal + Spiritual)
+
+**Loop:** Intrapersonal golden-addiction (premature witness) + Spiritual golden-addiction (premature transcendence) = performs "enlightened self-awareness" without genuine Red grounding. Claims to have transcended ego without ever having a healthy ego.
+
+**Detection:** Sophisticated intrapersonal + spiritual language + LOW accuracy on concrete self-knowledge tasks + LOW Red-stage capacity scores.
+
+**Breaking the loop:** Require CONCRETE Red demonstrations before accepting "transcendent" claims. "Before you witness your anger, BE angry. Before you transcend ego, HAVE an ego."
+
+### 4.4 The Emotional Stranger (Intrapersonal + Emotional)
+
+**Loop:** Intrapersonal dark-allergy (won't look inward) + Emotional dark-allergy (won't feel) = disconnected from entire interior. Cannot name states because they refuse to look AND refuse to feel.
+
+**Detection:** Zero intrapersonal engagement + zero emotional engagement. Flat affect + no self-report. "I'm fine" to everything.
+
+**Breaking the loop:** Somatic entry point — the body feels even when the mind refuses. Use embodied-somatic modality to surface states that bypass the refusal to look/feel.
+
+---
+
+---
+
+## 7. Shadow Surfacing Sequence
+
+The game surfaces shadows in a specific developmental order:
 
 ```
-No self-identification (pre-Red)
-  → Stable self-identification ("I am X")
-    → State-labelling ("I am angry/wanting/afraid")
-      → Self-prediction ("I will fight/flee/freeze")
-        → Self-pattern recognition ("I always fight when afraid")
-          → Brief witness-pause ("I notice I'm about to fight because I'm afraid")
-            → [Amber threshold: self-in-role]
+1. Self-identification → Does a stable "I am X" exist?
+   ├─ If inflated → Narcissist pathway
+   ├─ If absent/refused → Unexamined pathway
+   └─ If present and accurate → proceed
+
+2. State-labelling → Can they name current states?
+   ├─ If abstract/performed → Premature Witness pathway
+   ├─ If refused → Unexamined pathway
+   └─ If concrete and accurate → proceed
+
+3. Self-prediction → Can they predict own behaviour?
+   ├─ If grandiose → Narcissist pathway
+   ├─ If absent → Unexamined pathway
+   ├─ If sophisticated but inaccurate → Premature Witness pathway
+   └─ If calibrated → proceed
+
+4. Witness-pause → Can they step back briefly?
+   ├─ If refused with hostility → Identity-Clinger pathway
+   ├─ If performed without accuracy → Premature Witness pathway
+   ├─ If refused with dismissal → Unexamined pathway
+   └─ If brief and genuine → healthy
+
+5. Integration → Can they hold self-as-object AND self-as-subject?
+   └─ This is the Red ceiling / Amber threshold
 ```
 
-### 7.2 Shadow as developmental information
-
-Each shadow tells us WHERE the player is stuck:
-- Narcissist: stuck at self-identification (has it, but it's inaccurate)
-- Unexamined: stuck BEFORE self-identification (refuses the first step)
-- Premature Witness: jumped to witness-pause without the foundation
-- Identity-Clinger: stuck at self-identification (has it, but can't let it become object)
-
-The game uses this information to present the NEXT appropriate developmental challenge — not the one the player wants, but the one they need.
+---

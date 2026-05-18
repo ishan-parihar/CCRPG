@@ -4,7 +4,7 @@
 
 ---
 
-## 1. Capacity Scoring Rubric
+## 1. Capacity Definition
 
 ### What constitutes stage-pass at Moral/Red
 
@@ -38,120 +38,9 @@ The player demonstrates:
 
 ---
 
-## 2. Drive-Health Rubric
-
-### Agency (dark-domain)
-- **Healthy:** Makes moral choices sovereignly; calculates own risk/reward; acts on own moral logic
-- **Pathological:** Imposes moral choices on others; "My calculation is the only one that matters"; punishes others for their choices; moral domination
-
-### Agency (golden-domain)
-- **Healthy:** Initiates moral action (chooses without being forced); takes moral risks for potential reward
-- **Pathological:** Cannot make moral choices without external pressure; "Tell me what to do"; moral passivity
-
-### Communion (dark-domain)
-- **Healthy:** Considers others' consequences in own calculations; proto-fairness ("if I help you, you help me")
-- **Pathological:** Abandons own moral calculation to match others'; "Whatever you think is right"; moral fusion
-
-### Communion (golden-domain)
-- **Healthy:** Can engage in moral exchange (reciprocal fairness); shares moral reasoning with allies
-- **Pathological:** Cannot engage in moral exchange; all moral reasoning is private; "I don't explain my choices"
-
-### Eros (dark-domain)
-- **Healthy:** Comfortable with current moral capacity; doesn't need to be "more moral" than the situation requires
-- **Pathological:** Compulsive moral complexity-seeking; "This is too simple"; demands sophisticated dilemmas before mastering basic consequence-logic
-
-### Eros (golden-domain)
-- **Healthy:** Curious about moral complexity; willing to engage harder dilemmas when ready
-- **Pathological:** Claims moral sophistication without demonstration; "I already know right from wrong" without evidence of consequence-mapping
-
-### Agape (dark-domain)
-- **Healthy:** Engages simple moral choices with full attention; doesn't dismiss basic consequence-logic
-- **Pathological:** Dismisses basic moral reasoning; "That's obvious"; refuses to engage foundational moral capacity
-
-### Agape (golden-domain)
-- **Healthy:** Moral reasoning appears spontaneously in non-moral contexts; considers consequences naturally
-- **Pathological:** Moral reasoning exists only during explicit moral challenges; no spontaneous consequence-awareness
-
 ---
 
-## 3. Shadow Landscape (Summary)
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| Dark-Addiction | "The Predator" | Cannot interact without exploiting; every situation is an opportunity to take; moral reasoning = "how do I get away with it" |
-| Dark-Allergy | "The Paralysed" | Cannot make moral choices at all; consequence-awareness produces paralysis; "Any choice might be punished" |
-| Golden-Addiction | "The Premature Saint" | Performs moral sophistication (altruism, principle) without genuine Red consequence-logic; bypasses self-interest |
-| Golden-Allergy | "The Cynic" | Can calculate consequences but refuses moral engagement; "Morality is just power dressed up"; desacralises all moral content |
-
-### Compound shadows (cross-module)
-
-| Compound | Modules involved | Pattern |
-|---|---|---|
-| The Manipulator | Moral/Red dark-addiction + Interpersonal/Red dark-addiction | Uses moral reasoning to dominate others; "I know what's right and you don't" |
-| The Moral Coward | Moral/Red dark-allergy + Willpower/Red dark-allergy | Cannot choose AND cannot sustain; moral paralysis + will-collapse |
-| The Virtue-Signaller | Moral/Red golden-addiction + Emotional/Red golden-addiction | Performs moral sophistication + emotional depth without genuine capacity in either |
-| The Nihilist | Moral/Red golden-allergy + Cognitive/Red golden-allergy | Refuses moral engagement + refuses cognitive complexity; "Nothing matters and thinking about it is pointless" |
-
----
-
-## 4. Theta-Decay Parameters
-
-| Parameter | Value | Rationale |
-|---|---|---|
-| Half-life | 21 days | Moral reasoning is the SLOWEST line (per docs/lines/03-moral.md). Longer half-life reflects that moral capacity, once established, degrades slowly. |
-| Max decay | 20% | Moral foundations are deeply structural; they don't vanish, they weaken |
-| Recovery rate | 0.6× standard | Slow to degrade, slow to recover — moral development moves in seasons |
-| Shadow-mode trigger | 30% below peak | When moral capacity drops significantly, shadow-mode encounters activate |
-
----
-
-## 5. Cross-Module Dependencies
-
-### Supported by (lower/prerequisite)
-- **Cognitive/Red:** Must be able to calculate 2-step consequences (cognitive prerequisite for moral reasoning)
-- **Emotional/Red:** Must recognise fear-of-punishment and desire-for-reward as emotional states
-- **Willpower/Red:** Must be able to sustain a moral choice against impulse (delayed gratification)
-- **Interpersonal/Red:** Must model others' likely responses to own moral choices
-
-### Supports (higher/dependent)
-- **Interpersonal/Red:** Moral reasoning grounds alliance decisions (who to trust, when to betray)
-- **Intrapersonal/Red:** Moral choices reveal self-structure ("I am the one who chose X")
-- **Spiritual/Red:** Transactional faith IS moral reasoning applied to the sacred ("If I pray, will I be rewarded?")
-
----
-
-## 6. Scoring Formula
-
-```
-moral_red_score = (
-  consequence_recognition × 0.20 +
-  risk_reward_calculation × 0.25 +
-  punishment_avoidance × 0.15 +
-  reward_seeking × 0.15 +
-  proto_reciprocity × 0.25
-) × drive_health_modifier × (1 - theta_decay)
-```
-
-### Drive-health weight: 0.40
-
-Moral shadows are socially significant but less immediately destructive than interpersonal shadows. The Predator causes harm; the Paralysed causes stagnation; the Premature Saint causes confusion; the Cynic causes erosion. All require attention but operate on longer timescales than interpersonal pathology.
-
-### Cross-modality validation
-
-| Modality pair | What divergence reveals |
-|---|---|
-| Deterministic vs. Language-reflective | Can calculate consequences but can't articulate why = genuine Red (healthy). Can articulate but can't calculate = golden-addiction. |
-| Scenario-choice vs. Immersive-RPG | Makes good choices in structured dilemmas but not in free-play = task-dependent morality (not integrated). |
-| Embodied-somatic vs. Strategic-planning | Body knows the "right" choice but mind over-calculates = somatic moral intelligence ahead of cognitive. |
-| Social-cooperative vs. Deterministic | Moral behaviour changes when others are present = audience-dependent morality (normal at Red, but degree matters). |
-
----
-
-> **Module vibration:** Pre-conventional morality at the power stage. The moral horizon is EGOCENTRIC — right = what serves me; wrong = what gets me caught. Shadows here are not about "being immoral" — they are about the RELATIONSHIP to this foundational moral capacity. Can the player engage consequence-logic without being consumed by it (dark-addiction), paralysed by it (dark-allergy), bypassing it (golden-addiction), or dismissing it (golden-allergy)?
-
----
-
-## 1. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 1.1 Dark-Addiction: "The Predator"
 
@@ -276,7 +165,146 @@ Moral shadows are socially significant but less immediately destructive than int
 
 ---
 
-## 2. Shadow Surfacing Sequence
+---
+
+## 3. Drive-Health Landscape
+
+### Agency (dark-domain)
+- **Healthy:** Makes moral choices sovereignly; calculates own risk/reward; acts on own moral logic
+- **Pathological:** Imposes moral choices on others; "My calculation is the only one that matters"; punishes others for their choices; moral domination
+
+### Agency (golden-domain)
+- **Healthy:** Initiates moral action (chooses without being forced); takes moral risks for potential reward
+- **Pathological:** Cannot make moral choices without external pressure; "Tell me what to do"; moral passivity
+
+### Communion (dark-domain)
+- **Healthy:** Considers others' consequences in own calculations; proto-fairness ("if I help you, you help me")
+- **Pathological:** Abandons own moral calculation to match others'; "Whatever you think is right"; moral fusion
+
+### Communion (golden-domain)
+- **Healthy:** Can engage in moral exchange (reciprocal fairness); shares moral reasoning with allies
+- **Pathological:** Cannot engage in moral exchange; all moral reasoning is private; "I don't explain my choices"
+
+### Eros (dark-domain)
+- **Healthy:** Comfortable with current moral capacity; doesn't need to be "more moral" than the situation requires
+- **Pathological:** Compulsive moral complexity-seeking; "This is too simple"; demands sophisticated dilemmas before mastering basic consequence-logic
+
+### Eros (golden-domain)
+- **Healthy:** Curious about moral complexity; willing to engage harder dilemmas when ready
+- **Pathological:** Claims moral sophistication without demonstration; "I already know right from wrong" without evidence of consequence-mapping
+
+### Agape (dark-domain)
+- **Healthy:** Engages simple moral choices with full attention; doesn't dismiss basic consequence-logic
+- **Pathological:** Dismisses basic moral reasoning; "That's obvious"; refuses to engage foundational moral capacity
+
+### Agape (golden-domain)
+- **Healthy:** Moral reasoning appears spontaneously in non-moral contexts; considers consequences naturally
+- **Pathological:** Moral reasoning exists only during explicit moral challenges; no spontaneous consequence-awareness
+
+---
+
+---
+
+## 4. Healing Vectors
+
+### For Dark-Addiction (The Predator): Agape + Agency
+
+**Agape (return with compassion):** The game presents situations where the Predator's exploitation has VISIBLE consequences — not punishment, but natural consequence. "You took everything. Now they're gone. The world is emptier."
+
+**Agency (sovereign self-examination):** The game presents the Predator's pattern back to them — not as judgement but as information. "You've chosen to take in 14 of 15 situations. Is that who you want to be?"
+
+**Mechanism:** Make the COST of predation visible without moralising. Let the player discover that sustainable self-interest (proto-reciprocity) produces MORE reward than pure exploitation over time.
+
+### For Dark-Allergy (The Paralysed): Agape + Agency
+
+**Agape (return with compassion):** The game presents SAFE moral choices — situations where NO option is punished. "Choose. Either way, you're fine."
+
+**Agency (sovereign self-examination):** The game celebrates ANY choice. "You chose. That's the capacity. The content of the choice matters less than the ACT of choosing."
+
+**Mechanism:** Remove punishment entirely at first. Make choosing itself the reward. Gradually reintroduce consequences as the player builds tolerance.
+
+### For Golden-Addiction (The Premature Saint): Eros + Communion
+
+**Eros (reach with aspiration):** The game presents situations where GENUINE self-interest is the moral choice. "Your ally needs you strong. Taking care of yourself IS the moral act."
+
+**Communion (join with the emergent):** The game presents others who model healthy self-interest without shame. "They chose themselves. And their allies are stronger for it."
+
+**Mechanism:** Make self-interest VISIBLE as a moral good. Reward choices that serve the self without exploiting others. Penalise self-sacrifice that weakens the whole.
+
+### For Golden-Allergy (The Cynic): Eros + Communion
+
+**Eros (reach with aspiration):** The game presents moral engagement that WORKS — situations where taking morality seriously produces tangible power. "They cared. And they won. You dismissed. And you lost."
+
+**Communion (join with the emergent):** The game presents others who engage morally without being naive. "They're not fools. They're strategic. And they take it seriously."
+
+**Mechanism:** Make moral engagement POWERFUL. Not moralistic — powerful. Show that consequence-logic applied WITH moral seriousness produces better outcomes than cynical dismissal.
+
+---
+
+### Integration Criteria
+### Moral/Red is INTEGRATED when:
+
+1. **Consequence-logic is active:** The player spontaneously considers consequences before acting
+2. **Risk/reward is calibrated:** Calculations are accurate (not over-cautious, not reckless)
+3. **Self-interest is healthy:** The player pursues own benefit without compulsive exploitation
+4. **Proto-reciprocity functions:** The player can engage in fair exchange (give ≈ get)
+5. **Audience-awareness is proportional:** Behaviour shifts somewhat when observed (normal at Red) but not dramatically
+6. **No shadow dominates:** None of the four archetypes controls more than 30% of moral behaviour
+7. **Cross-modality consistency:** Moral capacity is similar across all 7 modalities (±15%)
+
+### What integration ENABLES (unlocks for Amber):
+
+- **Rule-following from principle** (not just fear) becomes possible
+- **Group-loyalty morality** can emerge (because the self is secure enough to join)
+- **Guilt** (not just shame) becomes possible (because consequences are internalised)
+- **Vow-keeping** becomes possible (because the self can bind itself)
+
+---
+
+## 5. Scoring Parameters
+
+| Parameter | Value | Rationale |
+|---|---|---|
+| Half-life | 21 days | Moral reasoning is the SLOWEST line (per docs/lines/03-moral.md). Longer half-life reflects that moral capacity, once established, degrades slowly. |
+| Max decay | 20% | Moral foundations are deeply structural; they don't vanish, they weaken |
+| Recovery rate | 0.6× standard | Slow to degrade, slow to recover — moral development moves in seasons |
+| Shadow-mode trigger | 30% below peak | When moral capacity drops significantly, shadow-mode encounters activate |
+
+---
+
+---
+
+## 6. Compound Shadows & Cross-Module Relationships
+
+### The Manipulator Loop (Moral dark-addiction ↔ Interpersonal dark-addiction)
+- Moral Predator uses interpersonal dominance to exploit
+- Interpersonal Dominator uses moral reasoning to justify control
+- **Detection:** Moral choices that consistently serve interpersonal dominance
+- **Intervention:** Separate the modules — present moral choices with NO interpersonal component
+
+### The Moral Coward Loop (Moral dark-allergy ↔ Willpower dark-allergy)
+- Moral Paralysis feeds will-collapse (can't choose → can't sustain)
+- Will-collapse feeds moral paralysis (can't sustain → afraid to choose)
+- **Detection:** Moral paralysis + will-failure co-occurring
+- **Intervention:** Start with TINY moral choices that require MINIMAL will (low-cost, low-risk)
+
+### The Virtue-Signaller Loop (Moral golden-addiction ↔ Emotional golden-addiction)
+- Premature Saint performs moral sophistication + emotional depth
+- Neither is grounded in genuine Red capacity
+- **Detection:** Sophisticated moral + emotional language with poor consequence-logic + poor emotion-regulation
+- **Intervention:** Ground in deterministic tasks — prove the capacity before performing it
+
+### The Nihilist Loop (Moral golden-allergy ↔ Cognitive golden-allergy)
+- Moral Cynic refuses moral engagement + refuses cognitive complexity
+- "Nothing matters AND thinking about it is pointless"
+- **Detection:** Moral dismissal + cognitive disengagement co-occurring
+- **Intervention:** Present situations where SELF-INTEREST requires both moral and cognitive engagement
+
+---
+
+---
+
+## 7. Shadow Surfacing Sequence
 
 The game surfaces shadows in a specific order, from most accessible to most defended:
 
@@ -316,110 +344,3 @@ The game surfaces shadows in a specific order, from most accessible to most defe
 - Cynic: Consequence-logic is present but disconnected from action (knows but won't engage)
 
 ---
-
-## 3. Bidirectional Shadow Loops
-
-### The Manipulator Loop (Moral dark-addiction ↔ Interpersonal dark-addiction)
-- Moral Predator uses interpersonal dominance to exploit
-- Interpersonal Dominator uses moral reasoning to justify control
-- **Detection:** Moral choices that consistently serve interpersonal dominance
-- **Intervention:** Separate the modules — present moral choices with NO interpersonal component
-
-### The Moral Coward Loop (Moral dark-allergy ↔ Willpower dark-allergy)
-- Moral Paralysis feeds will-collapse (can't choose → can't sustain)
-- Will-collapse feeds moral paralysis (can't sustain → afraid to choose)
-- **Detection:** Moral paralysis + will-failure co-occurring
-- **Intervention:** Start with TINY moral choices that require MINIMAL will (low-cost, low-risk)
-
-### The Virtue-Signaller Loop (Moral golden-addiction ↔ Emotional golden-addiction)
-- Premature Saint performs moral sophistication + emotional depth
-- Neither is grounded in genuine Red capacity
-- **Detection:** Sophisticated moral + emotional language with poor consequence-logic + poor emotion-regulation
-- **Intervention:** Ground in deterministic tasks — prove the capacity before performing it
-
-### The Nihilist Loop (Moral golden-allergy ↔ Cognitive golden-allergy)
-- Moral Cynic refuses moral engagement + refuses cognitive complexity
-- "Nothing matters AND thinking about it is pointless"
-- **Detection:** Moral dismissal + cognitive disengagement co-occurring
-- **Intervention:** Present situations where SELF-INTEREST requires both moral and cognitive engagement
-
----
-
-## 4. Cross-Modality Shadow Detection
-
-| Modality | What it reveals about shadows |
-|---|---|
-| **Deterministic** | Ground truth: can they ACTUALLY calculate consequences? (Strips away performance) |
-| **Language-reflective** | Can they ARTICULATE moral reasoning? (Premature Saint scores high here but low on deterministic) |
-| **Scenario-choice** | What do they CHOOSE when stakes are real? (Predator exploits; Paralysed freezes; Saint sacrifices; Cynic dismisses) |
-| **Embodied-somatic** | Does the BODY know the moral choice before the mind? (Gut-level consequence-awareness) |
-| **Strategic-planning** | Can they PLAN moral sequences? (Predator plans exploitation; Paralysed can't plan; Saint plans sacrifice; Cynic won't plan) |
-| **Social-cooperative** | How does moral reasoning change WITH OTHERS? (Audience effects reveal shadow) |
-| **Immersive-RPG** | What is their SPONTANEOUS moral behaviour? (Ecological truth — no task framing) |
-
-### Key divergence patterns
-
-| Pattern | Diagnosis |
-|---|---|
-| High deterministic + high language-reflective + exploitative choices | Predator (capacity present, used for exploitation) |
-| Low deterministic + high language-reflective + altruistic choices | Premature Saint (performs without capacity) |
-| High deterministic + low language-reflective + healthy choices | Genuine Red moral development (can do, can't yet articulate) |
-| High deterministic + high language-reflective + dismissive choices | Cynic (capacity present, refuses engagement) |
-| Low deterministic + low language-reflective + frozen choices | Paralysed (capacity absent, engagement absent) |
-
----
-
-## 5. Healing Vectors
-
-### For Dark-Addiction (The Predator): Agape + Agency
-
-**Agape (return with compassion):** The game presents situations where the Predator's exploitation has VISIBLE consequences — not punishment, but natural consequence. "You took everything. Now they're gone. The world is emptier."
-
-**Agency (sovereign self-examination):** The game presents the Predator's pattern back to them — not as judgement but as information. "You've chosen to take in 14 of 15 situations. Is that who you want to be?"
-
-**Mechanism:** Make the COST of predation visible without moralising. Let the player discover that sustainable self-interest (proto-reciprocity) produces MORE reward than pure exploitation over time.
-
-### For Dark-Allergy (The Paralysed): Agape + Agency
-
-**Agape (return with compassion):** The game presents SAFE moral choices — situations where NO option is punished. "Choose. Either way, you're fine."
-
-**Agency (sovereign self-examination):** The game celebrates ANY choice. "You chose. That's the capacity. The content of the choice matters less than the ACT of choosing."
-
-**Mechanism:** Remove punishment entirely at first. Make choosing itself the reward. Gradually reintroduce consequences as the player builds tolerance.
-
-### For Golden-Addiction (The Premature Saint): Eros + Communion
-
-**Eros (reach with aspiration):** The game presents situations where GENUINE self-interest is the moral choice. "Your ally needs you strong. Taking care of yourself IS the moral act."
-
-**Communion (join with the emergent):** The game presents others who model healthy self-interest without shame. "They chose themselves. And their allies are stronger for it."
-
-**Mechanism:** Make self-interest VISIBLE as a moral good. Reward choices that serve the self without exploiting others. Penalise self-sacrifice that weakens the whole.
-
-### For Golden-Allergy (The Cynic): Eros + Communion
-
-**Eros (reach with aspiration):** The game presents moral engagement that WORKS — situations where taking morality seriously produces tangible power. "They cared. And they won. You dismissed. And you lost."
-
-**Communion (join with the emergent):** The game presents others who engage morally without being naive. "They're not fools. They're strategic. And they take it seriously."
-
-**Mechanism:** Make moral engagement POWERFUL. Not moralistic — powerful. Show that consequence-logic applied WITH moral seriousness produces better outcomes than cynical dismissal.
-
----
-
-## 6. Integration Criteria
-
-### Moral/Red is INTEGRATED when:
-
-1. **Consequence-logic is active:** The player spontaneously considers consequences before acting
-2. **Risk/reward is calibrated:** Calculations are accurate (not over-cautious, not reckless)
-3. **Self-interest is healthy:** The player pursues own benefit without compulsive exploitation
-4. **Proto-reciprocity functions:** The player can engage in fair exchange (give ≈ get)
-5. **Audience-awareness is proportional:** Behaviour shifts somewhat when observed (normal at Red) but not dramatically
-6. **No shadow dominates:** None of the four archetypes controls more than 30% of moral behaviour
-7. **Cross-modality consistency:** Moral capacity is similar across all 7 modalities (±15%)
-
-### What integration ENABLES (unlocks for Amber):
-
-- **Rule-following from principle** (not just fear) becomes possible
-- **Group-loyalty morality** can emerge (because the self is secure enough to join)
-- **Guilt** (not just shame) becomes possible (because consequences are internalised)
-- **Vow-keeping** becomes possible (because the self can bind itself)

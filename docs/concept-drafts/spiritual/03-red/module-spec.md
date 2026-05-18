@@ -1,6 +1,8 @@
 # Spiritual / Red — Module Specification Skeleton
 
-## 1. What This Module Measures
+---
+
+## 1. Capacity Definition
 
 **Transactional meaning-making** — the first stable relationship to "ultimate concern" where the sacred is PERSONAL and POWER-GRANTING. At Red, spiritual intelligence is: "What do I value most? What gives me power? What is sacred TO ME?" The relationship to the sacred is egocentric and transactional: "I serve the power-deity; the power-deity serves me."
 
@@ -29,141 +31,9 @@ The sacred at Red is PERSONAL and POWER-GRANTING. It's not institutional religio
 
 ---
 
-## 2. Theta-Decay Parameters
-
-| Parameter | Value | Rationale |
-|---|---|---|
-| Half-life | 20 days | Slow. Spiritual altitude is event-driven, not session-driven. Values are stable once established. |
-| Max decay | 15% | Cannot lose more than 15% — values don't disappear, they just lose coherence |
-| Decay curve | Exponential | Standard |
-| Recovery rate | 1.1× | Slow recovery — spiritual coherence rebuilds gradually |
-| Practice sensitivity | MODERATE | Value-coherence practice arrests decay; casual play doesn't |
-
-### Decay-arrest conditions
-- Any value-invocation (stating primary value under load) arrests decay
-- Value-coherent action (acting in alignment with stated value) arrests decay
-- Sacred-boundary defence (protecting what's sacred) arrests decay
-- Transactional faith engagement (serving the sacred and receiving) arrests decay
-
 ---
 
-## 3. Drive-Health Weights
-
-| Drive | Weight | Rationale |
-|---|---|---|
-| Agency | 0.35 | Spiritual at Red is primarily SOVEREIGN — "MY value, MY sacred, MY power-deity" |
-| Communion | 0.15 | Minimal relational spirituality at Red (shared faith comes at Amber) |
-| Eros | 0.25 | The developmental edge — can they reach toward deeper values? |
-| Agape | 0.25 | Can they maintain value-coherence over time? Return to the sacred? |
-
-**Total drive-health weight for consciousness index:** 0.30
-
-### Rationale for 0.30
-Spiritual is the "why" line — it organises all other lines around ultimate concern. But at Red, its contribution is modest because the capacity is primitive (transactional, egocentric). Its weight increases at Amber+ where value-coherence becomes the organising principle of the whole personality.
-
----
-
-## 4. Shadow Landscape (Summary)
-
-| Quadrant | Archetype | Core pattern |
-|---|---|---|
-| Dark-Addiction | **The Zealot** | Over-identified with power-deity; sacred = weapon; values serve domination |
-| Dark-Allergy | **The Nihilist** | Refuses all value-hierarchy; "Nothing matters"; spiritual emptiness as defence |
-| Golden-Addiction | **The Premature Mystic** | Performs higher spiritual capacity without Red grounding; "I've transcended values" |
-| Golden-Allergy | **The Sacred-Refuser** | Terrified of committing to a value; refuses the sacred because commitment feels like death |
-
-### Compound shadows (cross-module)
-
-| Compound | Modules | Pattern |
-|---|---|---|
-| **The Holy Warrior** | Spiritual + Willpower (both dark-addiction) | Fanatical pursuit of sacred goal; unstoppable but blind |
-| **The Meaning-Void** | Spiritual + Intrapersonal (both dark-allergy) | No values AND no self-knowledge; drifting without anchor or mirror |
-| **The Spiritual Bypasser** | Spiritual + Intrapersonal (both golden-addiction) | Performs transcendence without Red grounding in either line |
-| **The Power-Atheist** | Spiritual + Cognitive (dark-allergy + dark-addiction) | Intellectualises away all value while over-identifying with cognitive power |
-
----
-
-## 5. Scoring Architecture
-
-### 5.1 Capacity dimensions
-
-| Dimension | Measurement | Weight |
-|---|---|---|
-| Value-identification clarity | Can they name what matters most? | 0.20 |
-| Value-coherence under load | Do actions align with stated value when pressured? | 0.30 |
-| Priority-under-load | Can they choose between competing values? | 0.20 |
-| Transactional faith engagement | Do they engage the sacred reciprocally? | 0.15 |
-| Sacred-boundary defence | Do they protect what they've declared sacred? | 0.15 |
-
-### 5.2 Cross-modality validation
-
-| Signal | Interpretation |
-|---|---|
-| Stated value matches behaviour (deterministic confirms language-reflective) | Genuine spiritual capacity |
-| Stated value exceeds behaviour (language-reflective >> deterministic) | Golden-addiction (performing spirituality) |
-| Behaviour shows value-coherence but cannot articulate (deterministic >> language-reflective) | Dark-allergy (has values but won't name them) |
-| Stated value is grandiose + behaviour is exploitative | Dark-addiction (values serve domination) |
-
-### 5.3 Altitude assignment
-
-| Checkpoint range | Altitude descriptor |
-|---|---|
-| 0-10 | Pre-spiritual: no stable value-identification |
-| 10-25 | Early Red: "X matters" (single, concrete value named) |
-| 25-45 | Mid Red: value-coherence under light pressure; transactional faith |
-| 45-65 | Late Red: priority-under-load; sacred-boundary defence |
-| 65-80 | Red ceiling: consistent value-coherence; stable sacred relationship |
-| 80+ | Approaching Amber: value-in-community; shared sacred |
-
----
-
-## 6. Session Scoring
-
-### 6.1 Per-session metrics
-
-- Value-identification stability (same primary value across session?)
-- Value-coherence rate (% of actions aligned with stated value)
-- Priority decisions (quality of value-prioritisation under load)
-- Sacred-boundary events (defended or violated?)
-- Transactional faith engagement (invoked and received?)
-
-### 6.2 Cross-session metrics
-
-- Value stability (same primary value across sessions? Healthy = stable; not rigid)
-- Coherence trend (improving alignment over time?)
-- Sacred-boundary consistency (same things remain sacred?)
-- Faith-engagement depth (deepening relationship to the sacred?)
-
----
-
-## 7. Integration with Other Modules
-
-### 7.1 Spiritual as organising line
-
-Spiritual intelligence organises the VALUE-HIERARCHY that all other lines serve. At Red, this is primitive: "I value power; therefore all my capacities serve power." But it provides the WHY that gives direction to the other lines.
-
-### 7.2 Bidirectional relationships
-
-| Other line | Relationship |
-|---|---|
-| Willpower | Spiritual provides the VALUE that willpower pursues; willpower provides the FORCE to maintain value-coherence |
-| Intrapersonal | Spiritual provides the "what matters"; intrapersonal provides the "do I actually live it?" |
-| Moral | Spiritual provides the value-hierarchy; moral provides the consequence-logic for acting on it |
-| Cognitive | Cognitive enables more complex value-models; spiritual provides the direction cognitive serves |
-
----
-
-## 1. The Spiritual/Red Shadow Landscape
-
-At Red, the sacred is PERSONAL, TRANSACTIONAL, and POWER-GRANTING. The developmental achievement is: "Something matters to me more than other things — and I serve it because it serves me." The shadow landscape revolves around the relationship to this first egocentric value-hierarchy — weaponising it, refusing it, performing transcendence of it, or refusing to commit to it.
-
-### The core tension
-
-The sacred at Red is a POWER-RELATIONSHIP. "I honour strength; strength honours me." This is not yet institutional faith (Amber), rational principle (Orange), or pluralistic acceptance (Green). It's raw, personal, concrete: "My power-deity is on MY side." The shadows cluster around this transactional sacred relationship.
-
----
-
-## 2. The Four Shadow Archetypes
+## 2. Shadow Archetypes
 
 ### 2.1 Dark-Addiction: "The Zealot"
 
@@ -296,85 +166,27 @@ The sacred at Red is a POWER-RELATIONSHIP. "I honour strength; strength honours 
 
 ---
 
-## 3. The Surfacing Sequence
+---
 
-The game surfaces shadows in a specific developmental order:
+## 3. Drive-Health Landscape
 
-```
-1. Value-identification → Can they name what matters most?
-   ├─ If weaponised → Zealot pathway
-   ├─ If absent/refused → Nihilist pathway
-   ├─ If abstract/transcendent → Premature Mystic pathway
-   └─ If present and concrete → proceed
+| Drive | Weight | Rationale |
+|---|---|---|
+| Agency | 0.35 | Spiritual at Red is primarily SOVEREIGN — "MY value, MY sacred, MY power-deity" |
+| Communion | 0.15 | Minimal relational spirituality at Red (shared faith comes at Amber) |
+| Eros | 0.25 | The developmental edge — can they reach toward deeper values? |
+| Agape | 0.25 | Can they maintain value-coherence over time? Return to the sacred? |
 
-2. Value-coherence → Do actions align with stated value?
-   ├─ If rigid/aggressive → Zealot pathway
-   ├─ If absent (no value to align with) → Nihilist pathway
-   ├─ If claimed but not demonstrated → Premature Mystic pathway
-   ├─ If started then abandoned → Sacred-Refuser pathway
-   └─ If sustained and genuine → proceed
+**Total drive-health weight for consciousness index:** 0.30
 
-3. Transactional faith → Do they engage the sacred reciprocally?
-   ├─ If one-directional/demanding → Zealot pathway
-   ├─ If absent → Nihilist pathway
-   ├─ If performed without genuine engagement → Premature Mystic pathway
-   ├─ If engaged then broken → Sacred-Refuser pathway
-   └─ If genuine and sustained → proceed
-
-4. Sacred-boundary → Do they protect what's sacred?
-   ├─ If offensive/weaponised → Zealot pathway
-   ├─ If nothing is sacred → Nihilist pathway
-   ├─ If "everything is sacred" (nothing specific) → Premature Mystic pathway
-   ├─ If declared then violated → Sacred-Refuser pathway
-   └─ If defended appropriately → proceed
-
-5. Priority-under-load → Can they choose between competing values?
-   ├─ If always chooses domination → Zealot pathway
-   ├─ If cannot choose (nothing matters) → Nihilist pathway
-   ├─ If claims "all values are equal" → Premature Mystic pathway
-   ├─ If chooses then regrets/switches → Sacred-Refuser pathway
-   └─ If chooses clearly and holds → healthy
-```
+### Rationale for 0.30
+Spiritual is the "why" line — it organises all other lines around ultimate concern. But at Red, its contribution is modest because the capacity is primitive (transactional, egocentric). Its weight increases at Amber+ where value-coherence becomes the organising principle of the whole personality.
 
 ---
 
-## 4. Bidirectional Shadow Loops (Cross-Module)
-
-### 4.1 The Holy Warrior (Spiritual + Willpower)
-
-**Loop:** Spiritual dark-addiction (zealotry) + Willpower dark-addiction (compulsive pursuit) = fanatical, unstoppable pursuit of sacred goal. The will serves the weaponised sacred without question. Crusade-mode.
-
-**Detection:** High spiritual engagement (but aggressive) + high willpower (but rigid). All effort serves the sacred weapon. Cannot stop, cannot question.
-
-**Breaking the loop:** Present situations where the sacred goal REQUIRES restraint. "Your god demands you WAIT. Your god demands you show mercy. Can your will serve THAT?"
-
-### 4.2 The Meaning-Void (Spiritual + Intrapersonal)
-
-**Loop:** Spiritual dark-allergy (nihilism) + Intrapersonal dark-allergy (unexamined) = no values AND no self-knowledge. Drifting without anchor or mirror. Cannot say what matters because they don't know themselves, and don't know themselves because nothing matters enough to look.
-
-**Detection:** Zero spiritual engagement + zero intrapersonal engagement. No values, no self-knowledge. Functional but hollow.
-
-**Breaking the loop:** Start with the BODY (somatic entry). The body has preferences even when the mind refuses. "Your body chose to protect that. Something matters. What?"
-
-### 4.3 The Spiritual Bypasser (Spiritual + Intrapersonal)
-
-**Loop:** Spiritual golden-addiction (premature transcendence) + Intrapersonal golden-addiction (premature witness) = performs "enlightened awareness" without Red grounding in either line. Claims transcendence of both self and values without ever having either.
-
-**Detection:** Sophisticated spiritual + intrapersonal language + LOW concrete capacity in both. Sounds awakened but can't name a value or predict own behaviour.
-
-**Breaking the loop:** Require CONCRETE Red demonstrations. "Before you transcend values, HAVE a value. Before you witness the self, KNOW the self. Ground first."
-
-### 4.4 The Power-Atheist (Spiritual + Cognitive)
-
-**Loop:** Spiritual dark-allergy (nihilism) + Cognitive dark-addiction (intellectualisation) = uses cognitive power to JUSTIFY spiritual emptiness. "Values are irrational. Meaning is a construct. I'm too smart for faith." Intelligence weaponised against the sacred.
-
-**Detection:** High cognitive engagement + zero spiritual engagement. Articulate dismissal of all value-hierarchy. "Meaning is a cognitive bias."
-
-**Breaking the loop:** Present situations where COGNITIVE SUCCESS requires value-commitment. "Your strategy needs a goal. What matters enough to plan for? Intelligence without direction is noise."
-
 ---
 
-## 5. The Healing Architecture
+## 4. Healing Vectors
 
 ### 5.1 For Dark-Addiction (The Zealot)
 
@@ -418,44 +230,104 @@ The game surfaces shadows in a specific developmental order:
 
 ---
 
-## 6. Detection Confidence Thresholds
+---
 
-| Shadow | Minimum sessions | Minimum signals | Confidence for diagnosis |
-|---|---|---|---|
-| The Zealot | 3 | 4+ aggressive value-invocations; sacred-as-weapon | 0.70 |
-| The Nihilist | 2 | 4+ refused value-identification; no coherence | 0.75 |
-| The Premature Mystic | 4 | Language-reflective >> deterministic gap sustained; abstract without concrete | 0.65 |
-| The Sacred-Refuser | 3 | 3+ commitment-then-abandonment cycles | 0.70 |
+## 5. Scoring Parameters
 
-### False-positive guards
+| Parameter | Value | Rationale |
+|---|---|---|
+| Half-life | 20 days | Slow. Spiritual altitude is event-driven, not session-driven. Values are stable once established. |
+| Max decay | 15% | Cannot lose more than 15% — values don't disappear, they just lose coherence |
+| Decay curve | Exponential | Standard |
+| Recovery rate | 1.1× | Slow recovery — spiritual coherence rebuilds gradually |
+| Practice sensitivity | MODERATE | Value-coherence practice arrests decay; casual play doesn't |
 
-- Zealot vs. genuinely passionate: check if value-invocation is AGGRESSIVE or just STRONG
-- Nihilist vs. pre-spiritual: check if they CAN identify values but WON'T (allergy) vs. haven't developed capacity yet
-- Premature Mystic vs. genuinely advanced: check if concrete tasks ALSO score high
-- Sacred-Refuser vs. healthy exploration: check if abandonment produces RELIEF (allergy) vs. genuine revision
+### Decay-arrest conditions
+- Any value-invocation (stating primary value under load) arrests decay
+- Value-coherent action (acting in alignment with stated value) arrests decay
+- Sacred-boundary defence (protecting what's sacred) arrests decay
+- Transactional faith engagement (serving the sacred and receiving) arrests decay
 
 ---
 
-## 7. Progression Through the Shadow Landscape
+---
 
-### 7.1 The healthy developmental path
+## 6. Compound Shadows & Cross-Module Relationships
+
+### 4.1 The Holy Warrior (Spiritual + Willpower)
+
+**Loop:** Spiritual dark-addiction (zealotry) + Willpower dark-addiction (compulsive pursuit) = fanatical, unstoppable pursuit of sacred goal. The will serves the weaponised sacred without question. Crusade-mode.
+
+**Detection:** High spiritual engagement (but aggressive) + high willpower (but rigid). All effort serves the sacred weapon. Cannot stop, cannot question.
+
+**Breaking the loop:** Present situations where the sacred goal REQUIRES restraint. "Your god demands you WAIT. Your god demands you show mercy. Can your will serve THAT?"
+
+### 4.2 The Meaning-Void (Spiritual + Intrapersonal)
+
+**Loop:** Spiritual dark-allergy (nihilism) + Intrapersonal dark-allergy (unexamined) = no values AND no self-knowledge. Drifting without anchor or mirror. Cannot say what matters because they don't know themselves, and don't know themselves because nothing matters enough to look.
+
+**Detection:** Zero spiritual engagement + zero intrapersonal engagement. No values, no self-knowledge. Functional but hollow.
+
+**Breaking the loop:** Start with the BODY (somatic entry). The body has preferences even when the mind refuses. "Your body chose to protect that. Something matters. What?"
+
+### 4.3 The Spiritual Bypasser (Spiritual + Intrapersonal)
+
+**Loop:** Spiritual golden-addiction (premature transcendence) + Intrapersonal golden-addiction (premature witness) = performs "enlightened awareness" without Red grounding in either line. Claims transcendence of both self and values without ever having either.
+
+**Detection:** Sophisticated spiritual + intrapersonal language + LOW concrete capacity in both. Sounds awakened but can't name a value or predict own behaviour.
+
+**Breaking the loop:** Require CONCRETE Red demonstrations. "Before you transcend values, HAVE a value. Before you witness the self, KNOW the self. Ground first."
+
+### 4.4 The Power-Atheist (Spiritual + Cognitive)
+
+**Loop:** Spiritual dark-allergy (nihilism) + Cognitive dark-addiction (intellectualisation) = uses cognitive power to JUSTIFY spiritual emptiness. "Values are irrational. Meaning is a construct. I'm too smart for faith." Intelligence weaponised against the sacred.
+
+**Detection:** High cognitive engagement + zero spiritual engagement. Articulate dismissal of all value-hierarchy. "Meaning is a cognitive bias."
+
+**Breaking the loop:** Present situations where COGNITIVE SUCCESS requires value-commitment. "Your strategy needs a goal. What matters enough to plan for? Intelligence without direction is noise."
+
+---
+
+---
+
+## 7. Shadow Surfacing Sequence
+
+The game surfaces shadows in a specific developmental order:
 
 ```
-No value-identification (pre-Red spiritual)
-  → Single concrete value ("Power matters"; "Victory matters")
-    → Value-coherence under light pressure (1-2 decisions)
-      → Transactional faith ("I serve strength; strength serves me")
-        → Sacred-boundary ("My weapon is sacred; I protect it")
-          → Priority-under-load (choose between competing values)
-            → [Amber threshold: value-in-community; shared sacred]
+1. Value-identification → Can they name what matters most?
+   ├─ If weaponised → Zealot pathway
+   ├─ If absent/refused → Nihilist pathway
+   ├─ If abstract/transcendent → Premature Mystic pathway
+   └─ If present and concrete → proceed
+
+2. Value-coherence → Do actions align with stated value?
+   ├─ If rigid/aggressive → Zealot pathway
+   ├─ If absent (no value to align with) → Nihilist pathway
+   ├─ If claimed but not demonstrated → Premature Mystic pathway
+   ├─ If started then abandoned → Sacred-Refuser pathway
+   └─ If sustained and genuine → proceed
+
+3. Transactional faith → Do they engage the sacred reciprocally?
+   ├─ If one-directional/demanding → Zealot pathway
+   ├─ If absent → Nihilist pathway
+   ├─ If performed without genuine engagement → Premature Mystic pathway
+   ├─ If engaged then broken → Sacred-Refuser pathway
+   └─ If genuine and sustained → proceed
+
+4. Sacred-boundary → Do they protect what's sacred?
+   ├─ If offensive/weaponised → Zealot pathway
+   ├─ If nothing is sacred → Nihilist pathway
+   ├─ If "everything is sacred" (nothing specific) → Premature Mystic pathway
+   ├─ If declared then violated → Sacred-Refuser pathway
+   └─ If defended appropriately → proceed
+
+5. Priority-under-load → Can they choose between competing values?
+   ├─ If always chooses domination → Zealot pathway
+   ├─ If cannot choose (nothing matters) → Nihilist pathway
+   ├─ If claims "all values are equal" → Premature Mystic pathway
+   ├─ If chooses then regrets/switches → Sacred-Refuser pathway
+   └─ If chooses clearly and holds → healthy
 ```
 
-### 7.2 Shadow as developmental information
-
-Each shadow tells us WHERE the player is stuck:
-- Zealot: stuck at value-identification (has it, but it's weaponised)
-- Nihilist: stuck BEFORE value-identification (refuses the first step)
-- Premature Mystic: jumped to "transcendence" without the foundation
-- Sacred-Refuser: stuck at value-commitment (can identify but won't hold)
-
-The game uses this information to present the NEXT appropriate developmental challenge.
+---
