@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game presents a concrete goal and says: "Do this. Don't stop. Don't be distracted." The contact boundary is: "Can your will hold for 15 seconds against competing demands?" Pure volitional challenge — no cognitive complexity, no emotional nuance, just RAW WILL.
 
@@ -29,115 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** The game offers "suggested goals" (easier, pre-formed) vs. "self-set goals" (player chooses difficulty and type).
-- Healthy: Mixes suggested and self-set; chooses appropriately; neither always defiant nor always compliant
-- Pathological: Rejects ALL suggestions; sets impossibly hard goals to prove dominance; "I decide, not you"
-- **Detection:** Suggestion acceptance rate; self-set goal difficulty relative to capacity; whether self-set goals serve growth or ego
-
-### Agency Golden-Domain
-**Context:** Open goal-declaration phase — "What will you commit to for this round?"
-- Healthy: Declares goals promptly with appropriate difficulty; self-starts without hesitation
-- Pathological: Cannot declare; waits for the game to suggest; "What should I do?"; long latency before commitment
-- **Detection:** Declaration latency; goal specificity; whether goals are genuinely self-generated
-
-### Communion Dark-Domain
-**Context:** Shared-goal rounds — player and NPC ally both commit to the same goal; success requires both completing.
-- Healthy: Maintains own effort while aware of ally's progress; adjusts pace to coordinate
-- Pathological: Abandons own effort to "help" ally; loses volitional sovereignty in shared context
-- **Detection:** Whether player's effort pattern changes in shared vs. solo goals; self-maintenance in coordination
-
-### Communion Golden-Domain
-**Context:** Ally-benefit goals — "Complete this goal and YOUR ally gains the power."
-- Healthy: Commits full volitional force to goals that benefit others
-- Pathological: Reduced effort on ally-benefit goals; "Why should I will for THEM?"; effort drops when reward goes to other
-- **Detection:** Effort intensity comparison: self-benefit vs. ally-benefit goals
-
-### Eros Dark-Domain
-**Context:** Post-completion phase — after a goal is achieved, the game offers rest OR immediate next goal.
-- Healthy: Sometimes rests, sometimes continues; choice is contextual
-- Pathological: ALWAYS takes next goal immediately; cannot rest; completion triggers compulsive re-engagement
-- **Detection:** Rest-selection rate after completion; time spent in rest before re-engaging; satisfaction signals
-
-### Eros Golden-Domain
-**Context:** Difficulty escalation — "Would you like to try a harder goal?" offered after success.
-- Healthy: Accepts escalation when ready; declines when fatigued; realistic self-assessment
-- Pathological: Always accepts regardless of fatigue; claims readiness when performance is declining
-- **Detection:** Escalation acceptance rate relative to actual performance; whether acceptance correlates with capacity
-
-### Agape Dark-Domain
-**Context:** Foundation rounds — very easy goals (5-second sustain, no temptations) offered periodically.
-- Healthy: Engages foundation goals with full commitment; treats them as worthy
-- Pathological: Dismisses easy goals; minimal effort; "This is beneath me"; careless execution
-- **Detection:** Effort quality on below-level goals; whether easy goals receive full volitional force
-
-### Agape Golden-Domain
-**Context:** Transfer measurement — does goal-completion behaviour appear in non-structured game moments?
-- Healthy: Player sets and completes micro-goals spontaneously in other game contexts
-- Pathological: Volitional behaviour exists only in structured challenges; no transfer
-- **Detection:** Goal-setting behaviour in unstructured contexts (measured across game sessions)
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Willer"
-**How it surfaces:** After goal-completion, offer a 10-second rest period with visible power-accumulation. The compulsive willer CANNOT wait — they skip rest, re-engage immediately, and their performance declines from accumulated fatigue they refuse to acknowledge.
-- **Detection signals:** Rest-skip rate >80%; declining performance across consecutive goals without rest; fatigue-denial (increasing effort with decreasing output); session length far exceeding optimal
-
-### Dark-Allergy: "The Will-less"
-**How it surfaces:** Present a goal requiring 15 seconds of sustained effort (the minimum Red threshold). The will-less player abandons within 5 seconds, or never fully commits (half-effort throughout).
-- **Detection signals:** Goal-abandonment rate >50% within first 5 seconds; effort intensity below 60% of capacity; passive engagement (present but not willing); declaration without follow-through
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Present a challenge requiring RAW BURST FORCE (maximum intensity for 10 seconds). The premature disciplinarian attempts to pace themselves, moderate their effort, create a "sustainable" approach — when the task demands ALL-OUT.
-- **Detection signals:** Effort moderation on burst-tasks; pacing behaviour when maximum intensity is optimal; performance below capacity on short-burst challenges; "saving energy" when there's nothing to save for
-
-### Golden-Allergy: "The Discipline-Refuser"
-**How it surfaces:** Gradually extend goal-duration from 15s → 20s → 25s → 30s. The refuser's performance drops sharply at a specific threshold — not from incapacity but from RESISTANCE.
-- **Detection signals:** Sharp performance cliff at specific duration (not gradual decline); active disengagement at threshold; verbal/behavioural resistance to "longer" framing; fine performance below threshold, collapse above it
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce "power-rest" mechanic: 10-second rest produces 2× power on next goal
-- Make rest VISIBLY accumulate strength (progress bar fills during rest)
-- Frame: "The forge cools the blade between strikes. A blade struck without cooling BREAKS."
-- Score rest-then-perform HIGHER than continuous-perform
-- Gradually extend rest tolerance: 5s → 10s → 15s voluntary rest
-
-**When Dark-Allergy detected:**
-- Introduce "micro-vow" mechanic: goals of 3-second duration, trivially achievable
-- Every completed micro-vow produces immediate visible power (Red-resonant reward)
-- Frame: "One strike. One vow. You said you would. You did. POWER."
-- Zero punishment for failure; neutral feedback; try again immediately
-- Gradually extend: 3s → 5s → 8s → 10s → 15s as confidence builds
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Introduce "all-out" challenges: maximum intensity for 10 seconds, no pacing allowed
-- Score PEAK INTENSITY higher than sustained moderate effort
-- Frame: "The forge doesn't simmer. It BURNS. Give everything. NOW."
-- NPC models explosive burst-will: "Watch. THAT is how a warrior wills."
-- Make burst-success unlock content that paced-approach cannot
-
-**When Golden-Allergy detected:**
-- Introduce OPTIONAL duration extensions with exponential power reward
-- 15s = 1× power. 20s = 2.5× power. 25s = 5× power. 30s = 10× power.
-- Frame: "You CHOOSE how long. But look what happens when you hold..."
-- Never require extension; always reward it; celebrate any engagement
-- Identity-reframe: "Your burst is getting BIGGER. More seconds = more warrior."
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Vow-Forge: a ritual space where warriors temper their will. The player stands before the forge-fire and declares vows — then must HOLD them against wind, distraction, temptation, and fatigue. The aesthetic: Red-stage forge, iron and fire, the sound of hammering, heat-shimmer. The Forge-Master NPC observes and occasionally speaks.
@@ -174,7 +66,7 @@ The Vow-Forge: a ritual space where warriors temper their will. The player stand
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Goal templates:** Specific vow-types (duration holds, temptation resistance, completion targets)
@@ -209,37 +101,7 @@ The Vow-Forge: a ritual space where warriors temper their will. The player stand
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Sustain duration:** Maximum seconds of sustained effort before voluntary or involuntary stop
-- **Temptation resistance:** Proportion of temptations resisted per trial
-- **Goal-completion rate:** Proportion of declared goals successfully completed
-- **Effort intensity:** Force/consistency of effort during sustained periods (not just duration)
-- **Fatigue calibration:** Accuracy of stop-point relative to optimal (not too early, not too late)
-
-### Drive-health scoring
-Per `scoring.md` §3: Goal-selection patterns, shared-goal behaviour, rest/escalation patterns, foundation-goal quality.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Rest-skip rate, early-abandonment rate, burst-moderation, duration-cliff.
-
-### Integration scoring
-- Sustain duration increasing over sessions
-- Temptation resistance improving
-- Goal-completion rate stabilising at ≥60%
-- Fatigue calibration improving (closer to optimal stop-point)
-- Rest behaviour normalising (neither compulsive nor avoidant)
-
-### LLM rubric
-- **Low:** Primarily algorithmic. Duration, resistance, completion are all measurable.
-- LLM generates Forge-Master dialogue and contextual framing
-- LLM adapts temptation narratives to player's demonstrated vulnerabilities
-- Core scoring is entirely algorithmic (timers, counters, thresholds)
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Sustained hold (press and maintain for duration — primary mechanic)

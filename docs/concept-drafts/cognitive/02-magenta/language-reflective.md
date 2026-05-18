@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "What is this rune? What does it mean? How do you use it? How do you KNOW?" The contact boundary is: "Can you put your symbolic experience into words?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Naming symbols independently (generating names without prompts).
-- Healthy: Creates accurate names; "This rune means fire because it looks like flames"
-- Pathological: Names as power-claims; "I name this rune MINE and now I control it"
-- **Detection:** Whether naming serves understanding or domination
-
-### Agency Golden-Domain
-**Context:** Self-initiated verbal reflection on symbolic experience.
-- Healthy: Spontaneously describes what happened; "I saw the rune and remembered it"
-- Pathological: Cannot reflect without prompting; waits to be asked
-- **Detection:** Spontaneous verbal reflection rate
-
-### Communion Dark-Domain
-**Context:** Sharing names/descriptions with others.
-- Healthy: Shares naming; accepts others' names; "You call it the fire-rune? I call it the warm-rune."
-- Pathological: Demands others use their names; "It's called what I say it's called"
-- **Detection:** Flexibility in shared naming vs. rigid imposition
-
-### Communion Golden-Domain
-**Context:** Learning names from others (receiving symbolic language).
-- Healthy: Integrates others' names into own understanding
-- Pathological: Cannot learn from others' naming; must discover alone
-- **Detection:** Integration quality of received symbolic language
-
-### Eros Dark-Domain
-**Context:** Naming familiar symbols (well-known runes).
-- Healthy: Maintains accurate naming of familiar symbols
-- Pathological: Bored with naming familiar things; "I already know this"
-- **Detection:** Naming quality on below-level familiar content
-
-### Eros Golden-Domain
-**Context:** Naming novel symbols (never-seen runes).
-- Healthy: Attempts naming with appropriate uncertainty; "I think this means..."
-- Pathological: Claims certain knowledge of novel symbols; over-confident naming
-- **Detection:** Appropriate uncertainty vs. premature certainty in novel naming
-
-### Agape Dark-Domain
-**Context:** Maintaining naming accuracy over time.
-- Healthy: Names remain accurate and consistent across sessions
-- Pathological: Naming degrades; symbols lose their names
-- **Detection:** Naming consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether naming appears spontaneously in other contexts.
-- Healthy: Names symbols in non-language tasks; verbal mediation transfers
-- Pathological: Naming exists only during explicit language tasks
-- **Detection:** Spontaneous naming in ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Thinker"
-**How it surfaces:** Naming IS spell-casting. The player believes that naming a symbol gives them power over it. Language is incantation, not description. "I name you fire-rune and you OBEY."
-- **Detection signals:** Names as commands; belief that naming controls; distress when named things don't obey; language used for power not understanding; incantatory quality to all naming
-
-### Dark-Allergy: "The Concrete-Bound"
-**How it surfaces:** Cannot or will not name symbols. "It's just a shape. Why would I name it?" Language about symbols feels pointless. No verbal engagement with symbolic content.
-- **Detection signals:** Minimal verbal output about symbols; "I don't know" responses; refusal to name; treats naming as meaningless; no language-symbol connection
-
-### Golden-Addiction: "The Premature Reasoner"
-**How it surfaces:** OVER-EXPLAINS with logical language that exceeds actual capacity. "This rune represents the thermodynamic principle of..." — sophisticated language masking shallow symbolic understanding.
-- **Detection signals:** Verbal sophistication >> deterministic performance; logical language about magical content; explanations that sound advanced but don't match actual symbol-holding capacity; cross-validation gap with deterministic
-
-### Golden-Allergy: "The Wonder-Refuser"
-**How it surfaces:** Fears naming because naming makes the symbol REAL. If they name it, they've committed to the symbolic world. Approach-withdrawal in verbal engagement.
-- **Detection signals:** Starts to name then stops; "It's... never mind"; approach-withdrawal in verbal tasks; can name when forced but avoids voluntary naming; naming produces visible discomfort
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce naming as DESCRIPTION not CONTROL: "What does it look like? Not what does it do for you."
-- Reward descriptive accuracy over power-claims
-- Frame: "Naming helps you understand. It doesn't give you power over the thing."
-- Build: language-as-understanding (healthy Magenta verbal relationship)
-
-**When Dark-Allergy detected:**
-- Start with PHYSICAL descriptions: "What colour is it? What shape?" (bridge from concrete)
-- Make naming produce understanding (not just labels): "Now that you named it, you can find it again"
-- Frame: "A name is just a way to remember. Like calling your friend by their name."
-- Reward ANY verbal engagement with symbolic content
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require SIMPLE naming that matches actual capacity: "One word. What is it?"
-- Block elaborate explanations; reward accuracy over sophistication
-- Frame: "Simple and true beats complex and empty. What do you ACTUALLY see?"
-- Cross-validate: naming must match deterministic performance
-
-**When Golden-Allergy detected:**
-- Make naming LOW-STAKES: "You can change the name later. Just try one now."
-- Present naming as PLAYFUL not COMMITTAL: "What would you call this? Just for fun."
-- Frame: "Names are just sounds. They don't trap you. You can always rename."
-- Reward approach; never punish withdrawal or "wrong" names
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Naming-Game: a verbal-symbolic space where the player names, describes, and reflects on runes and symbols. The aesthetic: Magenta-stage naming-ritual — the first time words are given to the magical world. A cave wall where symbols appear and the player speaks their names.
@@ -168,7 +64,7 @@ The Naming-Game: a verbal-symbolic space where the player names, describes, and 
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Naming prompts:** Symbols requiring names (varied complexity)
@@ -186,21 +82,7 @@ The Naming-Game: a verbal-symbolic space where the player names, describes, and 
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Naming accuracy:** Does the name match the symbol's referent?
-- **Descriptive quality:** Does the description capture the symbol's function?
-- **Explanatory coherence:** Does the explanation match actual use?
-- **Metacognitive depth:** Can the player reflect on their own process?
-- **Cross-validation alignment:** Does verbal performance match deterministic?
-
-### LLM rubric
-- **Very High:** Core scoring requires LLM for natural language evaluation. Naming accuracy, descriptive quality, explanatory coherence, metacognitive depth — all require semantic understanding.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Voice input (primary at Magenta — language is spoken before written); text input (secondary); tap-to-select from options (scaffolded mode for younger players)

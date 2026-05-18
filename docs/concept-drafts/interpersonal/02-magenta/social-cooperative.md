@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Your companion moves. Can you move with it? Not because it told you — because you FEEL it. Match its rhythm. Move when it moves. Stop when it stops." The contact boundary is: "Can you synchronise with another through felt-sense?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Maintaining some own-movement during synchrony.
-- Healthy: Matches rhythm while retaining some individual movement quality
-- Pathological: Loses all own-movement (total merger); OR: moves independently
-- **Detection:** Whether any individual movement quality remains during sync
-
-### Agency Golden-Domain
-**Context:** Initiating movement for the other to follow.
-- Healthy: Can lead as well as follow; initiates rhythm
-- Pathological: Cannot initiate; only follows (or only leads without sensing)
-- **Detection:** Initiation rate and quality
-
-### Communion Dark-Domain
-**Context:** Following the other's rhythm (letting it guide).
-- Healthy: Follows with genuine attunement; lets other's rhythm guide
-- Pathological: Follows without boundary (total merger); OR: cannot follow at all
-- **Detection:** Following quality (attuned vs. merged vs. independent)
-
-### Communion Golden-Domain
-**Context:** Mutual rhythm-creation (neither leads nor follows — co-created).
-- Healthy: Contributes to shared rhythm; neither dominates nor disappears
-- Pathological: Cannot co-create; only leads OR only follows
-- **Detection:** Mutuality of rhythm-creation
-
-### Eros Dark-Domain
-**Context:** Familiar synchrony (same companion, same rhythm).
-- Healthy: Maintains genuine sync quality with familiar patterns
-- Pathological: Sync becomes mechanical; loses felt quality
-- **Detection:** Whether familiar sync retains genuine felt-sense
-
-### Eros Golden-Domain
-**Context:** Novel synchrony (new rhythms, new companions).
-- Healthy: Adapts to novel rhythms with curiosity
-- Pathological: Cannot sync with unfamiliar rhythms; OR: overwhelmed by novelty
-- **Detection:** Novel synchrony quality
-
-### Agape Dark-Domain
-**Context:** Maintaining sync capacity over time.
-- Healthy: Synchrony quality remains consistent across sessions
-- Pathological: Sync capacity degrades; coordination becomes random
-- **Detection:** Sync quality across sessions
-
-### Agape Golden-Domain
-**Context:** Whether synchrony appears spontaneously.
-- Healthy: Syncs with companion naturally in free-play
-- Pathological: Synchrony exists only in explicit tasks
-- **Detection:** Spontaneous coordination in ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Fusion-Addict"
-**How it surfaces:** TOTAL MERGER in movement. Loses all own-movement. Becomes the companion's movement entirely. Cannot distinguish own rhythm from other's. "I AM their movement." No individual quality remains.
-- **Detection signals:** Zero individual movement; total rhythm-adoption; cannot move independently during sync; "I am them"; no own-quality; movement indistinguishable from companion's
-
-### Dark-Allergy: "The Phantom-Denier"
-**How it surfaces:** MOVES INDEPENDENTLY regardless of companion. Zero synchrony. Doesn't register companion's rhythm. Moves as if alone. Companion's movement is invisible.
-- **Detection signals:** Zero sync; independent movement; no rhythm-matching; companion's movement invisible; moves as if alone; sync score at floor
-
-### Golden-Addiction: "The Premature Coordinator"
-**How it surfaces:** PERFECT TIMING without felt connection. Mechanically precise synchrony that lacks felt quality. "Correct" coordination without genuine attunement. Robotic sync.
-- **Detection signals:** High timing accuracy but no felt-quality indicators; mechanical precision; sync without warmth; coordination without connection; "correct" but empty
-
-### Golden-Allergy: "The Bond-Refuser"
-**How it surfaces:** BEGINS to sync then BREAKS AWAY. Matches rhythm briefly then deliberately desynchronises. "I was moving with it but I stopped." Approach-withdrawal in coordination.
-- **Detection signals:** Brief sync followed by deliberate break; "I stopped"; approach-withdrawal in coordination; sync-break cycling; cannot sustain synchrony
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce OWN-MOVEMENT within sync: "Move WITH them but add something YOURS. Your own little movement."
-- Reward sync-with-individuality; penalise total merger
-- Frame: "You can move together AND be you. Add your own touch. Your own rhythm inside theirs."
-- Build: individuality within synchrony (self-in-connection)
-
-**When Dark-Allergy detected:**
-- Make companion's rhythm OBVIOUS and ATTRACTIVE: clear, simple, inviting rhythm
-- Reward ANY rhythm-matching; celebrate first sync moment
-- Frame: "They're moving. Can you move with them? Just a little. Match one beat. Just one."
-- Build: first synchrony (opening the coordination channel)
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require FELT sync: "Don't count. FEEL. Let their rhythm enter you. Move from feeling, not timing."
-- Block mechanical precision; reward felt-quality indicators
-- Frame: "Not perfect timing. WARM timing. Feel them. Let the movement come from feeling-with."
-- Build: genuine felt synchrony (warm not mechanical)
-
-**When Golden-Allergy detected:**
-- Make sustained sync BRIEF and SAFE: "Just 5 beats together. Then you can stop."
-- Reduce duration-pressure; make sync time-limited
-- Frame: "Just a few beats. Move together. Then done. Brief. Safe. Just a moment of together."
-- Build: sustained sync safety (moving together isn't threatening)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Moving-Together: a synchrony space where player and phantom-ally move in shared rhythm. The aesthetic: Magenta-stage dance — two glowing figures moving together. When in sync, a shared glow connects them. When out of sync, they dim separately.
@@ -170,7 +66,7 @@ The Moving-Together: a synchrony space where player and phantom-ally move in sha
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Simple rhythms:** Easy to match (slow, clear, repetitive)
@@ -188,21 +84,7 @@ The Moving-Together: a synchrony space where player and phantom-ally move in sha
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Sync accuracy:** How closely does movement match companion's rhythm?
-- **Felt-quality:** Does sync have warmth/connection quality (not just timing)?
-- **Individuality:** Does some own-movement remain during sync?
-- **Mutuality:** Can they co-create (not just follow)?
-- **Sustainability:** Can they maintain sync over time?
-
-### LLM rubric
-- **Low:** Core synchrony scoring algorithmic (timing accuracy, rhythm-matching). Felt-quality assessment requires some LLM evaluation of movement quality indicators.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (rhythm-matching); hold (sustained movement); swipe (directional movement); multi-touch (complex rhythms)

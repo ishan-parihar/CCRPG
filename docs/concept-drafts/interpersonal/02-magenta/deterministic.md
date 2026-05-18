@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Something is here. Can you sense it? Where? What is it feeling? Is it moving?" The contact boundary is: "Can you detect another being?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Detecting presence independently (no cues given).
-- Healthy: Detects presence through own sensing; trusts own perception
-- Pathological: Overwhelmed by presence (fusion); OR: detects nothing (denial)
-- **Detection:** Whether presence-detection is calibrated (not all/nothing)
-
-### Agency Golden-Domain
-**Context:** Detecting presence in ambiguous conditions.
-- Healthy: Offers tentative detection under ambiguity; tolerates uncertainty
-- Pathological: Cannot detect without certainty; freezes on ambiguous presence
-- **Detection:** Detection quality under ambiguity
-
-### Communion Dark-Domain
-**Context:** Detecting when another player/companion reports differently.
-- Healthy: Maintains own detection while hearing others' reports
-- Pathological: Adopts others' detection; loses own sensing
-- **Detection:** Whether own sensing survives social influence
-
-### Communion Golden-Domain
-**Context:** Shared detection (comparing presence-sensing with companion).
-- Healthy: Shares own sensing AND receives companion's with interest
-- Pathological: Cannot share detection; sensing is private
-- **Detection:** Quality of shared presence-sensing
-
-### Eros Dark-Domain
-**Context:** Familiar presences (same phantom-ally, same location).
-- Healthy: Maintains genuine detection for familiar presences
-- Pathological: Detection becomes rote; loses genuine sensing quality
-- **Detection:** Whether familiar detection retains genuine contact
-
-### Eros Golden-Domain
-**Context:** Novel presences (unfamiliar phantom-allies, new locations).
-- Healthy: Detects novel presences with curiosity
-- Pathological: Cannot detect unfamiliar presences; OR: overwhelmed by novelty
-- **Detection:** Novel presence-detection quality
-
-### Agape Dark-Domain
-**Context:** Maintaining detection accuracy over time.
-- Healthy: Presence-sensing remains consistent across sessions
-- Pathological: Detection degrades; presences become invisible again
-- **Detection:** Detection accuracy across sessions
-
-### Agape Golden-Domain
-**Context:** Whether presence-detection appears spontaneously.
-- Healthy: Notices presences naturally in non-detection tasks
-- Pathological: Presence-sensing exists only during explicit tasks
-- **Detection:** Spontaneous other-detection in ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Fusion-Addict"
-**How it surfaces:** OVERWHELMED by every presence detected. Cannot simply detect — immediately MERGES. Detection becomes fusion. "It's there and I'm IN it." Cannot maintain observer position.
-- **Detection signals:** Reports presence at maximum intensity; cannot describe without merging; loses self-position during detection; "I AM the presence"; detection = dissolution
-
-### Dark-Allergy: "The Phantom-Denier"
-**How it surfaces:** DETECTS NOTHING. Presences are invisible. "There's nothing there." The interpersonal channel is closed. Zero detection regardless of stimulus strength.
-- **Detection signals:** Zero detection; "nothing there"; no response to presence stimuli; misses all presences; detection accuracy at floor
-
-### Golden-Addiction: "The Premature Coordinator"
-**How it surfaces:** Reports SOPHISTICATED observations without genuine sensing. "I detect a presence at coordinates X,Y with emotional valence Z." Over-precise, over-detailed, but disconnected from actual sensing.
-- **Detection signals:** Over-precise reports; sophisticated language without felt-sense; inconsistent across similar stimuli; detection "too good" (exceeds what genuine sensing could produce); mechanical quality
-
-### Golden-Allergy: "The Bond-Refuser"
-**How it surfaces:** DETECTS presence then DISENGAGES. "Something's there. I don't want to track it." Detection works but engagement is refused. Sensing without following through.
-- **Detection signals:** Accurate initial detection followed by disengagement; "I sensed it but stopped"; detection without tracking; approach-withdrawal at the sensing level
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Require DISTANCE in detection: "Sense it from HERE. Don't go to it. Just notice FROM HERE."
-- Reward detection-with-self-stability; penalise fusion
-- Frame: "You are HERE. It is THERE. Two things. Can you sense it without becoming it?"
-- Build: observer-position during detection (self-stable sensing)
-
-**When Dark-Allergy detected:**
-- Make presence UNDENIABLE: strong stimulus, clear signal, obvious presence
-- Reward ANY detection; celebrate first "something is there"
-- Frame: "Something IS there. Look. Listen. Feel. Something. What is it?"
-- Build: first other-sensing (opening the interpersonal channel)
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require SIMPLE detection: "Is something there? Yes or no. That's all."
-- Block over-precise reports; reward simple genuine sensing
-- Frame: "Not coordinates. Not analysis. Just: is something there? Can you FEEL it?"
-- Build: genuine sensing beneath performance (felt-sense detection)
-
-**When Golden-Allergy detected:**
-- Make continued detection SAFE: "Just keep sensing. You don't have to DO anything. Just notice."
-- Remove engagement-pressure; make detection low-stakes
-- Frame: "Just notice it's there. That's enough. You don't have to connect. Just sense."
-- Build: sustained detection without engagement-pressure
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Presence-Sense: a detection space where phantom-allies appear and the player must sense them. The aesthetic: Magenta-stage spirit-world — glowing presences that shimmer in and out of visibility. The player's task is simply to NOTICE them.
@@ -170,7 +66,7 @@ The Presence-Sense: a detection space where phantom-allies appear and the player
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Clear presences:** Obvious, strong, easy to detect
@@ -188,21 +84,7 @@ The Presence-Sense: a detection space where phantom-allies appear and the player
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Detection accuracy:** Can they detect presence? (hit rate)
-- **False alarm rate:** Do they report presence when nothing is there?
-- **Location accuracy:** Can they locate the presence?
-- **State accuracy:** Can they identify the presence's emotional state?
-- **Tracking accuracy:** Can they follow a moving presence?
-
-### LLM rubric
-- **Low:** Core detection is algorithmic (presence/absence, location, state selection). Minimal LLM needed. Primarily psychophysical measurement.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (indicate presence location); select (state identification); swipe (track movement); hold (sustain detection)

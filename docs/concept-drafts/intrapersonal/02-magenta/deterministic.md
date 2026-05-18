@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Look into the mirror-pool. Many images appear. Which one is YOU? Not which one do you WANT to be — which one IS you? Find yourself." The contact boundary is: "Can you recognise your own self-image?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Identifying self-image independently (no hints, no guidance).
-- Healthy: Recognises self-image with confidence; "that's me"
-- Pathological: Always picks grandest (inflation); OR: cannot pick (absence)
-- **Detection:** Whether self-recognition is accurate and self-generated
-
-### Agency Golden-Domain
-**Context:** Identifying self-image under ambiguity (similar images, unclear distinctions).
-- Healthy: Makes tentative but genuine self-identification under ambiguity
-- Pathological: Cannot identify self without clear markers; freezes
-- **Detection:** Self-recognition quality under ambiguity
-
-### Communion Dark-Domain
-**Context:** Identifying self when companion's image is also present.
-- Healthy: Distinguishes own image from companion's; "that's me, that's you"
-- Pathological: Picks companion's image as own (merger); OR: cannot see companion
-- **Detection:** Self-other distinction accuracy
-
-### Communion Golden-Domain
-**Context:** Shared self-recognition (both player and companion identify themselves).
-- Healthy: Both identify selves; mutual recognition
-- Pathological: Cannot participate in mutual recognition; only self OR only other
-- **Detection:** Quality of mutual self-recognition
-
-### Eros Dark-Domain
-**Context:** Recognising self-image across time (same self, different moments).
-- Healthy: Recognises self-image as consistent across presentations
-- Pathological: Self-image changes every time; no constancy
-- **Detection:** Self-constancy in recognition
-
-### Eros Golden-Domain
-**Context:** Recognising self-image that has CHANGED (growth-recognition).
-- Healthy: Can recognise "new me" as still me; growth doesn't break identity
-- Pathological: Cannot recognise changed self; OR: only recognises old self
-- **Detection:** Growth-recognition quality
-
-### Agape Dark-Domain
-**Context:** Maintaining self-recognition over time.
-- Healthy: Self-recognition remains consistent across sessions
-- Pathological: Self-recognition degrades; cannot find self after absence
-- **Detection:** Recognition consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether self-recognition appears spontaneously.
-- Healthy: Notices own image naturally in non-recognition tasks
-- Pathological: Self-recognition exists only during explicit tasks
-- **Detection:** Spontaneous self-recognition
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Fantasy-Prisoner"
-**How it surfaces:** Always picks the GRANDEST, BRIGHTEST, MOST SPECIAL image. "That's me — the biggest one!" Inflated self-recognition. Cannot identify actual self because the fantasy is too compelling.
-- **Detection signals:** Consistently picks grandest image; "the special one"; inflated selections; cannot pick ordinary image as self; defends grand selection when challenged
-
-### Dark-Allergy: "The Self-Stranger"
-**How it surfaces:** CANNOT PICK. "I don't know which one is me." Blank. Confused. No self-image to recognise. The mirror-pool shows nothing familiar.
-- **Detection signals:** No selection; "I don't know"; confusion; long latency with no choice; random selections; "none of them"; cannot identify self
-
-### Golden-Addiction: "The Premature Ego"
-**How it surfaces:** Picks the STRONGEST, most POWERFUL image. Not the grandest (that's fantasy) but the most CAPABLE. "The one that can DO things." Will-based self-recognition.
-- **Detection signals:** Picks most powerful/capable image; "the strong one"; function-based selection; no imaginative/playful self-recognition; self = capability
-
-### Golden-Allergy: "The Identity-Refuser"
-**How it surfaces:** APPROACHES a selection then RETREATS. "Maybe that one… no." Begins to identify then pulls back. Self-recognition approach-withdrawal.
-- **Detection signals:** Approach-withdrawal; "maybe… no"; begins selection then cancels; multiple near-selections without commitment; self-identification feels dangerous
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present ORDINARY self-images alongside grand ones: "This one. Just you. Not the biggest. Just you."
-- Reward recognition of ACTUAL self (ordinary, real, present)
-- Frame: "The real you. Not the special one. The one that's HERE. That's you too."
-- Build: accurate self-recognition (actual not inflated)
-
-**When Dark-Allergy detected:**
-- Start with MAXIMUM distinction: one image clearly different from all others
-- "This one. It's different from the rest. That's because it's YOU. See?"
-- Frame: "You ARE someone. This one. Different from the others. That's you."
-- Reward ANY self-identification; celebrate first "that's me"
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Present PLAYFUL, IMAGINATIVE self-images (not just powerful ones)
-- "Not the strongest. The one that DREAMS. The one that PLAYS. That's also you."
-- Frame: "You're not just what you can do. You're also what you imagine. Find THAT you."
-- Build: imaginative self-recognition (playful not just functional)
-
-**When Golden-Allergy detected:**
-- Make self-identification BRIEF and SAFE: "Just point. Quick. Which one? Done."
-- Reduce threat of claiming identity; make it momentary
-- Frame: "Just for a second. Which one is you? Point. Done. You can let go after."
-- Build: self-identification safety (claiming self isn't permanent trap)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Mirror-Pool: a magical reflecting surface. Images appear — some are the player's self-image, some are others, some are distortions. The player identifies which is THEM. The aesthetic: Magenta-stage mirror-pool — shimmering water showing faces/figures, one of which is the player's magical self.
@@ -170,7 +66,7 @@ The Mirror-Pool: a magical reflecting surface. Images appear — some are the pl
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Clear self-images:** Obviously the player's magical self
@@ -188,21 +84,7 @@ The Mirror-Pool: a magical reflecting surface. Images appear — some are the pl
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Recognition accuracy:** Correct self-identification rate
-- **Discrimination:** Can distinguish self from similar others?
-- **Constancy:** Recognises changed self as still self?
-- **Speed:** Recognition latency (faster = more integrated, but not impulsive)
-- **Confidence:** Selection firmness (not hesitant, not rigid)
-
-### LLM rubric
-- **Low:** Core recognition scoring fully algorithmic (correct/incorrect selection, latency, confidence metrics). LLM only for edge-case ambiguity resolution.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (identify self-image); swipe (reject non-self); hold (confirm selection)

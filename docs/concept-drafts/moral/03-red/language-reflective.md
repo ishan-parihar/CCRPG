@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Why did you choose that? What did you think would happen? What would THEY choose, and why?" The contact boundary is: "Can you put your moral reasoning into words?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Articulating moral reasoning about own choices.
-- Healthy: "I chose X because it gets me Y" — clear, sovereign, self-aware
-- Pathological: "I chose X because they DESERVED it" — moral language used to justify domination
-- **Detection:** Whether articulation serves self-understanding or self-justification
-
-### Agency Golden-Domain
-**Context:** Generating moral explanations without prompting.
-- Healthy: Offers explanations spontaneously; "I think I chose that because..."
-- Pathological: Cannot articulate without being asked; "I don't know why I chose that"
-- **Detection:** Spontaneous moral articulation rate
-
-### Communion Dark-Domain
-**Context:** Explaining others' moral reasoning.
-- Healthy: "They probably chose X because they wanted Y" — models others' logic
-- Pathological: "They chose X because that's what I would have chosen" — projects own logic onto others
-- **Detection:** Whether explanations of others' reasoning are genuinely other-modelling or self-projection
-
-### Communion Golden-Domain
-**Context:** Discussing moral reasoning with another (NPC or system).
-- Healthy: Engages in moral dialogue; considers alternative explanations
-- Pathological: Cannot discuss; moral reasoning is private and non-shareable
-- **Detection:** Quality of moral dialogue engagement
-
-### Eros Dark-Domain
-**Context:** Simple moral articulation vs. complex.
-- Healthy: Articulates at current level with clarity
-- Pathological: Demands complex moral language; "That explanation is too simple"
-- **Detection:** Satisfaction with current articulation complexity
-
-### Eros Golden-Domain
-**Context:** Articulating moral reasoning about novel/complex situations.
-- Healthy: Attempts with appropriate uncertainty; "I think... maybe because..."
-- Pathological: Claims certainty about complex moral reasoning; "Obviously the answer is..."
-- **Detection:** Calibration between articulation confidence and actual reasoning quality
-
-### Agape Dark-Domain
-**Context:** Simple consequence-naming ("I did X because Y would happen").
-- Healthy: Engages fully; names consequences clearly
-- Pathological: Dismisses; "That's too basic to explain"
-- **Detection:** Engagement quality on simple articulation tasks
-
-### Agape Golden-Domain
-**Context:** Whether moral articulation appears spontaneously.
-- Healthy: Explains own choices naturally in non-task contexts
-- Pathological: Moral articulation exists only when explicitly prompted
-- **Detection:** Spontaneous moral explanation in free-play
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Predator"
-**How it surfaces:** The Predator's moral articulation is SOPHISTICATED but exclusively self-serving. They can explain their exploitation logic clearly: "I took it because I could and they couldn't stop me." The articulation is honest but reveals predatory moral structure.
-- **Detection signals:** Clear articulation + exclusively self-serving content; can explain exploitation logic fluently; never articulates others' welfare as relevant; "Why wouldn't I take it?"
-
-### Dark-Allergy: "The Paralysed"
-**How it surfaces:** Cannot articulate moral reasoning because they cannot ACCESS their moral reasoning. "I don't know why I chose that." "I don't know what would happen." The articulation is absent not from lack of verbal skill but from lack of moral engagement.
-- **Detection signals:** "I don't know" responses; inability to name consequences even after they've occurred; verbal skill present on non-moral topics but absent on moral ones; avoids moral articulation entirely
-
-### Golden-Addiction: "The Premature Saint"
-**How it surfaces:** Moral articulation is FAR MORE SOPHISTICATED than demonstrated moral capacity. They speak of "fairness," "everyone's needs," "the right thing" — but their deterministic scores show they can't actually calculate consequences. The words are ahead of the capacity.
-- **Detection signals:** Sophisticated moral language + low deterministic accuracy; uses Amber+ moral vocabulary at Red; articulates principles they don't demonstrate; verbal sophistication >> behavioural sophistication
-
-### Golden-Allergy: "The Cynic"
-**How it surfaces:** Can articulate consequence-logic perfectly but FRAMES it dismissively. "Yeah, I took it because I wanted it. So what? That's all morality is." The articulation is accurate but wrapped in refusal to take moral content seriously.
-- **Detection signals:** Accurate articulation + dismissive framing; "Morality is just..." reductions; can explain but won't engage; articulation used to DISTANCE from moral content rather than engage it
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Ask the Predator to articulate OTHERS' consequences (not just their own)
-- Frame: "You explained your choice clearly. Now — what happened to THEM? Can you say it?"
-- Reward comprehensive articulation (self + other consequences)
-
-**When Dark-Allergy detected:**
-- Provide SENTENCE STARTERS for moral articulation ("I chose X because...")
-- Frame: "Just finish the sentence. Any answer is fine. There's no wrong explanation."
-- Reward ANY articulation; remove judgement from the verbal task
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require articulation to MATCH demonstrated capacity (from deterministic cross-validation)
-- Frame: "You said 'fairness.' But your choices show you can't calculate consequences yet. Start there. What happened when you chose X?"
-- Ground sophisticated language in demonstrated capacity
-
-**When Golden-Allergy detected:**
-- Ask the Cynic to articulate WHY they dismiss moral content
-- Frame: "You said 'so what.' But you calculated perfectly. Why won't you take it seriously? What's the cost of caring?"
-- Make the dismissal itself the object of articulation
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Consequence-Tongue: a space where moral reasoning is SPOKEN. After actions (from other modalities or within this one), the player is asked to articulate. The aesthetic: Red-stage council-fire, where warriors explain their choices to the war-band. Speaking is power. Silence is weakness.
@@ -163,7 +63,7 @@ The Consequence-Tongue: a space where moral reasoning is SPOKEN. After actions (
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Consequence-naming prompts:** "What happened when X?"
@@ -181,21 +81,7 @@ The Consequence-Tongue: a space where moral reasoning is SPOKEN. After actions (
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Articulation accuracy:** Does the verbal explanation match demonstrated behaviour?
-- **Consequence-naming completeness:** How many consequences are identified?
-- **Other-modelling quality:** Accuracy of predictions about others' moral reasoning
-- **Teaching effectiveness:** Does the NPC "learn" from the player's explanation?
-- **Self-reflection depth:** Quality of meta-moral awareness
-
-### LLM rubric
-- **Very High:** Core mechanic requires LLM evaluation of free-text moral articulation. Rubric-guided assessment of authenticity, sophistication-match, and reasoning quality.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Free-text (primary); multiple-choice (fallback for low-verbal players); voice-to-text (accessibility)

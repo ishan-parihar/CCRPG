@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Your ally needs to know what you can do. Tell them. Are you right?" The contact boundary is: "Can you represent yourself accurately to others? Can you receive their perception of you?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Representing own capacity to an ally for task allocation.
-- Healthy: "I'm strong at X, weaker at Y — give me X"
-- Pathological: "I'm the best at everything — give me the hardest task"
-- **Detection:** Accuracy of self-representation in coordination contexts
-
-### Agency Golden-Domain
-**Context:** Initiating self-disclosure for coordination purposes.
-- Healthy: Volunteers relevant self-knowledge without being asked
-- Pathological: Cannot initiate self-disclosure; waits to be asked
-- **Detection:** Spontaneous self-representation rate in coordination
-
-### Communion Dark-Domain
-**Context:** Receiving feedback about self from ally ("You seem tired").
-- Healthy: Considers feedback; updates self-model if accurate
-- Pathological: Collapses into ally's perception; "If you say I'm tired, I must be tired"
-- **Detection:** Whether feedback is EVALUATED or automatically accepted
-
-### Communion Golden-Domain
-**Context:** Mutual self-knowledge exchange (both share, both learn).
-- Healthy: Shares AND receives; mutual self-knowledge improves coordination
-- Pathological: Only shares OR only receives; cannot do both
-- **Detection:** Bidirectional self-knowledge exchange quality
-
-### Eros Dark-Domain
-**Context:** Simple self-representation (tell ally one strength).
-- Healthy: Engages fully; accurate simple self-representation
-- Pathological: Dismisses; "They should already know what I can do"
-- **Detection:** Engagement quality on basic social self-knowledge tasks
-
-### Eros Golden-Domain
-**Context:** Representing self in novel social contexts (new ally, new situation).
-- Healthy: Adapts self-representation to context; appropriate uncertainty
-- Pathological: Same self-representation regardless of context; no adaptation
-- **Detection:** Context-sensitivity of self-representation
-
-### Agape Dark-Domain
-**Context:** Maintaining accurate self-representation over time with same ally.
-- Healthy: Self-representation stays accurate as capacity changes
-- Pathological: Self-representation becomes stale; doesn't update
-- **Detection:** Whether self-representation tracks actual capacity changes
-
-### Agape Golden-Domain
-**Context:** Whether social self-knowledge appears in other modalities.
-- Healthy: Uses ally-feedback to improve self-knowledge in solo tasks
-- Pathological: Social self-knowledge stays in social contexts only
-- **Detection:** Transfer of socially-acquired self-knowledge to solo contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Narcissist"
-**How it surfaces:** Self-representation to allies is INFLATED. "I'm the strongest, give me the hardest task" — then fails. Cannot represent limitations to others because limitations are denied internally. Social self-knowledge is self-promotion.
-- **Detection signals:** Inflated self-representation to allies; coordination failures from over-commitment; cannot say "I'm not good at X" to others; allies learn to distrust self-reports
-
-### Dark-Allergy: "The Unexamined"
-**How it surfaces:** Cannot represent self to allies AT ALL. "I don't know what I'm good at. Just tell me what to do." No self-knowledge to communicate. Social coordination fails because self-data is absent.
-- **Detection signals:** Cannot answer "What are you good at?"; defers all task-allocation to others; no self-representation; coordination depends entirely on others' assessment
-
-### Golden-Addiction: "The Premature Witness"
-**How it surfaces:** OVER-SHARES abstract self-models that don't help coordination. "I'm currently in a phase of integrating my shadow warrior..." — ally needs to know: "Can you fight or not?" Sophisticated self-disclosure that's functionally useless.
-- **Detection signals:** Verbose, abstract self-representation; allies confused by self-disclosure; self-sharing doesn't improve coordination; sounds self-aware but allies can't USE the information
-
-### Golden-Allergy: "The Identity-Clinger"
-**How it surfaces:** Self-representation is ONLY the identity. "I am the warrior. I fight." Cannot represent non-identity aspects to allies. Coordination limited to identity-confirming roles.
-- **Detection signals:** Self-representation = identity statement only; cannot represent vulnerability/limitation to allies; coordination restricted to identity-role; refuses non-identity task allocation
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present coordination tasks where ACCURATE self-representation produces team success
-- Frame: "You said you could handle it. You couldn't. Your ally suffered. Next time: tell them your REAL capacity."
-- Make honest self-representation produce better coordination outcomes
-
-**When Dark-Allergy detected:**
-- Present SIMPLE self-representation tasks ("Tell your ally ONE thing you're good at")
-- Frame: "Your ally needs one piece of information. What can you do? One word."
-- Reward ANY self-representation; celebrate the first honest self-disclosure
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require FUNCTIONAL self-representation ("Can you do X: yes or no?")
-- Frame: "Your ally doesn't need your life story. Can you fight? Can you wait? Simple answer."
-- Score coordination improvement from self-disclosure, not disclosure sophistication
-
-**When Golden-Allergy detected:**
-- Present coordination tasks requiring NON-IDENTITY self-representation
-- Frame: "The warrior who can say 'I'm tired' gets rest. The one who can't fights exhausted and loses."
-- Make vulnerability-disclosure produce tactical advantage
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Self-in-the-Circle: a coordination game where self-knowledge must be COMMUNICATED to allies for joint success. The player represents their capacity, receives feedback, and coordinates based on mutual self-knowledge. The aesthetic: Red-stage war-band planning — warriors declaring their strengths and limitations before battle.
@@ -164,7 +64,7 @@ The Self-in-the-Circle: a coordination game where self-knowledge must be COMMUNI
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Self-representation tasks:** Communicate capacity to ally for coordination
@@ -182,21 +82,7 @@ The Self-in-the-Circle: a coordination game where self-knowledge must be COMMUNI
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Self-representation accuracy:** Does communicated capacity match demonstrated?
-- **Feedback integration rate:** Does ally-feedback update self-model when accurate?
-- **Coordination quality:** Does mutual self-knowledge improve joint outcomes?
-- **Perception-gap awareness:** Can they identify where self-view ≠ others' view?
-- **Self-model update speed:** How quickly does new social information integrate?
-
-### LLM rubric
-- **Medium:** Social scenario generation, ally dialogue, feedback narration. Core scoring (representation accuracy, coordination outcomes) algorithmic.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (self-representation choices); accept/reject (feedback integration); drag-and-drop (task allocation)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** Faces appear. Voices sound. The player must NAME what they see/hear. Then they must FEEL it (channel). Then they must CONTROL it (override). The contact boundary is: "Can you accurately perceive, use, and manage basic emotion?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Emotion-channelling tasks — "Feel anger. Use it. NOW."
-- Healthy: Accesses anger on demand; channels it into the task; releases after
-- Pathological: Anger takes over; cannot release after channelling; "I AM the anger now"
-- **Detection:** Post-channelling state — does the player return to baseline or escalate?
-
-### Agency Golden-Domain
-**Context:** Self-directed emotion identification — "What are YOU feeling right now?"
-- Healthy: Identifies own state with confidence; "I feel excited"
-- Pathological: Cannot identify own state without external prompt; "I don't know what I feel"
-- **Detection:** Self-identification accuracy; confidence in own emotional state
-
-### Communion Dark-Domain
-**Context:** Reading emotion in others (NPC faces/voices).
-- Healthy: Reads accurately without absorbing; "They are angry" (not "I feel their anger")
-- Pathological: Absorbs the displayed emotion; own state shifts to match the stimulus
-- **Detection:** Whether player's own emotional state changes to match stimuli (contagion)
-
-### Communion Golden-Domain
-**Context:** Reading emotion in ambiguous expressions (could be anger OR fear).
-- Healthy: Tolerates ambiguity; "Could be either — I need more information"
-- Pathological: Cannot tolerate ambiguity; forces a single label immediately
-- **Detection:** Response to ambiguous stimuli — tolerance vs. forced certainty
-
-### Eros Dark-Domain
-**Context:** Repeating mastered emotion-recognition at current level vs. advancing.
-- Healthy: Enjoys current accuracy; advances when ready
-- Pathological: Demands harder stimuli immediately; treats current level as boring
-- **Detection:** Engagement quality at current difficulty; advancement pressure
-
-### Eros Golden-Domain
-**Context:** Subtle/mixed emotion stimuli (beyond current demonstrated capacity).
-- Healthy: Attempts with curiosity; accepts errors as learning
-- Pathological: Claims accuracy on subtle stimuli without demonstration; guesses confidently
-- **Detection:** Accuracy on stretch-stimuli; confidence calibration
-
-### Agape Dark-Domain
-**Context:** Basic emotion recognition (well below current level — obvious expressions).
-- Healthy: Engages with full attention; doesn't dismiss easy stimuli
-- Pathological: Careless on easy stimuli; "This is too simple"
-- **Detection:** Accuracy on below-level stimuli (should be near-perfect; carelessness shows)
-
-### Agape Golden-Domain
-**Context:** Whether recognition accuracy persists outside structured tasks.
-- Healthy: Emotional reading appears in other game contexts
-- Pathological: Accuracy exists only during explicit recognition tasks
-- **Detection:** Transfer of recognition skill to non-task contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Rage-Addict"
-**How it surfaces:** Present a channelling task (feel anger, use it as power). Observe whether the player can RELEASE the emotion after channelling. The rage-addict cannot — intensity persists and escalates.
-- **Detection signals:** Post-channelling escalation; inability to return to baseline; increasing intensity across trials; channelling "success" but override failure
-
-### Dark-Allergy: "The Frozen"
-**How it surfaces:** Present basic affect-recognition stimuli (obvious angry face). The frozen player's accuracy is uniformly low — not because they can't see, but because they can't FEEL what they see.
-- **Detection signals:** Uniformly low recognition across all emotions; flat response to all stimuli; no emotional engagement with the task; "correct" self-management (nothing to manage)
-
-### Golden-Addiction: "The Premature Empath"
-**How it surfaces:** Compare recognition accuracy with self-reported emotional awareness. The premature empath CLAIMS high awareness but DEMONSTRATES low accuracy.
-- **Detection signals:** High confidence + low accuracy; sophisticated vocabulary in language tasks but poor performance in deterministic tasks; cross-modality discrepancy
-
-### Golden-Allergy: "The Sensitivity-Refuser"
-**How it surfaces:** Present stimuli requiring recognition of VULNERABILITY emotions (fear, sadness). The refuser's accuracy drops specifically for these emotions while remaining high for power-emotions.
-- **Detection signals:** Asymmetric accuracy — high for anger/pride/excitement, low for fear/sadness/tenderness; active disengagement from vulnerability-emotion stimuli
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce "power-release" — releasing emotion at the right moment produces MORE power than holding it
-- Frame: "The warrior who releases rage at the perfect moment strikes twice as hard"
-- Scoring rewards clean release over sustained intensity
-
-**When Dark-Allergy detected:**
-- Introduce "micro-recognition" — identify just ONE emotion in ONE face, 1 second
-- Frame: "See that? Anger. You SAW it. That's YOUR emotional eye opening."
-- Celebrate any recognition; gradually increase palette
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require DEMONSTRATED accuracy before advancing; verbal claims don't count
-- Frame: "Show me. Don't tell me. Read THAT face. What do you see?"
-- Lock advancement behind accuracy thresholds (not vocabulary)
-
-**When Golden-Allergy detected:**
-- Frame vulnerability-emotions as TACTICAL INTELLIGENCE — "Read their fear = know when they'll run"
-- Make fear-recognition produce combat advantage
-- Never frame nuance as "sensitivity" — frame as "warrior's edge"
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Wroth-Reader: a Red-stage emotional training ground. NPC faces appear — warriors, enemies, allies — displaying emotions. The player must read them accurately to gain tactical advantage. The aesthetic: war-camp firelight, faces lit by flame, the intensity of reading an enemy's intent before battle.
@@ -165,7 +65,7 @@ The Wroth-Reader: a Red-stage emotional training ground. NPC faces appear — wa
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Face stimuli:** NPC faces displaying emotions at varied intensities (culturally diverse)
@@ -200,30 +100,7 @@ The Wroth-Reader: a Red-stage emotional training ground. NPC faces appear — wa
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Recognition accuracy:** % correct across all presented stimuli
-- **Recognition speed:** Mean RT for correct identifications
-- **Channelling success:** % of channelling prompts successfully demonstrated
-- **Override success:** % of override attempts where emotion was managed
-- **Self-identification accuracy:** Correlation between self-report and behavioural signals
-
-### Drive-health scoring
-Per `scoring.md` §2: Behavioural patterns during and between tasks.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §2: Post-channelling escalation, uniform low accuracy, confidence-accuracy gap, emotion-type asymmetry.
-
-### Integration scoring
-- Recognition accuracy increasing; channelling reliability improving; override success rate growing; shadow patterns diminishing
-
-### LLM rubric
-- **Low:** Core mechanics are algorithmic (face matching, accuracy scoring, RT measurement). LLM generates contextual framing and NPC dialogue only.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (emotion label selection)

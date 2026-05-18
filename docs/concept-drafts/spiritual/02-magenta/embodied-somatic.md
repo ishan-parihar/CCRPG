@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "The sacred is here. Can you feel it in your body? Not think it — FEEL it. Where? Your chest gets warm? Your skin tingles? Your belly opens? Show me where the sacred touches your body." The contact boundary is: "Can you feel the numinous somatically?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Locating sacred-feeling in body independently.
-- Healthy: Locates numinous body-feeling with confidence; "I feel it here"
-- Pathological: Feels it everywhere (inflation); OR: feels nothing (absence)
-- **Detection:** Whether somatic sacred-feeling is specific and self-generated
-
-### Agency Golden-Domain
-**Context:** Feeling the sacred under somatic ambiguity.
-- Healthy: Offers tentative body-location under ambiguity
-- Pathological: Cannot feel sacred without strong somatic signal; freezes
-- **Detection:** Somatic sacred-feeling under ambiguity
-
-### Communion Dark-Domain
-**Context:** Feeling sacred when companion reports different body-location.
-- Healthy: Maintains own sacred body-feeling while hearing companion's
-- Pathological: Adopts companion's sacred body-location; loses own
-- **Detection:** Whether own somatic sacred-sense survives social comparison
-
-### Communion Golden-Domain
-**Context:** Shared somatic sacred exploration.
-- Healthy: Shares own sacred body-feeling AND receives companion's
-- Pathological: Cannot share somatic sacred experience; it's private/shameful
-- **Detection:** Quality of shared somatic sacred exploration
-
-### Eros Dark-Domain
-**Context:** Sacred body-feeling consistency over time.
-- Healthy: Same body-areas respond to sacred consistently
-- Pathological: Sacred body-feeling moves randomly; no somatic constancy
-- **Detection:** Somatic sacred constancy
-
-### Eros Golden-Domain
-**Context:** Growing somatic sacred sensitivity (new body-areas responding).
-- Healthy: Can feel sacred in new body-areas without losing core location
-- Pathological: Cannot expand; OR: loses core when expanding
-- **Detection:** Somatic sacred growth quality
-
-### Agape Dark-Domain
-**Context:** Maintaining somatic sacred-feeling over time.
-- Healthy: Body-sacred feeling remains accessible across sessions
-- Pathological: Somatic sacred-feeling degrades; cannot feel sacred in body after absence
-- **Detection:** Somatic sacred accessibility across sessions
-
-### Agape Golden-Domain
-**Context:** Whether somatic sacred-feeling appears spontaneously.
-- Healthy: Feels sacred in body naturally in non-spiritual tasks
-- Pathological: Somatic sacred exists only during explicit tasks
-- **Detection:** Spontaneous somatic sacred-feeling
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Spirit-Addict"
-**How it surfaces:** Feels sacred EVERYWHERE in body. "My whole body is on fire! The spirits fill every cell!" Inflated somatic sacred. No specificity — the sacred-body is grandiose.
-- **Detection signals:** "Everywhere"; "my whole body"; no specific location; inflated; cannot narrow down; somatic sacred = total body flooding
-
-### Dark-Allergy: "The Spirit-Denier"
-**How it surfaces:** Feels NOTHING sacred in body. "I don't feel anything different. My body is just my body." No somatic sacred response. The body is deaf to the numinous.
-- **Detection signals:** "Nothing"; "I don't feel it"; no somatic response; body as purely physical; "just my body"; no sacred-body connection
-
-### Golden-Addiction: "The Premature Priest"
-**How it surfaces:** Feels sacred ONLY as power/energy. "Strength in my arms! Power in my chest!" The sacred-body is the POWER-body. No gentle/warm/subtle sacred-feeling — only force.
-- **Detection signals:** Power-language; "strength"; "energy"; "force"; only in arms/fists/muscles; no warmth/gentleness; sacred-body = power-body
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** BEGINS feeling sacred in body then SHUTS DOWN. "I felt warmth in my chest but then it stopped." Somatic sacred approach-withdrawal. The body-sacred flickers.
-- **Detection signals:** Brief feeling then loss; "I felt it but it's gone"; shutdown; approach-withdrawal; somatic sacred appears then disappears; "too much"
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Guide to SPECIFIC location: "Not everywhere. ONE place. Where do you feel it MOST? Just one spot."
-- Reward specificity; narrow the inflated sacred-body
-- Frame: "The sacred has a home in your body. Not all of it. One place. Where is the CENTER of the glow?"
-- Build: specific somatic sacred-location (centered not flooded)
-
-**When Dark-Allergy detected:**
-- Start with STRONGEST body-sensation during sacred content: "When the glow appears — anything? Warmth? Tingling? Even tiny?"
-- Connect any body-response to sacred presence
-- Frame: "Your body knows. Even if your mind doesn't. Feel your chest when the glow comes. Anything? Even a whisper?"
-- Reward ANY somatic sacred response; celebrate first "I felt something"
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Guide AWAY from power-body: "Not strength. WARMTH. Not force. GENTLENESS. Where do you feel the sacred softly?"
-- Reward gentle/warm sacred body-feelings; block power-only
-- Frame: "The sacred isn't always strong. Sometimes it's warm. Soft. Gentle. Where do you feel THAT?"
-- Build: gentle somatic sacred (sacred ≠ power)
-
-**When Golden-Allergy detected:**
-- Make somatic sacred BRIEF: "Just 3 seconds. Feel the glow in your body. Where? … Good. Done. You felt it."
-- Reduce duration; sacred-body doesn't need to be sustained
-- Frame: "Just a flash. Where did the sacred touch you? Quick. Done. You can let go. But you FELT it."
-- Build: somatic sacred safety (feeling sacred in body isn't overwhelming)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Sacred Body: a somatic sacred-exploration space. Sacred content is presented; the player locates where they feel it in their body. A body-outline lights up where the player indicates sacred-feeling. The aesthetic: Magenta-stage body-temple — a glowing body-outline that illuminates where the sacred is felt. Golden/warm colours for sacred-body.
@@ -170,7 +66,7 @@ The Sacred Body: a somatic sacred-exploration space. Sacred content is presented
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Strong sacred stimuli:** Obviously numinous content (easy to feel in body)
@@ -188,21 +84,7 @@ The Sacred Body: a somatic sacred-exploration space. Sacred content is presented
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Location presence:** Can they feel sacred in body at all?
-- **Specificity:** Is the location specific (not "everywhere")?
-- **Quality:** Can they describe what sacred feels like there?
-- **Constancy:** Does location remain consistent?
-- **Range:** Can they feel sacred in multiple areas while maintaining center?
-
-### LLM rubric
-- **Low-Medium:** Core location scoring algorithmic (tap-area, consistency). LLM for quality descriptions, inflation detection, and power-bias assessment.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-on-body-map (where sacred is felt); select quality (warm/tingling/expanding); hold (sustain feeling)

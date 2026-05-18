@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Your companion shows you a rune. Can you hold it? Can you show one back? Can you cast together?" The contact boundary is: "Can your symbolic thinking include another?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Sharing symbols with companion (giving runes).
-- Healthy: Shares symbols generously; teaches companion
-- Pathological: Hoards symbols; refuses to share; "These are MY runes"
-- **Detection:** Sharing rate and quality
-
-### Agency Golden-Domain
-**Context:** Initiating shared symbolic activity.
-- Healthy: Invites companion into symbolic play; leads ritual
-- Pathological: Cannot initiate shared activity; waits for companion to start
-- **Detection:** Initiation rate of shared symbolic activity
-
-### Communion Dark-Domain
-**Context:** Receiving symbols from companion (learning their runes).
-- Healthy: Receives and integrates companion's symbols
-- Pathological: Loses own symbols when receiving others'; fusion
-- **Detection:** Whether receiving enhances or replaces own symbolic capacity
-
-### Communion Golden-Domain
-**Context:** Coordinated symbolic action (casting together).
-- Healthy: Coordinates timing and symbol-selection with companion
-- Pathological: Cannot coordinate; symbolic activity must be solo
-- **Detection:** Coordination quality in shared casting
-
-### Eros Dark-Domain
-**Context:** Familiar shared activities (well-practiced rituals).
-- Healthy: Maintains engagement in familiar shared symbolic activity
-- Pathological: Bored with familiar shared rituals; "We already did this"
-- **Detection:** Engagement quality on familiar shared activities
-
-### Eros Golden-Domain
-**Context:** Novel shared symbolic situations (new companion, new ritual).
-- Healthy: Engages with curiosity; explores new shared symbolic space
-- Pathological: Retreats to solo activity in novel social-symbolic contexts
-- **Detection:** Engagement quality in novel shared symbolic contexts
-
-### Agape Dark-Domain
-**Context:** Maintaining shared symbolic relationships over time.
-- Healthy: Shared symbolic activity remains consistent across sessions
-- Pathological: Shared symbolic engagement degrades; companion forgotten
-- **Detection:** Consistency of shared symbolic engagement across sessions
-
-### Agape Golden-Domain
-**Context:** Whether shared symbolic activity appears spontaneously.
-- Healthy: Shares symbols with companion naturally in free-play
-- Pathological: Shared symbolic activity exists only in structured tasks
-- **Detection:** Spontaneous shared symbolic behaviour
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Thinker"
-**How it surfaces:** DEMANDS companion accept their symbolic system. "My runes are the REAL runes. Use mine." Shared symbolic space becomes domination — the companion must submit to the player's magical system.
-- **Detection signals:** Refuses companion's symbols; demands companion use player's symbols; distress when companion uses different symbols; shared space = player's space
-
-### Dark-Allergy: "The Concrete-Bound"
-**How it surfaces:** Cannot engage in shared symbolic activity. Companion shows a rune; player doesn't respond symbolically. "Why are you showing me shapes?" No shared symbolic engagement.
-- **Detection signals:** Zero response to companion's symbolic offerings; no shared symbolic activity; treats companion's symbols as meaningless; cannot participate in ritual
-
-### Golden-Addiction: "The Premature Reasoner"
-**How it surfaces:** Tries to TEACH the companion "real" cognition instead of engaging in shared symbolic play. "Let me show you how this ACTUALLY works." Bypasses shared magical-symbolic engagement for premature instruction.
-- **Detection signals:** Teaching behaviour instead of sharing; "Actually, the rune works because..." ; cannot engage in shared symbolic PLAY; turns ritual into lesson
-
-### Golden-Allergy: "The Wonder-Refuser"
-**How it surfaces:** Fears shared symbolic engagement because sharing makes symbols MORE real. If another being also uses the symbol, it's no longer "just imagination." Approach-withdrawal in shared symbolic space.
-- **Detection signals:** Engages solo but withdraws in shared context; companion's symbolic engagement triggers retreat; "I'd rather do this alone"; shared symbolic space feels threatening
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Companion offers symbols that are DIFFERENT but EQUALLY VALID
-- Shared activity requires BOTH symbol-systems to work together
-- Frame: "Your rune opens the left door. Their rune opens the right. You need both."
-- Reward acceptance of companion's symbols alongside own
-
-**When Dark-Allergy detected:**
-- Companion offers symbols with TANGIBLE shared benefit (together = stronger)
-- Make shared symbolic activity produce results solo activity cannot
-- Frame: "Together, your runes make something neither can alone. Try."
-- Reward ANY shared symbolic engagement; celebrate first coordinated action
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Block teaching; require PLAY: "Don't explain. Just do it together."
-- Make shared symbolic play produce better results than instruction
-- Frame: "Play first. Understanding comes from playing together, not explaining."
-- Reward shared engagement over pedagogical behaviour
-
-**When Golden-Allergy detected:**
-- Make shared symbolic engagement LOW-COMMITMENT: "Just hold the same rune. That's all."
-- Companion is GENTLE and NON-DEMANDING
-- Frame: "They're just holding the same shape. Nothing changes. Just together."
-- Build shared symbolic comfort through minimal shared acts
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Rune-Sharing: a shared symbolic space where player and companion engage in coordinated symbolic activity. The aesthetic: Magenta-stage ritual-circle — two beings around a fire, sharing runes, tracing symbols together, building shared meaning in the flickering light.
@@ -169,7 +65,7 @@ The Rune-Sharing: a shared symbolic space where player and companion engage in c
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Recognition items:** Companion shows symbol; player identifies
@@ -187,21 +83,7 @@ The Rune-Sharing: a shared symbolic space where player and companion engage in c
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Shared recognition:** Can the player recognise companion's symbols?
-- **Coordination quality:** How well do they coordinate simultaneous symbolic action?
-- **Timing accuracy:** Can they match companion's timing in shared casting?
-- **Exchange quality:** Do they give and receive symbols appropriately?
-- **Shared engagement rate:** How naturally do they engage in shared symbolic activity?
-
-### LLM rubric
-- **Medium:** Companion behaviour generation, social scenario construction, coordination evaluation. Core timing/accuracy scoring algorithmic.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (respond to companion's symbol); simultaneous hold (coordinated holding); timed tap (shared casting); drag (symbol exchange)

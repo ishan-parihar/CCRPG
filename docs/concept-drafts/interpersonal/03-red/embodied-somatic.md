@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** Bodies move. Bodies signal. The game asks: "What does their body tell you? Can your body move WITH theirs? Can your body say NO?" The contact boundary is: "Is your interpersonal intelligence embodied or purely cognitive?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** NPC approaches with ambiguous body-language. Player must respond physically.
-- Healthy: Responds with appropriate physical assertion (neither aggressive nor submissive)
-- Pathological: Responds with maximum physical dominance regardless of signal; "My body dominates all space"
-- **Detection:** Physical response proportionality to body-signal intensity
-
-### Agency Golden-Domain
-**Context:** Player must INITIATE physical coordination (approach an ally, signal readiness through body).
-- Healthy: Initiates physical approach/signal with confidence
-- Pathological: Cannot initiate physical interpersonal engagement; waits for others to approach
-- **Detection:** Physical initiation rate and quality
-
-### Communion Dark-Domain
-**Context:** Ally moves in a rhythm; player must match WITHOUT losing own timing.
-- Healthy: Matches ally's rhythm while maintaining own physical centre
-- Pathological: Completely abandons own rhythm to mirror ally; physical fusion
-- **Detection:** Whether matching rhythm eliminates player's own physical signature
-
-### Communion Golden-Domain
-**Context:** Synchronised physical action (coordinated timing with ally).
-- Healthy: Achieves physical synchrony while maintaining distinct action
-- Pathological: Cannot synchronise; body remains isolated from ally's rhythm
-- **Detection:** Synchronisation quality in coordinated physical tasks
-
-### Eros Dark-Domain
-**Context:** Simple body-reading vs. complex multi-body reading.
-- Healthy: Comfortable with current physical reading capacity
-- Pathological: Seeks ever-more-complex physical interpersonal challenges
-- **Detection:** Satisfaction at current body-reading complexity
-
-### Eros Golden-Domain
-**Context:** Subtle body-signals (micro-expressions of intent through posture shifts).
-- Healthy: Attempts subtle reading with curiosity
-- Pathological: Claims to read subtle signals without accuracy
-- **Detection:** Accuracy on subtle body-signal tasks
-
-### Agape Dark-Domain
-**Context:** Obvious body-signals (clearly aggressive posture, clearly open posture).
-- Healthy: Reads with full attention; responds accurately
-- Pathological: Dismisses obvious signals; "I already know body language"
-- **Detection:** Engagement quality on simple body-reading tasks
-
-### Agape Golden-Domain
-**Context:** Spontaneous body-reading in non-task contexts.
-- Healthy: Reads NPC bodies naturally during free-play
-- Pathological: Body-reading exists only during explicit tasks
-- **Detection:** Spontaneous physical interpersonal awareness
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Dominator"
-**How it surfaces:** In physical coordination tasks, the Dominator's body TAKES OVER — forces the rhythm, dominates the shared space, makes the ally match THEM rather than finding mutual rhythm.
-- **Detection signals:** Forces own rhythm on coordination tasks; takes maximum physical space; cannot yield physical ground; ally must always adapt to player, never the reverse
-
-### Dark-Allergy: "The Isolate"
-**How it surfaces:** Cannot read body-signals because the body is WITHDRAWN from the interpersonal field. Physical distance maximised. No physical coordination attempted. Body is a wall, not a bridge.
-- **Detection signals:** Maximum physical distance maintained; no rhythm-matching attempted; body-reading accuracy near zero from disengagement; physical withdrawal from all interpersonal proximity
-
-### Golden-Addiction: "The Premature Diplomat"
-**How it surfaces:** PERFORMS physical coordination (goes through the motions of synchrony) without genuine physical attunement. The body does what looks right but isn't actually reading the other.
-- **Detection signals:** Performed synchrony without genuine attunement; correct "shape" but wrong timing; body-coordination that looks good but doesn't actually match the ally's rhythm
-
-### Golden-Allergy: "The Loyalty-Refuser"
-**How it surfaces:** Can read bodies and coordinate physically but REFUSES sustained physical coordination. Drops out of rhythm after brief engagement. Cannot maintain physical alliance across time.
-- **Detection signals:** Good initial coordination that drops off; cannot sustain physical synchrony; exits coordinated movement early; body "disconnects" after brief engagement
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce "follow-the-leader" where the ALLY leads and the player must follow physically
-- Frame: "The warrior who can follow a rhythm is stronger than one who can only impose. Follow. Then lead. Both are power."
-- Reward physical yielding as strength
-
-**When Dark-Allergy detected:**
-- Introduce "distant coordination" — physical synchrony at MAXIMUM distance (no proximity threat)
-- Frame: "You don't have to be close. Just match the rhythm from where you are. Distance is fine."
-- Start with zero-proximity physical coordination; celebrate any rhythm-matching
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require MEASURED physical attunement (actual timing accuracy, not performed shape)
-- Frame: "Don't look like you're coordinating. Actually coordinate. The timing must be TRUE."
-- Score genuine synchrony over performed coordination
-
-**When Golden-Allergy detected:**
-- Introduce SUSTAINED coordination rewards — longer physical synchrony = more power
-- Frame: "Hold the rhythm. Longer. The war-band that moves together strikes harder."
-- Make sustained physical coordination produce escalating rewards
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The War-Body's Eye: a training ground where bodies speak. NPCs approach with physical signals; allies move in rhythms to coordinate with; boundaries must be held through positioning. The aesthetic: Red-stage sparring ground, war-dance, the physical language of the war-band.
@@ -164,7 +64,7 @@ The War-Body's Eye: a training ground where bodies speak. NPCs approach with phy
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Body-signal profiles:** NPC posture/movement configurations signalling specific intents
@@ -182,20 +82,7 @@ The War-Body's Eye: a training ground where bodies speak. NPCs approach with phy
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Body-reading accuracy:** % correct intent identification from physical signals
-- **Rhythm-matching precision:** Timing accuracy in coordination tasks
-- **Coordination quality:** Synchrony measurement in joint physical actions
-- **Boundary effectiveness:** Quality of physical assertion (neither aggressive nor yielding)
-
-### LLM rubric
-- **Low:** Core mechanics are algorithmic (timing measurement, posture recognition, synchrony scoring). LLM generates contextual framing only.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Timed tap/hold (rhythm matching); directional input (approach/withdraw/hold); force-sensitive (boundary assertion intensity)

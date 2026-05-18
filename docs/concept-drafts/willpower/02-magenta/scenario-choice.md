@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You wished for X. Now choose. This path leads toward your wish. That path leads somewhere else (but it's shiny). Which do you take?" The contact boundary is: "Can your wish guide your choices?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Choosing independently in service of own wish.
-- Healthy: Chooses the wish-aligned path by own will
-- Pathological: Demands all paths; refuses to choose one; "I want EVERYTHING"
-- **Detection:** Whether choice is made or demanded
-
-### Agency Golden-Domain
-**Context:** Self-directed wish-guided choice (no hint about which path aligns).
-- Healthy: Identifies wish-aligned path independently
-- Pathological: Cannot identify which path serves the wish without being told
-- **Detection:** Self-directed wish-path identification
-
-### Communion Dark-Domain
-**Context:** Choosing when companion chooses differently.
-- Healthy: Holds own wish-guided choice despite companion's different path
-- Pathological: Abandons wish to follow companion; "I'll go where they go"
-- **Detection:** Whether wish-guided choice survives social pressure
-
-### Communion Golden-Domain
-**Context:** Shared wish-guided choice (choosing together toward shared wish).
-- Healthy: Coordinates wish-guided choice with companion
-- Pathological: Cannot share wish-guided choosing; choices are private
-- **Detection:** Quality of shared wish-guided decision-making
-
-### Eros Dark-Domain
-**Context:** Familiar wish-choice scenarios (same wish, same paths).
-- Healthy: Maintains wish-guided choosing on familiar scenarios
-- Pathological: Chooses by habit rather than consulting wish
-- **Detection:** Whether wish is still consulted on familiar choices
-
-### Eros Golden-Domain
-**Context:** Novel wish-choice scenarios (new paths, unfamiliar options).
-- Healthy: Applies wish-guidance to novel choices with curiosity
-- Pathological: Cannot apply wish to novel scenarios; freezes
-- **Detection:** Wish-guided choosing in novel contexts
-
-### Agape Dark-Domain
-**Context:** Maintaining wish-guided choosing over time.
-- Healthy: Wish-guided choice remains consistent across sessions
-- Pathological: Wish-guidance degrades; choices become random
-- **Detection:** Wish-choice alignment across sessions
-
-### Agape Golden-Domain
-**Context:** Whether wish-guided choosing appears spontaneously.
-- Healthy: Uses wishes to guide choices in non-willpower tasks
-- Pathological: Wish-guided choosing exists only in explicit willpower tasks
-- **Detection:** Transfer of wish-guided choosing to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Demander"
-**How it surfaces:** DEMANDS BOTH PATHS. Refuses to choose. "I want the wish AND the shiny thing." Or: chooses the shiny distractor every time (immediate gratification over wish-alignment).
-- **Detection signals:** Refuses to choose one path; demands all options; always chooses immediate gratification; wish forgotten in favour of shiny; "Why can't I have both?"
-
-### Dark-Allergy: "The Wish-Abandoner"
-**How it surfaces:** FORGETS THE WISH before choosing. Chooses randomly. "Which one was my wish again?" The wish has no functional power — it doesn't guide anything.
-- **Detection signals:** Cannot recall wish at choice-point; random choice patterns; "I forgot what I wanted"; wish has no influence on choice; choice-wish alignment at chance level
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Chooses the "CORRECT" path without consulting the wish. "That's the right answer." Correctness replaces desire. The choice is duty-driven, not wish-driven.
-- **Detection signals:** Correct choices without wish-consultation; "That's the right one" (not "That's what I wished for"); duty-language; no desire-reference in choice-making
-
-### Golden-Allergy: "The Effort-Refuser"
-**How it surfaces:** REFUSES TO CHOOSE. "Choosing is too hard." "I don't want to pick." The choice-point itself is the effort that's refused. Wishing is fine; choosing is too much.
-- **Detection signals:** Choice-avoidance; long latency at choice-points; "I don't want to pick"; approach-withdrawal at decisions; wish exists but cannot guide action
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Make wish-aligned path CLEARLY BETTER than distractor (not just different)
-- Reward wish-alignment; make distractor-choice produce less
-- Frame: "Your wish is HERE. The shiny thing is nice but it's not your wish. Which matters more?"
-- Build: wish-priority over immediate gratification
-
-**When Dark-Allergy detected:**
-- REMIND the wish at choice-point: "Remember? You wished for X. Which path leads there?"
-- Make wish visible during choice (not just at declaration)
-- Frame: "Your wish is still here. See it? Now which path goes toward it?"
-- Reward wish-recall; celebrate first wish-guided choice
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Remove "correct" framing; make BOTH paths valid but only one wish-aligned
-- Require wish-reference in choice: "Which one does your WISH want?"
-- Frame: "Not the right answer. YOUR answer. What did you wish for? Go there."
-- Build: desire-guided choosing (not duty-guided)
-
-**When Golden-Allergy detected:**
-- Make choice TINY: "Just lean toward one. You don't have to commit."
-- Remove choice-pressure: "Either is fine. But which one does your wish prefer?"
-- Frame: "Not a big choice. Just a lean. Which way does your wish pull?"
-- Build: choice-tolerance (choosing doesn't destroy the wish)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Wish-Path: a choice-space where the player's wish guides decisions. The aesthetic: Magenta-stage crossroads — paths that glow with the colour of the player's wish. The wish-aligned path resonates; the distractor sparkles differently.
@@ -170,7 +66,7 @@ The Wish-Path: a choice-space where the player's wish guides decisions. The aest
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Simple choices:** Clear wish-aligned vs. non-aligned paths
@@ -188,21 +84,7 @@ The Wish-Path: a choice-space where the player's wish guides decisions. The aest
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Wish-choice alignment:** Does the choice serve the declared wish?
-- **Wish-recall at choice-point:** Can they remember the wish when choosing?
-- **Distractor resistance:** Can they resist attractive non-wish options?
-- **Choice latency:** How quickly do they choose? (Too fast = no consultation; too slow = avoidance)
-- **Wish-reference in choice:** Evidence that the wish was consulted (not just correct answer)
-
-### LLM rubric
-- **High:** Scenario generation, wish-reference evaluation, desire-vs-duty discrimination. Core choice-accuracy algorithmic but wish-consultation quality requires LLM.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (path choice); wish-declaration (verbal or tap); hold (wish-recall)

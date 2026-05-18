@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The world itself IS emotionally alive. NPCs have emotions that affect their behaviour. Situations provoke the player's emotions. The emotional landscape shifts. The player is never told "read this emotion" — they must NOTICE, RESPOND, and NAVIGATE spontaneously.
 
@@ -29,106 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Emotional provocations in the world (NPCs insulting, threatening, challenging).
-- Healthy: Responds to provocations with chosen emotional response; doesn't get hijacked
-- Pathological: Every provocation triggers maximum emotional response; "They made me angry"
-- **Detection:** Whether provocations produce proportional or disproportionate emotional responses
-
-### Agency Golden-Domain
-**Context:** Situations requiring emotional initiative (no one prompts the player to feel).
-- Healthy: Generates emotional responses spontaneously; engages emotionally without prompts
-- Pathological: Emotionally passive; waits for the world to provoke before feeling anything
-- **Detection:** Spontaneous emotional engagement rate; self-initiated emotional responses
-
-### Communion Dark-Domain
-**Context:** NPCs in emotional states throughout the world.
-- Healthy: Notices and reads NPC emotions without absorbing them
-- Pathological: Absorbs every NPC's emotional state; emotional state shifts with every encounter
-- **Detection:** Whether player's emotional state correlates with recently-encountered NPC emotions
-
-### Communion Golden-Domain
-**Context:** Opportunities for shared emotional experience (celebrations, mourning, battle-joy).
-- Healthy: Joins shared emotional moments naturally
-- Pathological: Remains emotionally isolated; never joins group emotional experiences
-- **Detection:** Engagement with shared emotional opportunities
-
-### Eros Dark-Domain
-**Context:** Areas of varying emotional intensity (calm zones vs. intense zones).
-- Healthy: Navigates both; enjoys calm and intensity appropriately
-- Pathological: Compulsively seeks highest-intensity emotional areas; cannot rest in calm zones
-- **Detection:** Zone-selection patterns; time in calm vs. intense areas
-
-### Eros Golden-Domain
-**Context:** Emotionally complex areas (mixed emotions, ambiguous situations).
-- Healthy: Engages complexity with curiosity
-- Pathological: Avoids or oversimplifies complex emotional terrain
-- **Detection:** Engagement quality in emotionally complex areas
-
-### Agape Dark-Domain
-**Context:** Familiar emotional territory (known NPCs, known emotional dynamics).
-- Healthy: Maintains emotional engagement with familiar territory
-- Pathological: Dismisses familiar emotional content; "I already know how they feel"
-- **Detection:** Emotional engagement quality in familiar areas
-
-### Agape Golden-Domain
-**Context:** Whether emotional intelligence demonstrated in tasks appears in free-navigation.
-- Healthy: Emotional reading, channelling, regulation appear naturally
-- Pathological: Emotional intelligence exists only during explicit challenges
-- **Detection:** Transfer of emotional skills to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Rage-Addict"
-**How it surfaces:** Observe emotional intensity across the session. The rage-addict's emotional intensity ESCALATES throughout — they seek provocations, amplify conflicts, and cannot rest in emotional calm.
-- **Detection signals:** Escalating emotional intensity across session; provocation-seeking; conflict-amplification; inability to rest in calm zones; session length far exceeding optimal
-
-### Dark-Allergy: "The Frozen"
-**How it surfaces:** Observe whether the player engages the emotional world AT ALL. The frozen player navigates the world as if emotions don't exist — ignores NPC emotional states, doesn't respond to provocations, treats the world as purely tactical.
-- **Detection signals:** No emotional engagement with NPCs; flat response to provocations; treats emotional content as irrelevant; purely tactical navigation
-
-### Golden-Addiction: "The Premature Empath"
-**How it surfaces:** Observe the QUALITY of emotional engagement. The premature empath PERFORMS emotional awareness (pauses at emotional moments, makes "empathic" choices) but their actual reading accuracy is low.
-- **Detection signals:** Performed emotional engagement without accuracy; "empathic" behaviour that doesn't match NPC actual states; style over substance in emotional navigation
-
-### Golden-Allergy: "The Sensitivity-Refuser"
-**How it surfaces:** Observe which emotional content the player engages. The refuser engages power-emotions (anger, pride, excitement) but AVOIDS vulnerability-emotions (fear, sadness, tenderness) in the world.
-- **Detection signals:** Selective emotional engagement — power-emotions only; avoids NPCs showing vulnerability; dismisses sad/fearful content; "That's not important"
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- World introduces "calm-power zones" — areas where emotional calm produces MORE power than intensity
-- Rest areas become NECESSARY for power-regeneration
-- Frame: Natural consequence — intensity without rest = diminishing returns
-
-**When Dark-Allergy detected:**
-- World makes emotional reading NECESSARY for navigation (emotionally-gated paths)
-- NPCs whose emotions MUST be read to interact with (angry NPC won't trade; must read and respond)
-- Frame: Natural consequence — ignoring emotions = missing opportunities
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- World introduces accuracy-gated content — performed empathy doesn't open doors; only accurate reading does
-- Frame: Natural consequence — style without substance = locked out
-
-**When Golden-Allergy detected:**
-- World introduces vulnerability-gated content — areas/NPCs that only respond to vulnerability-reading
-- Make vulnerability-engagement produce unique rewards unavailable through power-emotions
-- Frame: Natural consequence — ignoring vulnerability = missing unique power
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 An open Red-stage world where emotions are ALIVE. NPCs have emotional states that affect their behaviour, availability, and responses. The environment has emotional zones (calm, intense, mixed). Combat is emotionally influenced (reading enemy emotion = tactical advantage). The player navigates freely.
@@ -162,7 +63,7 @@ An open Red-stage world where emotions are ALIVE. NPCs have emotional states tha
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **NPC emotional configurations:** Characters with varied emotional states and behaviours
@@ -181,21 +82,7 @@ An open Red-stage world where emotions are ALIVE. NPCs have emotional states tha
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring (ECOLOGICAL)
-- **Spontaneous reading rate:** How often the player notices NPC emotions without prompting
-- **Reading accuracy:** Accuracy of spontaneous emotional readings
-- **Channelling frequency:** How often emotion is used as power in combat
-- **Regulation quality:** Emotional stability under provocation
-- **Navigation wisdom:** Quality of emotional zone-selection and engagement
-
-### LLM rubric
-- **High:** World generation, ecological emotional assessment, NPC emotional behaviour, narrative adaptation. Evaluates spontaneous emotional behaviour.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (interact, read, engage); hold (channel, regulate); swipe (navigate)

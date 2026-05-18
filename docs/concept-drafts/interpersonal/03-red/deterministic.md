@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** NPCs behave. Their behaviour signals intent. The game asks: "What do they want?" The contact boundary is: "Can you read another agent's intent from their behaviour alone?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Player reads NPC intent correctly. What do they DO with the reading?
-- Healthy: Uses reading to coordinate mutual benefit or defend appropriately
-- Pathological: Uses every reading for manipulation/exploitation; "Now I know their weakness"
-- **Detection:** Response selection after accurate reading — exploit vs. coordinate
-
-### Agency Golden-Domain
-**Context:** Ambiguous NPC intent — player must DECIDE how to engage without certainty.
-- Healthy: Makes a choice and acts; accepts uncertainty
-- Pathological: Cannot act without certainty; paralysed by ambiguous intent
-- **Detection:** Response latency and quality under ambiguity
-
-### Communion Dark-Domain
-**Context:** NPC signals "help" intent. Does the player accept help?
-- Healthy: Accepts help; coordinates; maintains own goals within the alliance
-- Pathological: Accepts help and immediately subordinates own goals; "Whatever they want"
-- **Detection:** Whether accepting help changes the player's own action-pattern
-
-### Communion Golden-Domain
-**Context:** Player must SIGNAL own intent to an NPC (make themselves readable).
-- Healthy: Signals clearly; allows others to read them
-- Pathological: Cannot signal; remains opaque; "Why should they know what I want?"
-- **Detection:** Quality and clarity of player's own intent-signalling
-
-### Eros Dark-Domain
-**Context:** Mastered 1-NPC reading vs. advancing to 2-NPC simultaneous reading.
-- Healthy: Comfortable with current level; advances when ready
-- Pathological: Demands harder tasks immediately; "This is too easy"
-- **Detection:** Satisfaction at current difficulty vs. compulsive advancement
-
-### Eros Golden-Domain
-**Context:** Subtle intent cues (NPC whose intent is ambiguous or shifting).
-- Healthy: Engages subtlety with curiosity; accepts uncertainty
-- Pathological: Claims to read subtle intent without accuracy; "I can tell exactly what they want"
-- **Detection:** Confidence-accuracy calibration on subtle cues
-
-### Agape Dark-Domain
-**Context:** Simple 1-NPC obvious-intent tasks (clearly helping, clearly threatening).
-- Healthy: Engages with full attention; maintains accuracy
-- Pathological: Dismisses; "I already know this"; accuracy drops from disengagement
-- **Detection:** Engagement quality and accuracy on below-level tasks
-
-### Agape Golden-Domain
-**Context:** Whether intent-reading appears spontaneously in non-task contexts.
-- Healthy: Reads NPCs in free-play without being prompted
-- Pathological: Only reads when explicitly asked; no spontaneous social intelligence
-- **Detection:** Spontaneous reading rate outside structured tasks
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Dominator"
-**How it surfaces:** Present an NPC with clear "help" intent. The Dominator reads it correctly but RESPONDS with dominance — commands the helper, exploits the offer, turns help into servitude.
-- **Detection signals:** Accurate reading + exploitative response; every "help" NPC becomes a servant; cannot accept help as equals; response pattern: read → dominate regardless of intent
-
-### Dark-Allergy: "The Isolate"
-**How it surfaces:** Present NPCs with clear intents. The Isolate either refuses to engage the task OR reads ALL intents as "harm" (projection of threat onto neutral/helpful agents).
-- **Detection signals:** Non-engagement with reading tasks; all-threat projection; accuracy near zero not from inability but from refusal; "They all want to hurt me"
-
-### Golden-Addiction: "The Premature Diplomat"
-**How it surfaces:** Present NPCs with SIMPLE intents (clearly help, clearly harm). The Premature Diplomat provides ELABORATE readings ("I sense a complex interplay of motivations...") that miss the simple truth.
-- **Detection signals:** Over-complex readings of simple signals; low accuracy + high elaboration; cannot identify basic intent because they're looking for sophisticated patterns that aren't there
-
-### Golden-Allergy: "The Loyalty-Refuser"
-**How it surfaces:** Present a multi-session NPC whose intent is consistently "help." The Loyalty-Refuser reads it correctly each time but never BUILDS on the relationship — treats each interaction as isolated.
-- **Detection signals:** Accurate reading + no relationship-building; treats consistent allies as strangers each session; cannot accumulate relational history
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce scenarios where COORDINATION produces more power than domination
-- Frame: "The helper gives you 2× power if you coordinate. If you command, they give 1×. Your choice."
-- Reward mutual-benefit responses over exploitative ones
-
-**When Dark-Allergy detected:**
-- Introduce UNMISTAKABLE help-intent NPCs (zero ambiguity; cannot be misread as threat)
-- Frame: "This one is helping. Look — they're giving you resources. No strings. Just look."
-- Start with zero-risk interpersonal engagement; celebrate any accurate reading
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require SIMPLE, DIRECT readings — "Help, harm, or trade? One word."
-- Penalise over-elaboration; reward accuracy
-- Frame: "Don't tell me their life story. What do they WANT? One word."
-
-**When Golden-Allergy detected:**
-- Introduce CONTINUITY rewards — NPCs who remember past interactions and offer MORE if the player maintains the relationship
-- Frame: "They remember you. Last time you coordinated, they got stronger. Now they offer more."
-- Make loyalty produce measurably superior outcomes
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Intent-Reader: a war-camp where NPCs arrive with intentions. Some want to help (join the war-band). Some want to harm (spies, assassins). Some want to trade (merchants, mercenaries). The player must read their intent from behavioural cues and respond appropriately. The aesthetic: Red-stage war-camp, firelit arrivals, the warlord's judgement seat.
@@ -171,7 +71,7 @@ The Intent-Reader: a war-camp where NPCs arrive with intentions. Some want to he
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **NPC behavioural profiles:** Defined cue-sets that signal specific intents
@@ -190,21 +90,7 @@ The Intent-Reader: a war-camp where NPCs arrive with intentions. Some want to he
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Intent-reading accuracy:** % correct identification of NPC intent
-- **Reading speed:** Time to correct identification (faster = more fluent)
-- **Multi-agent capacity:** Maximum NPCs read simultaneously with ≥70% accuracy
-- **Shift detection:** Speed and accuracy of detecting intent changes
-- **Response appropriateness:** Quality of action taken after reading
-
-### LLM rubric
-- **Low:** Core mechanics are algorithmic (NPC displays cues → player selects intent → system checks accuracy). LLM generates NPC behavioural descriptions and contextual framing only.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (identify intent from options); timed response (coordination); swipe (approach/avoid/negotiate)

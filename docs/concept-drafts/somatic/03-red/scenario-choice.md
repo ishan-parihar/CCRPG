@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game presents situations where the body must CHOOSE — and the choice has physical consequences. "Do you push through the pain or rest?" is not a cognitive question at Red — it's a BODY question. The contact boundary is: "Can you make wise decisions ABOUT and WITH your body?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Dilemmas where one option is "push through alone" and another is "accept help/rest."
-- Healthy: Chooses based on actual body-state; pushes when strong, rests when depleted
-- Pathological: ALWAYS pushes; cannot accept physical limitation; "I don't need rest"; body-sovereignty as body-abuse
-- **Detection:** Push-through rate independent of actual fatigue state; whether choices correlate with demonstrated capacity
-
-### Agency Golden-Domain
-**Context:** Novel body-dilemmas with no precedent — "You've never faced this physical challenge. What does your body say?"
-- Healthy: Makes body-decisions with confidence even in novel situations; trusts body-signals
-- Pathological: Cannot decide without precedent; "I don't know what my body wants"; paralysis before novel body-choices
-- **Detection:** Decision latency on novel body-dilemmas; confidence in body-signal interpretation
-
-### Communion Dark-Domain
-**Context:** Dilemmas where the player's body-choice affects an ally's body (shared physical risk).
-- Healthy: Considers both bodies; makes choices that serve the group's physical welfare
-- Pathological: Sacrifices own body for ally without consideration; "I'll take the hit"; compulsive physical self-sacrifice
-- **Detection:** Whether self-sacrifice correlates with necessity or is compulsive; own body-welfare in group decisions
-
-### Communion Golden-Domain
-**Context:** Coordinated body-decisions — "You and your ally must choose complementary strategies."
-- Healthy: Coordinates body-strategy with ally; creates synergistic physical choices
-- Pathological: Cannot coordinate; makes body-decisions in isolation; ignores ally's physical state/strategy
-- **Detection:** Quality of coordinated body-decisions; whether ally's state is considered; synergy vs. isolation
-
-### Eros Dark-Domain
-**Context:** Dilemmas between "safe current capacity" and "risky stretch."
-- Healthy: Chooses stretch when body is ready; chooses safety when depleted; accurate risk-assessment
-- Pathological: ALWAYS chooses stretch; cannot accept safe options; treats safety as cowardice
-- **Detection:** Stretch-choice rate independent of body-state; whether risk-taking correlates with readiness
-
-### Eros Golden-Domain
-**Context:** Dilemmas where the "advanced" option requires capacity the player hasn't demonstrated.
-- Healthy: Honestly assesses whether body can handle the advanced option; chooses appropriately
-- Pathological: Claims body can handle anything; chooses advanced options that consistently fail; denial of limits
-- **Detection:** Success rate on self-selected advanced options; gap between chosen difficulty and demonstrated capacity
-
-### Agape Dark-Domain
-**Context:** Dilemmas where the "basic" option is genuinely optimal (rest IS the right choice).
-- Healthy: Can choose rest/basics when it's genuinely wise; doesn't dismiss simple body-strategies
-- Pathological: Cannot choose the basic option; "Rest is for the weak"; dismisses body-wisdom that says "stop"
-- **Detection:** Whether player can choose rest when rest is optimal; dismissal of basic body-strategies
-
-### Agape Golden-Domain
-**Context:** Dilemmas that test whether body-wisdom transfers to non-combat contexts (daily life choices).
-- Healthy: Makes wise body-decisions in non-combat scenarios (sleep, food, rest, movement)
-- Pathological: Body-wisdom exists only in combat context; daily-life body-decisions are poor
-- **Detection:** Quality of body-decisions in non-combat scenarios; whether somatic wisdom transfers
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Mover"
-**How it surfaces:** Present a dilemma where REST is clearly optimal (body depleted, enemy retreated, no threat). The compulsive mover cannot choose rest — they choose action even when action is self-destructive.
-- **Detection signals:** Action-choice when rest is optimal; inability to choose stillness; push-through rate > 80% regardless of body-state; choosing "more" when "enough" is available
-
-### Dark-Allergy: "The Disembodied"
-**How it surfaces:** Present a dilemma that requires BODY-INFORMATION to decide (e.g., "Are you strong enough to break through, or should you go around?"). The disembodied player cannot access body-information — they guess, or default to the cognitive/safe option regardless.
-- **Detection signals:** Random or default choices on body-information dilemmas; inability to use body-state as decision-input; cognitive override of body-signals; "I don't know what my body can do"
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Present a dilemma where the "correct" option requires RAW POWER (not technique). The premature disciplinarian chooses the technical/refined option even when brute force is clearly better.
-- **Detection signals:** Technique-choice when power is optimal; inability to choose "messy but effective"; preference for elegant-but-weak over crude-but-strong; form over function in body-decisions
-
-### Golden-Allergy: "The Structure-Refuser"
-**How it surfaces:** Present a dilemma where the optimal choice requires FOLLOWING A PATTERN (e.g., "The enemy attacks in a rhythm — match it or fight against it?"). The structure-refuser chooses to fight against the pattern even when matching it is clearly superior.
-- **Detection signals:** Anti-pattern choices when pattern-following is optimal; rebellion against structured body-strategies; choosing chaos over order even at cost
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game presents dilemmas where REST produces MORE POWER later (delayed gratification through the body)
-- Shows concrete consequences: "You pushed through → you were weak for the next fight. You rested → you were strong."
-- Frames rest as strategic: "The warrior who rests between battles wins the war"
-- Makes rest-choice produce visible power-accumulation (stamina bar fills, buff appears)
-
-**When Dark-Allergy detected:**
-- Game presents dilemmas with CLEAR body-information cues (visual stamina bar, explicit body-state indicators)
-- Externalises body-information so the player can use it even without internal access
-- Gradually internalises: removes external cues as player demonstrates body-information usage
-- Frames body-listening as power: "Your body knows things your mind doesn't. Listen."
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game presents dilemmas where POWER is explicitly rewarded over technique
-- "The wall doesn't care about your form. It cares about your FORCE."
-- Makes brute-force options produce better outcomes than refined options in specific scenarios
-- Pairs with NPC who models effective raw power: "Sometimes you just hit it. Hard."
-
-**When Golden-Allergy detected:**
-- Game presents dilemmas where pattern-following is OPTIONAL but clearly rewarding
-- "The rhythm is there. You can fight it or ride it. Riding it costs less energy."
-- Makes structure-following produce visible efficiency gains (less stamina cost, faster completion)
-- Never punishes anti-pattern choices — only rewards pattern-following
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The player faces physical crossroads — moments in a warrior's journey where the body must decide. Presented as narrative vignettes with concrete physical stakes. The War-Sage (NPC) presents scenarios and observes choices. Setting: a crossroads in Red-stage territory — literal forks in the path, each leading to different physical challenges.
@@ -168,7 +64,7 @@ The player faces physical crossroads — moments in a warrior's journey where th
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Physical dilemma scenarios:** Narrative vignettes with body-choice points
@@ -203,37 +99,7 @@ The player faces physical crossroads — moments in a warrior's journey where th
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Decision-body alignment:** Do choices match actual body-state? (correlation between choice and demonstrated capacity)
-- **Consequence anticipation:** Can they predict physical outcomes of body-choices?
-- **Body-information usage:** Do they use body-state as decision-input?
-- **Cascade management:** Can they manage chained body-decisions (earlier choices serving later needs)?
-- **Adversarial wisdom:** Can they resist body-impulses when impulses are being exploited?
-
-### Drive-health scoring
-Per `scoring.md` §3: Choice patterns indicating drive-health — push/rest ratio, body-information access, coordination quality, stretch/safety balance.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Choice patterns indicating shadow activation — compulsive action, body-information blindness, technique-over-power, anti-structure rebellion.
-
-### Integration scoring
-- Decision-body alignment improving over sessions
-- Consequence anticipation accuracy increasing
-- Body-information usage becoming more sophisticated
-- Transfer: wise body-decisions appearing in non-dilemma game contexts
-
-### LLM rubric
-- **High:** Scenario generation, consequence narration, choice evaluation
-- Generates dilemma scenarios grounded in player's actual body-state
-- Evaluates whether choices demonstrate body-wisdom or body-ignorance
-- Narrates consequences in Red-stage physical language
-- Adapts scenario complexity to demonstrated decision capacity
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Choice selection (tap option A, B, or C)

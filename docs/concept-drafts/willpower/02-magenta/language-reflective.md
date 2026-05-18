@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "What do you want? Say it. Name your wish. Tell me what you're wishing for." The contact boundary is: "Can you put your wish into words?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Speaking wishes independently (unprompted wish-articulation).
-- Healthy: Names wishes clearly and independently
-- Pathological: Demands rather than wishes; "GIVE ME" not "I want"
-- **Detection:** Whether speech is wish (desire) or demand (command)
-
-### Agency Golden-Domain
-**Context:** Self-generated wish-naming (not choosing from options).
-- Healthy: Generates own wish-language; articulates unique desires
-- Pathological: Cannot name wishes without options; "What are my choices?"
-- **Detection:** Self-generated vs. prompted wish-articulation
-
-### Communion Dark-Domain
-**Context:** Speaking wishes in social context (companion present).
-- Healthy: Names own wishes while hearing companion's
-- Pathological: Echoes companion's wishes; "I want what they want"
-- **Detection:** Whether wish-language is own or borrowed
-
-### Communion Golden-Domain
-**Context:** Shared wish-articulation (naming wishes together).
-- Healthy: Contributes unique wishes to shared naming
-- Pathological: Cannot share wishes verbally; wishes are private/unspeakable
-- **Detection:** Quality of shared wish-articulation
-
-### Eros Dark-Domain
-**Context:** Familiar wish-naming (same wishes, repeated sessions).
-- Healthy: Maintains genuine articulation of familiar wishes
-- Pathological: Wish-language becomes rote; loses genuine desire
-- **Detection:** Whether repeated wish-naming retains genuine quality
-
-### Eros Golden-Domain
-**Context:** Novel wish-naming (articulating new desires).
-- Healthy: Names novel wishes with curiosity and clarity
-- Pathological: Generates novel wish-language compulsively without meaning
-- **Detection:** Whether novel wishes are genuine or performative
-
-### Agape Dark-Domain
-**Context:** Maintaining wish-articulation quality over time.
-- Healthy: Wish-language remains clear and genuine across sessions
-- Pathological: Wish-articulation degrades; becomes formulaic
-- **Detection:** Wish-language quality trend across sessions
-
-### Agape Golden-Domain
-**Context:** Whether wish-articulation appears spontaneously.
-- Healthy: Names wishes naturally in non-willpower contexts
-- Pathological: Wish-naming exists only when explicitly prompted
-- **Detection:** Spontaneous wish-articulation in ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Demander"
-**How it surfaces:** Speech is DEMAND not WISH. "I want" becomes "GIVE ME." Escalating verbal intensity. Multiple demands in rapid succession. The language of entitlement, not desire.
-- **Detection signals:** Command language ("Give me," "I need," "Now!"); escalating intensity; rapid demand-switching; no patience in speech; entitlement markers
-
-### Dark-Allergy: "The Wish-Abandoner"
-**How it surfaces:** Cannot name a wish. "I don't know what I want." "Nothing." "I don't care." Empty language where desire should be. The wish-function has no verbal expression.
-- **Detection signals:** "I don't know"; "Nothing"; "Whatever"; empty responses to wish-prompts; cannot generate desire-language; flat verbal affect
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Speaks TASKS not WISHES. "I need to do X." "I should work on Y." Goal-language without desire-language. The speech of obligation, not wanting.
-- **Detection signals:** Task/obligation language ("I should," "I need to," "I have to"); no desire-words; goal-without-wish; duty-speech; cannot say "I WANT"
-
-### Golden-Allergy: "The Effort-Refuser"
-**How it surfaces:** Speaks beautiful wishes then NEGATES them. "I want X... but I can't." "I wish I could... but it's impossible." Desire articulated then immediately defeated.
-- **Detection signals:** Wish + negation pattern ("I want... but"); self-defeating language; beautiful articulation followed by "but"; desire-then-defeat cycle
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Reframe demands as wishes: "Not 'give me.' 'I wish for.' Say it gently."
-- Reward SOFT wish-language over demand-language
-- Frame: "A wish is gentle. 'I wish for...' Not 'GIVE ME.' Try again, softly."
-- Build: wish-language (desire without demand)
-
-**When Dark-Allergy detected:**
-- Offer TINY wish-prompts: "Do you like this one or that one? Which calls to you?"
-- Make wish-naming SAFE: "Any wish. Even tiny. 'I want... something warm.'"
-- Frame: "Just one word. What do you want? Even 'something nice.' That counts."
-- Reward ANY desire-language; celebrate first "I want..."
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Block task-language; require desire-language: "Not what you SHOULD do. What do you WANT?"
-- Reward "I want" over "I should"; make desire-language produce better results
-- Frame: "Forget 'should.' What do you WANT? What calls to you? What's the wish?"
-- Build: desire-before-duty (wish grounds effort)
-
-**When Golden-Allergy detected:**
-- Block negation: "Say the wish. Stop before 'but.' Just the wish."
-- Reward wish-without-negation; make un-negated wishes produce results
-- Frame: "I want X. Full stop. No 'but.' Just the wish. Let it stand."
-- Build: wish-confidence (desire without self-defeat)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Wish-Speaker: a verbal wish-articulation space where the player names their desires. The aesthetic: Magenta-stage wishing-tree — spoken wishes become glowing leaves. Clear wishes glow bright. Demands crackle. Empty speech produces nothing. Negated wishes dim.
@@ -169,7 +65,7 @@ The Wish-Speaker: a verbal wish-articulation space where the player names their 
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Wish-prompts:** Contexts that invite wish-articulation
@@ -187,21 +83,7 @@ The Wish-Speaker: a verbal wish-articulation space where the player names their 
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Wish-formation:** Can they name a wish at all? (binary → quality)
-- **Wish-clarity:** How specific and clear is the articulation?
-- **Wish-genuineness:** Does the language carry genuine desire? (LLM-evaluated)
-- **Wish-stability:** Is the same wish named on return? (recall accuracy)
-- **Wish-elaboration:** Can they tell the story of the wish?
-
-### LLM rubric
-- **Very High:** Core modality. LLM evaluates wish-language quality, demand-vs-wish discrimination, task-vs-desire discrimination, negation detection, genuineness assessment, elaboration quality.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Voice input (primary) or text input; tap-to-select for wish-choice prompts

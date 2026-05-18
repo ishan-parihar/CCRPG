@@ -1,12 +1,12 @@
-# Somatic / Amber — Embodied-Somatic Game Concept
+# Somatic / Amber — Embodied-Somatic
 
-> **Axis:** The embodied-somatic axis probes somatic intelligence through THE BODY ITSELF — the deepest, most direct modality. For the Somatic line, this is the PRIMARY axis: the body probing its own capacity. At Amber, this is: "Can your body hold the discipline? Can it feel itself holding? Can it know itself as a disciplined body?"
+> **Axis:** The embodied-somatic axis probes somatic intelligence through THE BODY ITSELF — the deepest, most direct modality. For the Somatic line, this is the PRIMARY axis: the body probing its own capacity.
 >
-> **Why this axis for Somatic/Amber:** This is the somatic line probing itself through its own medium. Not measuring the body (deterministic), not talking about the body (language-reflective), not deciding about the body (scenario-choice) — but the body BEING the body. The felt-sense of discipline. The interoceptive awareness of form. The body knowing itself as form-keeper.
+> **Why this axis:** This is the somatic line probing itself through its own medium. Not measuring the body (deterministic), not talking about the body (language-reflective), not deciding about the body (scenario-choice) — but the body BEING the body. The felt-sense of discipline. The interoceptive awareness of form. The body knowing itself as form-keeper.
 
 ---
 
-## 1. Game Identity
+## §1 Game Identity
 
 - **Title:** "The Living Stance"
 - **Core mechanic:** The player's body IS the game. Not reproducing external forms but INHABITING them — feeling the stance from inside, sensing the form as lived experience, knowing the discipline as body-knowledge. Interoceptive awareness during disciplined movement.
@@ -15,130 +15,24 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## §2 Catalyst Delivery
 
-**Catalyst:** "Hold the stance. Now: feel it. Not from outside — from INSIDE. Where is the effort? Where is the ease? What does your body know about this form that your mind doesn't?" The contact boundary is: "Can you INHABIT your body's discipline — not just execute it?"
+**What it uniquely presents:** The demand to INHABIT the body — not execute form but FEEL it from inside. Interoceptive awareness as the primary measure.
 
-**Unconscious response:**
-- *Submergent:* How does the player INHABIT their body? The Rigid Driller executes perfectly but cannot FEEL (body-as-machine). The Undisciplined Body cannot hold long enough to feel anything. The Premature Virtuoso reports sensations that don't match body-state (fabricated interoception). The Form-Refuser inhabits familiar forms deeply but cannot feel novel ones.
-- *Emergent:* Can they inhabit their body genuinely — feeling the discipline from inside with accurate interoception?
+**How it differs from other 6:** Only modality where the body probes ITSELF. Not accuracy (deterministic), not words (language-reflective), not decisions (scenario-choice), not planning (strategic), not group (social), not ecology (immersive) — but pure INHABITATION. The felt-sense of being a disciplined body.
 
-**Integration path:** Rewards GENUINE EMBODIED INHABITATION — the body felt from inside, discipline experienced as lived reality, form known as body-knowledge.
+**What it uniquely surfaces:** Dark-addiction as perfect execution without feeling (body-as-machine). Dark-allergy as inability to hold long enough to feel. Golden-addiction as fabricated interoception (elaborate claims + poor execution). Golden-allergy as deep inhabitation of familiar but numbness at novel.
 
-**Successful integration:** The player inhabits their disciplined body — somatic intelligence at its most direct.
+**Successful integration:** The player inhabits their disciplined body — somatic intelligence at its most direct, felt from inside.
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Inhabiting the body sovereignly (feeling without external guidance).
-- Healthy: Feels body independently; interoception is self-directed
-- Pathological: Cannot feel without guidance; OR: over-controls feeling (forces sensation)
-- **Detection:** Whether interoceptive awareness is self-generated
-
-### Agency Golden-Domain
-**Context:** Inhabiting the body during novel forms (feeling the unfamiliar).
-- Healthy: Feels novel body-states with curiosity; interoception extends to new territory
-- Pathological: Cannot feel novel states; interoception frozen in familiar
-- **Detection:** Interoceptive range in novel forms
-
-### Communion Dark-Domain
-**Context:** Feeling the body while connected to others (group form).
-- Healthy: Maintains own interoception while sensing group energy
-- Pathological: Loses own feeling in group; OR: cannot sense group at all
-- **Detection:** Whether own interoception survives group context
-
-### Communion Golden-Domain
-**Context:** Shared embodied experience (feeling WITH others).
-- Healthy: Senses shared body-state; feels the group's rhythm as lived experience
-- Pathological: Cannot share embodied experience; always solo in body
-- **Detection:** Quality of shared interoceptive experience
-
-### Eros Dark-Domain
-**Context:** Sustained interoceptive awareness over time.
-- Healthy: Maintains body-feeling across extended practice
-- Pathological: Interoception fades with time; OR: becomes compulsive (cannot stop feeling)
-- **Detection:** Interoceptive sustainability
-
-### Eros Golden-Domain
-**Context:** Growing interoceptive subtlety (finer body-awareness).
-- Healthy: Notices increasingly subtle body-signals with appropriate effort
-- Pathological: Cannot grow; OR: claims subtle awareness without evidence
-- **Detection:** Interoceptive growth quality
-
-### Agape Dark-Domain
-**Context:** Maintaining interoceptive capacity across sessions.
-- Healthy: Returns with maintained body-awareness
-- Pathological: Interoception degrades between sessions; body becomes numb
-- **Detection:** Cross-session interoceptive stability
-
-### Agape Golden-Domain
-**Context:** Whether interoceptive awareness appears in daily life.
-- Healthy: Feels body naturally outside practice; embodied awareness transfers
-- Pathological: Body-awareness exists only during explicit practice
-- **Detection:** Spontaneous interoceptive awareness
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Rigid Driller"
-**How it surfaces:** Executes form perfectly but CANNOT FEEL IT. Body-as-machine. When asked "what do you feel?" — reports position, not sensation. No interoception during discipline. The body is a tool, not a home.
-- **Detection signals:** Perfect execution + zero interoceptive report; "I'm holding the stance" (position, not feeling); no sensation-words; body-as-object language; cannot report effort-location; mechanical inhabitation
-
-### Dark-Allergy: "The Undisciplined Body"
-**How it surfaces:** Cannot hold form long enough to develop interoceptive awareness. Body breaks before feeling can emerge. No sustained inhabitation.
-- **Detection signals:** Form breaks before interoceptive prompt; "I couldn't hold long enough to feel anything"; no sustained body-experience; too brief for awareness; chaotic body prevents inhabitation
-
-### Golden-Addiction: "The Premature Virtuoso"
-**How it surfaces:** Reports ELABORATE sensations that don't match body-state. Claims subtle awareness without demonstrated capacity. Fabricated interoception.
-- **Detection signals:** Reports don't match observed body-state; claims "energy flow" while form is unstable; elaborate sensation-reports + poor execution; interoceptive claims exceed demonstrated capacity; "I feel the subtle channels" (while failing basic hold)
-
-### Golden-Allergy: "The Form-Refuser"
-**How it surfaces:** Deep, genuine interoception in FAMILIAR forms but NUMB in novel forms. Body-awareness frozen in known territory.
-- **Detection signals:** Rich interoceptive reports for familiar forms; "I can't feel anything" for novel forms; body-awareness drops sharply at novelty; inhabits known forms deeply, cannot inhabit new ones
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Guide attention INWARD during form: "You're holding. Good. Now: where is the effort? Not the position — the FEELING. Is it warm? Heavy? Tight?"
-- Reward ANY interoceptive report: "You felt heaviness in your shoulders. Good. That's your body speaking."
-- Frame: "Your body isn't just a machine. It FEELS. The form has a feeling. Can you find it?"
-- Build: interoceptive awareness during discipline (body-as-home not body-as-tool)
-
-**When Dark-Allergy detected:**
-- Start with MICRO-HOLDS with interoceptive focus: "Hold for two seconds. What do you feel? Even 'nothing' is an answer."
-- Make brief inhabitation the goal (not duration): "Two seconds of FEELING the hold. That's enough."
-- Frame: "Not long. Just FELT. Two seconds of really being in your body. That's the practice."
-- Build: brief but genuine inhabitation (quality over duration)
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require VERIFIABLE interoception: "You say you feel energy. Show me: where exactly? What temperature? What weight?"
-- Ground claims in observable body-state: "Your form is unstable. Feel THAT first. The wobble. The effort."
-- Frame: "Start with what's real. The effort. The weight. The temperature. Build from there."
-- Build: grounded interoception (real feeling, not fabricated)
-
-**When Golden-Allergy detected:**
-- Guide interoception into NOVEL forms gently: "New stance. New feeling. What's there? Even 'strange' or 'different' counts."
-- Reward any novel interoceptive report
-- Frame: "Your body can feel new things. It's already feeling them. Just notice. What's there?"
-- Build: expanding interoceptive range (new forms get felt)
-
----
-
-## 6. Game Design
+## §3 Game Design
 
 ### Setup
-The Living Stance: an interoceptive practice space. The player holds forms and is guided to FEEL them from inside. Not measuring accuracy (that's deterministic) but measuring INHABITATION — the quality of body-awareness during discipline. The aesthetic: Amber-stage inner sanctum — quiet, warm, the body honoured as a knowing entity.
+An interoceptive practice space. The player holds forms and is guided to FEEL them from inside. Not measuring accuracy (that's deterministic) but measuring INHABITATION — the quality of body-awareness during discipline. Aesthetic: Amber-stage inner sanctum — quiet, warm, the body honoured as a knowing entity.
 
-### Interaction
+### Interaction Phases
 - **The Felt Hold (1-5):** Hold a simple stance → interoceptive prompt: "Where is the effort?"
 - **The Inhabited Form (5-15):** Execute a form → "What did your body feel during that sequence?"
 - **The Breathing Body (15-30):** Breath-coupled movement → "What happens inside when breath and movement join?"
@@ -159,8 +53,8 @@ The Living Stance: an interoceptive practice space. The player holds forms and i
 - Novelty: familiar forms → slightly novel → entirely new
 - Subtlety: gross sensations → moderate → subtle
 
-### Internal Progression
-| Phase | Checkpoint range | What changes |
+### Progression Table
+| Phase | Checkpoints | What changes |
 |---|---|---|
 | The Felt Hold | 1-5 | Basic interoception during simple hold |
 | The Inhabited Form | 5-15 | Body-awareness during form execution |
@@ -170,59 +64,22 @@ The Living Stance: an interoceptive practice space. The player holds forms and i
 
 ---
 
-## 7. Item Pool Specification
+## §4 Item Pool
 
-### Item types
-- **Location prompts:** "Where is the effort/ease/tension/warmth?"
-- **Quality prompts:** "What does it feel like? (temperature, weight, texture)"
-- **Process prompts:** "What changes as you hold/move/breathe?"
-- **Comparison prompts:** "How does this form feel different from the last?"
-- **Integration prompts:** "What does your body know right now?"
-
-### Minimum pool size
-- 20+ location, 20+ quality, 15+ process, 10+ comparison, 10+ integration
-
-### Drive/shadow mapping
-- Perfect execution + no feeling → dark-addiction; cannot hold to feel → dark-allergy
-- Fabricated sensation → golden-addiction; numb at novel → golden-allergy
+| Type | Pool size |
+|---|---|
+| Location prompts ("Where is the effort/ease/tension/warmth?") | 20+ |
+| Quality prompts ("What does it feel like? temperature, weight, texture") | 20+ |
+| Process prompts ("What changes as you hold/move/breathe?") | 15+ |
+| Comparison prompts ("How does this form feel different from the last?") | 10+ |
+| Integration prompts ("What does your body know right now?") | 10+ |
 
 ---
 
-## 8. Scoring Rubric
+## §5 Technical Requirements
 
-### Capacity scoring
-- **Interoceptive accuracy:** Does reported sensation match observed body-state?
-- **Interoceptive range:** How many body-regions can they report from?
-- **Interoceptive depth:** Quality of sensation-description (location → quality → process)
-- **Novel interoception:** Can they feel new forms?
-- **Sustained awareness:** Does interoception maintain over extended practice?
-
-### LLM rubric
-- **High:** Evaluates interoceptive reports for genuineness, accuracy, depth. Distinguishes mechanical from felt, fabricated from genuine, frozen from expanding. Cross-validates reports against observed body-state.
-
----
-
-## 9. Technical Requirements
-
-### Input types
-- Voice/text (interoceptive reports); body-map tap (sensation location); selection (scaffolded sensation vocabulary); hold (sustained form during reporting)
-
-### Timing requirements
-- Report timing tracked (latency between prompt and response); form-duration during reporting; no time pressure
-
-### NPC/AI requirements
-- Interoceptive prompt system (guides attention to body)
-- Body-state observation (what the body is actually doing during report)
-- Genuineness assessment (does report match observable state?)
-- Scaffolding system (vocabulary support when needed)
-- Fabrication detection (elaborate claims + poor execution)
-
-### LLM requirements
-- **High:** Evaluates natural language interoceptive reports
-- Assesses genuineness (felt vs. mechanical vs. fabricated)
-- Tracks interoceptive vocabulary growth
-- Generates appropriate prompts based on demonstrated awareness
-- Cross-validates reports against observed body-state
-
-### State persistence
-- Interoceptive report history; accuracy scores; range metrics; depth progression; novelty-awareness quality; sustained-awareness metrics; mechanical-report frequency; fabrication indicators; frozen-range indicators; drive/shadow signals; checkpoint position
+- **Inputs:** Voice/text (interoceptive reports); body-map tap (sensation location); selection (scaffolded sensation vocabulary); hold (sustained form during reporting)
+- **Timing:** Report timing tracked (latency between prompt and response); form-duration during reporting; no time pressure
+- **NPC/AI:** Interoceptive prompt system (guides attention to body); body-state observation (what body is actually doing during report); genuineness assessment (report matches observable state?); scaffolding system; fabrication detection (elaborate claims + poor execution)
+- **LLM level:** High — evaluates natural language interoceptive reports; assesses genuineness (felt vs. mechanical vs. fabricated); tracks interoceptive vocabulary growth; generates prompts based on demonstrated awareness; cross-validates reports against observed body-state
+- **State persistence:** Interoceptive report history; accuracy scores; range metrics; depth progression; novelty-awareness quality; sustained-awareness metrics; mechanical-report frequency; fabrication indicators; frozen-range indicators; drive/shadow signals; checkpoint position

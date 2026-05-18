@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game asks the player to PUT WORDS to their body's experience. The contact boundary is: "Can you make your body's knowledge CONSCIOUS through language?" At Red, this is concrete and power-framed: "Name what your body does when it strikes."
 
@@ -29,112 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** The game asks "What does YOUR body do when...?" — requiring sovereign self-knowledge of physical experience.
-- Healthy: Describes own body-experience with confidence and specificity; "MY body does X"
-- Pathological: Cannot describe own experience; borrows others' language; "I guess bodies do X"; no ownership of physical self-knowledge
-- **Detection:** Specificity and ownership in body-descriptions; first-person vs. generic language; confidence in physical self-report
-
-### Agency Golden-Domain
-**Context:** Novel body-experience prompts — "You just did something new. What did that feel like?"
-- Healthy: Generates novel body-language for novel experiences; creates descriptions without templates
-- Pathological: Cannot describe novel experiences; needs categories provided; "I don't know what to call it"
-- **Detection:** Quality of language for unprecedented physical experiences; ability to generate new body-vocabulary
-
-### Communion Dark-Domain
-**Context:** Describing SHARED physical experience — "What happened in your body when you moved with the partner?"
-- Healthy: Can describe the experience of physical joining without losing self-reference; "I felt X while we did Y"
-- Pathological: Loses self in description of shared experience; "We felt..." without "I felt..."; cannot distinguish own body-state from shared state
-- **Detection:** Self-reference maintenance in descriptions of shared physical experience
-
-### Communion Golden-Domain
-**Context:** Teaching movement through language — explaining to an NPC how to do something physical.
-- Healthy: Generates clear, body-centred instructions; uses concrete physical language; adapts to learner
-- Pathological: Cannot teach through language; instructions are abstract or disconnected from body-reality
-- **Detection:** Quality of physical instruction; whether NPC "learns" (proxy for instruction clarity); concrete vs. abstract language ratio
-
-### Eros Dark-Domain
-**Context:** Describing current physical capacity honestly — "What can your body do right now?"
-- Healthy: Accurate self-assessment; neither inflated nor deflated; matches demonstrated capacity
-- Pathological: Cannot rest in accurate description; always describes what body SHOULD do, not what it DOES; chronic dissatisfaction in language
-- **Detection:** Gap between verbal self-assessment and demonstrated capacity; satisfaction language vs. striving language ratio
-
-### Eros Golden-Domain
-**Context:** Describing physical aspirations — "What do you want your body to be able to do?"
-- Healthy: Articulates concrete, achievable next-steps; grounded aspiration
-- Pathological: Describes far-beyond capacity as imminent; "I'm almost there" when far away; language of bypass
-- **Detection:** Realism of aspiration language; gap between stated goals and current capacity; groundedness of growth-language
-
-### Agape Dark-Domain
-**Context:** Describing basic physical experiences — "What does it feel like to just breathe?"
-- Healthy: Can describe simple body-states with presence and appreciation; honours the basic
-- Pathological: Dismisses simple body-descriptions; "That's too basic to describe"; cannot find language for foundational experience
-- **Detection:** Quality and presence in descriptions of simple physical states; dismissal language
-
-### Agape Golden-Domain
-**Context:** Describing body-experience OUTSIDE the game — "How does your body feel right now, sitting here?"
-- Healthy: Can access and describe current body-state in non-game context; somatic awareness transfers
-- Pathological: Can only describe body-experience in game context; "I don't notice my body normally"
-- **Detection:** Quality of real-time body-state description; whether somatic vocabulary transfers to lived experience
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Mover"
-**How it surfaces:** Ask the player to describe a REST state. The compulsive mover cannot find language for stillness — they describe movement even when asked about rest, or their language becomes agitated/restless when the topic is non-movement.
-- **Detection signals:** Movement language in rest-state prompts; inability to describe stillness positively; agitation in language when topic is non-action; excessive detail about physical sensation (hyper-awareness)
-
-### Dark-Allergy: "The Disembodied"
-**How it surfaces:** Ask the player to describe what their body feels RIGHT NOW. The disembodied player goes blank — "fine," "nothing," "I don't know." They have no vocabulary for body-experience because they have no ACCESS to body-experience.
-- **Detection signals:** Minimal/empty responses to body-state prompts; "fine/nothing/normal" as default; cognitive language substituted for body-language ("I think I'm..." instead of "I feel..."); long response latency on body-prompts
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Ask the player to describe their movement in their OWN words. The premature disciplinarian uses TECHNICAL language borrowed from disciplines (martial arts terminology, anatomy terms, exercise science) without genuine felt-sense backing.
-- **Detection signals:** Technical/borrowed vocabulary without experiential grounding; correct terminology with flat affect; language that describes form but not feeling; "textbook" descriptions of body-experience
-
-### Golden-Allergy: "The Structure-Refuser"
-**How it surfaces:** Ask the player to use SPECIFIC CATEGORIES to describe their body-state (e.g., "rate your tension 1-5"). The structure-refuser resists categorisation — "I can't put it in a number" or "labels don't capture it" — even for simple body-states.
-- **Detection signals:** Resistance to structured body-language; refusal to categorise; "it's more complex than that" for simple states; rebellion against vocabulary frameworks
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game introduces "stillness naming" — describe what the body feels when NOT moving
-- Provides vocabulary for rest-states: "heavy," "warm," "settled," "quiet"
-- Rewards language that honours stillness as a body-state (not absence of state)
-- Frames: "The warrior who can name his rest knows when to strike"
-
-**When Dark-Allergy detected:**
-- Game introduces MINIMAL body-prompts — "Is your hand warm or cool right now?" (binary, concrete)
-- Starts with the most accessible body-part (hands, feet — high proprioceptive density)
-- Rewards ANY body-language, however simple: "warm" is a complete valid answer
-- Gradually expands: "What else do you notice?" — only after basic access is established
-- Never demands complex body-description; celebrates simple accurate naming
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game asks for FEELING language, not technical language: "Not what it's CALLED — what does it FEEL like?"
-- Rewards metaphor and personal language over terminology: "like a hot wire" > "muscle tension"
-- Pairs with NPC who models felt-sense language: "My arms feel like they're humming"
-- Makes technical language score LOWER than experiential language
-
-**When Golden-Allergy detected:**
-- Game introduces categories as TOOLS, not prisons: "Try this word — does it fit? If not, what fits better?"
-- Frames vocabulary as power: "The warrior who can name his state can change it"
-- Provides categories as starting points, not endpoints: "Start with 'tense' — then make it more precise"
-- Rewards any engagement with structured body-vocabulary
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The player sits with the Body-Speaker — an NPC who is both warrior and sage. The setting is a quiet corner of the Red-stage training ground: after physical training, the warrior reflects. Firelight, cooling sweat, the body still humming from effort. The Body-Speaker asks questions about the body's experience.
@@ -170,7 +65,7 @@ The player sits with the Body-Speaker — an NPC who is both warrior and sage. T
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Body-state prompts:** "What does X feel like right now?" (varied body-parts, states, contexts)
@@ -205,38 +100,7 @@ The player sits with the Body-Speaker — an NPC who is both warrior and sage. T
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Body-vocabulary range:** Number of distinct body-state words used accurately
-- **Description specificity:** Concrete vs. generic language ratio
-- **Self-assessment accuracy:** Correlation between verbal reports and demonstrated capacity
-- **Causal reasoning quality:** Can they explain WHY their body behaves as it does?
-- **Prediction accuracy:** Do body-predictions match subsequent performance?
-
-### Drive-health scoring
-Per `scoring.md` §3: Language patterns indicating drive-health — ownership, self-reference maintenance, accurate self-assessment, foundational appreciation.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Language patterns indicating shadow activation — rest-language quality, body-access indicators, technical-vs-felt language, structure-resistance.
-
-### Integration scoring
-- Body-vocabulary expanding over sessions
-- Self-assessment accuracy improving (language matching performance)
-- Causal reasoning deepening (better explanations of body-behaviour)
-- Transfer: body-language appearing in non-somatic game contexts
-
-### LLM rubric
-- **Very High:** This is an LLM-primary modality — all evaluation requires natural language understanding
-- Evaluates authenticity of body-language (felt-sense vs. performed)
-- Distinguishes concrete from abstract body-descriptions
-- Assesses whether language matches demonstrated physical capacity
-- Generates contextualised prompts based on recent gameplay
-- Evaluates teaching quality (would a learner understand?)
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Text input (primary — typed body-descriptions)

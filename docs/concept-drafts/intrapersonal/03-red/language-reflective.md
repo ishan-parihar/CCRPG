@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Say what you feel. Explain why you chose that. Tell me what you'll do next." The contact boundary is: "Can you put your inner life into words?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Articulating own choices and motivations.
-- Healthy: "I chose X because I wanted Y" — clear, honest, sovereign
-- Pathological: "I chose X because I'm the best" — self-aggrandising narration
-- **Detection:** Whether verbal explanations serve accuracy or self-image
-
-### Agency Golden-Domain
-**Context:** Generating self-knowledge language without prompting.
-- Healthy: Spontaneously narrates inner experience when relevant
-- Pathological: Cannot generate self-knowledge language without structured prompts
-- **Detection:** Spontaneous vs. prompted verbal self-knowledge
-
-### Communion Dark-Domain
-**Context:** Sharing self-knowledge with others (explaining self to an NPC).
-- Healthy: Can describe self to others accurately; adjusts for audience
-- Pathological: Over-shares; cannot filter; "Let me tell you everything about myself"
-- **Detection:** Appropriateness of self-disclosure in social contexts
-
-### Communion Golden-Domain
-**Context:** Receiving verbal feedback about self and integrating it.
-- Healthy: "You said I seem angry. Let me check... yes, I think you're right."
-- Pathological: Cannot integrate others' verbal observations about them
-- **Detection:** Whether external verbal feedback updates self-model
-
-### Eros Dark-Domain
-**Context:** Simple verbal self-knowledge (name one state).
-- Healthy: Engages fully; accurate on simple naming
-- Pathological: "That's too basic. Let me tell you about my deeper patterns..."
-- **Detection:** Engagement quality on simple verbal self-knowledge tasks
-
-### Eros Golden-Domain
-**Context:** Articulating novel or unfamiliar inner experiences.
-- Healthy: Attempts with appropriate uncertainty; "I think I feel... something like..."
-- Pathological: Claims verbal mastery of all inner experience; no uncertainty
-- **Detection:** Appropriate uncertainty in novel self-articulation
-
-### Agape Dark-Domain
-**Context:** Maintaining verbal self-knowledge over time.
-- Healthy: Consistent vocabulary; stable self-descriptions across sessions
-- Pathological: Verbal self-knowledge degrades; "I used to be able to say what I felt"
-- **Detection:** Verbal self-knowledge consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether verbal self-knowledge appears in other modalities.
-- Healthy: Self-narration appears naturally during other tasks
-- Pathological: Verbal self-knowledge exists only in language-reflective tasks
-- **Detection:** Spontaneous self-narration in non-language contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Narcissist"
-**How it surfaces:** Verbal self-knowledge is GRANDIOSE NARRATION. The player tells a story about themselves that's flattering but inaccurate. "I am the strongest warrior because I never give up" — when evidence shows they quit frequently.
-- **Detection signals:** Self-narration consistently positive/powerful; cannot articulate weakness; verbal self-image contradicts behavioural evidence; narration serves self-aggrandisement, not accuracy
-
-### Dark-Allergy: "The Unexamined"
-**How it surfaces:** Verbal self-knowledge is ABSENT. The player cannot or will not put inner experience into words. "I don't know." "I just do things." "Why do I need to say it?"
-- **Detection signals:** Minimal verbal output on self-knowledge tasks; generic responses; cannot name states beyond "fine" or "okay"; dismisses verbal self-knowledge as unnecessary
-
-### Golden-Addiction: "The Premature Witness"
-**How it surfaces:** Verbal self-knowledge is SOPHISTICATED BUT INACCURATE. Beautiful language about inner experience that doesn't match reality. "I'm observing my attachment patterns" — but can't predict their next action.
-- **Detection signals:** High verbal sophistication + low prediction accuracy; abstract language without concrete grounding; language-reflective score >> deterministic score; sounds self-aware but ISN'T
-
-### Golden-Allergy: "The Identity-Clinger"
-**How it surfaces:** Verbal self-knowledge is ACCURATE BUT NARROW. Can articulate identity-confirming states perfectly ("I am strong, I am determined") but CANNOT articulate identity-threatening states ("I am afraid, I am uncertain").
-- **Detection signals:** High accuracy on identity-confirming articulation; zero articulation of identity-contradicting states; vocabulary restricted to power/strength/will; cannot find words for vulnerability
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present verbal tasks requiring SPECIFIC, VERIFIABLE self-descriptions
-- Frame: "Don't tell me a story. Tell me ONE thing you feel right now. We'll check if it's true."
-- Reward specificity and accuracy over eloquence
-
-**When Dark-Allergy detected:**
-- Present MINIMAL verbal demands (one word; forced-choice from a list)
-- Frame: "Pick one. Angry, calm, wanting, afraid. Which is closest? That's all."
-- Reward ANY verbal self-knowledge; celebrate the first word
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require CONCRETE language that PREDICTS behaviour (not abstract "processing")
-- Frame: "Simple words. What will you DO next? Not what you're 'processing' — what you'll DO."
-- Score prediction accuracy, not verbal sophistication
-
-**When Golden-Allergy detected:**
-- Introduce vocabulary for identity-threatening states (fear, uncertainty, weakness)
-- Frame: "The warrior who can NAME his fear controls it. The one who can't is controlled BY it."
-- Start with LOW-THREAT identity-contradictions; build vocabulary gradually
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Self-Tongue: a verbal mirror where the player must put their inner life into words. The game presents prompts, the player responds verbally (text input or selection), and the game evaluates accuracy against behavioural evidence. The aesthetic: Red-stage warrior speaking to a war-council — declaring intent, naming state, explaining choice. Words as weapons of self-knowledge.
@@ -164,7 +64,7 @@ The Self-Tongue: a verbal mirror where the player must put their inner life into
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **State-naming prompts:** "What do you feel?" with verification options
@@ -182,28 +82,7 @@ The Self-Tongue: a verbal mirror where the player must put their inner life into
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **State-naming accuracy:** % of named states confirmed by behavioural indicators
-- **Explanation quality:** Do articulated motivations predict future behaviour?
-- **Self-prediction verbal accuracy:** Do verbal predictions match outcomes?
-- **Pattern articulation validity:** Are described patterns confirmed by data?
-- **Vocabulary range:** How many distinct inner states can they name?
-
-### Cross-modality validation (CRITICAL)
-- Language-reflective vs. deterministic gap = key diagnostic
-- If language >> deterministic: golden-addiction (performing self-knowledge)
-- If deterministic >> language: dark-allergy (has knowledge, won't articulate)
-- If both high: genuine self-knowledge
-- If both low: early development (not yet self-knowing)
-
-### LLM rubric
-- **Very High:** Evaluates open verbal responses; assesses articulation quality; detects sophistication-without-accuracy; generates contextual prompts. Core accuracy scoring still algorithmic (prediction vs. outcome).
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Text input (short verbal responses); tap-to-select (forced-choice state labels); multiple-choice (explanation options); open response (pattern descriptions)

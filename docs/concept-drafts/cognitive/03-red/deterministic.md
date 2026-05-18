@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game presents executive-function challenges at the player's contact boundary — just beyond comfortable, requiring genuine cognitive effort. Framed as "sharpening the mind for battle" (Red-resonant framing).
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** The game offers optional hints/scaffolding on difficult trials. The player can request help or refuse it.
-- Healthy: Uses hints strategically when genuinely stuck, maintains own approach
-- Pathological: Refuses ALL help even when failing repeatedly (cognitive aggression) OR demands help on every trial (cannot think alone)
-- **Detection:** Hint acceptance/rejection ratio; performance after hint rejection (stubborn failure = pathology)
-
-### Agency Golden-Domain
-**Context:** The game presents novel challenge types without instruction. The player must figure out the rules independently.
-- Healthy: Explores novel challenges with confidence, tolerates initial failure
-- Pathological: Freezes without instruction, cannot attempt without guarantee of success
-- **Detection:** Latency on novel trials; attempt rate on unfamiliar challenge types
-
-### Communion Dark-Domain
-**Context:** Between-session leaderboards and "training partner" comparisons (NPC or async multiplayer).
-- Healthy: Observes others' strategies with interest, maintains own approach
-- Pathological: Abandons own strategy to copy top performers without understanding
-- **Detection:** Strategy consistency before/after seeing others' performance
-
-### Communion Golden-Domain
-**Context:** Collaborative challenge modes where two players (or player + NPC) must coordinate cognitive tasks.
-- Healthy: Genuine coordination — each contributes their strength
-- Pathological: Performs understanding to match partner, agrees without genuine engagement
-- **Detection:** Performance in solo vs. paired contexts; does pairing improve or mask weakness?
-
-### Eros Dark-Domain
-**Context:** The game allows the player to stay at mastered difficulty or advance. No pressure to advance.
-- Healthy: Enjoys current mastery, advances when ready (not compulsively)
-- Pathological: Cannot rest at any level — immediately demands harder, treats mastery as insufficient
-- **Detection:** Time spent at mastered levels; self-advancement rate; emotional quality of engagement at current level
-
-### Eros Golden-Domain
-**Context:** Optional "reach" challenges 1-2 levels above current stable performance.
-- Healthy: Attempts reach challenges with curiosity, accepts failure gracefully
-- Pathological: Attempts reach challenges compulsively, claims mastery before demonstrating it
-- **Detection:** Gap between self-selected difficulty and stable performance; error acknowledgment patterns
-
-### Agape Dark-Domain
-**Context:** The game periodically presents "foundation drills" — tasks below current level.
-- Healthy: Engages foundation drills with full effort and grace
-- Pathological: Dismisses them, performs poorly on purpose, expresses contempt
-- **Detection:** Performance quality on below-level tasks; engagement signals (speed, accuracy, effort)
-
-### Agape Golden-Domain
-**Context:** Free-play segments where the player can use cognitive skills in unstructured contexts (e.g., planning a fortress layout).
-- Healthy: Applies cognitive capacity to real decisions — planning transfers to action
-- Pathological: Cognitive capacity exists only in structured tasks, cannot transfer
-- **Detection:** Quality of decisions in free-play vs. structured task performance
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Strategist"
-**How it surfaces:** The game includes "snap decision" trials — tasks that must be answered in <500ms with no planning time. The compulsive strategist freezes, over-thinks, or shows extreme distress.
-- **Detection signals:** RT > 2× expected on snap trials; repeated timeout on time-pressured tasks; excessive planning on simple items
-
-### Dark-Allergy: "The Anti-Intellectual Warrior"
-**How it surfaces:** The game includes pure-cognitive trials with no action component. The allergy manifests as avoidance, rushing through without engagement, or expressed frustration.
-- **Detection signals:** Accuracy drops on pure-cognitive trials vs. action-embedded ones; skip rate; time-to-abandon
-
-### Golden-Addiction: "The Premature Abstractionist"
-**How it surfaces:** The game allows self-selection of difficulty. The bypass manifests as choosing levels far above stable performance and failing repeatedly without adjusting downward.
-- **Detection signals:** Self-selected difficulty > stable performance + 2 levels; repeated failure without downward adjustment; claims of "almost had it" without evidence
-
-### Golden-Allergy: "The Growth-Refuser"
-**How it surfaces:** The game presents optional advancement opportunities. The refusal manifests as never selecting harder material, staying at comfortable levels indefinitely.
-- **Detection signals:** 5+ sessions without attempting advancement; avoidance of "reach" challenges; withdrawal when difficulty increases
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game introduces "warrior's rest" phases — brief periods where the optimal move is to NOT think (simple reaction time, pure reflex)
-- Rewards speed-of-action over depth-of-planning on specific trials
-- Frames non-thinking as a POWER ("the warrior who acts without hesitation")
-- Gradually increases proportion of snap-decision trials
-
-**When Dark-Allergy detected:**
-- Game embeds cognitive challenges WITHIN action sequences (thinking as part of fighting, not separate)
-- Frames planning as "battle strategy" — the warrior who plans WINS more
-- Starts with very short cognitive demands (2-second planning windows) and extends gradually
-- Rewards cognitive engagement with power-resonant outcomes (bigger damage, better loot)
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game requires DEMONSTRATION of current-level mastery before unlocking harder content
-- Makes current-level excellence visually/sonically rewarding (mastery feels good)
-- Introduces "depth challenges" — same difficulty but requiring consistency over time
-- Pairs with NPC who models genuine mastery (not performance)
-
-**When Golden-Allergy detected:**
-- Game presents harder material as OPTIONAL with zero penalty for failure
-- Frames growth as adventure ("what's beyond the next gate?")
-- Introduces tiny difficulty increments (barely noticeable) to build tolerance
-- Pairs with NPC who is also growing (normalises the growth edge)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The player enters a fortress training ground. Visual: Red-stage aesthetic (saffron/brass/weapon-walls). A "War-Mind Master" NPC presents challenges as warrior training. The framing is always power-resonant: "sharpen your mind to conquer."
@@ -167,7 +63,7 @@ The player enters a fortress training ground. Visual: Red-stage aesthetic (saffr
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **n-back sequences:** Rune-symbol sets (8 distinct symbols, combinatorial sequences)
@@ -199,30 +95,7 @@ The player enters a fortress training ground. Visual: Red-stage aesthetic (saffr
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-Per `scoring.md` §2: weighted mean of task-specific scores (n-back d', Stroop interference, Go/No-Go commission rate, ToL optimality, Simon congruency effect).
-
-### Drive-health scoring
-Per `scoring.md` §3: Each drive-domain scored 0-1 based on behavioural signals observed during gameplay (hint acceptance, strategy consistency, advancement patterns, foundation engagement, transfer quality).
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Behavioural signals mapped to shadow quadrant severity. Dominant quadrant identified from signal patterns across sessions.
-
-### Integration scoring
-- Progression stage: encounter → recognition → integration → evolution
-- Measured by: shadow severity trend (declining = integrating), drive-health trend (improving = evolving), capacity transfer (appearing in free-play = embodying)
-
-### LLM rubric
-Minimal for deterministic axis — scoring is primarily algorithmic. LLM used only for:
-- Generating contextual framing text (War-Mind Master dialogue)
-- Interpreting compound patterns across sessions
-- Generating novel challenge framings to prevent habituation
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (n-back match, Go/No-Go response, Simon direction)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The world is full of symbols. Nobody asks "can you hold a rune?" — the player simply NAVIGATES, and the world reveals whether they engage symbolically or not. Runes glow on cave walls. Totems pulse. Glyphs respond to proximity. The question is: does the player SEE and ENGAGE?
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Opportunities to engage symbols independently in the open world.
-- Healthy: Engages symbols spontaneously; explores symbolic content
-- Pathological: Uses symbols only for domination; "I control this world through runes"
-- **Detection:** Quality of spontaneous symbolic engagement (exploration vs. control)
-
-### Agency Golden-Domain
-**Context:** Situations requiring symbolic initiative (hidden rune, unactivated totem).
-- Healthy: Initiates symbolic engagement without prompting
-- Pathological: Cannot engage symbols without being directed to them
-- **Detection:** Spontaneous symbolic initiative rate
-
-### Communion Dark-Domain
-**Context:** Companion's symbolic activity in the open world.
-- Healthy: Engages with companion's symbolic discoveries; shares
-- Pathological: Ignores companion's symbols; only own discoveries matter
-- **Detection:** Response to companion's symbolic offerings in free-play
-
-### Communion Golden-Domain
-**Context:** Shared symbolic spaces (ritual circles, totem groves).
-- Healthy: Engages shared symbolic spaces naturally with companion
-- Pathological: Avoids shared symbolic spaces; prefers solo exploration
-- **Detection:** Engagement rate in shared vs. solo symbolic spaces
-
-### Eros Dark-Domain
-**Context:** Familiar symbolic terrain (same runes, same paths).
-- Healthy: Maintains symbolic engagement in familiar territory
-- Pathological: Symbolic engagement fades with familiarity
-- **Detection:** Engagement quality in familiar vs. novel symbolic contexts
-
-### Eros Golden-Domain
-**Context:** Novel symbolic content (new areas, new rune-types).
-- Healthy: Engages with curiosity; explores new symbolic terrain
-- Pathological: Avoids novel symbolic content; stays in familiar areas
-- **Detection:** Engagement quality in novel symbolic contexts
-
-### Agape Dark-Domain
-**Context:** Maintaining symbolic engagement over time.
-- Healthy: Consistent symbolic engagement across sessions
-- Pathological: Symbolic engagement degrades; world becomes "just scenery"
-- **Detection:** Symbolic engagement consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether structured cognitive skills appear in free-navigation.
-- Healthy: n=1 holding, symbol-recognition, gesture-casting appear naturally
-- Pathological: Cognitive skills exist only during explicit tasks
-- **Detection:** Transfer of structured cognitive skills to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Thinker"
-**How it surfaces:** Observe symbolic engagement patterns across the session. The Magical Thinker engages EVERYTHING symbolically — over-attributes meaning, performs rituals at every totem, believes every glyph controls reality. High engagement but LOW accuracy.
-- **Detection signals:** Engages all symbolic content indiscriminately; ritual behaviour at every sacred space; attributes causation to coincidence; high symbolic engagement + low actual symbol-holding accuracy; "Everything means something!"
-
-### Dark-Allergy: "The Concrete-Bound"
-**How it surfaces:** Observe whether the player engages symbolic content AT ALL. The Concrete-Bound navigates the world physically — avoids runes, ignores totems, treats glyphs as decoration. The symbolic world is invisible to them.
-- **Detection signals:** Zero engagement with symbolic content; navigates by physical landmarks only; ignores runes/totems/glyphs; treats the magical world as non-magical; no symbolic interaction in free-play
-
-### Golden-Addiction: "The Premature Reasoner"
-**How it surfaces:** Observe the QUALITY of symbolic engagement. The Premature Reasoner tries to SYSTEMATISE the magical world — creates rules, seeks patterns, treats symbols as a code to crack rather than a world to inhabit.
-- **Detection signals:** Systematic rather than playful engagement; seeks "the rules" behind symbols; treats magical world as puzzle to solve; cannot engage in wonder; "There must be a pattern" attitude; analytical rather than imaginative
-
-### Golden-Allergy: "The Wonder-Refuser"
-**How it surfaces:** Observe symbolic APPROACH patterns. The Wonder-Refuser APPROACHES symbolic content then WITHDRAWS. Moves toward a glowing rune then turns away. Enters a sacred space then leaves quickly. The symbolic world attracts and repels.
-- **Detection signals:** Approach-withdrawal at symbolic content; enters sacred spaces then leaves; moves toward runes then away; brief engagement followed by retreat; the magical world is both attractive and threatening
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- World introduces symbols that DON'T respond to ritual (breaking magical attribution)
-- Some runes are decorative; some are functional. Player must LEARN which is which.
-- Natural consequence: indiscriminate ritual = wasted time; accurate engagement = access
-
-**When Dark-Allergy detected:**
-- World makes symbolic engagement NECESSARY for navigation (symbol-gated paths)
-- Runes that produce TANGIBLE physical results (bridge from concrete to symbolic)
-- Natural consequence: symbolic engagement = access; symbolic ignorance = stuck
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- World introduces symbols that RESIST systematisation (magical, not logical)
-- Some symbols work by FEELING not RULE (reward intuitive engagement)
-- Natural consequence: systematic approach = partial access; playful approach = full access
-
-**When Golden-Allergy detected:**
-- World introduces LOW-COMMITMENT symbolic engagement (brief, safe, rewarding)
-- Symbols that INVITE without DEMANDING (glow gently, don't flash urgently)
-- Natural consequence: brief engagement = small reward; no punishment for withdrawal
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 An open Magenta-stage world where symbols are ALIVE and RESPONSIVE. Painted caves with glowing runes. Totem circles that pulse. Dream-grounds where glyphs float. Sacred groves where the trees have faces. The world IS symbolic — the player navigates it, and their cognitive life reveals itself.
@@ -163,7 +63,7 @@ An open Magenta-stage world where symbols are ALIVE and RESPONSIVE. Painted cave
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Environmental runes:** Symbols on walls, floors, objects (varied visibility)
@@ -181,21 +81,7 @@ An open Magenta-stage world where symbols are ALIVE and RESPONSIVE. Painted cave
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring (ECOLOGICAL)
-- **Symbol-noticing rate:** How many symbols does the player engage spontaneously?
-- **Symbol-use accuracy:** When they engage, do they use symbols correctly?
-- **Symbol-memory:** Do they remember symbol locations and meanings across sessions?
-- **Exploration quality:** Do they explore symbolic content with curiosity?
-- **Transfer evidence:** Do structured cognitive skills appear in free-navigation?
-
-### LLM rubric
-- **High:** World generation, ecological cognitive assessment, symbol-response dynamics. Evaluates spontaneous symbolic behaviour patterns without explicit tasks.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (interact with symbols); trace (activate runes); hold (engage totems); navigate (explore)

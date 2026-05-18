@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Your companion has a wish too. Can you wish together? Can you wait together? Can you step together?" The contact boundary is: "Can your will join with another's?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Leading shared wishing (setting the shared wish).
-- Healthy: Proposes shared wish that includes companion's desire
-- Pathological: Demands companion adopt their wish; "We wish for MY thing"
-- **Detection:** Whether shared wish includes both or only player's desire
-
-### Agency Golden-Domain
-**Context:** Initiating shared wishing.
-- Healthy: Invites companion into shared wishing; starts the process
-- Pathological: Cannot initiate shared wishing; waits for companion to start
-- **Detection:** Initiation rate of shared wish-activity
-
-### Communion Dark-Domain
-**Context:** Following companion's wish (joining their intention).
-- Healthy: Joins companion's wish while maintaining own desire
-- Pathological: Loses own wish entirely when joining; total fusion
-- **Detection:** Whether own wish survives joining companion's
-
-### Communion Golden-Domain
-**Context:** Mutual wish-sharing (exchanging wishes, finding common ground).
-- Healthy: Shares own wish AND receives companion's; finds overlap
-- Pathological: Cannot share wishes; wishes are private/unshareable
-- **Detection:** Quality of mutual wish-exchange
-
-### Eros Dark-Domain
-**Context:** Familiar shared wishing (same companion, same shared wish).
-- Healthy: Maintains engagement in familiar shared wishing
-- Pathological: Shared wishing becomes rote; loses genuine quality
-- **Detection:** Engagement quality on familiar shared wishes
-
-### Eros Golden-Domain
-**Context:** Novel shared wishing (new companion, new shared wish).
-- Healthy: Engages with curiosity in novel shared wishing
-- Pathological: Cannot form shared wishes with new companions
-- **Detection:** Shared wish-formation quality in novel contexts
-
-### Agape Dark-Domain
-**Context:** Maintaining shared wishing over time.
-- Healthy: Shared wish-engagement remains consistent
-- Pathological: Shared wishing degrades; companion forgotten
-- **Detection:** Shared wish-quality across sessions
-
-### Agape Golden-Domain
-**Context:** Whether shared wishing appears spontaneously.
-- Healthy: Forms shared wishes naturally in free-play
-- Pathological: Shared wishing exists only in structured tasks
-- **Detection:** Spontaneous shared wish-formation
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Demander"
-**How it surfaces:** DEMANDS companion serve their wish. "You wish for MY thing too!" Shared wishing becomes wish-imposition. The companion exists to amplify the player's demand.
-- **Detection signals:** Imposes own wish on companion; distress when companion has different wish; "We BOTH want MY thing"; shared = mine; companion as wish-amplifier
-
-### Dark-Allergy: "The Wish-Abandoner"
-**How it surfaces:** ADOPTS companion's wish entirely. Has no wish of their own to share. "I want what they want." Shared wishing is impossible because there's only one wish (the companion's).
-- **Detection signals:** Echoes companion's wish; no independent wish to contribute; "Whatever they want"; cannot name own wish in shared context; fusion without contribution
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** IMPOSES DISCIPLINE on the shared wishing. "We should work together. Here's the plan." Turns shared wishing into shared duty. No magic, no play — just coordinated effort.
-- **Detection signals:** Duty-language in shared context; "We should"; imposes structure on shared wishing; removes magic from shared intention; turns play into work
-
-### Golden-Allergy: "The Effort-Refuser"
-**How it surfaces:** WITHDRAWS from shared effort. Can wish alone but won't wish WITH. "I'll wish by myself." Shared wishing requires too much — joining is effort, and effort is refused.
-- **Detection signals:** Withdrawal from shared activity; "I'll do it alone"; cannot join shared wishing; shared effort = too much; prefers solo wishing
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Require LISTENING to companion's wish before sharing own
-- Reward shared wishes that INCLUDE companion's desire
-- Frame: "What does THEY want? Listen. Now: can your wishes be friends?"
-- Build: inclusive shared wishing (not wish-imposition)
-
-**When Dark-Allergy detected:**
-- Require OWN wish before joining companion's: "What do YOU want? Say it first."
-- Make shared wishing require BOTH contributions
-- Frame: "Your wish matters too. Say yours. Then we put them together."
-- Reward independent wish-contribution to shared intention
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Remove duty-framing; require PLAYFUL shared wishing
-- Reward magic and play in shared intention; penalise rigid structure
-- Frame: "Not a plan. A WISH. Together. What do we DREAM? Play with it."
-- Build: playful shared intention (not dutiful coordination)
-
-**When Golden-Allergy detected:**
-- Make shared wishing LOW-EFFORT: "Just wish near each other. Same direction."
-- Reduce joining-demand: parallel wishing before coordinated wishing
-- Frame: "You don't have to merge. Just wish in the same direction. Side by side."
-- Build: parallel shared intention (proximity before fusion)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Wish-Together: a shared wishing space where player and companion form collective intention. The aesthetic: Magenta-stage wishing-circle — two wish-lights that can merge, dance together, or remain separate. When wishes align, they glow brighter together.
@@ -170,7 +66,7 @@ The Wish-Together: a shared wishing space where player and companion form collec
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Shared wish prompts:** Contexts for finding wish-overlap
@@ -188,21 +84,7 @@ The Wish-Together: a shared wishing space where player and companion form collec
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Shared wish-formation:** Can they form a wish that includes both desires?
-- **Own-wish maintenance:** Do they maintain own wish while sharing?
-- **Shared patience:** Can they wait together?
-- **Coordinated action:** Can they step together?
-- **Altruistic wishing:** Can they wish FOR the companion?
-
-### LLM rubric
-- **Medium:** Companion behaviour, shared wish evaluation, wish-overlap detection. Core coordination timing algorithmic.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (wish choice); verbal (wish-naming); timed tap (coordinated action); hold (shared patience)

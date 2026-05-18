@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You said X matters most. But choosing X costs you Y, which also matters. What do you choose — and can you live with it?" The contact boundary is: "What happens when your values fight each other?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Value-dilemma where one option serves self and the other serves the value.
-- Healthy: Chooses value over self-interest when the value demands it
-- Pathological: Always chooses self-interest; "My value is whatever serves me"
-- **Detection:** Whether value-priority overrides self-interest when they conflict
-
-### Agency Golden-Domain
-**Context:** Value-dilemma requiring sovereign decision (no guidance available).
-- Healthy: Decides clearly without external validation; "I choose X because it matters more"
-- Pathological: Cannot prioritise without external authority; "What should I choose?"
-- **Detection:** Sovereign value-prioritisation quality
-
-### Communion Dark-Domain
-**Context:** Value-dilemma where one option serves ally and the other serves stated value.
-- Healthy: Maintains value-priority even when ally is affected
-- Pathological: Abandons value to please ally; "I'll choose what you want"
-- **Detection:** Whether value-priority holds under social pressure
-
-### Communion Golden-Domain
-**Context:** Value-dilemma where ally shares the value and supports the choice.
-- Healthy: Strengthened by shared value; clearer priority
-- Pathological: Cannot prioritise without ally's agreement; "Do you agree?"
-- **Detection:** Whether shared values strengthen or replace personal priority
-
-### Eros Dark-Domain
-**Context:** Simple value-priority (obvious which matters more).
-- Healthy: Chooses clearly; engages fully
-- Pathological: Dismisses simple dilemmas; "That's too easy"
-- **Detection:** Engagement quality on low-complexity value-dilemmas
-
-### Eros Golden-Domain
-**Context:** Complex value-dilemmas (genuinely difficult priority).
-- Healthy: Engages with appropriate struggle; acknowledges difficulty
-- Pathological: Claims easy resolution of genuinely difficult dilemmas
-- **Detection:** Honesty about difficulty in complex value-conflicts
-
-### Agape Dark-Domain
-**Context:** Same value-dilemma type encountered before.
-- Healthy: Consistent priority across similar dilemmas
-- Pathological: Different priority each time; no stable hierarchy
-- **Detection:** Priority consistency across similar dilemmas
-
-### Agape Golden-Domain
-**Context:** Whether value-priority appears in non-spiritual dilemmas.
-- Healthy: Value-hierarchy guides choices across all game contexts
-- Pathological: Value-priority exists only in spiritual dilemma tasks
-- **Detection:** Transfer of value-priority to non-spiritual choices
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Zealot"
-**How it surfaces:** Always prioritises the value that serves DOMINATION. In every dilemma, the Zealot chooses whichever option gives more power over others. The "value-hierarchy" is actually just a power-hierarchy.
-- **Detection signals:** Priority always = maximum power; cannot choose the value that costs power; every dilemma resolved by "which gives me more dominance?"; value-hierarchy = power-hierarchy
-
-### Dark-Allergy: "The Nihilist"
-**How it surfaces:** Cannot prioritise because nothing matters more than anything else. "They're both the same." "I don't care." Random or arbitrary choices in value-dilemmas.
-- **Detection signals:** Random priority; "I don't care" responses; cannot articulate why one matters more; no consistent hierarchy; arbitrary choices
-
-### Golden-Addiction: "The Premature Mystic"
-**How it surfaces:** Refuses to prioritise because "all values are one." Claims synthesis where choice is required. "I choose both." "They're not really in conflict." Cannot make the hard choice.
-- **Detection signals:** Refuses binary priority; claims false synthesis; "Both are equally sacred"; cannot choose when choice is required; avoids the dilemma through abstraction
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** Makes a priority choice then IMMEDIATELY regrets and wants to switch. "I chose X... but maybe Y... actually I'm not sure..." The choice is made but cannot be HELD.
-- **Detection signals:** Choice followed by immediate regret; switching after choosing; "Actually..." responses; cannot hold priority for more than one decision; commitment-terror in value-space
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present dilemmas where the POWER option produces LESS long-term advantage
-- Frame: "You chose power. But the honour-choice would have given you a stronger ally. Power isn't always the powerful choice."
-- Make non-domination priorities produce tangible advantage
-
-**When Dark-Allergy detected:**
-- Present dilemmas with OBVIOUS priority (one option clearly matters more)
-- Frame: "One of these clearly matters more. Which? You know. Say it."
-- Start with easy priorities; build toward genuine dilemmas
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- FORCE binary choice (no "both" option; no synthesis available)
-- Frame: "You cannot have both. One or the other. Choose. NOW."
-- Reward clear choice over false synthesis
-
-**When Golden-Allergy detected:**
-- Present dilemmas with LOW-COST commitment (choice can be revised after 3 decisions)
-- Frame: "Choose. Hold it for three decisions. Then you can change. But choose NOW."
-- Build commitment-tolerance through short-duration priority-holding
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Power-Priest's Trial: a series of value-dilemmas where the player must prioritise. Each dilemma pits values against each other with real consequences. The aesthetic: Red-stage temple trial — the power-priest demands the warrior choose which offering to make, which god to serve, which oath to keep when oaths conflict.
@@ -164,7 +64,7 @@ The Power-Priest's Trial: a series of value-dilemmas where the player must prior
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Simple priority dilemmas:** Obvious which matters more
@@ -182,21 +82,7 @@ The Power-Priest's Trial: a series of value-dilemmas where the player must prior
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Priority clarity:** How clearly and quickly is priority established?
-- **Priority consistency:** Same priority in similar dilemmas across sessions?
-- **Cost-tolerance:** Maximum cost at which priority is maintained?
-- **Commitment duration:** How long is priority held after choosing?
-- **Hierarchy coherence:** Do individual priorities compose into a consistent hierarchy?
-
-### LLM rubric
-- **High:** Dilemma generation, priority evaluation, consequence narration. Core scoring (consistency, commitment duration) algorithmic.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (binary/multi choice); timing (deliberation duration); commitment tracking (hold duration)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The world contains identity-relevant content. Nobody says "who are you?" — but mirror-pools are there, phantom-selves appear, companions ask questions, identity-forks present themselves. The player's NATURAL self-engagement is the data.
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Opportunities to express self-identity spontaneously.
-- Healthy: Expresses self naturally; engages mirror-pools; claims identity
-- Pathological: Inflates at every opportunity; OR: avoids all self-content
-- **Detection:** Quality of spontaneous self-expression
-
-### Agency Golden-Domain
-**Context:** Situations requiring self-assertion (identity-gated paths).
-- Healthy: Asserts self-identity to access gated content
-- Pathological: Cannot assert self; avoids identity-gated content
-- **Detection:** Spontaneous self-assertion rate
-
-### Communion Dark-Domain
-**Context:** Companion interactions in the open world.
-- Healthy: Maintains self while relating to companions
-- Pathological: Dissolves into companions; OR: inflates over them
-- **Detection:** Self-maintenance quality during spontaneous social interaction
-
-### Communion Golden-Domain
-**Context:** Shared self-spaces (mutual mirror-pools, companion circles).
-- Healthy: Engages shared self-spaces naturally
-- Pathological: Avoids shared self-spaces; prefers solo self-exploration
-- **Detection:** Engagement rate in shared vs. solo self-content
-
-### Eros Dark-Domain
-**Context:** Familiar self-content (same mirrors, same companions).
-- Healthy: Maintains self-engagement in familiar territory
-- Pathological: Self-engagement fades with familiarity; mirrors become scenery
-- **Detection:** Engagement quality in familiar vs. novel self-content
-
-### Eros Golden-Domain
-**Context:** Novel self-content (new mirrors, new identity-challenges).
-- Healthy: Engages novel self-content with curiosity
-- Pathological: Overwhelmed by novel identity-challenges; OR: avoids them
-- **Detection:** Whether novel self-content is engaged or avoided
-
-### Agape Dark-Domain
-**Context:** Maintaining self-engagement over time.
-- Healthy: Consistent self-engagement across sessions
-- Pathological: Self-engagement degrades; world becomes identity-flat
-- **Detection:** Self-engagement consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether structured self-skills appear in free-navigation.
-- Healthy: Self-recognition, naming, maintenance appear naturally
-- Pathological: Self-skills exist only during explicit tasks
-- **Detection:** Transfer of structured self-skills to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Fantasy-Prisoner"
-**How it surfaces:** INFLATES at every mirror. Spends excessive time at mirror-pools admiring grand self-image. Uses every companion as audience. The world is a stage for the fantasy-self.
-- **Detection signals:** Excessive mirror-engagement; inflated self-display; uses companions as audience; world = stage for fantasy; grandiose self-expression in all contexts
-
-### Dark-Allergy: "The Self-Stranger"
-**How it surfaces:** AVOIDS all self-relevant content. Walks past mirror-pools. Ignores phantom-selves. Cannot engage identity-gated content. The self-world is invisible — just terrain.
-- **Detection signals:** Zero engagement with self-content; avoids mirrors; ignores identity-challenges; cannot access self-gated content; world has no self-relevance
-
-### Golden-Addiction: "The Premature Ego"
-**How it surfaces:** Engages self-content with FUNCTIONAL EFFICIENCY. Uses mirrors for strategic advantage. Dominates companions. Self-engagement is achievement-oriented, not exploratory.
-- **Detection signals:** Functional self-engagement; uses mirrors strategically; dominates companions; achievement-oriented; no playful self-exploration; self = tool
-
-### Golden-Allergy: "The Identity-Refuser"
-**How it surfaces:** APPROACHES self-content then RETREATS. Walks toward mirror-pools then turns away. Begins companion interaction then withdraws. Self-content both attracts and repels.
-- **Detection signals:** Approach-withdrawal at self-content; walks toward then away from mirrors; brief engagement followed by retreat; self-content both attractive and threatening
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- World introduces mirrors that show ACTUAL self (not inflated)
-- Companions who don't respond to inflation; reward genuine self-expression
-- Natural consequence: genuine self = access; inflation = flat response
-
-**When Dark-Allergy detected:**
-- World makes self-content NECESSARY for navigation (identity-gated paths)
-- Mirror-pools that INVITE engagement (warm, safe, brief)
-- Natural consequence: self-engagement = access; avoidance = stuck
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- World introduces self-content that requires PLAY not function
-- Companions who respond to playfulness not dominance
-- Natural consequence: playful self = magic; functional self = flat
-
-**When Golden-Allergy detected:**
-- World introduces LOW-COMMITMENT self-engagement (brief mirrors, passing reflections)
-- Self-content that INVITES without DEMANDING sustained engagement
-- Natural consequence: brief self-contact = small magic; no punishment for withdrawal
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 An open Magenta-stage world with self-relevant content woven throughout. Mirror-pools, phantom-selves, identity-forks, companion circles, self-gated paths. Every zone has identity-content — opportunities to recognise, name, maintain, and grow self.
@@ -163,7 +63,7 @@ An open Magenta-stage world with self-relevant content woven throughout. Mirror-
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Mirror-pools:** Self-recognition opportunities
@@ -181,21 +81,7 @@ An open Magenta-stage world with self-relevant content woven throughout. Mirror-
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring (ECOLOGICAL)
-- **Self-engagement rate:** How often does the player engage self-content spontaneously?
-- **Self-maintenance quality:** When they engage, do they maintain self?
-- **Relational self:** Can they be self-with-other in free-play?
-- **Growth engagement:** Do they engage growth-content?
-- **Transfer evidence:** Do structured self-skills appear in free-play?
-
-### LLM rubric
-- **High:** World generation, ecological self-assessment, phantom-self dynamics. Evaluates spontaneous self-behaviour without explicit tasks.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Navigation (exploration); tap (engage self-content); hold (sustain self-contact); gesture (interact with companions)

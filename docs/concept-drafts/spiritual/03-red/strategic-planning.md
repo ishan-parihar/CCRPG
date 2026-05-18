@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You said X matters most. Plan 3 steps that serve X. Every step must honour your value." The contact boundary is: "Can your value ORGANISE your planning?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Planning where value-coherence requires sacrifice of efficiency.
-- Healthy: Accepts less-efficient plan that maintains value-coherence
-- Pathological: Abandons value-coherence for efficiency; "Winning matters more than how I win"
-- **Detection:** Whether value-coherence is maintained when it costs efficiency
-
-### Agency Golden-Domain
-**Context:** Self-directed value-coherent planning.
-- Healthy: Generates value-coherent plans independently
-- Pathological: Cannot plan value-coherently without template
-- **Detection:** Quality of self-generated value-coherent plans
-
-### Communion Dark-Domain
-**Context:** Joint planning where ally's approach conflicts with player's value.
-- Healthy: Maintains value-coherence in joint plans; negotiates
-- Pathological: Abandons value to match ally's plan; "Whatever works for the team"
-- **Detection:** Whether value-coherence survives joint planning
-
-### Communion Golden-Domain
-**Context:** Planning that serves shared values with ally.
-- Healthy: Shared values strengthen plan coherence
-- Pathological: Cannot plan value-coherently without ally's validation
-- **Detection:** Whether shared values enhance or replace personal value-planning
-
-### Eros Dark-Domain
-**Context:** Simple value-coherent plans (2 steps).
-- Healthy: Engages fully; maintains value-coherence on simple plans
-- Pathological: Dismisses simple value-planning; "Too easy"
-- **Detection:** Engagement quality on below-level value-coherent planning
-
-### Eros Golden-Domain
-**Context:** Complex value-coherent plans (novel situations).
-- Healthy: Attempts with appropriate uncertainty; maintains value-coherence
-- Pathological: Claims effortless value-coherent planning in novel contexts
-- **Detection:** Genuine engagement vs. performed mastery in novel value-planning
-
-### Agape Dark-Domain
-**Context:** Maintaining value-coherent planning over time.
-- Healthy: Plans consistently serve stated value across sessions
-- Pathological: Value-coherent planning degrades; plans become value-free
-- **Detection:** Value-coherent planning consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether value-coherent planning appears in other modalities.
-- Healthy: Plans in other contexts naturally serve stated value
-- Pathological: Value-coherent planning exists only in spiritual tasks
-- **Detection:** Transfer of value-coherent planning to non-spiritual contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Zealot"
-**How it surfaces:** All plans are CRUSADE PLANS — every step serves domination through the sacred. Plans are value-coherent but AGGRESSIVE. The value organises planning, but only for conquest.
-- **Detection signals:** All plans terminate in domination; value-coherence = crusade-coherence; cannot plan gentle value-service; every step is an attack in service of the sacred
-
-### Dark-Allergy: "The Nihilist"
-**How it surfaces:** Plans contain NO value-coherence. Steps are ordered by efficiency, reward, or randomness — never by value-alignment. "Why would my values affect my plan?"
-- **Detection signals:** Zero correlation between stated value and plan structure; plans are value-free; cannot explain how plan serves value; planning and values are disconnected
-
-### Golden-Addiction: "The Premature Mystic"
-**How it surfaces:** OVER-ELABORATE value-coherent plans that never execute. "First I'll align my intention, then I'll consecrate the approach, then I'll..." — plans so spiritually loaded they collapse under their own weight.
-- **Detection signals:** Plans too elaborate to execute; excessive value-language in planning; planning time >> execution time; beautiful value-coherent plans that fail in practice
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** Starts value-coherent plans then ABANDONS value-coherence mid-plan. "I was planning for honour but... actually let me just win." Commitment to value-coherent planning collapses under pressure.
-- **Detection signals:** Value-coherent start → value-free finish; mid-plan value-abandonment; "Actually, forget the value" responses; cannot sustain value-coherent planning under pressure
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present planning tasks where value-coherence requires RESTRAINT (plan to protect, not conquer)
-- Frame: "Your value demands you PROTECT this time. Plan three steps of protection. No attacks."
-- Reward non-aggressive value-coherent planning
-
-**When Dark-Allergy detected:**
-- Present planning tasks with EXPLICIT value-alignment cues ("Plan 2 steps that serve [your value]")
-- Frame: "You said power matters. Does step 1 serve power? Does step 2? Make them serve."
-- Reward ANY value-coherent planning; celebrate the first value-aligned step
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Impose SIMPLICITY constraints (maximum 3 steps; no spiritual language in plan)
-- Frame: "Three steps. Each serves your value. No ceremony. Just action."
-- Reward executed simplicity over elaborate non-execution
-
-**When Golden-Allergy detected:**
-- Present SHORT value-coherent planning windows (maintain coherence for 2 steps only)
-- Frame: "Two steps. Keep your value alive for two steps. That's all."
-- Build value-coherent planning endurance gradually
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Value-Strategist: a campaign-planning game where every step must serve the player's stated value. The player declares a value, then plans a sequence of actions where each step honours that value. The aesthetic: Red-stage war-council where the warrior plans a campaign in service of their sacred cause.
@@ -164,7 +64,7 @@ The Value-Strategist: a campaign-planning game where every step must serve the p
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Simple value-alignment tasks:** 2-step plans serving stated value
@@ -182,21 +82,7 @@ The Value-Strategist: a campaign-planning game where every step must serve the p
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Value-coherence per step:** % of plan steps that serve stated value
-- **Plan effectiveness:** Does the plan achieve its goal?
-- **Coherence under pressure:** Does value-coherence survive obstacles?
-- **Adaptation quality:** Can plans revise while maintaining value-coherence?
-- **Sustained coherence:** Value-coherence maintained across full plan duration
-
-### LLM rubric
-- **Medium:** Campaign generation, value-coherence evaluation, obstacle construction. Core scoring (step-by-step value-alignment) algorithmic.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Drag-and-drop (plan construction); tap-to-select (step selection); sequence input (plan ordering)

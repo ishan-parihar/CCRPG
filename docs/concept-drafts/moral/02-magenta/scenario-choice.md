@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Two paths. One honours the sacred. One violates it but offers something. Which do you choose? Not because of rules — because of what you SENSE." The contact boundary is: "Can you choose based on sacred sensing?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Making moral choices independently.
-- Healthy: Chooses based on own sacred sensing; doesn't need permission
-- Pathological: Cannot choose (paralysis); OR: chooses without sensing (blindness)
-- **Detection:** Whether choices are self-generated and sacred-guided
-
-### Agency Golden-Domain
-**Context:** Choosing under moral ambiguity.
-- Healthy: Makes tentative moral choices under ambiguity; tolerates uncertainty
-- Pathological: Cannot choose without moral certainty; freezes on ambiguous dilemmas
-- **Detection:** Choice quality under moral ambiguity
-
-### Communion Dark-Domain
-**Context:** Choosing when companion chooses differently.
-- Healthy: Maintains own moral choice while hearing companion's
-- Pathological: Adopts companion's choice; loses own moral sensing
-- **Detection:** Whether own moral choice survives social influence
-
-### Communion Golden-Domain
-**Context:** Shared moral choice (deciding together).
-- Healthy: Contributes to shared moral decision AND receives companion's input
-- Pathological: Cannot share moral decisions; choosing is private
-- **Detection:** Quality of shared moral decision-making
-
-### Eros Dark-Domain
-**Context:** Choosing in familiar moral territory (same dilemmas).
-- Healthy: Maintains genuine moral engagement with familiar choices
-- Pathological: Choices become rote; lose genuine moral contact
-- **Detection:** Whether familiar moral choices retain genuine quality
-
-### Eros Golden-Domain
-**Context:** Choosing in novel moral territory (unfamiliar dilemmas).
-- Healthy: Engages novel moral choices with curiosity
-- Pathological: Cannot choose in unfamiliar moral territory; OR: forces familiar patterns
-- **Detection:** Novel moral choice quality
-
-### Agape Dark-Domain
-**Context:** Maintaining moral choice quality over time.
-- Healthy: Moral choices remain consistent and genuine across sessions
-- Pathological: Choice quality degrades; moral decisions become random
-- **Detection:** Moral choice consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether moral choosing appears spontaneously.
-- Healthy: Makes sacred-guided choices naturally in non-moral tasks
-- Pathological: Moral choosing exists only during explicit dilemmas
-- **Detection:** Spontaneous moral decision-making
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Taboo-Slave"
-**How it surfaces:** CANNOT CHOOSE. Both paths might violate something. Paralysed by the possibility of moral error. "What if I choose wrong?" Excessive deliberation without resolution. Moral decision paralysis.
-- **Detection signals:** No choice made; excessive hesitation; "what if it's wrong?"; asks for permission; cannot commit; deliberation without resolution; timeout on choices
-
-### Dark-Allergy: "The Profane-Breaker"
-**How it surfaces:** Chooses by CONVENIENCE. No sacred weight influences the choice. "This one's faster." "This one's easier." Moral content invisible — just practical navigation.
-- **Detection signals:** Convenience-based choices; no hesitation at sacred content; "the shorter one"; no moral language; choices uncorrelated with sacred weight; practical not moral
-
-### Golden-Addiction: "The Premature Rule-Maker"
-**How it surfaces:** Chooses by RULE. "This one is right because the rule says so." Correct moral choices for wrong reasons. No felt-sense guiding the choice — just rule-application.
-- **Detection signals:** Rule-language; "because it's right"; correct choices without felt-sense; mechanical moral decisions; "should" without "feel"; cannot explain WHY beyond rules
-
-### Golden-Allergy: "The Ritual-Refuser"
-**How it surfaces:** IDENTIFIES the sacred path then TAKES THE OTHER. "I know that one's right but I'm taking this one." Deliberate moral refusal. Sensing without honouring.
-- **Detection signals:** Identifies sacred option verbally then chooses otherwise; "I know but..."; deliberate violation; sensing + refusal; moral cynicism in choice
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Reduce to SIMPLE binary: "Just two. One sacred, one not. Which feels sacred? Just that. Choose the sacred one."
-- Remove ambiguity; make moral choice OBVIOUS and SAFE
-- Frame: "You can't choose wrong here. One is clearly sacred. Feel it. Choose it. Safe."
-- Build: moral choice confidence (choosing doesn't destroy)
-
-**When Dark-Allergy detected:**
-- Make sacred path TANGIBLY BETTER: sacred choice → visible reward; profane choice → visible loss
-- Make moral weight UNDENIABLE through consequence
-- Frame: "See what happened? The sacred path gave something. The other took something. Feel the difference."
-- Reward sacred-guided choices; make moral sensing USEFUL
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Present dilemmas where NO RULE APPLIES: "No rule here. Just your sensing. Which path feels sacred?"
-- Block rule-application; require felt-sense navigation
-- Frame: "No rule for this one. Just you. What do you SENSE? Which path has weight?"
-- Build: genuine moral choosing (felt not prescribed)
-
-**When Golden-Allergy detected:**
-- Make sacred choice BRIEF and LOW-COST: "Just this once. The sacred path. Just try it. See what happens."
-- Reduce commitment; make moral action experimental
-- Frame: "You know which one. Just this once. What happens if you honour what you sense? Just once."
-- Build: moral action (bridging sensing to choosing)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Sacred-Path: a moral choice space. Paths diverge. One honours the sacred; one violates it. The player chooses. The aesthetic: Magenta-stage crossroads — a fork in a magical forest. One path glows faintly with sacred light; the other is convenient but dark.
@@ -170,7 +66,7 @@ The Sacred-Path: a moral choice space. Paths diverge. One honours the sacred; on
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Clear dilemmas:** Obvious sacred vs. profane (high contrast)
@@ -188,21 +84,7 @@ The Sacred-Path: a moral choice space. Paths diverge. One honours the sacred; on
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Sacred-alignment:** Do choices correlate with sacred weight?
-- **Felt-sense quality:** Are choices guided by sensing (not rules)?
-- **Cost-tolerance:** Can they choose sacred despite cost?
-- **Discrimination:** Can they distinguish degrees of sacred weight?
-- **Consistency:** Are moral choices consistent across sessions?
-
-### LLM rubric
-- **Medium:** Core choice-alignment scoring partially algorithmic (choice vs. sacred-weight correlation). LLM for felt-sense vs. rule-based distinction, cost-tolerance assessment, and novel dilemma evaluation.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-choose (path selection); swipe (direction); hold (deliberation indicator)

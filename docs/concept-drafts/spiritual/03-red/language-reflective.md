@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "What matters most to you? Why? More than what? How do you know?" The contact boundary is: "Can you put your sacred into words?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Articulating own values without external validation.
-- Healthy: "I value X because it makes me strong" — clear, honest, sovereign
-- Pathological: "I value X because it makes me BETTER THAN YOU" — value as weapon
-- **Detection:** Whether verbal value-articulation serves meaning or domination
-
-### Agency Golden-Domain
-**Context:** Generating value-language without prompting.
-- Healthy: Spontaneously articulates values when relevant
-- Pathological: Cannot articulate values without structured prompts
-- **Detection:** Spontaneous vs. prompted value-articulation
-
-### Communion Dark-Domain
-**Context:** Sharing values with others (explaining to an NPC).
-- Healthy: Can describe values to others; adjusts for audience
-- Pathological: Over-shares; preaches; "Let me tell you what REALLY matters"
-- **Detection:** Appropriateness of value-disclosure in social contexts
-
-### Communion Golden-Domain
-**Context:** Receiving others' value-articulations and integrating.
-- Healthy: "You value Y. I value X. Both are real."
-- Pathological: Cannot hear others' values without attacking or dismissing
-- **Detection:** Whether others' value-articulations are received without aggression
-
-### Eros Dark-Domain
-**Context:** Simple value-naming (state one value).
-- Healthy: Engages fully; names concrete value
-- Pathological: "That's too simple. Let me explain my entire philosophy..."
-- **Detection:** Engagement quality on simple value-naming tasks
-
-### Eros Golden-Domain
-**Context:** Articulating values at the edge (why does THIS matter more than THAT?).
-- Healthy: Attempts with appropriate uncertainty; "I think X matters more because..."
-- Pathological: Claims absolute certainty about value-hierarchy; no uncertainty
-- **Detection:** Appropriate uncertainty in value-priority articulation
-
-### Agape Dark-Domain
-**Context:** Maintaining verbal value-consistency over time.
-- Healthy: Same values articulated consistently across sessions
-- Pathological: Different values articulated each session; no verbal consistency
-- **Detection:** Verbal value-consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether value-articulation appears in other modalities.
-- Healthy: Values referenced naturally in non-spiritual contexts
-- Pathological: Value-language exists only in spiritual tasks
-- **Detection:** Spontaneous value-reference in non-spiritual contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Zealot"
-**How it surfaces:** Value-articulation is AGGRESSIVE and ABSOLUTE. "X is the ONLY thing that matters and anyone who disagrees is WRONG." The verbal dimension reveals that values serve domination, not meaning.
-- **Detection signals:** Aggressive value-declarations; cannot articulate without attacking alternatives; absolute certainty; value-language is weapon-language
-
-### Dark-Allergy: "The Nihilist"
-**How it surfaces:** Cannot articulate ANY value. "Nothing matters." "I don't have values." "This is pointless." The verbal dimension reveals spiritual emptiness.
-- **Detection signals:** Cannot name a value; dismisses value-articulation tasks; "Nothing" or "I don't know" to all value-questions; no value-language available
-
-### Golden-Addiction: "The Premature Mystic"
-**How it surfaces:** SOPHISTICATED value-language that doesn't match behaviour. "I value the interconnectedness of all beings" — but deterministic shows zero value-coherence. Beautiful words, empty practice.
-- **Detection signals:** High verbal sophistication + low behavioural coherence; abstract values that can't be operationalised; language-reflective >> deterministic gap; sounds enlightened but acts randomly
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** CAN articulate values clearly but immediately QUALIFIES them. "I value honour... but not always... it depends... I might change my mind." The verbal dimension reveals commitment-terror.
-- **Detection signals:** Clear value-articulation followed by immediate qualification; "but," "maybe," "sometimes" after every value-statement; can name but won't commit verbally
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present value-articulation tasks requiring EXPLANATION without aggression
-- Frame: "Tell me WHY it matters. Not why others are wrong. Why it matters TO YOU."
-- Reward explanatory value-language over aggressive value-language
-
-**When Dark-Allergy detected:**
-- Present MINIMAL value-articulation ("One word. What matters? Just one.")
-- Frame: "Not a philosophy. One word. Strength? Victory? Freedom? Honour? Pick one."
-- Reward ANY value-articulation; celebrate the first word
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require CONCRETE, ACTIONABLE value-articulation ("What will you DO differently because of this value?")
-- Frame: "Don't tell me what you believe. Tell me what you'll DO. One action."
-- Score action-prediction from value-articulation, not sophistication
-
-**When Golden-Allergy detected:**
-- Present value-articulation tasks with COMMITMENT FRAMING ("Say it without 'but'")
-- Frame: "No qualifiers. 'I value X.' Period. Say it clean. You can always change later."
-- Reward unqualified value-statements; build commitment-tolerance through language
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Value-Tongue: a verbal mirror for spiritual intelligence. The player articulates their values and the game evaluates clarity, consistency, and accuracy (cross-validated against behaviour). The aesthetic: Red-stage oath-speaking — the warrior declaring before the war-band what they fight for.
@@ -164,7 +64,7 @@ The Value-Tongue: a verbal mirror for spiritual intelligence. The player articul
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Value-naming prompts:** "What matters most?" with verification
@@ -182,28 +82,7 @@ The Value-Tongue: a verbal mirror for spiritual intelligence. The player articul
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Value-naming clarity:** Can they name a concrete value?
-- **Explanation quality:** Can they articulate WHY it matters?
-- **Priority consistency:** Same priority articulated across contexts?
-- **Teaching effectiveness:** Can others understand their values from their explanation?
-- **Verbal-behavioural alignment:** Do articulated values match demonstrated behaviour?
-
-### Cross-modality validation (CRITICAL)
-- Language-reflective vs. deterministic gap = key diagnostic
-- If language >> deterministic: golden-addiction (performing spirituality)
-- If deterministic >> language: dark-allergy (has values, won't articulate)
-- If both high: genuine spiritual capacity
-- If both low: early development
-
-### LLM rubric
-- **Very High:** Evaluates verbal responses; assesses articulation quality; detects sophistication-without-coherence; generates adaptive prompts; evaluates teaching effectiveness.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Text input (value-naming, explanations); tap-to-select (forced-choice values); multiple-choice (priority selection)

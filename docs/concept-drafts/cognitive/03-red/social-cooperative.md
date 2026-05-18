@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game presents problems that CANNOT be solved alone — they require coordinating with others. The contact boundary is: "Can you model another mind well enough to coordinate action?" At Red, this is egocentric modelling: "What do THEY want? How can I use that?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Challenges where the player can either coordinate with allies OR attempt solo (solo is harder but possible).
-- Healthy: Coordinates when it's optimal, goes solo when genuinely better
-- Pathological: ALWAYS goes solo; refuses to coordinate; "I don't need them"; treats coordination as weakness
-- **Detection:** Solo attempt rate on coordination-optimal problems; performance comparison solo vs. coordinated
-
-### Agency Golden-Domain
-**Context:** Situations where the player must LEAD — assign roles, make the plan, direct others.
-- Healthy: Leads with confidence; makes decisions for the group; takes responsibility
-- Pathological: Cannot lead; defers all decisions; "What do you think we should do?"; paralysis in leadership role
-- **Detection:** Decision latency in leadership role; quality of role assignments; willingness to direct
-
-### Communion Dark-Domain
-**Context:** Situations where an ally has a DIFFERENT plan. The player must integrate or negotiate.
-- Healthy: Considers ally's plan genuinely; integrates good elements; maintains own strategic thinking
-- Pathological: Abandons own plan entirely; "OK, we'll do it your way"; cognitive collapse in disagreement
-- **Detection:** Plan quality after disagreement; whether player's strategic thinking survives social pressure
-
-### Communion Golden-Domain
-**Context:** Genuine co-planning — building a strategy together where both minds contribute.
-- Healthy: Builds on ally's ideas; offers own ideas; creates something neither could alone
-- Pathological: Performs collaboration without genuine engagement; agrees without contributing; "Yeah, good idea" without adding
-- **Detection:** Contribution quality in co-planning; whether joint plans are genuinely collaborative or one-sided
-
-### Eros Dark-Domain
-**Context:** The game allows staying with familiar allies (known patterns) or engaging new ones (unknown patterns).
-- Healthy: Comfortable with current allies; engages new ones when ready
-- Pathological: Cannot rest with current allies; always seeking new/harder social challenges; treats familiar coordination as boring
-- **Detection:** Engagement quality with familiar vs. novel allies; satisfaction signals with known patterns
-
-### Eros Golden-Domain
-**Context:** Challenges that require modelling MORE complex agents (allies with hidden motivations, conflicting goals).
-- Healthy: Attempts complex social modelling with curiosity; accepts limits
-- Pathological: Claims to understand complex motivations without evidence; performs social insight they don't have
-- **Detection:** Accuracy of predictions about complex agents; gap between claimed understanding and demonstrated modelling
-
-### Agape Dark-Domain
-**Context:** Simple coordination tasks (basic turn-taking, simple role-following) after mastering harder ones.
-- Healthy: Engages simple coordination with full presence; doesn't dismiss basic teamwork
-- Pathological: Dismisses simple coordination; "This is too easy, I don't need a partner for this"
-- **Detection:** Engagement quality on simple coordination; whether basic teamwork is honoured or dismissed
-
-### Agape Golden-Domain
-**Context:** Transfer — using social-cognitive skills in unstructured game contexts (NPC interactions, alliance management).
-- Healthy: Social modelling appears in free-play; the player naturally considers others' motivations
-- Pathological: Social cognition exists only in structured challenges; free-play interactions are purely reactive
-- **Detection:** Quality of NPC interaction in free-play; whether the player models others' motivations spontaneously
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Strategist"
-**How it surfaces:** Present a simple coordination task (take turns hitting a target). The compulsive strategist over-plans the coordination — creates elaborate systems for a task that requires "you go, then I go."
-- **Detection signals:** Over-complex coordination schemes for simple tasks; excessive communication before acting; treating simple teamwork as a complex optimisation problem
-
-### Dark-Allergy: "The Anti-Intellectual Warrior"
-**How it surfaces:** Present a problem that clearly requires coordination (two switches that must be pressed simultaneously). The allergy manifests as attempting to solve it solo, failing, and trying again solo rather than coordinating.
-- **Detection signals:** Solo attempts on coordination-required problems; refusal to engage ally's capabilities; "I'll figure it out myself" on impossible-alone tasks
-
-### Golden-Addiction: "The Premature Abstractionist"
-**How it surfaces:** Present a simple social-cognitive challenge (predict what the ally will do based on visible self-interest). The bypass manifests as claiming complex psychological insight: "They're conflicted between their duty and their desire" when the actual answer is "they want the gold."
-- **Detection signals:** Over-complex social modelling for simple agents; psychological language beyond Red-stage capacity; predictions that are sophisticated but wrong
-
-### Golden-Allergy: "The Growth-Refuser"
-**How it surfaces:** Gradually increase the complexity of agents to model (from transparent self-interest to hidden motivations). The refusal manifests as disengagement when social complexity increases.
-- **Detection signals:** Performance cliff when agent complexity increases; preference for transparent allies; avoidance of challenges requiring deeper modelling
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game introduces "just do it together" tasks — simple coordination with no planning phase
-- Rewards speed of coordination over optimality of coordination scheme
-- Frames simple teamwork as power: "The war-band that moves as one is unstoppable"
-- Shows that over-planning coordination wastes time the enemy uses
-
-**When Dark-Allergy detected:**
-- Game makes coordination NECESSARY and REWARDING (solo path is blocked, not just harder)
-- Frames allies as FORCE MULTIPLIERS: "Your blade alone cannot breach this wall. Two blades can."
-- Starts with minimal coordination (simultaneous action) and extends to sequential
-- Rewards coordination with power-resonant outcomes (bigger victories, more loot)
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game requires ACCURATE predictions (not just sophisticated-sounding ones)
-- Scoring rewards correct simple predictions over wrong complex ones
-- Pairs with transparent NPC who models straightforward social reasoning
-- Makes accurate simplicity more valuable than impressive complexity
-
-**When Golden-Allergy detected:**
-- Game introduces slightly more complex agents ONE trait at a time
-- Frames social complexity as opportunity: "This ally has a secret — discover it and gain power"
-- Provides scaffolding: "Watch what they do when offered gold vs. glory"
-- Celebrates any engagement with social complexity
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The player leads a war-band of 2-4 NPC allies. Each ally has visible traits (strong/fast/smart/sneaky) and visible motivations (gold/glory/loyalty/survival). The war-band faces challenges that require different combinations of abilities. The aesthetic: Red-stage war-camp, around a fire, planning raids.
@@ -168,7 +64,7 @@ The player leads a war-band of 2-4 NPC allies. Each ally has visible traits (str
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Coordination challenges:** Timing/sequencing tasks requiring 2+ agents
@@ -202,36 +98,7 @@ The player leads a war-band of 2-4 NPC allies. Each ally has visible traits (str
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Coordination success rate:** Can they time/sequence actions with allies?
-- **Role-assignment optimality:** Do they match traits to challenges correctly?
-- **Prediction accuracy:** Can they model what others will do?
-- **Negotiation quality:** Do they find solutions that satisfy multiple interests?
-- **Social pattern detection:** Can they identify hidden motivations from behaviour?
-
-### Drive-health scoring
-Per `scoring.md` §3: Solo/coordination ratio, plan-survival after disagreement, engagement with novel agents, simple-coordination quality.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Over-planning coordination, solo attempts on group tasks, over-complex social modelling, social-complexity avoidance.
-
-### Integration scoring
-- Coordination success improving over sessions
-- Prediction accuracy increasing (better social modelling)
-- Transfer: social-cognitive skills appearing in free-play NPC interactions
-- Balance: can coordinate AND act independently as appropriate
-
-### LLM rubric
-- **High:** Generates NPC behaviour, evaluates negotiation quality, creates social scenarios
-- NPCs must behave consistently with their stated motivations
-- Evaluates whether player's social reasoning is concrete and accurate (not abstract and wrong)
-- Generates contextual dialogue for allies and adversaries
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Choice selection (assign roles, make predictions, negotiate options)

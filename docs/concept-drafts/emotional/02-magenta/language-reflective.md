@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You feel something. What's the word? Even one word. What does this feel like?" The contact boundary is: "Can you put feelings into language?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Finding feeling-words independently (no word-bank, no hints).
-- Healthy: Generates own feeling-words; trusts own emotional vocabulary
-- Pathological: Cannot find words without help; OR: produces words compulsively without accuracy
-- **Detection:** Whether self-generated words match the actual mood
-
-### Agency Golden-Domain
-**Context:** Naming feelings in ambiguous scenes (no "right answer").
-- Healthy: Offers tentative but genuine feeling-words for ambiguous moods
-- Pathological: Cannot name without certainty; freezes on ambiguous feelings
-- **Detection:** Willingness and quality of naming under ambiguity
-
-### Communion Dark-Domain
-**Context:** Sharing feeling-words with companion (comparing emotional language).
-- Healthy: Shares own words AND hears companion's; integrates both
-- Pathological: Adopts companion's words; loses own; OR: ignores companion's naming
-- **Detection:** Whether own feeling-words survive social comparison
-
-### Communion Golden-Domain
-**Context:** Co-creating emotional language (building shared vocabulary).
-- Healthy: Contributes to shared emotional vocabulary; builds on companion's words
-- Pathological: Cannot share emotional language; words are private
-- **Detection:** Quality of shared emotional vocabulary building
-
-### Eros Dark-Domain
-**Context:** Familiar feelings (naming moods they've named before).
-- Healthy: Maintains genuine contact with familiar feelings when naming
-- Pathological: Naming becomes rote; words lose connection to feeling
-- **Detection:** Whether familiar naming retains genuine sensing
-
-### Eros Golden-Domain
-**Context:** Novel feelings (moods they haven't named before).
-- Healthy: Reaches for new words; experiments with language for novel feelings
-- Pathological: Forces familiar words onto novel feelings; OR: overwhelmed by unnamed feelings
-- **Detection:** Quality of novel affect-labelling attempts
-
-### Agape Dark-Domain
-**Context:** Maintaining affect-labelling capacity over time.
-- Healthy: Emotional vocabulary remains connected to sensing across sessions
-- Pathological: Words disconnect from feelings; labelling becomes mechanical
-- **Detection:** Word-feeling connection quality across sessions
-
-### Agape Golden-Domain
-**Context:** Whether affect-labelling appears spontaneously.
-- Healthy: Names feelings naturally in non-emotional-task contexts
-- Pathological: Affect-labelling exists only during explicit tasks
-- **Detection:** Spontaneous emotional language use
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Mood-Flooder"
-**How it surfaces:** TORRENTS of feeling-words. "It's sad and angry and scared and lonely and desperate and overwhelming and..." Word-flood without precision. Every feeling-word applies because they're drowning.
-- **Detection signals:** Excessive word-count; all emotions named simultaneously; no discrimination between feelings; word-flood; intensity always maximum; "it's EVERYTHING"
-
-### Dark-Allergy: "The Affect-Denier"
-**How it surfaces:** "Nothing." "Fine." "I don't know." Cannot find ANY word for the feeling. Not refusal — genuine inability to bridge sensing and language. The feeling-word connection is absent.
-- **Detection signals:** "Nothing" / "fine" / "I don't know" consistently; zero emotional vocabulary production; cannot generate even one feeling-word; blank responses; no word-feeling bridge
-
-### Golden-Addiction: "The Premature Empath"
-**How it surfaces:** SOPHISTICATED vocabulary disconnected from actual sensing. "I detect a melancholic undertone with hints of existential ennui." Beautiful words that don't match the scene. Language exceeds sensing.
-- **Detection signals:** Vocabulary complexity exceeds scene complexity; words don't match actual mood; sophisticated but inaccurate; language as performance not sensing; "sounds right" but isn't
-
-### Golden-Allergy: "The Feeling-Refuser"
-**How it surfaces:** CAN sense the feeling but WON'T NAME IT. "I know what it is but I don't want to say." Naming makes it real, and real feelings are threatening. Sensing exists; language is refused.
-- **Detection signals:** Long latency then minimal response; "I'd rather not"; can identify from options but won't generate; sensing present but naming refused; avoidance of emotional language
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Require ONE word: "Just one. The MAIN feeling. Not all of them. One."
-- Reward precision over quantity; make single accurate words score highest
-- Frame: "Many feelings are here. But which one is LOUDEST? Just that one. One word."
-- Build: discriminative affect-labelling (one feeling at a time)
-
-**When Dark-Allergy detected:**
-- Offer BODY-BRIDGE: "You might not have a word. But where do you feel it? What colour is it?"
-- Accept non-verbal labels (colours, textures, temperatures) as valid feeling-words
-- Frame: "Not a fancy word. A colour. A temperature. Warm? Cold? Dark? Light? That counts."
-- Reward ANY label; celebrate first feeling-word (even "warm" or "dark")
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require SIMPLE words: "Not a poem. One simple word. Happy? Sad? Angry? Scared? Calm?"
-- Penalise complexity; reward accuracy with basic vocabulary
-- Frame: "Forget the fancy words. What does a child call this feeling? That word. Use that."
-- Build: honest labelling (accuracy over sophistication)
-
-**When Golden-Allergy detected:**
-- Make naming SAFE: "The word stays between us. Nobody else hears. Just whisper it."
-- Reduce naming-threat; make emotional language private and protected
-- Frame: "Just to yourself. What's the feeling? You don't have to say it loud. Just know it."
-- Build: naming-safety (words for feelings aren't dangerous)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Feeling-Word: a verbal affect-labelling space. Emotional atmospheres are presented and the player generates words for them. The aesthetic: Magenta-stage word-garden — feelings float as colours/shapes, and when the player names them, the word appears as a glowing seed that grows into a plant. Named feelings become living things.
@@ -170,7 +66,7 @@ The Feeling-Word: a verbal affect-labelling space. Emotional atmospheres are pre
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Clear-mood scenes:** Obvious emotional atmospheres requiring basic labels
@@ -188,21 +84,7 @@ The Feeling-Word: a verbal affect-labelling space. Emotional atmospheres are pre
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Word-mood match:** Does the generated word match the scene's designed mood?
-- **Precision level:** How precise is the word? (basic → moderate → nuanced)
-- **Word-count calibration:** Appropriate number of words (not flood, not blank)
-- **Novel-word generation:** Can they find words for unfamiliar feelings?
-- **Shared vocabulary quality:** Can they build emotional language with companion?
-
-### LLM rubric
-- **Very High:** Core mechanic requires LLM to evaluate generated words against scene mood. Semantic matching, vocabulary assessment, over-interpretation detection, word-feeling alignment.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Verbal (speech-to-text for feeling-words); tap-to-select (word-bank fallback); text input

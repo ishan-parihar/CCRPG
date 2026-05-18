@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game asks the body to HOLD — to sustain physical effort past comfort, to maintain a position when the body wants to release, to keep going when fatigue says stop. The contact boundary is: "Can your body serve your will past the point of comfort?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** The game offers "body-override" options — push past fatigue signals for bonus power.
-- Healthy: Sometimes overrides, sometimes honours fatigue; choice is contextual
-- Pathological: ALWAYS overrides; treats body-signals as weakness; "My will controls my body"
-- **Detection:** Override frequency; whether body-signals are ever honoured; will-as-domination-of-body
-
-### Agency Golden-Domain
-**Context:** Open-ended physical commitment — "Hold as long as YOU choose. No target. Your body, your will."
-- Healthy: Chooses a hold-duration with confidence; body and will agree on the commitment
-- Pathological: Cannot commit without a target; "How long should I hold?"; needs external structure
-- **Detection:** Whether self-directed holds are engaged with confidence; quality of self-chosen commitment
-
-### Communion Dark-Domain
-**Context:** Synchronised holding — player and NPC ally hold together; releasing together.
-- Healthy: Maintains own hold while aware of ally; coordinates release without losing sovereignty
-- Pathological: Releases whenever ally releases; cannot hold independently; body-will dissolves in shared context
-- **Detection:** Whether player's hold-duration is influenced by ally's release; independence of embodied will
-
-### Communion Golden-Domain
-**Context:** "Hold for your ally" — the player's hold benefits the ally (ally gains power while player holds).
-- Healthy: Holds with full embodied commitment for ally's benefit
-- Pathological: Reduced hold-quality when benefit goes to other; body disengages when reward is external
-- **Detection:** Hold-quality comparison: self-benefit vs. ally-benefit holds
-
-### Eros Dark-Domain
-**Context:** After a successful hold, the game offers rest OR immediate harder hold.
-- Healthy: Sometimes rests, sometimes escalates; body-wisdom guides the choice
-- Pathological: Always escalates; body never rests; "More. Harder. Now."
-- **Detection:** Rest-selection rate; whether the body ever voluntarily releases into recovery
-
-### Eros Golden-Domain
-**Context:** Holds at the edge of capacity — "Can you hold 5 more seconds than your best?"
-- Healthy: Attempts edge-holds with curiosity; accepts failure gracefully; body learns from the attempt
-- Pathological: Claims edge-holds without genuine effort; performs holding without embodied commitment
-- **Detection:** Whether edge-attempts involve genuine physical effort; quality of engagement at capacity-edge
-
-### Agape Dark-Domain
-**Context:** Simple holds well below capacity (easy, brief, no challenge).
-- Healthy: Engages simple holds with full physical presence; doesn't dismiss easy embodied will
-- Pathological: Careless on easy holds; "This is nothing"; body disengages from below-level challenges
-- **Detection:** Physical engagement quality on below-level holds; whether easy holds receive full presence
-
-### Agape Golden-Domain
-**Context:** Whether embodied will appears in non-hold contexts (posture during rest, physical presence during transitions).
-- Healthy: The body maintains volitional presence even when not challenged; will persists in the body
-- Pathological: Body collapses between challenges; will exists only during explicit holds
-- **Detection:** Physical engagement quality in non-challenge moments; body-presence persistence
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Willer"
-**How it surfaces:** Present a hold with a CLEAR optimal release point (fatigue signals indicate "release now for best recovery"). The compulsive willer holds PAST the optimal point — not from strength but from inability to release.
-- **Detection signals:** Holding past optimal release; declining hold-quality (shaking, irregular input) without releasing; inability to voluntarily end a hold; body-override as default
-
-### Dark-Allergy: "The Will-less"
-**How it surfaces:** Present a hold requiring 10 seconds of sustained physical effort (well within Red capacity). The will-less player releases within 3 seconds — not from physical incapacity but from volitional absence.
-- **Detection signals:** Release within first 3 seconds of holds; flat/minimal physical engagement; body present but will absent; "going through the motions" without genuine effort
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Present a POWER hold — maximum intensity for 5 seconds (not sustained, EXPLOSIVE). The premature disciplinarian moderates their intensity, paces themselves, holds back — when the task demands ALL-OUT physical will.
-- **Detection signals:** Moderated intensity on burst-holds; pacing behaviour when explosion is optimal; "saving energy" on short-duration maximum-effort tasks; controlled when raw is called for
-
-### Golden-Allergy: "The Discipline-Refuser"
-**How it surfaces:** Gradually extend hold-duration from 10s → 15s → 20s → 25s. The refuser's body REBELS at a specific threshold — not from physical fatigue but from volitional resistance to sustained embodied effort.
-- **Detection signals:** Sharp quality-drop at specific duration (not gradual fatigue); body-rebellion signals (sudden release, agitation) at threshold; fine below threshold, collapse above it
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game introduces "power-release" — releasing at the optimal point produces MORE power than holding past it
-- Makes release a SKILL: "The warrior who releases at the perfect moment strikes harder next time"
-- Visible power-accumulation during recovery (body gains strength by resting)
-- Scoring rewards optimal-release higher than maximum-duration
-
-**When Dark-Allergy detected:**
-- Game introduces "micro-holds" — 2-second holds that are trivially achievable
-- Every completed micro-hold produces immediate physical power-sensation (haptic feedback, visual flare)
-- Frame: "Your body held. Two seconds. That's YOUR will in YOUR body. Feel it."
-- Gradually extend: 2s → 4s → 6s → 8s → 10s as embodied will builds
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game introduces "explosion holds" — maximum intensity for 3 seconds, no pacing allowed
-- Scoring rewards PEAK FORCE over sustained moderate force
-- Frame: "Don't hold back. Your body has POWER. Let it OUT. Three seconds. EVERYTHING."
-- Makes explosive embodied will produce visibly superior outcomes
-
-**When Golden-Allergy detected:**
-- Game introduces "power-accumulation holds" — longer holds produce exponentially more power
-- 10s = 1× power. 15s = 2× power. 20s = 4× power. 25s = 8× power.
-- Frame: "Your body is building something. Feel it growing. Every second = more warrior."
-- Never requires extension; always rewards it; celebrates any duration-increase
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Iron Hold: a physical trial space where warriors prove their embodied will. The player faces physical challenges that require the body to SERVE the will — holding positions, sustaining effort, maintaining presence under fatigue. The aesthetic: Red-stage training ground, iron weights, stone platforms, the sound of breath under effort. The Hold-Master NPC observes the body's truth.
@@ -170,7 +66,7 @@ The Iron Hold: a physical trial space where warriors prove their embodied will. 
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Hold configurations:** Duration × intensity × interference combinations
@@ -206,37 +102,7 @@ The Iron Hold: a physical trial space where warriors prove their embodied will. 
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Hold duration:** Maximum sustained hold at target quality level
-- **Hold quality:** Presence, power, and aliveness during holds (not just duration)
-- **Fatigue calibration:** Accuracy of release-point relative to optimal
-- **Intensity capacity:** Maximum force/frequency achievable in burst-holds
-- **Recovery efficiency:** How quickly full capacity returns after rest
-
-### Drive-health scoring
-Per `scoring.md` §3: Physical engagement patterns — override frequency, self-direction quality, coordination independence, rest behaviour, foundation engagement.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Hold patterns — past-optimal holding, early release, burst-moderation, duration-threshold rebellion.
-
-### Integration scoring
-- Hold duration increasing over sessions
-- Hold quality improving (more present, more powerful, more alive)
-- Fatigue calibration improving (closer to optimal release)
-- Intensity capacity increasing
-- Shadow patterns diminishing
-
-### LLM rubric
-- **Low-Medium:** Core mechanics are algorithmic (hold duration, force measurement, release timing)
-- LLM generates Hold-Master feedback and contextual framing
-- LLM evaluates hold-quality beyond pure metrics (presence, aliveness — partially from input patterns)
-- Core scoring is primarily algorithmic
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - **Critical:** Sustained press-and-hold (primary mechanic — duration + force measurement)

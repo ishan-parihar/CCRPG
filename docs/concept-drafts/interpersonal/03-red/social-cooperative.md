@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You have allies. They have needs. You have needs. The enemy is coming. Can you hold the war-band together?" The contact boundary is: "Can you DO interpersonal — not just read it or plan it, but LIVE it?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Alliance under pressure — who leads?
-- Healthy: Leads when appropriate; follows when ally is better positioned
-- Pathological: MUST lead always; cannot allow ally to take initiative; "I'm in charge"
-- **Detection:** Leadership-seizure rate regardless of context
-
-### Agency Golden-Domain
-**Context:** Alliance needs someone to initiate a risky coordinated action.
-- Healthy: Initiates when it's their turn; takes relational risks
-- Pathological: Cannot initiate; waits for ally to take all risks; "You go first"
-- **Detection:** Initiation rate in risky coordination contexts
-
-### Communion Dark-Domain
-**Context:** Ally makes a request that costs the player resources.
-- Healthy: Evaluates cost/benefit; helps when alliance benefits
-- Pathological: Always gives; cannot refuse ally's requests; loses all resources to ally
-- **Detection:** Refusal rate on costly requests (0% = communion dark)
-
-### Communion Golden-Domain
-**Context:** Opportunity to share a victory reward with ally.
-- Healthy: Shares proportionally to contribution
-- Pathological: Cannot share; takes all rewards; "I earned this"
-- **Detection:** Sharing rate on joint victories
-
-### Eros Dark-Domain
-**Context:** Current alliance is stable vs. opportunity for a "better" ally.
-- Healthy: Maintains current alliance; evaluates new opportunities carefully
-- Pathological: Constantly seeks upgrades; discards current allies for new ones
-- **Detection:** Alliance-rotation rate; time-to-discard
-
-### Eros Golden-Domain
-**Context:** Alliance faces a challenge beyond current coordination capacity.
-- Healthy: Attempts with curiosity; grows through the challenge
-- Pathological: Claims the alliance can handle anything; "We've got this" without basis
-- **Detection:** Confidence-capacity calibration in alliance challenges
-
-### Agape Dark-Domain
-**Context:** Simple coordination tasks with established ally.
-- Healthy: Maintains engagement; keeps alliance healthy
-- Pathological: Neglects established alliances; "They're fine without me"
-- **Detection:** Alliance maintenance quality over time
-
-### Agape Golden-Domain
-**Context:** Whether alliance behaviour appears spontaneously.
-- Healthy: Coordinates with allies naturally in free-play
-- Pathological: Alliance behaviour exists only in structured tasks
-- **Detection:** Spontaneous coordination in non-task contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Dominator"
-**How it surfaces:** In the war-band, the Dominator COMMANDS rather than coordinates. Allies are ordered, not consulted. Coordination is "they do what I say." Alliance health degrades because allies are treated as servants.
-- **Detection signals:** Command-rate >> coordination-rate; ally satisfaction declining; player takes all decisions; cannot execute ally-initiated plans; alliance health drops despite player's high individual performance
-
-### Dark-Allergy: "The Isolate"
-**How it surfaces:** Cannot maintain the alliance AT ALL. Operates solo within the war-band context. Doesn't coordinate, doesn't reciprocate, doesn't respond to ally needs. The war-band exists in name only.
-- **Detection signals:** Zero coordination actions; zero reciprocity; ally needs ignored; operates as if alone; alliance health at minimum despite ally availability
-
-### Golden-Addiction: "The Premature Diplomat"
-**How it surfaces:** PERFORMS alliance behaviour (says the right things, makes the right gestures) but actual coordination quality is low. Talks about teamwork without doing it.
-- **Detection signals:** High verbal alliance behaviour + low actual coordination quality; "We're a great team" while coordination timing is poor; performs reciprocity gestures without genuine resource-sharing
-
-### Golden-Allergy: "The Loyalty-Refuser"
-**How it surfaces:** Coordinates effectively but EXITS the alliance at the first sign of cost. Cannot maintain the war-band through difficulty. Good in easy times, gone in hard times.
-- **Detection signals:** High coordination quality in low-pressure + alliance abandonment under pressure; exits when ally needs help; "I'm out" at first difficulty; cannot sustain alliance through adversity
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce scenarios where ALLY-LED coordination produces superior outcomes
-- Frame: "Your war-band fights harder when they CHOOSE to follow. Command less. Coordinate more."
-- Reward coordination over command; make ally-satisfaction produce power bonuses
-
-**When Dark-Allergy detected:**
-- Introduce MINIMAL coordination requirements (one action per round with ally)
-- Frame: "Just one action together. That's all. One coordinated strike."
-- Start with the smallest possible relational engagement; celebrate any coordination
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require MEASURABLE coordination (timing accuracy, resource-sharing amounts) not just performed teamwork
-- Frame: "Don't tell me you're a team. Show me. Coordinate. Now."
-- Score actual coordination quality over verbal alliance behaviour
-
-**When Golden-Allergy detected:**
-- Introduce ADVERSITY-BONDING — alliances that survive difficulty become MUCH stronger
-- Frame: "The war-band that holds through the storm becomes unbreakable. Stay."
-- Make sustained-through-difficulty alliances produce exponential rewards
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The War-Band: a live alliance in a Red-stage world. The player and 1-2 NPC allies face challenges together. Alliance health is a visible resource. Coordination produces power. Neglect produces decay. The aesthetic: Red-stage war-band on campaign, shared fire, shared danger, the bonds of warriors.
@@ -164,7 +64,7 @@ The War-Band: a live alliance in a Red-stage world. The player and 1-2 NPC allie
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Coordination challenges:** Timed joint actions with allies
@@ -182,21 +82,7 @@ The War-Band: a live alliance in a Red-stage world. The player and 1-2 NPC allie
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Coordination quality:** Timing accuracy and effectiveness of joint actions
-- **Reciprocity balance:** Evenness of give/receive across the alliance
-- **Alliance health maintenance:** Sustained alliance health over time
-- **Betrayal detection accuracy:** Correct identification of genuine shifts vs. false alarms
-- **Repair effectiveness:** Speed and quality of alliance repair after rupture
-
-### LLM rubric
-- **Medium:** NPC ally behaviour, alliance dynamics narration, repair evaluation. Core coordination scoring algorithmic.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Timed tap (coordination); resource allocation (reciprocity); response selection (repair)

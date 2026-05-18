@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game provokes emotion and asks: "Where do you feel it? How does your body respond? Can you SHOW me the feeling through your body?" The contact boundary is: "Is your emotional life embodied or disembodied?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Emotional provocation — game triggers anger. Observe body response.
-- Healthy: Body activates (increased intensity) but remains under volitional control
-- Pathological: Body takes over; physical intensity escalates beyond control; "The rage moves me"
-- **Detection:** Whether physical emotional response remains volitional or becomes autonomous
-
-### Agency Golden-Domain
-**Context:** "Show me anger in your body" — self-directed emotional embodiment.
-- Healthy: Can generate physical emotional expression on demand
-- Pathological: Cannot access emotion physically without external trigger
-- **Detection:** Self-directed physical emotional expression quality
-
-### Communion Dark-Domain
-**Context:** Observing another's emotional body-state (NPC showing physical anger).
-- Healthy: Reads the body-emotion without own body mirroring involuntarily
-- Pathological: Own body mirrors every observed emotion; physical contagion
-- **Detection:** Whether observing emotional bodies triggers involuntary physical mirroring
-
-### Communion Golden-Domain
-**Context:** Synchronised emotional embodiment — feel WITH an ally (shared physical emotional state).
-- Healthy: Can join another's physical emotional state while maintaining own centre
-- Pathological: Cannot physically share emotional states; body remains isolated
-- **Detection:** Quality of shared physical emotional expression
-
-### Eros Dark-Domain
-**Context:** Current physical emotional intensity vs. desire for more.
-- Healthy: Rests in current body-emotion state; advances naturally
-- Pathological: Seeks ever-increasing physical emotional intensity; "More! Harder!"
-- **Detection:** Physical intensity escalation patterns; satisfaction at current level
-
-### Eros Golden-Domain
-**Context:** Subtle physical emotions (mild irritation, quiet pride, gentle excitement).
-- Healthy: Can detect and express subtle body-emotions
-- Pathological: Claims subtle physical awareness without demonstration
-- **Detection:** Whether subtle body-emotions produce genuine physical signals
-
-### Agape Dark-Domain
-**Context:** Basic body-emotion tasks (obvious physical anger expression).
-- Healthy: Engages basic embodiment with full presence
-- Pathological: Dismisses basic body-emotion; "I'm beyond this"
-- **Detection:** Engagement quality on simple physical emotional tasks
-
-### Agape Golden-Domain
-**Context:** Whether body-emotion awareness persists outside structured tasks.
-- Healthy: Physical emotional awareness appears in free-play
-- Pathological: Body-emotion exists only during explicit tasks
-- **Detection:** Spontaneous physical emotional expression in non-task contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Rage-Addict"
-**How it surfaces:** Provoke mild emotion (slight irritation). Observe whether the body AMPLIFIES it — turning mild into intense, irritation into rage, physically.
-- **Detection signals:** Physical amplification of mild emotions; body always at maximum intensity; cannot produce mild physical emotional responses; escalation pattern in body-signals
-
-### Dark-Allergy: "The Frozen"
-**How it surfaces:** Provoke clear emotion (obvious anger trigger). Observe whether the body responds AT ALL. The frozen player's body remains flat — no physical emotional response.
-- **Detection signals:** Flat physical response to emotional stimuli; no body-activation; "I don't feel anything in my body"; physical numbness despite emotional context
-
-### Golden-Addiction: "The Premature Empath"
-**How it surfaces:** Ask for physical emotional expression. The premature empath PERFORMS body-emotion (does what looks right) without genuine physical activation.
-- **Detection signals:** Performed physical expression without genuine activation; correct "shape" but no intensity; body going through motions without feeling; discrepancy between expressed and measured physical signals
-
-### Golden-Allergy: "The Sensitivity-Refuser"
-**How it surfaces:** Ask for physical expression of VULNERABILITY emotions (fear in the body, sadness in the body). The refuser's body can express power-emotions but CANNOT express vulnerability physically.
-- **Detection signals:** Strong physical expression for anger/pride; absent/blocked for fear/sadness; body refuses vulnerability-postures; physical tension when vulnerability is requested
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce "body-volume control" — same emotion at 10%, 30%, 50%, 70%, 100% physical intensity
-- Frame: "Your body can whisper rage. Not just scream it. Whispered rage is CONTROLLED rage."
-- Reward graduated physical expression over maximum-only
-
-**When Dark-Allergy detected:**
-- Introduce "micro-body-feelings" — "Is there ANY sensation? Warmth? Coolness? Tightness? Anything?"
-- Frame: "Your body is speaking. Very quietly. Listen. Even a whisper counts."
-- Celebrate any physical emotional signal, no matter how small
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require MEASURED physical activation (heart-rate proxy, input intensity) not just performed expression
-- Frame: "Don't show me anger. FEEL it. Your body knows the difference."
-- Score genuine activation over performed expression
-
-**When Golden-Allergy detected:**
-- Introduce vulnerability-embodiment as POWER — "The warrior who feels fear in his gut BEFORE the enemy strikes dodges first"
-- Frame physical vulnerability as tactical advantage
-- Make fear-in-body produce combat benefit
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Wroth-Body: a physical-emotional training ground. The player's body IS the instrument of emotional intelligence. Emotional stimuli provoke physical responses; the game reads the body's truth. The aesthetic: Red-stage body-training, warrior's physical emotional discipline, the heat of the forge.
@@ -164,7 +64,7 @@ The Wroth-Body: a physical-emotional training ground. The player's body IS the i
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Emotional stimuli:** Provocations designed to trigger specific body-emotions
@@ -184,21 +84,7 @@ The Wroth-Body: a physical-emotional training ground. The player's body IS the i
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Physical responsiveness:** Does the body respond to emotional stimuli?
-- **Location accuracy:** Can they identify where emotions live in the body?
-- **Intensity matching:** Can they match physical intensity to emotional intensity?
-- **Transition fluidity:** Can they shift between emotional body-states?
-- **Regulation effectiveness:** Can they use the body to manage emotion?
-
-### LLM rubric
-- **Low-Medium:** Core mechanics are input-intensity measurement (algorithmic). LLM generates stimuli and contextual framing.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Force-sensitive tap/hold (physical intensity measurement)

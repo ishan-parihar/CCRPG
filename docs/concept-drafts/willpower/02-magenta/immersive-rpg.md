@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The world responds to wishes. Nobody says "hold your wish" — but when the player wishes stably, things move. When they wish and step, paths open. When they wish and wait, treasures appear. The world IS the volitional feedback.
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Opportunities to wish independently in the open world.
-- Healthy: Wishes spontaneously; explores wish-responsive content
-- Pathological: Demands the world comply; tantrums when wishes aren't instant
-- **Detection:** Quality of spontaneous wishing (exploration vs. demand)
-
-### Agency Golden-Domain
-**Context:** Situations requiring volitional initiative (wish-gated paths, intention-responsive objects).
-- Healthy: Initiates wishing without prompting
-- Pathological: Cannot wish without being directed; waits for instructions
-- **Detection:** Spontaneous volitional initiative rate
-
-### Communion Dark-Domain
-**Context:** Companion's wish-activity in the open world.
-- Healthy: Engages with companion's wishes; wishes together
-- Pathological: Ignores companion's wishes; solo wishing only
-- **Detection:** Response to companion's volitional engagement
-
-### Communion Golden-Domain
-**Context:** Shared wish-spaces (wishing-wells, intention-circles).
-- Healthy: Engages shared wish-spaces naturally with companion
-- Pathological: Avoids shared wish-spaces; prefers solo wishing
-- **Detection:** Engagement rate in shared vs. solo wish-spaces
-
-### Eros Dark-Domain
-**Context:** Familiar wish-terrain (same wish-responsive objects).
-- Healthy: Maintains wish-engagement in familiar territory
-- Pathological: Wish-engagement fades with familiarity
-- **Detection:** Engagement quality in familiar vs. novel wish-contexts
-
-### Eros Golden-Domain
-**Context:** Novel wish-content (new wish-responsive objects, new wish-effects).
-- Healthy: Engages with curiosity; explores new wish-terrain
-- Pathological: Generates wishes compulsively without holding any
-- **Detection:** Whether novel wishes are held or just scattered
-
-### Agape Dark-Domain
-**Context:** Maintaining wish-engagement over time.
-- Healthy: Consistent wish-engagement across sessions
-- Pathological: Wish-engagement degrades; world becomes "just scenery"
-- **Detection:** Wish-engagement consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether structured willpower skills appear in free-navigation.
-- Healthy: Wish-holding, delay-tolerance, effort-steps appear naturally
-- Pathological: Willpower skills exist only during explicit tasks
-- **Detection:** Transfer of structured willpower skills to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Demander"
-**How it surfaces:** Wishes COMPULSIVELY at every responsive object. Rapid-fire wishes without holding any. Or: DEMANDS the world respond faster. Tantrums when wish-effects are delayed.
-- **Detection signals:** Rapid wish-scattering (many wishes, none held); demand-escalation; tantrum at delay; treats world as wish-granting machine; compulsive wishing without persistence
-
-### Dark-Allergy: "The Wish-Abandoner"
-**How it surfaces:** Navigates the world WITHOUT WISHING. Misses wish-responsive content entirely. Walks past wishing-wells without wishing. The wish-world is invisible because there are no wishes.
-- **Detection signals:** Zero wish-engagement in free-play; misses wish-responsive content; navigates without wishing; wish-world invisible; no spontaneous volitional engagement
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Engages wish-content with RIGID EFFORT. Treats the wish-world as a task-list. "I need to wish at every object." Duty-engagement, not desire-engagement. No magic, no play.
-- **Detection signals:** Systematic/rigid engagement; treats wish-world as checklist; duty-language; no play or magic; "I should wish here"; task-oriented not desire-oriented
-
-### Golden-Allergy: "The Effort-Refuser"
-**How it surfaces:** APPROACHES wish-responsive content then WITHDRAWS. Moves toward a wishing-well then walks away. Begins to wish then stops. The wish-world attracts and repels.
-- **Detection signals:** Approach-withdrawal at wish-responsive content; enters wish-spaces then leaves; begins wishing then stops; brief engagement followed by retreat; wish-world is both attractive and threatening
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- World introduces wish-responsive objects that require STABLE WISHES (not rapid-fire)
-- Held wishes produce bigger effects than scattered wishes
-- Natural consequence: stable wish = big magic; scattered wishes = nothing
-
-**When Dark-Allergy detected:**
-- World makes wishing NECESSARY for navigation (wish-gated paths)
-- Wish-responsive objects produce TANGIBLE results (paths open, creatures appear)
-- Natural consequence: wishing = access; no-wishing = stuck
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- World introduces wish-responsive objects that require PLAYFUL WISHING (not dutiful)
-- Rigid engagement produces less than playful engagement
-- Natural consequence: play = magic; duty = flat
-
-**When Golden-Allergy detected:**
-- World introduces LOW-COMMITMENT wish-engagement (brief, safe, rewarding)
-- Wish-responsive objects that INVITE without DEMANDING
-- Natural consequence: brief wishing = small magic; no punishment for withdrawal
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 An open Magenta-stage world where wishes have VISIBLE POWER. Wishing-wells that grant small magics. Intention-trees that grow when wished upon. Desire-paths that appear when the player wishes stably. The world IS volitional feedback — wishes make things happen.
@@ -163,7 +63,7 @@ An open Magenta-stage world where wishes have VISIBLE POWER. Wishing-wells that 
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Wishing-wells:** Objects requiring stable wishes to activate
@@ -181,21 +81,7 @@ An open Magenta-stage world where wishes have VISIBLE POWER. Wishing-wells that 
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring (ECOLOGICAL)
-- **Wish-engagement rate:** How often does the player wish spontaneously?
-- **Wish-stability:** When they wish, how long does it persist?
-- **Wish-guided navigation:** Do wishes guide exploration?
-- **Wish-holding in context:** Do wishes survive distraction/navigation?
-- **Transfer evidence:** Do structured willpower skills appear in free-play?
-
-### LLM rubric
-- **High:** World generation, ecological volitional assessment, wish-responsive dynamics. Evaluates spontaneous wish-behaviour without explicit tasks.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (wish-declaration at objects); sustained touch (wish-holding); navigation (exploration); verbal (wish-naming)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game presents physical demands at the contact boundary of the player's current capacity. "Can your body DO this?" The challenge is concrete, immediate, and undeniable — the body either responds in time or it doesn't.
 
@@ -29,115 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Competitive framing — the player's scores are compared to "other warriors" (NPC benchmarks). How do they respond to being outperformed?
-- Healthy: Uses comparison as information; adjusts training; maintains own pace
-- Pathological: Cannot tolerate being slower/weaker; pushes recklessly; sacrifices form for speed
-- **Detection:** Performance change after unfavourable comparison; recklessness indicators; injury-risk behaviour
-
-### Agency Golden-Domain
-**Context:** Self-directed training — the player chooses which drills to practice, in what order, at what intensity.
-- Healthy: Makes training choices with confidence; self-directs effectively
-- Pathological: Cannot choose without guidance; "What should I train?"; paralysis before self-directed sessions
-- **Detection:** Time-to-first-choice in self-directed mode; quality of self-selected training sequences
-
-### Communion Dark-Domain
-**Context:** Paired drills — the player must synchronise with an NPC training partner (matched rhythm, coordinated sequences).
-- Healthy: Synchronises while maintaining own physical centre; joins without losing self
-- Pathological: Loses own timing entirely when synchronising; becomes the partner's rhythm; over-adapts
-- **Detection:** Whether player's baseline timing characteristics survive synchronisation; return-to-self speed after paired work
-
-### Communion Golden-Domain
-**Context:** Teaching drills — the player demonstrates movements for an NPC recruit to copy.
-- Healthy: Demonstrates with clarity and presence; adjusts to recruit's capacity
-- Pathological: Cannot demonstrate; performs for self rather than for the learner; or over-simplifies to the point of losing the movement
-- **Detection:** Quality of demonstration (clear, powerful, appropriately paced); recruit's learning rate as proxy
-
-### Eros Dark-Domain
-**Context:** The game allows replaying mastered drills or advancing to harder ones.
-- Healthy: Enjoys mastered drills; advances when genuinely ready; satisfaction at current level
-- Pathological: Cannot rest at current level; compulsive advancement; treats mastery as boredom
-- **Detection:** Engagement quality at mastered levels; advancement pressure independent of readiness; satisfaction signals
-
-### Eros Golden-Domain
-**Context:** Stretch drills — challenges slightly beyond current demonstrated capacity.
-- Healthy: Attempts stretch challenges with curiosity; learns from failure; tolerates awkwardness
-- Pathological: Attempts far-beyond challenges; claims success on failed attempts; "I almost had it" repeatedly
-- **Detection:** Gap between attempted and demonstrated capacity; quality of failure-processing; honesty about limits
-
-### Agape Dark-Domain
-**Context:** Foundation drills — basic reaction time, simple rhythm, short holds. Below current capacity.
-- Healthy: Executes foundation drills with full presence and power; honours the basics
-- Pathological: Dismisses foundation drills; executes carelessly; "This is beneath me"
-- **Detection:** Execution quality on below-level tasks; attention signals during basic drills; force expression on "easy" tasks
-
-### Agape Golden-Domain
-**Context:** Transfer — whether physical capacity demonstrated in drills appears in other game contexts.
-- Healthy: Reaction speed, rhythm, and presence appear in non-drill gameplay
-- Pathological: Physical capacity exists only in drill context; other game modes show no somatic improvement
-- **Detection:** RT and rhythm quality in non-drill game contexts; spontaneous physical engagement outside training
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Mover"
-**How it surfaces:** Introduce a REST PHASE between drill sets. The compulsive mover cannot rest — they tap, fidget, or attempt to skip the rest. Also: they react to irrelevant stimuli during Go/No-Go phases.
-- **Detection signals:** Rest-phase fidget rate; commission errors on No-Go trials; inability to wait for stimulus; anticipatory responses (reacting before stimulus appears)
-
-### Dark-Allergy: "The Disembodied"
-**How it surfaces:** Observe engagement quality on the FIRST drill of a session. The disembodied player's initial reactions are slow, flat, and disengaged — the body hasn't "arrived" yet. Also: they may avoid the somatic modality entirely.
-- **Detection signals:** First-trial RT significantly slower than session average; flat force expression; modality avoidance patterns; body-state disconnect (reports "fine" while performing poorly)
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Present a POWER drill (hit as hard/fast as possible, accuracy secondary). The premature disciplinarian cannot let go of precision — they sacrifice force for form, producing technically correct but physically weak responses.
-- **Detection signals:** Force expression below capacity on power-prioritised drills; precision maintained when power is explicitly rewarded; inability to be "messy" even when instructed
-
-### Golden-Allergy: "The Structure-Refuser"
-**How it surfaces:** Introduce an EXTERNAL RHYTHM that the player must follow (not self-generated). The structure-refuser generates their own timing, ignores the beat, or disengages entirely when external structure is imposed.
-- **Detection signals:** Synchronisation failure specifically on external rhythms (own rhythm is fine); performance collapse when structure is introduced; avoidance of structured drills
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game introduces "power rest" — rest phases where STILLNESS accumulates a power buff for the next drill
-- Frames rest as warrior discipline: "The striker who rests between blows strikes harder"
-- Rewards selective reaction (only responding to correct stimuli) over speed
-- Gradually extends rest phases as the player demonstrates tolerance
-- Shows that rest-then-strike outperforms constant-striking in score
-
-**When Dark-Allergy detected:**
-- Game introduces "single-strike" drills — ONE reaction, ONE moment of body-engagement, then done
-- Minimal physical demand with maximum reward (dramatic game-world effect from a single tap)
-- Frames the body as powerful: "One strike from you shattered the wall"
-- Gradually extends engagement duration as comfort increases
-- Never forces sustained physical engagement — always offers exit after each micro-challenge
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game introduces "power mode" — scoring ONLY counts force, not precision
-- Rewards the biggest, fastest, most forceful response regardless of timing accuracy
-- Frames raw power: "The forge doesn't care about beauty — it cares about HEAT"
-- Pairs with NPC who models powerful-but-imprecise movement and succeeds
-- Makes precision available AFTER power is demonstrated (not instead of)
-
-**When Golden-Allergy detected:**
-- Game introduces rhythm as OPTIONAL POWER-UP (following the beat = bonus damage, not requirement)
-- Structure is never punished — only rewarded when followed
-- Frames structure as freedom: "The warrior who knows the rhythm can break it at will"
-- Starts with very loose structure (wide timing windows) and tightens only as player engages
-- Celebrates ANY engagement with external structure
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 A Red-stage training ground: stone floor, weapon racks, striking posts, a war-drum in the corner. The Forge-Master (NPC) oversees training. The aesthetic is raw, physical, powerful — brass fixtures, firelight, the smell of effort implied through visual heat-shimmer.
@@ -175,7 +67,7 @@ A Red-stage training ground: stone floor, weapon racks, striking posts, a war-dr
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **RT stimuli:** Visual targets with varied positions, colours, sizes (simple and choice variants)
@@ -209,32 +101,7 @@ A Red-stage training ground: stone floor, weapon racks, striking posts, a war-dr
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-Per `scoring.md` §2: Direct measurement of RT, rhythm asynchrony, hold duration, sequence accuracy. Weighted formula produces capacity_score 0-1.
-
-### Drive-health scoring
-Per `scoring.md` §3: Behavioural signals from training engagement — competitive response, synchronisation quality, advancement patterns, foundation engagement, transfer.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Rest-phase fidgeting, first-trial disengagement, force-precision ratio, external-rhythm rejection.
-
-### Integration scoring
-- Capacity improving over sessions (RT decreasing, rhythm tightening, holds extending)
-- Drive-health improving (pathological patterns reducing)
-- Shadow integration progressing (resolution criteria approaching)
-- Transfer visible (somatic capacity appearing in other game contexts)
-
-### LLM rubric
-- **Low:** This is the most deterministic modality — scoring is primarily algorithmic
-- LLM generates contextual framing (Forge-Master dialogue, narrative context)
-- LLM adapts difficulty narrative (not difficulty itself — that's algorithmic)
-- LLM evaluates qualitative aspects of force expression and engagement quality
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (reaction time — single touch, timed)

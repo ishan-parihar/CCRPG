@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "The sacred is here. You can feel it. Now — what do you call it? What name does it have? What would you say to it? Tell me about the spirits." The contact boundary is: "Can you articulate your numinous experience?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Independent sacred naming (no prompts, no vocabulary given).
-- Healthy: Generates own sacred language with confidence
-- Pathological: Floods with sacred words (inflation); OR: no sacred vocabulary (absence)
-- **Detection:** Whether sacred language is self-generated and authentic
-
-### Agency Golden-Domain
-**Context:** Naming under ambiguity (numinous experience that's hard to articulate).
-- Healthy: Offers tentative sacred language under ambiguity; "It's like a…"
-- Pathological: Cannot name ambiguous sacred experience; freezes
-- **Detection:** Sacred articulation quality under ambiguity
-
-### Communion Dark-Domain
-**Context:** Naming when companion uses different sacred language.
-- Healthy: Maintains own sacred vocabulary while hearing companion's
-- Pathological: Adopts companion's sacred language; loses own
-- **Detection:** Whether own sacred language survives social input
-
-### Communion Golden-Domain
-**Context:** Shared sacred naming (co-creating sacred vocabulary).
-- Healthy: Shares own sacred words AND receives companion's; mutual enrichment
-- Pathological: Cannot share sacred language; numinous vocabulary is private
-- **Detection:** Quality of shared sacred articulation
-
-### Eros Dark-Domain
-**Context:** Sacred language consistency over time.
-- Healthy: Same sacred vocabulary used consistently (stable relationship to numinous)
-- Pathological: Sacred language changes randomly; no stable sacred vocabulary
-- **Detection:** Sacred vocabulary consistency
-
-### Eros Golden-Domain
-**Context:** Growing sacred vocabulary (new words for deeper experience).
-- Healthy: Can develop new sacred language for new numinous experiences
-- Pathological: Cannot grow vocabulary; OR: vocabulary grows without grounding
-- **Detection:** Sacred vocabulary growth quality
-
-### Agape Dark-Domain
-**Context:** Maintaining sacred articulation over time.
-- Healthy: Sacred language remains accessible across sessions
-- Pathological: Sacred vocabulary degrades; cannot name the numinous after absence
-- **Detection:** Sacred articulation accessibility across sessions
-
-### Agape Golden-Domain
-**Context:** Whether sacred language appears spontaneously.
-- Healthy: Uses sacred vocabulary naturally in non-spiritual tasks
-- Pathological: Sacred language exists only during explicit spiritual tasks
-- **Detection:** Spontaneous sacred articulation
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Spirit-Addict"
-**How it surfaces:** FLOODS with sacred language. "The spirits speak! They're everywhere! The glow is in everything! The sacred sings to me always!" Over-articulation. Sacred vocabulary is inflated — everything gets sacred names.
-- **Detection signals:** Excessive sacred vocabulary; everything named sacred; flooding; "always"; "everywhere"; no ordinary language; sacred words for non-sacred things
-
-### Dark-Allergy: "The Spirit-Denier"
-**How it surfaces:** NO sacred vocabulary. "I don't know what to call it. There's nothing there. I don't have words for that." Empty sacred language. Cannot name the numinous because they cannot sense it.
-- **Detection signals:** No sacred words; "I don't know"; "nothing"; cannot name; empty vocabulary; "what do you mean?"; no language for numinous experience
-
-### Golden-Addiction: "The Premature Priest"
-**How it surfaces:** POWER-LANGUAGE only. "The strong spirit. The mighty one. The one that gives strength." Sacred vocabulary filtered through power. Names only powerful/useful sacred things.
-- **Detection signals:** Power-words only; "strong"; "mighty"; "gives me"; transactional language; no gentle/subtle sacred words; sacred = powerful
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** BEGINS naming then STOPS. "It's like a… no. I can't. It's too… I don't know." Approach-withdrawal in sacred articulation. The words almost come then retreat.
-- **Detection signals:** Incomplete sacred naming; "it's like…"; trails off; "I can't say it"; approach-withdrawal; words begin then stop; "never mind"
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Guide to SPECIFIC naming: "Not everything. ONE thing. The most sacred. Give THAT one a name. Just that one."
-- Reward specific sacred language; narrow the flood
-- Frame: "One word. For the ONE thing that glows most. Not everything. Your special word for the special thing."
-- Build: discriminating sacred vocabulary (specific not flooding)
-
-**When Dark-Allergy detected:**
-- Start with FEELING-WORDS: "Not a name. Just a feeling. Warm? Cool? Big? Small? What does 'different' feel like?"
-- Build sacred vocabulary from sensation-words upward
-- Frame: "You don't need a big word. Just… does it feel warm? Cool? Light? Heavy? That's your first sacred word."
-- Reward ANY sacred articulation; celebrate first naming
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Guide to GENTLE sacred language: "Not the strong one. The quiet one. The gentle glow. What do you call THAT?"
-- Reward subtle/gentle sacred vocabulary; block power-only naming
-- Frame: "The sacred whispers too. Not just roars. What do you call the whisper? The gentle one?"
-- Build: subtle sacred vocabulary (sacred ≠ powerful)
-
-**When Golden-Allergy detected:**
-- Make naming LOW-STAKES: "Just one word. Quick. What would you call it? Any word. No wrong answer."
-- Reduce threat of sacred articulation; make it playful
-- Frame: "Just a sound. A colour. A feeling-word. Quick. Don't think. What comes? … That's your word."
-- Build: sacred articulation confidence (naming isn't dangerous)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Spirit-Words: a sacred articulation space. The player encounters numinous content and must NAME it, DESCRIBE it, SPEAK to it. The aesthetic: Magenta-stage word-altar — sacred things that await naming. When named, they respond (glow brighter, move, acknowledge).
@@ -170,7 +66,7 @@ The Spirit-Words: a sacred articulation space. The player encounters numinous co
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Naming prompts:** "What do you call this?" (sacred stimuli requiring names)
@@ -188,21 +84,7 @@ The Spirit-Words: a sacred articulation space. The player encounters numinous co
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Vocabulary presence:** Can they name the sacred at all?
-- **Specificity:** Are sacred names specific (not generic)?
-- **Authenticity:** Do sacred words feel genuine (not performative)?
-- **Range:** Can they name different kinds of sacred?
-- **Consistency:** Same sacred vocabulary used stably?
-
-### LLM rubric
-- **Very High:** Sacred language assessment requires deep NLP. LLM evaluates authenticity, specificity, emotional grounding, inflation detection, and vocabulary growth.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Voice/text (sacred naming); tap-to-select (from word-options for younger players); gesture (pointing while naming)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The world is populated. Nobody says "sense the other" — but presences are there, companions are available, coordination opportunities exist. The player's NATURAL relational engagement is the data.
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Opportunities to sense and engage others independently.
-- Healthy: Senses presences spontaneously; approaches with some self-stability
-- Pathological: Merges with every presence; OR: navigates as if alone
-- **Detection:** Quality of spontaneous relational engagement (sensing vs. merging vs. ignoring)
-
-### Agency Golden-Domain
-**Context:** Situations requiring relational initiative (companion-gated paths, presence-responsive objects).
-- Healthy: Initiates relational engagement without prompting
-- Pathological: Cannot engage relationally without being directed
-- **Detection:** Spontaneous relational initiative rate
-
-### Communion Dark-Domain
-**Context:** Companion's relational engagement in the open world.
-- Healthy: Engages with companion's relational activity; shares relational space
-- Pathological: Ignores companion's relational engagement; solo navigation
-- **Detection:** Response to companion's relational activity
-
-### Communion Golden-Domain
-**Context:** Shared relational spaces (bonding-pools, companion-gardens).
-- Healthy: Engages shared relational spaces naturally with companion
-- Pathological: Avoids shared relational spaces; prefers solo exploration
-- **Detection:** Engagement rate in shared vs. solo relational content
-
-### Eros Dark-Domain
-**Context:** Familiar relational terrain (same companions, same presences).
-- Healthy: Maintains relational engagement in familiar territory
-- Pathological: Relational engagement fades with familiarity; companions become scenery
-- **Detection:** Engagement quality in familiar vs. novel relational zones
-
-### Eros Golden-Domain
-**Context:** Novel relational content (new presences, new companions).
-- Healthy: Engages novel relational content with curiosity
-- Pathological: Overwhelmed by novel presences; OR: avoids unfamiliar others
-- **Detection:** Whether novel relational content is engaged or avoided
-
-### Agape Dark-Domain
-**Context:** Maintaining relational engagement over time.
-- Healthy: Consistent relational engagement across sessions
-- Pathological: Relational engagement degrades; world becomes relationally flat
-- **Detection:** Relational engagement consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether structured interpersonal skills appear in free-navigation.
-- Healthy: Other-sensing, bonding, coordination appear naturally
-- Pathological: Interpersonal skills exist only during explicit tasks
-- **Detection:** Transfer of structured interpersonal skills to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Fusion-Addict"
-**How it surfaces:** MERGES with every presence encountered. Cannot navigate independently. Stuck in relational fusion. Seeks companions compulsively. Cannot be alone for any duration.
-- **Detection signals:** Merges with every presence; cannot navigate alone; stuck near companions; compulsive companion-seeking; distress when alone; zero solo exploration
-
-### Dark-Allergy: "The Phantom-Denier"
-**How it surfaces:** Navigates the populated world AS IF ALONE. Misses all presences. Walks past companions without registering them. The relational world is invisible — just terrain.
-- **Detection signals:** Zero engagement with presences; misses companion-gated paths; navigates without relational sensing; presences invisible; world is "just terrain"
-
-### Golden-Addiction: "The Premature Coordinator"
-**How it surfaces:** Engages relational content with MECHANICAL PRECISION. Coordinates perfectly but without warmth. "Relates" without genuine connection. Efficient but empty relational behaviour.
-- **Detection signals:** Mechanical relational engagement; coordinates without warmth; efficient but empty; no genuine bonding despite perfect coordination; "correct" relating without felt-sense
-
-### Golden-Allergy: "The Bond-Refuser"
-**How it surfaces:** APPROACHES presences then RETREATS. Enters relational spaces then leaves quickly. Begins to bond then withdraws. The relational world attracts and repels simultaneously.
-- **Detection signals:** Approach-withdrawal at relational content; enters companion-spaces then leaves; brief engagement followed by retreat; relational content both attractive and threatening
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- World introduces SOLO-REWARDING content (paths that require individual navigation)
-- Companions become accessible only after demonstrating some solo capacity
-- Natural consequence: self-stability = access to richer relational content
-
-**When Dark-Allergy detected:**
-- World makes relational content NECESSARY for navigation (companion-gated paths)
-- Presences produce TANGIBLE results (hidden paths, shared treasures)
-- Natural consequence: sensing others = access; ignoring = stuck
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- World introduces content that requires GENUINE BONDING not just coordination
-- Warmth-responsive objects that don't respond to mechanical precision
-- Natural consequence: genuine connection = magic; mechanical relating = flat
-
-**When Golden-Allergy detected:**
-- World introduces LOW-COMMITMENT relational engagement (brief, safe, rewarding companion-touches)
-- Relational content that INVITES without DEMANDING sustained bonding
-- Natural consequence: brief connection = small magic; no punishment for withdrawal
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 An open Magenta-stage world populated with phantom-allies, spirit-presences, and potential companions. Every zone has relational content — presences to sense, companions to bond with, coordination opportunities. The world IS relational.
@@ -163,7 +63,7 @@ An open Magenta-stage world populated with phantom-allies, spirit-presences, and
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Presences:** Beings to sense and approach
@@ -181,21 +81,7 @@ An open Magenta-stage world populated with phantom-allies, spirit-presences, and
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring (ECOLOGICAL)
-- **Presence-engagement rate:** How often does the player engage relational content spontaneously?
-- **Sensing accuracy:** When they engage, do they sense correctly?
-- **Bonding quality:** Do they form genuine connections?
-- **Coordination quality:** Can they synchronise with companions?
-- **Transfer evidence:** Do structured interpersonal skills appear in free-play?
-
-### LLM rubric
-- **High:** World generation, ecological interpersonal assessment, companion dynamics. Evaluates spontaneous relational behaviour without explicit tasks.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Navigation (exploration); tap (engage presence); hold (sustain connection); gesture (coordinate with companion)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The world has sacred spaces, profane spaces, value-testing situations, and transactional faith opportunities. Nobody asks "what do you value?" — the player simply ACTS, and the world reveals whether their actions are value-coherent.
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Opportunities to act on values in the open world.
-- Healthy: Acts on values spontaneously; value-coherent behaviour without prompting
-- Pathological: Uses values only as weapons; value-action = aggression
-- **Detection:** Quality of spontaneous value-coherent action (alignment vs. aggression)
-
-### Agency Golden-Domain
-**Context:** Situations requiring value-initiative (sacred space threatened; value-opportunity appears).
-- Healthy: Initiates value-coherent action without being asked
-- Pathological: Cannot initiate spiritual action without prompting
-- **Detection:** Spontaneous spiritual initiative rate
-
-### Communion Dark-Domain
-**Context:** NPCs who share or challenge values in the open world.
-- Healthy: Engages others' spiritual lives; shares and receives
-- Pathological: Imposes values on all NPCs; "You should value what I value"
-- **Detection:** Quality of social spiritual engagement (sharing vs. imposing)
-
-### Communion Golden-Domain
-**Context:** Opportunities for shared sacred action in free-play.
-- Healthy: Engages shared sacred action naturally with allies
-- Pathological: Spiritual life is entirely private; cannot share
-- **Detection:** Spontaneous shared sacred engagement rate
-
-### Eros Dark-Domain
-**Context:** Familiar spiritual terrain (same sacred spaces, same value-opportunities).
-- Healthy: Maintains spiritual engagement in familiar territory
-- Pathological: Spiritual engagement fades with familiarity; "I've already done this"
-- **Detection:** Spiritual engagement quality in familiar vs. novel contexts
-
-### Eros Golden-Domain
-**Context:** Novel spiritual situations (unfamiliar sacred spaces, new value-challenges).
-- Healthy: Engages with curiosity; explores new spiritual terrain
-- Pathological: Avoids novel spiritual content; stays in familiar sacred spaces
-- **Detection:** Engagement quality in novel spiritual contexts
-
-### Agape Dark-Domain
-**Context:** Maintaining spiritual behaviour over time (consistency across sessions).
-- Healthy: Consistent value-coherent behaviour; reputation builds naturally
-- Pathological: Spiritual behaviour degrades over time; values fade
-- **Detection:** Spiritual consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether spiritual intelligence demonstrated in tasks appears in free-navigation.
-- Healthy: Value-coherence, sacred-boundary defence, transactional faith appear naturally
-- Pathological: Spiritual intelligence exists only during explicit challenges
-- **Detection:** Transfer of spiritual skills to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Zealot"
-**How it surfaces:** Observe spiritual patterns across the session. The Zealot's interactions are ALL value-weaponisation — attacks NPCs with different values, destroys others' sacred spaces, demands conversion from every NPC.
-- **Detection signals:** Aggression toward different-value NPCs; destruction of others' sacred spaces; proselytising behaviour; value-coherence through domination; spiritual engagement = crusade
-
-### Dark-Allergy: "The Nihilist"
-**How it surfaces:** Observe whether the player engages spiritual content AT ALL. The Nihilist ignores sacred spaces, doesn't engage transactional faith, shows no value-coherent behaviour. Spiritual content is invisible to them.
-- **Detection signals:** Zero engagement with sacred spaces; no transactional faith; no value-coherent patterns; spiritual content ignored; navigates as if the sacred doesn't exist
-
-### Golden-Addiction: "The Premature Mystic"
-**How it surfaces:** Observe the QUALITY of spiritual engagement. The Premature Mystic VISITS every sacred space, PERFORMS every ritual, but actual value-coherence is low — they engage spiritual content aesthetically without genuine value-commitment.
-- **Detection signals:** High sacred-space visitation + low value-coherence; performs rituals without genuine engagement; spiritual tourism without commitment; looks spiritual but behaviour is value-free
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** Observe spiritual COMMITMENT patterns. The Sacred-Refuser APPROACHES sacred content then WITHDRAWS. Enters sacred spaces then leaves quickly. Starts transactional faith then breaks it. Approach-withdrawal in spiritual ecology.
-- **Detection signals:** Approach-withdrawal at sacred spaces; starts then abandons spiritual engagement; enters sacred territory then retreats; commitment-terror in ecological spiritual context
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- World introduces sacred spaces that REQUIRE peaceful engagement (aggression = locked out)
-- NPCs with different values who offer ALLIANCE (not conversion targets)
-- Natural consequence: crusade = isolation; coexistence = power
-
-**When Dark-Allergy detected:**
-- World makes spiritual engagement NECESSARY for navigation (value-gated paths, faith-only resources)
-- Sacred spaces that offer TANGIBLE POWER for engagement
-- Natural consequence: spiritual engagement = access; spiritual ignorance = locked out
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- World introduces VALUE-COHERENCE REQUIREMENTS (visiting sacred spaces without value-coherent behaviour produces nothing)
-- Rituals that require GENUINE commitment to produce effect
-- Natural consequence: performed spirituality = empty; genuine = powerful
-
-**When Golden-Allergy detected:**
-- World introduces LOW-COMMITMENT sacred engagement (brief visits that produce power; no long-term obligation)
-- Sacred spaces with EASY EXIT (enter, receive, leave — no trapping)
-- Natural consequence: brief sacred engagement = power; avoidance = missing resources
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 An open Red-stage world where the sacred is REAL and POWERFUL. Sacred spaces grant buffs. Transactional faith produces resources. Value-coherent behaviour builds reputation. The world responds to the player's spiritual pattern. The aesthetic: Red-stage territory with temples, altars, power-shrines, sacred boundaries — the spiritual ecology of power.
@@ -163,7 +63,7 @@ An open Red-stage world where the sacred is REAL and POWERFUL. Sacred spaces gra
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Sacred space configurations:** Altars, shrines, boundaries with varied spiritual dynamics
@@ -181,21 +81,7 @@ An open Red-stage world where the sacred is REAL and POWERFUL. Sacred spaces gra
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring (ECOLOGICAL)
-- **Spontaneous value-coherence:** How often does the player act on values without prompting?
-- **Sacred engagement rate:** How naturally does the player engage spiritual content?
-- **Transactional faith quality:** Quality of serve-and-receive spiritual exchanges
-- **Value-reputation coherence:** Consistency of spiritual behaviour creating clear identity
-- **Spiritual navigation quality:** Quality of engagement with sacred ecology
-
-### LLM rubric
-- **High:** World generation, ecological spiritual assessment, sacred space dynamics, NPC spiritual memory. Evaluates spontaneous spiritual behaviour patterns.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (interact, serve, receive, protect); hold (engage sacred space); swipe (navigate)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You want X. What's ONE thing you could do? Just one step. What would move you closer?" The contact boundary is: "Can your wish produce a plan?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Forming wish→action links independently.
-- Healthy: Identifies action-steps toward wish by own reasoning
-- Pathological: Demands the wish without identifying any action; "Just make it happen"
-- **Detection:** Whether any action-step is identified or only demand expressed
-
-### Agency Golden-Domain
-**Context:** Self-generated action-steps (not choosing from options).
-- Healthy: Generates own action-steps toward wish
-- Pathological: Cannot identify action-steps without being given options
-- **Detection:** Self-generated vs. prompted action-step identification
-
-### Communion Dark-Domain
-**Context:** Planning when companion has a different plan.
-- Healthy: Holds own wish→action link despite companion's different approach
-- Pathological: Abandons own plan to copy companion's
-- **Detection:** Whether own wish→action link survives social context
-
-### Communion Golden-Domain
-**Context:** Shared planning (planning together toward shared wish).
-- Healthy: Contributes to shared plan while maintaining own wish-connection
-- Pathological: Cannot plan with others; planning is private only
-- **Detection:** Quality of shared wish→action planning
-
-### Eros Dark-Domain
-**Context:** Familiar wish→action links (same wish, same step).
-- Healthy: Maintains wish→action connection on familiar plans
-- Pathological: Plan becomes mechanical; wish-connection lost
-- **Detection:** Whether familiar plans retain wish-motivation
-
-### Eros Golden-Domain
-**Context:** Novel wish→action links (new wishes requiring new steps).
-- Healthy: Forms novel wish→action links with curiosity
-- Pathological: Cannot form new links; stuck on familiar plans only
-- **Detection:** Novel wish→action link formation quality
-
-### Agape Dark-Domain
-**Context:** Maintaining wish→action planning over time.
-- Healthy: Planning capacity remains consistent across sessions
-- Pathological: Planning degrades; wish→action links become weaker
-- **Detection:** Planning quality across sessions
-
-### Agape Golden-Domain
-**Context:** Whether wish→action planning appears spontaneously.
-- Healthy: Forms wish→action links naturally in free-play
-- Pathological: Planning exists only in explicit planning tasks
-- **Detection:** Spontaneous wish→action link formation
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Demander"
-**How it surfaces:** REFUSES TO PLAN. "I don't need a step. I just WANT it." Planning is unnecessary because wishing should be sufficient. The wish IS the plan.
-- **Detection signals:** No action-step identified; "Just give it to me"; wish = plan; refuses planning as unnecessary; "Why do I need a step? I WANT it"
-
-### Dark-Allergy: "The Wish-Abandoner"
-**How it surfaces:** Cannot plan because there's NO WISH to plan toward. "Plan for what?" No goal = no plan. The planning function has no fuel.
-- **Detection signals:** No wish to plan toward; "I don't know what I want"; cannot identify goal for planning; empty planning context; no wish-fuel for action-steps
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Plans WITHOUT WISHING. Identifies action-steps that serve no desire. "I should do X, then Y, then Z." Elaborate planning without wish-foundation. Plans for duty, not desire.
-- **Detection signals:** Action-steps without wish-connection; "I should" not "I want"; elaborate plans with no desire-fuel; duty-planning; cannot name the wish the plan serves
-
-### Golden-Allergy: "The Effort-Refuser"
-**How it surfaces:** Can identify the step but WON'T TAKE IT. "I know I could do X... but I won't." The plan exists but remains theoretical. Planning without execution.
-- **Detection signals:** Correct step-identification + zero execution; "I could but..."; theoretical planning; plan-without-action; knows the step, refuses the step
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Show that wishing ALONE doesn't produce results; ONE STEP does
-- Make the step TINY: "Just one thing. The smallest step. Then the wish moves."
-- Frame: "Your wish is beautiful. Now: one tiny step. Watch what happens."
-- Build: wish + step > wish alone (planning adds to wishing)
-
-**When Dark-Allergy detected:**
-- Provide the wish FIRST, then ask for the step: "Here's a wish. What's one step toward it?"
-- Make the wish GIVEN so planning can happen without wish-formation
-- Frame: "Let's say you want THIS. What's one thing you could do? Just one."
-- Reward ANY step-identification; celebrate first wish→action link
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require WISH-NAMING before planning: "What's the wish? Name it. THEN plan."
-- Block planning until wish is stated; make wish-connected plans score higher
-- Frame: "Before the plan: what do you WANT? The plan serves the wish, not the other way."
-- Build: wish-grounded planning (desire fuels action)
-
-**When Golden-Allergy detected:**
-- Make the step AUTOMATIC after identification: "You named the step. Now it happens."
-- Remove execution-barrier; show that identifying = doing (at this level)
-- Frame: "You found the step! That's the hard part. Now just... do it. One moment."
-- Build: plan→action bridge (planning leads to doing)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Wish-Step: a planning space where wishes become steps. The aesthetic: Magenta-stage stepping-stones — the wish floats ahead, and stepping-stones appear when the player identifies actions. Each correct step makes a stone appear, creating a path toward the wish.
@@ -170,7 +66,7 @@ The Wish-Step: a planning space where wishes become steps. The aesthetic: Magent
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Direct links:** Obvious wish→action connections
@@ -188,21 +84,7 @@ The Wish-Step: a planning space where wishes become steps. The aesthetic: Magent
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Wish→action link formation:** Can they identify a step that serves the wish?
-- **Link quality:** Is the identified step actually relevant to the wish?
-- **Wish-connection:** Is the plan connected to desire (not just duty)?
-- **Sequence capacity:** Can they form 2-step sequences? (ceiling at Magenta)
-- **Execution rate:** Do identified steps get taken?
-
-### LLM rubric
-- **Low-Medium:** Step-relevance evaluation requires some LLM judgment. Wish-connection assessment. Core step-identification scoring partially algorithmic.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (choose action-step from options); verbal (name the step); drag (connect wish to action)

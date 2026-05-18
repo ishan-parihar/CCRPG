@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You are not alone with the sacred. Others are here. They feel it too. Can you share this? Can you be in the numinous together — not losing your own sacred-sense, not ignoring theirs?" The contact boundary is: "Can you share sacred experience?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Maintaining own sacred-sense in group.
-- Healthy: Maintains own numinous experience while in sacred circle
-- Pathological: Dominates group sacred space; OR: loses own sacred-sense in group
-- **Detection:** Whether own sacred-sense remains stable in communal context
-
-### Agency Golden-Domain
-**Context:** Contributing to group sacred experience.
-- Healthy: Offers own sacred-sense to the group with confidence
-- Pathological: Cannot contribute; OR: over-contributes (dominates)
-- **Detection:** Quality of individual contribution to shared sacred
-
-### Communion Dark-Domain
-**Context:** Receiving others' sacred experience.
-- Healthy: Receives companions' sacred-sense without losing own
-- Pathological: Absorbs others' sacred experience (fusion); OR: blocks it
-- **Detection:** Whether they can receive without fusion or rejection
-
-### Communion Golden-Domain
-**Context:** Genuine mutual sacred participation.
-- Healthy: Participates in shared sacred with both giving and receiving
-- Pathological: Cannot achieve genuine mutuality; one-directional only
-- **Detection:** Quality of mutual sacred participation
-
-### Eros Dark-Domain
-**Context:** Shared sacred consistency over time.
-- Healthy: Can participate in sacred circle consistently across sessions
-- Pathological: Shared sacred engagement is random; no stable communal practice
-- **Detection:** Communal sacred consistency
-
-### Eros Golden-Domain
-**Context:** Growing in shared sacred capacity (deeper communal experience).
-- Healthy: Can participate in increasingly deep shared sacred without losing self
-- Pathological: Cannot deepen; OR: deepens without maintaining boundaries
-- **Detection:** Shared sacred growth quality
-
-### Agape Dark-Domain
-**Context:** Maintaining shared sacred capacity over time.
-- Healthy: Communal sacred participation remains accessible across sessions
-- Pathological: Shared sacred capacity degrades; cannot participate after absence
-- **Detection:** Communal sacred persistence
-
-### Agape Golden-Domain
-**Context:** Whether shared sacred appears spontaneously.
-- Healthy: Shares sacred naturally in non-spiritual social contexts
-- Pathological: Shared sacred exists only during explicit ritual tasks
-- **Detection:** Spontaneous shared sacred
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Spirit-Addict"
-**How it surfaces:** DOMINATES the sacred circle. "I feel it most! The spirits speak to ME! Listen to me!" Uses communal sacred for inflation. The group is audience for their numinous grandiosity.
-- **Detection signals:** Dominates sacred space; "I feel it most"; uses group as audience; inflated sacred claims; cannot share equally; "the spirits chose ME"
-
-### Dark-Allergy: "The Spirit-Denier"
-**How it surfaces:** CANNOT PARTICIPATE. "I don't feel anything. What are they doing? I don't understand." Absent from communal sacred. The group's numinous experience is invisible/meaningless.
-- **Detection signals:** Cannot participate; "I don't feel it"; confused by others' sacred experience; absent; "what are they doing?"; no communal sacred capacity
-
-### Golden-Addiction: "The Premature Priest"
-**How it surfaces:** LEADS/CONTROLS the sacred circle. "I'll lead the ritual. Follow me. Do what I say." Uses communal sacred for power/status. Priest-role, not participant-role.
-- **Detection signals:** Takes control; "follow me"; leads without invitation; uses ritual for status; cannot be equal participant; priest-posture; "I'll show you how"
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** APPROACHES the circle then WITHDRAWS. "I was going to join but… I'll just watch." Feels the pull of communal sacred but cannot commit to participation.
-- **Detection signals:** Approach-withdrawal; "I'll watch"; cannot join; feels the pull but retreats; "maybe next time"; communal sacred feels too intimate/overwhelming
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present sacred circle as EQUAL space: "Everyone feels it. Not just you. Equal. Can you feel it WITH them, not OVER them?"
-- Reward equal participation; block domination
-- Frame: "The sacred is shared. Not yours alone. Everyone's. Can you be ONE of the circle? Not the center?"
-- Build: equal communal sacred (participant not star)
-
-**When Dark-Allergy detected:**
-- Start with OBSERVATION: "Just watch. See how they feel it. Does anything stir in you? Even watching?"
-- Build from observation to peripheral participation to full joining
-- Frame: "You don't have to feel what they feel. Just be near. In the circle. Present. That's enough to start."
-- Reward ANY communal sacred engagement; celebrate first participation
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Present sacred circle that DOESN'T NEED a leader: "No leader. Everyone equal. Can you participate without leading?"
-- Block priest-role; reward equal participation
-- Frame: "Not leading. Not teaching. Just being WITH. In the circle. Equal. Can you do that?"
-- Build: equal communal sacred (participant not priest)
-
-**When Golden-Allergy detected:**
-- Make joining LOW-COMMITMENT: "Just one moment in the circle. Then you can step back. Just one moment together."
-- Reduce commitment; communal sacred doesn't have to be sustained
-- Frame: "Just step in. Feel it for a moment. With them. Then you can go. But for one moment — together."
-- Build: communal sacred safety (joining isn't permanent or overwhelming)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Sacred Circle: a communal sacred space. Player and companions participate in shared numinous experience. The aesthetic: Magenta-stage ritual circle — figures gathered around a sacred center, each with their own glow, the shared glow between them growing as they participate together.
@@ -170,7 +66,7 @@ The Sacred Circle: a communal sacred space. Player and companions participate in
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Harmonious circles:** Easy shared sacred (similar companions)
@@ -188,21 +84,7 @@ The Sacred Circle: a communal sacred space. Player and companions participate in
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Participation:** Can they be in the sacred circle at all?
-- **Equality:** Do they participate as equal (not dominant or absent)?
-- **Contribution:** Do they add to shared sacred?
-- **Reception:** Can they receive others' sacred experience?
-- **Adaptation:** Can they maintain participation when circle changes?
-
-### LLM rubric
-- **Low:** Core participation tracking algorithmic (presence, contribution rate, dominance detection). LLM for equality assessment and genuine-vs-performative participation.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (join circle); gesture (contribute to shared sacred); hold (sustain participation); rhythm (synchronise with group)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Two paths. One glows — the sacred way. One is easy — the ordinary way. The sacred path is harder. Which do you choose? What matters more — ease or the glow?" The contact boundary is: "Does the sacred orient your behaviour?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Choosing the sacred path independently (no social pressure).
-- Healthy: Chooses sacred path with sovereign confidence
-- Pathological: Compulsive sacred-choosing (no real choice); OR: ignores sacred entirely
-- **Detection:** Whether sacred choice is genuine and self-generated
-
-### Agency Golden-Domain
-**Context:** Choosing under ambiguity (unclear which path is sacred).
-- Healthy: Makes tentative sacred choice under ambiguity
-- Pathological: Cannot choose when sacred path is unclear; freezes
-- **Detection:** Sacred decision quality under ambiguity
-
-### Communion Dark-Domain
-**Context:** Choosing when companion chooses differently.
-- Healthy: Maintains own sacred choice while respecting companion's
-- Pathological: Adopts companion's choice; loses own sacred orientation
-- **Detection:** Whether own sacred choice survives social disagreement
-
-### Communion Golden-Domain
-**Context:** Shared sacred decision (choosing together).
-- Healthy: Contributes own sacred sense to group decision
-- Pathological: Cannot share sacred decision-making; OR: dominates group choice
-- **Detection:** Quality of collaborative sacred decision
-
-### Eros Dark-Domain
-**Context:** Sacred choice consistency over time.
-- Healthy: Consistently chooses sacred path across sessions
-- Pathological: Sacred choices are random; no stable sacred orientation
-- **Detection:** Sacred decision consistency
-
-### Eros Golden-Domain
-**Context:** Choosing HARDER sacred paths (growth in sacred commitment).
-- Healthy: Can choose increasingly costly sacred paths as capacity grows
-- Pathological: Cannot grow in sacred commitment; OR: jumps to extreme sacrifice
-- **Detection:** Sacred commitment growth quality
-
-### Agape Dark-Domain
-**Context:** Maintaining sacred orientation over time.
-- Healthy: Sacred choices remain consistent across sessions
-- Pathological: Sacred orientation degrades; reverts to easy path after absence
-- **Detection:** Sacred orientation persistence
-
-### Agape Golden-Domain
-**Context:** Whether sacred orientation appears spontaneously.
-- Healthy: Chooses sacred-aligned options naturally in non-spiritual tasks
-- Pathological: Sacred orientation exists only during explicit spiritual tasks
-- **Detection:** Spontaneous sacred orientation
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Spirit-Addict"
-**How it surfaces:** ALWAYS chooses sacred path — compulsively, without genuine discernment. "The spirits! Always follow the spirits!" Cannot choose the ordinary path even when appropriate. Sacred choice is compulsive, not free.
-- **Detection signals:** 100% sacred choices; no discernment; compulsive; "always the spirits"; cannot choose ordinary even when sacred path is inappropriate; rigid sacred-following
-
-### Dark-Allergy: "The Spirit-Denier"
-**How it surfaces:** ALWAYS chooses easy/ordinary path. "Why would I go the hard way? There's nothing special about that path." Cannot orient toward sacred because they cannot sense it.
-- **Detection signals:** 0% sacred choices; "nothing there"; always easy path; no sacred orientation; "why bother?"; sacred path invisible
-
-### Golden-Addiction: "The Premature Priest"
-**How it surfaces:** Chooses sacred ONLY when it provides advantage. "The sacred path — it gives power, right? Then yes." Transactional sacred choice. If sacred path costs without reward, ignores it.
-- **Detection signals:** Sacred choice only when rewarding; "what do I get?"; transactional; ignores costly sacred paths; sacred = strategic advantage; no sacrifice
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** APPROACHES sacred path then RETREATS. "I was going to go that way but… the other way is fine." Feels the pull of the sacred path but cannot commit. Sacred choice feels too demanding.
-- **Detection signals:** Approach-withdrawal; "I was going to but…"; retreats from sacred path; feels the pull but cannot follow; "too much"; sacred commitment feels overwhelming
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present situations where ORDINARY choice is appropriate: "Not every fork needs the sacred path. Sometimes ordinary is right. Can you choose ordinary when it's appropriate?"
-- Reward discerning sacred choice (not compulsive)
-- Frame: "The spirits don't demand EVERY choice. Sometimes the easy path is fine. Can you tell when?"
-- Build: discerning sacred orientation (free not compulsive)
-
-**When Dark-Allergy detected:**
-- Present OBVIOUS sacred-vs-ordinary forks with clear benefit: "This path glows. It's a little harder but look — something beautiful is there. Worth it?"
-- Make sacred path SLIGHTLY harder but clearly rewarding
-- Frame: "Just this once. The glowing path. A little harder. But see what's there? Worth a try?"
-- Reward ANY sacred choice; celebrate first sacred orientation
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Present sacred paths that COST without obvious reward: "This path glows. It's harder. No reward at the end — just the glow. Still worth it?"
-- Reward sacred choice WITHOUT transactional benefit
-- Frame: "Not for power. Not for reward. Just because it glows. Because it matters. Is that enough?"
-- Build: non-transactional sacred orientation (sacred for its own sake)
-
-**When Golden-Allergy detected:**
-- Make sacred path LOW-COST: "Just one step. The sacred path. Just one step on it. Then you can come back."
-- Reduce commitment; sacred choice doesn't have to be total
-- Frame: "Not the whole path. Just one step. Feel what it's like. You can always come back."
-- Build: sacred commitment safety (following the sacred isn't all-or-nothing)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Sacred Path: a choice-space where paths diverge. One path glows (sacred); one is ordinary. The sacred path is harder/longer/costlier but leads to numinous content. The ordinary path is easy but flat. The player chooses. The aesthetic: Magenta-stage spirit-crossroads — forking paths in a magical forest, one glowing faintly.
@@ -170,7 +66,7 @@ The Sacred Path: a choice-space where paths diverge. One path glows (sacred); on
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Low-cost forks:** Sacred slightly harder (entry-level)
@@ -188,21 +84,7 @@ The Sacred Path: a choice-space where paths diverge. One path glows (sacred); on
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Sacred orientation:** Does the sacred influence choices at all?
-- **Discernment:** Can they distinguish when sacred choice is appropriate?
-- **Commitment:** Can they follow sacred path when costly?
-- **Consistency:** Stable sacred orientation across sessions?
-- **Spontaneity:** Sacred orientation in non-spiritual contexts?
-
-### LLM rubric
-- **Medium:** Core choice-tracking algorithmic. LLM for discernment assessment, compulsion detection, transactional-vs-genuine evaluation, and approach-withdrawal pattern recognition.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (choose path); swipe (direction); hold (commit to choice under pressure)

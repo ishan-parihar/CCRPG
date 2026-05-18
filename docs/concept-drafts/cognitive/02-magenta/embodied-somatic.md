@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Draw the rune in the air. Hold the shape. Your body knows the symbol before your mind does." The contact boundary is: "Can your body make and hold symbols?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Independent gesture-production (create the symbol without a model).
-- Healthy: Produces gestures independently; body initiates symbolic action
-- Pathological: Gestures are aggressive/dominating; body uses symbols as weapons
-- **Detection:** Whether gesture serves symbol-production or domination
-
-### Agency Golden-Domain
-**Context:** Self-initiated gestural exploration (trying new symbol-gestures).
-- Healthy: Explores new gestures with curiosity; body experiments
-- Pathological: Cannot initiate gesture without being shown first
-- **Detection:** Spontaneous gestural exploration rate
-
-### Communion Dark-Domain
-**Context:** Mirroring another's gesture (copy the symbol-movement).
-- Healthy: Mirrors accurately; body coordinates with model
-- Pathological: Loses own gestural capacity when mirroring; becomes the other
-- **Detection:** Whether mirroring enhances or replaces own gesture
-
-### Communion Golden-Domain
-**Context:** Shared gesture (producing a symbol together with partner).
-- Healthy: Coordinates gesture with partner; shared symbol-production
-- Pathological: Cannot share gestural space; body isolates
-- **Detection:** Quality of coordinated gesture-production
-
-### Eros Dark-Domain
-**Context:** Familiar gestures (well-practiced symbol-movements).
-- Healthy: Maintains accuracy on familiar gestures
-- Pathological: Body disengages from familiar gestures; goes mechanical
-- **Detection:** Gestural quality on below-level familiar symbols
-
-### Eros Golden-Domain
-**Context:** Novel gestures (new symbol-movements never attempted).
-- Healthy: Attempts with appropriate effort; body explores
-- Pathological: Claims mastery of novel gestures immediately
-- **Detection:** Genuine effort vs. performed ease on novel gestures
-
-### Agape Dark-Domain
-**Context:** Maintaining gestural accuracy over time.
-- Healthy: Gesture quality remains stable across sessions
-- Pathological: Gestural accuracy degrades; body forgets symbols
-- **Detection:** Gestural consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether gestural symbols appear spontaneously.
-- Healthy: Body produces symbolic gestures in non-task contexts
-- Pathological: Gestural symbols exist only during explicit tasks
-- **Detection:** Spontaneous gestural symbol-production
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Thinker"
-**How it surfaces:** The body performs ELABORATE RITUALS that exceed the symbol's requirements. The gesture becomes a ceremony — waving, circling, dramatic movements that have nothing to do with the actual rune-shape. Body as magical instrument rather than symbol-producer.
-- **Detection signals:** Gesture complexity far exceeding symbol requirements; ritual additions to simple traces; dramatic body-movements for simple runes; belief that MORE gesture = MORE power
-
-### Dark-Allergy: "The Concrete-Bound"
-**How it surfaces:** The body moves WITHOUT symbolic intent. Traces are random; gestures don't correspond to symbols. The body is active but not symbolically engaged. Movement without meaning.
-- **Detection signals:** Low gesture-symbol correspondence; random traces; body active but not symbolically directed; no improvement in gestural accuracy; movement without meaning
-
-### Golden-Addiction: "The Premature Reasoner"
-**How it surfaces:** SKIPS gesture entirely. "I don't need to move — I can just think the symbol." Treats embodied cognition as primitive. Refuses to engage the body in symbolic work.
-- **Detection signals:** Minimal gestural engagement; verbal/mental preference; "I already know it, why do I need to draw it?"; body disengaged from cognitive tasks; treats gesture as unnecessary
-
-### Golden-Allergy: "The Wonder-Refuser"
-**How it surfaces:** The body FREEZES at symbolic gesture. Starts to trace then stops. The hand approaches the rune-shape then withdraws. Somatic approach-avoidance at the symbolic gesture.
-- **Detection signals:** Incomplete gestures; start-stop patterns; hand approaches then withdraws; body tension at gesture-initiation; can produce gestures when forced but avoids voluntary production
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Constrain gesture to MINIMAL required movement: "Just the shape. Nothing extra."
-- Reward accuracy over elaboration; strip ritual additions
-- Frame: "The rune is simple. Your body needs to be simple too. Just the shape."
-- Build: precise gestural symbol-production (not ritual performance)
-
-**When Dark-Allergy detected:**
-- Connect gesture to TANGIBLE outcome: "Trace this shape → the door opens"
-- Make the body's symbolic action produce visible results
-- Frame: "Your hand draws the shape. The world responds. That's all."
-- Reward ANY accurate gesture; celebrate first symbol-body connection
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- REQUIRE gesture for task completion (cannot think-only; must move)
-- Make gestural engagement produce BETTER results than mental-only
-- Frame: "Your body knows things your mind doesn't yet. Let it teach you."
-- Reward embodied engagement; block disembodied shortcuts
-
-**When Golden-Allergy detected:**
-- Present gesture as PLAY not PERFORMANCE: "Just move your hand. See what shape appears."
-- Remove accuracy pressure; reward movement itself
-- Frame: "No right or wrong. Just move. The shape will come."
-- Build gestural confidence through low-stakes exploration
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Gesture-Caster: a somatic-symbolic space where the body produces magic. The player traces runes, holds shapes, and casts through gesture. The aesthetic: Magenta-stage cave-painting — the player's hand leaves glowing traces in the air, each trace a symbol, each symbol a spell.
@@ -168,7 +64,7 @@ The Gesture-Caster: a somatic-symbolic space where the body produces magic. The 
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Copy gestures:** Shapes to reproduce immediately
@@ -186,21 +82,7 @@ The Gesture-Caster: a somatic-symbolic space where the body produces magic. The 
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Gestural accuracy:** How closely does the trace match the target shape?
-- **Hold stability:** Can the gesture be sustained without drift?
-- **Gestural memory:** Can the shape be reproduced after delay?
-- **Efficiency:** Is the gesture minimal (no ritual additions)?
-- **Spontaneity:** Does gestural symbol-production appear naturally?
-
-### LLM rubric
-- **Low:** Core scoring is algorithmic (shape-matching, hold-stability, timing). LLM generates contextual framing only.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Touch-trace (draw on screen); gyroscope/accelerometer (gesture in air); hold-position (sustained touch); swipe-patterns (directional gesture)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game presents cognitive challenges that REQUIRE bodily engagement — you cannot solve them by thinking alone; you must move, tap, time, and navigate. The contact boundary is: "Can your body express what your mind knows?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** The game offers "auto-rhythm" assists that handle timing while the player focuses on pattern. Accepting/rejecting this scaffolding.
-- Healthy: Uses assists strategically when learning new patterns, drops them when ready
-- Pathological: Refuses all assists even when failing repeatedly; "I'll do it myself" while rhythm collapses
-- **Detection:** Assist rejection rate when performance is below threshold; stubbornness vs. sovereignty
-
-### Agency Golden-Domain
-**Context:** Free-rhythm sections where the player must CREATE their own pattern (not follow a given one).
-- Healthy: Creates patterns with confidence, experiments, tolerates imperfection
-- Pathological: Cannot create without a template; freezes in free-rhythm; needs to be told what to do
-- **Detection:** Quality and confidence of self-generated patterns; latency before first attempt in free sections
-
-### Communion Dark-Domain
-**Context:** Paired rhythm sections — player must synchronise with an NPC drummer while maintaining their own pattern.
-- Healthy: Maintains own rhythm while synchronising; both patterns coexist
-- Pathological: Loses own rhythm entirely to match the other; cognitive pattern collapses into mimicry
-- **Detection:** Pattern integrity during synchronisation; whether own cognitive tracking survives pairing
-
-### Communion Golden-Domain
-**Context:** Call-and-response rhythm — player and NPC build a pattern together, each adding complexity.
-- Healthy: Genuine co-creation; adds complexity that builds on what the other offered
-- Pathological: Performs complexity without genuine engagement; adds flashy moves that don't connect
-- **Detection:** Whether additions are responsive to partner or self-contained performances
-
-### Eros Dark-Domain
-**Context:** The game allows the player to stay at current rhythm complexity or advance to faster/more complex patterns.
-- Healthy: Enjoys current rhythm mastery; advances when the body is ready (not just the mind)
-- Pathological: Demands faster/harder immediately; cannot rest in a groove; treats current rhythm as insufficient
-- **Detection:** Time spent in groove before demanding advancement; quality of engagement at current level
-
-### Eros Golden-Domain
-**Context:** Optional "reach" rhythms that require cognitive tracking beyond current stable capacity.
-- Healthy: Attempts reach rhythms with playful curiosity; accepts when body can't yet do it
-- Pathological: Forces reach rhythms before current ones are stable; body fails but mind insists
-- **Detection:** Gap between attempted complexity and stable performance; body-stress signals (timing breakdown)
-
-### Agape Dark-Domain
-**Context:** Foundation rhythms — simple patterns that maintain basic timing and coordination.
-- Healthy: Engages foundation rhythms with full presence; the simple groove is satisfying
-- Pathological: Dismisses simple rhythms; performs them carelessly; "This is boring"
-- **Detection:** Quality of engagement on simple patterns; timing precision on "easy" rhythms
-
-### Agape Golden-Domain
-**Context:** Transfer challenges — using rhythm-based cognitive skills in non-rhythm game contexts.
-- Healthy: Timing and pattern-tracking transfer to combat, navigation, and other activities
-- Pathological: Rhythm skills exist only in rhythm context; cannot apply timing to other situations
-- **Detection:** Timing quality in non-rhythm contexts; whether pattern-tracking appears in free-play
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Strategist"
-**How it surfaces:** Present a simple rhythm that requires FEELING more than thinking. The compulsive strategist tries to COUNT rather than FEEL, disrupting the natural flow.
-- **Detection signals:** Timing becomes mechanical/rigid on feel-based rhythms; performance WORSE on simple grooves than complex patterns; visible tension/effort on easy material
-
-### Dark-Allergy: "The Anti-Intellectual Warrior"
-**How it surfaces:** Present a rhythm that requires COGNITIVE TRACKING (n-back pattern within the beat). The allergy manifests as ignoring the cognitive layer and just hitting the beat.
-- **Detection signals:** Rhythm timing is good but pattern-tracking accuracy is poor; player engages the body but not the mind-in-body; "I'm just vibing" without tracking
-
-### Golden-Addiction: "The Premature Abstractionist"
-**How it surfaces:** Present a complex polyrhythm that requires genuine multi-tracking. The bypass manifests as performing the APPEARANCE of complexity without actual cognitive tracking.
-- **Detection signals:** Looks complex but accuracy on tracked elements is low; style over substance; body moves impressively but cognitive content is absent
-
-### Golden-Allergy: "The Growth-Refuser"
-**How it surfaces:** Gradually increase rhythm complexity. The refusal manifests as body tension, timing breakdown, or explicit withdrawal when complexity increases.
-- **Detection signals:** Performance cliff at specific complexity threshold; body tension signals; preference for repeating mastered rhythms indefinitely
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game introduces "feel-first" phases: rhythm with no cognitive tracking required — just GROOVE
-- Rewards relaxed timing over rigid precision
-- Frames flow as power: "The warrior who moves like water cannot be stopped"
-- Gradually teaches that the body can think WITHOUT the mind controlling every beat
-
-**When Dark-Allergy detected:**
-- Game embeds cognitive elements WITHIN the groove (not separate from it)
-- Pattern-tracking emerges from the rhythm itself (not imposed on top)
-- Frames cognitive rhythm as "battle instinct" — the body that KNOWS the pattern
-- Starts with 1-element tracking within a comfortable groove, extends gradually
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game requires ACCURACY on tracked elements (not just impressive movement)
-- Strips away style points — only cognitive tracking quality matters
-- Pairs with NPC who models precise, simple, genuinely tracked rhythm
-- Makes accurate simplicity more rewarding than flashy complexity
-
-**When Golden-Allergy detected:**
-- Game introduces complexity as PLAY — "What if we add one more thing?"
-- New elements are tiny (one additional beat, one additional track)
-- Frames complexity as adventure: "The drum speaks a new word"
-- Celebrates any engagement with new complexity, however brief
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The player enters a war-drum circle in the Red-stage fortress. War-drums of different sizes surround them. A "Drum-Master" NPC (battle-scarred percussionist) demonstrates patterns. The aesthetic: firelight, weapon-rhythm, the pulse of the war-camp.
@@ -168,7 +64,7 @@ The player enters a war-drum circle in the Red-stage fortress. War-drums of diff
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Rhythm sequences:** Beat patterns at various tempos (procedurally generated)
@@ -202,36 +98,7 @@ The player enters a war-drum circle in the Red-stage fortress. War-drums of diff
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Timing precision:** How close to the beat? (ms deviation)
-- **Pattern-tracking accuracy:** n-back d' within rhythmic context
-- **Spatial accuracy:** Correct directional sequences
-- **Inhibition quality:** Commission errors on feint-beats
-- **Integration:** Can they maintain ALL of the above simultaneously?
-
-### Drive-health scoring
-Per `scoring.md` §3: Behavioural signals from rhythm engagement patterns — assist usage, synchronisation quality, advancement patterns, foundation engagement.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Timing rigidity, tracking avoidance, performance-without-accuracy, complexity withdrawal.
-
-### Integration scoring
-- Mind-body unity increasing (less separation between "thinking" and "moving")
-- Timing becoming more natural/flowing (less mechanical)
-- Cognitive tracking becoming effortless within rhythm
-- Transfer: timing and pattern skills appearing in other game contexts
-
-### LLM rubric
-Minimal for this modality — scoring is primarily algorithmic (timing precision, accuracy, d'). LLM used for:
-- Generating contextual framing (Drum-Master dialogue)
-- Interpreting compound patterns across sessions
-- Adapting difficulty narrative
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (primary — beat-synchronised)

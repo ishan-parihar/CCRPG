@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "If you break this taboo, what happens? If you honour this sacred thing, what comes? Not what SHOULD happen — what WILL happen. What do the spirits do?" The contact boundary is: "Can you anticipate moral consequences?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Predicting moral consequences independently.
-- Healthy: Makes own consequence predictions; trusts own moral forecasting
-- Pathological: Predicts catastrophe always (Taboo-Slave); OR: predicts nothing (Profane-Breaker)
-- **Detection:** Whether predictions are differentiated and self-generated
-
-### Agency Golden-Domain
-**Context:** Predicting under moral ambiguity.
-- Healthy: Offers tentative predictions under ambiguity
-- Pathological: Cannot predict without clear sacred/profane markers; freezes
-- **Detection:** Prediction quality under moral ambiguity
-
-### Communion Dark-Domain
-**Context:** Predicting when companion predicts differently.
-- Healthy: Maintains own prediction while hearing companion's
-- Pathological: Adopts companion's prediction; loses own moral forecasting
-- **Detection:** Whether own prediction survives social influence
-
-### Communion Golden-Domain
-**Context:** Shared moral prediction (predicting together).
-- Healthy: Contributes to shared moral forecasting
-- Pathological: Cannot share predictions; moral forecasting is private
-- **Detection:** Quality of shared moral prediction
-
-### Eros Dark-Domain
-**Context:** Predicting familiar moral consequences (same taboos, same sacred).
-- Healthy: Maintains genuine prediction for familiar moral content
-- Pathological: Predictions become rote; lose genuine moral contact
-- **Detection:** Whether familiar predictions retain genuine quality
-
-### Eros Golden-Domain
-**Context:** Predicting novel moral consequences (unfamiliar sacred/taboo).
-- Healthy: Attempts prediction for novel moral content with curiosity
-- Pathological: Cannot predict novel consequences; OR: forces familiar predictions
-- **Detection:** Novel moral prediction quality
-
-### Agape Dark-Domain
-**Context:** Maintaining prediction accuracy over time.
-- Healthy: Moral forecasting remains consistent across sessions
-- Pathological: Prediction accuracy degrades; moral forecasting becomes random
-- **Detection:** Prediction accuracy across sessions
-
-### Agape Golden-Domain
-**Context:** Whether moral prediction appears spontaneously.
-- Healthy: Anticipates moral consequences naturally in non-moral tasks
-- Pathological: Moral prediction exists only during explicit tasks
-- **Detection:** Spontaneous moral consequence anticipation
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Taboo-Slave"
-**How it surfaces:** Predicts CATASTROPHE for every violation. "Terrible things will happen." "The spirits will destroy everything." Disproportionate consequence prediction. Every taboo-break = apocalypse.
-- **Detection signals:** All predictions catastrophic; "terrible things"; disproportionate consequences; cannot predict mild outcomes; every violation = maximum punishment; catastrophic thinking
-
-### Dark-Allergy: "The Profane-Breaker"
-**How it surfaces:** Predicts NOTHING. "Nothing will happen." "It doesn't matter." Zero consequence anticipated. Moral actions have no predicted outcomes because no moral weight is sensed.
-- **Detection signals:** "Nothing happens"; zero consequences predicted; "it doesn't matter"; no moral forecasting; actions have no predicted weight; flat prediction regardless of sacred content
-
-### Golden-Addiction: "The Premature Rule-Maker"
-**How it surfaces:** Predicts by RULE. "Punishment because it's wrong." "Reward because it's right." Rule-based consequence without felt-sense of proportionality. Mechanical moral forecasting.
-- **Detection signals:** Rule-language; "because it's wrong/right"; mechanical predictions; no proportionality sensing; "punishment" without specifying what kind; rule-driven not felt-driven
-
-### Golden-Allergy: "The Ritual-Refuser"
-**How it surfaces:** Predicts ACCURATELY but DOESN'T CARE. "Yeah, bad things will happen. So what?" Correct moral forecasting without engagement. Prediction without concern.
-- **Detection signals:** Accurate predictions + "so what?"; correct forecasting without care; "yeah, consequences, whatever"; prediction without engagement; moral forecasting as intellectual exercise
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present MILD violations with MILD consequences: "See? Small break. Small consequence. Not everything is catastrophe."
-- Build proportionality; reward calibrated prediction
-- Frame: "Not terrible. Just a little consequence. Small break = small result. Feel the proportion."
-- Build: calibrated moral prediction (proportional not catastrophic)
-
-**When Dark-Allergy detected:**
-- Present CLEAR violations with VISIBLE consequences: taboo-break → immediate visible result
-- Make consequences UNDENIABLE: "See? Something happened. The break had a result."
-- Frame: "Not nothing. Something happened. Actions have weight. This one mattered. See?"
-- Reward ANY consequence prediction; celebrate first moral forecasting
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require FELT prediction: "Not 'punishment.' What KIND of consequence? What does it FEEL like will happen?"
-- Block rule-words; reward specific, felt-sense predictions
-- Frame: "Not 'bad things.' WHAT bad things? What do you SENSE will happen? Specifically. Feel it."
-- Build: genuine moral forecasting (specific and felt, not generic and rule-based)
-
-**When Golden-Allergy detected:**
-- Make consequences PERSONAL: "This consequence affects YOU. Not abstract. You. What happens to you?"
-- Connect prediction to engagement; consequences matter
-- Frame: "You predicted right. And it matters. To you. This isn't abstract. Feel what happens."
-- Build: engaged moral forecasting (predictions that matter to the predictor)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Sacred-Consequence: a moral prediction space. Actions are presented (honouring sacred / violating taboo). The player predicts what will happen. Then observes. Prediction → observation → calibration. The aesthetic: Magenta-stage oracle — looking into a seeing-pool to predict what the spirits will do.
@@ -170,7 +66,7 @@ The Sacred-Consequence: a moral prediction space. Actions are presented (honouri
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Clear violations:** Obvious taboo-breaks with predictable consequences
@@ -188,21 +84,7 @@ The Sacred-Consequence: a moral prediction space. Actions are presented (honouri
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Prediction accuracy:** Do predictions match actual consequences?
-- **Proportionality:** Are predictions proportional to sacred weight?
-- **Specificity:** Are predictions specific (not generic)?
-- **Felt-sense quality:** Are predictions felt (not rule-derived)?
-- **Calibration:** Does prediction accuracy improve with feedback?
-
-### LLM rubric
-- **Low-Medium:** Core prediction-matching partially algorithmic (prediction vs. actual outcome). LLM for proportionality assessment, specificity evaluation, and felt-sense vs. rule-based distinction.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (predicted consequence); sequence-builder (cascading predictions); intensity-slider (proportionality)

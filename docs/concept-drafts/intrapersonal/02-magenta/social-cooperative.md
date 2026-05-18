@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Here is your companion. You are together now. Who are you? Still you? Or have you changed? Are you still the same person you were alone? Show me." The contact boundary is: "Can you be a self WITH another?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Maintaining self-identity during interaction.
-- Healthy: Remains "I" while interacting; self-concept stable in relationship
-- Pathological: Inflates in relationship (dominates); OR: dissolves (loses self)
-- **Detection:** Whether self-concept remains stable during interaction
-
-### Agency Golden-Domain
-**Context:** Asserting self-identity when companion challenges it.
-- Healthy: Maintains self-concept under social pressure; "I'm still me"
-- Pathological: Cannot maintain self when challenged; collapses or over-asserts
-- **Detection:** Self-maintenance under social challenge
-
-### Communion Dark-Domain
-**Context:** Receiving companion's identity without losing own.
-- Healthy: Acknowledges companion's identity while maintaining own
-- Pathological: Absorbs companion's identity; becomes them
-- **Detection:** Whether own identity survives receiving companion's
-
-### Communion Golden-Domain
-**Context:** Genuine mutual self-sharing (both maintain selves while connecting).
-- Healthy: Shares self AND receives other; mutual identity-maintenance
-- Pathological: Cannot share self in relationship; OR: cannot receive other
-- **Detection:** Quality of mutual self-maintenance
-
-### Eros Dark-Domain
-**Context:** Self-consistency across different companions.
-- Healthy: Remains same self with different companions
-- Pathological: Becomes different person with each companion; no relational self-constancy
-- **Detection:** Self-constancy across relationships
-
-### Eros Golden-Domain
-**Context:** Growing through relationship (self expands through connection).
-- Healthy: Self-concept enriched by relationship without losing core
-- Pathological: Cannot grow through relationship; OR: loses self in growth
-- **Detection:** Relational growth quality
-
-### Agape Dark-Domain
-**Context:** Maintaining relational self-identity over time.
-- Healthy: Self-in-relationship remains consistent across sessions
-- Pathological: Relational self-identity degrades; cannot be self-with-other after absence
-- **Detection:** Relational self-consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether relational self-maintenance appears spontaneously.
-- Healthy: Maintains self naturally in all social contexts
-- Pathological: Self-maintenance exists only during explicit tasks
-- **Detection:** Spontaneous relational self-maintenance
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Fantasy-Prisoner"
-**How it surfaces:** INFLATES in relationship. "I'm the leader! I'm the special one! They need me!" Uses companion to amplify fantasy-self. Relationship = audience for inflation.
-- **Detection signals:** Inflates with companion; "I'm the leader"; uses other as audience; self-concept grows grander in relationship; companion = mirror for fantasy
-
-### Dark-Allergy: "The Self-Stranger"
-**How it surfaces:** DISSOLVES into companion. "I'm whoever they are." Loses self entirely in relationship. Becomes the other. No "I" remains when "we" begins.
-- **Detection signals:** Dissolves; becomes companion; "I'm like them"; no self in relationship; mirrors other completely; "we're the same"; identity = other's identity
-
-### Golden-Addiction: "The Premature Ego"
-**How it surfaces:** DOMINATES in relationship. "I'm the strong one, they follow." Uses will-power to maintain self by controlling other. Self-maintenance through domination, not genuine identity.
-- **Detection signals:** Dominates; "they follow me"; controls companion; self = power-over-other; cannot relate as equals; relationship = hierarchy
-
-### Golden-Allergy: "The Identity-Refuser"
-**How it surfaces:** MERGES deliberately. "We're the same. There's no difference between us." Refuses to be a separate self in relationship. Individuation in relationship feels dangerous.
-- **Detection signals:** Deliberate merger; "we're the same"; refuses difference; "no separation"; individuation = betrayal; being "I" in "we" feels wrong
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present companion as EQUAL: "They're not your audience. They're a person. Like you. Equal."
-- Reward self-maintenance WITHOUT inflation; being ordinary together
-- Frame: "You don't need to be special here. Just you. And them. Together. Both real. Both ordinary."
-- Build: relational self without inflation (equal not grandiose)
-
-**When Dark-Allergy detected:**
-- Maintain self-markers DURING interaction: "You're still you. Even with them. What's YOUR name? Still yours."
-- Keep self-identity active during relationship
-- Frame: "You AND them. Not just them. You're still here. Still you. Say your name. Still yours."
-- Reward ANY self-maintenance in relationship; celebrate first "I'm still me"
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Present companion as EQUAL partner: "Not following you. Beside you. Equal. Can you be WITH, not over?"
-- Block domination; reward equal relating
-- Frame: "Not leading. Not controlling. Just being WITH. Side by side. Both real. Both equal."
-- Build: equal relational self (with not over)
-
-**When Golden-Allergy detected:**
-- Make difference SAFE: "You're different from them. That's okay. Different AND together. Both true."
-- Reduce threat of individuation in relationship
-- Frame: "You can be different AND connected. Being 'I' doesn't mean being alone. You AND them. Both."
-- Build: differentiated relational self (separate and connected)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Self-With: a relational self-exploration space. Player and companion interact. During interaction, self-identity is monitored. The aesthetic: Magenta-stage companion-circle — two figures in a sacred space, each with their own glow (self-image), observing whether glows remain distinct or merge.
@@ -170,7 +66,7 @@ The Self-With: a relational self-exploration space. Player and companion interac
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Similar companions:** Easy to maintain self (clearly different)
@@ -188,21 +84,7 @@ The Self-With: a relational self-exploration space. Player and companion interac
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Self-maintenance:** Does self-concept remain stable in relationship?
-- **Flexibility:** Can they adapt relationally without losing self?
-- **Mutuality:** Can they share self AND receive other?
-- **Differentiation:** Can they be different AND connected?
-- **Consistency:** Same self across different companions?
-
-### LLM rubric
-- **Low:** Core self-maintenance scoring algorithmic (self-image consistency before/during/after interaction). LLM for inflation detection, dissolution detection, and mutuality assessment.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (confirm self-identity); gesture (interact with companion); hold (maintain self during challenge)

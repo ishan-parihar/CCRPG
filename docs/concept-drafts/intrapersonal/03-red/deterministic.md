@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "What are you feeling right now? What will you do next? How strong are you?" The contact boundary is: "Do you ACTUALLY know yourself, or do you just think you do?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Self-assessment of own capacity (strength, skill, speed).
-- Healthy: Accurate self-assessment; knows actual capacity
-- Pathological: Inflated self-assessment; claims capacity beyond evidence
-- **Detection:** Gap between self-rated capacity and demonstrated capacity
-
-### Agency Golden-Domain
-**Context:** Self-prediction of own choices in novel situations.
-- Healthy: Makes predictions with appropriate confidence; revises when wrong
-- Pathological: Cannot predict own behaviour; "I don't know what I'll do"
-- **Detection:** Self-prediction attempt rate and accuracy
-
-### Communion Dark-Domain
-**Context:** Self-assessment that includes how others perceive them.
-- Healthy: Can estimate others' perception of them with some accuracy
-- Pathological: Assumes others see them as they see themselves (projection)
-- **Detection:** Gap between predicted-others'-perception and actual NPC responses
-
-### Communion Golden-Domain
-**Context:** Incorporating feedback into self-knowledge.
-- Healthy: Updates self-model when evidence contradicts it
-- Pathological: Cannot integrate disconfirming evidence; self-model is fixed
-- **Detection:** Self-model update rate after disconfirming evidence
-
-### Eros Dark-Domain
-**Context:** Simple self-knowledge tasks (name current state).
-- Healthy: Engages fully; accurate on simple tasks
-- Pathological: Dismisses simple self-knowledge; "I already know myself"
-- **Detection:** Engagement quality on below-level self-knowledge tasks
-
-### Eros Golden-Domain
-**Context:** Self-knowledge at the edge (predict behaviour in unfamiliar situations).
-- Healthy: Attempts with appropriate uncertainty
-- Pathological: Claims certainty about self in novel contexts without evidence
-- **Detection:** Confidence calibration on edge-of-knowledge self-predictions
-
-### Agape Dark-Domain
-**Context:** Maintaining self-knowledge over time (consistency).
-- Healthy: Self-knowledge is stable and accurate across sessions
-- Pathological: Self-knowledge degrades; "I used to know but now I'm not sure"
-- **Detection:** Self-knowledge consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether self-knowledge appears spontaneously in other tasks.
-- Healthy: Self-predictions and self-assessments appear naturally in other modalities
-- Pathological: Self-knowledge exists only when explicitly tested
-- **Detection:** Spontaneous self-knowledge in non-intrapersonal contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Narcissist"
-**How it surfaces:** Self-assessments are CONSISTENTLY INFLATED. The player rates themselves higher than behaviour demonstrates. Self-predictions are grandiose. The gap between self-image and reality is the diagnostic signal.
-- **Detection signals:** Self-rated capacity > demonstrated capacity (sustained across 3+ sessions); self-predictions consistently over-optimistic; cannot name limitations; rejects disconfirming evidence
-
-### Dark-Allergy: "The Unexamined"
-**How it surfaces:** Self-assessments are ABSENT or GENERIC. The player cannot or will not rate themselves. Self-predictions are not attempted. "I don't know" is the consistent response — not from humility but from refusal to look.
-- **Detection signals:** Self-assessment skip rate >60%; self-predictions not attempted; generic responses ("fine," "normal," "whatever"); no engagement with self-knowledge tasks
-
-### Golden-Addiction: "The Premature Witness"
-**How it surfaces:** Self-assessments use SOPHISTICATED LANGUAGE but are INACCURATE. The player describes their inner state in complex terms but the description doesn't match behaviour. They SOUND self-aware but AREN'T.
-- **Detection signals:** Verbal sophistication HIGH + behavioural accuracy LOW; abstract self-descriptions that don't predict behaviour; "I'm processing my shadow" but can't name a concrete state; language-reflective >> deterministic gap
-
-### Golden-Allergy: "The Identity-Clinger"
-**How it surfaces:** Self-assessments are ACCURATE BUT RIGID. The player knows themselves within their identity ("I am strong, I am brave") but CANNOT assess states that contradict identity. Blind spots are identity-shaped.
-- **Detection signals:** High accuracy on identity-confirming assessments; zero accuracy on identity-contradicting assessments; cannot rate vulnerability, fear, weakness; blind spots cluster around identity-threats
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present UNDENIABLE behavioural evidence alongside self-assessment
-- Frame: "You said 8/10. You scored 5/10. The gap is 3. A warrior who knows his true strength fights smarter."
-- Reward accuracy: accurate self-assessment → tactical advantage in subsequent tasks
-
-**When Dark-Allergy detected:**
-- Present MINIMAL self-knowledge demands (binary: "Are you more angry or more calm right now?")
-- Frame: "One word. That's all. Name what you feel. It takes half a second."
-- Reward ANY self-knowledge attempt: even wrong answers score higher than skips
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require CONCRETE, VERIFIABLE self-assessments (not abstract language)
-- Frame: "Don't describe your process. Predict your next action. We'll check."
-- Score ACCURACY, not sophistication. Simple + correct > complex + wrong.
-
-**When Golden-Allergy detected:**
-- Present self-assessment tasks that include identity-contradicting states
-- Frame: "The warrior who knows his fear uses it. Name it. It doesn't make you less."
-- Start with LOW-THREAT identity-contradictions; build tolerance gradually
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Self-Reader: a mirror-game where the player's self-knowledge is tested against reality. Before each action, predict. After each action, assess. The game compares prediction to reality, assessment to evidence. The aesthetic: Red-stage warrior examining their reflection in a blade — not vanity but tactical self-knowledge.
@@ -164,7 +64,7 @@ The Self-Reader: a mirror-game where the player's self-knowledge is tested again
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **State-labelling tasks:** Name current state from options (verified against behavioural indicators)
@@ -182,21 +82,7 @@ The Self-Reader: a mirror-game where the player's self-knowledge is tested again
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **State-labelling accuracy:** % of state-labels confirmed by behavioural indicators
-- **Self-prediction accuracy:** % of predictions confirmed by actual behaviour
-- **Capacity-assessment calibration:** Correlation between self-rated and demonstrated capacity
-- **Pattern-recognition validity:** % of identified patterns confirmed across sessions
-- **Blind-spot awareness:** Can they name what they don't know?
-
-### LLM rubric
-- **Low:** Core scoring is purely algorithmic (prediction vs. reality comparison). LLM generates contextual framing only.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (state labels, predictions from options); slider (capacity self-rating); forced-choice (pattern identification)

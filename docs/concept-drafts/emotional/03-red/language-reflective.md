@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game asks the player to PUT WORDS to emotion. "What is this warrior feeling? Why? What will happen next because of it?" The contact boundary is: "Can you bring emotion into language without losing its truth?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** "Describe YOUR emotional state right now." Self-directed emotional language.
-- Healthy: Names own state with confidence and accuracy; "I feel excited about this challenge"
-- Pathological: Uses emotion-language to CONTROL rather than describe; "I'm FURIOUS" (performative intensity)
-- **Detection:** Whether self-descriptions match behavioural signals; performative vs. genuine language
-
-### Agency Golden-Domain
-**Context:** Novel emotional situations requiring new language — "What would you call THIS feeling?"
-- Healthy: Generates novel descriptions with confidence; "It's like anger but smaller — irritation?"
-- Pathological: Cannot generate emotional language without prompts; copies provided vocabulary
-- **Detection:** Originality of emotional language; self-generated vs. borrowed vocabulary
-
-### Communion Dark-Domain
-**Context:** Describing ANOTHER's emotional state — "What is this warrior feeling?"
-- Healthy: Describes other's emotion accurately without projecting own state
-- Pathological: Projects own emotional state onto others; "They feel what I feel"
-- **Detection:** Whether descriptions of others match stimulus vs. match player's own state
-
-### Communion Golden-Domain
-**Context:** Explaining emotion TO another — "Tell the recruit what anger feels like."
-- Healthy: Explains clearly using concrete Red-level language; accessible teaching
-- Pathological: Cannot explain; emotional knowledge is private/incommunicable
-- **Detection:** Quality of emotional explanation; whether others could learn from it
-
-### Eros Dark-Domain
-**Context:** Current vocabulary level vs. desire for more sophisticated language.
-- Healthy: Uses current vocabulary fully; advances naturally
-- Pathological: Demands complex emotional vocabulary immediately; "These words are too simple"
-- **Detection:** Satisfaction with current vocabulary; premature sophistication-seeking
-
-### Eros Golden-Domain
-**Context:** Stretch vocabulary — emotions that require more nuanced language (mixed feelings, subtle states).
-- Healthy: Attempts new language with curiosity; accepts imprecision
-- Pathological: Claims sophisticated vocabulary without accurate application
-- **Detection:** Whether stretch-vocabulary is accurately applied or merely performed
-
-### Agape Dark-Domain
-**Context:** Basic naming tasks (obvious emotions, simple language).
-- Healthy: Engages basic naming with full attention
-- Pathological: Dismisses basic tasks; "I already know this"
-- **Detection:** Engagement quality on below-level naming
-
-### Agape Golden-Domain
-**Context:** Whether emotional language appears spontaneously in non-language contexts.
-- Healthy: Uses emotion-words naturally in other game contexts
-- Pathological: Emotional language exists only in language tasks
-- **Detection:** Spontaneous affect-labelling in non-task contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Rage-Addict"
-**How it surfaces:** Observe emotional language INTENSITY. The rage-addict's language is always at maximum: "FURIOUS," "ENRAGED," "BURNING" — no moderate emotional vocabulary. Cannot name mild emotions.
-- **Detection signals:** All emotion-words at maximum intensity; absence of moderate vocabulary; language escalates across session; cannot describe calm/neutral states
-
-### Dark-Allergy: "The Frozen"
-**How it surfaces:** Ask "What are you feeling?" The frozen player's response: "Nothing," "Fine," "I don't know." Emotional vocabulary is absent or minimal — not from lack of intelligence but from lack of ACCESS.
-- **Detection signals:** Minimal emotional vocabulary; "I don't know" responses; inability to name ANY current state; language about emotions is abstract/distant ("people feel angry when...")
-
-### Golden-Addiction: "The Premature Empath"
-**How it surfaces:** Compare verbal sophistication with deterministic accuracy. The premature empath uses ADVANCED emotional vocabulary ("I sense a complex interplay of frustration and wounded pride") but CANNOT accurately identify basic emotions in the deterministic task.
-- **Detection signals:** Sophisticated vocabulary + low deterministic accuracy = KEY DIAGNOSTIC; language exceeds demonstrated capacity; abstract emotional descriptions without concrete grounding
-
-### Golden-Allergy: "The Sensitivity-Refuser"
-**How it surfaces:** Observe vocabulary RANGE. The refuser has words for power-emotions (anger, pride, excitement) but NO words for vulnerability-emotions. When asked about fear or sadness: "That's not a thing" or "I don't do that."
-- **Detection signals:** Asymmetric vocabulary — rich for power-emotions, absent for vulnerability-emotions; active rejection of vulnerability-language; "Warriors don't feel fear"
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce MODERATE emotional vocabulary: "irritated," "annoyed," "pleased" (not just "FURIOUS" and "ECSTATIC")
-- Frame: "The warrior who names his anger precisely controls it precisely. 'Irritated' is different from 'enraged.'"
-- Reward precise language over intense language
-
-**When Dark-Allergy detected:**
-- Introduce binary emotional language: "Something or nothing?" → "Good-something or bad-something?"
-- Frame: "One word. Just one. What is it? Even 'something' counts."
-- Celebrate ANY emotional language; build from zero
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require DEMONSTRATED accuracy before accepting vocabulary; "You said 'wounded pride.' Show me — which face shows wounded pride?"
-- Lock vocabulary advancement behind deterministic accuracy
-- Frame: "Words must MATCH what you see. Show me the feeling, then name it."
-
-**When Golden-Allergy detected:**
-- Introduce vulnerability-vocabulary as TACTICAL LANGUAGE — "Name their fear = predict their retreat"
-- Frame: "The warrior who can say 'afraid' can see it in the enemy. That's power."
-- Make vulnerability-language produce combat advantage
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Wroth-Tongue: a Red-stage verbal-emotional training ground. The player speaks (types/selects) emotional language in response to prompts. An NPC "Tongue-Master" evaluates accuracy and guides vocabulary development. The aesthetic: war-council, firelit discussion, naming the enemy's weakness.
@@ -164,7 +64,7 @@ The Wroth-Tongue: a Red-stage verbal-emotional training ground. The player speak
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Naming prompts:** Face/voice stimuli requiring emotion labels
@@ -194,27 +94,7 @@ The Wroth-Tongue: a Red-stage verbal-emotional training ground. The player speak
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Naming accuracy:** % of emotion labels that match ground-truth
-- **Description quality:** Specificity, body-grounding, accuracy of descriptions
-- **Explanation quality:** Causal accuracy, logical coherence
-- **Prediction accuracy:** % of behaviour predictions that match outcomes
-- **Vocabulary range:** Number of distinct emotion-words used accurately
-
-### Cross-modality validation
-- **Critical:** Compare language-reflective vocabulary with deterministic accuracy
-- Vocabulary > accuracy = golden-addiction signal
-- Accuracy > vocabulary = under-verbalisation (healthy growth opportunity)
-- Vocabulary ≈ accuracy = integrated (healthy)
-
-### LLM rubric
-- **Very High:** All evaluation requires NLU — assessing descriptions, explanations, predictions, teaching quality. Core mechanic is language-based.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Text input (typed emotional language) OR selection from vocabulary options

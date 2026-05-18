@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The world responds to the body. Nobody says "hold this posture" — but when the player holds stably, doors open. When they move rhythmically, paths appear. When they're body-aware, hidden content reveals itself. The world IS the somatic feedback.
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Opportunities to engage the body independently in the open world.
-- Healthy: Engages body spontaneously; explores somatic content
-- Pathological: Uses body only for domination; "My body CONTROLS this world"
-- **Detection:** Quality of spontaneous body-engagement (exploration vs. control)
-
-### Agency Golden-Domain
-**Context:** Situations requiring somatic initiative (body-gated paths, posture-responsive objects).
-- Healthy: Initiates body-engagement without prompting
-- Pathological: Cannot engage body without being directed
-- **Detection:** Spontaneous somatic initiative rate
-
-### Communion Dark-Domain
-**Context:** Companion's body-activity in the open world.
-- Healthy: Engages with companion's somatic discoveries; moves together
-- Pathological: Ignores companion's body-activity; solo only
-- **Detection:** Response to companion's somatic engagement in free-play
-
-### Communion Golden-Domain
-**Context:** Shared body-spaces (rhythm-circles, posture-groves).
-- Healthy: Engages shared body-spaces naturally with companion
-- Pathological: Avoids shared body-spaces; prefers solo somatic engagement
-- **Detection:** Engagement rate in shared vs. solo body-spaces
-
-### Eros Dark-Domain
-**Context:** Familiar body-terrain (same posture-doors, same rhythm-paths).
-- Healthy: Maintains body-engagement in familiar territory
-- Pathological: Body-engagement fades with familiarity
-- **Detection:** Engagement quality in familiar vs. novel body-contexts
-
-### Eros Golden-Domain
-**Context:** Novel body-content (new posture-responsive objects, new rhythms).
-- Healthy: Engages with curiosity; explores new body-terrain
-- Pathological: Avoids novel body-content; stays in familiar territory
-- **Detection:** Engagement quality in novel body-contexts
-
-### Agape Dark-Domain
-**Context:** Maintaining body-engagement over time.
-- Healthy: Consistent body-engagement across sessions
-- Pathological: Body-engagement degrades; world becomes "just scenery"
-- **Detection:** Body-engagement consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether structured somatic skills appear in free-navigation.
-- Healthy: Postural holding, rhythm, body-awareness appear naturally
-- Pathological: Somatic skills exist only during explicit tasks
-- **Detection:** Transfer of structured somatic skills to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Body-Magician"
-**How it surfaces:** Performs body-rituals at EVERY responsive object. Over-engages somatic content with magical attribution. Holds postures at every door whether needed or not. Treats the body-world as a ritual-space requiring constant ceremony.
-- **Detection signals:** Ritual behaviour at every body-responsive object; over-engagement; magical attribution; holds postures unnecessarily; treats all body-content as requiring ceremony
-
-### Dark-Allergy: "The Disembodied"
-**How it surfaces:** Navigates the world WITHOUT body-engagement. Misses body-responsive content entirely. Walks past posture-doors without holding. Ignores rhythm-paths. The body-world is invisible.
-- **Detection signals:** Zero body-engagement in free-play; misses body-responsive content; navigates physically but not somatically; body-world invisible; no spontaneous body-engagement
-
-### Golden-Addiction: "The Premature Athlete"
-**How it surfaces:** Engages body-content with MAXIMUM INTENSITY. Holds postures with excessive force. Moves at maximum speed. Treats the body-world as a gym rather than a temple. Performance over presence.
-- **Detection signals:** Maximum intensity on all body-engagement; excessive force; speed-seeking; treats body-world as performance arena; intensity without awareness
-
-### Golden-Allergy: "The Sensation-Refuser"
-**How it surfaces:** APPROACHES body-responsive content then WITHDRAWS. Moves toward a posture-door then walks away. Enters a rhythm-path then stops. The body-world attracts and repels.
-- **Detection signals:** Approach-withdrawal at body-responsive content; enters body-spaces then leaves; moves toward then away; brief engagement followed by retreat; body-world is both attractive and threatening
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- World introduces body-responsive objects that DON'T respond to ritual (only to genuine presence)
-- Some objects require STILLNESS not ceremony
-- Natural consequence: ritual = nothing; genuine presence = access
-
-**When Dark-Allergy detected:**
-- World makes body-engagement NECESSARY for navigation (body-gated paths)
-- Body-responsive objects produce TANGIBLE results (paths open, treasures appear)
-- Natural consequence: body-engagement = access; body-ignorance = stuck
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- World introduces body-responsive objects that require GENTLENESS (force = locked out)
-- Gentle engagement produces better results than intense engagement
-- Natural consequence: intensity = locked; gentleness = access
-
-**When Golden-Allergy detected:**
-- World introduces LOW-COMMITMENT body-engagement (brief, safe, rewarding)
-- Body-responsive objects that INVITE without DEMANDING
-- Natural consequence: brief engagement = small reward; no punishment for withdrawal
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 An open Magenta-stage world where the body is ALIVE and the world RESPONDS. Posture-doors that open to stable holds. Rhythm-paths that appear when the player moves in time. Body-awareness zones that reveal hidden content when the player is present. The world IS somatic feedback.
@@ -163,7 +63,7 @@ An open Magenta-stage world where the body is ALIVE and the world RESPONDS. Post
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Posture-doors:** Objects requiring stable holds to activate
@@ -181,21 +81,7 @@ An open Magenta-stage world where the body is ALIVE and the world RESPONDS. Post
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring (ECOLOGICAL)
-- **Body-engagement rate:** How often does the player engage body-responsive content spontaneously?
-- **Engagement quality:** When they engage, is it genuine presence or ritual/intensity?
-- **Body-navigation:** Do they navigate the world somatically?
-- **Awareness depth:** How much hidden content do they discover through body-presence?
-- **Transfer evidence:** Do structured somatic skills appear in free-navigation?
-
-### LLM rubric
-- **High:** World generation, ecological somatic assessment, body-responsive dynamics. Evaluates spontaneous body-engagement patterns without explicit tasks.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Sustained touch (posture-engagement); rhythmic input (rhythm-paths); presence (awareness-zones); navigation (exploration)

@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "The sacred needs something from you. Not just feeling — DOING. An offering. A preparation. A ritual. Can you plan for the sacred? Can you organise your actions around what matters most?" The contact boundary is: "Can you plan around sacred obligations?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Planning sacred actions independently.
-- Healthy: Creates own sacred plan with confidence
-- Pathological: Over-plans obsessively; OR: cannot plan for sacred at all
-- **Detection:** Whether sacred planning is self-generated and proportionate
-
-### Agency Golden-Domain
-**Context:** Planning under ambiguity (unclear what the sacred requires).
-- Healthy: Makes tentative sacred plan under uncertainty
-- Pathological: Cannot plan when sacred requirements are unclear; freezes
-- **Detection:** Sacred planning quality under ambiguity
-
-### Communion Dark-Domain
-**Context:** Planning when companion has different sacred plan.
-- Healthy: Maintains own sacred plan while hearing companion's
-- Pathological: Adopts companion's plan; loses own sacred planning
-- **Detection:** Whether own sacred plan survives social input
-
-### Communion Golden-Domain
-**Context:** Collaborative sacred planning (planning ritual together).
-- Healthy: Contributes to shared sacred plan AND accepts others' contributions
-- Pathological: Cannot collaborate on sacred planning; OR: dominates
-- **Detection:** Quality of collaborative sacred planning
-
-### Eros Dark-Domain
-**Context:** Sacred planning consistency over time.
-- Healthy: Maintains consistent sacred planning across sessions
-- Pathological: Sacred plans change randomly; no stable ritual practice
-- **Detection:** Sacred planning consistency
-
-### Eros Golden-Domain
-**Context:** Growing sacred planning complexity (more elaborate rituals).
-- Healthy: Can plan increasingly complex sacred actions as capacity grows
-- Pathological: Cannot grow in complexity; OR: jumps to overwhelming complexity
-- **Detection:** Sacred planning growth quality
-
-### Agape Dark-Domain
-**Context:** Maintaining sacred planning over time.
-- Healthy: Sacred planning remains active across sessions
-- Pathological: Sacred planning degrades; abandons ritual preparation after absence
-- **Detection:** Sacred planning persistence
-
-### Agape Golden-Domain
-**Context:** Whether sacred planning appears spontaneously.
-- Healthy: Plans for sacred naturally in non-spiritual contexts
-- Pathological: Sacred planning exists only during explicit tasks
-- **Detection:** Spontaneous sacred planning
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Spirit-Addict"
-**How it surfaces:** OVER-PLANS obsessively. "I need TEN offerings! And the PERFECT place! And the EXACT time!" Ritual preparation becomes compulsive. Cannot stop planning; planning IS the addiction.
-- **Detection signals:** Excessive preparation; "more offerings"; "perfect timing"; cannot stop planning; obsessive detail; ritual preparation as anxiety-management; "not enough yet"
-
-### Dark-Allergy: "The Spirit-Denier"
-**How it surfaces:** WON'T PLAN for sacred. "Why would I prepare? There's nothing there. It's pointless." Cannot organise behaviour around the numinous because they don't sense it.
-- **Detection signals:** Refuses to plan; "pointless"; "nothing there"; no sacred preparation; "why bother?"; treats ritual planning as waste of time
-
-### Golden-Addiction: "The Premature Priest"
-**How it surfaces:** Plans EFFICIENTLY for maximum sacred POWER. "Fastest route. Minimum offering for maximum buff. Optimise the ritual." Sacred planning as strategic optimisation.
-- **Detection signals:** Efficiency-language; "fastest"; "minimum effort"; "maximum power"; optimises ritual; no care/reverence in planning; sacred planning = resource management
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** BEGINS planning then ABANDONS. "I was going to prepare the offering but… it doesn't matter. Never mind." Approach-withdrawal in sacred planning.
-- **Detection signals:** Incomplete plans; "never mind"; abandons preparation; starts then stops; "it doesn't matter"; sacred planning feels futile or overwhelming
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present SIMPLE sacred requirements: "Just one offering. Just one step. The spirits don't need perfection. They need presence."
-- Reward proportionate planning; block obsessive over-preparation
-- Frame: "Enough. One offering. One moment. The sacred doesn't demand everything. Just something. With care."
-- Build: proportionate sacred planning (enough not obsessive)
-
-**When Dark-Allergy detected:**
-- Present EASY sacred planning: "Just one thing. Pick it up. Bring it to the glow. That's a sacred plan. Done."
-- Make sacred planning MINIMAL; one step
-- Frame: "Not a big ritual. Just one thing. Bring something to the sacred place. That's planning for the spirits."
-- Reward ANY sacred planning; celebrate first preparation
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Present sacred planning that requires CARE not efficiency: "Not the fastest way. The most CAREFUL way. With reverence."
-- Reward careful/reverent planning; block optimisation-only
-- Frame: "Slowly. With care. Not efficient — REVERENT. The sacred doesn't want speed. It wants attention."
-- Build: reverent sacred planning (careful not optimised)
-
-**When Golden-Allergy detected:**
-- Make sacred planning LOW-COMMITMENT: "Just plan one step. Not the whole ritual. Just the first thing. What would you do first?"
-- Reduce scope; sacred planning doesn't have to be complete
-- Frame: "Just the first step. Not everything. What's the first thing you'd do? Just that. Easy."
-- Build: sacred planning safety (planning for the sacred isn't overwhelming)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Sacred Preparation: a ritual-planning space. The player must organise steps to complete a sacred action — gather offerings, find the right place, time the ritual. The aesthetic: Magenta-stage preparation-altar — a workspace where sacred items are gathered and arranged. Steps glow when completed correctly.
@@ -170,7 +66,7 @@ The Sacred Preparation: a ritual-planning space. The player must organise steps 
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Simple offerings:** One-step sacred actions
@@ -188,21 +84,7 @@ The Sacred Preparation: a ritual-planning space. The player must organise steps 
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Planning presence:** Can they plan for sacred at all?
-- **Proportionality:** Is the plan appropriate (not obsessive or minimal)?
-- **Sequencing:** Can they order sacred steps correctly?
-- **Adaptability:** Can they adjust when requirements change?
-- **Reverence:** Is the planning done with care (not just efficiency)?
-
-### LLM rubric
-- **Low-Medium:** Core sequencing/completion algorithmic. LLM for proportionality assessment, reverence detection, and obsession-vs-care discrimination.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap (select items/steps); drag (sequence steps); hold (confirm plan)

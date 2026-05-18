@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Two paths. One requires strength you may or may not have. One requires patience you may or may not have. Which do you choose — and WHY?" The contact boundary is: "Does your self-knowledge actually GUIDE your choices?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Dilemma where one path requires admitting limitation.
-- Healthy: Chooses the path that matches actual capacity, even if it means admitting weakness
-- Pathological: Always chooses the "strong" path regardless of actual capacity
-- **Detection:** Whether path-choice correlates with actual capacity or with self-image
-
-### Agency Golden-Domain
-**Context:** Dilemma requiring self-knowledge to navigate independently.
-- Healthy: Uses self-knowledge to make sovereign choice; "I know I'm better at X"
-- Pathological: Cannot choose without external guidance; "Which should I pick?"
-- **Detection:** Self-knowledge-guided independent choice quality
-
-### Communion Dark-Domain
-**Context:** Dilemma where self-knowledge must be shared to coordinate with ally.
-- Healthy: Accurately communicates own capacity to ally for joint decision
-- Pathological: Misrepresents capacity to ally (inflates or deflates)
-- **Detection:** Accuracy of self-representation in joint decision contexts
-
-### Communion Golden-Domain
-**Context:** Dilemma where ally's knowledge of you helps the choice.
-- Healthy: Accepts ally's assessment; integrates it with own self-knowledge
-- Pathological: Rejects ally's assessment; "You don't know me"
-- **Detection:** Whether ally-feedback improves choice quality
-
-### Eros Dark-Domain
-**Context:** Simple self-knowledge dilemmas (binary: "Are you better at X or Y?").
-- Healthy: Engages fully; accurate on simple self-knowledge choices
-- Pathological: Dismisses simple dilemmas; "Obviously I'm better at everything"
-- **Detection:** Engagement quality on below-level self-knowledge dilemmas
-
-### Eros Golden-Domain
-**Context:** Dilemmas at the edge of self-knowledge (novel situations).
-- Healthy: Acknowledges uncertainty; "I'm not sure — let me try and find out"
-- Pathological: Claims certainty about self in novel contexts
-- **Detection:** Appropriate uncertainty at self-knowledge edge
-
-### Agape Dark-Domain
-**Context:** Familiar dilemmas (same type encountered before).
-- Healthy: Uses past self-knowledge to choose efficiently
-- Pathological: Doesn't apply past self-knowledge; treats each dilemma as new
-- **Detection:** Whether past self-knowledge transfers to similar dilemmas
-
-### Agape Golden-Domain
-**Context:** Whether self-knowledge-guided choice appears in other modalities.
-- Healthy: Uses self-knowledge to guide choices across all game contexts
-- Pathological: Self-knowledge-guided choice exists only in structured dilemmas
-- **Detection:** Transfer of self-knowledge-guided choice to ecological contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Narcissist"
-**How it surfaces:** Always chooses the path that CONFIRMS grandiose self-image, regardless of actual capacity. Chooses "the warrior's path" even when evidence shows they'd succeed better on "the thinker's path." Choices serve self-image, not self-knowledge.
-- **Detection signals:** Path-choice correlates with self-image, not demonstrated capacity; consistently chooses "impressive" paths; fails on chosen paths because capacity doesn't match; cannot choose the "humble" path even when it's optimal
-
-### Dark-Allergy: "The Unexamined"
-**How it surfaces:** Choices are RANDOM or IMPULSIVE — no self-knowledge guides them. "I'll just pick one." No consideration of own capacity, own patterns, own strengths. The choice is made without consulting the self.
-- **Detection signals:** No correlation between choice and capacity; random path-selection; cannot articulate why they chose; no self-knowledge reasoning visible in choice patterns
-
-### Golden-Addiction: "The Premature Witness"
-**How it surfaces:** OVER-ANALYSES the dilemma without choosing. "I need to examine my relationship to both paths before I can decide." The self-knowledge is performed but doesn't produce ACTION. Analysis paralysis dressed as self-awareness.
-- **Detection signals:** Excessive deliberation time; sophisticated reasoning that doesn't improve choice quality; "I'm still processing" without choosing; analysis that doesn't converge on action
-
-### Golden-Allergy: "The Identity-Clinger"
-**How it surfaces:** Always chooses the IDENTITY-CONFIRMING path. The warrior always chooses the fight path. Never chooses the path that would require being something other than their identity. Self-knowledge is accurate but RIGID — cannot choose outside identity.
-- **Detection signals:** 100% identity-confirming choices; never chooses paths requiring non-identity capacities; accurate self-knowledge within identity but blind outside it; cannot say "I might be better at the non-warrior path"
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present dilemmas where the "impressive" path FAILS and the "humble" path SUCCEEDS
-- Frame: "You chose the warrior's path. You failed. The thinker's path would have worked. Know your REAL strength."
-- Natural consequence: fantasy-based choices produce failure; accuracy-based choices produce success
-
-**When Dark-Allergy detected:**
-- Present dilemmas with CLEAR self-knowledge cues ("This path requires patience. Do you have patience?")
-- Frame: "Before you choose — ask yourself ONE question: which am I better at?"
-- Reward self-consultation before choice (even brief)
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Impose TIME LIMITS on dilemma choices (must choose within X seconds)
-- Frame: "You know enough. Choose NOW. Self-knowledge that doesn't produce action is useless."
-- Reward decisive action over extended analysis
-
-**When Golden-Allergy detected:**
-- Present dilemmas where the IDENTITY-CONTRADICTING path produces MORE power
-- Frame: "The warrior who can also think wins battles the pure warrior loses. Try the other path."
-- Make identity-expansion produce tangible advantage
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Self-Knower's Dilemma: a branching path where each fork requires self-knowledge to navigate optimally. The player must know their actual strengths, weaknesses, patterns, and edges to choose well. The aesthetic: Red-stage crossroads — the warrior at the fork, choosing which battle to fight based on self-knowledge.
@@ -164,7 +64,7 @@ The Self-Knower's Dilemma: a branching path where each fork requires self-knowle
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Capacity-matching dilemmas:** Choose path based on actual strength/weakness
@@ -182,21 +82,7 @@ The Self-Knower's Dilemma: a branching path where each fork requires self-knowle
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Choice-capacity alignment:** % of choices that match demonstrated capacity
-- **Limitation-awareness:** Can they choose paths that acknowledge weakness?
-- **Pattern-utilisation:** Do past patterns inform current choices?
-- **Edge-navigation:** Quality of choices in novel/uncertain situations
-- **Identity-flexibility:** Can they choose outside identity when optimal?
-
-### LLM rubric
-- **High:** Scenario generation, dilemma construction, choice-reasoning evaluation. Core alignment scoring algorithmic (choice vs. demonstrated capacity).
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (path choice); optional text (reasoning); timing (deliberation duration)

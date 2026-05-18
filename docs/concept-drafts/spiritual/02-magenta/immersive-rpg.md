@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The world contains sacred content. Nobody says "feel the spirits" — but shrines are there, spirit-presences drift past, sacred places hum, offerings can be made. The player's NATURAL sacred engagement is the data.
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Opportunities to engage sacred content spontaneously.
-- Healthy: Engages sacred content naturally; stops at shrines; notices spirits
-- Pathological: Over-engages ALL sacred content (inflation); OR: ignores all (blindness)
-- **Detection:** Quality of spontaneous sacred engagement
-
-### Agency Golden-Domain
-**Context:** Spirit-gated content requiring sacred assertion.
-- Healthy: Asserts sacred relationship to access gated content
-- Pathological: Cannot assert sacred relationship; avoids spirit-gates
-- **Detection:** Spontaneous sacred assertion rate
-
-### Communion Dark-Domain
-**Context:** Spirit-companion interactions in the open world.
-- Healthy: Relates to spirit-companions without fusion or exploitation
-- Pathological: Fuses with spirits; OR: exploits them; OR: ignores them
-- **Detection:** Quality of spontaneous spirit-relationship
-
-### Communion Golden-Domain
-**Context:** Shared sacred spaces (communal shrines, group rituals).
-- Healthy: Engages shared sacred spaces naturally
-- Pathological: Avoids shared sacred; prefers solo spiritual engagement
-- **Detection:** Engagement rate in shared vs. solo sacred content
-
-### Eros Dark-Domain
-**Context:** Familiar sacred content (same shrines, same spirits).
-- Healthy: Maintains sacred engagement in familiar territory
-- Pathological: Sacred engagement fades with familiarity; shrines become scenery
-- **Detection:** Engagement quality in familiar vs. novel sacred content
-
-### Eros Golden-Domain
-**Context:** Novel sacred content (new shrines, deeper spirit-presences).
-- Healthy: Engages novel sacred content with appropriate awe
-- Pathological: Overwhelmed by novel sacred; OR: treats it as routine
-- **Detection:** Whether novel sacred content evokes appropriate response
-
-### Agape Dark-Domain
-**Context:** Maintaining sacred engagement over time.
-- Healthy: Consistent sacred engagement across sessions
-- Pathological: Sacred engagement degrades; world becomes flat
-- **Detection:** Sacred engagement consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether structured spiritual skills appear in free-navigation.
-- Healthy: Detection, naming, planning, sharing appear naturally
-- Pathological: Spiritual skills exist only during explicit tasks
-- **Detection:** Transfer of structured spiritual skills to ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Spirit-Addict"
-**How it surfaces:** OVER-ENGAGES all sacred content. Cannot pass a shrine without stopping. Sees spirits everywhere. The world is ONLY sacred — no ordinary navigation. Spiritual engagement is compulsive.
-- **Detection signals:** Stops at every shrine; excessive spirit-engagement; cannot navigate ordinarily; world is only sacred; compulsive ritual behaviour; "the spirits are everywhere!"
-
-### Dark-Allergy: "The Spirit-Denier"
-**How it surfaces:** IGNORES all sacred content. Walks past shrines. Doesn't notice spirits. Cannot access spirit-gated content. The spirit-world is invisible — just terrain.
-- **Detection signals:** Zero sacred engagement; walks past shrines; ignores spirits; cannot access spirit-gates; world has no sacred dimension; purely functional navigation
-
-### Golden-Addiction: "The Premature Priest"
-**How it surfaces:** Engages sacred content ONLY for power/advantage. Uses shrines for buffs. Exploits spirits for resources. Sacred engagement is purely strategic.
-- **Detection signals:** Strategic-only sacred engagement; uses shrines for buffs; exploits spirits; no reverence; sacred = resource; "what does this shrine give me?"
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** APPROACHES sacred content then RETREATS. Walks toward shrines then turns away. Notices spirits then looks away. Sacred content both attracts and repels.
-- **Detection signals:** Approach-withdrawal at sacred content; walks toward then away from shrines; brief spirit-engagement followed by retreat; sacred content both attractive and threatening
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- World introduces ORDINARY zones (sacred-free areas that are still valuable)
-- Shrines that respond to PROPORTIONATE engagement (not compulsive)
-- Natural consequence: proportionate engagement = deeper sacred; compulsive = flat response
-
-**When Dark-Allergy detected:**
-- World makes sacred content NECESSARY for navigation (spirit-gated paths)
-- Shrines that INVITE engagement (warm, safe, brief, rewarding)
-- Natural consequence: sacred engagement = access; ignoring = stuck
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- World introduces sacred content that requires REVERENCE not exploitation
-- Spirits who respond to genuine relationship, not transaction
-- Natural consequence: reverent engagement = spirit-companionship; exploitation = spirit-withdrawal
-
-**When Golden-Allergy detected:**
-- World introduces LOW-COMMITMENT sacred engagement (passing shrines that glow briefly)
-- Sacred content that INVITES without DEMANDING sustained engagement
-- Natural consequence: brief sacred contact = small magic; no punishment for withdrawal
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 An open Magenta-stage world saturated with sacred content. Shrines at crossroads. Spirit-presences drifting. Sacred groves humming. Offering-places waiting. Every zone has numinous content — opportunities to sense, relate, participate, and be oriented by the sacred.
@@ -164,7 +64,7 @@ An open Magenta-stage world saturated with sacred content. Shrines at crossroads
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Shrines:** Sacred places for engagement/offering
@@ -182,21 +82,7 @@ An open Magenta-stage world saturated with sacred content. Shrines at crossroads
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring (ECOLOGICAL)
-- **Sacred engagement rate:** How often does the player engage sacred content spontaneously?
-- **Relationship quality:** When they engage, is it genuine (not exploitative)?
-- **Communal sacred:** Can they share sacred in free-play?
-- **Growth engagement:** Do they engage deeper sacred content?
-- **Transfer evidence:** Do structured spiritual skills appear in free-play?
-
-### LLM rubric
-- **High:** World generation, ecological spiritual assessment, spirit-companion dynamics. Evaluates spontaneous sacred behaviour without explicit tasks.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Navigation (exploration); tap (engage sacred content); hold (sustain sacred contact); gesture (ritual actions/offerings)

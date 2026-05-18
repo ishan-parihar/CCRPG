@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "What does your body feel like right now? Can you find a word? A picture? What's happening inside?" The contact boundary is: "Can you put body-experience into words?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Naming body-sensations independently.
-- Healthy: Generates accurate body-words; "My shoulders feel tight"
-- Pathological: Names sensations as powers; "I feel UNSTOPPABLE"
-- **Detection:** Whether naming serves awareness or grandiosity
-
-### Agency Golden-Domain
-**Context:** Self-initiated verbal body-reflection.
-- Healthy: Spontaneously describes body-state; "Right now I feel heavy"
-- Pathological: Cannot reflect on body without prompting
-- **Detection:** Spontaneous body-verbal reflection rate
-
-### Communion Dark-Domain
-**Context:** Sharing body-descriptions with others.
-- Healthy: Shares body-experience; accepts others' descriptions
-- Pathological: Demands others feel what they feel; "You should feel this too"
-- **Detection:** Flexibility in shared body-language
-
-### Communion Golden-Domain
-**Context:** Learning body-words from others.
-- Healthy: Integrates others' body-vocabulary into own
-- Pathological: Cannot learn body-language from others; must invent alone
-- **Detection:** Integration quality of received body-vocabulary
-
-### Eros Dark-Domain
-**Context:** Naming familiar sensations.
-- Healthy: Maintains accurate naming of familiar body-states
-- Pathological: Bored with naming familiar sensations
-- **Detection:** Naming quality on familiar body-states
-
-### Eros Golden-Domain
-**Context:** Naming novel sensations.
-- Healthy: Attempts naming with appropriate uncertainty; "I think it feels like..."
-- Pathological: Claims certain knowledge of novel sensations
-- **Detection:** Appropriate uncertainty vs. premature certainty
-
-### Agape Dark-Domain
-**Context:** Maintaining body-naming accuracy over time.
-- Healthy: Body-vocabulary remains accurate across sessions
-- Pathological: Body-naming degrades; sensations lose their words
-- **Detection:** Naming consistency across sessions
-
-### Agape Golden-Domain
-**Context:** Whether body-naming appears spontaneously.
-- Healthy: Names body-states in non-language tasks
-- Pathological: Body-naming exists only during explicit language tasks
-- **Detection:** Spontaneous body-naming in ecological context
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Body-Magician"
-**How it surfaces:** Names sensations as POWERS. "I feel INVINCIBLE." "My body is CHARGED." Language serves magical attribution rather than accurate description. Every sensation is grandiose.
-- **Detection signals:** Power-language for body-states; grandiose descriptions; no neutral/unpleasant naming; all sensations described as magical/powerful; language serves fantasy not awareness
-
-### Dark-Allergy: "The Disembodied"
-**How it surfaces:** Cannot name body-sensations. "I don't feel anything." "I don't know." No body-vocabulary. The body is linguistically invisible.
-- **Detection signals:** Minimal verbal output about body; "I don't know" responses; no body-vocabulary; treats body-naming as impossible; cannot generate body-words
-
-### Golden-Addiction: "The Premature Athlete"
-**How it surfaces:** Names PERFORMANCE not SENSATION. "I feel strong." "I feel fast." "I feel powerful." Language describes what the body DOES, not what it FEELS. Performance-vocabulary masking sensation-absence.
-- **Detection signals:** Performance-language only; no sensation-words; "strong/fast/powerful" but never "warm/tight/buzzy"; verbal sophistication about body-performance + absence of felt-sense vocabulary
-
-### Golden-Allergy: "The Sensation-Refuser"
-**How it surfaces:** Starts to name then stops. "It feels... never mind." Naming makes sensation REAL and that's threatening. Approach-withdrawal in body-language.
-- **Detection signals:** Incomplete naming; "It feels... I don't know"; approach-withdrawal in verbal body-tasks; can name when forced but avoids voluntary naming; naming produces visible discomfort
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce NEUTRAL body-vocabulary: "Not powerful. Just... what temperature? What weight?"
-- Reward descriptive accuracy over grandiosity
-- Frame: "What does it ACTUALLY feel like? Not what you wish. What's really there?"
-- Build: accurate body-language (warm, cool, tight, loose, heavy, light)
-
-**When Dark-Allergy detected:**
-- Start with SIMPLEST body-words: "Warm or cool? That's all. Which one?"
-- Make body-naming produce understanding: "Now you know — your hands are warm"
-- Frame: "Just one word. Warm? Cool? Tight? Loose? Pick the closest."
-- Reward ANY body-naming; celebrate first accurate sensation-word
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Block performance-language; require SENSATION-language: "Not strong. What TEMPERATURE?"
-- Reward felt-sense vocabulary over performance vocabulary
-- Frame: "Forget what your body can DO. What does it FEEL like? Inside?"
-- Cross-validate: naming must match deterministic body-state data
-
-**When Golden-Allergy detected:**
-- Make naming LOW-STAKES: "Any word. You can change it. Just try one."
-- Present naming as PLAYFUL: "If your body were a weather, what weather?"
-- Frame: "It's just a word. It doesn't trap you. You can always find a different one."
-- Reward approach; never punish withdrawal or "wrong" words
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Body-Tongue: a verbal-somatic space where the player names body-experience. The aesthetic: Magenta-stage body-oracle — a space where the body speaks through the player's words. Glowing body-outlines with sensation-zones that light up; the player gives them names.
@@ -169,7 +65,7 @@ The Body-Tongue: a verbal-somatic space where the player names body-experience. 
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Open naming prompts:** "What does X feel like?"
@@ -187,21 +83,7 @@ The Body-Tongue: a verbal-somatic space where the player names body-experience. 
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Naming accuracy:** Does the word match the actual body-state (cross-validated with deterministic)?
-- **Vocabulary range:** How many different body-words does the player use?
-- **Specificity:** Can they name specific zones vs. only whole-body?
-- **Metaphorical quality:** Can they use imagery to describe sensation?
-- **Cross-validation alignment:** Does verbal report match objective body-data?
-
-### LLM rubric
-- **Very High:** Core scoring requires LLM for natural language evaluation. Naming accuracy, vocabulary range, metaphorical quality — all require semantic understanding.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Voice input (primary — body-language is spoken at Magenta); text input (secondary); tap-to-select from options (scaffolded mode)

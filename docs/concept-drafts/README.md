@@ -1,8 +1,8 @@
 # Concept Drafts — 64 Modules × 7 Game Modalities
 
-> **Purpose:** First-principles concept designs for every game in the CCRPG assessment ecosystem. Each game is a self-contained developmental catalyst that implicitly diagnoses AND progressively heals/evolves the player across all drives and shadow-polarities for its line×stage module.
+> **Purpose:** First-principles game designs for every game in the CCRPG assessment ecosystem. Each game is a self-contained developmental catalyst that implicitly diagnoses AND progressively heals/evolves the player across all drives and shadow-polarities for its line×stage module.
 > **Structure:** `{line}/{stage}/` — one directory per module (64 total).
-> **Each module contains:** 7 concept-draft files (one per game modality) + 1 shadow-diagnostics file + 1 scoring skeleton.
+> **Each module contains:** 1 module-spec file + 7 game concept files (one per modality).
 
 ---
 
@@ -12,16 +12,14 @@
 concept-drafts/
 ├── cognitive/
 │   ├── 01-infrared/
-│   │   ├── scoring.md
-│   │   ├── shadow-diagnostics.md
-│   │   ├── deterministic.md
+│   │   ├── module-spec.md          ← THE module's psychology (capacity + shadows + drives + healing + scoring)
+│   │   ├── deterministic.md        ← Game design ONLY (unique to this modality)
 │   │   ├── language-reflective.md
 │   │   ├── scenario-choice.md
 │   │   ├── embodied-somatic.md
 │   │   ├── strategic-planning.md
 │   │   ├── social-cooperative.md
-│   │   ├── immersive-rpg.md
-│   │   └── shadow-diagnostics.md
+│   │   └── immersive-rpg.md
 │   ├── 02-magenta/
 │   │   └── ... (same 8 files)
 │   └── ... (through 08-white)
@@ -34,175 +32,151 @@ concept-drafts/
 └── interpersonal/
 ```
 
-**Total files when complete:** 64 modules × 9 files = 576 concept documents.
+**Total files when complete:** 64 modules × 8 files = 512 concept documents.
 
 ---
 
-## The Core Requirement: Game as Developmental Catalyst
+## The Uniqueness Principle
 
-Every game in this system follows the catalyst→experience→integration flow:
+Every file must contain ONLY information that no other file contains. The architecture enforces this:
 
-```
-CATALYST: The game presents a challenge at the player's contact boundary
-  → DRIVES ACTIVATE: All 4 drives respond (healthy or pathological, in dark and golden domains)
-    → SHADOWS SURFACE: The dominant pathology pattern becomes visible through behaviour
-      → EXPERIENCE: The player processes the catalyst through their current structure
-        → INTEGRATION: The game's progression mechanics guide toward healthy drive expression
-          → HEALING (dark shadows integrate) / EVOLUTION (golden shadows dissolve)
-```
+| File | Unique lateral | Does NOT contain |
+|---|---|---|
+| `module-spec.md` | The module's full psychology: capacity definition, shadow archetypes, drive-health landscape, healing vectors, scoring parameters, compound shadows, cross-module relationships | Game designs, item pools, technical requirements |
+| Each game file | The unique game design for ONE modality: how THIS axis delivers catalyst differently from the other 6 | Shadow archetype definitions, drive-health tables, healing theory, scoring formulas (reference module-spec.md) |
 
-Each game must be:
-- **Self-contained:** Playable independently with its own internal progression
-- **All-inclusive:** Probes ALL 4 drives × BOTH domains (dark/golden) × ALL 4 shadow quadrants
-- **Progressive:** Moves from diagnosis → healing → evolution within a single play session
-- **Dual-vector:** Supports heal/evolve (Agape+Agency integrating dark) AND evolve/heal (Eros+Communion dissolving golden)
-- **Holonically aware:** Keeps lower-stage capacities healthy while enabling upper-stage growth
+**What lives in foundational docs (never repeated in concept-drafts):**
+- `foundations/10` — The 4-quadrant shadow MODEL (what shadows ARE)
+- `foundations/12` — The drive assessment FRAMEWORK (how drives are measured in general)
+- `foundations/14` — The catalyst→experience→integration MECHANICS (how games become catalysts in general)
+
+**What lives in module-spec.md (never repeated in game files):**
+- The 4 shadow archetypes for THIS module (names, patterns, detection signals)
+- The drive-health landscape for THIS module (4×2 healthy/pathological)
+- The healing vectors for THIS module (heal/evolve + evolve/heal)
+- The scoring parameters for THIS module (capacity dimensions, theta-decay, thresholds)
+- Compound shadows and cross-module relationships
+
+**What lives in each game file (never repeated across game files):**
+- The unique game concept (title, mechanic, aesthetic)
+- How THIS modality delivers catalyst at the contact boundary (distinct from other 6)
+- The actual gameplay (setup, interaction, feedback, progression)
+- The item pool specification
+- Technical requirements (inputs, timing, LLM needs, state)
 
 ---
 
-## What Each File Must Contain
+## File Templates
 
-### Per-modality concept draft (`deterministic.md`, `language-reflective.md`, etc.)
+### module-spec.md
 
 ```markdown
-# {Line}/{Stage} — {Modality} Game Concept
+# {Line} / {Stage} — Module Specification
+
+## 1. Capacity Definition
+- What this module measures (the specific developmental capacity at this line×stage)
+- Core capacity dimensions (table: dimension, definition, assessment vehicle, ceiling)
+- What this is NOT (distinguish from adjacent stages above and below)
+
+## 2. Shadow Archetypes
+- Dark-Addiction: [Named] — core pattern, drive pathology, behavioural signatures, what it protects against
+- Dark-Allergy: [Named] — core pattern, drive pathology, behavioural signatures, what it protects against
+- Golden-Addiction: [Named] — core pattern, drive pathology, behavioural signatures, what it protects against
+- Golden-Allergy: [Named] — core pattern, drive pathology, behavioural signatures, what it protects against
+
+## 3. Drive-Health Landscape
+- Full 4×2 table: each drive in both domains (healthy + pathological expression)
+- How drives interact at this specific line×stage
+
+## 4. Healing Vectors
+- Heal/Evolve (Agape + Agency → dark shadows): specific interventions for this module
+- Evolve/Heal (Eros + Communion → golden shadows): specific interventions for this module
+- Integration criteria: what "healed" looks like at this module
+
+## 5. Scoring Parameters
+- Theta model (half-life, max-decay, composite weights)
+- Stage-transition thresholds (up and down)
+- Drive-health weight and shadow-drag coefficient
+- Cross-validation rules (how modalities validate each other)
+
+## 6. Compound Shadows & Cross-Module Relationships
+- Named compound shadows (which modules interact)
+- Bidirectional loops
+- How this module's health supports/depends on adjacent modules
+
+## 7. Shadow Surfacing Sequence
+- Which capacity dimension surfaces which shadow first
+- Per-modality surfacing table (one row per modality — how each game surfaces each shadow)
+- Shadow intensity scoring (levels 0-4)
+```
+
+### Game concept file (deterministic.md, language-reflective.md, etc.)
+
+```markdown
+# {Line} / {Stage} — {Modality} Game Concept
+
+> **Modality axis:** [One sentence: what unique dimension of catalyst delivery this modality provides]
+> **Why this axis for this module:** [One sentence: why this modality matters for this specific line×stage]
 
 ## 1. Game Identity
 - Title (evocative, not clinical)
-- Core mechanic (one sentence)
-- Duration (seconds/minutes per session)
-- Internal progression stages (how the game deepens across sessions)
+- Core mechanic (one paragraph — what makes this game THIS game)
+- Duration per session
+- Internal progression stages (named phases with checkpoint ranges)
 
-## 2. The Catalyst→Experience→Integration Flow
-- What catalyst does this game present at the contact boundary?
-- How does the player's unconscious respond? (submergent and emergent)
-- How does the game guide from experience toward integration?
-- What does successful integration look like within this game?
+## 2. Catalyst Delivery
+- What specific catalyst does THIS modality present at the contact boundary?
+- How is this DIFFERENT from the other 6 modalities for this module?
+- What unconscious material does this axis uniquely surface?
+- What does successful integration look like WITHIN this game?
 
-## 3. Drive Probing (All 4 × Both Domains)
-- Agency dark-domain: [how the game creates context for sovereign vs. dominating]
-- Agency golden-domain: [how the game creates context for individuating at the edge]
-- Communion dark-domain: [how the game creates context for sharing vs. fusing]
-- Communion golden-domain: [how the game creates context for joining at the new level]
-- Eros dark-domain: [how the game creates context for resting vs. compulsive growth]
-- Eros golden-domain: [how the game creates context for reaching vs. bypassing]
-- Agape dark-domain: [how the game creates context for returning vs. regressing]
-- Agape golden-domain: [how the game creates context for embodying vs. staying abstract]
+## 3. Game Design
+- Setup (what the player sees; aesthetic)
+- Interaction (what they do at each progression phase)
+- Feedback (what they experience — implicit, not clinical)
+- Difficulty adaptation (how the game meets the player)
+- Internal progression table (phase → checkpoint range → what changes)
 
-## 4. Shadow Surfacing (All 4 Quadrants)
-- Dark-Addiction: [what clinging/fixation looks like in this game; detection signals]
-- Dark-Allergy: [what avoidance/aversion looks like in this game; detection signals]
-- Golden-Addiction: [what bypassing/rushing looks like in this game; detection signals]
-- Golden-Allergy: [what refusal/terror looks like in this game; detection signals]
+## 4. Item Pool
+- Item types (with brief descriptions)
+- Minimum pool sizes
+- Generation rules
 
-## 5. Healing/Evolution Mechanics
-- Heal/Evolve vector: How does this game use Agape+Agency to integrate dark shadows?
-  - What does the game present when dark-addiction is detected?
-  - What does the game present when dark-allergy is detected?
-  - What does successful dark-shadow integration look like in gameplay?
-- Evolve/Heal vector: How does this game use Eros+Communion to dissolve golden shadows?
-  - What does the game present when golden-addiction is detected?
-  - What does the game present when golden-allergy is detected?
-  - What does successful golden-shadow dissolution look like in gameplay?
-- How does healing at this stage maintain lower-stage health?
-- How does evolution at this stage prepare for upper-stage growth?
-
-## 6. Game Design
-- Setup (what the player sees)
-- Interaction (what they do)
-- Feedback (what they learn — implicit, not clinical)
-- Difficulty adaptation (how the game meets the player where they are)
-- Internal progression (how the game deepens across repeated sessions)
-
-## 7. Item Pool Specification
-- Item types (stimuli, scenarios, patterns)
-- Minimum pool size (≥20 per shadow quadrant)
-- Generation rules (how to create more items)
-- How items map to drives and shadow quadrants
-
-## 8. Scoring Rubric
-- Capacity scoring (stage-pass/fail)
-- Drive-health scoring (all 4 drives × both domains)
-- Shadow-state scoring (which quadrant is dominant)
-- Integration scoring (is the player healing/evolving through play?)
-- LLM rubric (if applicable — for qualitative assessment)
-
-## 9. Technical Requirements
-- Input types (tap, hold, swipe, text, choice)
-- Timing requirements (RT measurement, sustained input)
-- NPC/AI requirements (for social/cooperative)
-- LLM requirements (for language-based)
+## 5. Technical Requirements
+- Input types
+- Timing requirements
+- NPC/AI requirements
+- LLM requirements (None / Low / Medium / High / Very High)
 - State persistence (what carries across sessions)
 ```
 
-### Shadow diagnostics file (`shadow-diagnostics.md`)
+---
 
-```markdown
-# {Line}/{Stage} — Shadow Diagnostics
+## What Each Modality Uniquely Probes
 
-## 1. The Four Shadow Archetypes at This Module
+The 7 modalities are 7 AXES of catalyst delivery. Each surfaces the same shadows through a different dimension:
 
-### Dark-Addiction: [Named Archetype]
-- Description: What fixation/clinging looks like at this line×stage
-- Which drives are pathological: [specify which drives contribute and how]
-- Detection signals in gameplay
-- What the player is unconsciously avoiding by clinging
+| Modality | Unique axis | What it alone can measure |
+|---|---|---|
+| **Deterministic** | Objective psychophysics | Ground-truth capacity (binary correct/incorrect, ms timing). No interpretation. The calibration anchor. |
+| **Language-reflective** | Verbal metacognition | Whether the player can ARTICULATE their process. Bridges implicit capacity to explicit awareness. |
+| **Scenario-choice** | Contextual decision-making | Whether the player can APPLY capacity wisely in ambiguous situations. Wisdom, not just skill. |
+| **Embodied-somatic** | Body-as-medium | Whether capacity is EMBODIED (not just mental). The body's relationship to the line's capacity. |
+| **Strategic-planning** | Multi-step sequencing | Whether the player can PLAN within the capacity's domain. Executive function applied to this line. |
+| **Social-cooperative** | Relational coordination | Whether the player can exercise capacity WITH OTHERS. The social dimension of the line. |
+| **Immersive-rpg** | Ecological/spontaneous | Whether capacity appears NATURALLY in free-play. Transfer to lived behaviour. The ultimate validity check. |
 
-### Dark-Allergy: [Named Archetype]
-- Description: What avoidance/aversion looks like at this line×stage
-- Which drives are pathological: [specify which drives contribute and how]
-- Detection signals in gameplay
-- What the player is unconsciously rejecting
+---
 
-### Golden-Addiction: [Named Archetype]
-- Description: What bypassing/premature transcendence looks like at this line×stage
-- Which drives are pathological: [specify which drives contribute and how]
-- Detection signals in gameplay
-- What the player is unconsciously avoiding by rushing upward
+## Cross-Validation Logic
 
-### Golden-Allergy: [Named Archetype]
-- Description: What terror of transcendence looks like at this line×stage
-- Which drives are pathological: [specify which drives contribute and how]
-- Detection signals in gameplay
-- What the player is unconsciously refusing
+Modalities validate each other. Discrepancies between modalities are diagnostic:
 
-## 2. Full Drive-Health Landscape (4 Drives × 2 Domains)
-
-| Drive | Healthy (dark domain) | Pathological (dark domain) | Healthy (golden domain) | Pathological (golden domain) |
-|---|---|---|---|---|
-| Agency | [specific to this line×stage] | [specific] | [specific] | [specific] |
-| Communion | [specific] | [specific] | [specific] | [specific] |
-| Eros | [specific] | [specific] | [specific] | [specific] |
-| Agape | [specific] | [specific] | [specific] | [specific] |
-
-## 3. Atman Project Defenses Active at This Module
-- Which defenses are most common at this line×stage
-- How they manifest in gameplay behaviour
-- How the games circumvent them (working WITH the contact boundary)
-
-## 4. The Catalyst→Experience→Integration Map
-- What catalyst does this module's contact boundary naturally seek?
-- How does the submergent unconscious respond to this catalyst?
-- How does the emergent unconscious respond to this catalyst?
-- What does successful integration look like at this module?
-
-## 5. Heal/Evolve Mechanics
-- Heal/Evolve (bottom-up): How Agape + Agency integrate dark shadows at this module
-- Evolve/Heal (top-down): How Eros + Communion dissolve golden shadows at this module
-- What "healed" looks like — the integration criteria
-- How resolving this module's shadows enables advancement
-
-## 6. Cross-Module Relationships
-- Which other modules' shadows reinforce this one (compound shadows)
-- Which other modules' health dissolves this one
-- How this module's health supports the holon above
-- How this module's health depends on the holon below
-
-## 7. Lower-Stage Maintenance
-- How this module remains relevant when the player advances beyond it
-- What "shadow-mode" looks like for this module (testing drive-health, not capacity)
-- When the system should present this module as a holonic return encounter
-```
+- **Deterministic high + Language-reflective low** = implicit capacity without metacognitive awareness (normal at early stages)
+- **Language-reflective high + Deterministic low** = verbal performance without actual capacity (golden-addiction signal)
+- **Deterministic high + Immersive-rpg low** = structured capacity without ecological transfer (compartmentalised)
+- **Social-cooperative high + Deterministic low** = group-dependent capacity (communion-addiction signal)
+- **Embodied-somatic high + Language-reflective low** = embodied knowing without verbal access (somatic intelligence ahead of cognitive)
 
 ---
 
@@ -219,9 +193,9 @@ Each game must be:
 
 ## Reference Documents
 
-- `foundations/10` — The 4-quadrant shadow model (addiction/allergy × dark/golden), all 4 drives × both domains
+- `foundations/10` — The 4-quadrant shadow model (what shadows ARE; the 256-shadow matrix)
 - `foundations/11` — Game modalities (7 types, what each measures)
-- `foundations/12` — Drive assessment mechanics (dual-domain probes, golden-domain probes)
-- `foundations/13` — Architecture of consciousness (theoretical substrate: 5-layer topography, contact boundary, Matrix/Potentiator)
+- `foundations/12` — Drive assessment mechanics (how drives are measured; the framework)
+- `foundations/13` — Architecture of consciousness (5-layer topography, contact boundary, Matrix/Potentiator)
 - `foundations/14` — Game as developmental catalyst (catalyst→experience→integration mechanics)
-- `STAGE-ASSESSMENT-ARCHITECTURE.md` — Module contract and composition rules
+- `ROADMAP.md` — Development phases and process

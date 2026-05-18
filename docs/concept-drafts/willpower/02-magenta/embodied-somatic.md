@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You wish for X. Hold this shape and the wish comes closer. Can your body hold for your wish?" The contact boundary is: "Can your body serve your will?"
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Holding body-state independently for the wish.
-- Healthy: Body holds by own will; wish-motivated, stable
-- Pathological: Body forces aggressively; holding as domination not service
-- **Detection:** Whether body-effort serves the wish or dominates the task
-
-### Agency Golden-Domain
-**Context:** Self-initiated body-effort toward wish.
-- Healthy: Engages body toward wish without prompting
-- Pathological: Cannot engage body without being told how
-- **Detection:** Self-initiated wish-body engagement rate
-
-### Communion Dark-Domain
-**Context:** Holding body-state alongside companion (shared wish-holding).
-- Healthy: Holds own body-effort while sharing space with companion
-- Pathological: Loses own body-effort when companion is present; matches their collapse
-- **Detection:** Whether own body-effort survives social context
-
-### Communion Golden-Domain
-**Context:** Coordinated body-effort toward shared wish.
-- Healthy: Coordinates body-effort with companion toward shared goal
-- Pathological: Cannot coordinate body-effort; effort is private only
-- **Detection:** Quality of shared body-effort
-
-### Eros Dark-Domain
-**Context:** Familiar body-effort (same hold, same wish).
-- Healthy: Maintains wish-fuelled body-effort on familiar tasks
-- Pathological: Body-effort becomes mechanical; wish-fuel depletes
-- **Detection:** Whether familiar body-effort retains wish-motivation
-
-### Eros Golden-Domain
-**Context:** Novel body-effort (new holds, new wish-body connections).
-- Healthy: Engages novel body-effort with curiosity
-- Pathological: Pushes into intense novel effort prematurely
-- **Detection:** Whether novel body-effort is gentle or forced
-
-### Agape Dark-Domain
-**Context:** Maintaining wish-body connection over time.
-- Healthy: Body-effort remains wish-fuelled across sessions
-- Pathological: Wish-body connection degrades; effort becomes empty
-- **Detection:** Wish-motivation quality across sessions
-
-### Agape Golden-Domain
-**Context:** Whether wish-body connection appears spontaneously.
-- Healthy: Body engages toward wishes naturally in free-play
-- Pathological: Wish-body effort exists only in explicit tasks
-- **Detection:** Spontaneous wish-body engagement
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Magical Demander"
-**How it surfaces:** Body DEMANDS rather than HOLDS. Aggressive physical engagement — slamming, forcing, pushing. The body expresses demand, not patient effort. Physical tantrum when the wish isn't immediately granted.
-- **Detection signals:** Aggressive body-engagement; slamming/forcing; physical escalation; body-tantrum at delay; effort as demand not patience
-
-### Dark-Allergy: "The Wish-Abandoner"
-**How it surfaces:** Body COLLAPSES immediately. Cannot sustain any physical effort toward the wish. Hold duration = 0. The body has no wish-fuel; it gives up before starting.
-- **Detection signals:** Immediate collapse; zero hold-duration; body disengages instantly; no physical effort toward wish; "I can't" before trying
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Body holds RIGIDLY without wish-connection. Forced effort — maximum tension, no gentleness, no joy. The body obeys but doesn't WANT. Holding as duty, not desire.
-- **Detection signals:** Maximum tension; rigid holding; no gentleness; joyless effort; body obeys without wanting; forced rather than wish-fuelled
-
-### Golden-Allergy: "The Effort-Refuser"
-**How it surfaces:** Body APPROACHES effort then WITHDRAWS. Begins to hold then releases. The body senses that effort is possible but refuses to sustain it. Physical approach-withdrawal.
-- **Detection signals:** Brief engagement then release; approach-withdrawal pattern; begins hold then drops; body can but won't; physical effort-avoidance
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Require GENTLE holding: "Soft. Patient. Your body waits, not demands."
-- Reward patience over force; make gentle effort produce better results
-- Frame: "Your body can wait. Gently. The wish comes to patient bodies."
-- Build: patient body-effort (not demanding body-force)
-
-**When Dark-Allergy detected:**
-- Present ULTRA-BRIEF body-effort: "Hold for 1 second. That's all. For your wish."
-- Make the wish VISIBLE during body-effort (motivation)
-- Frame: "One second. Your body holds. For your wish. Just one second."
-- Reward ANY sustained body-effort; celebrate first 1-second hold
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require WISH-CONNECTION during hold: "Why are you holding? What's the wish?"
-- Make wish-disconnected effort score lower than wish-connected effort
-- Frame: "Not just holding. Holding FOR something. What's your wish? Feel it while you hold."
-- Build: wish-fuelled effort (not empty discipline)
-
-**When Golden-Allergy detected:**
-- Make effort TINY and REWARDING: "Just begin. One moment. The wish gets closer."
-- Show immediate wish-progress from minimal effort
-- Frame: "The tiniest hold. Look — your wish moved closer. Just from that."
-- Build: effort-reward connection (effort produces wish-progress)
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Wish-Body: a somatic wish-holding space where the body carries the intention. The aesthetic: Magenta-stage body-temple — the player's body-outline holds a glowing wish. When the body holds stably, the wish grows brighter and closer. When the body collapses or forces, the wish dims or retreats.
@@ -170,7 +66,7 @@ The Wish-Body: a somatic wish-holding space where the body carries the intention
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Hold postures:** Various positions with wish-connection
@@ -188,21 +84,7 @@ The Wish-Body: a somatic wish-holding space where the body carries the intention
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Hold duration:** How long can the body sustain effort toward the wish?
-- **Gentleness quality:** Is the hold gentle or forced? (force sensor / pressure)
-- **Wish-connection:** Evidence that the hold serves the wish (not empty discipline)
-- **Persistence through distraction:** Does the hold survive competing stimuli?
-- **Effort-initiation:** Can the body BEGIN effort? (approach vs. avoidance)
-
-### LLM rubric
-- **Low:** Core scoring algorithmic (duration, force, persistence). LLM generates wish-contexts and feedback only.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Sustained touch (hold); pressure-sensitive touch (gentleness); hold-through-distraction

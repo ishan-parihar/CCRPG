@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "Your body knows what matters. When you act on your value, something shifts. When you betray it, something tightens. Can you feel it?" The contact boundary is: "Does your body participate in your spiritual life?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Physical action in value-aligned vs. value-violating contexts.
-- Healthy: Body differentiates — different force/energy for aligned vs. violating actions
-- Pathological: Body energises ONLY for domination; no somatic response to non-power values
-- **Detection:** Whether somatic differentiation exists for non-power values
-
-### Agency Golden-Domain
-**Context:** Initiating value-coherent physical action.
-- Healthy: Body initiates with appropriate energy when acting on values
-- Pathological: Cannot physically initiate value-coherent action; body doesn't respond to values
-- **Detection:** Initiation quality on value-charged physical tasks
-
-### Communion Dark-Domain
-**Context:** Physical action that serves shared values (joint sacred action).
-- Healthy: Body coordinates with others during value-coherent action
-- Pathological: Body cannot coordinate during sacred action; isolates
-- **Detection:** Coordination quality during value-charged joint actions
-
-### Communion Golden-Domain
-**Context:** Receiving the sacred physically (being served by the power-deity).
-- Healthy: Body responds to receiving (relaxation, energy, openness)
-- Pathological: Cannot receive physically; body stays guarded even during sacred reception
-- **Detection:** Somatic reception quality during transactional faith
-
-### Eros Dark-Domain
-**Context:** Simple value-charged physical actions.
-- Healthy: Body engages fully at current level
-- Pathological: Body disengages from simple sacred-physical tasks
-- **Detection:** Somatic engagement quality on below-level value-physical tasks
-
-### Eros Golden-Domain
-**Context:** Novel value-charged physical situations.
-- Healthy: Body responds with exploratory engagement
-- Pathological: Body performs sacred response without genuine somatic engagement
-- **Detection:** Whether novel value-physical contexts produce genuine vs. performed responses
-
-### Agape Dark-Domain
-**Context:** Familiar value-charged physical actions (repeated sacred rituals).
-- Healthy: Body maintains engagement; somatic markers remain active
-- Pathological: Body goes mechanical; sacred-physical actions become rote
-- **Detection:** Whether somatic engagement persists on familiar value-physical tasks
-
-### Agape Golden-Domain
-**Context:** Whether somatic value-signals appear spontaneously.
-- Healthy: Body signals value-content in non-task contexts
-- Pathological: Somatic value-signals exist only during explicit spiritual tasks
-- **Detection:** Spontaneous somatic spiritual engagement
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Zealot"
-**How it surfaces:** The body shows AGGRESSION during all value-charged action. Every sacred-physical act is a STRIKE. The body cannot hold the sacred gently — only forcefully. Somatic spiritual engagement = violence.
-- **Detection signals:** Maximum force on all value-charged actions; cannot perform gentle sacred-physical acts; body treats all spiritual content as combat; aggression is the only somatic spiritual response
-
-### Dark-Allergy: "The Nihilist"
-**How it surfaces:** The body shows NO somatic response to value-content. Value-charged and value-neutral actions have identical physical signatures. The body has DISCONNECTED from spiritual content entirely.
-- **Detection signals:** Identical force/timing across value-charged and neutral actions; no somatic markers for spiritual content; body treats sacred and profane identically
-
-### Golden-Addiction: "The Premature Mystic"
-**How it surfaces:** The body PERFORMS sacred response without genuine somatic engagement. Looks reverent (slow, careful, "mindful") but physiological markers show no actual somatic spiritual processing.
-- **Detection signals:** Performed reverence without genuine somatic markers; "sacred" movement that's just slow; no correlation between value-weight and physical response; body performs spirituality without feeling it
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** The body APPROACHES value-charged action then WITHDRAWS. Initial somatic engagement followed by physical retreat. The body WANTS to engage the sacred but pulls back.
-- **Detection signals:** Approach-withdrawal pattern on value-charged actions; initial engagement followed by retreat; body starts sacred-physical action then stops; somatic commitment-terror
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Introduce GENTLE sacred-physical actions (hold, protect, cradle — not strike)
-- Frame: "The sacred isn't always a weapon. Hold it gently. Your body can serve without striking."
-- Reward gentle somatic spiritual engagement
-
-**When Dark-Allergy detected:**
-- Introduce MINIMAL value-charged physical actions (tap the sacred object; touch the boundary)
-- Frame: "Just touch. Your body can feel the sacred. One touch. Notice what happens."
-- Reward ANY somatic response to value-content
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require MEASURABLE somatic engagement (force variation that correlates with value-weight)
-- Frame: "Don't look sacred. FEEL sacred. Your body must respond, not perform."
-- Score genuine somatic differentiation over performed reverence
-
-**When Golden-Allergy detected:**
-- Introduce SHORT sacred-physical commitments (hold for 2 seconds, then release)
-- Frame: "Two seconds. Hold the sacred for two seconds. Then you're free. Your body can do this."
-- Build somatic commitment-tolerance through brief holds
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Sacred-Body: a physical space where value-charged actions are measured somatically. The player performs actions in sacred and profane contexts; the game measures whether the body DIFFERENTIATES. The aesthetic: Red-stage temple-ground where the warrior's body responds to the sacred — the surge of power at the altar, the tension at the boundary.
@@ -164,7 +64,7 @@ The Sacred-Body: a physical space where value-charged actions are measured somat
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Value-aligned physical actions:** Actions in service of stated value
@@ -182,21 +82,7 @@ The Sacred-Body: a physical space where value-charged actions are measured somat
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Somatic differentiation:** Does force/timing vary between value-aligned and value-violating actions?
-- **Value-violation tension:** Does the body signal when values are betrayed?
-- **Pre-decision signalling:** Does the body signal value-content before conscious choice?
-- **Sustained engagement:** Can somatic spiritual engagement be maintained over time?
-- **Gentle-force range:** Can the body hold the sacred gently (not just aggressively)?
-
-### LLM rubric
-- **Low-Medium:** Core scoring is algorithmic (force/timing correlation with value-content). LLM generates contextual framing.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Force-sensitive tap/hold; timing-sensitive; rhythm; sustained hold duration

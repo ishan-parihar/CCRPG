@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game presents physical goals that CANNOT be achieved in one action — they require sequential body-planning. "Strike high, THEN dodge low, THEN strike again." The contact boundary is: "Can you hold a 2-step body-plan and execute it without losing the thread?"
 
@@ -29,112 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** The game offers "body-advisor" suggestions for physical sequences. The player can accept or create their own.
-- Healthy: Evaluates suggestions against own body-knowledge; accepts good ones, modifies others
-- Pathological: Rejects ALL body-advice; "My body knows best" even when it clearly doesn't; cannot integrate physical guidance
-- **Detection:** Suggestion rejection rate independent of suggestion quality; performance after rejection vs. acceptance
-
-### Agency Golden-Domain
-**Context:** Open-ended physical challenges — "Find a way to get past this obstacle using your body."
-- Healthy: Generates body-plans with confidence; iterates when first attempt fails
-- Pathological: Cannot begin without a template; "Show me how"; paralysis before novel physical planning
-- **Detection:** Time-to-first-action on open physical problems; quality of self-generated body-plans
-
-### Communion Dark-Domain
-**Context:** Coordinated body-planning — player and NPC ally must execute a joint physical sequence.
-- Healthy: Integrates ally's physical constraints into own body-plan; creates sequences that work for both
-- Pathological: Abandons own body-plan entirely to follow ally; loses physical sovereignty in coordination
-- **Detection:** Whether joint sequences reflect player's body-intelligence or pure compliance
-
-### Communion Golden-Domain
-**Context:** Teaching body-sequences — player must help an NPC recruit plan THEIR physical sequence.
-- Healthy: Scaffolds the recruit's body-planning; demonstrates then lets them try
-- Pathological: Does it FOR them; cannot let others develop their own body-plans
-- **Detection:** Whether teaching involves genuine scaffolding or just demonstration-and-copy
-
-### Eros Dark-Domain
-**Context:** Replaying mastered sequences or advancing to longer ones.
-- Healthy: Enjoys executing clean 2-step sequences; advances when genuinely ready
-- Pathological: Cannot rest in 2-step mastery; demands 4-step sequences immediately; treats current capacity as failure
-- **Detection:** Satisfaction signals at current sequence-length; advancement pressure independent of readiness
-
-### Eros Golden-Domain
-**Context:** Stretch sequences — one step longer than current stable capacity.
-- Healthy: Attempts stretch sequences with curiosity; learns from breakdown
-- Pathological: Attempts far-beyond sequences; claims success on failed executions; "I almost had it"
-- **Detection:** Gap between attempted sequence-length and successfully executed sequence-length
-
-### Agape Dark-Domain
-**Context:** Foundation sequences — simple 1-step physical actions that maintain basic body-planning.
-- Healthy: Executes simple sequences with full presence and power
-- Pathological: Dismisses simple sequences; executes carelessly; "This is too easy for my body"
-- **Detection:** Execution quality on below-level sequences; presence during basic body-planning
-
-### Agape Golden-Domain
-**Context:** Transfer — body-planning appearing in free-play (spontaneous sequencing in other game contexts).
-- Healthy: Physical sequences appear naturally in non-planning game contexts
-- Pathological: Body-planning exists only in structured challenges; free-play is purely reactive
-- **Detection:** Sequential physical behaviour quality in non-planning contexts
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Mover"
-**How it surfaces:** Present a 2-step physical problem and observe planning time. The compulsive mover DOESN'T plan — they immediately execute, fail, and try again without pausing. OR: they over-plan cognitively (thinking about the body rather than planning THROUGH the body).
-- **Detection signals:** Zero planning time before execution; repeated failed attempts without pause; OR excessive cognitive planning time with poor physical execution; inability to hold a body-plan (starts executing before plan is complete)
-
-### Dark-Allergy: "The Disembodied"
-**How it surfaces:** Present a problem that clearly requires physical sequencing. The disembodied player attempts to solve it COGNITIVELY — thinking about what the body should do rather than feeling into the sequence.
-- **Detection signals:** Cognitive approach to physical problems; correct verbal plan but poor physical execution; disconnect between knowing and doing; body doesn't "remember" the plan during execution
-
-### Golden-Addiction: "The Premature Disciplinarian"
-**How it surfaces:** Present a 2-step problem and observe whether the player attempts a 4-step "elegant" sequence instead of the simple effective one.
-- **Detection signals:** Over-complex physical sequences for simple problems; "elegant" body-plans that fail; inability to choose the simple physical path; form over function in sequencing
-
-### Golden-Allergy: "The Structure-Refuser"
-**How it surfaces:** Gradually increase sequence-length requirements. The refusal manifests as disengagement when 3-step sequences are required — "I don't want to plan my body."
-- **Detection signals:** Performance cliff at specific sequence-length; avoidance of longer sequences; preference for reactive over planned movement; "My body just does things"
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game introduces "pause-then-strike" — a mandatory 2-second body-planning window before execution
-- Rewards FIRST-ATTEMPT success (planning pays off; reactive repetition doesn't)
-- Frames: "The warrior who pauses strikes once. The warrior who rushes strikes ten times and misses."
-- Shows that planned-then-executed outperforms reactive-repeated in score AND in power
-
-**When Dark-Allergy detected:**
-- Game introduces "body-first planning" — feel the sequence in the body BEFORE executing
-- Provides physical rehearsal: "Move through it slowly first. Let your body learn the path."
-- Starts with 1-step (barely planning) and extends to 2-step
-- Frames: "Your body already knows. Let it show you the plan."
-- Rewards body-led planning over cognitive planning
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game rewards MINIMUM-STEP solutions (the shortest physical sequence that works)
-- Scoring penalises unnecessary steps; the most efficient body-plan scores highest
-- Pairs with NPC who models efficient physical planning: "Two moves. Clean. Done."
-- Makes simplicity more powerful than complexity
-
-**When Golden-Allergy detected:**
-- Game introduces 3-step sequences as OPTIONAL with bonus power
-- Frames longer sequences as "bigger victories" — more steps = more territory gained
-- Provides scaffolding: "What if your body did THIS first, then...?"
-- Celebrates any engagement with sequential body-planning
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 A physical obstacle course — walls to breach, gaps to cross, enemies to defeat — that requires PLANNED sequences of body-actions. Not a reaction-time challenge (that's deterministic) but a PLANNING challenge: "Look at the obstacle. Plan your body's approach. Execute." The aesthetic: Red-stage assault course, stone and iron, firelight.
@@ -170,7 +65,7 @@ A physical obstacle course — walls to breach, gaps to cross, enemies to defeat
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Obstacle configurations:** Physical challenges requiring specific action sequences
@@ -205,36 +100,7 @@ A physical obstacle course — walls to breach, gaps to cross, enemies to defeat
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Sequence length:** Maximum body-sequence successfully executed (2, 3, 4+ steps)
-- **Execution quality:** Power and presence during planned sequences (not just correctness)
-- **Transition fluidity:** Quality of movement between sequence steps (smooth vs. choppy)
-- **Adaptation speed:** How quickly the body re-plans when conditions change
-- **Stamina efficiency:** How well body-resources are allocated across a sequence
-
-### Drive-health scoring
-Per `scoring.md` §3: Behavioural signals from body-planning engagement — advisor usage, coordination quality, advancement patterns, foundation engagement.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Planning-time patterns, cognitive-vs-physical approach, over-complexity, disengagement.
-
-### Integration scoring
-- Sequence length increasing over sessions
-- Execution quality improving (more present, more powerful)
-- Transition fluidity improving (smoother between steps)
-- Transfer: sequential body-behaviour appearing in other game contexts
-
-### LLM rubric
-- **Medium:** Generates obstacle configurations, narrates outcomes, adapts difficulty narrative
-- Evaluates execution quality (presence, power) beyond pure accuracy
-- Generates contextual framing (assault-course narrative)
-- Not required for core sequence-length scoring (algorithmic)
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Sequence input (order actions in a queue before execution)

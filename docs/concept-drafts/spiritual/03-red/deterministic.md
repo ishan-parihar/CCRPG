@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "You said X matters most. Now X costs you something. Do you still choose X?" The contact boundary is: "Is your value REAL — does it survive pressure?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Value-coherent action that requires sacrifice (giving up reward to maintain value).
-- Healthy: Sacrifices reward to maintain value; sovereign choice
-- Pathological: Abandons value whenever reward is sufficient; "Values are nice but winning is better"
-- **Detection:** Value-coherence rate when maintaining value has a cost
-
-### Agency Golden-Domain
-**Context:** Declaring and holding a value without external validation.
-- Healthy: Holds value regardless of whether others approve
-- Pathological: Cannot hold value without external reinforcement
-- **Detection:** Value-coherence in absence of social reward
-
-### Communion Dark-Domain
-**Context:** Value-coherent action that affects others (value requires helping/not-harming).
-- Healthy: Maintains value even when it costs others' approval
-- Pathological: Abandons value to maintain social approval
-- **Detection:** Value-coherence when social cost is involved
-
-### Communion Golden-Domain
-**Context:** Value-coherent action in coordination with ally who shares the value.
-- Healthy: Strengthened value-coherence when ally shares value
-- Pathological: Value-coherence depends entirely on ally's presence
-- **Detection:** Whether shared values strengthen or replace personal coherence
-
-### Eros Dark-Domain
-**Context:** Simple value-coherence tasks (low cost to maintain value).
-- Healthy: Maintains value easily; full engagement
-- Pathological: Dismisses low-cost value-coherence; "That's too easy to count"
-- **Detection:** Engagement quality on low-cost value-coherence tasks
-
-### Eros Golden-Domain
-**Context:** Value-coherence at the edge (high cost; uncertain outcome).
-- Healthy: Maintains value with appropriate struggle; acknowledges difficulty
-- Pathological: Claims effortless value-coherence at all costs; "It's easy for me"
-- **Detection:** Honesty about difficulty of high-cost value-coherence
-
-### Agape Dark-Domain
-**Context:** Maintaining value-coherence over time (across sessions).
-- Healthy: Same value, consistently demonstrated, across sessions
-- Pathological: Value changes between sessions; no sustained coherence
-- **Detection:** Cross-session value stability and coherence
-
-### Agape Golden-Domain
-**Context:** Whether value-coherence appears in non-spiritual tasks.
-- Healthy: Value guides behaviour across all game contexts
-- Pathological: Value-coherence exists only in spiritual tasks
-- **Detection:** Value-coherent behaviour in non-spiritual modalities
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Zealot"
-**How it surfaces:** Value-coherence is HIGH but AGGRESSIVE. The value is maintained by ATTACKING anything that threatens it. Coherence through domination, not alignment.
-- **Detection signals:** Value maintained through aggression; others punished for different values; coherence = crusade; value-invocation always offensive
-
-### Dark-Allergy: "The Nihilist"
-**How it surfaces:** No value is stated OR stated value has ZERO behavioural coherence. Actions are random relative to any value-hierarchy. Nothing predicts behaviour because nothing matters.
-- **Detection signals:** Cannot state a value; or stated value has 0% behavioural coherence; actions unpredictable from any value-model; no sacred-boundary behaviour
-
-### Golden-Addiction: "The Premature Mystic"
-**How it surfaces:** Stated value is ABSTRACT and behaviour shows NO coherence with it. "I value the unity of all beings" — but behaviour is indistinguishable from random. The value is too abstract to produce coherent action.
-- **Detection signals:** Abstract/transcendent stated value + zero behavioural coherence; value cannot be operationalised into action; sounds spiritual but behaviour is value-free
-
-### Golden-Allergy: "The Sacred-Refuser"
-**How it surfaces:** Value-coherence STARTS then COLLAPSES. The player states a value, acts on it for 1-2 decisions, then abandons it. The pattern is: commit → hold briefly → abandon → new value → repeat.
-- **Detection signals:** Value-coherence duration <3 decisions; frequent value-switching; commitment-abandonment cycles; can identify values but cannot sustain them
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present value-coherence tasks where the value REQUIRES restraint
-- Frame: "Your value demands you PROTECT, not attack. Hold it gently. That's true strength."
-- Reward non-aggressive value-coherence; penalise value-as-weapon
-
-**When Dark-Allergy detected:**
-- Present MINIMAL value-identification ("For this ONE task, what matters? Pick one.")
-- Frame: "One value. One task. See if it helps. The warrior with a cause fights harder."
-- Reward ANY value-coherent behaviour; celebrate the first alignment
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require CONCRETE, OPERATIONALISABLE values ("Not 'unity' — what will you DO differently?")
-- Frame: "A value you can't act on isn't a value. Name something CONCRETE. Then act on it."
-- Score behavioural coherence, not value-sophistication
-
-**When Golden-Allergy detected:**
-- Present SHORT value-commitment windows (hold for 3 decisions, then free)
-- Frame: "Three decisions. That's all. Hold your value for three. Then you can change."
-- Gradually extend commitment windows as tolerance builds
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Value-Reader: a behavioural coherence game. The player declares a value, then faces situations where maintaining that value has varying costs. The game measures whether behaviour aligns with declaration. The aesthetic: Red-stage oath-taking — the warrior declares before the war-band, then must LIVE the oath.
@@ -164,7 +64,7 @@ The Value-Reader: a behavioural coherence game. The player declares a value, the
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Low-cost coherence tests:** Situations where value-maintenance is easy
@@ -182,21 +82,7 @@ The Value-Reader: a behavioural coherence game. The player declares a value, the
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Value-coherence rate:** % of actions aligned with stated value
-- **Cost-tolerance:** Maximum cost at which value-coherence is maintained
-- **Priority consistency:** Same value wins in similar conflict situations
-- **Sustained-hold duration:** Longest streak of value-coherent decisions
-- **Cross-context coherence:** Value-coherence in non-spiritual tasks
-
-### LLM rubric
-- **Low:** Core scoring is purely algorithmic (stated value vs. behavioural alignment). LLM generates contextual framing only.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (value declaration from options or free-text); tap-to-choose (action selection in value-testing scenarios)

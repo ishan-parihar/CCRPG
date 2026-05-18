@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** The game presents decisions where the "right" answer requires holding multiple factors in mind simultaneously. At Red, this means: "I want X, but getting X costs Y — is it worth it?" The contact boundary is the limit of how many factors the player can hold.
 
@@ -29,111 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Choices where one option requires accepting help/alliance and another allows solo action.
-- Healthy: Chooses solo when genuinely optimal, accepts help when it serves the goal
-- Pathological: ALWAYS chooses solo even when it's clearly suboptimal; "I don't need anyone"
-- **Detection:** Solo-choice rate when collaboration is clearly superior; reasoning quality for solo choices
-
-### Agency Golden-Domain
-**Context:** Novel dilemma types with no clear precedent — the player must reason from first principles.
-- Healthy: Engages novel dilemmas with confidence, makes a reasoned choice even without certainty
-- Pathological: Paralysis on novel dilemmas; cannot choose without a template; "What's the right answer?"
-- **Detection:** Decision latency on novel vs. familiar dilemmas; quality of reasoning on unprecedented choices
-
-### Communion Dark-Domain
-**Context:** Choices where the player can see what others chose (NPC or async) before deciding.
-- Healthy: Considers others' choices as information, makes own decision
-- Pathological: Copies majority choice without reasoning; "Everyone else picked A, so A must be right"
-- **Detection:** Correlation between player's choice and displayed majority; reasoning quality when going against majority
-
-### Communion Golden-Domain
-**Context:** Dilemmas that affect both the player AND others (shared consequences).
-- Healthy: Considers shared impact genuinely, makes decisions that account for others
-- Pathological: Performs consideration without genuine engagement; "I chose B for the team" but reasoning is hollow
-- **Detection:** Whether shared-consequence reasoning is concrete and specific or vague and performative
-
-### Eros Dark-Domain
-**Context:** Choices between "safe, known outcome" and "risky, potentially better outcome."
-- Healthy: Chooses risk when the reasoning supports it, chooses safety when appropriate
-- Pathological: ALWAYS chooses risk; cannot tolerate the "boring" safe option; compulsive novelty-seeking in decisions
-- **Detection:** Risk-choice rate independent of reasoning quality; whether risk-taking is reasoned or compulsive
-
-### Eros Golden-Domain
-**Context:** Choices that require reasoning BEYOND current demonstrated capacity (stretch decisions).
-- Healthy: Attempts stretch reasoning with genuine effort, accepts when it's beyond them
-- Pathological: Claims to have reasoned through complex decisions but reasoning doesn't hold up; performs sophistication
-- **Detection:** Quality of reasoning on stretch decisions; whether claimed reasoning matches actual choice logic
-
-### Agape Dark-Domain
-**Context:** Choices that revisit earlier, simpler decision types (foundation decisions).
-- Healthy: Engages simple decisions with full reasoning quality; doesn't phone it in
-- Pathological: Dismisses simple decisions; "This is obvious, just pick A"; reasoning quality drops on "easy" choices
-- **Detection:** Reasoning quality on below-level decisions vs. at-level decisions
-
-### Agape Golden-Domain
-**Context:** Choices where the decision must be IMPLEMENTED (not just chosen) — follow-through required.
-- Healthy: Choice and implementation are consistent; they do what they decided
-- Pathological: Makes good decisions but doesn't follow through; reasoning exists in theory only
-- **Detection:** Consistency between stated choice and subsequent behaviour; implementation quality
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Compulsive Strategist"
-**How it surfaces:** Present a simple binary choice with obvious best option. The compulsive strategist takes excessive time, considers irrelevant factors, cannot commit.
-- **Detection signals:** Decision time > 3× expected on simple choices; requesting additional information when none is needed; changing answer multiple times
-
-### Dark-Allergy: "The Anti-Intellectual Warrior"
-**How it surfaces:** Present a choice that clearly rewards planning (visible 2-step consequence). The allergy manifests as instant choice without considering consequences.
-- **Detection signals:** Decision time < 1 second on complex choices; choice quality uncorrelated with consequence visibility; "I just picked one"
-
-### Golden-Addiction: "The Premature Abstractionist"
-**How it surfaces:** Present a concrete choice and ask for reasoning. The bypass manifests as abstract justification disconnected from the actual concrete factors.
-- **Detection signals:** Reasoning uses abstract principles when concrete factors are available; mismatch between stated reasoning and actual choice logic; "I considered the systemic implications" on a 2-option resource trade
-
-### Golden-Allergy: "The Growth-Refuser"
-**How it surfaces:** Present choices that increase in complexity (more factors, longer consequence chains). The refusal manifests as disengagement when complexity increases.
-- **Detection signals:** Engagement drops as complexity increases; choice quality degrades at higher complexity not from inability but from withdrawal; preference for repeating simple choices
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Game introduces "gut-check" rounds: "You have 3 seconds. Choose NOW."
-- Rewards decisive action; shows that quick decisions often produce good outcomes
-- Frames decisiveness as power: "The warlord who hesitates loses the battle"
-- Gradually reduces available decision time on simple choices
-
-**When Dark-Allergy detected:**
-- Game shows consequences BEFORE the next choice: "Last time you rushed, you lost 50 gold"
-- Introduces "scout report" mechanic: brief consequence preview that rewards reading
-- Frames planning as power: "The warlord who scouts wins before fighting"
-- Starts with 1-factor decisions and adds factors gradually
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Game requires CONCRETE justification: "Point to the specific factor that made you choose A"
-- Strips away abstract options — all choices are grounded in visible, countable resources
-- Pairs with NPC who models concrete reasoning: "I picked A because 5 > 3"
-- Makes concrete mastery more rewarding than abstract performance
-
-**When Golden-Allergy detected:**
-- Game introduces complexity ONE factor at a time (barely noticeable increase)
-- Frames harder decisions as "bigger prizes" — complexity = opportunity, not threat
-- Provides "advisor" NPC who helps with one factor (scaffolding)
-- Celebrates any engagement with harder material: "The warlord grows bolder"
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The player sits in a war-room with a tactical map. A "War-Council" of NPCs presents dilemmas. The aesthetic is Red-stage: battle-maps, resource tokens (gold, soldiers, weapons), territory markers. Every choice has VISIBLE, CONCRETE stakes.
@@ -168,7 +64,7 @@ The player sits in a war-room with a tactical map. A "War-Council" of NPCs prese
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Resource dilemmas:** Allocate limited resources between competing needs (gold, soldiers, time)
@@ -202,35 +98,7 @@ The player sits in a war-room with a tactical map. A "War-Council" of NPCs prese
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Factor integration:** How many factors does the player demonstrably consider?
-- **Consequence projection:** How many steps ahead can they reason?
-- **Consistency:** Do similar dilemmas produce similar reasoning (not random)?
-- **Optimality:** Do choices produce good outcomes given available information?
-
-### Drive-health scoring
-Per `scoring.md` §3: Choice patterns scored for drive signals. Solo/alliance ratio, risk/safety ratio, engagement quality on simple/complex, implementation consistency.
-
-### Shadow-state scoring
-Per `shadow-diagnostics.md` §3: Decision-time patterns, reasoning quality patterns, complexity-engagement patterns mapped to shadow quadrants.
-
-### Integration scoring
-- Factor count increasing over sessions (can hold more)
-- Consequence chain length increasing (can project further)
-- Reasoning quality improving (more concrete, more specific)
-- Transfer: decision quality in OTHER game modalities improving
-
-### LLM rubric
-- Evaluates stated reasoning (when player explains choices)
-- Generates contextual scenarios based on player's game state
-- Detects abstract-vs-concrete reasoning quality
-- Identifies shadow patterns across decision history
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Choice selection (tap on option)

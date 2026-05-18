@@ -15,7 +15,7 @@
 
 ---
 
-## 2. The Catalyst→Experience→Integration Flow
+## 2. Catalyst Delivery
 
 **Catalyst:** "How does your body feel right now? Are you ready or tired? Tense or loose?" The contact boundary is: "Can you read your own body's signals accurately?"
 
@@ -29,107 +29,7 @@
 
 ---
 
-## 3. Drive Probing (All 4 × Both Domains)
-
-### Agency Dark-Domain
-**Context:** Self-assessment of physical capacity (strength, speed, endurance).
-- Healthy: Accurate body-capacity assessment; knows actual physical state
-- Pathological: Inflated body-assessment; "I'm at full power" when fatigued
-- **Detection:** Gap between self-rated physical state and performance indicators
-
-### Agency Golden-Domain
-**Context:** Using body-knowledge to initiate action at optimal timing.
-- Healthy: Waits for readiness; acts when body signals "go"
-- Pathological: Cannot read body-readiness; acts randomly or waits indefinitely
-- **Detection:** Correlation between self-reported readiness and action quality
-
-### Communion Dark-Domain
-**Context:** Reading own body in relation to another's (matching rhythm, coordinating).
-- Healthy: Knows own body-state well enough to coordinate with another
-- Pathological: Cannot coordinate because doesn't know own body's current state
-- **Detection:** Coordination quality as function of body-state awareness
-
-### Communion Golden-Domain
-**Context:** Receiving body-feedback from the game (vibration, rhythm cues) and integrating.
-- Healthy: Uses external body-feedback to update self-assessment
-- Pathological: Ignores body-feedback; maintains self-assessment regardless
-- **Detection:** Whether external body-cues update self-reported state
-
-### Eros Dark-Domain
-**Context:** Simple body-reading (binary: tired/energised).
-- Healthy: Engages fully; accurate on simple body-reads
-- Pathological: Dismisses simple body-reading; "I'm always ready"
-- **Detection:** Engagement quality on basic body-state assessment
-
-### Eros Golden-Domain
-**Context:** Subtle body-reading (nuanced states: slightly tense, moderately fatigued).
-- Healthy: Attempts nuanced body-reading with appropriate uncertainty
-- Pathological: Claims perfect body-awareness without demonstration
-- **Detection:** Nuanced body-reading accuracy vs. claimed awareness
-
-### Agape Dark-Domain
-**Context:** Maintaining body-awareness over a session (not just at start).
-- Healthy: Body-awareness persists; updates as state changes
-- Pathological: Initial body-read only; doesn't track changes during session
-- **Detection:** Body-state tracking accuracy over session duration
-
-### Agape Golden-Domain
-**Context:** Whether body-awareness appears spontaneously in other tasks.
-- Healthy: Adjusts behaviour based on body-state in non-somatic tasks
-- Pathological: Body-awareness exists only in explicit body-reading tasks
-- **Detection:** Spontaneous body-state-guided behaviour in other modalities
-
----
-
-## 4. Shadow Surfacing (All 4 Quadrants)
-
-### Dark-Addiction: "The Narcissist"
-**How it surfaces:** Body-state is always reported as PEAK. "I'm at full power. I'm completely ready. I'm not tired at all." — when performance indicators show fatigue, tension, or depletion. The body-image is grandiose.
-- **Detection signals:** Self-reported body-state consistently "peak" regardless of actual indicators; performance degrades while self-report stays high; cannot acknowledge physical limitation; body-image is fantasy
-
-### Dark-Allergy: "The Unexamined"
-**How it surfaces:** Cannot report body-state AT ALL. "I don't know how my body feels. I just go." No interoceptive awareness. The body is a tool used without reading.
-- **Detection signals:** Cannot select body-state from options; "I don't know" on all body-reading tasks; no correlation between self-report and performance; body used without awareness
-
-### Golden-Addiction: "The Premature Witness"
-**How it surfaces:** Reports body-state in ABSTRACT terms without accuracy. "I'm sensing a subtle energetic shift in my solar plexus" — but can't say whether they're tired or energised. Sophisticated body-language without functional body-knowledge.
-- **Detection signals:** Abstract/spiritual body-language; cannot answer simple "tired or energised?"; body-report doesn't predict performance; sounds body-aware but ISN'T functionally
-
-### Golden-Allergy: "The Identity-Clinger"
-**How it surfaces:** Reports body-state ONLY in identity-confirming terms. The warrior is always "strong" and "ready." Cannot report fatigue, weakness, or vulnerability in the body. Body-knowledge is filtered through identity.
-- **Detection signals:** Only "strong/ready/powerful" body-reports; cannot acknowledge fatigue even when performance drops; body-vocabulary restricted to power-states; identity filters body-awareness
-
----
-
-## 5. Healing/Evolution Mechanics
-
-### Heal/Evolve Vector (Agape + Agency for dark shadows)
-
-**When Dark-Addiction detected:**
-- Present tasks where ACCURATE body-reading produces advantage (predict fatigue → rest → perform better)
-- Frame: "You said full power. Then you crashed. The warrior who knows his fatigue rests BEFORE the crash."
-- Make accurate body-reading produce tactical superiority
-
-**When Dark-Allergy detected:**
-- Present BINARY body-reads (just two options: "more tired or more energised right now?")
-- Frame: "Your body is speaking. One signal. Tired or ready? Listen."
-- Reward ANY body-reading attempt; celebrate the first accurate read
-
-### Evolve/Heal Vector (Eros + Communion for golden shadows)
-
-**When Golden-Addiction detected:**
-- Require FUNCTIONAL body-knowledge (predict performance from body-state)
-- Frame: "Don't describe your energy. PREDICT your next score. Your body knows — can you hear it simply?"
-- Score prediction accuracy, not description sophistication
-
-**When Golden-Allergy detected:**
-- Introduce body-states that INCLUDE vulnerability (fatigue as tactical information, not weakness)
-- Frame: "The warrior who knows his fatigue fights SMARTER. Knowing 'tired' isn't weakness — it's intelligence."
-- Make vulnerability-acknowledgment produce power
-
----
-
-## 6. Game Design
+## 3. Game Design
 
 ### Setup
 The Self-Body: a physical self-knowledge game where the player reads their own body-state and the game verifies. Before physical tasks, assess readiness. After physical tasks, assess fatigue. The game compares self-report to performance. The aesthetic: Red-stage warrior checking their body before battle — not meditation but TACTICAL body-reading.
@@ -164,7 +64,7 @@ The Self-Body: a physical self-knowledge game where the player reads their own b
 
 ---
 
-## 7. Item Pool Specification
+## 4. Item Pool Specification
 
 ### Item types
 - **Energy assessments:** Binary and scaled energy-level self-reports
@@ -182,21 +82,7 @@ The Self-Body: a physical self-knowledge game where the player reads their own b
 
 ---
 
-## 8. Scoring Rubric
-
-### Capacity scoring
-- **Energy-read accuracy:** Correlation between self-reported energy and performance
-- **Tension-read accuracy:** Does reported tension match force/timing patterns?
-- **Readiness calibration:** Does readiness rating predict performance quality?
-- **Limit prediction accuracy:** How close is predicted endurance to actual?
-- **Body-state tracking:** Does awareness update as state changes during session?
-
-### LLM rubric
-- **Low:** Core scoring is algorithmic (self-report vs. performance correlation). LLM generates contextual framing only.
-
----
-
-## 9. Technical Requirements
+## 5. Technical Requirements
 
 ### Input types
 - Tap-to-select (binary/scaled body-state); slider (intensity ratings); body-map tap (tension location)
