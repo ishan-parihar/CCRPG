@@ -76,11 +76,20 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
   });
   eventBus.on('session_ended', (payload) => {
     telemetryService.recordEvent('session_ended', { timestamp: payload.timestamp, encounterCount: payload.encounterCount });
+    void telemetryService.flush();
   });
 
   // Screen reader overlay
   if (a11yManager.isScreenReaderEnabled() && typeof document !== 'undefined') {
-    createScreenReaderOverlay();
+    const screenReaderOverlay = createScreenReaderOverlay();
+    game.registry.set(RegistryKeys.ScreenReader, screenReaderOverlay);
+  }
+
+  // Flush telemetry on page unload (fire-and-forget since beforeunload cannot await async)
+  if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', () => {
+      void telemetryService.flush();
+    });
   }
 
   // ── Android hardware back button ─────────────────────────────────
