@@ -40,8 +40,8 @@ describe('bootRegistries', () => {
     expect(AbilityRegistry.all().length).toBeGreaterThanOrEqual(10);
   });
 
-  it('registers Red stage encounters (12 total: 8 side + 3 mini + 1 main)', () => {
-    expect(EncounterRegistry.all()).toHaveLength(12);
+  it('registers Red stage encounters (34 total: 30 side + 3 mini + 1 main)', () => {
+    expect(EncounterRegistry.all()).toHaveLength(34);
   });
 
   it('registers Red narrative beats', () => {
