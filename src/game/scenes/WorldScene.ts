@@ -8,6 +8,7 @@ import { SceneKeys, RegistryKeys, TextureKeys } from '../keys.js';
 import type { Significator } from '@core/domain/Significator.js';
 import type { Holon } from '@core/domain/Holon.js';
 import type { EncounterSpec } from '@core/domain/Encounter.js';
+import { EncounterRegistry } from '@core/registries/index.js';
 
 interface WorldState {
   readonly holons: readonly Holon[];
@@ -179,35 +180,63 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private interactWithNPC(holon: Holon): void {
-    // Create a minimal encounter spec from the holon for routing
-    const encounter: EncounterSpec = {
-      id: `encounter-${holon.id}`,
-      lines: [holon.line],
-      stage: holon.stage,
-      quadrants: ['UL'],
-      role: holon.narrativeRole === 'main-boss' ? 'main' : 'side',
-      ray: 'Red',
-      modality: 'ImmersiveRPG',
-      taskBinds: [{ taskSlug: 'n_back', line: holon.line }],
-      narrative: {
-        theme: `Encounter with ${holon.name}`,
-        allyBeats: ['Your companion watches closely.'],
-        codexEntry: `Met ${holon.name} in the volcanic badlands.`,
-      },
-      enemy: {
-        name: holon.name,
-        stats: {
-          maxHp: 100,
-          maxMana: 40,
-          agility: 50,
-          attack: 15,
-          defense: 10,
-          precision: 80,
-          magic: 12,
-          luck: 5,
-        },
-      },
-    };
+    // Look up a matching encounter from the registry based on the NPC's line and role
+    const role = holon.narrativeRole === 'main-boss' ? 'main' : 'side';
+    const matchingKeys = EncounterRegistry.keysFor({ stage: holon.stage, role } as Partial<EncounterSpec>);
+
+    // Filter to encounters whose lines include this holon's line
+    const candidates = matchingKeys
+      .map(key => EncounterRegistry.get(key))
+      .filter((enc): enc is EncounterSpec =>
+        enc !== undefined && enc.lines.includes(holon.line)
+      );
+
+    let encounter: EncounterSpec;
+
+    if (candidates.length > 0) {
+      // Pick a random matching encounter for variety
+      encounter = candidates[Math.floor(Math.random() * candidates.length)]!;
+    } else {
+      // Fallback: use any encounter from the registry that matches the stage
+      const allKeys = EncounterRegistry.keysFor({ stage: holon.stage } as Partial<EncounterSpec>);
+      const allCandidates = allKeys
+        .map(key => EncounterRegistry.get(key))
+        .filter((enc): enc is EncounterSpec => enc !== undefined);
+
+      if (allCandidates.length > 0) {
+        encounter = allCandidates[Math.floor(Math.random() * allCandidates.length)]!;
+      } else {
+        // Ultimate fallback: construct a minimal encounter
+        encounter = {
+          id: `encounter-${holon.id}`,
+          lines: [holon.line],
+          stage: holon.stage,
+          quadrants: ['UL'],
+          role: 'side',
+          ray: 'Red',
+          modality: 'ImmersiveRPG',
+          taskBinds: [{ taskSlug: 'n_back', line: holon.line }],
+          narrative: {
+            theme: `Encounter with ${holon.name}`,
+            allyBeats: ['Your companion watches closely.'],
+            codexEntry: `Met ${holon.name} in the volcanic badlands.`,
+          },
+          enemy: {
+            name: holon.name,
+            stats: {
+              maxHp: 100,
+              maxMana: 40,
+              agility: 50,
+              attack: 15,
+              defense: 10,
+              precision: 80,
+              magic: 12,
+              luck: 5,
+            },
+          },
+        };
+      }
+    }
 
     this.scene.start(SceneKeys.Encounter, { encounter });
   }

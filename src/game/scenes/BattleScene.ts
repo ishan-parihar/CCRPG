@@ -447,7 +447,12 @@ export class BattleScene extends Phaser.Scene {
       hold: 1000,
     });
 
-    // Heal enemy to simulate new phase HP pool
+    // Reset enemy HP to the new phase's pool value
+    // First drain any residual HP, then heal to exactly hpPool (clamped to maxHp)
+    const currentHp = this.enemy.battler.hp;
+    if (currentHp > 0) {
+      this.enemy.battler.takeDamage(currentHp);
+    }
     this.enemy.battler.heal(phase.hpPool);
     this.enemy.nameLabel.setText(`${this.enemy.battler.name} (${phase.quadrant})`);
   }

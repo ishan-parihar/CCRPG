@@ -7,6 +7,7 @@ import { SceneKeys, RegistryKeys } from '../keys.js';
 import type { EncounterSpec } from '@core/domain/Encounter.js';
 import type { EventBus } from '@core/events/EventBus.js';
 import type { ConsequenceRecord } from '@core/domain/ConsequenceRecord.js';
+import { CONQUEROR_PHASES } from '@core/data/encounters/red/conqueror.js';
 import { routeModality } from '../logic/encounterRouting.js';
 
 export { routeModality } from '../logic/encounterRouting.js';
@@ -29,8 +30,16 @@ export class EncounterScene extends Phaser.Scene {
 
     const targetScene = routeModality(this.encounter.modality);
 
+    // Build scene data; include Conqueror phases for main boss encounters
+    const sceneData: { encounter: EncounterSpec; phases?: typeof CONQUEROR_PHASES } = {
+      encounter: this.encounter,
+    };
+    if (this.encounter.role === 'main' || this.encounter.id === 'red-main-tyrant') {
+      sceneData.phases = CONQUEROR_PHASES;
+    }
+
     // Launch the target sub-scene and listen for its completion
-    this.scene.launch(targetScene, { encounter: this.encounter });
+    this.scene.launch(targetScene, sceneData);
     this.scene.pause();
 
     const target = this.scene.get(targetScene);

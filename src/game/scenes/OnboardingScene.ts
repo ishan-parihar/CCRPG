@@ -12,6 +12,7 @@ import { createInitialProfile, type TaskSlug } from '@core/domain/PlayerProfile.
 import { createSignificator } from '@core/domain/Significator.js';
 import type { Holon } from '@core/domain/Holon.js';
 import type { OnboardingProbe, ProbeResult } from '../onboarding/ProbeInterface.js';
+import holonsJson from '@core/data/red-layer-holons.json';
 
 import { CognitiveProbe } from '../onboarding/probes/CognitiveProbe.js';
 import { EmotionalProbe } from '../onboarding/probes/EmotionalProbe.js';
@@ -281,15 +282,8 @@ export class OnboardingScene extends Phaser.Scene {
   }
 
   private loadRedLayerHolons(): Holon[] {
-    // Import red-layer-holons.json data inline (bundled by Vite)
-    // Since JSON imports require static analysis, we use a minimal fallback
-    // This will be populated at runtime when the JSON is loaded
-    try {
-      // Vite resolves JSON imports at build time; for runtime we provide empty default
-      return [];
-    } catch {
-      return [];
-    }
+    // Static JSON import resolved by Vite at build time
+    return holonsJson as unknown as Holon[];
   }
 
   private lineToTaskSlug(line: string): TaskSlug | undefined {

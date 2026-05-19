@@ -5,6 +5,9 @@
 import Phaser from 'phaser';
 import { SceneKeys } from '../keys.js';
 import type { EncounterSpec } from '@core/domain/Encounter.js';
+import type { ConsequenceRecord } from '@core/domain/ConsequenceRecord.js';
+import { processOutcome } from '@core/engines/ConsequenceEngine.js';
+import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
 import { getFallback } from '@infra/llm/FallbackProvider.js';
 import { mapChoiceToResponse } from '../logic/dilemmaMapping.js';
 
@@ -81,11 +84,26 @@ export class DilemmaScene extends Phaser.Scene {
       fontSize: '16px', color: '#888899', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
-    // Map choice to PlayerResponse
-    mapChoiceToResponse(choice.id, this.encounter.id);
+    // Map choice to PlayerResponse and produce ConsequenceRecord
+    const response = mapChoiceToResponse(choice.id, this.encounter.id);
+    const scheduled: ScheduledEncounter = {
+      id: this.encounter.id,
+      moduleRef: this.encounter.id,
+      modality: this.encounter.modality ?? 'ScenarioChoice',
+      targetLines: [...this.encounter.lines],
+      stage: this.encounter.stage,
+      holonSource: this.encounter.id,
+      shadowTarget: null,
+      polarityMode: 'Exploring',
+      difficulty: 0.5,
+      sessionPosition: 'peak',
+      priority: 1,
+      driveTarget: null,
+    };
+    const record: ConsequenceRecord = processOutcome(scheduled, response, Date.now());
 
     this.time.delayedCall(2000, () => {
-      this.events.emit('encounter_done', { record: undefined });
+      this.events.emit('encounter_done', { record });
     });
   }
 }
