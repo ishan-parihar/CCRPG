@@ -10,6 +10,11 @@ import { AccessibilityStore } from '@infra/persistence/AccessibilityStore.js';
 import { AccessibilityManager } from './accessibility/AccessibilityManager.js';
 import { createDefaultSettings } from '@core/accessibility/AccessibilitySettings.js';
 import { createScreenReaderOverlay } from './accessibility/ScreenReaderOverlay.js';
+import { TelemetryCollector } from '@core/telemetry/TelemetryCollector.js';
+import { TelemetryStore } from '@infra/telemetry/TelemetryStore.js';
+import { TelemetryService } from '@infra/telemetry/TelemetryService.js';
+import { CryptoStore } from '@infra/crypto/CryptoStore.js';
+import { EventBus } from '@core/events/EventBus.js';
 
 /**
  * Boot the Phaser game and attach it to the given parent. Wires up
@@ -37,6 +42,41 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
   game.registry.set(RegistryKeys.SaveRepo, saveRepo);
   game.registry.set(RegistryKeys.Native, native);
   game.registry.set(RegistryKeys.Accessibility, a11yManager);
+
+  // Telemetry system (opt-in only)
+  const telemetryCollector = new TelemetryCollector();
+  const telemetryCrypto = new CryptoStore();
+  const telemetryStore = new TelemetryStore(createKeyValueStore(), telemetryCrypto);
+  const telemetryService = new TelemetryService(
+    telemetryCollector,
+    telemetryStore,
+    () => a11yManager.getSettings().telemetryOptIn,
+  );
+  game.registry.set(RegistryKeys.Telemetry, telemetryService);
+
+  // EventBus for cross-layer communication
+  const eventBus = new EventBus();
+  game.registry.set(RegistryKeys.EventBus, eventBus);
+
+  // Forward game events to telemetry
+  eventBus.on('encounter_completed', (payload) => {
+    telemetryService.recordEvent('encounter_completed', { record: payload.record });
+  });
+  eventBus.on('shadow_surfaced', (payload) => {
+    telemetryService.recordEvent('shadow_surfaced', { shadowId: payload.shadowId, line: payload.line, quadrant: payload.quadrant });
+  });
+  eventBus.on('shadow_resolved', (payload) => {
+    telemetryService.recordEvent('shadow_resolved', { shadowId: payload.shadowId });
+  });
+  eventBus.on('transformation_triggered', (payload) => {
+    telemetryService.recordEvent('transformation_triggered', { signal: payload.signal });
+  });
+  eventBus.on('session_started', (payload) => {
+    telemetryService.recordEvent('session_started', { timestamp: payload.timestamp });
+  });
+  eventBus.on('session_ended', (payload) => {
+    telemetryService.recordEvent('session_ended', { timestamp: payload.timestamp, encounterCount: payload.encounterCount });
+  });
 
   // Screen reader overlay
   if (a11yManager.isScreenReaderEnabled() && typeof document !== 'undefined') {

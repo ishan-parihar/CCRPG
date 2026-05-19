@@ -33,6 +33,7 @@ export const RegistryKeys = {
   Significator: 'state:significator',
   WorldState: 'state:world',
   EventBus: 'svc:eventbus',
+  Telemetry: 'svc:telemetry',
 } as const;
 
 export const GameEvents = {
