@@ -1,0 +1,368 @@
+/**
+ * ContextPipeline - 7-step context aggregation pipeline for LLM system prompt assembly.
+ * Per foundations/22 section 4 (steps 4.1 through 4.7).
+ */
+import type { Line } from '../../core/domain/Line.js';
+import type { Stage } from '../../core/domain/Stage.js';
+import type { Modality } from '../../core/domain/enums.js';
+import type { Holon } from '../../core/domain/Holon.js';
+import type { ScheduledEncounter } from '../../core/domain/EncounterSpecNew.js';
+import type { Significator } from '../../core/domain/Significator.js';
+import type { HolonRegistry } from '../../core/data/HolonRegistry.js';
+import type { ConceptDraftIndex } from '../../core/data/ConceptDraftIndex.js';
+import type { ConsequenceRecord } from '../../core/domain/ConsequenceRecord.js';
+import type { FrequencySpec } from './FrequencyConditioner.js';
+
+import { ALL_LINES } from '../../core/domain/Line.js';
+import { getHolon, queryByLine } from '../../core/data/HolonRegistry.js';
+import { queryByLineStage } from '../../core/data/ConceptDraftIndex.js';
+import { generateFrequencySpec } from './FrequencyConditioner.js';
+
+// ---------------------------------------------------------------------------
+// Public interfaces
+// ---------------------------------------------------------------------------
+
+export interface VeilFilteredSignificator {
+  readonly perceivedLayer: Stage;
+  readonly lineAltitudes: Readonly<Record<Line, Stage>>;
+  readonly activeDriveSignals: readonly string[];
+  readonly activeShadowSignals: readonly string[];
+  readonly recentChoicePatterns: readonly string[];
+  readonly transformationProximity: 'distant' | 'approaching' | 'threshold';
+  readonly sessionEnergy: 'high' | 'moderate' | 'low';
+}
+
+export interface ContextPipelineInput {
+  readonly encounter: ScheduledEncounter;
+  readonly significator: Significator;
+  readonly holonRegistry: HolonRegistry;
+  readonly conceptIndex: ConceptDraftIndex;
+  readonly recentConsequences: readonly ConsequenceRecord[];
+  readonly sessionContext: { readonly energy: 'high' | 'moderate' | 'low' };
+}
+
+export interface ContextPipelineOutput {
+  readonly systemPrompt: string;
+  readonly frequencySpec: FrequencySpec;
+  readonly selectedHolons: readonly Holon[];
+  readonly veilFilteredSig: VeilFilteredSignificator;
+}
+
+// ---------------------------------------------------------------------------
+// Step 1: selectHolons
+// ---------------------------------------------------------------------------
+
+interface HolonSelection {
+  readonly primary: Holon | null;
+  readonly contextual: readonly Holon[];
+}
+
+function selectHolons(encounter: ScheduledEncounter, registry: HolonRegistry): HolonSelection {
+  const primary = getHolon(registry, encounter.holonSource) ?? null;
+
+  const targetLine = encounter.targetLines[0];
+  let contextual: Holon[] = [];
+
+  if (targetLine) {
+    const sameLineHolons = queryByLine(registry, targetLine);
+    contextual = sameLineHolons
+      .filter(h => h.id !== encounter.holonSource)
+      .slice(0, 5);
+  }
+
+  return { primary, contextual };
+}
+
+// ---------------------------------------------------------------------------
+// Step 2: filterSignificator
+// ---------------------------------------------------------------------------
+
+function filterSignificator(
+  sig: Significator,
+  sessionEnergy: 'high' | 'moderate' | 'low',
+): VeilFilteredSignificator {
+  // Map drive weights to qualitative signals
+  const activeDriveSignals: string[] = [];
+  for (const [drive, weight] of Object.entries(sig.drives.weights)) {
+    if (weight > 0.3) {
+      activeDriveSignals.push(`${drive.toLowerCase()}-elevated`);
+    } else if (weight < -0.3) {
+      activeDriveSignals.push(`${drive.toLowerCase()}-suppressed`);
+    }
+  }
+
+  // Map active shadows to signals
+  const activeShadowSignals: string[] = sig.shadows.entries
+    .filter(e => e.resolvedAt === null)
+    .map(e => `${e.quadrant}-${e.line.toLowerCase()}-active`);
+
+  // Determine transformation proximity based on how many lines are at the current stage
+  const linesAtCurrentStage = ALL_LINES.filter(
+    l => sig.altitudes[l] === sig.currentStage,
+  ).length;
+
+  let transformationProximity: 'distant' | 'approaching' | 'threshold';
+  if (linesAtCurrentStage >= 6) {
+    transformationProximity = 'threshold';
+  } else if (linesAtCurrentStage >= 4) {
+    transformationProximity = 'approaching';
+  } else {
+    transformationProximity = 'distant';
+  }
+
+  // Recent choice patterns from transformation records
+  const recentChoicePatterns: string[] = sig.transformations
+    .slice(-3)
+    .map(t => `${t.fromStage}-to-${t.toStage}`);
+
+  return {
+    perceivedLayer: sig.currentStage,
+    lineAltitudes: { ...sig.altitudes },
+    activeDriveSignals,
+    activeShadowSignals,
+    recentChoicePatterns,
+    transformationProximity,
+    sessionEnergy,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Step 3: injectEncounterSpec
+// ---------------------------------------------------------------------------
+
+interface EncounterContext {
+  readonly line: Line;
+  readonly stage: Stage;
+  readonly modality: Modality;
+  readonly catalyticPurpose: string;
+  readonly moduleRef: string;
+}
+
+function injectEncounterSpec(
+  encounter: ScheduledEncounter,
+  conceptIndex: ConceptDraftIndex,
+): EncounterContext {
+  const targetLine = encounter.targetLines[0] ?? 'Cognitive';
+  const entry = queryByLineStage(conceptIndex, targetLine, encounter.stage);
+  const catalyticPurpose = entry ? entry.title : 'catalytic engagement';
+
+  return {
+    line: targetLine,
+    stage: encounter.stage,
+    modality: encounter.modality,
+    catalyticPurpose,
+    moduleRef: encounter.moduleRef,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Step 4: conditionFrequency
+// ---------------------------------------------------------------------------
+
+function conditionFrequency(
+  encounter: ScheduledEncounter,
+  sig: Significator,
+  holonSelection: HolonSelection,
+): FrequencySpec {
+  const targetLine = encounter.targetLines[0] ?? 'Cognitive';
+  const playerStage = sig.altitudes[targetLine] ?? sig.currentStage;
+  const holonLine = holonSelection.primary?.line ?? targetLine;
+  const holonStage = holonSelection.primary?.stage ?? encounter.stage;
+
+  return generateFrequencySpec(targetLine, playerStage, holonLine, holonStage, encounter.modality);
+}
+
+// ---------------------------------------------------------------------------
+// Step 5: injectModalityRubric
+// ---------------------------------------------------------------------------
+
+const MODALITY_RUBRICS: Readonly<Record<Modality, string>> = {
+  Deterministic:
+    'LLM provides narrative framing only. All mechanics are computed by fixed systems. Do not generate scores, rolls, or mechanical outcomes. Focus on atmosphere and consequence description.',
+  Strategic:
+    'LLM generates strategic scenario context and evaluates player reasoning. Fixed mechanics handle resource tracking and outcome resolution. Provide multi-option scenarios with hidden complexity.',
+  Embodied:
+    'LLM guides somatic awareness prompts and body-scan narratives. Fixed mechanics track timing and progression. Use sensory language. No abstract intellectualization.',
+  ScenarioChoice:
+    'LLM presents morally complex scenarios with multiple valid responses. Fixed mechanics score alignment and drive expression. Ensure all options feel viable. No obvious correct answer.',
+  LanguageReflective:
+    'LLM generates reflective prompts and mirrors player language patterns. Fixed mechanics analyze response depth and vocabulary complexity. Encourage elaboration without leading.',
+  SocialCooperative:
+    'LLM voices NPCs and manages dialogue flow. Fixed mechanics track relationship states and trust levels. Maintain character consistency. Honor NPC boundaries and motivations.',
+  ImmersiveRPG:
+    'LLM generates full narrative environment, NPC dialogue, and scene descriptions. Fixed mechanics handle combat, inventory, and stat progression. Maintain world consistency and dramatic tension.',
+};
+
+function injectModalityRubric(modality: Modality): string {
+  return MODALITY_RUBRICS[modality];
+}
+
+// ---------------------------------------------------------------------------
+// Step 6: assembleConsequenceContext
+// ---------------------------------------------------------------------------
+
+function assembleConsequenceContext(
+  recentConsequences: readonly ConsequenceRecord[],
+  holonSelection: HolonSelection,
+): string {
+  if (recentConsequences.length === 0) {
+    return 'No prior encounter history in this session.';
+  }
+
+  const selectedHolonIds = new Set<string>();
+  if (holonSelection.primary) {
+    selectedHolonIds.add(holonSelection.primary.id);
+  }
+  for (const h of holonSelection.contextual) {
+    selectedHolonIds.add(h.id);
+  }
+
+  // Filter to consequences involving selected holons, then take last 3
+  const relevant = recentConsequences
+    .filter(c => c.holonDeltas.some(d => selectedHolonIds.has(d.holonId)) || selectedHolonIds.size === 0)
+    .slice(-3);
+
+  if (relevant.length === 0) {
+    // Fall back to most recent 3 regardless of holon match
+    const fallback = recentConsequences.slice(-3);
+    return fallback.map(c => c.narrativeSummary).join(' | ');
+  }
+
+  return relevant.map(c => c.narrativeSummary).join(' | ');
+}
+
+// ---------------------------------------------------------------------------
+// Step 7: assembleSystemPrompt
+// ---------------------------------------------------------------------------
+
+function assembleSystemPrompt(
+  frequencySpec: FrequencySpec,
+  holonSelection: HolonSelection,
+  encounterContext: EncounterContext,
+  modalityRubric: string,
+  consequenceContext: string,
+  veilFilteredSig: VeilFilteredSignificator,
+): string {
+  const holonDescriptions = formatHolonDescriptions(holonSelection);
+  const playerStateSignals = formatPlayerState(veilFilteredSig);
+  const outputFormat = getOutputFormat(encounterContext.modality);
+
+  return `[ROLE] You are the manifestation layer of CCRPG.
+[COSMOLOGY] Third Density constraints. Veil enforced. Free will absolute.
+[FREQUENCY] tone=${frequencySpec.toneDirective}; vocabulary=${frequencySpec.vocabularyBand}; values=${frequencySpec.valueLens}; taboos=${frequencySpec.taboos.join(',')}; cross-altitude=${frequencySpec.crossAltitudeDynamic ?? 'none'}
+[HOLONS] ${holonDescriptions}
+[ENCOUNTER] line=${encounterContext.line}; stage=${encounterContext.stage}; modality=${encounterContext.modality}; purpose=${encounterContext.catalyticPurpose}; module=${encounterContext.moduleRef}
+[MODALITY] ${modalityRubric}
+[CONTINUITY] ${consequenceContext}
+[PLAYER STATE] ${playerStateSignals}
+[OUTPUT FORMAT] ${outputFormat}
+[RULES] No Veil violations. No clinical language. No scoring references. No frame-breaking. Stay in frequency.`;
+}
+
+function formatHolonDescriptions(holonSelection: HolonSelection): string {
+  const parts: string[] = [];
+
+  if (holonSelection.primary) {
+    const h = holonSelection.primary;
+    parts.push(`primary=${h.name}(${h.line}/${h.stage},role=${h.narrativeRole})`);
+  }
+
+  for (const h of holonSelection.contextual) {
+    parts.push(`${h.name}(${h.line}/${h.stage},role=${h.narrativeRole})`);
+  }
+
+  if (parts.length === 0) {
+    return 'none-available';
+  }
+
+  return parts.join('; ');
+}
+
+function formatPlayerState(sig: VeilFilteredSignificator): string {
+  const signals: string[] = [
+    `layer=${sig.perceivedLayer}`,
+    `transformation=${sig.transformationProximity}`,
+    `energy=${sig.sessionEnergy}`,
+  ];
+
+  if (sig.activeDriveSignals.length > 0) {
+    signals.push(`drives=${sig.activeDriveSignals.join(',')}`);
+  }
+
+  if (sig.activeShadowSignals.length > 0) {
+    signals.push(`shadows=${sig.activeShadowSignals.join(',')}`);
+  }
+
+  if (sig.recentChoicePatterns.length > 0) {
+    signals.push(`patterns=${sig.recentChoicePatterns.join(',')}`);
+  }
+
+  return signals.join('; ');
+}
+
+function getOutputFormat(modality: Modality): string {
+  switch (modality) {
+    case 'Deterministic':
+      return '{ "narrative": string, "atmosphereHints": string[] }';
+    case 'Strategic':
+      return '{ "scenario": string, "options": { id: string, description: string }[], "hiddenFactors": string[] }';
+    case 'Embodied':
+      return '{ "guidance": string, "sensoryPrompts": string[], "pacing": "slow"|"medium"|"fast" }';
+    case 'ScenarioChoice':
+      return '{ "scenario": string, "choices": { id: string, text: string, subtext: string }[] }';
+    case 'LanguageReflective':
+      return '{ "prompt": string, "mirrorObservations": string[], "elaborationHooks": string[] }';
+    case 'SocialCooperative':
+      return '{ "npcDialogue": string, "emotionalTone": string, "relationshipSignals": string[] }';
+    case 'ImmersiveRPG':
+      return '{ "narration": string, "environment": string, "npcActions": { name: string, action: string }[], "availableActions": string[] }';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Public export: buildContext
+// ---------------------------------------------------------------------------
+
+export function buildContext(input: ContextPipelineInput): ContextPipelineOutput {
+  // Step 1: Select holons
+  const holonSelection = selectHolons(input.encounter, input.holonRegistry);
+
+  // Step 2: Filter significator
+  const veilFilteredSig = filterSignificator(input.significator, input.sessionContext.energy);
+
+  // Step 3: Inject encounter spec
+  const encounterContext = injectEncounterSpec(input.encounter, input.conceptIndex);
+
+  // Step 4: Condition frequency
+  const frequencySpec = conditionFrequency(input.encounter, input.significator, holonSelection);
+
+  // Step 5: Inject modality rubric
+  const modalityRubric = injectModalityRubric(input.encounter.modality);
+
+  // Step 6: Assemble consequence context
+  const consequenceContext = assembleConsequenceContext(input.recentConsequences, holonSelection);
+
+  // Step 7: Assemble system prompt
+  const systemPrompt = assembleSystemPrompt(
+    frequencySpec,
+    holonSelection,
+    encounterContext,
+    modalityRubric,
+    consequenceContext,
+    veilFilteredSig,
+  );
+
+  // Collect selected holons for output
+  const selectedHolons: Holon[] = [];
+  if (holonSelection.primary) {
+    selectedHolons.push(holonSelection.primary);
+  }
+  selectedHolons.push(...holonSelection.contextual);
+
+  return {
+    systemPrompt,
+    frequencySpec,
+    selectedHolons,
+    veilFilteredSig,
+  };
+}
