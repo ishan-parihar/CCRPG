@@ -48,7 +48,9 @@ docs/
 │   ├── 19-choice-and-polarity-engine.md    ← STO/STS vectors, consequence propagation
 │   ├── 20-veil-of-forgetting.md            ← The implicit-operation principle
 │   ├── 21-incarnation-architecture.md      ← MASTER SYNTHESIS (Option C: layered-world incarnation)
-│   └── 22-holon-context-engine.md          ← LLM-driven world implementation spec
+│   ├── 22-holon-context-engine.md          ← LLM-driven world implementation spec
+│   ├── 23-polarity-ontology.md             ← Per-line×stage polarity texture catalogue (64 cells)
+│   └── 24-encounter-scheduler.md           ← Encounter selection algorithm & macro-catalyst engine
 │
 ├── concept-drafts/      ← 512 game concept documents (64 modules × 8 files)
 │   ├── README.md        ← Templates and requirements for each file
@@ -85,6 +87,8 @@ docs/
 | foundations/20 | The Veil of Forgetting: the implicit-operation principle; what the game reveals vs withholds |
 | foundations/21 | **MASTER SYNTHESIS** (Option C): how all greater-cycle archetypes + concept-drafts + modalities compose into a playable game |
 | foundations/22 | The Holon Context Engine: LLM-driven world implementation spec (data model, pipeline, generation, consequences) |
+| foundations/23 | Polarity Ontology: the 64-cell polarity texture catalogue — per-line×stage STO/STS/exploratory textures grounded in concept-drafts |
+| foundations/24 | Encounter Scheduler & Macro-Catalyst Engine: the operational algorithm that selects, routes, and conditions encounters |
 | **— Architecture / process docs —** ||
 | STAGE-ASSESSMENT-ARCHITECTURE | The MODULE CONTRACT (composition rules, interfaces) |
 | concept-drafts/README | TEMPLATES for what each concept-draft file must contain |

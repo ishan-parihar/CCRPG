@@ -265,16 +265,201 @@ Per MVP-BLUEPRINT §7: *"Stage advancement is a pure function of PlayerProfile."
 
 ---
 
-## 9. What this document does NOT cover (cross-references)
+## 9. State transitions: events that mutate the Significator
+
+The Significator is mutated exclusively through well-defined events. No system writes to the PlayerProfile outside this event protocol. Each event specifies its input, the fields it mutates, side-effects on other engines, and invariants that must hold after the mutation.
+
+### 9.1 Event → state-change matrix
+
+| Event | Input data | Fields mutated | Side-effects | Invariants enforced |
+|---|---|---|---|---|
+| **encounter_completed** | `EncounterResult` (line, stage, modality, drive-signals, choice-points, score) | `drives.weights`, `shadows[]` (new or updated entry), `polarityVector.choiceTrail` (appended), `taskStaircases[line]` (updated), theta-decay timestamp reset for involved lines | Polarity engine recalculates direction/magnitude; encounter scheduler re-weights next pool | Drive weights remain in [-1,1]; staircase never jumps >1 level per encounter |
+| **shadow_surfaced** | `ShadowDetection` (line, stage, quadrant, driveSignature, confidence) | `shadows[]` (new entry with `resolutionStatus: 'unresolved'`), `drives.fixationRisk` (incremented for relevant drive) | Encounter scheduler bias increases toward recurrence of this shadow's line×stage; no polarity change | Shadow entry requires confidence ≥ 0.6; max 3 unresolved shadows per line |
+| **shadow_integrated** | `IntegrationResult` (shadowId, depth: 'partial' \| 'full', encounterIds) | `shadows[id].resolutionStatus` → 'partial' or 'integrated', `shadows[id].integrationEvents[]` (appended), `altitudes[line]` (potentially advances if full + threshold met), `drives.fixationRisk` (decremented) | If altitude advances → stage synthesiser recalculates centre-of-gravity; narrative registry notified | Altitude advances only on full integration + convergence criteria (§5.3); fixationRisk ≥ 0 |
+| **transformation_threshold_crossed** | `ConvergenceSignal` (line, currentStage, targetStage, convergenceScore) | `pendingTransformation` flag set; no altitude change yet | Transformation engine (foundations/17) activated; encounter scheduler locks to Transformation sequence | Only one pending transformation per line at a time; convergenceScore ≥ 0.8 required |
+| **transformation_completed** | `TransformationResult` (line, fromStage, toStage, polarityAtCrossing) | `altitudes[line]` advances, `transformations[]` (new entry), `pendingTransformation` cleared, `stage` (re-synthesised) | Great Way reconfiguration (foundations/18) triggered; narrative registry advances arc; world palette/tone shift | New altitude = old + 1 (no skipping); all lower altitudes must be healthy (theta > threshold) |
+| **transformation_failed** | `TransformationAbort` (line, reason, partialProgress) | `pendingTransformation` remains set with `attempts` incremented; `shadows[]` may gain new entry (the resistance pattern) | Scheduler defers re-attempt for configurable cooldown; anti-frustration backstop activates | Max 3 consecutive failures before scheduler pivots to alternative growth path |
+| **regression_detected** | `ThetaDecayAlert` (line, currentAltitude, decayedTo) | `altitudes[line]` decreases, `stage` (re-synthesised if centre-of-gravity affected) | Bleed-through encounters activated for regressed line; narrative surfaces instability signals | Regression max 1 stage per decay event; cannot regress below Infrared |
+| **session_pause** | `SessionContext` (timestamp, activeEncounterId or null) | Ephemeral state pruned (in-encounter working memory, uncommitted drive-deltas); persistent state unchanged | Save triggered (see save_event); session timer paused | No data loss — all committed mutations already persisted |
+| **session_resume** | `SessionContext` (timestamp, profileVersion) | Theta-decay computed for elapsed time; `lastActiveAt` updated | Encounter scheduler recalculates pool based on elapsed decay; nudge encounters queued if decay significant | Profile version matches saved version (integrity check) |
+| **save_event** | `SaveTrigger` (reason: 'checkpoint' \| 'pause' \| 'manual') | None (read-only serialisation) | Serialised profile emitted with `stateVersion` counter incremented; written to encrypted local storage | Serialised state passes schema validation; stateVersion monotonically increases |
+| **load_event** | `LoadRequest` (profileId, expectedVersion) | Full profile deserialised into memory | Integrity hash verified; if mismatch → recovery from last valid checkpoint | Schema version compatible; no field corruption; stateVersion ≥ expected |
+| **harvest_event** | `HarvestTrigger` (crystallisationIndex, rayIntegration, allStagesHealthy) | `harvestState` set to 'crystallised'; `polarityVector` locked (immutable); Veil partially lifted flag set | Archive copy created; post-harvest mode unlocked; player-visible developmental summary generated (per foundations/20 §8.4) | crystallisationIndex ≥ threshold (STO: 0.51×0.85; STS: 0.95×0.85); all 8 line altitudes ≥ White |
+
+### 9.2 Event ordering guarantees
+
+- Events are processed **sequentially** within a session — no concurrent mutations.
+- `encounter_completed` always fires before any derived events (`shadow_surfaced`, `shadow_integrated`, `transformation_threshold_crossed`).
+- `transformation_threshold_crossed` → `transformation_completed` | `transformation_failed` is an atomic sequence — no other events interleave.
+- `save_event` captures a consistent snapshot — never fires mid-mutation.
+
+---
+
+## 10. State observability: layered access
+
+The Significator's state is sensitive developmental data. Access is stratified into three layers, each with strict boundaries enforced by the architecture.
+
+### 10.1 The three observer layers
+
+| Layer | Observers | Access level | Purpose |
+|---|---|---|---|
+| **Engine-internal** | Encounter scheduler, polarity engine, theta-decay engine, transformation detector, stage synthesiser, drive-health monitor | Full — all fields, all precision | Compute next catalyst, detect thresholds, enforce invariants |
+| **LLM-context** | Holon Context Engine (foundations/22 §4.2) | Filtered — Veil-respecting machine signals only | Condition generation on player state without exposing raw metrics |
+| **Player-visible** | Player (via UI, Codex, narrative, aesthetics) | Bounded — felt-sense only, no measurement language | Preserve the Veil; enable authentic experience |
+
+### 10.2 Per-field access matrix
+
+| Significator field | Engine-internal | LLM-context | Player-visible |
+|---|---|---|---|
+| `altitudes: Record<Line, Stage>` | ✅ raw values | ✅ raw stage labels (e.g., `cognitive: orange`) | ❌ never — player perceives capability shifts, not labels |
+| `stage` (centre-of-gravity) | ✅ | ✅ as `perceivedLayer` | ❌ never — world-feel changes communicate this implicitly |
+| `drives.weights` | ✅ numerical | ✅ as signals (`agency-elevated`, `communion-suppressed`) | ❌ never |
+| `drives.fixationRisk` | ✅ numerical | ✅ as signal (`fixation-risk-high-on-agency`) | ❌ never |
+| `shadows[]` (Distortion Ledger) | ✅ full entries | ⚠️ anonymised signals only (`dark-allergy-active-on-interpersonal`); no archetype names, no quadrant labels in player-facing language | ❌ never — shadow material surfaces as narrative recurrence |
+| `polarityVector.direction` | ✅ numerical | ⚠️ machine label only (`sto-consolidating`); no magnitude number | ❌ never — consequences communicate polarity implicitly |
+| `polarityVector.magnitude` | ✅ numerical | ❌ not injected | ❌ never |
+| `polarityVector.choiceTrail` | ✅ full history | ⚠️ last 5 entries as `recentChoicePatterns[]` (machine labels) | ❌ never |
+| `rayProfile` | ✅ | ❌ not injected (too meta) | ❌ never (until harvest) |
+| `taskStaircases` | ✅ | ❌ not injected | ❌ never — player perceives difficulty as "the world adapting" |
+| `transformations[]` | ✅ full history | ✅ as `transformationProximity` signal | ❌ never — player experiences the Transformation as narrative event |
+| `pendingTransformation` | ✅ | ✅ as `transformation-approaching` | ❌ never |
+| `vows[]` | ✅ | ✅ (player-authored; safe to inject) | ✅ player authored these — visible in Codex |
+| `primaryValue` | ✅ | ✅ (player-authored) | ✅ visible in Codex |
+| `states` (state-stages) | ✅ | ✅ as signal (`subtle-access-active`) | ❌ never as labels — player experiences state-shifts directly |
+| `harvestState` | ✅ | ✅ when active | ⚠️ only at harvest (Veil lifts per foundations/20 §8.4) |
+| `sessionEnergy` (ephemeral) | ✅ | ✅ as `high` / `moderate` / `low` | ❌ never |
+
+### 10.3 Veil enforcement rules
+
+1. **No numerical values** cross into the player-visible layer — ever.
+2. **No developmental terminology** (stage names, drive labels, shadow quadrant names, polarity direction) appears in player-facing UI or dialogue.
+3. **The LLM receives machine signals, not player-facing language.** The LLM translates signals into narrative; it never echoes them verbatim.
+4. **Player-authored fields** (vows, primaryValue) are the only Significator data the player sees directly.
+5. **The harvest exception:** At harvest (foundations/20 §8.4), the Veil lifts. The player may optionally view their full developmental trajectory — because the Choice has already been made.
+
+---
+
+## 11. The Significator lifecycle
+
+The Significator evolves through distinct lifecycle stages, each with characteristic state, events, and exit criteria.
+
+### 11.1 Stage A: Onboarding (first ~20 minutes)
+
+**Purpose:** Produce initial estimates for all Significator fields with minimal player burden.
+
+| Aspect | State at end of onboarding |
+|---|---|
+| `altitudes` | Initial estimates (±1 stage accuracy); confidence low; derived from adaptive onboarding tasks |
+| `drives.weights` | Initial balance estimate from onboarding choice-patterns; exploratory, not stable |
+| `shadows[]` | Empty — no shadows surfaced yet |
+| `polarityVector` | direction ≈ 0.0, magnitude ≈ 0.0 — fully uncrystallised, exploratory |
+| `transformations[]` | Empty |
+| `taskStaircases` | Seeded at estimated difficulty from onboarding performance |
+| `vows[]` / `primaryValue` | May be set if onboarding includes self-authorship prompt; otherwise empty |
+| `stage` | Synthesised from initial altitude estimates (typically Infrared or Magenta) |
+
+**Characteristic events:** Rapid `encounter_completed` events (short onboarding tasks); no shadows, no transformations.
+
+**Exit criteria:** All 8 line altitudes have initial estimates with confidence ≥ 0.5; drive-balance has ≥ 3 data points; player has entered the game world.
+
+### 11.2 Stage B: First-loop play (Red stage MVP, ~6 hours)
+
+**Purpose:** Stabilise the Significator through repeated encounters; surface first shadows; begin polarity exploration.
+
+| Aspect | Typical end-state |
+|---|---|
+| `altitudes` | Red confirmed across most lines (±0 accuracy); some lines may show Amber-edge signals |
+| `drives.weights` | Stable profile emerging; fixationRisk may be non-zero for 1-2 drives |
+| `shadows[]` | 2–5 entries; mostly `unresolved`; first `partial` integrations possible |
+| `polarityVector` | direction beginning to lean (±0.1–0.3); magnitude 0.1–0.25 (exploration phase) |
+| `transformations[]` | Empty — no stage transitions yet |
+| `taskStaircases` | Calibrated to player's actual capacity; stable oscillation around true level |
+| `stage` | Red (confirmed) |
+
+**Characteristic events:** Regular `encounter_completed`; first `shadow_surfaced` events; early polarity-signal choices; theta-decay not yet relevant (too early).
+
+**Exit criteria:** `transformation_threshold_crossed` fires for at least one line (Red → Amber); OR player has completed ≥ 30 encounters with stable altitude estimates.
+
+### 11.3 Stage C: Mid-game (Acts I–II, ~20–60 hours)
+
+**Purpose:** The bulk of developmental play. Multiple Transformations cross. The Significator becomes complex and internally differentiated.
+
+| Aspect | State evolution |
+|---|---|
+| `altitudes` | Lines diverge — some at Amber, some at Orange, growth-edge lines pushing toward Green; spiky profile normal |
+| `drives.weights` | Dynamic — shifts per encounter; fixationRisk fluctuates; drive-balance becomes a live concern |
+| `shadows[]` | 10–30 entries; mix of unresolved, partial, and integrated; integration_history growing |
+| `polarityVector` | direction consolidating (±0.3–0.6); magnitude 0.3–0.6 (consolidation phase); per-line divergence narrowing |
+| `transformations[]` | 3–8 entries across different lines; transformation_history records the journey |
+| `stage` | Amber → Orange → Green (centre-of-gravity advances as lines coordinate) |
+
+**Characteristic events:** All event types active; `transformation_completed` events every 5–10 hours; `regression_detected` possible if player neglects lines; `shadow_integrated` events mark breakthroughs.
+
+**Exit criteria:** Centre-of-gravity reaches Turquoise; OR all lines ≥ Green with polarity magnitude ≥ 0.5.
+
+### 11.4 Stage D: Late-game (Act III — Turquoise/White, ~10–30 hours)
+
+**Purpose:** Polarity crystallisation. The Significator becomes highly coherent — per-line divergence narrows, drive-balance stabilises, shadow material integrates deeply.
+
+| Aspect | Thresholds |
+|---|---|
+| `altitudes` | All lines ≥ Turquoise; growth-edge lines pushing White; max divergence ≤ 2 stages between any two lines |
+| `drives.weights` | Stable dynamic equilibrium; fixationRisk near zero across all drives |
+| `shadows[]` | Mostly integrated; remaining unresolved shadows are deep/subtle; new surfacings rare |
+| `polarityVector` | direction ≥ |0.51| (STO) or ≤ -0.95 (STS); magnitude ≥ 0.7 (crystallisation phase); per-line polarity coherent |
+| `transformations[]` | 8–12+ entries; late transformations are subtle frame-shifts, not dramatic upheavals |
+| `stage` | Turquoise → White |
+
+**Characteristic events:** `transformation_completed` (Turquoise → White); deep `shadow_integrated` events; polarity-locking choices; theta-decay vigilance (all lower stages must remain healthy).
+
+**Exit criteria:** All lines at White; crystallisationIndex ≥ harvest threshold; all ray integrations complete.
+
+### 11.5 Stage E: Harvest (endgame)
+
+**Purpose:** The Veil lifts. Final polarity crystallises. The Significator is archived.
+
+| Aspect | Final state |
+|---|---|
+| `harvestState` | `'crystallised'` |
+| `polarityVector` | Locked — immutable from this point |
+| Veil | Partially lifted — player may view developmental trajectory |
+| Archive | Immutable copy of full Significator state preserved |
+
+**What becomes visible to the player (per foundations/20 §8.4):**
+- Full developmental trajectory (line altitudes over time)
+- Shadow integration history (what was confronted, what was resolved)
+- Polarity crystallisation path (the choice trail, in narrative form)
+- The architecture itself — the player can now understand how the game worked
+
+**What remains private:** Raw numerical scores, confidence intervals, staircase parameters — these are implementation detail, not meaningful to the player.
+
+**Characteristic events:** `harvest_event` fires once; archive created; post-harvest mode unlocked.
+
+**Exit criteria:** Player acknowledges harvest; character retired (STO → mentor presence; STS → adversarial presence; per foundations/19 §9).
+
+### 11.6 Stage F: Post-harvest (post-MVP, reserved)
+
+The harvested Significator persists as an archived record. Future systems may allow:
+- The archived Significator to appear as an NPC in other players' worlds
+- A "new incarnation" mode where the player begins fresh with subtle carry-over
+- Longitudinal developmental reports for the player's personal growth record
+
+Specification deferred to post-MVP design phase.
+
+---
+
+## 12. What this document does NOT cover (cross-references)
 
 | Topic | Document |
 |---|---|
 | The macro/micro distinction and the four macro archetypes as pure theory | foundations/15 |
-| The 4-quadrant shadow model (Dark-Addiction, Dark-Allergy, Golden-Addiction, Golden-Allergy) and how shadows are surfaced in encounters | foundations/10 |
-| The contact boundary, lesser-cycle topography (Matrix/Potentiator/Catalyst/Experience), and the catalyst→experience→integration flow | foundations/13 |
+| The 4-quadrant shadow model and how shadows are surfaced in encounters | foundations/10 |
+| The contact boundary, lesser-cycle topography, and catalyst→experience→integration flow | foundations/13 |
 | The four drives (Agency, Communion, Eros, Agape) as motivational primitives | foundations/05 |
-| Transformation events — the mechanics of stage-transition and frame-change | foundations/17 (forthcoming) |
-| The Great Way — the world-system that provides macro-catalyst to the Significator | foundations/18 (forthcoming) |
-| Choice and polarity — how micro-choices crystallise into macro-polarity | foundations/19 (forthcoming) |
-| The Veil of Forgetting — why the game never reveals its developmental logic to the player | foundations/20 (forthcoming) |
-| The Incarnation Architecture — how all macro-cycle documents synthesise into the master game-structure | foundations/21 (forthcoming) |
+| Transformation events — the mechanics of stage-transition and frame-change that mutate the Significator | foundations/17 |
+| The Great Way — the world-system that reconfigures on transformation_completed | foundations/18 |
+| Choice and polarity — how micro-choices crystallise into macro-polarity (polarity tracking) | foundations/19 |
+| The Veil of Forgetting — bounds on player observability of Significator state | foundations/20 |
+| The Incarnation Architecture — how all macro-cycle documents synthesise into the master game-structure | foundations/21 |
+| The Holon Context Engine — LLM context layer that reads Veil-filtered Significator state | foundations/22 |
+| The encounter scheduler — observation of Significator state for catalyst selection | foundations/21 §4 |

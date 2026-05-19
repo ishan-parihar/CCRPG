@@ -69,6 +69,8 @@
 - `20-veil-of-forgetting.md` — the implicit-operation principle
 - `21-incarnation-architecture.md` ← **master synthesis (Option C)**
 - `22-holon-context-engine.md` — LLM-driven world implementation
+- `23-polarity-ontology.md` — per-line×stage polarity texture catalogue (64 cells)
+- `24-encounter-scheduler.md` — encounter selection algorithm & macro-catalyst engine
 
 ### `lines/` (9) — one per line of intelligence
 

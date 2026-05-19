@@ -1,7 +1,7 @@
 # 21 — Incarnation Architecture (Option C)
 
 > **Lateral:** Master synthesis — how greater-cycle archetypes + concept-drafts + modalities compose into a playable game.
-> **Depends on:** 11, 13, 14, 15, 16, 17, 18, 19, 20
+> **Depends on:** 11, 13, 14, 15, 16, 17, 18, 19, 20, 23, 24
 > **Referenced by:** all implementation work; MVP-BLUEPRINT
 
 ---
@@ -179,6 +179,8 @@ This is non-negotiable (per AGENTS.md §5.7).
 ---
 
 ## 4. The encounter scheduler
+
+> **Full algorithmic specification:** see `foundations/24-encounter-scheduler.md`. This section provides the architectural overview; doc 24 provides the implementable algorithm with priority formulas, polarity-conditioned selection modes, shadow-targeting logic, transformation-window scheduling, session-level arc management, and the macro-catalyst engine.
 
 The encounter scheduler is the world's intelligence — the algorithmic engine that decides *what* encounters to present, *when*, and *why*. It is the bridge between the Significator's needs and the Great Way's offerings.
 
@@ -669,10 +671,14 @@ These invariants are enforced by the engine at startup or via property-based tes
 
 ### 12.3 Polarity invariants
 
-- Every choice-point in every encounter is classified: STO-signal, STS-signal, neutral, or ambiguous-by-design
-- Every classified choice contributes a vector to the PolarityVector on PlayerProfile
+- Polarity is multi-scale: per-encounter trace → per-cell vector (64) → per-line profile (8) → master polarity (1). See foundations/19 for the full model.
+- Every choice-point in every encounter produces a polarity trace with four dimensions: drive directionality, energetic direction, stage orientation, source-of-nourishment
+- Per-cell polarity textures are grounded in the concept-drafts' shadow/drive ontology (see foundations/23 for the 64-cell catalogue)
 - The polarity engine never steers the player toward either pole — it provides authentic conditions for crystallisation
-- Reversal is never prevented — free will is absolute — but crystallisation has inertia
+- STO and STS are both valid evolutionary paths; both are playable with mechanical fairness
+- The exploratory state (uncrystallised) is legitimate and default through Acts I-II — not a failure mode
+- Master polarity crystallises only when ≥6 lines show coherent direction at altitude ≥ Orange
+- Reversal is never prevented — free will is absolute — but crystallisation has inertia proportional to coherence
 - The polarity vector is never visible to the player (Veil enforcement)
 
 ### 12.4 Veil invariants
@@ -718,7 +724,9 @@ This document is the master synthesis. It references but does not duplicate the 
 | Significator data architecture | foundations/16 | PlayerProfile schema, Distortion Ledger internals, free-will design commitments |
 | Transformation event mechanics | foundations/17 | Threshold detection formulas, Crucible phase design, ego-dissolution principles, regression handling |
 | Great Way world-system | foundations/18 | Holon taxonomy (individual through cosmic), PESTLE dimensions, co-creation dynamics |
-| Choice & polarity engine | foundations/19 | PolarityVector schema, aggregation algorithm, crystallisation dynamics, harvest thresholds |
+| Choice & polarity engine | foundations/19 | Multi-scale polarity model (4 levels), STO/STS reconciliation, aggregation, crystallisation dynamics, harvest thresholds |
+| Polarity ontology | foundations/23 | The 64-cell polarity texture catalogue — per-line×stage STO/STS/exploratory textures grounded in concept-drafts |
+| Encounter scheduler algorithm | foundations/24 | The full implementable algorithm: priority formula, polarity-conditioned selection, shadow-targeting, transformation-window, session-arc, macro-catalyst engine |
 | Veil of Forgetting | foundations/20 | The experiential principle in full — why the Veil exists, how it is enforced, edge cases |
 | LLM / Holon Context Engine | foundations/22 | Prompt engineering, context window management, rubric formats, holon-context threading |
 | Lesser-cycle catalyst flow | foundations/14 | Catalyst→Experience→Integration mechanics within a single encounter |

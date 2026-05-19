@@ -3,7 +3,7 @@
 > **Lateral:** Transformation as a discrete game event — the violent frame-change of the Significator at stage thresholds. The GAME-DESIGN translation of the Lovers archetype (Card Six) into CCRPG architecture. NOT the lesser-cycle integration within encounters (that is foundations/14); this is the *qualitative leap* between stages that requires ego-dissolution.
 >
 > **Depends on:** 15, 14, 13, 10, 02
-> **Forward-references:** 18, 19, 21
+> **Forward-references:** 18, 19, 21, 24
 
 ---
 
@@ -240,108 +240,261 @@ The key signal: the dark shadow *stops recurring* after the golden capacity is a
 
 ---
 
-## 6. Phase-transition as world-event
+## 6. The Great Way Reconfiguration: how Transformation redirects future catalyst
 
-### 6.1 The Great Way responds
+This is the operational heart of the macro→micro programming mechanism. When a Transformation event completes, the Great Way (foundations/18) must reconfigure itself to deliver catalyst at the new altitude.
 
-Transformation is not merely internal. Per foundations/15, the Great Way (the macro-environment) is a responsive mirror of the Significator's state. When the player crosses a stage threshold, the *world itself* undergoes a phase transition:
+### 6.1 The reconfiguration trigger
 
-- **New perceptual layer:** Environmental details, colours, sounds, and interactive elements that were previously invisible become perceptible (see foundations/18 for the perceptual layer system)
-- **New collective holons:** NPC groups, factions, and communities that operate at the new stage become accessible. The player can now *see* and *interact with* social structures they previously could not perceive
-- **NPC relationship re-framing:** Existing NPCs reveal new dimensions. An NPC who seemed simple at Red reveals moral complexity at Amber. Relationships deepen or strain based on the new frame
-- **Systemic mechanics shift:** Economy, ecology, governance — the world's systems respond to the player's new stage (see foundations/21 for the incarnation architecture)
+A successful Transformation event — the completion of Phase C (Emergence) of the Lovers Crucible (§2.2) — is the trigger. At this moment the Significator's altitude-vector has crossed the stage threshold: convergence condition satisfied, dual-shadow window navigated, knot-untying pairs resolved.
 
-### 6.2 Scope of this document
+The system commits an **atomic state transition** on the PlayerProfile:
 
-The *mechanics* of world-response are specified in foundations/18 (Great Way world-system) and foundations/21 (Incarnation Architecture). This document specifies only that Transformation *triggers* the world-response and that the trigger is irreversible — once the perceptual layer activates, it cannot be deactivated.
+```ts
+interface TransformationCommit {
+  previousAltitude: Stage;
+  newAltitude: Stage;
+  timestamp: number;
+  convergenceCount: number;
+  shadowClearance: number;
+  polarityVectorAtCommit: PolarityVector;
+  distortionLedgerSnapshot: DistortionLedger;
+}
+```
+
+This commit is irreversible. The Significator now *is* the new altitude. The world MUST update — the Great Way cannot deliver catalyst at an altitude the Significator has transcended as its primary source.
+
+### 6.2 The four reconfiguration operations
+
+When the TransformationCommit is written, the Great Way executes four operations in sequence:
+
+#### 6.2.1 Layer-perception promotion
+
+The next stage's perceptual layer becomes **active**. Per foundations/21 §2, each layer is a tagged set of render data, audio data, entity visibility masks, and encounter eligibility flags. Promotion means:
+
+- **Encounter eligibility:** All 8 lines at the new stage enter the scheduler's eligible pool. The scheduler (foundations/21 §4) can now draw from these modules as primary catalyst sources.
+- **NPC visibility:** NPCs whose primary layer-signature matches the new altitude transition from `invisible` to `fully-interactable` — not instantly, but over 2–5 sessions following the temporal experience protocol (§6.5).
+- **Environment rendering:** Spaces that existed as flat/empty at the previous altitude reveal new-layer detail. The renderer activates the new layer's palette uniforms, shader parameters, particle systems, and lighting profiles.
+- **Audio shift:** Modal scale and instrumentation crossfade toward the new layer's sonic signature over sessions, not frames.
+
+#### 6.2.2 Layer-perception demotion
+
+The previous stage's perceptual layer drops to **shadow-mode**:
+
+- **Encounter frequency:** Previous altitude's modules drop from primary-catalyst weight to maintenance-only. They surface ONLY when theta-decay triggers (per foundations/14) — i.e., when capacity at that stage has degraded from neglect.
+- **NPC presence:** Previous-altitude NPCs remain visible and interactable but become *background*. They no longer initiate encounters spontaneously.
+- **Environmental rendering:** The previous layer's aesthetic recedes — it becomes the *ground* upon which the new layer is *figure*.
+
+#### 6.2.3 Holon repopulation
+
+The Great Way's collective holons (foundations/18 §2.4–2.7) reconfigure:
+
+- **PESTLE distribution shift:** The six PESTLE dimensions shift their expressions to match the new altitude. A Red→Amber transition shifts Political from warlord-feudalism toward theocratic-monarchy; Economic from plunder toward tithing; Social from honour-culture toward caste/class.
+- **Anchor-holon activation:** Each stage has hand-authored anchor holons — canonical NPCs, factions, environments that define the layer's identity. These were imperceptible; at reconfiguration they activate. The Amber temple's doors open; the Orange academy's scholars become visible.
+- **Side-holon seeding:** The LLM (foundations/22) generates fresh side-holons — non-canonical NPCs, minor factions, side-quests — using the new layer's frequency-conditioning. These provide variety around the authored anchors.
+
+#### 6.2.4 Encounter-distribution rebalancing
+
+The encounter scheduler (foundations/21 §4) updates priority weights:
+
+- **New altitude modules → primary weight** (growth edge)
+- **Previous altitude modules → theta-decay-only** (maintenance)
+- **One-above-new altitude → low exploratory weight** (golden-shadow horizon impressions)
+- **All lower altitudes → theta-decay-only**
+
+The weight ramp-up occurs over `rampUpSessions` (synchronised with the render transition) so the shift is gradual in practice.
+
+### 6.3 What is preserved across reconfiguration
+
+The world is RECONFIGURED, not REPLACED:
+
+- **Distortion Ledger:** Every shadow surfaced, every integration achieved carries forward intact.
+- **NPC relationships:** NPCs from prior layers persist in shadow-mode with full relationship state. They can be revisited.
+- **Recurring characters:** NPCs designed to span multiple stage-layers reveal new dimensions at the new altitude with full continuity.
+- **Polarity vectors:** STO/STS crystallisation is cumulative. Transformation does not reset polarity — it deepens it.
+- **World geography:** The physical world is ONE continuous space (foundations/21 §2.1). No locations are deleted. Prior locations render through the new perceptual layer.
+- **Theta-decay timers:** All lower-stage capacity timers continue. Neglect triggers bleed-through regardless of current altitude.
+
+### 6.4 What is generated fresh
+
+- **New-layer NPCs:** Anchor-holons activate from dormancy; side-holons are freshly created by the LLM using new-altitude frequency-conditioning (foundations/22).
+- **New-layer environments:** Spaces reveal new-altitude detail. The LLM generates environmental descriptions, interactive objects, and ambient flavour conditioned on the new layer's PESTLE state and ray-palette.
+- **New-layer side-quests:** Non-canonical encounter sequences generated from the new altitude's concept-drafts (8 module-specs × 7 modality games each).
+- **New-layer PESTLE surface:** Market prices, political tensions, social norms, weather patterns regenerated to match new-altitude expressions.
+
+The principle: **anchors are pre-existing; surface is freshly manifested.** The structural skeleton is authored and canonical; the living flesh is generated contextually.
+
+### 6.5 The temporal experience
+
+The reconfiguration is **atomic in the underlying state** but **gradual on the surface**.
+
+**What does NOT happen:** No loading screen. No "Stage Up!" dialogue. No fanfare or achievement popup. No sudden environmental snap. Any of these would be a **Veil violation** (foundations/20).
+
+**What DOES happen:** Over 3–7 sessions post-commit, the world *feels different*. NPCs respond with more complexity. New opportunities appear — doors that were always there now open. Old places feel less central. The palette shifts subtly. New characters appear naturally. The player's own abilities feel different — old combos still work but feel *simple*; new possibilities emerge.
+
+**The felt-sense:** "Something changed. I'm not sure when. The world feels bigger. More alive. I think I changed."
+
+**Implementation:** The renderer maintains a `transitionProgress` float (0.0→1.0) advancing each session post-commit. Visual, audio, and entity-visibility changes are gated by this value. The scheduler's weight ramp-up synchronises with the render transition.
+
+### 6.6 The trajectory-redirection mechanic
+
+By reconfiguring the Great Way, Transformation **redirects the entire stream of future lesser-cycle encounters**. Before Transformation the scheduler draws from the old altitude's modules and the PESTLE environment generates old-frequency catalyst. After, it draws from the new altitude's modules with new-frequency catalyst. The *same* lesser-cycle mechanics (catalyst→experience→integration) operate — what changed is the **input distribution**. The Transformation did not change the engine; it changed the fuel.
+
+This is how the macro-cycle programs the micro-cycle: Transformation → reconfigures Great Way → shifts encounter-distribution → scheduler draws from new modules → lesser-cycle processes new-altitude catalyst → player develops at new altitude → accumulates toward NEXT Transformation.
+
+### 6.7 Failed/Incomplete Transformation: partial reconfiguration
+
+Partial completion (some lines crossed but convergence minimum unmet, or Crucible entered but not completed) produces:
+
+- **Peeks of the new layer:** Occasional new-altitude holons become briefly perceptible — flashes of the next layer's aesthetic, momentary encounters with new-altitude NPCs that shimmer and fade.
+- **Intermittent new-altitude encounters:** The scheduler occasionally draws from new-altitude modules at very low weight, only for lines that individually crossed. These feel like *glimpses*.
+- **Previous layer remains dominant:** Old altitude's modules retain primary weight. The reconfiguration has *begun* but not *committed*.
+
+This creates a felt-sense of *being between worlds* — the old no longer fully satisfies, the new isn't fully accessible. The tension biases the scheduler toward **completion-encounters**: encounters addressing remaining lines that haven't crossed, or re-presenting unresolved knot-untying pairs.
+
+Resolution: either remaining lines cross and full reconfiguration commits, or the player cannot sustain the partial state and regresses — partial reconfiguration dissolves, previous layer reasserts.
+
+### 6.8 Reverse-direction reconfiguration (regression)
+
+If theta-decay collapses enough lines below the current altitude's maintenance threshold, the Great Way reconfigures *downward*:
+
+- **Current layer fades:** NPCs become less responsive; encounters feel hollow.
+- **Previous layer reasserts:** Previous-altitude NPCs re-emerge from shadow-mode; previous encounters return to primary scheduling weight; bleed-through (foundations/18 §6.2) intensifies until it becomes the dominant perceptual experience.
+- **PESTLE regression:** Macro-environment expressions regress toward previous altitude. Political structures simplify. Social norms coarsen. The world *contracts*.
+
+**Polarity cost:** Per foundations/19, regression reduces polarity magnitude (not direction). Crystallisation progress partially unwinds.
+
+**Temporal experience:** Unlike forward-reconfiguration (gradual, dawn-like), regression is *felt* — the world becomes oppressive, claustrophobic, simpler. This felt-sense is itself catalyst motivating re-engagement with neglected capacities.
+
+**Recovery:** Regression is never permanent. The player can re-develop collapsed capacities and re-approach the threshold. The Crucible will re-open.
 
 ---
 
-## 7. The 8 Transformation events (one per stage transition)
+## 7. Transformation as macro-program for the lesser-cycle
+
+The relationship between the greater cycle (Transformation events) and the lesser cycle (per-encounter catalyst→experience→integration) is **programmatic**. The greater cycle determines what the lesser cycle processes.
+
+### 7.1 The metabolism metaphor
+
+The lesser cycle (foundations/14) is a metabolism. Each encounter is a unit of catalyst the Significator ingests, processes, and integrates. The metabolic engine is constant — the same catalyst→experience→integration mechanics operate at every altitude. What changes is the *food*. A Red-altitude metabolism processes power dynamics and dominance challenges. An Amber-altitude metabolism processes rule-following, belonging, and moral structure. Same engine, different substrate.
+
+### 7.2 Transformation as dietary shift
+
+The Transformation event shifts the encounter-distribution — the pool of available catalyst — from one altitude to the next. The lesser cycle continues its constant rhythm but now processes different material.
+
+| Component | Role | Analogy |
+|---|---|---|
+| Lesser cycle (foundations/14) | Engine that processes catalyst | Digestive system |
+| Encounter scheduler (foundations/21 §4) | Selector that chooses what to present | Appetite signal |
+| Great Way configuration (foundations/18) | Environment determining what's available | Ecosystem / food supply |
+| Transformation event (this document) | Shift that reconfigures the environment | Migration to new territory |
+
+### 7.3 The programming scope
+
+A single Transformation redirects the next **thousands** of lesser-cycle encounters. Between any two Transformations, the player engages 500–2000+ encounters. The macro-cycle operates on weeks-to-months; the micro-cycle on minutes-to-hours. Ratio: approximately 1:1000 — one Transformation programs a thousand encounters.
+
+### 7.4 The feedback loop
+
+The programming is bidirectional:
+
+```
+Transformation (macro) → reconfigures Great Way → new catalyst distribution
+    ↓
+Lesser-cycle encounters (micro) → process new-altitude catalyst
+    ↓
+Integration signals → accumulate on PlayerProfile
+    ↓
+Threshold detection → convergence toward NEXT Transformation
+    ↓
+Next Transformation (macro) → reconfigures Great Way again
+```
+
+Each lesser-cycle encounter deposits a micro-vector of change. These accumulate until the next threshold. The greater cycle is *emergent from* the lesser cycle's accumulation, and simultaneously *determinative of* the lesser cycle's content. Neither cycle is primary; they are co-constitutive.
+
+### 7.5 The architectural implication
+
+The encounter scheduler (foundations/21 §4) and the Great Way reconfiguration (§6) must be tightly coupled. The scheduler's weight-distribution IS the mechanism by which Transformation redirects the lesser cycle. If weights don't update at Transformation, the player receives old-altitude catalyst despite having transcended — a developmental mismatch where the world ignores the player's growth.
+
+The design commitment: **the world always matches the Significator's demonstrated altitude.** The Great Way is a responsive mirror (foundations/18). Transformation updates the mirror. The lesser cycle is what the mirror reflects back as catalyst.
+
+---
+
+## 8. The 8 Transformation events (one per stage transition)
 
 Each stage transition has a distinct character — a unique flavour of ego-dissolution and emergence. The Crucible's narrative and mechanical design differs for each.
 
-### 7.1 Infrared → Magenta: Animation of the World
+### 8.1 Infrared → Magenta: Animation of the World
 
-The world comes alive. What was mere survival-environment becomes populated with *agents* — things that have will, intention, symbol. The player transitions from pure sensori-motor reaction to symbolic representation. The Crucible presents situations where treating the world as dead matter fails; only by attributing agency and meaning to the environment can the player proceed. The terror: the world is no longer predictable; it has a mind of its own. See `stages/01` and `stages/02` for full detail.
+The world comes alive. What was mere survival-environment becomes populated with *agents* — things that have will, intention, symbol. The player transitions from pure sensori-motor reaction to symbolic representation. The Crucible presents situations where treating the world as dead matter fails; only by attributing agency and meaning can the player proceed. The terror: the world is no longer predictable; it has a mind of its own.
 
-### 7.2 Magenta → Red: Assertion of the I
+### 8.2 Magenta → Red: Assertion of the I
 
-The self separates from the magical field. What was undifferentiated participation becomes sovereign will. The player transitions from "the world acts through me" to "I act upon the world." The Crucible presents situations where magical thinking and tribal fusion fail; only by asserting individual agency — saying "I want, I choose, I refuse" — can the player proceed. The terror: separation from the group means being alone. See `stages/02` and `stages/03`.
+The self separates from the magical field. What was undifferentiated participation becomes sovereign will. The Crucible presents situations where magical thinking and tribal fusion fail; only by asserting individual agency — "I want, I choose, I refuse" — can the player proceed. The terror: separation from the group means being alone.
 
-### 7.3 Red → Amber: Submission to Order
+### 8.3 Red → Amber: Submission to Order
 
-The ego submits to something larger than itself. What was raw power becomes structured belonging. The player transitions from "I dominate" to "I serve a purpose greater than myself." The Crucible presents situations where brute force and dominance fail; only by accepting rules, roles, and the authority of a larger order can the player proceed. The terror: submission means loss of power; belonging means vulnerability. See `stages/03` and `stages/04`.
+The ego submits to something larger than itself. What was raw power becomes structured belonging. The Crucible presents situations where brute force fails; only by accepting rules, roles, and the authority of a larger order can the player proceed. The terror: submission means loss of power; belonging means vulnerability.
 
-### 7.4 Amber → Orange: Rational Individuation
+### 8.4 Amber → Orange: Rational Individuation
 
-The self breaks from conformity through reason. What was unquestioned belonging becomes critical examination. The player transitions from "the group tells me what is true" to "I determine what is true through evidence and logic." The Crucible presents situations where dogma and authority fail; only by thinking independently — questioning, testing, falsifying — can the player proceed. The terror: leaving the group's certainty means facing existential doubt alone. See `stages/04` and `stages/05`.
+The self breaks from conformity through reason. The Crucible presents situations where dogma and authority fail; only by thinking independently — questioning, testing, falsifying — can the player proceed. The terror: leaving the group's certainty means facing existential doubt alone.
 
-### 7.5 Orange → Green: Pluralistic Empathy
+### 8.5 Orange → Green: Pluralistic Empathy
 
-The rational ego discovers its own limitations. What was objective achievement becomes sensitivity to multiple perspectives. The player transitions from "I am right" to "there are many valid ways of seeing." The Crucible presents situations where rational analysis alone fails; only by feeling into others' perspectives — empathising, including, honouring difference — can the player proceed. The terror: if all perspectives are valid, where is solid ground? See `stages/05` and `stages/06`.
+The rational ego discovers its own limitations. The Crucible presents situations where rational analysis alone fails; only by feeling into others' perspectives — empathising, including, honouring difference — can the player proceed. The terror: if all perspectives are valid, where is solid ground?
 
-### 7.6 Green → Turquoise: Vision-Logic Integration
+### 8.6 Green → Turquoise: Vision-Logic Integration
 
-The pluralistic self discovers that honouring all perspectives requires a *meta-perspective* that can hold them all. What was sensitivity becomes systemic integration. The player transitions from "all views are equal" to "all views are included in a developmental hierarchy of increasing embrace." The Crucible presents situations where flat pluralism fails; only by seeing the *pattern* that connects — integrating first-tier stages into a coherent whole — can the player proceed. The terror: hierarchy feels like betrayal of inclusion; integration feels like arrogance. See `stages/06` and `stages/07`.
+The pluralistic self discovers that honouring all perspectives requires a *meta-perspective*. The Crucible presents situations where flat pluralism fails; only by seeing the pattern that connects — integrating first-tier stages into a coherent whole — can the player proceed. The terror: hierarchy feels like betrayal of inclusion.
 
-### 7.7 Turquoise → White: Non-Dual Surrender
+### 8.7 Turquoise → White: Non-Dual Surrender
 
-The integral self surrenders its own integration. What was vision-logic becomes direct, unmediated awareness. The player transitions from "I see the whole" to "I am the whole seeing itself." The Crucible presents situations where even integral cognition fails; only by releasing the need to *understand* — surrendering the knower into the known — can the player proceed. The terror: if the self dissolves entirely, what remains? This is the deepest ego-death in the game. See `stages/07` and `stages/08`.
+The integral self surrenders its own integration. The Crucible presents situations where even integral cognition fails; only by releasing the need to *understand* — surrendering the knower into the known — can the player proceed. The terror: if the self dissolves entirely, what remains? This is the deepest ego-death in the game.
 
 ---
 
-## 8. The 9th transition: opening to The Choice
+## 9. The 9th transition: opening to The Choice
 
-### 8.1 Beyond White
+### 9.1 Beyond White
 
-White (Super-Integral / Non-Dual) is not the terminus of CCRPG's arc. It is the stage from which the ultimate macro-polarity crystallises. The 9th transition is not a Transformation in the same sense as the previous seven — it is the opening onto **The Choice** (foundations/19).
+White (Super-Integral / Non-Dual) is not the terminus. It is the stage from which the ultimate macro-polarity crystallises. The 9th transition is not a Transformation in the same sense — it is the opening onto **The Choice** (foundations/19).
 
-At this horizon, the player's accumulated polarity — the aggregate of every micro-choice across every lesser-cycle, every Transformation navigated, every shadow integrated or refused — reaches its final crystallisation. The game does not *make* this choice for the player; it reveals the choice the player has *already been making* all along.
+At this horizon, the player's accumulated polarity — the aggregate of every micro-choice across every lesser-cycle, every Transformation navigated, every shadow integrated or refused — reaches its final crystallisation. The game does not *make* this choice; it reveals the choice the player has *already been making* all along.
 
-### 8.2 Scope
+### 9.2 Scope
 
 The mechanics of The Choice are specified in foundations/19 (Choice & Polarity Engine). This document notes only that the 7th Transformation (Turquoise→White) opens the gateway to The Choice, and that The Choice is the teleological horizon toward which all seven prior Transformations have been oriented.
 
 ---
 
-## 9. Failure modes and recovery
+## 10. Failure modes and recovery
 
-### 9.1 Premature Transformation attempt
+### 10.1 Premature Transformation attempt
 
-**Condition:** The player reaches the threshold window but has not cleared sufficient dark shadows at the current stage.
+**Condition:** Threshold window reached but insufficient dark-shadow clearance.
+**Result:** Crucible encounters overwhelm — unresolved submergent material keeps activating.
+**Recovery:** System detects repeated failure (≥3 sessions without progress), gracefully exits threshold window, increases dark-shadow surfacing. Threshold re-opens when shadows clear.
 
-**Result:** The Crucible encounters overwhelm. The player cannot navigate them because unresolved submergent material keeps activating, pulling attention downward when the encounters demand upward reach.
+### 10.2 Bypassing (golden-addiction during Transformation)
 
-**Recovery:** The system detects repeated failure in the Crucible (≥3 sessions without progress) and gracefully exits the threshold window. The encounter scheduler returns to normal mode with increased dark-shadow surfacing. The player is guided back to integration work. The threshold will re-open when shadows are cleared.
+**Condition:** Player leaps toward next stage without integrating current-stage shadows.
+**Result:** Golden-shadow encounters engaged enthusiastically; dark-shadow encounters avoided.
+**Recovery:** System increases dark-shadow frequency within the Crucible. The Crucible will not complete until both vectors (heal/evolve AND evolve/heal) are demonstrated.
 
-### 9.2 Bypassing (golden-addiction during Transformation)
+### 10.3 Regression lock
 
-**Condition:** The player attempts to leap to the next stage without integrating the current stage's shadows — spiritual bypassing at the macro scale.
+**Condition:** Repeated threshold failures with regression (≥3 attempts at same transition).
+**Recovery:** System enters "consolidation phase" — stops triggering threshold, focuses on strengthening current-stage health across all lines. Threshold re-opens after ≥10 sessions of healthy functioning.
 
-**Result:** The system detects the pattern: golden-shadow encounters are engaged enthusiastically while dark-shadow encounters are avoided. The player claims the new frame but cannot embody it.
+### 10.4 Partial Transformation stall
 
-**Recovery:** The system increases dark-shadow encounter frequency within the Crucible itself. The Crucible will not complete until both vectors (heal/evolve AND evolve/heal) are demonstrated. The player cannot bypass — the architecture enforces integration.
-
-### 9.3 Regression lock
-
-**Condition:** The player repeatedly fails Transformation attempts and regresses each time, creating a loop.
-
-**Result:** The system detects the loop (≥3 threshold attempts with regression in the same stage transition).
-
-**Recovery:** The system enters a "consolidation phase" — it stops attempting to trigger the threshold and instead focuses entirely on strengthening the player's current-stage health across all lines. The threshold will only re-open after a sustained period (≥10 sessions) of healthy current-stage functioning. The game communicates: "Grow strong here first."
-
-### 9.4 Partial Transformation
-
-**Condition:** The player navigates part of the Crucible but cannot complete it in one arc.
-
+**Condition:** Player navigates part of the Crucible but cannot complete it.
 **Result:** Progress is saved. The Crucible is not all-or-nothing.
-
-**Recovery:** The player can return to the Crucible at any time. Completed knot-untying pairs remain resolved. The Crucible resumes from where the player left off. There is no penalty for taking time.
+**Recovery:** Player returns at any time. Completed knot-untying pairs remain resolved. Crucible resumes from where the player left off. No penalty for taking time.
 
 ---
 
-## 10. What this document does NOT cover (cross-references)
+## 11. What this document does NOT cover (cross-references)
 
 | Topic | Document |
 |---|---|
@@ -349,9 +502,13 @@ The mechanics of The Choice are specified in foundations/19 (Choice & Polarity E
 | The 4-quadrant shadow model, drive-health formulas, 256-shadow matrix | foundations/10 |
 | The 5-layer topography of the unconscious, contact boundary mechanics, Matrix/Potentiator dynamics | foundations/13 |
 | Lesser-cycle catalyst→experience→integration (within-encounter mechanics) | foundations/14 |
-| The Significator architecture (the entity that undergoes Transformation) | foundations/16 (forward-reference) |
-| The Great Way world-system (how the world responds to Transformation) | foundations/18 (forward-reference) |
-| The Choice & polarity engine (what Transformation ultimately serves) | foundations/19 (forward-reference) |
-| The Incarnation Architecture (master game-structure integrating all macro-archetypes) | foundations/21 (forward-reference) |
+| The Significator architecture (the entity that undergoes Transformation) | foundations/16 |
+| The Great Way world-system (how the world responds to Transformation) | foundations/18 |
+| The Choice & polarity engine (what Transformation ultimately serves) | foundations/19 |
+| The Veil of Forgetting (the experiential principle governing surface manifestation) | foundations/20 |
+| The Incarnation Architecture (master game-structure integrating all macro-archetypes) | foundations/21 |
+| The encounter scheduler (priority weights, selection algorithm, session-fit) | foundations/21 §4 |
+| The Holon Context Engine (LLM-driven content generation for new-layer holons) | foundations/22 |
+| Developmental telemetry and adaptive calibration | foundations/24 |
 | Per-stage detail (world bibles, aesthetics, bestiaries) | stages/01 through stages/08 |
 | The eight stages as a developmental sequence | foundations/02 |
