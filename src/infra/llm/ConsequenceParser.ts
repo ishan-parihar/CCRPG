@@ -84,6 +84,12 @@ export function parseConsequence(
     if (typeof shadow !== 'object' || shadow === null) {
       errors.push('shadowSignal must be an object or null');
     } else {
+      if (typeof shadow['quadrant'] !== 'string' || (shadow['quadrant'] as string).length === 0) {
+        errors.push('shadowSignal.quadrant must be a non-empty string');
+      }
+      if (typeof shadow['line'] !== 'string' || (shadow['line'] as string).length === 0) {
+        errors.push('shadowSignal.line must be a non-empty string');
+      }
       if (typeof shadow['intensity'] === 'number') {
         if (shadow['intensity'] < 0 || shadow['intensity'] > 1) {
           errors.push(`shadowSignal.intensity ${shadow['intensity']} outside allowed range [0, 1]`);

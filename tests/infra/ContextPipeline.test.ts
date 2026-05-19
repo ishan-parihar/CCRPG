@@ -189,6 +189,38 @@ describe('ContextPipeline', () => {
       expect(result.selectedHolons.length).toBeGreaterThan(0);
       expect(result.selectedHolons[0].id).toBe('holon-1');
     });
+
+    it('selects holons from multiple target lines', () => {
+      const holons = [
+        makeMockHolon('holon-1', 'WarriorGuide', 'Cognitive', 'Red'),
+        makeMockHolon('holon-2', 'Empath', 'Emotional', 'Red'),
+        makeMockHolon('holon-3', 'Sage', 'Cognitive', 'Amber'),
+        makeMockHolon('holon-4', 'Healer', 'Emotional', 'Amber'),
+        makeMockHolon('holon-5', 'Beast', 'Somatic', 'Red'),
+      ];
+
+      const input: ContextPipelineInput = {
+        ...makeDefaultInput(),
+        encounter: makeMockEncounter({
+          targetLines: ['Cognitive', 'Emotional'],
+          holonSource: 'holon-1',
+        }),
+        holonRegistry: makeMockRegistry(holons),
+      };
+
+      const result = buildContext(input);
+
+      // Should include holons from both Cognitive and Emotional lines
+      const selectedLines = result.selectedHolons.map(h => h.line);
+      expect(selectedLines).toContain('Cognitive');
+      expect(selectedLines).toContain('Emotional');
+
+      // Should NOT include Somatic holons since only Cognitive and Emotional are targeted
+      expect(selectedLines).not.toContain('Somatic');
+
+      // The system prompt [ENCOUNTER] section should contain both line names
+      expect(result.systemPrompt).toContain('lines=Cognitive,Emotional');
+    });
   });
 
   describe('buildContext - VeilFilteredSignificator', () => {

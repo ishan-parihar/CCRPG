@@ -109,6 +109,35 @@ describe('ModalityContracts', () => {
       expect(minimal.score).toBeLessThan(substantial.score);
       expect(minimal.signals).toContain('minimal response');
     });
+
+    it('scores a short response more leniently at Red than at Green', () => {
+      const shortResponse = 'I did it.';
+      const redScore = scoreResponse(shortResponse, 'Red');
+      const greenScore = scoreResponse(shortResponse, 'Green');
+      // Red (early stage) is more lenient with short responses
+      expect(redScore.score).toBeGreaterThan(greenScore.score);
+    });
+
+    it('scores nuance/paradox language higher at Green than at Red', () => {
+      const nuancedResponse =
+        'Both paths had merit, yet the tension between them held something deeper. I felt simultaneously drawn to each choice, perhaps because the paradox itself revealed a complex truth about my nature that I had not yet embraced.';
+      const redScore = scoreResponse(nuancedResponse, 'Red');
+      const greenScore = scoreResponse(nuancedResponse, 'Green');
+      // Later stages (Green) reward nuance/paradox vocabulary
+      expect(greenScore.score).toBeGreaterThan(redScore.score);
+      expect(greenScore.signals).toContain('nuance/paradox language detected');
+    });
+
+    it('differentiates scoring at Amber (middle stage)', () => {
+      const amberScore = scoreResponse(
+        'I chose to stay because I believed loyalty demanded it, although part of me wanted to leave.',
+        'Amber',
+      );
+      expect(amberScore.score).toBeGreaterThanOrEqual(0);
+      expect(amberScore.score).toBeLessThanOrEqual(1);
+      // Middle stage should reward connectives/reasoning
+      expect(amberScore.signals).toContain('causal reasoning present');
+    });
   });
 
   describe('ScenarioChoice buildScenarioPrompt', () => {
