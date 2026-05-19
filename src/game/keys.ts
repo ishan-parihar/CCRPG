@@ -9,6 +9,11 @@ export const SceneKeys = {
   UIOverlay: 'UIOverlayScene',
   RadialChart: 'RadialChartScene',
   Codex: 'CodexScene',
+  World: 'WorldScene',
+  Encounter: 'EncounterScene',
+  Reflection: 'ReflectionScene',
+  Dilemma: 'DilemmaScene',
+  Journal: 'JournalScene',
 } as const;
 
 export const TextureKeys = {
@@ -24,6 +29,9 @@ export const RegistryKeys = {
   Native: 'svc:native',
   Save: 'state:save',
   Profile: 'state:profile',
+  Significator: 'state:significator',
+  WorldState: 'state:world',
+  EventBus: 'svc:eventbus',
 } as const;
 
 export const GameEvents = {

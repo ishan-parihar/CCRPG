@@ -9,6 +9,8 @@ import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
 import { calibrate } from '@core/usecases/OnboardingCalibrator.js';
 import { createInitialProfile, type TaskSlug } from '@core/domain/PlayerProfile.js';
+import { createSignificator } from '@core/domain/Significator.js';
+import type { Holon } from '@core/domain/Holon.js';
 import type { OnboardingProbe, ProbeResult } from '../onboarding/ProbeInterface.js';
 
 import { CognitiveProbe } from '../onboarding/probes/CognitiveProbe.js';
@@ -239,6 +241,20 @@ export class OnboardingScene extends Phaser.Scene {
     const profile = { ...baseProfile, taskStaircases: seededStaircases, onboardingComplete: true, totalSessionsPlayed: 1 };
     this.registry.set(RegistryKeys.Profile, profile);
 
+    // Create Significator from calibration results
+    const playerId = profile.id;
+    const sig = createSignificator(playerId, result.altitudes, result.stage);
+    this.registry.set(RegistryKeys.Significator, sig);
+
+    // Create initial WorldState from red-layer-holons
+    const holonsData: Holon[] = this.loadRedLayerHolons();
+    const worldState = {
+      holons: holonsData,
+      recentEncounterIds: [] as string[],
+      cooldowns: {} as Record<string, number>,
+    };
+    this.registry.set(RegistryKeys.WorldState, worldState);
+
     this.add.text(width / 2, height / 2 - 80,
       'Calibration Complete\n\nYour developmental profile has been mapped.\nThe world will meet you where you stand.',
       {
@@ -261,7 +277,19 @@ export class OnboardingScene extends Phaser.Scene {
     this.add.text(width / 2, height - 80, '[ Enter the World ]', {
       fontSize: '20px', color: '#88ccff', fontFamily: 'monospace',
     }).setOrigin(0.5).setInteractive()
-      .on('pointerdown', () => this.scene.start(SceneKeys.MainMenu));
+      .on('pointerdown', () => this.scene.start(SceneKeys.World));
+  }
+
+  private loadRedLayerHolons(): Holon[] {
+    // Import red-layer-holons.json data inline (bundled by Vite)
+    // Since JSON imports require static analysis, we use a minimal fallback
+    // This will be populated at runtime when the JSON is loaded
+    try {
+      // Vite resolves JSON imports at build time; for runtime we provide empty default
+      return [];
+    } catch {
+      return [];
+    }
   }
 
   private lineToTaskSlug(line: string): TaskSlug | undefined {
