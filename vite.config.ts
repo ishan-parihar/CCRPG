@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 
 export default defineConfig(({ mode }) => ({
-  base: './',
+  base: mode === 'production' ? '/CCRPG/' : './',
   define: {
     __DEV__: JSON.stringify(mode !== 'production'),
   },
