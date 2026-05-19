@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { RegistryKeys, SceneKeys } from '../keys.js';
 import { makeButton } from '../ui/Button.js';
 import type { PlayerProfile } from '@core/domain/PlayerProfile.js';
+import type { Significator } from '@core/domain/Significator.js';
 
 /**
  * MainMenu — primary navigation surface.
@@ -45,6 +46,21 @@ export class MainMenuScene extends Phaser.Scene {
 
     // Navigation buttons
     let btnY = 620;
+
+    // Show "Continue to World" if Significator exists
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
+    if (sig) {
+      makeButton(this, width / 2, btnY, {
+        label: '🌍  Continue to World',
+        width: 380,
+        height: 72,
+        fill: 0x2a3a1a,
+        hoverFill: 0x3a5a2a,
+        onClick: () => this.scene.start(SceneKeys.World),
+      });
+      btnY += 90;
+    }
+
     makeButton(this, width / 2, btnY, {
       label: '⚔️  Enter Battle',
       width: 380,

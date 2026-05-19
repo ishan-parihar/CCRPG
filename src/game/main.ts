@@ -36,6 +36,11 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
       game.scene.start(SceneKeys.MainMenu);
       return true;
     }
+    const world = game.scene.getScene(SceneKeys.World);
+    if (world && game.scene.isActive(SceneKeys.World)) {
+      game.scene.start(SceneKeys.MainMenu);
+      return true;
+    }
     const onboarding = game.scene.getScene(SceneKeys.Onboarding);
     if (onboarding && game.scene.isActive(SceneKeys.Onboarding)) {
       game.scene.start(SceneKeys.MainMenu);

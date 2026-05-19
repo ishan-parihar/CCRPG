@@ -7,6 +7,11 @@ import { BattleScene } from './scenes/BattleScene.js';
 import { UIOverlayScene } from './scenes/UIOverlayScene.js';
 import { RadialChartScene } from './scenes/RadialChartScene.js';
 import { CodexScene } from './scenes/CodexScene.js';
+import { WorldScene } from './scenes/WorldScene.js';
+import { EncounterScene } from './scenes/EncounterScene.js';
+import { ReflectionScene } from './scenes/ReflectionScene.js';
+import { DilemmaScene } from './scenes/DilemmaScene.js';
+import { JournalScene } from './scenes/JournalScene.js';
 
 /** Logical resolution — designed for portrait mobile (9:16). */
 export const VIEWPORT = { width: 720, height: 1280 } as const;
@@ -45,6 +50,11 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
       UIOverlayScene,
       RadialChartScene,
       CodexScene,
+      WorldScene,
+      EncounterScene,
+      ReflectionScene,
+      DilemmaScene,
+      JournalScene,
     ],
   };
 }

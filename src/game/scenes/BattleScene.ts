@@ -12,6 +12,10 @@ import {
 } from '@core/index.js';
 import { updateProfile, type EncounterResult } from '@core/usecases/ProfileUpdater.js';
 import type { PlayerProfile } from '@core/domain/PlayerProfile.js';
+import type { EncounterSpec } from '@core/domain/Encounter.js';
+import type { Significator } from '@core/domain/Significator.js';
+import type { EventBus } from '@core/events/EventBus.js';
+import type { ConquerorPhase } from '@core/data/encounters/red/conqueror.js';
 import { GameEvents, RegistryKeys, SceneKeys, TextureKeys } from '../keys.js';
 import { makeButton } from '../ui/Button.js';
 import { StatBar } from '../ui/StatBar.js';
@@ -59,31 +63,54 @@ export class BattleScene extends Phaser.Scene {
   /** Per-spell n-back accuracy history for adaptive load scaling. */
   private nBackHistory: number[] = [];
   private uiScene!: Phaser.Scene;
+  /** Dynamic encounter spec, if provided via scene data. */
+  private encounterSpec: EncounterSpec | null = null;
+  /** Multi-phase boss state. */
+  private currentPhaseIndex = 0;
+  private phases: ConquerorPhase[] = [];
 
   constructor() {
     super({ key: SceneKeys.Battle });
   }
 
-  create(): void {
+  create(data?: { encounter?: EncounterSpec; phases?: ConquerorPhase[] }): void {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x070b14);
     this.drawArena();
 
+    // Accept dynamic encounter data if provided
+    this.encounterSpec = data?.encounter ?? null;
+    this.phases = data?.phases ? [...data.phases] : [];
+    this.currentPhaseIndex = 0;
+
     const save = this.registry.get(RegistryKeys.Save) as SaveData;
+
+    // Use Significator if available, fall back to Profile
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
+
+    // Determine enemy from encounter spec or default
+    const enemyName = this.encounterSpec?.enemy?.name ?? 'Voidshade';
+    const enemyStats = this.encounterSpec?.enemy?.stats
+      ? { ...this.encounterSpec.enemy.stats }
+      : this.scaleEnemyStats(save.level);
+
+    // If multi-phase boss, use phase HP
+    const phaseHp = this.phases.length > 0 ? this.phases[0]!.hpPool : undefined;
+    const finalEnemyStats = phaseHp ? { ...enemyStats, maxHp: phaseHp } : enemyStats;
+
     const playerStats = save.stats;
-    const enemyStats = this.scaleEnemyStats(save.level);
 
     const playerBattler = new Battler({
       id: 'player',
-      name: save.playerName,
+      name: sig?.id ?? save.playerName,
       side: 'player',
       stats: playerStats,
     });
     const enemyBattler = new Battler({
       id: 'enemy',
-      name: 'Voidshade',
+      name: enemyName,
       side: 'enemy',
-      stats: enemyStats,
+      stats: finalEnemyStats,
     });
 
     this.player = this.makeView(playerBattler, width / 2, height - 380, false);
@@ -391,12 +418,38 @@ export class BattleScene extends Phaser.Scene {
   // ─── End-of-battle ────────────────────────────────────────────────
   private checkBattleEnd(): void {
     if (!this.enemy.battler.isAlive) {
+      // Multi-phase: advance to next phase if available
+      if (this.phases.length > 0 && this.currentPhaseIndex < this.phases.length - 1) {
+        this.currentPhaseIndex++;
+        this.advancePhase();
+        return;
+      }
       this.endBattle('victory');
       return;
     }
     if (!this.player.battler.isAlive) {
       this.endBattle('defeat');
     }
+  }
+
+  private advancePhase(): void {
+    const phase = this.phases[this.currentPhaseIndex]!;
+
+    // Show phase transition banner
+    this.bannerText.setText(`Phase ${this.currentPhaseIndex + 1}: ${phase.name}`);
+    this.bannerText.setColor('#ffd166');
+    this.tweens.add({
+      targets: this.bannerText,
+      alpha: 1,
+      duration: 300,
+      ease: 'sine.out',
+      yoyo: true,
+      hold: 1000,
+    });
+
+    // Heal enemy to simulate new phase HP pool
+    this.enemy.battler.heal(phase.hpPool);
+    this.enemy.nameLabel.setText(`${this.enemy.battler.name} (${phase.quadrant})`);
   }
 
   private async endBattle(outcome: 'victory' | 'defeat'): Promise<void> {
@@ -431,6 +484,31 @@ export class BattleScene extends Phaser.Scene {
         const updatedProfile = updateProfile(profile, encounterResult);
         this.registry.set(RegistryKeys.Profile, updatedProfile);
       }
+
+      // Emit encounter_completed on core EventBus if available
+      const coreEventBus = this.registry.get(RegistryKeys.EventBus) as EventBus | undefined;
+      if (coreEventBus && this.encounterSpec) {
+        coreEventBus.emit('encounter_completed', {
+          record: {
+            encounterId: this.encounterSpec.id,
+            timestamp: Date.now(),
+            polarityTrace: {
+              encounterId: this.encounterSpec.id,
+              timestamp: Date.now(),
+              driveDirectionality: { Agency: 'HealthyBalanced', Communion: 'HealthyBalanced', Eros: 'HealthyBalanced', Agape: 'HealthyBalanced' },
+              energeticDirection: 'Radiative',
+              stageOrientation: 'ReachingHigher',
+              sourceOfNourishment: 'LowerRealm',
+            },
+            shadowSurfaced: null,
+            shadowResolved: null,
+            holonDeltas: [],
+            altitudeShift: null,
+            driveShift: null,
+            narrativeSummary: `Defeated ${this.enemy.battler.name}`,
+          },
+        });
+      }
     }
 
     this.bannerText.setText(outcome === 'victory' ? 'Victory!' : 'Defeat');
@@ -444,7 +522,12 @@ export class BattleScene extends Phaser.Scene {
 
     this.time.delayedCall(1600, () => {
       this.scene.stop(SceneKeys.UIOverlay);
-      this.scene.start(SceneKeys.MainMenu);
+      // If launched from EncounterScene, signal completion; otherwise go to MainMenu
+      if (this.encounterSpec) {
+        this.events.emit('encounter_done', { record: undefined });
+      } else {
+        this.scene.start(SceneKeys.MainMenu);
+      }
     });
   }
 
