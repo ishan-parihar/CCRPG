@@ -2,6 +2,7 @@
  * Encounter — typed encounter specification.
  */
 import type { Drive } from './Drive.js';
+import type { Modality } from './enums.js';
 import type { Line } from './Line.js';
 import type { Quadrant, TaskSlug } from './PlayerProfile.js';
 import type { Ray } from './Ray.js';
@@ -41,6 +42,7 @@ export interface EncounterSpec {
   readonly quadrants: readonly Quadrant[];
   readonly role: EncounterRole;
   readonly ray: Ray;
+  readonly modality?: Modality;
   readonly drive?: { readonly fixated: Drive; readonly absent: Drive };
   readonly taskBinds: readonly TaskBind[];
   readonly narrative: EncounterNarrative;
