@@ -60,15 +60,21 @@ interface HolonSelection {
 function selectHolons(encounter: ScheduledEncounter, registry: HolonRegistry): HolonSelection {
   const primary = getHolon(registry, encounter.holonSource) ?? null;
 
-  const targetLine = encounter.targetLines[0];
+  // Query holons for ALL target lines, not just the first
+  const seenIds = new Set<string>();
   let contextual: Holon[] = [];
 
-  if (targetLine) {
+  for (const targetLine of encounter.targetLines) {
     const sameLineHolons = queryByLine(registry, targetLine);
-    contextual = sameLineHolons
-      .filter(h => h.id !== encounter.holonSource)
-      .slice(0, 5);
+    for (const h of sameLineHolons) {
+      if (h.id !== encounter.holonSource && !seenIds.has(h.id)) {
+        seenIds.add(h.id);
+        contextual.push(h);
+      }
+    }
   }
+
+  contextual = contextual.slice(0, 5);
 
   return { primary, contextual };
 }
@@ -131,7 +137,7 @@ function filterSignificator(
 // ---------------------------------------------------------------------------
 
 interface EncounterContext {
-  readonly line: Line;
+  readonly lines: readonly Line[];
   readonly stage: Stage;
   readonly modality: Modality;
   readonly catalyticPurpose: string;
@@ -142,12 +148,16 @@ function injectEncounterSpec(
   encounter: ScheduledEncounter,
   conceptIndex: ConceptDraftIndex,
 ): EncounterContext {
-  const targetLine = encounter.targetLines[0] ?? 'Cognitive';
-  const entry = queryByLineStage(conceptIndex, targetLine, encounter.stage);
+  // Include all target lines in the encounter context
+  const lines: Line[] = encounter.targetLines.length > 0
+    ? [...encounter.targetLines]
+    : ['Cognitive' as Line];
+  const primaryLine = lines[0];
+  const entry = queryByLineStage(conceptIndex, primaryLine, encounter.stage);
   const catalyticPurpose = entry ? entry.title : 'catalytic engagement';
 
   return {
-    line: targetLine,
+    lines,
     stage: encounter.stage,
     modality: encounter.modality,
     catalyticPurpose,
@@ -164,6 +174,8 @@ function conditionFrequency(
   sig: Significator,
   holonSelection: HolonSelection,
 ): FrequencySpec {
+  // Use the primary target line (first) for frequency conditioning.
+  // Multi-line encounters still use a single frequency to maintain voice consistency.
   const targetLine = encounter.targetLines[0] ?? 'Cognitive';
   const playerStage = sig.altitudes[targetLine] ?? sig.currentStage;
   const holonLine = holonSelection.primary?.line ?? targetLine;
@@ -251,7 +263,7 @@ function assembleSystemPrompt(
 [COSMOLOGY] Third Density constraints. Veil enforced. Free will absolute.
 [FREQUENCY] tone=${frequencySpec.toneDirective}; vocabulary=${frequencySpec.vocabularyBand}; values=${frequencySpec.valueLens}; taboos=${frequencySpec.taboos.join(',')}; cross-altitude=${frequencySpec.crossAltitudeDynamic ?? 'none'}
 [HOLONS] ${holonDescriptions}
-[ENCOUNTER] line=${encounterContext.line}; stage=${encounterContext.stage}; modality=${encounterContext.modality}; purpose=${encounterContext.catalyticPurpose}; module=${encounterContext.moduleRef}
+[ENCOUNTER] lines=${encounterContext.lines.join(',')}; stage=${encounterContext.stage}; modality=${encounterContext.modality}; purpose=${encounterContext.catalyticPurpose}; module=${encounterContext.moduleRef}
 [MODALITY] ${modalityRubric}
 [CONTINUITY] ${consequenceContext}
 [PLAYER STATE] ${playerStateSignals}

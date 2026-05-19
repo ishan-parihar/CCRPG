@@ -69,13 +69,13 @@ export function parseConsequence(
     }
   }
 
-  // Step 4: Validate polarityMagnitude if present
-  if (obj['polarityMagnitude'] !== undefined) {
-    if (typeof obj['polarityMagnitude'] !== 'number') {
-      errors.push('polarityMagnitude must be a number');
-    } else if (obj['polarityMagnitude'] < 0 || obj['polarityMagnitude'] > 1) {
-      errors.push(`polarityMagnitude ${obj['polarityMagnitude']} outside allowed range [0, 1]`);
-    }
+  // Step 4: Validate polarityMagnitude (required field per ParsedConsequence interface)
+  if (obj['polarityMagnitude'] === undefined || obj['polarityMagnitude'] === null) {
+    errors.push('Missing required field: polarityMagnitude');
+  } else if (typeof obj['polarityMagnitude'] !== 'number') {
+    errors.push('polarityMagnitude must be a number');
+  } else if (obj['polarityMagnitude'] < 0 || obj['polarityMagnitude'] > 1) {
+    errors.push(`polarityMagnitude ${obj['polarityMagnitude']} outside allowed range [0, 1]`);
   }
 
   // Step 5: Validate shadowSignal if present
