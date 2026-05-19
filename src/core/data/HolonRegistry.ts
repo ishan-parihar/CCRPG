@@ -34,3 +34,7 @@ export function queryByLine(registry: HolonRegistry, line: Line): Holon[] {
 export function getHolon(registry: HolonRegistry, id: string): Holon | undefined {
   return registry.holons.find(h => h.id === id);
 }
+
+export function queryByNarrativeRole(registry: HolonRegistry, role: string): Holon[] {
+  return registry.holons.filter(h => h.narrativeRole === role);
+}
