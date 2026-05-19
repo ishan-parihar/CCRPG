@@ -1,0 +1,900 @@
+{
+  "modules": {
+    "cognitive:infrared": {
+      "line": "Cognitive",
+      "stage": "Infrared",
+      "title": "Cognitive / Infrared — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "cognitive:magenta": {
+      "line": "Cognitive",
+      "stage": "Magenta",
+      "title": "Cognitive / Magenta — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "cognitive:red": {
+      "line": "Cognitive",
+      "stage": "Red",
+      "title": "Cognitive / Red — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "cognitive:amber": {
+      "line": "Cognitive",
+      "stage": "Amber",
+      "title": "Cognitive / Amber — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "cognitive:orange": {
+      "line": "Cognitive",
+      "stage": "Orange",
+      "title": "Cognitive / Orange — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "cognitive:green": {
+      "line": "Cognitive",
+      "stage": "Green",
+      "title": "Cognitive / Green — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "cognitive:turquoise": {
+      "line": "Cognitive",
+      "stage": "Turquoise",
+      "title": "Cognitive / Turquoise — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "cognitive:white": {
+      "line": "Cognitive",
+      "stage": "White",
+      "title": "Cognitive / White — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "emotional:infrared": {
+      "line": "Emotional",
+      "stage": "Infrared",
+      "title": "Emotional × Infrared — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "emotional:magenta": {
+      "line": "Emotional",
+      "stage": "Magenta",
+      "title": "Emotional / Magenta — Module Specification Skeleton",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "emotional:red": {
+      "line": "Emotional",
+      "stage": "Red",
+      "title": "Emotional / Red — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "emotional:amber": {
+      "line": "Emotional",
+      "stage": "Amber",
+      "title": "Emotional / Amber — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "emotional:orange": {
+      "line": "Emotional",
+      "stage": "Orange",
+      "title": "Emotional / Orange — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "emotional:green": {
+      "line": "Emotional",
+      "stage": "Green",
+      "title": "Emotional / Green — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "emotional:turquoise": {
+      "line": "Emotional",
+      "stage": "Turquoise",
+      "title": "Emotional / Turquoise — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "emotional:white": {
+      "line": "Emotional",
+      "stage": "White",
+      "title": "Emotional / White — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "moral:infrared": {
+      "line": "Moral",
+      "stage": "Infrared",
+      "title": "Moral × Infrared — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "moral:magenta": {
+      "line": "Moral",
+      "stage": "Magenta",
+      "title": "Moral / Magenta — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "moral:red": {
+      "line": "Moral",
+      "stage": "Red",
+      "title": "Moral / Red — Module Specification Skeleton",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "moral:amber": {
+      "line": "Moral",
+      "stage": "Amber",
+      "title": "Moral / Amber — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "moral:orange": {
+      "line": "Moral",
+      "stage": "Orange",
+      "title": "Moral / Orange — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "moral:green": {
+      "line": "Moral",
+      "stage": "Green",
+      "title": "Moral / Green — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "moral:turquoise": {
+      "line": "Moral",
+      "stage": "Turquoise",
+      "title": "Moral / Turquoise — Module Spec",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "moral:white": {
+      "line": "Moral",
+      "stage": "White",
+      "title": "Moral / White — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "intrapersonal:infrared": {
+      "line": "Intrapersonal",
+      "stage": "Infrared",
+      "title": "Intrapersonal × Infrared — Module Spec",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "intrapersonal:magenta": {
+      "line": "Intrapersonal",
+      "stage": "Magenta",
+      "title": "Intrapersonal / Magenta — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "intrapersonal:red": {
+      "line": "Intrapersonal",
+      "stage": "Red",
+      "title": "Intrapersonal / Red — Module Specification Skeleton",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "intrapersonal:amber": {
+      "line": "Intrapersonal",
+      "stage": "Amber",
+      "title": "Intrapersonal / Amber — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "intrapersonal:orange": {
+      "line": "Intrapersonal",
+      "stage": "Orange",
+      "title": "Intrapersonal / Orange — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "intrapersonal:green": {
+      "line": "Intrapersonal",
+      "stage": "Green",
+      "title": "Intrapersonal / Green — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "intrapersonal:turquoise": {
+      "line": "Intrapersonal",
+      "stage": "Turquoise",
+      "title": "Intrapersonal × Turquoise — Module Spec",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "intrapersonal:white": {
+      "line": "Intrapersonal",
+      "stage": "White",
+      "title": "Intrapersonal / White — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "spiritual:infrared": {
+      "line": "Spiritual",
+      "stage": "Infrared",
+      "title": "Spiritual × Infrared — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "spiritual:magenta": {
+      "line": "Spiritual",
+      "stage": "Magenta",
+      "title": "Spiritual / Magenta — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "spiritual:red": {
+      "line": "Spiritual",
+      "stage": "Red",
+      "title": "Spiritual / Red — Module Specification Skeleton",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "spiritual:amber": {
+      "line": "Spiritual",
+      "stage": "Amber",
+      "title": "Spiritual / Amber — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "spiritual:orange": {
+      "line": "Spiritual",
+      "stage": "Orange",
+      "title": "Spiritual / Orange — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "spiritual:green": {
+      "line": "Spiritual",
+      "stage": "Green",
+      "title": "Spiritual / Green — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "spiritual:turquoise": {
+      "line": "Spiritual",
+      "stage": "Turquoise",
+      "title": "Spiritual / Turquoise — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "spiritual:white": {
+      "line": "Spiritual",
+      "stage": "White",
+      "title": "Spiritual / White — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "somatic:infrared": {
+      "line": "Somatic",
+      "stage": "Infrared",
+      "title": "Somatic / Infrared — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "somatic:magenta": {
+      "line": "Somatic",
+      "stage": "Magenta",
+      "title": "Somatic / Magenta — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "somatic:red": {
+      "line": "Somatic",
+      "stage": "Red",
+      "title": "Somatic / Red — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "somatic:amber": {
+      "line": "Somatic",
+      "stage": "Amber",
+      "title": "Somatic / Amber — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "somatic:orange": {
+      "line": "Somatic",
+      "stage": "Orange",
+      "title": "Somatic / Orange — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "somatic:green": {
+      "line": "Somatic",
+      "stage": "Green",
+      "title": "Somatic / Green — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "somatic:turquoise": {
+      "line": "Somatic",
+      "stage": "Turquoise",
+      "title": "Somatic × Turquoise — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "somatic:white": {
+      "line": "Somatic",
+      "stage": "White",
+      "title": "Somatic / White — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "willpower:infrared": {
+      "line": "Willpower",
+      "stage": "Infrared",
+      "title": "Willpower × Infrared — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "willpower:magenta": {
+      "line": "Willpower",
+      "stage": "Magenta",
+      "title": "Willpower / Magenta — Module Specification Skeleton",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "willpower:red": {
+      "line": "Willpower",
+      "stage": "Red",
+      "title": "Willpower / Red — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "willpower:amber": {
+      "line": "Willpower",
+      "stage": "Amber",
+      "title": "Willpower / Amber — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "willpower:orange": {
+      "line": "Willpower",
+      "stage": "Orange",
+      "title": "Willpower / Orange — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "willpower:green": {
+      "line": "Willpower",
+      "stage": "Green",
+      "title": "Willpower / Green — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "willpower:turquoise": {
+      "line": "Willpower",
+      "stage": "Turquoise",
+      "title": "Willpower × Turquoise — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "willpower:white": {
+      "line": "Willpower",
+      "stage": "White",
+      "title": "Willpower / White — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "interpersonal:infrared": {
+      "line": "Interpersonal",
+      "stage": "Infrared",
+      "title": "Interpersonal × Infrared — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "interpersonal:magenta": {
+      "line": "Interpersonal",
+      "stage": "Magenta",
+      "title": "Interpersonal / Magenta — Module Specification Skeleton",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "interpersonal:red": {
+      "line": "Interpersonal",
+      "stage": "Red",
+      "title": "Interpersonal / Red — Module Specification Skeleton",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "interpersonal:amber": {
+      "line": "Interpersonal",
+      "stage": "Amber",
+      "title": "Interpersonal / Amber — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "interpersonal:orange": {
+      "line": "Interpersonal",
+      "stage": "Orange",
+      "title": "Interpersonal / Orange — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "interpersonal:green": {
+      "line": "Interpersonal",
+      "stage": "Green",
+      "title": "Interpersonal / Green — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "interpersonal:turquoise": {
+      "line": "Interpersonal",
+      "stage": "Turquoise",
+      "title": "Interpersonal × Turquoise — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    },
+    "interpersonal:white": {
+      "line": "Interpersonal",
+      "stage": "White",
+      "title": "Interpersonal / White — Module Specification",
+      "modalities": [
+        "Deterministic",
+        "Strategic",
+        "Embodied",
+        "ScenarioChoice",
+        "LanguageReflective",
+        "SocialCooperative",
+        "ImmersiveRPG"
+      ]
+    }
+  }
+}

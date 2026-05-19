@@ -1,0 +1,122 @@
+[
+  {
+    "id": "conqueror",
+    "name": "The Conqueror",
+    "kind": "NPC",
+    "line": "Willpower",
+    "stage": "Red",
+    "drives": { "dominant": "Agency", "secondary": "Eros", "shadowQuadrant": "DarkAddiction" },
+    "polarity": "Absorptive",
+    "narrativeRole": "main-boss",
+    "relationships": ["warlord-faction"],
+    "active": true
+  },
+  {
+    "id": "viper-tactician",
+    "name": "The Viper Tactician",
+    "kind": "NPC",
+    "line": "Cognitive",
+    "stage": "Red",
+    "drives": { "dominant": "Agency", "secondary": "Communion", "shadowQuadrant": "GoldenAllergy" },
+    "polarity": "Absorptive",
+    "narrativeRole": "strategist-rival",
+    "relationships": ["warlord-faction"],
+    "active": true
+  },
+  {
+    "id": "bloodfury",
+    "name": "Bloodfury",
+    "kind": "NPC",
+    "line": "Emotional",
+    "stage": "Red",
+    "drives": { "dominant": "Eros", "secondary": "Agency", "shadowQuadrant": "DarkAddiction" },
+    "polarity": "Absorptive",
+    "narrativeRole": "rage-warrior",
+    "relationships": ["warlord-faction", "arena-of-dominion"],
+    "active": true
+  },
+  {
+    "id": "elder-ashmark",
+    "name": "Elder Ashmark",
+    "kind": "NPC",
+    "line": "Moral",
+    "stage": "Red",
+    "drives": { "dominant": "Communion", "secondary": "Agape", "shadowQuadrant": null },
+    "polarity": "Radiative",
+    "narrativeRole": "loyalty-tester",
+    "relationships": [],
+    "active": true
+  },
+  {
+    "id": "silent-fang",
+    "name": "Silent Fang",
+    "kind": "NPC",
+    "line": "Intrapersonal",
+    "stage": "Red",
+    "drives": { "dominant": "Agency", "secondary": "Agape", "shadowQuadrant": "GoldenAddiction" },
+    "polarity": "Sovereign",
+    "narrativeRole": "lone-wolf",
+    "relationships": [],
+    "active": true
+  },
+  {
+    "id": "bone-shaman",
+    "name": "The Bone Shaman",
+    "kind": "NPC",
+    "line": "Spiritual",
+    "stage": "Red",
+    "drives": { "dominant": "Eros", "secondary": "Communion", "shadowQuadrant": "DarkAllergy" },
+    "polarity": "Radiative",
+    "narrativeRole": "mystic-guide",
+    "relationships": ["arena-of-dominion"],
+    "active": true
+  },
+  {
+    "id": "ironjaw",
+    "name": "Ironjaw",
+    "kind": "NPC",
+    "line": "Somatic",
+    "stage": "Red",
+    "drives": { "dominant": "Agency", "secondary": "Eros", "shadowQuadrant": "DarkAddiction" },
+    "polarity": "Absorptive",
+    "narrativeRole": "gladiator-champion",
+    "relationships": ["arena-of-dominion", "warlord-faction"],
+    "active": true
+  },
+  {
+    "id": "scar-queen",
+    "name": "The Scar Queen",
+    "kind": "NPC",
+    "line": "Interpersonal",
+    "stage": "Red",
+    "drives": { "dominant": "Communion", "secondary": "Agency", "shadowQuadrant": "DarkAllergy" },
+    "polarity": "Absorptive",
+    "narrativeRole": "rival-faction-leader",
+    "relationships": ["arena-of-dominion"],
+    "active": true
+  },
+  {
+    "id": "warlord-faction",
+    "name": "The Warlord's Horde",
+    "kind": "Faction",
+    "line": "Willpower",
+    "stage": "Red",
+    "drives": { "dominant": "Agency", "secondary": "Eros", "shadowQuadrant": "DarkAddiction" },
+    "polarity": "Absorptive",
+    "narrativeRole": "dominant-faction",
+    "relationships": ["conqueror", "viper-tactician", "bloodfury", "ironjaw"],
+    "active": true
+  },
+  {
+    "id": "arena-of-dominion",
+    "name": "The Arena of Dominion",
+    "kind": "Location",
+    "line": "Somatic",
+    "stage": "Red",
+    "drives": { "dominant": "Agency", "secondary": "Eros", "shadowQuadrant": null },
+    "polarity": "Sovereign",
+    "narrativeRole": "contested-territory",
+    "relationships": ["warlord-faction", "scar-queen", "ironjaw", "bloodfury", "bone-shaman"],
+    "active": true
+  }
+]
