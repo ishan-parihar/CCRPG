@@ -3,7 +3,7 @@
 > **Lateral:** The composite internal scoring model that folds five developmental dimensions -- altitude, drive health, polarity, shadow topology, and transformation readiness -- into a single index consumed by the auto-mode strategy engine. The CCI is NEVER player-facing (Veil principle, foundations/20). It operates at the session-strategy level, above the encounter scheduler's per-encounter priority formula.
 >
 > **Depends on:** 10, 12, 16, 17, 19
-> **Referenced by:** 27 (auto-mode strategy engine)
+> **Referenced by:** 26 (unified architecture), 27 (auto-mode strategy engine)
 
 ---
 

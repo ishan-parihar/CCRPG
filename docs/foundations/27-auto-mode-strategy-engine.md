@@ -106,11 +106,12 @@ Auto-mode adjusts the scheduler's 7-criterion priority weights for the duration 
 ```ts
 interface PriorityWeightBias {
   // Multipliers applied to the scheduler's default weights (foundations/24 section 3.2)
+  // Field names match PriorityWeights in src/core/engines/PriorityComputation.ts
   // A multiplier of 1.0 = no change; >1.0 = boost; <1.0 = reduce
-  thetaDecay: number;
+  thetaUrgency: number;
   shadowActivation: number;
   polarityAlignment: number;
-  transformationReady: number;
+  transformationReadiness: number;
   driveCorrection: number;
   narrativeCoherence: number;
   sessionFit: number;
@@ -122,10 +123,10 @@ function applyWeightBias(
   bias: PriorityWeightBias
 ): PriorityWeights {
   const biased = {
-    thetaDecay: defaults.thetaDecay * bias.thetaDecay,
+    thetaUrgency: defaults.thetaUrgency * bias.thetaUrgency,
     shadowActivation: defaults.shadowActivation * bias.shadowActivation,
     polarityAlignment: defaults.polarityAlignment * bias.polarityAlignment,
-    transformationReady: defaults.transformationReady * bias.transformationReady,
+    transformationReadiness: defaults.transformationReadiness * bias.transformationReadiness,
     driveCorrection: defaults.driveCorrection * bias.driveCorrection,
     narrativeCoherence: defaults.narrativeCoherence * bias.narrativeCoherence,
     sessionFit: defaults.sessionFit * bias.sessionFit,
@@ -205,21 +206,21 @@ function computeWeightBias(theme: SessionTheme, cci: CCIScore): PriorityWeightBi
   switch (theme) {
     case 'shadow-integration':
       return {
-        thetaDecay: 0.6,           // reduce maintenance
-        shadowActivation: 1.8,     // strongly boost shadow encounters
-        polarityAlignment: 0.7,    // reduce polarity focus
-        transformationReady: 0.5,  // reduce transformation push
-        driveCorrection: 1.2,      // moderate boost (shadows often involve drive imbalance)
-        narrativeCoherence: 0.8,   // slightly reduce narrative
-        sessionFit: 1.0,           // unchanged
+        thetaUrgency: 0.6,           // reduce maintenance
+        shadowActivation: 1.8,       // strongly boost shadow encounters
+        polarityAlignment: 0.7,      // reduce polarity focus
+        transformationReadiness: 0.5, // reduce transformation push
+        driveCorrection: 1.2,        // moderate boost (shadows often involve drive imbalance)
+        narrativeCoherence: 0.8,     // slightly reduce narrative
+        sessionFit: 1.0,             // unchanged
       };
 
     case 'growth-edge-push':
       return {
-        thetaDecay: 0.8,
+        thetaUrgency: 0.8,
         shadowActivation: 0.7,
         polarityAlignment: 1.2,
-        transformationReady: 1.8,  // strongly boost threshold-contributing encounters
+        transformationReadiness: 1.8, // strongly boost threshold-contributing encounters
         driveCorrection: 0.8,
         narrativeCoherence: 1.0,
         sessionFit: 0.9,
@@ -227,32 +228,32 @@ function computeWeightBias(theme: SessionTheme, cci: CCIScore): PriorityWeightBi
 
     case 'consolidation':
       return {
-        thetaDecay: 1.5,           // boost maintenance of neglected lines
+        thetaUrgency: 1.5,           // boost maintenance of neglected lines
         shadowActivation: 0.8,
         polarityAlignment: 0.8,
-        transformationReady: 0.5,  // reduce growth pressure
-        driveCorrection: 1.3,     // moderate rebalancing
+        transformationReadiness: 0.5, // reduce growth pressure
+        driveCorrection: 1.3,        // moderate rebalancing
         narrativeCoherence: 1.2,
-        sessionFit: 1.4,           // prioritise session comfort
+        sessionFit: 1.4,             // prioritise session comfort
       };
 
     case 'drive-rebalancing':
       return {
-        thetaDecay: 0.7,
+        thetaUrgency: 0.7,
         shadowActivation: 0.8,
         polarityAlignment: 0.7,
-        transformationReady: 0.6,
-        driveCorrection: 2.0,      // heavily boost drive correction
+        transformationReadiness: 0.6,
+        driveCorrection: 2.0,        // heavily boost drive correction
         narrativeCoherence: 0.9,
         sessionFit: 1.0,
       };
 
     case 'transformation-prep':
       return {
-        thetaDecay: 0.5,
-        shadowActivation: 1.5,     // clear shadows blocking threshold
+        thetaUrgency: 0.5,
+        shadowActivation: 1.5,       // clear shadows blocking threshold
         polarityAlignment: 1.0,
-        transformationReady: 2.0,  // maximum threshold focus
+        transformationReadiness: 2.0, // maximum threshold focus
         driveCorrection: 0.7,
         narrativeCoherence: 1.0,
         sessionFit: 0.7,
@@ -261,10 +262,10 @@ function computeWeightBias(theme: SessionTheme, cci: CCIScore): PriorityWeightBi
     case 'active-transformation':
       // Delegate entirely to transformation mode (foundations/24 section 6.2)
       return {
-        thetaDecay: 0.2,
+        thetaUrgency: 0.2,
         shadowActivation: 0.5,
         polarityAlignment: 0.3,
-        transformationReady: 3.0,
+        transformationReadiness: 3.0,
         driveCorrection: 0.3,
         narrativeCoherence: 0.5,
         sessionFit: 0.5,
@@ -272,21 +273,21 @@ function computeWeightBias(theme: SessionTheme, cci: CCIScore): PriorityWeightBi
 
     case 'post-transformation':
       return {
-        thetaDecay: 0.5,           // everything is fresh, low decay urgency
-        shadowActivation: 0.5,     // shadows cleared at threshold
-        polarityAlignment: 1.5,    // polarity deepens at new altitude
-        transformationReady: 0.2,  // far from next threshold
-        driveCorrection: 1.3,     // drives rebalance
-        narrativeCoherence: 1.8,   // new narrative arc opening
-        sessionFit: 1.5,           // gentle re-entry
+        thetaUrgency: 0.5,           // everything is fresh, low decay urgency
+        shadowActivation: 0.5,       // shadows cleared at threshold
+        polarityAlignment: 1.5,      // polarity deepens at new altitude
+        transformationReadiness: 0.2, // far from next threshold
+        driveCorrection: 1.3,        // drives rebalance
+        narrativeCoherence: 1.8,     // new narrative arc opening
+        sessionFit: 1.5,             // gentle re-entry
       };
 
     case 'polarity-deepening':
       return {
-        thetaDecay: 0.8,
+        thetaUrgency: 0.8,
         shadowActivation: 0.9,
-        polarityAlignment: 2.0,    // heavily boost polarity encounters
-        transformationReady: 0.8,
+        polarityAlignment: 2.0,      // heavily boost polarity encounters
+        transformationReadiness: 0.8,
         driveCorrection: 0.7,
         narrativeCoherence: 1.0,
         sessionFit: 0.9,
@@ -295,10 +296,10 @@ function computeWeightBias(theme: SessionTheme, cci: CCIScore): PriorityWeightBi
     case 'balanced-development':
     default:
       return {
-        thetaDecay: 1.0,
+        thetaUrgency: 1.0,
         shadowActivation: 1.0,
         polarityAlignment: 1.0,
-        transformationReady: 1.0,
+        transformationReadiness: 1.0,
         driveCorrection: 1.0,
         narrativeCoherence: 1.0,
         sessionFit: 1.0,
@@ -651,10 +652,10 @@ function generateFirstSessionStrategy(session: SessionContext): SessionStrategy 
       },
     },
     weightBias: {
-      thetaDecay: 0.5,
+      thetaUrgency: 0.5,
       shadowActivation: 0.3,
       polarityAlignment: 0.8,
-      transformationReady: 0.2,
+      transformationReadiness: 0.2,
       driveCorrection: 0.5,
       narrativeCoherence: 1.5,           // boost narrative for engagement
       sessionFit: 2.0,                   // heavily weight session comfort
@@ -700,10 +701,10 @@ function applySafetyOverride(strategy: SessionStrategy): SessionStrategy {
       },
     },
     weightBias: {
-      thetaDecay: 1.0,
+      thetaUrgency: 1.0,
       shadowActivation: 0.3,             // reduce shadow encounters
       polarityAlignment: 0.5,
-      transformationReady: 0.2,
+      transformationReadiness: 0.2,
       driveCorrection: 1.5,             // gentle rebalancing
       narrativeCoherence: 1.5,           // narrative comfort
       sessionFit: 2.0,                   // maximum session comfort
@@ -755,7 +756,7 @@ Like the CCI engine, auto-mode is implemented as pure functions. No side effects
 ### 8.4 Test criteria
 
 - Given a CCI with `recommendedTheme: 'shadow-integration'`, strategy produces `shadowActivation` weight bias > 1.5
-- Given a CCI with `transformationProximity: 'imminent'`, strategy produces `transformationReady` weight bias > 1.5
+- Given a CCI with `transformationProximity: 'imminent'`, strategy produces `transformationReadiness` weight bias > 1.5
 - Given a session with `inferredEnergy: 'low'` mid-session, adjustment reduces peak intensity
 - Given 3 consecutive avoided encounters, adjustment shifts to consolidation theme
 - Given a first session (no history), strategy uses safe defaults with high session-fit weight

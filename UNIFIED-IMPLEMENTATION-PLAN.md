@@ -61,6 +61,7 @@ src/
 |---|---|
 | `src/core/domain/PlayerProfile.ts` | Mark as deprecated; ensure `Significator.ts` (already exists) is the sole vessel. Remove HP, Mana, Damage, Equipment fields if present. |
 | `src/core/domain/Stats.ts` | Remove HP, Mana, Attack, Defence, Speed -- retain only developmental stats (if any remain relevant) or delete entirely |
+| `src/game/ui/StatBar.ts` | Likely references HP/Mana display concepts. Remove or rewrite for developmental-only display. |
 | All files importing deleted modules | Update imports; remove combat-related logic; ensure build compiles |
 
 ### 0.3 -- Verification
@@ -71,6 +72,7 @@ src/
 | Type check passes | `npx tsc --noEmit` | 0 errors |
 | Tests pass | `npm run test` | All existing non-combat tests pass |
 | No dangling imports | `grep -r "Battler\|ATBEngine\|DamageCalculator\|BattleScene\|Spell" src/` | 0 results |
+| No residual HP/Mana/damage UI | `grep -r "HP\|Mana\|damage" src/` | 0 results (or only false positives in unrelated contexts) |
 
 ### 0.4 -- What survives from the old plan
 
@@ -96,8 +98,11 @@ src/
 | 3 | Implement module registry | `src/core/assessments/registry.ts` | foundations/26 section 3.1 | CRUD operations; cooldown management; query by line/stage/modality |
 | 4 | Implement lifecycle orchestrator | `src/core/assessments/lifecycle.ts` | foundations/26 section 3 | 7-stage pipeline executes correctly; state mutations applied |
 | 5 | Implement scoring mode router | `src/core/assessments/scoring.ts` | foundations/26 section 2.1 | Capacity/shadow/calibration/practice modes produce correct output types |
+| 5b | Create SignificatorSnapshot bridge type | `src/core/domain/SignificatorSnapshot.ts` | foundations/24 section 2.1 | Read-only projection from the existing `Significator` interface; includes pre-computed `driveBalance`, `fixationRisk`, `compoundShadows`, `recentEncounterHistory`, and `transformationReadiness` sub-object as required by CCI (foundations/25) and auto-mode (foundations/27); factory function `toSnapshot(sig: Significator): SignificatorSnapshot` compiles and returns a valid snapshot |
 
 ### Phase 1b: Red stage modules (Week 2-4)
+
+> **Note (SessionContext refactoring):** The existing `SessionContext` in `src/core/engines/PriorityComputation.ts` has fields (`encountersSoFar`, `sessionDurationMs`, `targetSessionLength`, `recentLines`) that diverge from the spec in foundations/24 section 2.3 (which adds `estimatedTimeAvailable`, `inferredEnergy`, `patienceSignals`, etc.). As part of Phase 1a domain model work, `SessionContext` must be extended to include these fields so that the CCI engine (Phase 2) and auto-mode (Phase 3) can consume session context correctly. This can be done as a sub-task alongside task 1 (Define assessment types).
 
 | # | Task | File(s) | Spec source | Test criteria |
 |---|---|---|---|---|
@@ -157,7 +162,7 @@ src/
 | 30 | Implement dimension extractors | `src/core/engines/CCIEngine.ts` | foundations/25 section 2 | Each of 5 dimensions correctly extracted from test Significator |
 | 31 | Implement normalisation functions | `src/core/engines/CCIEngine.ts` | foundations/25 section 2 (per dimension) | All normalised values in [0.0, 1.0]; edge cases handled |
 | 32 | Implement weight adjustment | `src/core/engines/CCIEngine.ts` | foundations/25 section 3.2 | Weights shift correctly for shadow-heavy, near-transformation, drive-imbalanced states |
-| 33 | Implement composite computation | `src/core/engines/CCIEngine.ts` | foundations/25 section 3.3 | Composite correct for known inputs; weights sum to 1.0 |
+| 33 | Implement composite computation | `src/core/engines/CCIEngine.ts` | foundations/25 section 3.3 | Composite correct for known inputs; weights sum to 1.0 after the normalisation step in `adjustWeights` (the active-transformation override hardcodes weights that happen to sum to 1.0, but the general-case normalisation is what guarantees it) |
 | 34 | Implement session signal derivation | `src/core/engines/CCIEngine.ts` | foundations/25 section 4 | Theme selection, intensity budget, shadow pressure classification all correct |
 | 35 | Integration test: CCI + existing engines | `src/tests/engines/CCIEngine.test.ts` | foundations/25 section 5.3 | CCI correctly reads ThetaDecay, PolarityEngine, TransformationDetector outputs |
 
