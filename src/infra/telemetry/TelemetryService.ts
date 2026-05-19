@@ -3,11 +3,8 @@ import type { TelemetryEvent } from '../../core/telemetry/TelemetryEvent.js';
 import { TelemetryCollector } from '../../core/telemetry/TelemetryCollector.js';
 import type { TelemetryStore } from './TelemetryStore.js';
 
-let idCounter = 0;
-
 function generateId(): string {
-  idCounter++;
-  return `tel-${Date.now()}-${idCounter}`;
+  return `tel-${crypto.randomUUID()}`;
 }
 
 export class TelemetryService {

@@ -1,7 +1,14 @@
 /**
- * CryptoStore — simple XOR + base64 wrapper for at-rest obfuscation of
- * telemetry data. NOT production cryptography — just the interface and
- * a minimal implementation to demonstrate the pattern.
+ * CryptoStore - XOR + base64 obfuscation for at-rest data.
+ *
+ * **Important:** This is obfuscation only, not real encryption. XOR with a
+ * static key is trivially reversible by anyone with access to the stored
+ * data and the source code. It prevents casual inspection of localStorage
+ * values but does NOT provide confidentiality against a determined actor.
+ *
+ * The {@link ICryptoStore} interface is the upgrade path: swap this
+ * implementation for a Web Crypto AES-GCM adapter (with a user-derived key)
+ * when stronger privacy guarantees are required.
  */
 
 const DEFAULT_KEY = 'ccrpg-telemetry-key';

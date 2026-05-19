@@ -34,6 +34,7 @@ export const RegistryKeys = {
   WorldState: 'state:world',
   EventBus: 'svc:eventbus',
   Telemetry: 'svc:telemetry',
+  ScreenReader: 'svc:screen-reader',
 } as const;
 
 export const GameEvents = {
