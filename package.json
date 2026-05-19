@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc --noEmit && vite build",
+    "build": "npm run check:invariants && tsc --noEmit && vite build",
+    "check:invariants": "npx tsx scripts/check-invariants.ts",
     "preview": "vite preview --port 4173",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
@@ -24,6 +25,7 @@
   "devDependencies": {
     "@capacitor/cli": "^6.1.2",
     "jsdom": "^29.1.1",
+    "tsx": "^4.22.2",
     "typescript": "^5.4.5",
     "vite": "^5.4.10",
     "vitest": "^2.1.4"

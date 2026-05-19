@@ -1,8 +1,11 @@
 import { defineConfig } from 'vite';
 import { fileURLToPath, URL } from 'node:url';
 
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
   base: './',
+  define: {
+    __DEV__: JSON.stringify(mode !== 'production'),
+  },
   resolve: {
     alias: {
       '@core': fileURLToPath(new URL('./src/core', import.meta.url)),
@@ -32,4 +35,4 @@ export default defineConfig({
   preview: {
     port: 4173,
   },
-});
+}));
