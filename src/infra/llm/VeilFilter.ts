@@ -50,6 +50,7 @@ const VEIL_PATTERNS: readonly VeilPattern[] = [
 export function filterInput(content: string): string {
   let result = content;
   for (const pattern of VEIL_PATTERNS) {
+    pattern.regex.lastIndex = 0;
     result = result.replace(pattern.regex, '');
   }
   // Clean up double spaces and leading/trailing whitespace from removals

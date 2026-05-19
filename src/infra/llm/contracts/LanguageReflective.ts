@@ -82,14 +82,26 @@ export function buildPrompt(
 /**
  * Score a player's response against the rubric (local heuristic, no LLM call).
  * Returns a score 0-1 and signal strings.
+ * Stage-aware calibration: early stages have lower length expectations and reward
+ * concrete language; middle stages expect structured reasoning; later stages expect
+ * depth and reward nuance/paradox.
  */
 export function scoreResponse(
   response: string,
-  _stage: Stage,
+  stage: Stage,
 ): { readonly score: number; readonly signals: readonly string[] } {
   const signals: string[] = [];
   const words = response.trim().split(/\s+/).filter((w) => w.length > 0);
   const wordCount = words.length;
+
+  // Stage-aware thresholds
+  const earlyStages: readonly Stage[] = ['Infrared', 'Magenta', 'Red'];
+  const middleStages: readonly Stage[] = ['Amber', 'Orange'];
+  // Later stages: Green, Turquoise, White
+
+  const isEarly = earlyStages.includes(stage);
+  const isMiddle = middleStages.includes(stage);
+  // isLater is the default (Green, Turquoise, White)
 
   // Self-referential language detection
   const selfRefPattern = /\b(I|my|me|myself|I'm|I've|I'd|I'll)\b/gi;
@@ -100,16 +112,45 @@ export function scoreResponse(
   const concreteWords = words.filter((w) => w.length <= 6);
   const concreteRatio = wordCount > 0 ? concreteWords.length / wordCount : 0;
 
-  // Length adequacy (too short = low, sweet spot = 15-80 words)
+  // Nuance/paradox indicators (relevant for later stages)
+  const nuancePattern = /\b(both|yet|paradox|complex|nuance|perhaps|tension|simultaneously|ambig)/gi;
+  const nuanceMatches = response.match(nuancePattern) ?? [];
+
+  // Length adequacy - calibrated by stage
   let lengthScore = 0;
-  if (wordCount >= 15 && wordCount <= 80) {
-    lengthScore = 1.0;
-  } else if (wordCount >= 5 && wordCount < 15) {
-    lengthScore = wordCount / 15;
-  } else if (wordCount > 80) {
-    lengthScore = 0.8;
+  if (isEarly) {
+    // Early stages: 5+ words is acceptable, sweet spot 5-60
+    if (wordCount >= 5 && wordCount <= 60) {
+      lengthScore = 1.0;
+    } else if (wordCount >= 3 && wordCount < 5) {
+      lengthScore = wordCount / 5;
+    } else if (wordCount > 60) {
+      lengthScore = 0.85;
+    } else {
+      lengthScore = wordCount / 5 * 0.3;
+    }
+  } else if (isMiddle) {
+    // Middle stages: 15+ words expected, sweet spot 15-80
+    if (wordCount >= 15 && wordCount <= 80) {
+      lengthScore = 1.0;
+    } else if (wordCount >= 5 && wordCount < 15) {
+      lengthScore = wordCount / 15;
+    } else if (wordCount > 80) {
+      lengthScore = 0.8;
+    } else {
+      lengthScore = wordCount / 5 * 0.3;
+    }
   } else {
-    lengthScore = wordCount / 5 * 0.3;
+    // Later stages: 20+ words expected, sweet spot 20-100
+    if (wordCount >= 20 && wordCount <= 100) {
+      lengthScore = 1.0;
+    } else if (wordCount >= 8 && wordCount < 20) {
+      lengthScore = wordCount / 20;
+    } else if (wordCount > 100) {
+      lengthScore = 0.8;
+    } else {
+      lengthScore = wordCount / 8 * 0.2;
+    }
   }
 
   // Depth: longer, more developed responses score higher
@@ -123,8 +164,18 @@ export function scoreResponse(
   // Self-reference score
   const selfRefScore = Math.min(1.0, selfRefRatio * 5);
 
-  // Stage indicators (any evidence of value-system language)
-  const stageIndicatorScore = concreteRatio > 0.3 ? 0.5 : 0.3;
+  // Stage indicators - calibrated by stage tier
+  let stageIndicatorScore: number;
+  if (isEarly) {
+    // Early stages reward concrete language
+    stageIndicatorScore = concreteRatio > 0.4 ? 0.7 : concreteRatio > 0.3 ? 0.5 : 0.3;
+  } else if (isMiddle) {
+    // Middle stages reward structured reasoning (connectives as proxy)
+    stageIndicatorScore = connectives.length >= 2 ? 0.7 : connectives.length >= 1 ? 0.5 : 0.3;
+  } else {
+    // Later stages reward nuance/paradox
+    stageIndicatorScore = nuanceMatches.length >= 2 ? 0.8 : nuanceMatches.length >= 1 ? 0.6 : 0.3;
+  }
 
   // Drive signals
   const driveScore = selfRefMatches.length > 0 ? 0.4 : 0.1;
@@ -154,6 +205,9 @@ export function scoreResponse(
   }
   if (depthScore > 0.7) {
     signals.push('depth indicator');
+  }
+  if (nuanceMatches.length > 0 && !isEarly) {
+    signals.push('nuance/paradox language detected');
   }
 
   return { score: Math.round(finalScore * 1000) / 1000, signals };
