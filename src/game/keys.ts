@@ -27,6 +27,7 @@ export const TextureKeys = {
 export const RegistryKeys = {
   SaveRepo: 'svc:save',
   Native: 'svc:native',
+  Accessibility: 'svc:accessibility',
   Save: 'state:save',
   Profile: 'state:profile',
   Significator: 'state:significator',

@@ -6,6 +6,10 @@ import { createKeyValueStore } from '@infra/persistence/createKeyValueStore.js';
 import { NativeBridge } from '@infra/native/NativeBridge.js';
 import { bootRegistries } from '@core/registries/boot.js';
 import { initI18n } from '@infra/i18n/I18n.js';
+import { AccessibilityStore } from '@infra/persistence/AccessibilityStore.js';
+import { AccessibilityManager } from './accessibility/AccessibilityManager.js';
+import { createDefaultSettings } from '@core/accessibility/AccessibilitySettings.js';
+import { createScreenReaderOverlay } from './accessibility/ScreenReaderOverlay.js';
 
 /**
  * Boot the Phaser game and attach it to the given parent. Wires up
@@ -25,8 +29,19 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
   const saveRepo = new SaveRepository(createKeyValueStore());
   const native = new NativeBridge();
 
+  // Accessibility system
+  const a11yStore = new AccessibilityStore(createKeyValueStore());
+  const savedSettings = await a11yStore.load();
+  const a11yManager = new AccessibilityManager(savedSettings ?? createDefaultSettings());
+
   game.registry.set(RegistryKeys.SaveRepo, saveRepo);
   game.registry.set(RegistryKeys.Native, native);
+  game.registry.set(RegistryKeys.Accessibility, a11yManager);
+
+  // Screen reader overlay
+  if (a11yManager.isScreenReaderEnabled() && typeof document !== 'undefined') {
+    createScreenReaderOverlay();
+  }
 
   // ── Android hardware back button ─────────────────────────────────
   await native.registerBackHandler(() => {
