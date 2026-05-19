@@ -5,6 +5,9 @@
 import Phaser from 'phaser';
 import { SceneKeys } from '../keys.js';
 import type { EncounterSpec } from '@core/domain/Encounter.js';
+import type { ConsequenceRecord } from '@core/domain/ConsequenceRecord.js';
+import { processOutcome, type PlayerResponse } from '@core/engines/ConsequenceEngine.js';
+import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
 import { getFallback } from '@infra/llm/FallbackProvider.js';
 
 export class ReflectionScene extends Phaser.Scene {
@@ -12,6 +15,7 @@ export class ReflectionScene extends Phaser.Scene {
   private promptIndex = 0;
   private prompts: string[] = [];
   private followUps: string[] = [];
+  private engagementCount = 0;
 
   constructor() {
     super({ key: SceneKeys.Reflection });
@@ -19,6 +23,7 @@ export class ReflectionScene extends Phaser.Scene {
 
   create(data: { encounter: EncounterSpec }): void {
     this.encounter = data.encounter;
+    this.engagementCount = 0;
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x0a0a1a);
 
@@ -72,6 +77,7 @@ export class ReflectionScene extends Phaser.Scene {
 
   private onResponse(_response: string): void {
     this.promptIndex++;
+    this.engagementCount++;
 
     if (this.promptIndex <= this.followUps.length) {
       // Show follow-up
@@ -93,8 +99,48 @@ export class ReflectionScene extends Phaser.Scene {
       align: 'center',
     }).setOrigin(0.5);
 
+    // Build a PlayerResponse based on engagement depth
+    const maxFollowUps = this.followUps.length + 1; // +1 for the initial prompt
+    const engagementRatio = this.engagementCount / Math.max(1, maxFollowUps);
+    // Higher engagement signals integrative orientation
+    const orientation = engagementRatio >= 0.8 ? 'IntegratingLower' as const
+      : engagementRatio >= 0.5 ? 'Homeostatic' as const
+      : 'ReachingHigher' as const;
+
+    const response: PlayerResponse = {
+      encounterId: this.encounter.id,
+      energeticDirection: 'Sovereign',
+      driveDirectionality: {
+        Agency: 'HealthyBalanced',
+        Communion: 'HealthyBalanced',
+        Eros: 'HealthyBalanced',
+        Agape: 'HealthyBalanced',
+      },
+      stageOrientation: orientation,
+      sourceOfNourishment: 'HigherRealm',
+      shadowSurfaced: null,
+      shadowResolvedId: null,
+      narrativeSummary: `Reflected on ${this.encounter.narrative.theme} (engagement: ${this.engagementCount}/${maxFollowUps})`,
+    };
+
+    const scheduled: ScheduledEncounter = {
+      id: this.encounter.id,
+      moduleRef: this.encounter.id,
+      modality: this.encounter.modality ?? 'LanguageReflective',
+      targetLines: [...this.encounter.lines],
+      stage: this.encounter.stage,
+      holonSource: this.encounter.id,
+      shadowTarget: null,
+      polarityMode: 'Exploring',
+      difficulty: 0.5,
+      sessionPosition: 'cooldown',
+      priority: 1,
+      driveTarget: null,
+    };
+    const record: ConsequenceRecord = processOutcome(scheduled, response, Date.now());
+
     this.time.delayedCall(2000, () => {
-      this.events.emit('encounter_done', { record: undefined });
+      this.events.emit('encounter_done', { record });
     });
   }
 }
