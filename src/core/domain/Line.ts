@@ -2,7 +2,7 @@
  * Line — the eight lines of intelligence.
  * Canonical string literal union per docs/02-glossary.md.
  */
-import type { Quadrant } from './PlayerProfile.js';
+import type { Quadrant } from './SharedTypes.js';
 
 export type Line =
   | 'Cognitive'

@@ -17,7 +17,7 @@ export const interpersonalEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Pack Negotiator',
-      stats: { maxHp: 75, maxMana: 20, agility: 12, attack: 10, defense: 7, precision: 12, magic: 8, luck: 8 },
+      difficulty: 2,
     },
   },
   {
@@ -36,7 +36,7 @@ export const interpersonalEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Faction Herald',
-      stats: { maxHp: 70, maxMana: 15, agility: 11, attack: 9, defense: 8, precision: 13, magic: 7, luck: 9 },
+      difficulty: 2,
     },
   },
   {
@@ -55,7 +55,7 @@ export const interpersonalEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Oath-Twister',
-      stats: { maxHp: 65, maxMana: 25, agility: 13, attack: 8, defense: 5, precision: 14, magic: 10, luck: 10 },
+      difficulty: 2,
     },
   },
   {
@@ -74,7 +74,7 @@ export const interpersonalEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Bond-Breaker',
-      stats: { maxHp: 90, maxMana: 10, agility: 10, attack: 14, defense: 9, precision: 9, magic: 5, luck: 6 },
+      difficulty: 2,
     },
   },
 ];

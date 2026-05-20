@@ -3,7 +3,6 @@ import { BootScene } from './scenes/BootScene.js';
 import { PreloaderScene } from './scenes/PreloaderScene.js';
 import { MainMenuScene } from './scenes/MainMenuScene.js';
 import { OnboardingScene } from './scenes/OnboardingScene.js';
-import { BattleScene } from './scenes/BattleScene.js';
 import { UIOverlayScene } from './scenes/UIOverlayScene.js';
 import { RadialChartScene } from './scenes/RadialChartScene.js';
 import { CodexScene } from './scenes/CodexScene.js';
@@ -46,7 +45,6 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
       PreloaderScene,
       MainMenuScene,
       OnboardingScene,
-      BattleScene,
       UIOverlayScene,
       RadialChartScene,
       CodexScene,

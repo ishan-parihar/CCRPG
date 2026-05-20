@@ -17,7 +17,7 @@ export const willpowerEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Distraction Fiend',
-      stats: { maxHp: 85, maxMana: 15, agility: 13, attack: 10, defense: 7, precision: 14, magic: 8, luck: 6 },
+      difficulty: 2,
     },
   },
   {
@@ -36,7 +36,7 @@ export const willpowerEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Pressure Lord',
-      stats: { maxHp: 100, maxMana: 10, agility: 9, attack: 16, defense: 10, precision: 8, magic: 4, luck: 5 },
+      difficulty: 2,
     },
   },
   {
@@ -55,7 +55,7 @@ export const willpowerEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Exhaustion Demon',
-      stats: { maxHp: 115, maxMana: 5, agility: 7, attack: 14, defense: 9, precision: 8, magic: 3, luck: 4 },
+      difficulty: 3,
     },
   },
   {
@@ -74,7 +74,7 @@ export const willpowerEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Cage Master',
-      stats: { maxHp: 95, maxMana: 15, agility: 10, attack: 13, defense: 11, precision: 9, magic: 6, luck: 5 },
+      difficulty: 2,
     },
   },
 ];

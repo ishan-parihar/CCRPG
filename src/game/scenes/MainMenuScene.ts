@@ -62,12 +62,12 @@ export class MainMenuScene extends Phaser.Scene {
     }
 
     makeButton(this, width / 2, btnY, {
-      label: '⚔️  Enter Battle',
+      label: '🌍  Explore World',
       width: 380,
       height: 72,
       fill: 0x1a3a2a,
       hoverFill: 0x2a5a3a,
-      onClick: () => this.scene.start(SceneKeys.Battle),
+      onClick: () => this.scene.start(SceneKeys.World),
     });
 
     btnY += 90;

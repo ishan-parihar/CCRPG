@@ -223,16 +223,7 @@ export class WorldScene extends Phaser.Scene {
           },
           enemy: {
             name: holon.name,
-            stats: {
-              maxHp: 100,
-              maxMana: 40,
-              agility: 50,
-              attack: 15,
-              defense: 10,
-              precision: 80,
-              magic: 12,
-              luck: 5,
-            },
+            difficulty: 2,
           },
         };
       }

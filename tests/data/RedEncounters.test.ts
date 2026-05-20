@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { redEncounterData } from '../../src/core/data/encounters/red/index.js';
 import { ALL_LINES } from '../../src/core/domain/Line.js';
 import { ALL_MODALITIES } from '../../src/core/domain/enums.js';
-import type { TaskSlug } from '../../src/core/domain/PlayerProfile.js';
+import type { TaskSlug } from '../../src/core/domain/SharedTypes.js';
 import type { Line } from '../../src/core/domain/Line.js';
 import type { Modality } from '../../src/core/domain/enums.js';
 
@@ -31,7 +31,7 @@ describe('Red Encounter Data', () => {
       expect(enc.narrative.allyBeats.length).toBeGreaterThanOrEqual(1);
       expect(enc.narrative.codexEntry).toBeTruthy();
       expect(enc.enemy.name).toBeTruthy();
-      expect(enc.enemy.stats.maxHp).toBeGreaterThan(0);
+      expect(enc.enemy.difficulty).toBeGreaterThan(0);
     }
   });
 

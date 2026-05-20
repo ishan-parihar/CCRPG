@@ -4,7 +4,7 @@
 import type { Drive } from './Drive.js';
 import type { Modality } from './enums.js';
 import type { Line } from './Line.js';
-import type { Quadrant, TaskSlug } from './PlayerProfile.js';
+import type { Quadrant, TaskSlug } from './SharedTypes.js';
 import type { Ray } from './Ray.js';
 import type { Stage } from './Stage.js';
 
@@ -23,16 +23,7 @@ export interface EncounterNarrative {
 
 export interface EncounterEnemy {
   readonly name: string;
-  readonly stats: {
-    readonly maxHp: number;
-    readonly maxMana: number;
-    readonly agility: number;
-    readonly attack: number;
-    readonly defense: number;
-    readonly precision: number;
-    readonly magic: number;
-    readonly luck: number;
-  };
+  readonly difficulty: number;
 }
 
 export interface EncounterSpec {

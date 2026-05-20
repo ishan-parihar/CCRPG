@@ -22,12 +22,12 @@ import type {
 } from '../events.js';
 
 /**
- * UIOverlayScene — runs in parallel above BattleScene. Owns all
+ * UIOverlayScene — runs in parallel above EncounterScene. Owns all
  * cognitive-task UI (N-back rune sequence, Stroop word/ink panel).
  *
  * Per the blueprint, communication is via decoupled event emitters:
- * BattleScene tells us "open this task"; we tell BattleScene "here is
- * the result". This scene knows nothing about combat math — it just
+ * EncounterScene tells us "open this task"; we tell EncounterScene "here is
+ * the result". This scene knows nothing about encounter math — it just
  * presents stimuli, captures input, scores trials, and reports back.
  */
 export class UIOverlayScene extends Phaser.Scene {

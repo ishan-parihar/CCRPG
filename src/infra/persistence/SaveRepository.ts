@@ -1,8 +1,6 @@
 import {
   DEFAULT_COGNITIVE_PROFILE,
-  DEFAULT_STATS,
   type CognitiveProfile,
-  type CombatStats,
 } from '@core/domain/Stats.js';
 import type { PlayerProfile } from '@core/domain/PlayerProfile.js';
 import type { KeyValueStore } from './KeyValueStore.js';
@@ -15,14 +13,13 @@ const CURRENT_VERSION = 1;
 export interface SaveData {
   readonly version: number;
   readonly playerName: string;
-  readonly stats: CombatStats;
   readonly cognitive: CognitiveProfile;
-  /** XP accumulated across battles. */
+  /** XP accumulated across sessions. */
   readonly xp: number;
   /** Level derived from XP curve. */
   readonly level: number;
-  /** Total battles completed. */
-  readonly battlesWon: number;
+  /** Total encounters completed. */
+  readonly encountersCompleted: number;
   /** Last save timestamp (ms since epoch). */
   readonly updatedAt: number;
 }
@@ -30,11 +27,10 @@ export interface SaveData {
 export const DEFAULT_SAVE: SaveData = {
   version: CURRENT_VERSION,
   playerName: 'Hero',
-  stats: DEFAULT_STATS,
   cognitive: DEFAULT_COGNITIVE_PROFILE,
   xp: 0,
   level: 1,
-  battlesWon: 0,
+  encountersCompleted: 0,
   updatedAt: 0,
 };
 
@@ -96,7 +92,6 @@ function migrate(input: Partial<SaveData>): SaveData {
   return {
     ...DEFAULT_SAVE,
     ...input,
-    stats: { ...DEFAULT_SAVE.stats, ...(input.stats ?? {}) },
     cognitive: { ...DEFAULT_SAVE.cognitive, ...(input.cognitive ?? {}) },
     version: CURRENT_VERSION,
   };

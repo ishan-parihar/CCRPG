@@ -94,8 +94,8 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
 
   // ── Android hardware back button ─────────────────────────────────
   await native.registerBackHandler(() => {
-    const battle = game.scene.getScene(SceneKeys.Battle);
-    if (battle && game.scene.isActive(SceneKeys.Battle)) {
+    const encounter = game.scene.getScene(SceneKeys.Encounter);
+    if (encounter && game.scene.isActive(SceneKeys.Encounter)) {
       game.scene.stop(SceneKeys.UIOverlay);
       game.scene.start(SceneKeys.MainMenu);
       return true;

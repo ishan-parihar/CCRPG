@@ -15,7 +15,7 @@ export function routeModality(modality: Modality): string {
     case 'Strategic':
     case 'Embodied':
     case 'ImmersiveRPG':
-      return SceneKeys.Battle;
+      return SceneKeys.Encounter;
     case 'LanguageReflective':
       return SceneKeys.Reflection;
     case 'ScenarioChoice':

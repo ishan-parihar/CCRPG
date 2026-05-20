@@ -1,27 +1,15 @@
 /**
- * PlayerProfile — the player's developmental psychograph and game state.
+ * @deprecated Use Significator.ts as the sole state vessel.
+ * PlayerProfile is kept for backward compatibility during migration.
  */
 import type { Drive } from './Drive.js';
 import type { Line } from './Line.js';
 import type { Ray } from './Ray.js';
 import type { Stage } from './Stage.js';
 import type { State } from './State.js';
+import type { Quadrant, TaskSlug } from './SharedTypes.js';
 
-export type Quadrant = 'UL' | 'UR' | 'LL' | 'LR';
-
-export type TaskSlug =
-  | 'n_back'
-  | 'stroop'
-  | 'simon'
-  | 'go_no_go'
-  | 'affect_recognition'
-  | 'dilemma_choice'
-  | 'reaction_time'
-  | 'held_input'
-  | 'breath_rhythm'
-  | 'self_report'
-  | 'value_coherence'
-  | 'pattern_prediction';
+export type { Quadrant, TaskSlug } from './SharedTypes.js';
 
 export interface StaircaseState {
   readonly level: number;

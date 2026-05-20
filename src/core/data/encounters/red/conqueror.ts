@@ -3,7 +3,7 @@
  * Each phase targets one quadrant (UL, UR, LL, LR) with specific
  * cognitive task bindings and HP pools.
  */
-import type { Quadrant, TaskSlug } from '../../../domain/PlayerProfile.js';
+import type { Quadrant, TaskSlug } from '../../../domain/SharedTypes.js';
 
 export interface TaskBind {
   readonly taskSlug: TaskSlug;
@@ -13,7 +13,7 @@ export interface TaskBind {
 export interface ConquerorPhase {
   readonly quadrant: Quadrant;
   readonly name: string;
-  readonly hpPool: number;
+  readonly difficulty: number;
   readonly taskBinds: readonly TaskBind[];
   readonly description: string;
 }
@@ -22,7 +22,7 @@ export const CONQUEROR_PHASES: readonly ConquerorPhase[] = [
   {
     quadrant: 'UL',
     name: 'Empath Read + Witness Pause',
-    hpPool: 120,
+    difficulty: 1,
     taskBinds: [
       { taskSlug: 'affect_recognition', description: 'Read the Conqueror\'s emotional feints' },
       { taskSlug: 'self_report', description: 'Sustain attention through the chaos' },
@@ -32,7 +32,7 @@ export const CONQUEROR_PHASES: readonly ConquerorPhase[] = [
   {
     quadrant: 'UR',
     name: 'Echo Cast + Reflex Dodge',
-    hpPool: 140,
+    difficulty: 2,
     taskBinds: [
       { taskSlug: 'n_back', description: 'Track and recall the Conqueror\'s attack patterns' },
       { taskSlug: 'reaction_time', description: 'Dodge the Conqueror\'s power strikes' },
@@ -42,7 +42,7 @@ export const CONQUEROR_PHASES: readonly ConquerorPhase[] = [
   {
     quadrant: 'LL',
     name: 'Attune — Companion Coordination',
-    hpPool: 100,
+    difficulty: 2,
     taskBinds: [
       { taskSlug: 'pattern_prediction', description: 'Coordinate with your companion\'s rhythm' },
       { taskSlug: 'dilemma_choice', description: 'Choose when to shield and when to strike together' },
@@ -52,7 +52,7 @@ export const CONQUEROR_PHASES: readonly ConquerorPhase[] = [
   {
     quadrant: 'LR',
     name: 'Resource Siege — Strategic Terrain',
-    hpPool: 160,
+    difficulty: 3,
     taskBinds: [
       { taskSlug: 'go_no_go', description: 'Manage resource flow under pressure' },
       { taskSlug: 'held_input', description: 'Hold positions while the terrain shifts' },

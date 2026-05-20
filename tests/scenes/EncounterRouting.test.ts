@@ -5,20 +5,20 @@ import type { Modality } from '../../src/core/domain/enums.js';
 import { ALL_MODALITIES } from '../../src/core/domain/enums.js';
 
 describe('routeModality', () => {
-  it('routes Deterministic to BattleScene', () => {
-    expect(routeModality('Deterministic')).toBe(SceneKeys.Battle);
+  it('routes Deterministic to EncounterScene', () => {
+    expect(routeModality('Deterministic')).toBe(SceneKeys.Encounter);
   });
 
-  it('routes Strategic to BattleScene', () => {
-    expect(routeModality('Strategic')).toBe(SceneKeys.Battle);
+  it('routes Strategic to EncounterScene', () => {
+    expect(routeModality('Strategic')).toBe(SceneKeys.Encounter);
   });
 
-  it('routes Embodied to BattleScene', () => {
-    expect(routeModality('Embodied')).toBe(SceneKeys.Battle);
+  it('routes Embodied to EncounterScene', () => {
+    expect(routeModality('Embodied')).toBe(SceneKeys.Encounter);
   });
 
-  it('routes ImmersiveRPG to BattleScene', () => {
-    expect(routeModality('ImmersiveRPG')).toBe(SceneKeys.Battle);
+  it('routes ImmersiveRPG to EncounterScene', () => {
+    expect(routeModality('ImmersiveRPG')).toBe(SceneKeys.Encounter);
   });
 
   it('routes LanguageReflective to ReflectionScene', () => {
@@ -41,10 +41,10 @@ describe('routeModality', () => {
     }
   });
 
-  it('routes all combat-like modalities to Battle', () => {
-    const combatModalities: Modality[] = ['Deterministic', 'Strategic', 'Embodied', 'ImmersiveRPG'];
-    for (const m of combatModalities) {
-      expect(routeModality(m)).toBe(SceneKeys.Battle);
+  it('routes all assessment modalities to Encounter', () => {
+    const assessmentModalities: Modality[] = ['Deterministic', 'Strategic', 'Embodied', 'ImmersiveRPG'];
+    for (const m of assessmentModalities) {
+      expect(routeModality(m)).toBe(SceneKeys.Encounter);
     }
   });
 });

@@ -5,7 +5,6 @@ export const SceneKeys = {
   Preloader: 'PreloaderScene',
   MainMenu: 'MainMenuScene',
   Onboarding: 'OnboardingScene',
-  Battle: 'BattleScene',
   UIOverlay: 'UIOverlayScene',
   RadialChart: 'RadialChartScene',
   Codex: 'CodexScene',

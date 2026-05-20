@@ -17,7 +17,7 @@ export const cognitiveEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'War-Mind Sentinel',
-      stats: { maxHp: 85, maxMana: 15, agility: 10, attack: 14, defense: 8, precision: 12, magic: 4, luck: 5 },
+      difficulty: 2,
     },
   },
   {
@@ -36,7 +36,7 @@ export const cognitiveEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Feral Tactician',
-      stats: { maxHp: 75, maxMana: 20, agility: 14, attack: 10, defense: 6, precision: 14, magic: 6, luck: 8 },
+      difficulty: 2,
     },
   },
   {
@@ -55,7 +55,7 @@ export const cognitiveEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Mind-Breaker',
-      stats: { maxHp: 70, maxMana: 30, agility: 12, attack: 8, defense: 5, precision: 10, magic: 14, luck: 7 },
+      difficulty: 2,
     },
   },
   {
@@ -74,7 +74,7 @@ export const cognitiveEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Cry-Caller',
-      stats: { maxHp: 65, maxMana: 25, agility: 11, attack: 12, defense: 6, precision: 13, magic: 8, luck: 6 },
+      difficulty: 1,
     },
   },
 ];

@@ -17,7 +17,7 @@ export const spiritualEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Earth-Caller',
-      stats: { maxHp: 70, maxMana: 30, agility: 9, attack: 10, defense: 7, precision: 8, magic: 14, luck: 8 },
+      difficulty: 2,
     },
   },
   {
@@ -36,7 +36,7 @@ export const spiritualEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Ritual Guardian',
-      stats: { maxHp: 95, maxMana: 25, agility: 8, attack: 12, defense: 10, precision: 9, magic: 12, luck: 6 },
+      difficulty: 2,
     },
   },
   {
@@ -55,7 +55,7 @@ export const spiritualEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Source Phantom',
-      stats: { maxHp: 80, maxMana: 35, agility: 10, attack: 9, defense: 6, precision: 10, magic: 16, luck: 9 },
+      difficulty: 2,
     },
   },
 ];

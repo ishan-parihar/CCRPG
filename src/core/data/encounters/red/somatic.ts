@@ -17,7 +17,7 @@ export const somaticEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Reflex Golem',
-      stats: { maxHp: 100, maxMana: 5, agility: 16, attack: 14, defense: 8, precision: 12, magic: 2, luck: 5 },
+      difficulty: 2,
     },
   },
   {
@@ -36,7 +36,7 @@ export const somaticEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Iron Stance',
-      stats: { maxHp: 120, maxMana: 5, agility: 6, attack: 12, defense: 16, precision: 8, magic: 2, luck: 4 },
+      difficulty: 3,
     },
   },
   {
@@ -55,7 +55,7 @@ export const somaticEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Endurance Warden',
-      stats: { maxHp: 130, maxMana: 10, agility: 8, attack: 10, defense: 12, precision: 9, magic: 4, luck: 5 },
+      difficulty: 3,
     },
   },
   {
@@ -74,7 +74,7 @@ export const somaticEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Pit Champion',
-      stats: { maxHp: 110, maxMana: 5, agility: 14, attack: 16, defense: 7, precision: 10, magic: 2, luck: 6 },
+      difficulty: 3,
     },
   },
 ];

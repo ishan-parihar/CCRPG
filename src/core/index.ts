@@ -6,8 +6,7 @@
 
 // --- Domain ---
 export * from './domain/Stats.js';
-export * from './domain/Battler.js';
-export * from './domain/Spell.js';
+export * from './domain/SharedTypes.js';
 export * from './domain/Stage.js';
 export * from './domain/Line.js';
 export * from './domain/Ray.js';
@@ -17,10 +16,8 @@ export * from './domain/PlayerProfile.js';
 export * from './domain/Encounter.js';
 
 // --- Use-cases ---
-export * from './usecases/ATBEngine.js';
 export * from './usecases/NBackTask.js';
 export * from './usecases/StroopTask.js';
-export * from './usecases/DamageCalculator.js';
 export * from './usecases/RandomSource.js';
 export * from './usecases/RegistryEngine.js';
 export * from './usecases/Staircase.js';

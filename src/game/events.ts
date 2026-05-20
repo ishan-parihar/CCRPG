@@ -1,9 +1,9 @@
 import type { NBackResult } from '@core/usecases/NBackTask.js';
 import type { StroopOutcome } from '@core/usecases/StroopTask.js';
-import type { TaskSlug } from '@core/domain/PlayerProfile.js';
+import type { TaskSlug } from '@core/domain/SharedTypes.js';
 
 /**
- * Strongly-typed event payloads shared between BattleScene and
+ * Strongly-typed event payloads shared between EncounterScene and
  * UIOverlayScene. Phaser's emitter is untyped, so we centralize the
  * shapes here to keep both ends honest.
  */

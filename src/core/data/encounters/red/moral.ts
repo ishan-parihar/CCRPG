@@ -17,7 +17,7 @@ export const moralEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Famine Wraith',
-      stats: { maxHp: 75, maxMana: 20, agility: 12, attack: 10, defense: 6, precision: 10, magic: 8, luck: 8 },
+      difficulty: 2,
     },
   },
   {
@@ -36,7 +36,7 @@ export const moralEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Oath-Breaker',
-      stats: { maxHp: 80, maxMana: 15, agility: 10, attack: 12, defense: 8, precision: 9, magic: 6, luck: 7 },
+      difficulty: 2,
     },
   },
   {
@@ -55,7 +55,7 @@ export const moralEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Fallen Rival',
-      stats: { maxHp: 70, maxMana: 10, agility: 8, attack: 14, defense: 10, precision: 8, magic: 4, luck: 6 },
+      difficulty: 2,
     },
   },
   {
@@ -74,7 +74,7 @@ export const moralEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'War-Judge',
-      stats: { maxHp: 95, maxMana: 20, agility: 9, attack: 13, defense: 11, precision: 10, magic: 7, luck: 5 },
+      difficulty: 2,
     },
   },
 ];

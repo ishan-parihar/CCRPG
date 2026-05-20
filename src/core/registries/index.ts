@@ -4,7 +4,7 @@
 import type { Drive } from '../domain/Drive.js';
 import type { EncounterSpec } from '../domain/Encounter.js';
 import type { Line } from '../domain/Line.js';
-import type { Quadrant, TaskSlug } from '../domain/PlayerProfile.js';
+import type { Quadrant, TaskSlug } from '../domain/SharedTypes.js';
 import type { Ray } from '../domain/Ray.js';
 import type { Stage } from '../domain/Stage.js';
 import { createRegistry } from '../usecases/RegistryEngine.js';

@@ -96,16 +96,6 @@ export class PreloaderScene extends Phaser.Scene {
     return {
       version: 1,
       playerName: 'Hero',
-      stats: {
-        maxHp: 120,
-        maxMana: 60,
-        agility: 60,
-        attack: 18,
-        defense: 12,
-        precision: 75,
-        magic: 22,
-        luck: 10,
-      },
       cognitive: {
         nBackAccuracy: 0,
         nBackLevel: 1,
@@ -115,7 +105,7 @@ export class PreloaderScene extends Phaser.Scene {
       },
       xp: 0,
       level: 1,
-      battlesWon: 0,
+      encountersCompleted: 0,
       updatedAt: 0,
     };
   }

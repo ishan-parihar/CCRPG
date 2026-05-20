@@ -1,6 +1,6 @@
 import Phaser from 'phaser';
 import { GameEvents } from '../keys.js';
-import type { TaskSlug } from '@core/domain/PlayerProfile.js';
+import type { TaskSlug } from '@core/domain/SharedTypes.js';
 import type {
   CognitiveTaskRequestPayload,
   CognitiveTaskResolvedPayload,
@@ -9,7 +9,7 @@ import type {
 /**
  * CognitiveOverlay — generic overlay that dispatches any cognitive task.
  *
- * BattleScene emits RequestCognitiveTask with a taskSlug + level.
+ * EncounterScene emits RequestCognitiveTask with a taskSlug + level.
  * This overlay presents a minimal timed interaction, scores it,
  * and emits ResolvedCognitiveTask back.
  *

@@ -22,7 +22,7 @@ const bosses: EncounterSpec[] = [
       { taskSlug: 'reaction_time', line: 'Somatic' },
     ],
     narrative: { theme: 'Domination', allyBeats: ['He rules by force alone.', 'Can you resist his command?'], codexEntry: 'Power without restraint devours itself.' },
-    enemy: { name: 'Iron Warlord', stats: { maxHp: 200, maxMana: 20, agility: 10, attack: 22, defense: 14, precision: 10, magic: 6, luck: 5 } },
+    enemy: { name: 'Iron Warlord', difficulty: 3 },
   },
   {
     id: 'red-mini-02-witch',
@@ -37,7 +37,7 @@ const bosses: EncounterSpec[] = [
       { taskSlug: 'stroop', line: 'Intrapersonal' },
     ],
     narrative: { theme: 'Seduction of power', allyBeats: ['Her gaze pulls at your desires.', 'Name what you feel — or be consumed.'], codexEntry: 'Desire unnamed becomes a chain.' },
-    enemy: { name: 'Hex Witch', stats: { maxHp: 150, maxMana: 50, agility: 12, attack: 8, defense: 8, precision: 14, magic: 20, luck: 10 } },
+    enemy: { name: 'Hex Witch', difficulty: 3 },
   },
   {
     id: 'red-mini-03-champion',
@@ -52,7 +52,7 @@ const bosses: EncounterSpec[] = [
       { taskSlug: 'n_back', line: 'Cognitive' },
     ],
     narrative: { theme: 'Might makes right', allyBeats: ['He offers a deal — betray your ally for power.', 'What is your word worth?'], codexEntry: 'Honour is the first casualty of ambition.' },
-    enemy: { name: 'Arena Champion', stats: { maxHp: 180, maxMana: 30, agility: 14, attack: 18, defense: 12, precision: 12, magic: 10, luck: 7 } },
+    enemy: { name: 'Arena Champion', difficulty: 3 },
   },
   // --- 1 Main boss (covers all 4 quadrants) ---
   {
@@ -80,7 +80,7 @@ const bosses: EncounterSpec[] = [
       ],
       codexEntry: 'The Red Tyrant is the shadow of unchecked will — the ego that refuses all bonds. To pass beyond Red is to master power without being mastered by it.',
     },
-    enemy: { name: 'The Red Tyrant', stats: { maxHp: 400, maxMana: 60, agility: 14, attack: 24, defense: 16, precision: 14, magic: 16, luck: 8 } },
+    enemy: { name: 'The Red Tyrant', difficulty: 5 },
   },
 ];
 

@@ -17,7 +17,7 @@ export const intrapersonalEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Impulse Shade',
-      stats: { maxHp: 60, maxMana: 30, agility: 14, attack: 8, defense: 5, precision: 12, magic: 12, luck: 9 },
+      difficulty: 1,
     },
   },
   {
@@ -36,7 +36,7 @@ export const intrapersonalEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Mirror Gladiator',
-      stats: { maxHp: 85, maxMana: 15, agility: 11, attack: 13, defense: 7, precision: 10, magic: 6, luck: 6 },
+      difficulty: 2,
     },
   },
   {
@@ -55,7 +55,7 @@ export const intrapersonalEncounters: readonly EncounterSpec[] = [
     },
     enemy: {
       name: 'Shadow Self',
-      stats: { maxHp: 90, maxMana: 20, agility: 13, attack: 12, defense: 8, precision: 11, magic: 10, luck: 7 },
+      difficulty: 2,
     },
   },
 ];
