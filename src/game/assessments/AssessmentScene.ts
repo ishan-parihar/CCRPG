@@ -16,7 +16,6 @@ import type {
   TrialResult,
   AssessmentResult,
   ModuleExecutionMode,
-  TaskType,
 } from '@core/assessments/types.js';
 import { runAssessment } from '@core/assessments/engine.js';
 import { NBackRenderer } from './renderers/NBackRenderer.js';

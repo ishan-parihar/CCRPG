@@ -19,8 +19,6 @@ import {
 } from '../../src/core/engines/AutoModeStrategy.js';
 import { startSession, tickWithStrategy, tick } from '../../src/core/GameLoop.js';
 import { DEFAULT_WEIGHTS } from '../../src/core/engines/PriorityComputation.js';
-import { ALL_LINES } from '../../src/core/domain/Line.js';
-import { ALL_STAGES } from '../../src/core/domain/Stage.js';
 import type { Line } from '../../src/core/domain/Line.js';
 import type { Stage } from '../../src/core/domain/Stage.js';
 import type { SessionContext } from '../../src/core/engines/PriorityComputation.js';
