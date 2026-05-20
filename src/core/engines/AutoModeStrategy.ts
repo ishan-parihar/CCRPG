@@ -1,0 +1,684 @@
+/**
+ * AutoModeStrategy -- Session-level strategy engine.
+ * Spec: foundations/27
+ *
+ * Consumes the CCI (foundations/25) and produces a session plan that
+ * parameterises the encounter scheduler's session arc, biases its priority
+ * weights, and adjusts mid-session based on engagement signals.
+ *
+ * Auto-mode wraps the scheduler; it never replaces it.
+ * Pure functions: state in, strategy out. No side effects.
+ */
+import type { SignificatorSnapshot } from '../domain/SignificatorSnapshot.js';
+import type { PriorityWeights, SessionContext } from './PriorityComputation.js';
+import { DEFAULT_WEIGHTS } from './PriorityComputation.js';
+import type { CCIScore, SessionTheme } from './CCIEngine.js';
+
+// ---------------------------------------------------------------------------
+// Types
+// ---------------------------------------------------------------------------
+
+export type WarmupFocus =
+  | 'theta-decay-arrest'
+  | 'familiar-modality'
+  | 'drive-rebalancing'
+  | 'continuation'
+  | 'general';
+
+export interface ParameterisedSessionArc {
+  warmup: {
+    intensityCeiling: number;
+    focus: WarmupFocus;
+    preferredModalities: string[];
+  };
+  peak: {
+    intensityRange: { min: number; max: number };
+    shadowAllocation: number;
+    transformationSlots: number;
+  };
+  cooldown: {
+    intensityCeiling: number;
+    integrationFocus: boolean;
+    preferredModalities: string[];
+  };
+}
+
+export interface PriorityWeightBias {
+  thetaUrgency: number;
+  shadowActivation: number;
+  polarityAlignment: number;
+  transformationReadiness: number;
+  driveCorrection: number;
+  narrativeCoherence: number;
+  sessionFit: number;
+}
+
+export interface EncounterBudget {
+  totalTarget: number;
+  warmupCount: number;
+  peakCount: number;
+  cooldownCount: number;
+  shadowEncounterCap: number;
+  practiceSlots: number;
+}
+
+export interface AdjustmentThresholds {
+  energyDropThreshold: number;
+  avoidanceSpikeThreshold: number;
+  engagementSurgeThreshold: number;
+  shadowFatigueTrials: number;
+  reEvaluationInterval: number;
+}
+
+export const DEFAULT_ADJUSTMENT_THRESHOLDS: AdjustmentThresholds = {
+  energyDropThreshold: 0.35,
+  avoidanceSpikeThreshold: 0.4,
+  engagementSurgeThreshold: 0.8,
+  shadowFatigueTrials: 3,
+  reEvaluationInterval: 3,
+};
+
+export interface SessionStrategy {
+  theme: SessionTheme;
+  themeRationale: string;
+  arc: ParameterisedSessionArc;
+  weightBias: PriorityWeightBias;
+  encounterBudget: EncounterBudget;
+  modalityBias: Partial<Record<string, number>>;
+  adjustmentThresholds: AdjustmentThresholds;
+}
+
+export interface SessionStrategyAdjustment {
+  type: 'intensity-reduction' | 'intensity-increase' | 'theme-shift' | 'shadow-pause';
+  newPeakIntensity?: { min: number; max: number };
+  newTheme?: SessionTheme;
+  newWeightBias?: PriorityWeightBias;
+  shadowBiasOverride?: number;
+  rationale: string;
+}
+
+export interface RecentEncounter {
+  outcome: 'completed' | 'avoided' | 'abandoned';
+  quality: number;
+  mode: 'capacity' | 'shadow' | 'calibration' | 'practice';
+  shadowIntegrated: boolean;
+}
+
+// ---------------------------------------------------------------------------
+// Main entry point
+// ---------------------------------------------------------------------------
+
+/**
+ * Generate a complete session strategy from CCI signals and session context.
+ * Called at session start before the first encounter.
+ */
+export function generateSessionStrategy(
+  cci: CCIScore,
+  session: SessionContext,
+  _previousStrategy: SessionStrategy | null,
+): SessionStrategy {
+  const theme = cci.sessionSignals.recommendedTheme;
+  const arc = parameteriseArc(theme, cci, session);
+  const weightBias = computeWeightBias(theme, cci);
+  const encounterBudget = computeEncounterBudget(session, arc);
+  const modalityBias = computeModalityBias(theme);
+  const adjustmentThresholds = { ...DEFAULT_ADJUSTMENT_THRESHOLDS };
+
+  return {
+    theme,
+    themeRationale: `CCI dominant dimension: ${cci.dominantDimension}; composite: ${cci.composite.toFixed(2)}`,
+    arc,
+    weightBias,
+    encounterBudget,
+    modalityBias,
+    adjustmentThresholds,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Weight bias computation
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute the priority weight bias multipliers for a given session theme.
+ * Each theme produces a characteristic bias that shapes which encounters
+ * the scheduler prefers during this session.
+ *
+ * Multiplier of 1.0 = no change; >1.0 = boost; <1.0 = reduce.
+ * Order: thetaUrgency, shadowActivation, polarityAlignment,
+ *        transformationReadiness, driveCorrection, narrativeCoherence, sessionFit
+ */
+export function computeWeightBias(theme: SessionTheme, _cci: CCIScore): PriorityWeightBias {
+  switch (theme) {
+    case 'shadow-integration':
+      return {
+        thetaUrgency: 0.6,
+        shadowActivation: 1.8,
+        polarityAlignment: 0.7,
+        transformationReadiness: 0.5,
+        driveCorrection: 1.2,
+        narrativeCoherence: 0.8,
+        sessionFit: 1.0,
+      };
+
+    case 'growth-edge-push':
+      return {
+        thetaUrgency: 0.8,
+        shadowActivation: 0.7,
+        polarityAlignment: 1.2,
+        transformationReadiness: 1.8,
+        driveCorrection: 0.8,
+        narrativeCoherence: 1.0,
+        sessionFit: 0.9,
+      };
+
+    case 'consolidation':
+      return {
+        thetaUrgency: 1.5,
+        shadowActivation: 0.8,
+        polarityAlignment: 0.8,
+        transformationReadiness: 0.5,
+        driveCorrection: 1.3,
+        narrativeCoherence: 1.2,
+        sessionFit: 1.4,
+      };
+
+    case 'drive-rebalancing':
+      return {
+        thetaUrgency: 0.7,
+        shadowActivation: 0.8,
+        polarityAlignment: 0.7,
+        transformationReadiness: 0.6,
+        driveCorrection: 2.0,
+        narrativeCoherence: 0.9,
+        sessionFit: 1.0,
+      };
+
+    case 'transformation-prep':
+      return {
+        thetaUrgency: 0.5,
+        shadowActivation: 1.5,
+        polarityAlignment: 1.0,
+        transformationReadiness: 2.0,
+        driveCorrection: 0.7,
+        narrativeCoherence: 1.0,
+        sessionFit: 0.7,
+      };
+
+    case 'active-transformation':
+      return {
+        thetaUrgency: 0.2,
+        shadowActivation: 0.5,
+        polarityAlignment: 0.3,
+        transformationReadiness: 3.0,
+        driveCorrection: 0.3,
+        narrativeCoherence: 0.5,
+        sessionFit: 0.5,
+      };
+
+    case 'post-transformation':
+      return {
+        thetaUrgency: 0.5,
+        shadowActivation: 0.5,
+        polarityAlignment: 1.5,
+        transformationReadiness: 0.2,
+        driveCorrection: 1.3,
+        narrativeCoherence: 1.8,
+        sessionFit: 1.5,
+      };
+
+    case 'polarity-deepening':
+      return {
+        thetaUrgency: 0.8,
+        shadowActivation: 0.9,
+        polarityAlignment: 2.0,
+        transformationReadiness: 0.8,
+        driveCorrection: 0.7,
+        narrativeCoherence: 1.0,
+        sessionFit: 0.9,
+      };
+
+    case 'balanced-development':
+      return {
+        thetaUrgency: 1.0,
+        shadowActivation: 1.0,
+        polarityAlignment: 1.0,
+        transformationReadiness: 1.0,
+        driveCorrection: 1.0,
+        narrativeCoherence: 1.0,
+        sessionFit: 1.0,
+      };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Weight bias application
+// ---------------------------------------------------------------------------
+
+/**
+ * Apply priority weight biases to the scheduler's default weights.
+ * Multiplies each default weight by its corresponding bias multiplier,
+ * then normalises so weights still sum to 1.0.
+ */
+export function applyWeightBias(
+  defaults: PriorityWeights,
+  bias: PriorityWeightBias,
+): PriorityWeights {
+  const biased = {
+    thetaUrgency: defaults.thetaUrgency * bias.thetaUrgency,
+    shadowActivation: defaults.shadowActivation * bias.shadowActivation,
+    polarityAlignment: defaults.polarityAlignment * bias.polarityAlignment,
+    transformationReadiness: defaults.transformationReadiness * bias.transformationReadiness,
+    driveCorrection: defaults.driveCorrection * bias.driveCorrection,
+    narrativeCoherence: defaults.narrativeCoherence * bias.narrativeCoherence,
+    sessionFit: defaults.sessionFit * bias.sessionFit,
+  };
+
+  // Normalise so weights sum to 1.0
+  const total = biased.thetaUrgency + biased.shadowActivation + biased.polarityAlignment
+    + biased.transformationReadiness + biased.driveCorrection + biased.narrativeCoherence
+    + biased.sessionFit;
+
+  if (total <= 0) return { ...DEFAULT_WEIGHTS };
+
+  return {
+    thetaUrgency: biased.thetaUrgency / total,
+    shadowActivation: biased.shadowActivation / total,
+    polarityAlignment: biased.polarityAlignment / total,
+    transformationReadiness: biased.transformationReadiness / total,
+    driveCorrection: biased.driveCorrection / total,
+    narrativeCoherence: biased.narrativeCoherence / total,
+    sessionFit: biased.sessionFit / total,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Arc parameterisation
+// ---------------------------------------------------------------------------
+
+/**
+ * Parameterise the session arc for a given theme.
+ * Each theme produces a distinct intensity curve, warmup focus, shadow
+ * allocation, and cooldown strategy tuned to its developmental purpose.
+ */
+export function parameteriseArc(
+  theme: SessionTheme,
+  _cci: CCIScore,
+  _session: SessionContext,
+): ParameterisedSessionArc {
+  switch (theme) {
+    case 'shadow-integration':
+      return {
+        warmup: {
+          intensityCeiling: 0.3,
+          focus: 'familiar-modality',
+          preferredModalities: ['LanguageReflective', 'ImmersiveRPG'],
+        },
+        peak: {
+          intensityRange: { min: 0.4, max: 0.7 },
+          shadowAllocation: 0.5,
+          transformationSlots: 0,
+        },
+        cooldown: {
+          intensityCeiling: 0.2,
+          integrationFocus: true,
+          preferredModalities: ['LanguageReflective'],
+        },
+      };
+
+    case 'growth-edge-push':
+      return {
+        warmup: {
+          intensityCeiling: 0.4,
+          focus: 'continuation',
+          preferredModalities: ['Deterministic', 'Strategic'],
+        },
+        peak: {
+          intensityRange: { min: 0.6, max: 1.0 },
+          shadowAllocation: 0.1,
+          transformationSlots: 2,
+        },
+        cooldown: {
+          intensityCeiling: 0.3,
+          integrationFocus: false,
+          preferredModalities: ['ImmersiveRPG', 'LanguageReflective'],
+        },
+      };
+
+    case 'consolidation':
+      return {
+        warmup: {
+          intensityCeiling: 0.3,
+          focus: 'theta-decay-arrest',
+          preferredModalities: ['Deterministic'],
+        },
+        peak: {
+          intensityRange: { min: 0.3, max: 0.6 },
+          shadowAllocation: 0.2,
+          transformationSlots: 0,
+        },
+        cooldown: {
+          intensityCeiling: 0.2,
+          integrationFocus: true,
+          preferredModalities: ['LanguageReflective', 'ImmersiveRPG'],
+        },
+      };
+
+    case 'drive-rebalancing':
+      return {
+        warmup: {
+          intensityCeiling: 0.35,
+          focus: 'drive-rebalancing',
+          preferredModalities: ['ScenarioChoice', 'SocialCooperative'],
+        },
+        peak: {
+          intensityRange: { min: 0.4, max: 0.7 },
+          shadowAllocation: 0.15,
+          transformationSlots: 0,
+        },
+        cooldown: {
+          intensityCeiling: 0.25,
+          integrationFocus: false,
+          preferredModalities: ['LanguageReflective'],
+        },
+      };
+
+    case 'transformation-prep':
+      return {
+        warmup: {
+          intensityCeiling: 0.4,
+          focus: 'continuation',
+          preferredModalities: ['Deterministic', 'Strategic'],
+        },
+        peak: {
+          intensityRange: { min: 0.7, max: 1.0 },
+          shadowAllocation: 0.3,
+          transformationSlots: 3,
+        },
+        cooldown: {
+          intensityCeiling: 0.3,
+          integrationFocus: true,
+          preferredModalities: ['LanguageReflective', 'ImmersiveRPG'],
+        },
+      };
+
+    case 'active-transformation':
+      return {
+        warmup: {
+          intensityCeiling: 0.3,
+          focus: 'general',
+          preferredModalities: ['ImmersiveRPG'],
+        },
+        peak: {
+          intensityRange: { min: 0.8, max: 1.0 },
+          shadowAllocation: 0.1,
+          transformationSlots: 3,
+        },
+        cooldown: {
+          intensityCeiling: 0.2,
+          integrationFocus: true,
+          preferredModalities: ['LanguageReflective'],
+        },
+      };
+
+    case 'post-transformation':
+      return {
+        warmup: {
+          intensityCeiling: 0.25,
+          focus: 'general',
+          preferredModalities: ['ScenarioChoice', 'ImmersiveRPG'],
+        },
+        peak: {
+          intensityRange: { min: 0.3, max: 0.5 },
+          shadowAllocation: 0.1,
+          transformationSlots: 0,
+        },
+        cooldown: {
+          intensityCeiling: 0.2,
+          integrationFocus: true,
+          preferredModalities: ['LanguageReflective'],
+        },
+      };
+
+    case 'polarity-deepening':
+      return {
+        warmup: {
+          intensityCeiling: 0.3,
+          focus: 'familiar-modality',
+          preferredModalities: ['ScenarioChoice', 'LanguageReflective'],
+        },
+        peak: {
+          intensityRange: { min: 0.5, max: 0.8 },
+          shadowAllocation: 0.15,
+          transformationSlots: 1,
+        },
+        cooldown: {
+          intensityCeiling: 0.25,
+          integrationFocus: false,
+          preferredModalities: ['ImmersiveRPG'],
+        },
+      };
+
+    case 'balanced-development':
+      return {
+        warmup: {
+          intensityCeiling: 0.35,
+          focus: 'general',
+          preferredModalities: [],
+        },
+        peak: {
+          intensityRange: { min: 0.5, max: 0.8 },
+          shadowAllocation: 0.2,
+          transformationSlots: 1,
+        },
+        cooldown: {
+          intensityCeiling: 0.25,
+          integrationFocus: false,
+          preferredModalities: ['LanguageReflective'],
+        },
+      };
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Encounter budget
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute the encounter budget for a session.
+ * Distributes encounters across warmup (20%), peak (60%), cooldown (20%)
+ * phases based on the target session length.
+ */
+export function computeEncounterBudget(
+  session: SessionContext,
+  arc: ParameterisedSessionArc,
+): EncounterBudget {
+  const totalTarget = session.targetSessionLength;
+
+  // Distribute encounters: warmup 20%, peak 60%, cooldown 20%
+  const warmupCount = Math.max(1, Math.round(totalTarget * 0.2));
+  const cooldownCount = Math.max(1, Math.round(totalTarget * 0.2));
+  const peakCount = Math.max(1, totalTarget - warmupCount - cooldownCount);
+
+  // Shadow cap: peak shadow allocation * peak encounter count
+  const shadowEncounterCap = Math.max(0, Math.round(arc.peak.shadowAllocation * peakCount));
+
+  // Practice slots: 1 for sessions with > 10 encounters, 0 otherwise
+  const practiceSlots = totalTarget > 10 ? 1 : 0;
+
+  return {
+    totalTarget,
+    warmupCount,
+    peakCount,
+    cooldownCount,
+    shadowEncounterCap,
+    practiceSlots,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Mid-session adjustment
+// ---------------------------------------------------------------------------
+
+/**
+ * Evaluate whether a mid-session strategy adjustment is needed.
+ * Checks 4 signals: energy drop, avoidance spike, engagement surge,
+ * and shadow fatigue. Returns null if no adjustment is warranted.
+ */
+export function evaluateMidSessionAdjustment(
+  currentStrategy: SessionStrategy,
+  session: SessionContext,
+  recentOutcomes: RecentEncounter[],
+): SessionStrategyAdjustment | null {
+  // Signal 1: Energy drop - reduce intensity when player energy is low
+  if (session.inferredEnergy === 'low' &&
+      currentStrategy.arc.peak.intensityRange.max > 0.5) {
+    return {
+      type: 'intensity-reduction',
+      newPeakIntensity: { min: 0.3, max: 0.5 },
+      rationale: 'Energy drop detected; reducing peak intensity',
+    };
+  }
+
+  // Signal 2: Avoidance spike - shift to consolidation when too many encounters avoided
+  const recentSlice = recentOutcomes.slice(0, 3);
+  const avoidanceCount = recentSlice.filter(e => e.outcome === 'avoided').length;
+  const avoidanceRate = recentSlice.length > 0 ? avoidanceCount / recentSlice.length : 0;
+  if (avoidanceRate > currentStrategy.adjustmentThresholds.avoidanceSpikeThreshold) {
+    return {
+      type: 'theme-shift',
+      newTheme: 'consolidation',
+      newWeightBias: computeWeightBias('consolidation', null as unknown as CCIScore),
+      rationale: 'High avoidance rate; shifting to consolidation',
+    };
+  }
+
+  // Signal 3: Engagement surge - allow intensity increase when quality is high
+  const recentQuality = recentOutcomes.length > 0
+    ? recentOutcomes.slice(0, 3).reduce((sum, e) => sum + e.quality, 0) /
+      Math.min(recentOutcomes.length, 3)
+    : 0;
+  if (recentQuality > currentStrategy.adjustmentThresholds.engagementSurgeThreshold &&
+      session.inferredEnergy === 'high') {
+    return {
+      type: 'intensity-increase',
+      newPeakIntensity: { min: 0.7, max: 1.0 },
+      rationale: 'High engagement + energy; allowing intensity increase',
+    };
+  }
+
+  // Signal 4: Shadow fatigue - pause shadow work when consecutive shadow
+  // encounters fail to produce integration
+  const consecutiveShadowFailures = countConsecutiveShadowFailures(recentOutcomes);
+  if (consecutiveShadowFailures >= currentStrategy.adjustmentThresholds.shadowFatigueTrials) {
+    return {
+      type: 'shadow-pause',
+      shadowBiasOverride: 0.3,
+      rationale: 'Shadow fatigue; reducing shadow encounter frequency',
+    };
+  }
+
+  return null;
+}
+
+// ---------------------------------------------------------------------------
+// Safety override
+// ---------------------------------------------------------------------------
+
+/**
+ * Check whether a safety override should engage.
+ * Returns true if the Significator shows multiple distress signals:
+ * high fixation risk AND heavy unresolved shadows AND low intensity budget.
+ * When true, the caller should force 'consolidation' theme.
+ */
+export function checkSafetyOverride(snapshot: SignificatorSnapshot): boolean {
+  const maxFixationRisk = Math.max(
+    ...Object.values(snapshot.fixationRisk),
+  );
+  const unresolvedShadows = snapshot.shadows.entries.filter(
+    e => e.resolvedAt === null,
+  ).length;
+
+  // Import from the CCI logic: if fixation > 0.8 AND shadows > 10 => distressed
+  // The intensity budget check is implicit: these conditions produce < 0.3 budget
+  return maxFixationRisk > 0.8 && unresolvedShadows > 10;
+}
+
+// ---------------------------------------------------------------------------
+// Internal helpers
+// ---------------------------------------------------------------------------
+
+/**
+ * Count consecutive shadow-mode encounters without integration from
+ * the most recent outcomes backwards.
+ */
+function countConsecutiveShadowFailures(outcomes: RecentEncounter[]): number {
+  let count = 0;
+  for (const outcome of outcomes) {
+    if (outcome.mode === 'shadow' && !outcome.shadowIntegrated) {
+      count++;
+    } else {
+      break;
+    }
+  }
+  return count;
+}
+
+/**
+ * Compute modality bias for a given theme.
+ * Returns partial record of modality multipliers. Empty means no bias.
+ */
+function computeModalityBias(theme: SessionTheme): Partial<Record<string, number>> {
+  switch (theme) {
+    case 'shadow-integration':
+      return {
+        'LanguageReflective': 1.4,
+        'ImmersiveRPG': 1.2,
+        'ScenarioChoice': 1.1,
+        'Deterministic': 0.7,
+      };
+    case 'growth-edge-push':
+      return {
+        'Deterministic': 1.3,
+        'Strategic': 1.3,
+        'ScenarioChoice': 1.1,
+      };
+    case 'consolidation':
+      return {
+        'Deterministic': 1.2,
+        'LanguageReflective': 1.1,
+        'ImmersiveRPG': 1.1,
+      };
+    case 'drive-rebalancing':
+      return {
+        'ScenarioChoice': 1.3,
+        'SocialCooperative': 1.3,
+        'ImmersiveRPG': 1.1,
+      };
+    case 'transformation-prep':
+      return {
+        'Strategic': 1.2,
+        'ScenarioChoice': 1.2,
+        'LanguageReflective': 1.1,
+      };
+    case 'active-transformation':
+      return {
+        'ImmersiveRPG': 1.5,
+        'ScenarioChoice': 1.3,
+      };
+    case 'post-transformation':
+      return {
+        'ImmersiveRPG': 1.3,
+        'LanguageReflective': 1.2,
+        'ScenarioChoice': 1.1,
+      };
+    case 'polarity-deepening':
+      return {
+        'ScenarioChoice': 1.4,
+        'LanguageReflective': 1.2,
+        'SocialCooperative': 1.1,
+      };
+    case 'balanced-development':
+      return {};
+  }
+}

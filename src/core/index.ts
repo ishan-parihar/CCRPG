@@ -51,3 +51,7 @@ export * from './assessments/scoring.js';
 
 // --- Domain (Snapshot) ---
 export * from './domain/SignificatorSnapshot.js';
+
+// --- Engines (CCI + Auto-Mode) ---
+export * from './engines/CCIEngine.js';
+export * from './engines/AutoModeStrategy.js';
