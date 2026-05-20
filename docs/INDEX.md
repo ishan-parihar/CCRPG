@@ -1,40 +1,39 @@
-# `/docs/` — Index
+# `/docs/` -- Index
 
 > The research foundation of CCRPG. The binding build plan lives at
-> the repo root in `MVP-BLUEPRINT.md`. This tree is the *why* and the
-> *what*; the blueprint is the *how* and the *when*.
+> the repo root in `UNIFIED-IMPLEMENTATION-PLAN.md`. This tree is the *why* and the
+> *what*; the unified plan is the *how* and the *when*.
 
 ## Reading order for a new contributor
 
-1. `../MVP-BLUEPRINT.md` — the actionable plan.
-2. `REQUIREMENTS.md` — the document-of-documents (this tree's contract).
+1. `../UNIFIED-IMPLEMENTATION-PLAN.md` -- the binding build plan.
+2. `REQUIREMENTS.md` -- the document-of-documents (this tree's contract).
 3. `00-vision.md`
 4. `01-first-principles.md`
 5. `02-glossary.md`
 6. `03-research-methodology.md`
-7. `foundations/00-…22-…` (in order — **00–09 substrate, 10–14 lesser cycle, 15–22 greater cycle**)
-8. `lines/00-overview-multi-line.md` then `01-…08-…` (any order)
-9. `stages/00-overview-eight-stages.md` then `01-…08-…` (in order)
-10. `combat/00-combat-philosophy.md`
-11. `enemies/00-enemy-taxonomy.md`
-12. `progression/00-progression-overview.md`
-13. `narrative/00-narrative-architecture.md`
-14. `concept-drafts/README.md` then a sampled module to see the lesser-cycle design briefs in concrete form
-15. `CHANGELOG.md` — what changed, and when.
+7. `foundations/00-...27-...` (in order -- **00-09 substrate, 10-14 lesser cycle, 15-27 greater cycle**)
+8. `lines/00-overview-multi-line.md` then `01-...08-...` (any order)
+9. `stages/00-overview-eight-stages.md` then `01-...08-...` (in order)
+10. `STAGE-ASSESSMENT-ARCHITECTURE.md`
+11. `progression/00-progression-overview.md`
+12. `narrative/00-narrative-architecture.md`
+13. `concept-drafts/README.md` then a sampled module to see the lesser-cycle design briefs in concrete form
+14. `CHANGELOG.md` -- what changed, and when.
 
 > **For the impatient:** read `00-vision.md`, then `foundations/15` and `foundations/21`. That gives you the world's metaphysics and the master architectural synthesis. Everything else fills in detail.
 
-## The 50 foundational documents
+## The foundational documents
 
 ### Meta layer (5)
 
-- `REQUIREMENTS.md` — the contract for the whole tree
+- `REQUIREMENTS.md` -- the contract for the whole tree
 - `00-vision.md`
 - `01-first-principles.md`
 - `02-glossary.md`
 - `03-research-methodology.md`
 
-### `foundations/` (23)
+### `foundations/` (28)
 
 #### Theoretical substrate (00–09)
 
@@ -69,8 +68,11 @@
 - `20-veil-of-forgetting.md` — the implicit-operation principle
 - `21-incarnation-architecture.md` ← **master synthesis (Option C)**
 - `22-holon-context-engine.md` — LLM-driven world implementation
-- `23-polarity-ontology.md` — per-line×stage polarity texture catalogue (64 cells)
-- `24-encounter-scheduler.md` — encounter selection algorithm & macro-catalyst engine
+- `23-polarity-ontology.md` -- per-line x stage polarity texture catalogue (64 cells)
+- `24-encounter-scheduler.md` -- encounter selection algorithm & macro-catalyst engine
+- `25-cumulative-consciousness-index.md` -- CCI composite metric
+- `26-unified-core-architecture.md` -- the unified core architecture spec
+- `27-auto-mode-strategy-engine.md` -- auto-mode session strategy generation
 
 ### `lines/` (9) — one per line of intelligence
 
@@ -98,8 +100,8 @@
 
 ### Architecture-philosophy (4)
 
-- `combat/00-combat-philosophy.md`
-- `enemies/00-enemy-taxonomy.md`
+- `STAGE-ASSESSMENT-ARCHITECTURE.md` -- module contract, composition rules, 4 execution modes
+- `ONBOARDING-REDESIGN-PLAN.md` -- binary-search composite assessment for Significator seeding
 - `progression/00-progression-overview.md`
 - `narrative/00-narrative-architecture.md`
 
@@ -121,15 +123,20 @@ review.
 
 ## Deferred documents
 
-The deeper engineering layers (`combat/01–06`, `enemies/01–05`,
-`progression/01–06`, `narrative/01–04`, `architecture/`, `ux/`,
-`validation/`, `roadmap/`) listed in `REQUIREMENTS.md §2` are
-**deferred to the implementation phase**. Each is referenced from its
-parent philosophy document with a one-line intent that AI agents can
-pick up using the philosophy as a binding contract.
+The deeper engineering layers (`progression/01-06`, `narrative/01-04`,
+`architecture/`, `ux/`, `validation/`, `roadmap/`) listed in
+`REQUIREMENTS.md` are **deferred to the implementation phase**. Each is
+referenced from its parent philosophy document with a one-line intent
+that AI agents can pick up using the philosophy as a binding contract.
+
+> **Note:** The `combat/` and `enemies/` directories have been archived
+> to `docs/archive/`. The combat philosophy is superseded by the
+> assessment-module architecture in `STAGE-ASSESSMENT-ARCHITECTURE.md`
+> and `UNIFIED-IMPLEMENTATION-PLAN.md`.
 
 ## Canon
 
-As of v1.0 (2026-05-17) the five load-bearing open questions have
-been resolved. See `CHANGELOG.md` and `REQUIREMENTS.md §6`. The
-build plan is `../MVP-BLUEPRINT.md`.
+As of v2.0 (2026-05-18) the architectural pivot is complete: ATB combat
+removed, assessment modules ARE the gameplay, Significator replaces
+PlayerProfile. See `CHANGELOG.md` and `REQUIREMENTS.md`. The
+binding build plan is `../UNIFIED-IMPLEMENTATION-PLAN.md`.

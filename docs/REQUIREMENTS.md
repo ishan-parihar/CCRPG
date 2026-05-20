@@ -96,22 +96,9 @@ docs/
 │   ├── 07-turquoise-integral.md
 │   └── 08-white-superintegral.md
 │
-├── combat/                           ← how lines × stages become gameplay
-│   ├── 00-combat-philosophy.md
-│   ├── 01-atb-engine.md
-│   ├── 02-cognitive-task-library.md
-│   ├── 03-skill-tree-architecture.md
-│   ├── 04-damage-and-resistance-model.md
-│   ├── 05-stance-and-state-shifting.md
-│   └── 06-multiplayer-combat.md
+├── combat/                           <- ARCHIVED: see docs/archive/combat-philosophy.md
 │
-├── enemies/                          ← who the player fights, and why
-│   ├── 00-enemy-taxonomy.md
-│   ├── 01-side-characters-cognitive-drills.md
-│   ├── 02-mini-bosses-dual-task.md
-│   ├── 03-main-bosses-synthesis.md
-│   ├── 04-stage-bestiaries.md
-│   └── 05-shadow-encounters.md
+├── enemies/                          <- ARCHIVED: see docs/archive/enemy-taxonomy.md
 │
 ├── progression/                      ← how the player grows
 │   ├── 00-progression-overview.md
@@ -162,9 +149,11 @@ docs/
     └── 03-risk-register.md
 ```
 
-Total: **1 master file + 4 meta-architecture files + 11 foundations + 9 lines + 9
-stages + 7 combat + 6 enemies + 7 progression + 5 narrative + 11 architecture + 5
-ux + 4 validation + 4 roadmap = 83 documents.**
+Total: **1 master file + 4 meta-architecture files + 28 foundations + 9 lines + 9
+stages + 7 progression + 5 narrative + 11 architecture + 5 ux + 4 validation +
+4 roadmap = 87 documents.** (Combat and enemies directories archived; see
+`STAGE-ASSESSMENT-ARCHITECTURE.md` and `UNIFIED-IMPLEMENTATION-PLAN.md` for
+the replacement architecture.)
 
 ---
 
@@ -293,28 +282,30 @@ structure:
 | `stages/07-turquoise-integral.md` | 7 — Turquoise | Indigo | Vision-logic, holism |
 | `stages/08-white-superintegral.md` | 8 — White | Violet | Non-dual, harvest |
 
-### 4.4 Combat — how lines × stages become real-time mechanics
+### 4.4 Combat -- ARCHIVED
 
-| File | Purpose |
-|------|---------|
-| `combat/00-combat-philosophy.md` | Why ATB and not pure twitch; why every move must be *legibly* a cognitive demand. |
-| `combat/01-atb-engine.md` | The maths: fill rate as f(agility), turn-stack, pause/resume, dead-skip. |
-| `combat/02-cognitive-task-library.md` | The full library: n-back, Stroop, Simon, Go/No-Go, Corsi, WCST, Tower-of-London, complex-span, dual-n-back, task-switching, plus emotional/moral/spiritual analogues. Each task: parameters, scoring function, stage-of-difficulty band. |
-| `combat/03-skill-tree-architecture.md` | How the skill tree is *generated* from {lines × stages}, not hand-authored, so adding a line or stage is a data change, not a code change. |
-| `combat/04-damage-and-resistance-model.md` | How performance on a cognitive task converts to damage / mitigation / status. The deterministic core under the dice. |
-| `combat/05-stance-and-state-shifting.md` | Cognitive-flexibility mechanics; stance as cached rule, stance-shift cost, WCST mid-fight. |
-| `combat/06-multiplayer-combat.md` | Server-authoritative cognitive evaluation, fixed tickrate, latency compensation that does not destroy reaction-time validity. |
+> **ARCHIVED.** Combat philosophy is superseded by the assessment module
+> architecture in `STAGE-ASSESSMENT-ARCHITECTURE.md` and
+> `UNIFIED-IMPLEMENTATION-PLAN.md`. The original combat philosophy document
+> is preserved at `docs/archive/combat-philosophy.md`.
 
-### 4.5 Enemies
+The assessment-module architecture replaces ATB combat entirely. Every
+gameplay encounter is now an assessment module executing in one of four
+modes (calibration, encounter, practice, shadow work). See
+`STAGE-ASSESSMENT-ARCHITECTURE.md` for the module contract, composition
+rules, and interfaces.
 
-| File | Purpose |
-|------|---------|
-| `enemies/00-enemy-taxonomy.md` | Enemy = (line targeted) × (stage of expression) × (role: side/mini/main/shadow). The combinatorial bestiary. |
-| `enemies/01-side-characters-cognitive-drills.md` | One side-character archetype per (line × stage). Their attack patterns *encode* a single cognitive task. |
-| `enemies/02-mini-bosses-dual-task.md` | Mini-bosses encode pairs of lines / dual-task interference. |
-| `enemies/03-main-bosses-synthesis.md` | Main bosses are stage exams — every line tested, every quadrant touched. |
-| `enemies/04-stage-bestiaries.md` | Stage-by-stage roster manifests with concrete enemies named, described, and statted. |
-| `enemies/05-shadow-encounters.md` | Pathology / regression / repression as boss material — anti-bosses that test the *integration* of the line, not just the capacity. |
+### 4.5 Enemies -- ARCHIVED
+
+> **ARCHIVED.** The "enemy" concept is replaced by encounter/assessment
+> modules in the unified architecture. The original enemy taxonomy is
+> preserved at `docs/archive/enemy-taxonomy.md`.
+
+Encounters are now assessment modules selected by the encounter scheduler
+(`foundations/24-encounter-scheduler.md`). Each module targets a specific
+line x stage cell and executes in one of four modes. See
+`STAGE-ASSESSMENT-ARCHITECTURE.md` and `UNIFIED-IMPLEMENTATION-PLAN.md`
+for the replacement architecture.
 
 ### 4.6 Progression
 
@@ -395,16 +386,15 @@ For a new contributor, the canonical reading order is:
 5. `foundations/00-integral-theory.md` → `foundations/10-shadow-and-pathology.md`
 6. `lines/00-overview-multi-line.md` → `lines/08-interpersonal.md`
 7. `stages/00-overview-eight-stages.md` → `stages/08-white-superintegral.md`
-8. `combat/00-combat-philosophy.md` → `combat/06-multiplayer-combat.md`
-9. `enemies/00-enemy-taxonomy.md` → `enemies/05-shadow-encounters.md`
-10. `progression/00-progression-overview.md` → `progression/06-state-training-meditation.md`
-11. `narrative/*` and `ux/*` (parallel)
-12. `architecture/00-overview.md` → `architecture/10-testing-strategy.md`
-13. `validation/*`
-14. `roadmap/*`
+8. `STAGE-ASSESSMENT-ARCHITECTURE.md`
+9. `progression/00-progression-overview.md` → `progression/06-state-training-meditation.md`
+10. `narrative/*` and `ux/*` (parallel)
+11. `architecture/00-overview.md` → `architecture/10-testing-strategy.md`
+12. `validation/*`
+13. `roadmap/*`
 
 The architecture section deliberately comes *after* foundations / lines / stages /
-combat / enemies — because architecture exists to *serve* the design, never to
+progression — because architecture exists to *serve* the design, never to
 constrain it.
 
 ---
@@ -427,8 +417,9 @@ These five canon decisions reshape several documents. The reshaping
 has been applied; the affected documents carry "Canon status" headers.
 
 The new load-bearing question is the *implementation question*:
-build the MVP per `MVP-BLUEPRINT.md`. That document supersedes any
-conflict; it is the single source of truth from this point forward.
+build the game per `UNIFIED-IMPLEMENTATION-PLAN.md`. That document
+supersedes any conflict; it is the single source of truth from this
+point forward.
 
 ---
 

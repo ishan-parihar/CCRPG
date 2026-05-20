@@ -86,17 +86,17 @@ A breath-paced meditation interlude between encounters:
 - **Non-Dual** practice — appears only as fleeting, gift-like cutscenes
   triggered by integration milestones. Cannot be ground / farmed.
 
-### 3.3 In-combat state expressions
+### 3.3 In-assessment state expressions
 
-State access translates to combat options:
+State access translates to assessment options:
 
-| State | In-combat expression |
+| State | In-assessment expression |
 |---|---|
-| Gross | Default; full sensory awareness; standard ATB. |
-| Subtle | Read enemy's emotional aura more clearly; better empathy / mood reads; stronger dream-themed spells. |
-| Causal | Emergency "still point" — pause time, single free action; high cooldown; cannot be used in synthesis exams. |
-| Witness | Slow time during a dilemma; gain extra read of enemy intention; vulnerable to Stroop interference if breaks. |
-| Non-Dual | Scripted moments only; full ATB charge, no cognitive penalties; lasts seconds. |
+| Gross | Default; full sensory awareness; standard assessment module execution. |
+| Subtle | Read encounter's emotional aura more clearly; better empathy / mood reads; enhanced intuitive assessment responses. |
+| Causal | Emergency "still point" -- pause time, single free action; high cooldown; cannot be used in synthesis assessments. |
+| Witness | Slow time during a dilemma; gain extra read of encounter intention; vulnerable to Stroop interference if breaks. |
+| Non-Dual | Scripted moments only; full engagement, no cognitive penalties; lasts seconds. |
 
 ### 3.4 Why this matters
 
@@ -122,13 +122,13 @@ interface StateProfile {
   totalMinutesPracticed: Record<State, number>;
 }
 
-type PlayerProfile['states'] = StateProfile;
+type Significator['states'] = StateProfile;
 ```
 
 The state mini-game is a `core/usecases/StatePractice.ts` use-case (to
-be written), pure of any Phaser dependency. The state effects on combat
-are applied in the damage and ATB pipelines as multipliers / option
-unlocks.
+be written), pure of any Phaser dependency. The state effects on
+assessments are applied in the assessment execution pipelines as
+multipliers / option unlocks.
 
 ## 5. Open questions
 

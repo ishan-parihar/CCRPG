@@ -1,8 +1,56 @@
-# Changelog — Research Phase
+# Changelog -- Research Phase
 
 A record of canon decisions and major restructurings of `/docs/`.
 The implementation phase will track its own changelog at the repo
 root (or in `CHANGELOG.md`).
+
+---
+
+## v2.0 -- Unified Architecture (2026-05-18)
+
+The architectural pivot: ATB combat is completely removed from the
+architecture. Assessment modules ARE the gameplay. Every encounter is a
+module executing in one of four modes (calibration, encounter, practice,
+shadow work).
+
+### Key architectural decisions
+
+- **BattleScene replaced by AssessmentScene** -- no more ATB rendering
+- **PlayerProfile replaced by Significator** -- the sole state vessel
+- **64-cell module architecture** (8 lines x 8 stages) is the game structure
+- **No HP, Mana, Spells, Damage** in the architecture
+
+### Documents added
+
+| Document | Purpose |
+|---|---|
+| `foundations/24-encounter-scheduler.md` | Encounter selection algorithm & macro-catalyst engine |
+| `foundations/25-cumulative-consciousness-index.md` | CCI composite metric |
+| `foundations/26-unified-core-architecture.md` | The unified core architecture spec |
+| `foundations/27-auto-mode-strategy-engine.md` | Auto-mode session strategy generation |
+| `docs/STAGE-ASSESSMENT-ARCHITECTURE.md` | Module contract, composition rules, 4 execution modes |
+| `docs/ONBOARDING-REDESIGN-PLAN.md` | Binary-search composite assessment for Significator seeding |
+| `UNIFIED-IMPLEMENTATION-PLAN.md` | The binding build plan (supersedes IMPLEMENTATION-PLAN.md) |
+
+### Documents archived to `docs/archive/`
+
+| Document | Reason |
+|---|---|
+| `plan.md` | Original ATB-based conceptual blueprint, fully superseded |
+| `IMPLEMENTATION-PLAN.md` | Superseded by UNIFIED-IMPLEMENTATION-PLAN.md; retains ATB references |
+| `docs/PROFILE-MAPPING-AUDIT.md` | Audits PlayerProfile which is replaced by Significator |
+| `docs/combat/00-combat-philosophy.md` | Predicated on ATB combat which is removed |
+| `docs/enemies/00-enemy-taxonomy.md` | "Enemy" concept replaced by encounter/assessment modules |
+
+### What did not change
+
+- The mandatory six-heading contract for every document.
+- The seven first-principles.
+- The line / stage / quadrant / state / drive vocabulary.
+- The transformed up-down staircase (1u/2d, ~70.7% target).
+- The clean-architecture split (core/ / infra/ / game/).
+- The concept-drafts (all 512 remain valid content specifications).
+- The Law-of-One canonical layer.
 
 ---
 
