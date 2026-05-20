@@ -41,3 +41,13 @@ export * from './usecases/BreathRhythmTask.js';
 // --- Registries ---
 export * from './registries/index.js';
 export { bootRegistries } from './registries/boot.js';
+
+// --- Assessments ---
+export * from './assessments/types.js';
+export * from './assessments/engine.js';
+export * from './assessments/registry.js';
+export * from './assessments/lifecycle.js';
+export * from './assessments/scoring.js';
+
+// --- Domain (Snapshot) ---
+export * from './domain/SignificatorSnapshot.js';

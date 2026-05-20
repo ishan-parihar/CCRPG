@@ -19,6 +19,13 @@ export interface SessionContext {
   readonly sessionDurationMs: number;
   readonly targetSessionLength: number; // encounters
   readonly recentLines: readonly string[];
+  readonly estimatedTimeAvailable?: number; // ms
+  readonly inferredEnergy?: 'high' | 'moderate' | 'low';
+  readonly patienceSignals?: {
+    readonly avoidanceRate: number;
+    readonly responseLatencyTrend: 'decreasing' | 'stable' | 'increasing';
+    readonly earlyExits: number;
+  };
 }
 
 export interface PriorityWeights {
