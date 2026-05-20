@@ -6,7 +6,7 @@ import type { PolarityMode, ShadowQuadrant } from '../domain/enums.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
 import type { Significator } from '../domain/Significator.js';
 import { generateCandidates, type WorldState } from './CandidateGeneration.js';
-import { computePriority, type SessionContext } from './PriorityComputation.js';
+import { computePriority, type SessionContext, type PriorityWeights } from './PriorityComputation.js';
 
 export type { WorldState } from './CandidateGeneration.js';
 export type { SessionContext } from './PriorityComputation.js';
@@ -20,6 +20,7 @@ export function scheduleNext(
   session: SessionContext,
   now: number,
   count: number = 3,
+  weights?: PriorityWeights,
 ): ScheduledEncounter[] {
   const candidates = generateCandidates(sig, world, now);
   if (candidates.length === 0) return [];
@@ -27,7 +28,7 @@ export function scheduleNext(
   // Score all candidates
   const scored = candidates.map(c => ({
     candidate: c,
-    priority: computePriority(c, sig, world, session, now),
+    priority: computePriority(c, sig, world, session, now, weights),
   }));
 
   // Sort descending by priority

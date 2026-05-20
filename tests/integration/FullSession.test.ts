@@ -251,6 +251,7 @@ describe('FullSession Integration', () => {
           { ...mockSession, encountersSoFar: i },
           sessionState,
           null,
+          null,
           now + i * 1000,
         );
         sessionState = result.sessionState;
@@ -290,6 +291,7 @@ describe('FullSession Integration', () => {
           session,
           sessionState,
           response,
+          null,
           now + i * 5000,
         );
 
@@ -321,6 +323,7 @@ describe('FullSession Integration', () => {
           emptyWorld,
           { ...mockSession, encountersSoFar: i },
           sessionState,
+          null,
           null,
           now + i * 5000,
         );

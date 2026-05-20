@@ -66,43 +66,44 @@ export function tickWithStrategy(
   session: SessionContext,
   sessionState: SessionState,
   response: PlayerResponse | null,
+  previousEncounter: ScheduledEncounter | null,
   now: number,
 ): { tickResult: TickResult; sessionState: SessionState } {
-  // 1. Increment encounter counter
-  const encountersSinceRefresh = sessionState.encountersSinceRefresh + 1;
-
-  // 2. Apply weight bias from strategy to default weights
-  const biasedWeights: PriorityWeights = applyWeightBias(
-    DEFAULT_WEIGHTS,
-    sessionState.strategy.weightBias,
-  );
-
-  // 3. Check for bleed-through
-  const bleedThrough = detectBleedThrough(sig.theta.lastEncounter, now);
-
-  // 4. Schedule next encounter (scheduler uses its own internal priority, but we
-  //    pass the session context which influences session_fit scoring)
-  const scheduled = scheduleNext(sig, world, session, now, 1);
-  const encounter = scheduled[0] ?? null;
-
-  // 5. Process response if available
+  // 1. Process response from previous encounter (if available)
   let updatedSig = sig;
   let updatedWorld = world;
 
-  if (response && encounter) {
-    const record = processOutcome(encounter, response, now);
+  if (response && previousEncounter) {
+    const record = processOutcome(previousEncounter, response, now);
     const result = applyConsequences(sig, world, record);
     updatedSig = result.sig;
     updatedWorld = result.world;
   }
 
+  // 2. Increment encounter counter
+  const encountersSinceRefresh = sessionState.encountersSinceRefresh + 1;
+
+  // 3. Apply weight bias from strategy to default weights
+  const biasedWeights: PriorityWeights = applyWeightBias(
+    DEFAULT_WEIGHTS,
+    sessionState.strategy.weightBias,
+  );
+
+  // 4. Check for bleed-through
+  const bleedThrough = detectBleedThrough(updatedSig.theta.lastEncounter, now);
+
+  // 5. Schedule next encounter with updated state and biased weights
+  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 1, biasedWeights);
+  const encounter = scheduled[0] ?? null;
+
   // 6. Check transformation threshold
   const transformation = detectThreshold(updatedSig);
 
   // 7. Track outcome in recentOutcomes
+  const quality = response ? estimateResponseQuality(response) : 0.3;
   const newOutcome: RecentEncounter = {
     outcome: response ? 'completed' : 'avoided',
-    quality: response ? 0.7 : 0.3,
+    quality,
     mode: 'capacity',
     shadowIntegrated: false,
   };
@@ -181,6 +182,33 @@ function applyAdjustmentToStrategy(
   }
 
   return updated;
+}
+
+/**
+ * Estimate encounter quality from the richness of the player response.
+ * Quality reflects engagement depth: diverse drive signals, shadow surfacing,
+ * and narrative richness indicate higher engagement.
+ */
+function estimateResponseQuality(response: PlayerResponse): number {
+  let quality = 0.5; // baseline for any completed encounter
+
+  // Diverse drive directionality boosts quality
+  const driveValues = Object.values(response.driveDirectionality);
+  const uniqueDrives = new Set(driveValues).size;
+  if (uniqueDrives >= 3) quality += 0.15;
+  else if (uniqueDrives >= 2) quality += 0.08;
+
+  // Shadow surfacing indicates deep engagement
+  if (response.shadowSurfaced !== null) quality += 0.15;
+
+  // Shadow resolution indicates integration
+  if (response.shadowResolvedId !== null) quality += 0.1;
+
+  // Longer narrative suggests deeper engagement
+  if (response.narrativeSummary.length > 100) quality += 0.1;
+  else if (response.narrativeSummary.length > 50) quality += 0.05;
+
+  return Math.min(1.0, quality);
 }
 
 /**

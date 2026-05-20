@@ -463,6 +463,13 @@ export function adjustWeights(
     adjusted.altitude -= 0.05;
   }
 
+  // Floor clamp: no dimension weight should go below 0.01
+  adjusted.altitude = Math.max(0.01, adjusted.altitude);
+  adjusted.driveHealth = Math.max(0.01, adjusted.driveHealth);
+  adjusted.polarity = Math.max(0.01, adjusted.polarity);
+  adjusted.shadowTopology = Math.max(0.01, adjusted.shadowTopology);
+  adjusted.transformationReadiness = Math.max(0.01, adjusted.transformationReadiness);
+
   // Normalise to sum to 1.0
   const total = adjusted.altitude + adjusted.driveHealth + adjusted.polarity
     + adjusted.shadowTopology + adjusted.transformationReadiness;

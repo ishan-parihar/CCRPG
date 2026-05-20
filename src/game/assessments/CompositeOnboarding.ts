@@ -74,8 +74,8 @@ const THREE_SESSION_SPLITS: Record<number, Line[]> = {
 // Maximum assessments per line before forced convergence
 const MAX_ASSESSMENTS_PER_LINE = 4;
 
-// Starting stage for binary search (Red = ordinal 2, middle of 8)
-const START_STAGE_ORDINAL = 2;
+// Starting stage for quick-calibration (Amber = ordinal 3, better midpoint)
+const START_STAGE_ORDINAL = Math.floor(ALL_STAGES.length / 2); // 4 (Orange) - used only for quick-calibration
 
 // ---------------------------------------------------------------------------
 // CompositeOnboarding class
@@ -112,39 +112,35 @@ export class CompositeOnboarding {
   /**
    * Run binary search for one line. Returns the found altitude.
    *
-   * Algorithm:
-   * 1. Start at Red (ordinal 2, middle of 8 stages)
+   * Algorithm (true binary search):
+   * 1. Start at midpoint of full range [0, 7]
    * 2. Run the module at that stage in 'calibration' mode
-   * 3. If passed (confidence >= threshold): move UP one stage
-   * 4. If failed: move DOWN one stage
-   * 5. Converge when: passed at stage S AND failed at S+1 (or hit boundary)
+   * 3. If passed (confidence >= threshold): set low = current+1, search higher
+   * 4. If failed: set high = current-1, search lower
+   * 5. Converge when low > high or MAX_ASSESSMENTS reached
    * 6. Return highest stage passed
    */
   async assessLine(
     line: Line,
     runModule: (module: StageAssessment) => Promise<AssessmentResult>,
   ): Promise<LineAssessmentResult> {
-    // Quick-calibration: single assessment at Red, no binary search
+    // Quick-calibration: single assessment at starting stage, no binary search
     if (this.config.sessionSplit === 'quick-calibration') {
       return this.quickCalibrateLine(line, runModule);
     }
 
-    let current = START_STAGE_ORDINAL;
-    const low = 0;
-    const high = ALL_STAGES.length - 1;
+    let low = 0;
+    let high = ALL_STAGES.length - 1; // 7
     let highestPassed: number | null = null;
-    let lowestFailed: number | null = null;
     let assessments = 0;
     let lastConfidence = 0;
 
-    while (assessments < MAX_ASSESSMENTS_PER_LINE) {
-      // Clamp current within bounds
-      current = Math.max(low, Math.min(high, current));
+    // Start at midpoint of full range
+    let current = Math.floor((low + high) / 2); // ordinal 3 (Amber)
 
-      // Fetch module from registry
+    while (assessments < MAX_ASSESSMENTS_PER_LINE && low <= high) {
       const module = this.registry.get(line, ALL_STAGES[current]!);
       if (!module) {
-        // No module at this stage; skip and try to converge with available data
         break;
       }
 
@@ -153,45 +149,18 @@ export class CompositeOnboarding {
       lastConfidence = result.confidence;
 
       if (result.passed && result.confidence >= this.config.confidenceThreshold) {
-        // Passed: record and try to move up
         highestPassed = current;
-
-        // Check convergence: passed here and already failed at next stage
-        if (lowestFailed !== null && current >= lowestFailed - 1) {
-          break;
-        }
-
-        // Move up
-        current = Math.min(current + 1, high);
-
-        // If we hit the ceiling, we are done
-        if (current === high && highestPassed === high) {
-          break;
-        }
+        low = current + 1; // search higher
       } else {
-        // Failed: record and try to move down
-        lowestFailed = current;
-
-        // Check convergence: failed here and already passed at previous stage
-        if (highestPassed !== null && current <= highestPassed + 1) {
-          break;
-        }
-
-        // Move down
-        current = Math.max(current - 1, low);
-
-        // If we hit the floor, we are done
-        if (current === low && lowestFailed === low) {
-          break;
-        }
+        high = current - 1; // search lower
       }
+
+      // Next midpoint
+      current = Math.floor((low + high) / 2);
     }
 
-    // Determine final altitude: highest stage passed, or Infrared if none passed
     const finalOrdinal = highestPassed ?? 0;
     const altitude = ALL_STAGES[finalOrdinal]!;
-
-    // Confidence: use the last confidence from the boundary assessment
     const confidence = highestPassed !== null ? lastConfidence : 0;
 
     return { line, altitude, confidence, assessmentsRun: assessments };

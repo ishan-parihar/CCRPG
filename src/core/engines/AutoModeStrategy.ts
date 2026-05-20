@@ -148,7 +148,7 @@ export function generateSessionStrategy(
  * Order: thetaUrgency, shadowActivation, polarityAlignment,
  *        transformationReadiness, driveCorrection, narrativeCoherence, sessionFit
  */
-export function computeWeightBias(theme: SessionTheme, _cci: CCIScore): PriorityWeightBias {
+export function computeWeightBias(theme: SessionTheme, _cci?: CCIScore | null): PriorityWeightBias {
   switch (theme) {
     case 'shadow-integration':
       return {
@@ -548,7 +548,7 @@ export function evaluateMidSessionAdjustment(
     return {
       type: 'theme-shift',
       newTheme: 'consolidation',
-      newWeightBias: computeWeightBias('consolidation', null as unknown as CCIScore),
+      newWeightBias: computeWeightBias('consolidation', null),
       rationale: 'High avoidance rate; shifting to consolidation',
     };
   }
