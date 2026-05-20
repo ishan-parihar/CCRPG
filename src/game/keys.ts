@@ -13,6 +13,7 @@ export const SceneKeys = {
   Reflection: 'ReflectionScene',
   Dilemma: 'DilemmaScene',
   Journal: 'JournalScene',
+  Assessment: 'AssessmentScene',
 } as const;
 
 export const TextureKeys = {
