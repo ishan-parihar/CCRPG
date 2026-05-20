@@ -24,7 +24,9 @@ jobs:
           cache: 'npm'
       - run: npm ci
       - name: Build
-        run: npx vite build --base /CCRPG/
+        # npm run build runs: check:invariants + tsc --noEmit + vite build
+        # vite.config.ts sets base: '/CCRPG/' in production mode automatically
+        run: npm run build
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
