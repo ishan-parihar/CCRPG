@@ -1,3 +1,9 @@
+> **Implementation Scope Notice:** The implementation details in this document
+> (ATB combat, BattleScene, HP/Mana, DamageCalculator, specific `src/` tree in section 27)
+> are superseded by `UNIFIED-IMPLEMENTATION-PLAN.md`. The **vision** (Parts I-IV),
+> **canon decisions** (section 2), and **modular architecture philosophy** (sections 4-8) remain
+> authoritative. For the binding build plan, see `UNIFIED-IMPLEMENTATION-PLAN.md`.
+
 # MVP Blueprint — The Definitive Build Plan
 
 > **Status:** v1.0 — load-bearing. This document is the *binding plan*

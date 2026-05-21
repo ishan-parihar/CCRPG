@@ -50,7 +50,10 @@ docs/
 │   ├── 21-incarnation-architecture.md      ← MASTER SYNTHESIS (Option C: layered-world incarnation)
 │   ├── 22-holon-context-engine.md          ← LLM-driven world implementation spec
 │   ├── 23-polarity-ontology.md             ← Per-line×stage polarity texture catalogue (64 cells)
-│   └── 24-encounter-scheduler.md           ← Encounter selection algorithm & macro-catalyst engine
+│   ├── 24-encounter-scheduler.md           ← Encounter selection algorithm & macro-catalyst engine
+│   ├── 25-cumulative-consciousness-index.md← CCI composite metric
+│   ├── 26-unified-core-architecture.md     ← The unified core architecture spec
+│   └── 27-auto-mode-strategy-engine.md     ← Auto-mode session strategy generation
 │
 ├── concept-drafts/      ← 512 game concept documents (64 modules × 8 files)
 │   ├── README.md        ← Templates and requirements for each file
@@ -58,8 +61,7 @@ docs/
 │   └── {line}/{stage}/  ← 64 module directories
 ├── lines/               ← Per-line documentation
 ├── stages/              ← Per-stage documentation
-├── combat/              ← Combat philosophy
-├── enemies/             ← Enemy taxonomy
+├── archive/             ← Archived documents (ATB combat philosophy, enemy taxonomy, old plans)
 ├── progression/         ← Progression overview
 └── narrative/           ← Narrative architecture
 ```
@@ -89,11 +91,16 @@ docs/
 | foundations/22 | The Holon Context Engine: LLM-driven world implementation spec (data model, pipeline, generation, consequences) |
 | foundations/23 | Polarity Ontology: the 64-cell polarity texture catalogue — per-line×stage STO/STS/exploratory textures grounded in concept-drafts |
 | foundations/24 | Encounter Scheduler & Macro-Catalyst Engine: the operational algorithm that selects, routes, and conditions encounters |
-| **— Architecture / process docs —** ||
-| STAGE-ASSESSMENT-ARCHITECTURE | The MODULE CONTRACT (composition rules, interfaces) |
+| foundations/25 | Cumulative Consciousness Index (CCI): the composite metric tracking integrated development across all lines and stages |
+| foundations/26 | Unified Core Architecture: the unified core architecture spec replacing ATB with assessment-module execution |
+| foundations/27 | Auto-Mode Strategy Engine: auto-mode session strategy generation for adaptive play |
+| **-- Architecture / process docs --** ||
+| STAGE-ASSESSMENT-ARCHITECTURE | The MODULE CONTRACT (composition rules, interfaces, 4 execution modes) |
+| ONBOARDING-REDESIGN-PLAN | Binary-search composite assessment for initial Significator seeding |
+| UNIFIED-IMPLEMENTATION-PLAN | The binding build plan replacing ATB combat with assessment-module architecture |
 | concept-drafts/README | TEMPLATES for what each concept-draft file must contain |
 | concept-drafts/ROADMAP | The TRAJECTORY for developing all 512 concept-drafts |
-| MVP-BLUEPRINT.md | The actionable build plan (the *how* and the *when*) |
+| MVP-BLUEPRINT.md | Vision & philosophy authoritative (Parts I-IV, canon decisions, modular architecture philosophy); implementation details superseded by UNIFIED-IMPLEMENTATION-PLAN.md |
 
 ### 2.3 Document Relationships (No Circular Dependencies)
 
@@ -136,7 +143,7 @@ docs/
             │  22's holon context engine, consuming concept-drafts as templates) │      │
             └────────────────────────────────────────────────────────────────────┘      │
                                                                                          │
-            (narrative/, lines/, stages/, combat/, enemies/, progression/ documents     │
+            (narrative/, lines/, stages/, progression/ documents               │
              provide per-domain detail consumed by both cycles ←─────────────────────────┘
 ```
 
@@ -198,14 +205,16 @@ Feedback (what works, what doesn't)
 R&D Documentation (refined theory + design)
 ```
 
-### 4.2 Current Phase: Concept-Draft Development
+### 4.2 Current Phase: Implementation Phase 0 — Legacy Removal
 
-We are currently in the concept-draft phase. The process:
+Concept-drafts are **COMPLETE** (all 512 exist across 64 modules x 8 files).
+The current phase is **Implementation Phase 0: Legacy Removal** per
+`UNIFIED-IMPLEMENTATION-PLAN.md`. The process:
 
-1. **Start with shadow-diagnostics** for each module (the anchor)
-2. **Then design 7 games** per module, each self-contained and all-inclusive
-3. **Each game must be a developmental catalyst** — not just a test
-4. **Phase order:** Red → Amber+Magenta → Orange+Green → Infrared+Turquoise+White
+1. **Archive obsolete ATB-based documents** (combat philosophy, enemy taxonomy, old plans)
+2. **Align all documentation** to the unified architecture (assessment modules, Significator, 64-cell system)
+3. **Remove legacy ATB code** from `src/` and replace with assessment-module architecture
+4. **Phase order per unified plan:** Legacy removal -> Core architecture -> First playable
 
 ### 4.3 The Grounding Principle
 
