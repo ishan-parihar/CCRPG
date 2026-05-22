@@ -15,6 +15,7 @@ import { TelemetryStore } from '@infra/telemetry/TelemetryStore.js';
 import { TelemetryService } from '@infra/telemetry/TelemetryService.js';
 import { CryptoStore } from '@infra/crypto/CryptoStore.js';
 import { EventBus } from '@core/events/EventBus.js';
+import { bootModuleRegistry } from '@core/assessments/bootModules.js';
 
 /**
  * Boot the Phaser game and attach it to the given parent. Wires up
@@ -57,6 +58,10 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
   // EventBus for cross-layer communication
   const eventBus = new EventBus();
   game.registry.set(RegistryKeys.EventBus, eventBus);
+
+  // Assessment module registry (64 modules: 8 lines × 8 stages)
+  const moduleRegistry = bootModuleRegistry();
+  game.registry.set(RegistryKeys.ModuleRegistry, moduleRegistry);
 
   // Forward game events to telemetry
   eventBus.on('encounter_completed', (payload) => {

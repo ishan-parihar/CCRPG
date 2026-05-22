@@ -15,6 +15,7 @@ export const SceneKeys = {
   Journal: 'JournalScene',
   Assessment: 'AssessmentScene',
   EncounterSelection: 'EncounterSelectionScene',
+  Settings: 'SettingsScene',
 } as const;
 
 export const TextureKeys = {

@@ -10,8 +10,18 @@ import type { ModuleRegistry } from '@core/assessments/registry.js';
 import type { AssessmentSceneData } from '../assessments/AssessmentScene.js';
 import type { Line } from '@core/domain/Line.js';
 import type { Stage } from '@core/domain/Stage.js';
+import type { Significator } from '@core/domain/Significator.js';
+import type { Drive } from '@core/domain/Drive.js';
+import type { DriveDirectionality } from '@core/domain/enums.js';
+import { processOutcome, applyConsequences, type PlayerResponse } from '@core/engines/ConsequenceEngine.js';
+import { accumulateTension, type PESTLETension } from '@core/engines/MacroCatalystEngine.js';
+import { detectThreshold } from '@core/engines/TransformationDetector.js';
+import type { WorldState } from '@core/engines/CandidateGeneration.js';
+import type { SaveRepository } from '@infra/persistence/SaveRepository.js';
 
 export { routeModality } from '../logic/encounterRouting.js';
+
+const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
 
 export class EncounterScene extends Phaser.Scene {
   private encounter!: ScheduledEncounter;
@@ -59,15 +69,58 @@ export class EncounterScene extends Phaser.Scene {
   }
 
   private onAssessmentComplete(result: AssessmentResult): void {
+    const now = Date.now();
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator;
+    const world = this.registry.get(RegistryKeys.WorldState) as WorldState;
     const eventBus = this.registry.get(RegistryKeys.EventBus) as EventBus | undefined;
+    const saveRepo = this.registry.get(RegistryKeys.SaveRepo) as SaveRepository | undefined;
+
+    // Build minimal PlayerResponse from AssessmentResult
+    const dir: DriveDirectionality = result.passed ? 'HealthyBalanced' : 'DarkAddicted';
+    const response: PlayerResponse = {
+      encounterId: this.encounter.id,
+      energeticDirection: result.passed ? 'Radiative' : 'Diffuse',
+      driveDirectionality: { Agency: dir, Communion: dir, Eros: dir, Agape: dir } as Record<Drive, DriveDirectionality>,
+      stageOrientation: result.passed ? 'ReachingHigher' : 'Homeostatic',
+      sourceOfNourishment: 'Ambivalent',
+      shadowSurfaced: result.passed ? null : 'DarkAddiction',
+      shadowResolvedId: null,
+      narrativeSummary: '',
+    };
+
+    // Process outcome and apply consequences
+    const record = processOutcome(this.encounter, response, now);
+    const updated = applyConsequences(sig, world, record, this.encounter);
+
+    // Accumulate PESTLE tension on a random dimension
+    const dim = PESTLE_DIMS[Math.floor(Math.random() * PESTLE_DIMS.length)]!;
+    const newTension = accumulateTension(
+      (updated.world as any).pestleTension ?? { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      dim,
+      0.05,
+    );
+    const updatedWorld = { ...updated.world, pestleTension: newTension } as WorldState;
+
+    // Detect transformation threshold
+    const transformation = detectThreshold(updated.sig);
+
+    // Update registry
+    this.registry.set(RegistryKeys.Significator, updated.sig);
+    this.registry.set(RegistryKeys.WorldState, updatedWorld);
+
+    // Persist
+    saveRepo?.saveProfile(updated.sig);
+
+    // Emit events
     if (eventBus) {
-      // Emit module_lifecycle_scored for the assessment pipeline
       const [line, stage] = this.encounter.moduleRef.split(':');
-      eventBus.emit('module_lifecycle_scored', {
-        module: { line, stage },
-        result,
-      });
+      eventBus.emit('module_lifecycle_scored', { module: { line, stage }, result });
+      eventBus.emit('encounter_completed', { record });
+      if (transformation) {
+        eventBus.emit('transformation_triggered', { signal: transformation });
+      }
     }
+
     this.scene.start(SceneKeys.World);
   }
 }

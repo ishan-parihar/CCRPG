@@ -3,8 +3,8 @@ import { BootScene } from './scenes/BootScene.js';
 import { PreloaderScene } from './scenes/PreloaderScene.js';
 import { MainMenuScene } from './scenes/MainMenuScene.js';
 import { OnboardingScene } from './scenes/OnboardingScene.js';
-import { UIOverlayScene } from './scenes/UIOverlayScene.js';
 import { RadialChartScene } from './scenes/RadialChartScene.js';
+import { SettingsScene } from './scenes/SettingsScene.js';
 import { CodexScene } from './scenes/CodexScene.js';
 import { WorldScene } from './scenes/WorldScene.js';
 import { EncounterScene } from './scenes/EncounterScene.js';
@@ -47,7 +47,6 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
       PreloaderScene,
       MainMenuScene,
       OnboardingScene,
-      UIOverlayScene,
       RadialChartScene,
       CodexScene,
       WorldScene,
@@ -57,6 +56,7 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
       JournalScene,
       AssessmentScene,
       EncounterSelectionScene,
+      SettingsScene,
     ],
   };
 }

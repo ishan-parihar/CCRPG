@@ -12,7 +12,7 @@
  *   practice - runs full task set (same as capacity)
  */
 import Phaser from 'phaser';
-import { SceneKeys } from '../keys.js';
+import { SceneKeys, RegistryKeys } from '../keys.js';
 import type {
   StageAssessment,
   AssessmentTask,
@@ -21,6 +21,9 @@ import type {
   ModuleExecutionMode,
 } from '@core/assessments/types.js';
 import { runModeAwareAssessment } from '@core/assessments/engine.js';
+import { selectSessionItems } from '@core/assessments/itemSelection.js';
+import { DOMOverlay } from '../accessibility/DOMOverlay.js';
+import type { AccessibilityManager } from '../accessibility/AccessibilityManager.js';
 import { NBackRenderer } from './renderers/NBackRenderer.js';
 import { ReactionTimeRenderer } from './renderers/ReactionTimeRenderer.js';
 import { DilemmaRenderer } from './renderers/DilemmaRenderer.js';
@@ -50,6 +53,8 @@ export class AssessmentScene extends Phaser.Scene {
   private currentTaskIndex = 0;
   private allTrials: TrialResult[] = [];
   private currentRenderer: RendererInstance | null = null;
+  private adaptiveTasks: readonly AssessmentTask[] | null = null;
+  private overlay: DOMOverlay | null = null;
 
   // Progress UI elements
   private progressText!: Phaser.GameObjects.Text;
@@ -66,6 +71,28 @@ export class AssessmentScene extends Phaser.Scene {
     this.currentTaskIndex = 0;
     this.allTrials = [];
     this.currentRenderer = null;
+    this.adaptiveTasks = null;
+    this.overlay = null;
+
+    // P2.3: Adaptive item selection for capacity/calibration/practice modes
+    const useAdaptive = (this.mode === 'capacity' || this.mode === 'calibration' || this.mode === 'practice')
+      && this.module.itemPool && this.module.itemPool.length > 0;
+    if (useAdaptive) {
+      const items = selectSessionItems(this.module.itemPool!, this.module.tasks.length, 0.5);
+      this.adaptiveTasks = items.map(item => ({
+        id: item.id,
+        type: item.taskType,
+        description: `Adaptive item ${item.id}`,
+        parameters: item.parameters,
+        measures: item.measures,
+      }));
+    }
+
+    // P2.4: Accessibility overlay
+    const a11y = this.registry.get(RegistryKeys.Accessibility) as AccessibilityManager | undefined;
+    if (a11y?.isScreenReaderEnabled()) {
+      this.overlay = new DOMOverlay();
+    }
 
     // Resume from checkpoint if provided
     const startIndex = data.resumeFrom?.taskIndex ?? 0;
@@ -116,6 +143,9 @@ export class AssessmentScene extends Phaser.Scene {
   }
 
   private getTasksForMode(): readonly AssessmentTask[] {
+    // Use adaptive items if available (capacity/calibration/practice with itemPool)
+    if (this.adaptiveTasks) return this.adaptiveTasks;
+
     switch (this.mode) {
       case 'encounter':
         // Single-trial mode: run only the first task
@@ -147,6 +177,7 @@ export class AssessmentScene extends Phaser.Scene {
     }
 
     const task = tasks[index];
+    this.overlay?.liveAnnounce(`Task ${index + 1} of ${tasks.length}: ${task.type}`);
     const renderer = this.createRenderer(task);
     this.currentRenderer = renderer;
     renderer.create();
@@ -238,6 +269,8 @@ export class AssessmentScene extends Phaser.Scene {
       this.currentRenderer.destroy();
       this.currentRenderer = null;
     }
+    this.overlay?.destroy();
+    this.overlay = null;
     this.scene.start(SceneKeys.World);
   }
 
@@ -248,6 +281,10 @@ export class AssessmentScene extends Phaser.Scene {
     const barWidth = this.scale.width - 80;
     this.progressFill.width = barWidth;
     this.progressText.setText('Complete');
+
+    this.overlay?.liveAnnounce('Assessment complete', 'assertive');
+    this.overlay?.destroy();
+    this.overlay = null;
 
     if (this.onComplete) {
       this.onComplete(result);

@@ -8,13 +8,8 @@ import { SceneKeys, RegistryKeys, TextureKeys } from '../keys.js';
 import type { Significator } from '@core/domain/Significator.js';
 import type { Holon } from '@core/domain/Holon.js';
 import type { EncounterSpec } from '@core/domain/Encounter.js';
-import { EncounterRegistry } from '@core/registries/index.js';
-
-interface WorldState {
-  readonly holons: readonly Holon[];
-  readonly recentEncounterIds: readonly string[];
-  readonly cooldowns: Readonly<Record<string, number>>;
-}
+import { scheduleNext, type WorldState } from '@core/engines/EncounterScheduler.js';
+import type { SessionContext } from '@core/engines/PriorityComputation.js';
 
 export class WorldScene extends Phaser.Scene {
   private player!: Phaser.GameObjects.Image;
@@ -79,6 +74,12 @@ export class WorldScene extends Phaser.Scene {
       fontSize: '16px', color: '#88ccff', fontFamily: 'monospace',
     }).setInteractive().setDepth(100)
       .on('pointerdown', () => this.scene.start(SceneKeys.Journal));
+
+    // Settings button
+    this.add.text(width - 140, 20, '⚙️', {
+      fontSize: '18px', color: '#cccccc', fontFamily: 'monospace',
+    }).setInteractive().setDepth(100)
+      .on('pointerdown', () => this.scene.start(SceneKeys.Settings));
   }
 
   override update(_time: number, _delta: number): void {
@@ -180,55 +181,43 @@ export class WorldScene extends Phaser.Scene {
   }
 
   private interactWithNPC(holon: Holon): void {
-    // Look up a matching encounter from the registry based on the NPC's line and role
-    const role = holon.narrativeRole === 'main-boss' ? 'main' : 'side';
-    const matchingKeys = EncounterRegistry.keysFor({ stage: holon.stage, role } as Partial<EncounterSpec>);
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
+    const world = this.registry.get(RegistryKeys.WorldState) as WorldState | undefined;
 
-    // Filter to encounters whose lines include this holon's line
-    const candidates = matchingKeys
-      .map(key => EncounterRegistry.get(key))
-      .filter((enc): enc is EncounterSpec =>
-        enc !== undefined && enc.lines.includes(holon.line)
-      );
-
-    let encounter: EncounterSpec;
-
-    if (candidates.length > 0) {
-      // Pick a random matching encounter for variety
-      encounter = candidates[Math.floor(Math.random() * candidates.length)]!;
-    } else {
-      // Fallback: use any encounter from the registry that matches the stage
-      const allKeys = EncounterRegistry.keysFor({ stage: holon.stage } as Partial<EncounterSpec>);
-      const allCandidates = allKeys
-        .map(key => EncounterRegistry.get(key))
-        .filter((enc): enc is EncounterSpec => enc !== undefined);
-
-      if (allCandidates.length > 0) {
-        encounter = allCandidates[Math.floor(Math.random() * allCandidates.length)]!;
-      } else {
-        // Ultimate fallback: construct a minimal encounter
-        encounter = {
-          id: `encounter-${holon.id}`,
-          lines: [holon.line],
-          stage: holon.stage,
-          quadrants: ['UL'],
-          role: 'side',
-          ray: 'Red',
-          modality: 'ImmersiveRPG',
-          taskBinds: [{ taskSlug: 'n_back', line: holon.line }],
-          narrative: {
-            theme: `Encounter with ${holon.name}`,
-            allyBeats: ['Your companion watches closely.'],
-            codexEntry: `Met ${holon.name} in the volcanic badlands.`,
-          },
-          enemy: {
-            name: holon.name,
-            difficulty: 2,
-          },
-        };
+    if (sig && world) {
+      const session: SessionContext = {
+        encountersSoFar: sig.totalEncounters,
+        sessionDurationMs: 0,
+        targetSessionLength: 10,
+        recentLines: [],
+      };
+      const results = scheduleNext(sig, world, session, Date.now(), 3);
+      if (results.length > 0) {
+        this.scene.start(SceneKeys.EncounterSelection, { encounters: results });
+        return;
       }
     }
 
+    // Fallback: construct a minimal encounter
+    const encounter: EncounterSpec = {
+      id: `encounter-${holon.id}`,
+      lines: [holon.line],
+      stage: holon.stage,
+      quadrants: ['UL'],
+      role: 'side',
+      ray: 'Red',
+      modality: 'ImmersiveRPG',
+      taskBinds: [{ taskSlug: 'n_back', line: holon.line }],
+      narrative: {
+        theme: `Encounter with ${holon.name}`,
+        allyBeats: ['Your companion watches closely.'],
+        codexEntry: `Met ${holon.name} in the volcanic badlands.`,
+      },
+      enemy: {
+        name: holon.name,
+        difficulty: 2,
+      },
+    };
     this.scene.start(SceneKeys.Encounter, { encounter });
   }
 

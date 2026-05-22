@@ -73,6 +73,11 @@ export class ReflectionScene extends Phaser.Scene {
         .on('pointerover', () => btn.setColor('#aaeeff'))
         .on('pointerout', () => btn.setColor('#88ccff'));
     });
+
+    // Back button
+    this.add.text(60, height - 50, '← Back', {
+      fontSize: '16px', color: '#aaaaaa', fontFamily: 'monospace',
+    }).setInteractive().on('pointerdown', () => this.scene.start(SceneKeys.World));
   }
 
   private onResponse(_response: string): void {
@@ -142,6 +147,7 @@ export class ReflectionScene extends Phaser.Scene {
 
     this.time.delayedCall(2000, () => {
       this.events.emit('encounter_done', { record });
+      this.scene.start(SceneKeys.World);
     });
   }
 }

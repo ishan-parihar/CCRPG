@@ -85,6 +85,16 @@ export class MainMenuScene extends Phaser.Scene {
       onClick: () => this.resetProfile(),
     });
 
+    btnY += 90;
+    makeButton(this, width / 2, btnY, {
+      label: '⚙️  Settings',
+      width: 300,
+      height: 56,
+      fill: 0x1a1a2a,
+      hoverFill: 0x2a2a4a,
+      onClick: () => this.scene.start(SceneKeys.Settings),
+    });
+
     // Footer
     this.add.text(width / 2, height - 40, `Stage: ${sig.currentStage}  ·  Sessions: ${sig.totalSessions}`, {
       fontFamily: 'system-ui, sans-serif',
