@@ -214,3 +214,5 @@ during Phase 5.
 ---
 
 *"Reality is not constructed; it is unfolded from a pre-existing whole."*
+---
+Developed by [Ishan Parihar](https://github.com/ishan-parihar) — If you find this useful, [consider supporting](https://rzp.io/rzp/ishan-parihar)
