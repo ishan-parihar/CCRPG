@@ -32,10 +32,14 @@ import { HoldRenderer } from './renderers/HoldRenderer.js';
 import { PatternRenderer } from './renderers/PatternRenderer.js';
 import { EmotionRenderer } from './renderers/EmotionRenderer.js';
 import { LLMDialogueRenderer } from './renderers/LLMDialogueRenderer.js';
+import { getModalityFrame, type NarrativeFrame } from './ModalityPresenter.js';
+import type { Modality } from '@core/domain/enums.js';
+import type { Stage } from '@core/domain/Stage.js';
 
 export interface AssessmentSceneData {
   readonly module: StageAssessment;
   readonly mode: ModuleExecutionMode;
+  readonly modality?: Modality;
   readonly onComplete?: (result: AssessmentResult) => void;
   readonly resumeFrom?: { taskIndex: number; priorTrials: readonly TrialResult[] };
 }
@@ -49,16 +53,13 @@ export class AssessmentScene extends Phaser.Scene {
   private module!: StageAssessment;
   private mode!: ModuleExecutionMode;
   private onComplete?: (result: AssessmentResult) => void;
+  private narrativeFrame: NarrativeFrame | null = null;
 
   private currentTaskIndex = 0;
   private allTrials: TrialResult[] = [];
   private currentRenderer: RendererInstance | null = null;
   private adaptiveTasks: readonly AssessmentTask[] | null = null;
   private overlay: DOMOverlay | null = null;
-
-  // Progress UI elements
-  private progressText!: Phaser.GameObjects.Text;
-  private progressFill!: Phaser.GameObjects.Rectangle;
 
   constructor() {
     super({ key: SceneKeys.Assessment });
@@ -73,6 +74,9 @@ export class AssessmentScene extends Phaser.Scene {
     this.currentRenderer = null;
     this.adaptiveTasks = null;
     this.overlay = null;
+    this.narrativeFrame = data.modality
+      ? getModalityFrame(data.modality, this.module.stage as Stage)
+      : null;
 
     // P2.3: Adaptive item selection for capacity/calibration/practice modes
     const useAdaptive = (this.mode === 'capacity' || this.mode === 'calibration' || this.mode === 'practice')
@@ -103,21 +107,6 @@ export class AssessmentScene extends Phaser.Scene {
     const { width } = this.scale;
     this.cameras.main.setBackgroundColor(0x05070b);
 
-    // Progress indicator: "Task X of Y" + thin bar at top
-    this.progressText = this.add.text(width / 2, 28, '', {
-      fontFamily: 'system-ui, sans-serif',
-      fontSize: '16px',
-      color: '#8899aa',
-    }).setOrigin(0.5).setDepth(100);
-
-    const barWidth = width - 80;
-    this.add.rectangle(width / 2, 54, barWidth, 4, 0x1a2233)
-      .setOrigin(0.5)
-      .setDepth(100);
-    this.progressFill = this.add.rectangle(
-      width / 2 - barWidth / 2, 54, 0, 4, 0x4cc9f0,
-    ).setOrigin(0, 0.5).setDepth(100);
-
     // Leave button (session-length sovereignty)
     const leaveBtn = this.add.text(width - 20, 28, '✕ Leave', {
       fontFamily: 'system-ui, sans-serif',
@@ -128,18 +117,12 @@ export class AssessmentScene extends Phaser.Scene {
     leaveBtn.on('pointerout', () => leaveBtn.setColor('#556677'));
     leaveBtn.on('pointerdown', () => this.onLeave());
 
-    this.updateProgress();
-    this.startTask(startIndex);
-  }
-
-  private updateProgress(): void {
-    const total = this.getTasksForMode().length;
-    const current = this.currentTaskIndex + 1;
-    this.progressText.setText(`Task ${current} of ${total}`);
-
-    const barWidth = this.scale.width - 80;
-    const fillWidth = (this.currentTaskIndex / total) * barWidth;
-    this.progressFill.width = fillWidth;
+    // Narrative intro or start immediately
+    if (this.narrativeFrame) {
+      this.showNarrativeText(this.narrativeFrame.intro, 2500, () => this.startTask(startIndex));
+    } else {
+      this.startTask(startIndex);
+    }
   }
 
   private getTasksForMode(): readonly AssessmentTask[] {
@@ -169,7 +152,6 @@ export class AssessmentScene extends Phaser.Scene {
   private startTask(index: number): void {
     const tasks = this.getTasksForMode();
     this.currentTaskIndex = index;
-    this.updateProgress();
 
     if (index >= tasks.length) {
       this.finishAssessment();
@@ -177,7 +159,7 @@ export class AssessmentScene extends Phaser.Scene {
     }
 
     const task = tasks[index];
-    this.overlay?.liveAnnounce(`Task ${index + 1} of ${tasks.length}: ${task.type}`);
+    this.overlay?.liveAnnounce(`Task ${index + 1}: ${task.type}`);
     const renderer = this.createRenderer(task);
     this.currentRenderer = renderer;
     renderer.create();
@@ -277,20 +259,49 @@ export class AssessmentScene extends Phaser.Scene {
   private finishAssessment(): void {
     const result = runModeAwareAssessment(this.module, this.allTrials, this.mode);
 
-    // Update progress bar to full
-    const barWidth = this.scale.width - 80;
-    this.progressFill.width = barWidth;
-    this.progressText.setText('Complete');
-
     this.overlay?.liveAnnounce('Assessment complete', 'assertive');
     this.overlay?.destroy();
     this.overlay = null;
 
-    if (this.onComplete) {
-      this.onComplete(result);
-    }
+    const emitDone = () => {
+      if (this.onComplete) this.onComplete(result);
+      this.events.emit('assessment_done', { result });
+    };
 
-    // Emit on scene events for any listeners (e.g., EncounterScene pattern)
-    this.events.emit('assessment_done', { result });
+    // Narrative outro or emit immediately
+    if (this.narrativeFrame) {
+      const isSuccess = 'passed' in result && result.passed;
+      const text = isSuccess ? this.narrativeFrame.outro.success : this.narrativeFrame.outro.neutral;
+      this.showNarrativeText(text, 2000, emitDone);
+    } else {
+      emitDone();
+    }
+  }
+
+  private showNarrativeText(text: string, durationMs: number, onDone: () => void): void {
+    const { width, height } = this.scale;
+    const txt = this.add.text(width / 2, height / 2, text, {
+      fontFamily: 'monospace',
+      fontSize: '20px',
+      color: '#ccccee',
+      wordWrap: { width: width - 80 },
+      align: 'center',
+    }).setOrigin(0.5).setDepth(200).setAlpha(0);
+
+    this.tweens.add({
+      targets: txt,
+      alpha: 1,
+      duration: 400,
+      onComplete: () => {
+        this.time.delayedCall(durationMs - 800, () => {
+          this.tweens.add({
+            targets: txt,
+            alpha: 0,
+            duration: 400,
+            onComplete: () => { txt.destroy(); onDone(); },
+          });
+        });
+      },
+    });
   }
 }

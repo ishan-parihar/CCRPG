@@ -32,6 +32,12 @@
  */
 import Phaser from 'phaser';
 import type { AssessmentTask, TrialResult, MeasureDimension } from '@core/assessments/types.js';
+import { evaluateResponse } from '@infra/llm/LLMClient.js';
+import { getFallback } from '@infra/llm/FallbackProvider.js';
+import type { Line } from '@core/domain/Line.js';
+import type { Stage } from '@core/domain/Stage.js';
+
+const LLM_RUBRIC = 'Score 0-1 based on depth of self-reflection, specificity of insight, and developmental awareness. Higher scores for responses that show genuine introspection rather than surface-level answers.';
 
 export class LLMDialogueRenderer {
   private scene: Phaser.Scene;
@@ -81,6 +87,14 @@ export class LLMDialogueRenderer {
     this.startTime = Date.now();
     this.inputText = '';
     this.timedOut = false;
+
+    // Get adaptive prompt from FallbackProvider if no explicit prompt
+    if (!this.task.parameters.prompt) {
+      const line = (this.task.parameters.line as Line) ?? 'Intrapersonal';
+      const stage = (this.task.parameters.stage as Stage) ?? 'Red';
+      const fallback = getFallback('LanguageReflective', line, stage);
+      if (fallback.prompt) this.prompt = fallback.prompt;
+    }
 
     // NPC dialogue bubble at top
     this.promptBubble = this.createDialogueBubble(width / 2, 160, this.prompt);
@@ -238,34 +252,30 @@ export class LLMDialogueRenderer {
     const responseTime = Date.now() - this.startTime;
     const responseText = this.inputText.trim();
 
-    // Compute dimension scores
+    // Call LLM for scoring, then finalize
+    this.scoreThenComplete(responseText, responseTime);
+  }
+
+  private async scoreThenComplete(responseText: string, responseTime: number): Promise<void> {
     const dimensions: Partial<Record<MeasureDimension, number>> = {};
 
     if (responseText.length > 0) {
-      const wordCount = responseText.split(/\s+/).length;
+      // Attempt LLM evaluation
+      const evaluation = await evaluateResponse(this.prompt, LLM_RUBRIC, responseText);
 
-      // Depth: proxy from word count (higher stages should produce more articulate responses)
-      // The actual depth scoring happens via LLM later; this is structural estimation
-      dimensions.depth = Math.min(1.0, Math.max(0.1, wordCount / 50));
+      let score: number;
+      if (evaluation.score === 0.5 && evaluation.feedback === 'LLM unavailable') {
+        // Fallback: use response length heuristic
+        score = responseText.length > 50 ? 0.7 : 0.3;
+      } else {
+        score = evaluation.score;
+      }
 
-      // Coherence: proxy from sentence structure (presence of connectives, length variation)
-      // Again, real scoring is LLM-based; this captures engagement level
-      const sentences = responseText.split(/[.!?]+/).filter(s => s.trim().length > 0);
-      const avgSentenceLength = sentences.length > 0
-        ? wordCount / sentences.length
-        : wordCount;
-      // Good coherence: 8-20 words per sentence
-      dimensions.coherence = Math.min(1.0, Math.max(0.1,
-        1 - Math.abs(avgSentenceLength - 14) / 14));
-
-      // Integration: presence of multiple perspectives or connections
-      // Structural proxy: response that references both self and other, or uses connecting language
-      dimensions.integration = Math.min(1.0, Math.max(0.1, wordCount / 60));
-
-      // Response time
+      dimensions.depth = score;
+      dimensions.coherence = score;
+      dimensions.integration = score;
       dimensions.response_time = Math.max(0, Math.min(1, responseTime / 60000));
     } else {
-      // No response: all dimensions at 0
       dimensions.depth = 0;
       dimensions.coherence = 0;
       dimensions.integration = 0;

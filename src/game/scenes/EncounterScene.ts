@@ -14,6 +14,7 @@ import type { Significator } from '@core/domain/Significator.js';
 import type { Drive } from '@core/domain/Drive.js';
 import type { DriveDirectionality } from '@core/domain/enums.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from '@core/engines/ConsequenceEngine.js';
+import { narrateConsequence } from '../systems/ConsequenceNarrator.js';
 import { accumulateTension, type PESTLETension } from '@core/engines/MacroCatalystEngine.js';
 import { detectThreshold } from '@core/engines/TransformationDetector.js';
 import type { WorldState } from '@core/engines/CandidateGeneration.js';
@@ -54,6 +55,7 @@ export class EncounterScene extends Phaser.Scene {
     const sceneData: AssessmentSceneData = {
       module,
       mode: this.encounter.executionMode,
+      modality: this.encounter.modality,
       onComplete: (result: AssessmentResult) => this.onAssessmentComplete(result),
     };
 
@@ -121,6 +123,7 @@ export class EncounterScene extends Phaser.Scene {
       }
     }
 
-    this.scene.start(SceneKeys.World);
+    const narration = narrateConsequence(this.encounter.modality, result.passed);
+    this.scene.start(SceneKeys.World, { consequenceText: narration.text });
   }
 }

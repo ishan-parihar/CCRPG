@@ -38,6 +38,7 @@ export const RegistryKeys = {
   Telemetry: 'svc:telemetry',
   ScreenReader: 'svc:screen-reader',
   ModuleRegistry: 'svc:module-registry',
+  Ecological: 'svc:ecological',
 } as const;
 
 export const GameEvents = {
