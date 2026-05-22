@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const somaticMagenta: StageAssessment = {
   line: 'Somatic',
@@ -22,6 +22,28 @@ export const somaticMagenta: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 90000,
+  itemPool: [
+    { id: 'somatic-magenta-01', taskType: 'rhythm', difficulty: 0.2, parameters: { bpm: 60, beats: 8, complexity: 'simple' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-magenta-02', taskType: 'rhythm', difficulty: 0.25, parameters: { bpm: 60, beats: 10, complexity: 'simple' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-magenta-03', taskType: 'rhythm', difficulty: 0.3, parameters: { bpm: 70, beats: 10, complexity: 'simple' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-magenta-04', taskType: 'rhythm', difficulty: 0.35, parameters: { bpm: 70, beats: 12, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-05', taskType: 'rhythm', difficulty: 0.4, parameters: { bpm: 80, beats: 12, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-06', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 2000, perturbations: false }, measures: ['accuracy'] },
+    { id: 'somatic-magenta-07', taskType: 'hold', difficulty: 0.35, parameters: { targetDurationMs: 2500, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-magenta-08', taskType: 'rhythm', difficulty: 0.45, parameters: { bpm: 80, beats: 14, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-09', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 3000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-magenta-10', taskType: 'rhythm', difficulty: 0.5, parameters: { bpm: 80, beats: 16, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-11', taskType: 'rhythm', difficulty: 0.55, parameters: { bpm: 90, beats: 14, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-12', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 3500, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-magenta-13', taskType: 'rhythm', difficulty: 0.6, parameters: { bpm: 90, beats: 16, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-14', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 4000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-magenta-15', taskType: 'rhythm', difficulty: 0.65, parameters: { bpm: 100, beats: 14, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-16', taskType: 'rhythm', difficulty: 0.7, parameters: { bpm: 100, beats: 16, complexity: 'simple', partnerMode: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-17', taskType: 'rhythm', difficulty: 0.75, parameters: { bpm: 110, beats: 14, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-18', taskType: 'hold', difficulty: 0.75, parameters: { targetDurationMs: 4500, perturbations: false, trials: 2 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-magenta-19', taskType: 'rhythm', difficulty: 0.85, parameters: { bpm: 110, beats: 18, complexity: 'simple' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-magenta-20', taskType: 'rhythm', difficulty: 0.9, parameters: { bpm: 120, beats: 16, complexity: 'simple', partnerMode: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain rhythm without external metronome',

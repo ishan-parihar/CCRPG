@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const moralAmber: StageAssessment = {
   line: 'Moral',
@@ -31,6 +31,28 @@ export const moralAmber: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 200000,
+  itemPool: [
+    { id: 'moral-amber-01', taskType: 'dilemma', difficulty: 0.2, parameters: { dilemmaType: 'simple-rule', choices: 2, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-amber-02', taskType: 'dilemma', difficulty: 0.25, parameters: { dilemmaType: 'duty-vs-desire', choices: 2, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-amber-03', taskType: 'dilemma', difficulty: 0.3, parameters: { dilemmaType: 'rule-vs-compassion', choices: 3, scenarioCount: 2 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-04', taskType: 'dilemma', difficulty: 0.35, parameters: { dilemmaType: 'group-loyalty', choices: 3, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-amber-05', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'A friend broke a rule. Should you report them?', maxResponseLength: 400 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-06', taskType: 'dilemma', difficulty: 0.4, parameters: { dilemmaType: 'rule-vs-compassion', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-07', taskType: 'dilemma', difficulty: 0.45, parameters: { dilemmaType: 'authority-vs-conscience', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-08', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'The group says one thing but you feel another is right. What do you do?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-09', taskType: 'dilemma', difficulty: 0.5, parameters: { dilemmaType: 'duty-vs-desire', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-10', taskType: 'dilemma', difficulty: 0.55, parameters: { dilemmaType: 'loyalty-vs-honesty', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-11', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'Two rules conflict. How do you decide which to follow?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-12', taskType: 'dilemma', difficulty: 0.6, parameters: { dilemmaType: 'rule-vs-rule', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-13', taskType: 'dilemma', difficulty: 0.65, parameters: { dilemmaType: 'group-loyalty-vs-outsider', choices: 4, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-14', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'Your leader asks you to do something you believe is wrong. What do you do?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-15', taskType: 'dilemma', difficulty: 0.7, parameters: { dilemmaType: 'sacred-rule-vs-harm', choices: 4, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-16', taskType: 'dilemma', difficulty: 0.75, parameters: { dilemmaType: 'competing-duties', choices: 4, scenarioCount: 4 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-17', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'Your group demands loyalty but the rule harms an outsider. Explain your reasoning.', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-18', taskType: 'dilemma', difficulty: 0.8, parameters: { dilemmaType: 'multi-role-obligation', choices: 4, scenarioCount: 4 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-19', taskType: 'dilemma', difficulty: 0.85, parameters: { dilemmaType: 'tradition-vs-justice', choices: 4, scenarioCount: 4 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-amber-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'Three duties conflict: loyalty to family, obedience to authority, and compassion for a stranger. Walk through your reasoning.', maxResponseLength: 700 }, measures: ['depth', 'coherence', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Apply moral rule without group pressure',

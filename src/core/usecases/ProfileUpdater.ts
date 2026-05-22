@@ -1,18 +1,18 @@
 /**
- * ProfileUpdater — the runtime loop that updates PlayerProfile after encounters.
- * encounter result → staircase → altitude → ceiling → stage → rays → shadows → drives
+ * ProfileUpdater — the runtime loop that updates Significator after encounters.
+ * encounter result → altitude → stage → rays → shadows → drives
  */
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
-import type { PlayerProfile, TaskSlug } from '../domain/PlayerProfile.js';
-import { LINE_QUADRANT } from '../domain/Line.js';
+import type { Significator, DriveState } from '../domain/Significator.js';
+import type { TaskSlug } from '../domain/SharedTypes.js';
 import { stageOrdinal } from '../domain/Stage.js';
-import { updateStaircase, DEFAULT_STAIRCASE_CONFIG } from './Staircase.js';
 import { thresholdToStage } from './ThresholdMaps.js';
 import { capToCeiling } from './LineCeilings.js';
 import { computeRayProfile } from './RayProfileComputer.js';
 import { synthesiseStage } from './StageSynthesizer.js';
 import { detectShadows } from './ShadowDetector.js';
+import type { ShadowLedger } from '../domain/ShadowLedger.js';
 
 /** Result of a single encounter's cognitive task. */
 export interface EncounterResult {
@@ -24,86 +24,80 @@ export interface EncounterResult {
 }
 
 /**
- * Update the player profile after an encounter.
- * Returns a new immutable profile (no mutation).
+ * Update the Significator after an encounter.
+ * Returns a new immutable Significator (no mutation).
  */
-export function updateProfile(profile: PlayerProfile, result: EncounterResult): PlayerProfile {
-  const slug = result.taskSlug;
+export function updateProfile(sig: Significator, result: EncounterResult): Significator {
+  // 1. Map trial accuracy → proposed altitude for the line
+  const correctCount = result.trials.filter(t => t.correct).length;
+  const threshold = result.trials.length > 0 ? Math.round((correctCount / result.trials.length) * 10) : 1;
+  const proposedStage = thresholdToStage(result.line, threshold);
 
-  // 1. Update staircase for the exercised task
-  let staircase = profile.taskStaircases[slug] ?? {
-    level: 1, reversals: 0, lastDirection: null, history: [],
-  };
-  for (const trial of result.trials) {
-    staircase = updateStaircase(staircase, DEFAULT_STAIRCASE_CONFIG, trial.correct);
-  }
-  const newStaircases = { ...profile.taskStaircases, [slug]: staircase };
-
-  // 2. Map staircase level → proposed altitude for the line
-  const proposedStage = thresholdToStage(result.line, staircase.level);
-
-  // 3. Enforce line ceiling
-  const currentAltitudes = { ...profile.altitudes };
+  // 2. Enforce line ceiling
+  const currentAltitudes = { ...sig.altitudes };
   const capped = capToCeiling(result.line, proposedStage, currentAltitudes);
 
-  // Only advance (never regress from staircase alone — regression is detected separately)
+  // Only advance (never regress from encounter alone)
   const currentOrd = stageOrdinal(currentAltitudes[result.line]);
   const cappedOrd = stageOrdinal(capped);
   if (cappedOrd > currentOrd) {
     currentAltitudes[result.line] = capped;
   }
 
-  // 4. Record altitude history
-  const altitudeHistory = [
-    ...profile.altitudeHistory,
-    { line: result.line, stage: currentAltitudes[result.line], atMs: Date.now() },
-  ];
-
-  // 5. Update quadrant coverage
-  const quadrant = LINE_QUADRANT[result.line];
-  const quadrantCoverage = { ...profile.quadrantCoverage };
-  const currentStage = profile.stage;
-  const existing = quadrantCoverage[currentStage] ?? [];
-  if (!existing.includes(quadrant)) {
-    quadrantCoverage[currentStage] = [...existing, quadrant];
-  }
-
-  // 6. Recompute synthesised stage
+  // 3. Recompute synthesised stage
   const newStage = synthesiseStage(currentAltitudes);
 
-  // 7. Recompute ray profile
+  // 4. Recompute ray profile
   const newRayProfile = computeRayProfile(currentAltitudes);
 
-  // 8. Update drive fixation risk
-  const newDrives = updateDriveRisk(profile.drives, result.driveChoice);
+  // 5. Update drive fixation risk
+  const newDrives = updateDriveRisk(sig.drives, result.driveChoice);
 
-  // 9. Build intermediate profile for shadow detection
-  const updatedProfile: PlayerProfile = {
-    ...profile,
+  // 6. Build updated Significator for shadow detection
+  const updated: Significator = {
+    ...sig,
     altitudes: currentAltitudes,
-    stage: newStage,
+    currentStage: newStage,
     rayProfile: newRayProfile,
-    taskStaircases: newStaircases,
-    quadrantCoverage,
-    altitudeHistory,
     drives: newDrives,
-    shadows: [], // will be recomputed below
+    totalEncounters: sig.totalEncounters + 1,
   };
 
-  // 10. Detect shadows on the updated profile
-  const shadows = detectShadows(updatedProfile);
+  // 7. Detect shadows and surface new entries
+  const signals = detectShadows(updated);
+  const now = Date.now();
+  const existingEntries = [...sig.shadows.entries];
+  for (const signal of signals) {
+    const alreadyTracked = existingEntries.some(
+      e => e.line === signal.line && e.resolvedAt === null,
+    );
+    if (!alreadyTracked) {
+      existingEntries.push({
+        id: `shadow-${now}-${signal.line}`,
+        quadrant: 'DarkAddiction',
+        line: signal.line,
+        stage: currentAltitudes[signal.line],
+        drive: 'Agency',
+        surfacedAt: now,
+        resolvedAt: null,
+        recurrenceCount: 0,
+        compoundPartner: null,
+        severity: 1,
+      });
+    }
+  }
+  const newShadows: ShadowLedger = {
+    entries: existingEntries,
+    activeCount: existingEntries.filter(e => e.resolvedAt === null).length,
+  };
 
-  return { ...updatedProfile, shadows };
+  return { ...updated, shadows: newShadows };
 }
 
 /**
  * Update drive fixation risk based on choice patterns.
- * If the same drive is chosen repeatedly, its fixation risk increases.
  */
-function updateDriveRisk(
-  drives: PlayerProfile['drives'],
-  choice?: Drive,
-): PlayerProfile['drives'] {
+function updateDriveRisk(drives: DriveState, choice?: Drive): DriveState {
   if (!choice) return drives;
 
   const decay = 0.95;
@@ -111,9 +105,9 @@ function updateDriveRisk(
 
   const newRisk = { ...drives.fixationRisk };
   for (const d of Object.keys(newRisk) as Drive[]) {
-    newRisk[d] = newRisk[d] * decay; // decay all
+    newRisk[d] = newRisk[d] * decay;
   }
-  newRisk[choice] = Math.min(1, newRisk[choice] + boost); // boost chosen
+  newRisk[choice] = Math.min(1, newRisk[choice] + boost);
 
   return { weights: drives.weights, fixationRisk: newRisk };
 }

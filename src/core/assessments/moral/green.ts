@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const moralGreen: StageAssessment = {
   line: 'Moral',
@@ -31,6 +31,28 @@ export const moralGreen: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 270000,
+  itemPool: [
+    { id: 'moral-green-01', taskType: 'dilemma', difficulty: 0.2, parameters: { dilemmaType: 'care-ethics', stakeholders: 2, choices: 2, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-green-02', taskType: 'dilemma', difficulty: 0.25, parameters: { dilemmaType: 'contextual-morality', stakeholders: 2, choices: 3, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-green-03', taskType: 'dilemma', difficulty: 0.3, parameters: { dilemmaType: 'care-ethics', stakeholders: 3, choices: 3, scenarioCount: 2 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-04', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'Two people you care about need different things from you. How do you choose?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-green-05', taskType: 'dilemma', difficulty: 0.35, parameters: { dilemmaType: 'stakeholder-inclusion', stakeholders: 3, choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-06', taskType: 'dilemma', difficulty: 0.4, parameters: { dilemmaType: 'multi-stakeholder', stakeholders: 3, choices: 4, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-07', taskType: 'llm_dialogue', difficulty: 0.45, parameters: { prompt: 'The marginalized voice says one thing, the majority says another. Who do you listen to?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-08', taskType: 'dilemma', difficulty: 0.45, parameters: { dilemmaType: 'contextual-morality', stakeholders: 4, choices: 4, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-09', taskType: 'dilemma', difficulty: 0.5, parameters: { dilemmaType: 'care-ethics', stakeholders: 4, choices: 4, scenarioCount: 3, noRightAnswer: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-10', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Every choice here hurts someone. How do you decide?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-11', taskType: 'dilemma', difficulty: 0.55, parameters: { dilemmaType: 'multi-stakeholder', stakeholders: 4, choices: 4, scenarioCount: 3, conflictingNeeds: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-12', taskType: 'dilemma', difficulty: 0.6, parameters: { dilemmaType: 'stakeholder-inclusion', stakeholders: 5, choices: 4, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'The person you excluded from the decision is now hurt. Was your process fair?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-14', taskType: 'dilemma', difficulty: 0.65, parameters: { dilemmaType: 'contextual-morality', stakeholders: 5, choices: 4, scenarioCount: 3, culturalContext: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-15', taskType: 'dilemma', difficulty: 0.7, parameters: { dilemmaType: 'multi-stakeholder', stakeholders: 5, choices: 4, scenarioCount: 4, noRightAnswer: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Your care for one group causes harm to another. How do you hold both?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-17', taskType: 'dilemma', difficulty: 0.8, parameters: { dilemmaType: 'care-ethics', stakeholders: 5, choices: 4, scenarioCount: 4, systemicHarm: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-18', taskType: 'dilemma', difficulty: 0.8, parameters: { dilemmaType: 'stakeholder-inclusion', stakeholders: 6, choices: 5, scenarioCount: 4, conflictingNeeds: true }, measures: ['depth', 'coherence', 'integration', 'self_correction'] },
+    { id: 'moral-green-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'Every stakeholder has a valid claim. You cannot satisfy all. What does care look like here?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-green-20', taskType: 'dilemma', difficulty: 0.9, parameters: { dilemmaType: 'complex-multi-stakeholder', stakeholders: 6, choices: 5, scenarioCount: 4, noRightAnswer: true, systemicHarm: true }, measures: ['depth', 'coherence', 'integration', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Make decision in multi-stakeholder dilemma alone',

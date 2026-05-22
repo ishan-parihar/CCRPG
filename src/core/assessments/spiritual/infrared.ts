@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const spiritualInfrared: StageAssessment = {
   line: 'Spiritual',
@@ -22,6 +22,28 @@ export const spiritualInfrared: StageAssessment = {
   },
   minimumTrials: 2,
   estimatedDurationMs: 45000,
+  itemPool: [
+    { id: 'spiritual-infrared-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 2, stimulusType: 'light' }, measures: ['accuracy'] },
+    { id: 'spiritual-infrared-02', taskType: 'scenario', difficulty: 0.25, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 3, stimulusType: 'light' }, measures: ['accuracy', 'response_time'] },
+    { id: 'spiritual-infrared-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 3, stimulusType: 'warmth' }, measures: ['accuracy'] },
+    { id: 'spiritual-infrared-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'aliveness-check', responseType: 'single-word', trials: 3, stimulusType: 'movement' }, measures: ['coherence'] },
+    { id: 'spiritual-infrared-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'wonder-stimulus', responseType: 'single-word', trials: 3, stimulusType: 'nature' }, measures: ['coherence'] },
+    { id: 'spiritual-infrared-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 4, stimulusType: 'sound' }, measures: ['accuracy', 'response_time'] },
+    { id: 'spiritual-infrared-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'aliveness-check', responseType: 'single-word', trials: 4, stimulusType: 'breath' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-infrared-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'wonder-stimulus', responseType: 'single-word', trials: 4, stimulusType: 'starlight' }, measures: ['coherence'] },
+    { id: 'spiritual-infrared-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 5, stimulusType: 'vibration' }, measures: ['accuracy', 'consistency'] },
+    { id: 'spiritual-infrared-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'aliveness-check', responseType: 'single-word', trials: 4, stimulusType: 'heartbeat' }, measures: ['coherence', 'response_time'] },
+    { id: 'spiritual-infrared-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'wonder-stimulus', responseType: 'single-word', trials: 5, stimulusType: 'water' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-infrared-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 5, stimulusType: 'subtle-light' }, measures: ['accuracy', 'response_time'] },
+    { id: 'spiritual-infrared-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'aliveness-check', responseType: 'single-word', trials: 5, stimulusType: 'pulse' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-infrared-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'wonder-stimulus', responseType: 'single-word', trials: 5, stimulusType: 'dawn' }, measures: ['coherence', 'response_time'] },
+    { id: 'spiritual-infrared-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 6, stimulusType: 'fading-light' }, measures: ['accuracy', 'consistency'] },
+    { id: 'spiritual-infrared-16', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'aliveness-check', responseType: 'single-word', trials: 6, stimulusType: 'stillness' }, measures: ['coherence', 'response_time'] },
+    { id: 'spiritual-infrared-17', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'wonder-stimulus', responseType: 'single-word', trials: 6, stimulusType: 'silence' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-infrared-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 7, stimulusType: 'barely-perceptible' }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'spiritual-infrared-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'aliveness-check', responseType: 'single-word', trials: 7, stimulusType: 'micro-movement' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-infrared-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'presence-absence', responseType: 'single-word', trials: 8, stimulusType: 'threshold-perception' }, measures: ['accuracy', 'response_time', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Respond to wonder from own impulse',

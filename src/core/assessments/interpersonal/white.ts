@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const interpersonalWhite: StageAssessment = {
   line: 'Interpersonal',
@@ -46,6 +46,28 @@ export const interpersonalWhite: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'interpersonal-white-01', taskType: 'cooperation', difficulty: 0.2, parameters: { groupSize: 2, taskComplexity: 'high', unityWithOther: true, rounds: 2 }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-white-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'Describe a moment when the boundary between you and another dissolved. What remained?', maxResponseLength: 400, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'interpersonal-white-03', taskType: 'cooperation', difficulty: 0.3, parameters: { groupSize: 3, taskComplexity: 'high', unityWithOther: true, telepathicAttunement: true, rounds: 3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-white-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'What is communication when there is no separation between communicators?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'interpersonal-white-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'unity-with-other', responseType: 'text', scenarios: 2, noSeparation: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-06', taskType: 'cooperation', difficulty: 0.4, parameters: { groupSize: 4, taskComplexity: 'high', collectiveAwakening: true, rounds: 3 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-white-07', taskType: 'llm_dialogue', difficulty: 0.45, parameters: { prompt: 'You know what another feels without them telling you. Not empathy - direct knowing. Describe this.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'telepathic-attunement', responseType: 'text', scenarios: 3, fieldUnity: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-09', taskType: 'cooperation', difficulty: 0.5, parameters: { groupSize: 4, taskComplexity: 'very-high', unityWithOther: true, collectiveAwakening: true, rounds: 4 }, measures: ['accuracy', 'transfer', 'consistency'] },
+    { id: 'interpersonal-white-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'The other is yourself wearing a different face. How does this change the nature of relationship?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'unity-with-other', responseType: 'text', scenarios: 3, noSeparation: true, collectiveField: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-12', taskType: 'cooperation', difficulty: 0.6, parameters: { groupSize: 5, taskComplexity: 'very-high', collectiveAwakening: true, unityField: true, rounds: 4 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-white-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'A group awakens together. Not individuals awakening in proximity, but awakening AS the group. Describe this.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'telepathic-attunement', responseType: 'text', scenarios: 4, fieldUnity: true, collectiveAwakening: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-15', taskType: 'cooperation', difficulty: 0.7, parameters: { groupSize: 6, taskComplexity: 'very-high', unityWithOther: true, collectiveAwakening: true, unityField: true, rounds: 5 }, measures: ['accuracy', 'consistency', 'transfer', 'integration'] },
+    { id: 'interpersonal-white-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'There is no helper and no helped. No teacher and no student. Only love meeting itself. What is relationship in this?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'unity-with-other', responseType: 'text', scenarios: 4, noSeparation: true, collectiveField: true, harvestTogether: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+    { id: 'interpersonal-white-18', taskType: 'cooperation', difficulty: 0.8, parameters: { groupSize: 8, taskComplexity: 'very-high', collectiveAwakening: true, unityField: true, harvestReadiness: true, rounds: 5 }, measures: ['accuracy', 'consistency', 'transfer', 'integration'] },
+    { id: 'interpersonal-white-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'All beings are one being. All minds are one mind. From this unity, what is the nature of service?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-white-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'collective-awakening', responseType: 'text', scenarios: 5, unityConsciousness: true, harvestTogether: true, allIsOne: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain centre without boundary - individual presence without wall between self and other',

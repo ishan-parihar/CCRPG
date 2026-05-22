@@ -34,6 +34,13 @@ const world: WorldState = {
   ],
   recentEncounterIds: [],
   cooldowns: {},
+  narrativeBeats: [],
+  activeBeatId: null,
+  completedBeatIds: [],
+  factions: [],
+  npcRelationships: [],
+  pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+  activeMacroEvents: [],
 };
 
 const session: SessionContext = {
@@ -58,7 +65,7 @@ function makeResponse(encounterId: string): PlayerResponse {
 
 describe('GameLoop', () => {
   it('produces an encounter on first tick', () => {
-    const result = tick(createSignificator('p1', altitudes, 'Red'), world, session, null, Date.now());
+    const result = tick(createSignificator('p1', altitudes, 'Red'), world, session, null, null, Date.now());
     expect(result.encounter).not.toBeNull();
   });
 
@@ -68,10 +75,10 @@ describe('GameLoop', () => {
     let now = Date.now();
 
     for (let i = 0; i < 20; i++) {
-      const result = tick(sig, w, { ...session, encountersSoFar: i }, null, now);
+      const result = tick(sig, w, { ...session, encountersSoFar: i }, null, null, now);
       if (result.encounter) {
         const resp = makeResponse(result.encounter.id);
-        const withConsequences = tick(result.sig, result.world, { ...session, encountersSoFar: i }, resp, now);
+        const withConsequences = tick(result.sig, result.world, { ...session, encountersSoFar: i }, resp, result.encounter, now);
         sig = withConsequences.sig;
         w = withConsequences.world;
       } else {
@@ -90,7 +97,7 @@ describe('GameLoop', () => {
       theta: { lastEncounter: { 'Cognitive:Red': 0 } },
     };
     const now = 30 * 24 * 60 * 60 * 1000; // 30 days later
-    const result = tick(staleSig, world, session, null, now);
+    const result = tick(staleSig, world, session, null, null, now);
     expect(result.bleedThrough.length).toBeGreaterThan(0);
     expect(result.bleedThrough).toContain('Cognitive:Red');
   });

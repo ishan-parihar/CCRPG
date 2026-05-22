@@ -1,9 +1,9 @@
 # CCRPG — Cognitive-Capacity-Driven RPG
 
-> 🚧 **Under Development** — Research phase complete. MVP build phase
-> beginning. Not yet playable as the full vision; an early Phaser 3 +
-> TypeScript scaffold is included in `src/` for reference and as the
-> seed of the MVP.
+> 🚧 **Under Development** — Core architecture complete. First playable
+> (Red stage vertical slice) ready for internal testing. Full 64-cell
+> assessment module system implemented with 1,280 items across all 8
+> stages.
 
 An assessment-module-driven developmental RPG whose every gameplay
 encounter is the gamification of a validated developmental assessment,
@@ -81,18 +81,20 @@ CCRPG/
 
 | Layer | Status |
 |---|---|
-| Research / design documentation | Complete -- 28 foundations + concept-drafts, canon-locked. |
-| Concept-drafts (512 modules) | Complete -- all 512 concept-drafts exist. |
-| Unified build plan | Complete -- `UNIFIED-IMPLEMENTATION-PLAN.md` at repo root. |
-| Implementation Phase 0: Legacy Removal | 🚧 **In progress** -- removing ATB architecture, aligning to assessment modules. |
-| Implementation Phase 1: Core Architecture | ⏳ Planned -- Significator, AssessmentScene, module execution engine. |
-| Implementation Phase 2: First Playable | ⏳ Planned -- Red stage vertical slice with assessment modules. |
+| Research / design documentation | ✅ Complete — 28 foundations + concept-drafts, canon-locked. |
+| Concept-drafts (512 modules) | ✅ Complete — all 512 concept-drafts exist. |
+| Unified build plan | ✅ Complete — `UNIFIED-IMPLEMENTATION-PLAN.md` at repo root. |
+| Implementation Phase 0: Legacy Removal | ✅ Complete — ATB removed, Significator is sole state vessel. |
+| Implementation Phase 1: Core Architecture | ✅ Complete — Assessment engine, CCI, AutoMode, Scheduler, all 64 modules with 1,280 items. |
+| Implementation Phase 2: First Playable | ✅ Complete — Full developmental loop, encounter selection UI, checkpoint system, accessibility layer. |
+| Implementation Phase 3: Polish | ✅ Complete — Macro-catalyst engine, WorldState enrichment, transformation lifecycle. |
 | Global deploy (web + Android) | ⏳ Planned. |
 
-The existing `src/` contains a working **early scaffold** from
-the pre-canon blueprint (now archived to `docs/archive/plan.md`) -- n-back task, Stroop task, basic
-Phaser scenes, Capacitor wrapping, Vitest tests. It is the *seed*
-the implementation grows from, not the final architecture.
+The `src/` contains the **full assessment-module architecture** —
+64 registered modules (8 lines × 8 stages), each with 20 assessment
+items, mode-aware execution (capacity/encounter/shadow/calibration/practice),
+adaptive item selection, and the complete developmental loop from
+CCI computation through encounter scheduling to Significator mutation.
 
 ## Quick start (the existing scaffold)
 

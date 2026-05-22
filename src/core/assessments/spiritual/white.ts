@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const spiritualWhite: StageAssessment = {
   line: 'Spiritual',
@@ -46,6 +46,28 @@ export const spiritualWhite: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'spiritual-white-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'non-dual-realization', responseType: 'text', scenarios: 2, unityGlimpse: true }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-white-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'Describe the sacred without using any word you have learned from a tradition.', maxResponseLength: 400, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-white-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'non-dual-realization', responseType: 'text', scenarios: 2, stabilization: true }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'spiritual-white-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'What is the difference between a spiritual experience and ordinary experience? Is there one?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-white-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'unity-consciousness', responseType: 'text', scenarios: 2, allIsOne: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'God is not separate from this moment. Describe this moment as divine without making it special.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'harvest-readiness', responseType: 'text', scenarios: 2, polarityResolved: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-08', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'What is realization when there is no one to realize and nothing to be realized?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-09', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'non-dual-realization', responseType: 'text', scenarios: 3, beyondWitness: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'The seeker is what is sought. Describe the moment this becomes lived rather than understood.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'unity-consciousness', responseType: 'text', scenarios: 3, noSeparation: true, embodied: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-12', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'Describe enlightenment as the most ordinary thing. Not special, not elevated, just this.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-13', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'harvest-readiness', responseType: 'text', scenarios: 3, densityTransition: true, serviceToAll: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-14', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'There is no path because you are already here. There is no practice because nothing is missing. Yet life continues. What moves it?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'non-dual-realization', responseType: 'text', scenarios: 4, permanentShift: true, noReturn: true }, measures: ['depth', 'coherence', 'consistency', 'integration'] },
+    { id: 'spiritual-white-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Unity includes separation. The One includes the many. Describe this without paradox - as direct seeing.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'unity-consciousness', responseType: 'text', scenarios: 4, allIsOne: true, noSeparation: true, harvestComplete: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+    { id: 'spiritual-white-18', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'The Creator knows itself through you knowing yourself. Describe this knowing that is not knowledge.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-white-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'harvest-readiness', responseType: 'text', scenarios: 4, densityTransition: true, fullIntegration: true, serviceToAll: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+    { id: 'spiritual-white-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'All is one. One is none. None is all. This is not philosophy. This is breakfast. Speak from here.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration', 'metacognition'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Find the sacred alone without practice, teacher, tradition, or technique',

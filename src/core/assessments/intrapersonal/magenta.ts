@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const intrapersonalMagenta: StageAssessment = {
   line: 'Intrapersonal',
@@ -23,6 +23,28 @@ export const intrapersonalMagenta: StageAssessment = {
   },
   minimumTrials: 2,
   estimatedDurationMs: 60000,
+  itemPool: [
+    { id: 'intrapersonal-magenta-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['Point to yourself.'], responseType: 'single-word' }, measures: ['depth'] },
+    { id: 'intrapersonal-magenta-02', taskType: 'self_report', difficulty: 0.25, parameters: { prompts: ['What is your name?'], responseType: 'single-word' }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-magenta-03', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['Are you big or small?'], responseType: 'single-word' }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-magenta-04', taskType: 'self_report', difficulty: 0.35, parameters: { prompts: ['What do you want right now?'], responseType: 'single-word' }, measures: ['depth'] },
+    { id: 'intrapersonal-magenta-05', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['How does your body feel?'], responseType: 'single-word' }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-magenta-06', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'mirror-recognition', responseType: 'choice', scenarios: 2 }, measures: ['accuracy', 'depth'] },
+    { id: 'intrapersonal-magenta-07', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['Are you happy or sad right now?'], responseType: 'single-word' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-magenta-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'body-awareness', responseType: 'choice', scenarios: 2 }, measures: ['accuracy', 'depth'] },
+    { id: 'intrapersonal-magenta-09', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['What makes you feel good?'], responseType: 'single-word' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-magenta-10', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['What are you afraid of?'], responseType: 'single-word' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-magenta-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'self-vs-other', responseType: 'choice', scenarios: 3 }, measures: ['accuracy', 'depth'] },
+    { id: 'intrapersonal-magenta-12', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['What do you want and what do you not want?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-magenta-13', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['Where do you feel happy in your body?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-magenta-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'desire-identification', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-magenta-15', taskType: 'self_report', difficulty: 0.7, parameters: { prompts: ['What makes you angry?', 'What makes you calm?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-magenta-16', taskType: 'self_report', difficulty: 0.75, parameters: { prompts: ['What do you want right now and why?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-magenta-17', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'impulse-awareness', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-magenta-18', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['Tell me about a time you felt very strong.'], responseType: 'text' }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-magenta-19', taskType: 'self_report', difficulty: 0.85, parameters: { prompts: ['What is different about you and your friend?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-magenta-20', taskType: 'self_report', difficulty: 0.9, parameters: { prompts: ['What do you want most?', 'How do you know it is yours and not someone else telling you?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'coherence'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'State desire without prompt repetition',

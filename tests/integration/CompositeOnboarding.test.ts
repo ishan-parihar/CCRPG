@@ -6,8 +6,6 @@
 import { describe, it, expect } from 'vitest';
 import {
   CompositeOnboarding,
-  type OnboardingConfig,
-  type LineAssessmentResult,
 } from '../../src/game/assessments/CompositeOnboarding.js';
 import { ModuleRegistry } from '../../src/core/assessments/registry.js';
 import type { StageAssessment, AssessmentResult, AssessmentTask, DriveProbe } from '../../src/core/assessments/types.js';
@@ -15,7 +13,6 @@ import { ALL_LINES } from '../../src/core/domain/Line.js';
 import { ALL_STAGES } from '../../src/core/domain/Stage.js';
 import { stageOrdinal } from '../../src/core/domain/Stage.js';
 import type { Line } from '../../src/core/domain/Line.js';
-import type { Stage } from '../../src/core/domain/Stage.js';
 import type { MeasureDimension } from '../../src/core/assessments/types.js';
 
 // ---------------------------------------------------------------------------

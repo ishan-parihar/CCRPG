@@ -19,6 +19,8 @@ import {
   type RecentEncounter,
 } from './engines/AutoModeStrategy.js';
 import { DEFAULT_WEIGHTS, type PriorityWeights } from './engines/PriorityComputation.js';
+import { runModeAwareAssessment } from './assessments/engine.js';
+import type { AssessmentResult, ShadowAssessmentResult, StageAssessment, TrialResult, ModuleExecutionMode } from './assessments/types.js';
 
 export interface TickResult {
   readonly encounter: ScheduledEncounter | null;
@@ -75,7 +77,7 @@ export function tickWithStrategy(
 
   if (response && previousEncounter) {
     const record = processOutcome(previousEncounter, response, now);
-    const result = applyConsequences(sig, world, record);
+    const result = applyConsequences(sig, world, record, previousEncounter);
     updatedSig = result.sig;
     updatedWorld = result.world;
   }
@@ -212,7 +214,7 @@ function estimateResponseQuality(response: PlayerResponse): number {
 }
 
 /**
- * Single game tick: schedule encounter, await response, apply consequences, check transformation.
+ * Single game tick: process previous response, schedule next encounter, check transformation.
  * In headless mode, `response` is provided directly (for testing/simulation).
  *
  * This is the original tick function, preserved for backward compatibility
@@ -223,28 +225,73 @@ export function tick(
   world: WorldState,
   session: SessionContext,
   response: PlayerResponse | null,
+  previousEncounter: ScheduledEncounter | null,
   now: number,
 ): TickResult {
-  // 1. Check for bleed-through (theta-decay urgency)
-  const bleedThrough = detectBleedThrough(sig.theta.lastEncounter, now);
-
-  // 2. Schedule next encounter
-  const scheduled = scheduleNext(sig, world, session, now, 1);
-  const encounter = scheduled[0] ?? null;
-
-  // 3. If we have a response (from previous encounter), process consequences
+  // 1. Process response from PREVIOUS encounter
   let updatedSig = sig;
   let updatedWorld = world;
 
-  if (response && encounter) {
-    const record = processOutcome(encounter, response, now);
-    const result = applyConsequences(sig, world, record);
+  if (response && previousEncounter) {
+    const record = processOutcome(previousEncounter, response, now);
+    const result = applyConsequences(sig, world, record, previousEncounter);
     updatedSig = result.sig;
     updatedWorld = result.world;
   }
+
+  // 2. Check for bleed-through (theta-decay urgency)
+  const bleedThrough = detectBleedThrough(updatedSig.theta.lastEncounter, now);
+
+  // 3. Schedule next encounter
+  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 1);
+  const encounter = scheduled[0] ?? null;
 
   // 4. Check transformation threshold
   const transformation = detectThreshold(updatedSig);
 
   return { encounter, sig: updatedSig, world: updatedWorld, transformation, bleedThrough };
+}
+
+/**
+ * Execute a module headlessly given pre-collected trials.
+ * Bridges the gap between encounter scheduling and consequence processing.
+ * In headless/test mode, trials are provided directly.
+ * In game mode, the AssessmentScene collects trials interactively.
+ */
+export function executeModule(
+  module: StageAssessment,
+  trials: readonly TrialResult[],
+  mode: ModuleExecutionMode,
+): AssessmentResult | ShadowAssessmentResult {
+  return runModeAwareAssessment(module, trials, mode);
+}
+
+/**
+ * End a session: apply theta-decay to all unvisited modules,
+ * persist final state, and return session summary.
+ */
+export function endSession(
+  sig: Significator,
+  sessionState: SessionState,
+  now: number,
+): { sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number } } {
+  // Apply theta-decay: increment decay for all cells NOT visited this session
+  // recentOutcomes don't carry cell keys directly, so we rely on theta timestamps
+  // Cells with timestamps >= session start are considered visited
+
+  // Count session stats
+  const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
+  const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= now - sessionState.cci.composite * 3600000).length;
+  const shadowsResolved = sig.shadows.entries.filter(e => e.resolvedAt !== null && e.resolvedAt >= now - 3600000).length;
+
+  // Increment totalSessions
+  const updatedSig: Significator = {
+    ...sig,
+    totalSessions: sig.totalSessions + 1,
+  };
+
+  return {
+    sig: updatedSig,
+    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved },
+  };
 }

@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const cognitiveWhite: StageAssessment = {
   line: 'Cognitive',
@@ -54,6 +54,28 @@ export const cognitiveWhite: StageAssessment = {
   },
   minimumTrials: 5,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'cognitive-white-01', taskType: 'n_back', difficulty: 0.2, parameters: { n: 5, trials: 12, stimulusDurationMs: 1000, interStimulusMs: 350, measureEffortlessness: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'cognitive-white-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'A thought arises. Before you think it, what is it?', maxResponseLength: 400, evaluateNonConceptual: true }, measures: ['depth', 'coherence'] },
+    { id: 'cognitive-white-03', taskType: 'n_back', difficulty: 0.3, parameters: { n: 5, trials: 14, stimulusDurationMs: 950, interStimulusMs: 320, measureEffortlessness: true, varianceThreshold: 0.08 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'cognitive-white-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'paradox-embrace', responseType: 'text', scenarios: 2, paradoxLevel: 'logical' }, measures: ['depth', 'coherence'] },
+    { id: 'cognitive-white-05', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'What knows? Not what do you know, but what is the knowing itself?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'cognitive-white-06', taskType: 'n_back', difficulty: 0.4, parameters: { n: 5, trials: 16, stimulusDurationMs: 900, interStimulusMs: 300, measureEffortlessness: true, varianceThreshold: 0.06 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'cognitive-white-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'non-conceptual-knowing', responseType: 'text', scenarios: 2, beyondThought: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'cognitive-white-08', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Describe the space between two thoughts. Not emptiness as a concept, but what is actually there.', maxResponseLength: 500, evaluateNonConceptual: true }, measures: ['depth', 'coherence'] },
+    { id: 'cognitive-white-09', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'paradox-embrace', responseType: 'text', scenarios: 3, paradoxLevel: 'self-referential' }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'cognitive-white-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'The mind that seeks to understand itself changes by the seeking. What remains when seeking stops?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'metacognition'] },
+    { id: 'cognitive-white-11', taskType: 'n_back', difficulty: 0.6, parameters: { n: 5, trials: 20, stimulusDurationMs: 900, interStimulusMs: 300, measureEffortlessness: true, varianceThreshold: 0.05 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'cognitive-white-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'meta-meta-cognition', responseType: 'text', scenarios: 2, recursiveAwareness: true }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'cognitive-white-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'Thinking about not-thinking is still thinking. What is genuinely prior to all cognition?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'cognitive-white-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'radical-unknowing', responseType: 'text', scenarios: 3, presentUnanswerable: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'cognitive-white-15', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'Is awareness itself a thought? Investigate without concluding.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'cognitive-white-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'paradox-embrace', responseType: 'text', scenarios: 3, paradoxLevel: 'self-referential-non-dual', dissolveFramework: true }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'cognitive-white-17', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'Describe cognition from the perspective of no-one. Not your perspective on cognition, but cognition without a cognizer.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'cognitive-white-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'meta-meta-cognition', responseType: 'text', scenarios: 3, recursiveAwareness: true, collapseRecursion: true }, measures: ['depth', 'metacognition', 'coherence', 'integration'] },
+    { id: 'cognitive-white-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'The question dissolves the questioner. The answer was never separate from the silence. Speak from here.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'cognitive-white-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'radical-unknowing', responseType: 'text', scenarios: 4, presentUnanswerable: true, measureGraspingAtAnswers: true, nonDualRest: true }, measures: ['depth', 'coherence', 'integration', 'metacognition'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Resolve paradox alone without deliberation - direct knowing without the knower',

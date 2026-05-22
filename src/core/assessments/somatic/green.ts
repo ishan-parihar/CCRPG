@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const somaticGreen: StageAssessment = {
   line: 'Somatic',
@@ -29,6 +29,28 @@ export const somaticGreen: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'somatic-green-01', taskType: 'rhythm', difficulty: 0.2, parameters: { bpm: 0, beats: 16, complexity: 'freeform', expressiveness: true }, measures: ['consistency', 'depth'] },
+    { id: 'somatic-green-02', taskType: 'self_report', difficulty: 0.25, parameters: { prompts: ['What does your body want to express right now?'], responseType: 'text' }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-green-03', taskType: 'rhythm', difficulty: 0.3, parameters: { bpm: 0, beats: 20, complexity: 'freeform', expressiveness: true, emotionTarget: 'calm' }, measures: ['consistency', 'depth'] },
+    { id: 'somatic-green-04', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['What did that rhythm feel like in your body?'], responseType: 'text' }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-green-05', taskType: 'rhythm', difficulty: 0.35, parameters: { bpm: 0, beats: 20, complexity: 'freeform', expressiveness: true, emotionTarget: 'joy' }, measures: ['consistency', 'depth'] },
+    { id: 'somatic-green-06', taskType: 'rhythm', difficulty: 0.4, parameters: { bpm: 0, beats: 24, complexity: 'freeform', partnerMode: true }, measures: ['consistency', 'accuracy'] },
+    { id: 'somatic-green-07', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['Where in your body do you feel the other person?'], responseType: 'text' }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-green-08', taskType: 'rhythm', difficulty: 0.45, parameters: { bpm: 0, beats: 24, complexity: 'expressive', emotionTarget: 'sadness' }, measures: ['depth', 'consistency'] },
+    { id: 'somatic-green-09', taskType: 'rhythm', difficulty: 0.5, parameters: { bpm: 0, beats: 28, complexity: 'freeform', expressiveness: true, somaticAwareness: true }, measures: ['consistency', 'depth'] },
+    { id: 'somatic-green-10', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['What intuition arises in your body about this situation?'], responseType: 'text' }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-green-11', taskType: 'rhythm', difficulty: 0.55, parameters: { bpm: 0, beats: 28, complexity: 'expressive', emotionTarget: 'anger', somaticAwareness: true }, measures: ['depth', 'consistency'] },
+    { id: 'somatic-green-12', taskType: 'rhythm', difficulty: 0.6, parameters: { bpm: 0, beats: 32, complexity: 'freeform', partnerMode: true, relationalAttunement: true }, measures: ['consistency', 'depth', 'accuracy'] },
+    { id: 'somatic-green-13', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['What does your body know that your mind does not?'], responseType: 'text' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-green-14', taskType: 'rhythm', difficulty: 0.65, parameters: { bpm: 0, beats: 32, complexity: 'expressive', emotionTarget: 'grief', somaticAwareness: true }, measures: ['depth', 'consistency'] },
+    { id: 'somatic-green-15', taskType: 'rhythm', difficulty: 0.7, parameters: { bpm: 0, beats: 32, complexity: 'freeform', partnerMode: true, relationalAttunement: true, emotionTarget: 'connection' }, measures: ['consistency', 'depth', 'accuracy'] },
+    { id: 'somatic-green-16', taskType: 'self_report', difficulty: 0.75, parameters: { prompts: ['Can you feel what the other person feels in your own body?', 'Where?'], responseType: 'text' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-green-17', taskType: 'rhythm', difficulty: 0.8, parameters: { bpm: 0, beats: 36, complexity: 'expressive', emotionTarget: 'contradictory', somaticAwareness: true }, measures: ['depth', 'consistency', 'integration'] },
+    { id: 'somatic-green-18', taskType: 'rhythm', difficulty: 0.8, parameters: { bpm: 0, beats: 36, complexity: 'freeform', partnerMode: true, relationalAttunement: true, blindMode: true }, measures: ['consistency', 'depth', 'accuracy'] },
+    { id: 'somatic-green-19', taskType: 'self_report', difficulty: 0.85, parameters: { prompts: ['Let your body speak without words. What does it say about this relationship?'], responseType: 'text' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-green-20', taskType: 'rhythm', difficulty: 0.9, parameters: { bpm: 0, beats: 40, complexity: 'expressive', emotionTarget: 'empathy', partnerMode: true, relationalAttunement: true, somaticAwareness: true }, measures: ['depth', 'consistency', 'integration', 'accuracy'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Create rhythm without any template',

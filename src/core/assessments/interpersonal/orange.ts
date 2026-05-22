@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const interpersonalOrange: StageAssessment = {
   line: 'Interpersonal',
@@ -30,6 +30,28 @@ export const interpersonalOrange: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'interpersonal-orange-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'false-belief', scenarios: 2, responseType: 'choice' }, measures: ['accuracy', 'depth'] },
+    { id: 'interpersonal-orange-02', taskType: 'pattern_prediction', difficulty: 0.25, parameters: { patternType: 'mental-state', patternLength: 3, repetitions: 2 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-orange-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'false-belief', scenarios: 3, responseType: 'choice-plus-text' }, measures: ['accuracy', 'depth'] },
+    { id: 'interpersonal-orange-04', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'negotiation', responseType: 'text', scenarios: 2, parties: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'interpersonal-orange-05', taskType: 'pattern_prediction', difficulty: 0.35, parameters: { patternType: 'mental-state', patternLength: 4, repetitions: 2 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-orange-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'perspective-taking', scenarios: 3, responseType: 'text', perspectives: 2 }, measures: ['depth', 'transfer'] },
+    { id: 'interpersonal-orange-07', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'This person did something that seems irrational. What might they believe that makes it rational?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'interpersonal-orange-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'negotiation', responseType: 'text', scenarios: 3, parties: 2, conflictingInterests: true }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'interpersonal-orange-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'false-belief', scenarios: 4, responseType: 'choice-plus-text' }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-orange-10', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { patternType: 'mental-state', patternLength: 4, repetitions: 3 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-orange-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'strategic-cooperation', responseType: 'text', scenarios: 3, rounds: 4 }, measures: ['depth', 'transfer', 'accuracy'] },
+    { id: 'interpersonal-orange-12', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'You need something from someone who wants something different. How do you find a deal?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'interpersonal-orange-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'second-order-false-belief', scenarios: 3, responseType: 'choice-plus-text' }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-orange-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'negotiation', responseType: 'text', scenarios: 4, parties: 3, conflictingInterests: true }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'interpersonal-orange-15', taskType: 'pattern_prediction', difficulty: 0.7, parameters: { patternType: 'mental-state', patternLength: 5, repetitions: 3, adaptiveNpc: true }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-orange-16', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'strategic-cooperation', responseType: 'text', scenarios: 4, rounds: 6, betrayalRisk: true }, measures: ['depth', 'transfer', 'accuracy'] },
+    { id: 'interpersonal-orange-17', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Three people each believe different things about each other. Predict what happens next.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'interpersonal-orange-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'second-order-false-belief', scenarios: 4, responseType: 'choice-plus-text', recursive: true }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-orange-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'negotiation', responseType: 'text', scenarios: 4, parties: 4, conflictingInterests: true, hiddenAgendas: true }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'interpersonal-orange-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'strategic-cooperation', responseType: 'text', scenarios: 5, rounds: 8, betrayalRisk: true, multiParty: true }, measures: ['depth', 'transfer', 'accuracy', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Predict NPC false belief without feedback',

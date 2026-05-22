@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const moralWhite: StageAssessment = {
   line: 'Moral',
@@ -45,6 +45,28 @@ export const moralWhite: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'moral-white-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'spontaneous-rightness', choices: 2, scenarios: 2, beyondRules: true }, measures: ['depth', 'coherence'] },
+    { id: 'moral-white-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'Describe a moral action that required no deliberation. Where did the rightness come from?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-white-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'spontaneous-rightness', choices: 3, scenarios: 2, noFramework: true }, measures: ['depth', 'coherence'] },
+    { id: 'moral-white-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'What is right action when there is no actor choosing? Describe morality without a moral agent.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'moral-white-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'choiceless-awareness', choices: 4, scenarios: 2, paradox: 'choice-without-chooser' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'All moral frameworks are partial. What guides action when you have released all frameworks?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'spontaneous-rightness', choices: 4, scenarios: 3, beyondRules: true, noDeliberation: true }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'moral-white-08', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Is compassion a choice or a natural expression of seeing clearly? What is the morality of clear seeing?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-09', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'choiceless-awareness', choices: 4, scenarios: 3, paradox: 'harm-without-harmer' }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'moral-white-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'When self and other are not-two, what does harm mean? What does care mean?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'spontaneous-rightness', choices: 5, scenarios: 3, beyondRules: true, situationalUniqueness: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-12', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'Describe the morality of a river flowing. Not as metaphor, but as direct insight into the nature of right action.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-13', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'choiceless-awareness', choices: 5, scenarios: 3, paradox: 'good-and-evil-not-two' }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'moral-white-14', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'Action arises. It is neither moral nor immoral. It is simply what is. Yet it serves life. How?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-15', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'spontaneous-rightness', choices: 5, scenarios: 4, beyondRules: true, noDeliberation: true, unityAction: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'The universe acts through you. You act through the universe. Where is the moral agent in this?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'choiceless-awareness', choices: 6, scenarios: 4, paradox: 'responsibility-without-self' }, measures: ['depth', 'coherence', 'complexity_handled', 'integration'] },
+    { id: 'moral-white-18', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'Before good and evil, before right and wrong, there is... what? And from that, how does action arise?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-white-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'spontaneous-rightness', choices: 6, scenarios: 4, beyondRules: true, unityAction: true, harvestReadiness: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+    { id: 'moral-white-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'There is no choice because there is no separation. There is no morality because there is no other to harm. Yet love moves. Describe this.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration', 'metacognition'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Act morally without any framework, principle, or even intention - just act',

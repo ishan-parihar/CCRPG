@@ -23,6 +23,15 @@ function cellKey(line: Line, stage: Stage): string {
   return `${line}:${stage}`;
 }
 
+/**
+ * Compute crystallization via spec formula (foundations/19 §B2).
+ * crystallization = coherence × sigmoid((traceCount - 5) / 7)
+ */
+export function computeCrystallization(coherence: number, traceCount: number): number {
+  const sigmoid = (x: number) => 1 / (1 + Math.exp(-x));
+  return coherence * sigmoid((traceCount - 5) / 7);
+}
+
 /** Record a new polarity trace into the state, updating the relevant cell. */
 export function recordTrace(state: PolarityState, trace: PolarityTrace, line: Line, stage: Stage): PolarityState {
   const key = cellKey(line, stage);
@@ -49,9 +58,7 @@ export function recordTrace(state: PolarityState, trace: PolarityTrace, line: Li
     ? existing.exploratoryBreadth * 0.95
     : Math.min(1, existing.exploratoryBreadth + 0.05);
 
-  const newCrystallization = newCoherence > CRYSTALLIZING_THRESHOLD
-    ? Math.min(1, existing.crystallization + 0.02)
-    : Math.max(0, existing.crystallization - 0.01);
+  const newCrystallization = computeCrystallization(newCoherence, count);
 
   const updatedCell: PolarityCellVector = {
     dominantPattern: newDominant,

@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const cognitiveMagenta: StageAssessment = {
   line: 'Cognitive',
@@ -30,6 +30,28 @@ export const cognitiveMagenta: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 120000,
+  itemPool: [
+    { id: 'cognitive-magenta-01', taskType: 'pattern_prediction', difficulty: 0.2, parameters: { patternLength: 2, patternType: 'simple-repeat', trials: 4 }, measures: ['accuracy'] },
+    { id: 'cognitive-magenta-02', taskType: 'pattern_prediction', difficulty: 0.25, parameters: { patternLength: 2, patternType: 'alternating', trials: 4 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-magenta-03', taskType: 'n_back', difficulty: 0.25, parameters: { n: 1, trials: 6, stimulusDurationMs: 1800, interStimulusMs: 600 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-magenta-04', taskType: 'pattern_prediction', difficulty: 0.3, parameters: { patternLength: 3, patternType: 'alternating', trials: 5 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-magenta-05', taskType: 'n_back', difficulty: 0.3, parameters: { n: 1, trials: 8, stimulusDurationMs: 1600, interStimulusMs: 550 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-magenta-06', taskType: 'pattern_prediction', difficulty: 0.35, parameters: { patternLength: 3, patternType: 'alternating', trials: 6 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-magenta-07', taskType: 'n_back', difficulty: 0.4, parameters: { n: 1, trials: 10, stimulusDurationMs: 1500, interStimulusMs: 500 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-magenta-08', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { patternLength: 3, patternType: 'cause-effect', trials: 5 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-magenta-09', taskType: 'n_back', difficulty: 0.45, parameters: { n: 1, trials: 12, stimulusDurationMs: 1400, interStimulusMs: 480 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-magenta-10', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { patternLength: 4, patternType: 'repeating', trials: 5 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-magenta-11', taskType: 'n_back', difficulty: 0.5, parameters: { n: 1, trials: 14, stimulusDurationMs: 1300, interStimulusMs: 450 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-magenta-12', taskType: 'pattern_prediction', difficulty: 0.55, parameters: { patternLength: 4, patternType: 'cause-effect', trials: 6 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-magenta-13', taskType: 'n_back', difficulty: 0.55, parameters: { n: 2, trials: 6, stimulusDurationMs: 1600, interStimulusMs: 550 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-magenta-14', taskType: 'pattern_prediction', difficulty: 0.6, parameters: { patternLength: 5, patternType: 'repeating', trials: 5 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-magenta-15', taskType: 'n_back', difficulty: 0.65, parameters: { n: 2, trials: 8, stimulusDurationMs: 1500, interStimulusMs: 500 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-magenta-16', taskType: 'pattern_prediction', difficulty: 0.7, parameters: { patternLength: 5, patternType: 'cause-effect', trials: 6 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-magenta-17', taskType: 'n_back', difficulty: 0.75, parameters: { n: 2, trials: 10, stimulusDurationMs: 1400, interStimulusMs: 450 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-magenta-18', taskType: 'pattern_prediction', difficulty: 0.8, parameters: { patternLength: 5, patternType: 'multi-cause', trials: 6 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-magenta-19', taskType: 'n_back', difficulty: 0.85, parameters: { n: 2, trials: 12, stimulusDurationMs: 1300, interStimulusMs: 420 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-magenta-20', taskType: 'n_back', difficulty: 0.9, parameters: { n: 2, trials: 14, stimulusDurationMs: 1200, interStimulusMs: 400 }, measures: ['accuracy', 'response_time', 'consistency', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Complete n=1 without hints or prompts',

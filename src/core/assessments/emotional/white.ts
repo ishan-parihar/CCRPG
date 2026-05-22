@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const emotionalWhite: StageAssessment = {
   line: 'Emotional',
@@ -46,6 +46,28 @@ export const emotionalWhite: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 270000,
+  itemPool: [
+    { id: 'emotional-white-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'emotional-perturbation', perturbationType: 'mild', recoveryMeasure: true, scenarios: 2 }, measures: ['consistency', 'depth'] },
+    { id: 'emotional-white-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'A feeling arises. You neither push it away nor hold it. What is your relationship to it?', maxResponseLength: 400, evaluateGrasping: true }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-white-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'emotional-perturbation', perturbationType: 'moderate', recoveryMeasure: true, scenarios: 2 }, measures: ['consistency', 'depth', 'integration'] },
+    { id: 'emotional-white-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'What is sadness when no one is sad? Describe emotion without an experiencer.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-white-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'equanimity-test', perturbationType: 'pleasant', measureGrasping: true, scenarios: 2 }, measures: ['depth', 'integration'] },
+    { id: 'emotional-white-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'Joy arises and passes. Grief arises and passes. What does not arise or pass?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-white-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'emotional-perturbation', perturbationType: 'deep', recoveryMeasure: true, measureGraspingAtCalm: true, scenarios: 3 }, measures: ['consistency', 'depth', 'integration'] },
+    { id: 'emotional-white-08', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Describe compassion that has no object. Not compassion for someone, but compassion as the nature of awareness itself.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-white-09', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'equanimity-test', perturbationType: 'painful', measureAversion: true, scenarios: 3 }, measures: ['depth', 'integration', 'consistency'] },
+    { id: 'emotional-white-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'An emotion so intense it could shatter you arises. You are transparent to it. Describe this transparency.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-white-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'emotional-perturbation', perturbationType: 'loss-of-meaning', recoveryMeasure: true, scenarios: 3 }, measures: ['depth', 'integration', 'consistency'] },
+    { id: 'emotional-white-12', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'What is the difference between equanimity and numbness? How do you know which you are experiencing?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'emotional-white-13', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'equanimity-test', perturbationType: 'both', measureGrasping: true, measureAversion: true, scenarios: 3 }, measures: ['depth', 'integration', 'consistency'] },
+    { id: 'emotional-white-14', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'Emotion is arising. There is no one feeling it. Describe this impersonal intimacy.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-white-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'emotional-perturbation', perturbationType: 'existential', recoveryMeasure: true, measureGraspingAtCalm: true, scenarios: 4 }, measures: ['depth', 'integration', 'consistency'] },
+    { id: 'emotional-white-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'All emotions are one energy wearing different masks. Describe the energy before it takes form.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-white-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'equanimity-test', perturbationType: 'maximum', measureGrasping: true, measureAversion: true, structureDissolution: true, scenarios: 3 }, measures: ['depth', 'integration', 'consistency'] },
+    { id: 'emotional-white-18', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'Love without an object. Grief without a story. Joy without a cause. What are these?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-white-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'emotional-perturbation', perturbationType: 'identity-dissolution', recoveryMeasure: true, scenarios: 4, measureGraspingAtCalm: true }, measures: ['depth', 'integration', 'consistency', 'coherence'] },
+    { id: 'emotional-white-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'There is no difference between feeling and being. Emotion is not happening to awareness - emotion IS awareness in motion. Speak from this.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration', 'metacognition'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain equanimity independently when deep emotion arises unexpectedly',

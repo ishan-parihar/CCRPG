@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const somaticInfrared: StageAssessment = {
   line: 'Somatic',
@@ -22,6 +22,28 @@ export const somaticInfrared: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 60000,
+  itemPool: [
+    { id: 'somatic-infrared-01', taskType: 'reaction_time', difficulty: 0.2, parameters: { stimulusType: 'simple', targetCount: 4, minGap: 2500, maxGap: 5000 }, measures: ['response_time', 'accuracy'] },
+    { id: 'somatic-infrared-02', taskType: 'reaction_time', difficulty: 0.25, parameters: { stimulusType: 'simple', targetCount: 5, minGap: 2200, maxGap: 4500 }, measures: ['response_time', 'accuracy'] },
+    { id: 'somatic-infrared-03', taskType: 'reaction_time', difficulty: 0.3, parameters: { stimulusType: 'simple', targetCount: 6, minGap: 2000, maxGap: 4000 }, measures: ['response_time', 'accuracy'] },
+    { id: 'somatic-infrared-04', taskType: 'reaction_time', difficulty: 0.35, parameters: { stimulusType: 'simple', targetCount: 6, minGap: 1800, maxGap: 3500 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-infrared-05', taskType: 'rhythm', difficulty: 0.3, parameters: { beatsPerMinute: 40, beats: 4, tolerance: 0.4 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-06', taskType: 'rhythm', difficulty: 0.35, parameters: { beatsPerMinute: 50, beats: 4, tolerance: 0.35 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-07', taskType: 'rhythm', difficulty: 0.4, parameters: { beatsPerMinute: 50, beats: 6, tolerance: 0.35 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-08', taskType: 'reaction_time', difficulty: 0.4, parameters: { stimulusType: 'simple', targetCount: 8, minGap: 1500, maxGap: 3000 }, measures: ['response_time', 'accuracy'] },
+    { id: 'somatic-infrared-09', taskType: 'rhythm', difficulty: 0.45, parameters: { beatsPerMinute: 60, beats: 6, tolerance: 0.3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-10', taskType: 'reaction_time', difficulty: 0.5, parameters: { stimulusType: 'simple', targetCount: 8, minGap: 1200, maxGap: 2800 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-infrared-11', taskType: 'rhythm', difficulty: 0.5, parameters: { beatsPerMinute: 60, beats: 8, tolerance: 0.3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-12', taskType: 'reaction_time', difficulty: 0.55, parameters: { stimulusType: 'simple', targetCount: 10, minGap: 1000, maxGap: 2500 }, measures: ['response_time', 'accuracy'] },
+    { id: 'somatic-infrared-13', taskType: 'rhythm', difficulty: 0.6, parameters: { beatsPerMinute: 70, beats: 8, tolerance: 0.25 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-14', taskType: 'reaction_time', difficulty: 0.6, parameters: { stimulusType: 'simple', targetCount: 10, minGap: 900, maxGap: 2200 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-infrared-15', taskType: 'rhythm', difficulty: 0.65, parameters: { beatsPerMinute: 80, beats: 8, tolerance: 0.2 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-16', taskType: 'reaction_time', difficulty: 0.7, parameters: { stimulusType: 'simple', targetCount: 12, minGap: 800, maxGap: 2000 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-infrared-17', taskType: 'rhythm', difficulty: 0.75, parameters: { beatsPerMinute: 90, beats: 10, tolerance: 0.2 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-18', taskType: 'reaction_time', difficulty: 0.8, parameters: { stimulusType: 'simple', targetCount: 14, minGap: 700, maxGap: 1800 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-infrared-19', taskType: 'rhythm', difficulty: 0.85, parameters: { beatsPerMinute: 100, beats: 12, tolerance: 0.15 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-infrared-20', taskType: 'reaction_time', difficulty: 0.9, parameters: { stimulusType: 'simple', targetCount: 16, minGap: 600, maxGap: 1500 }, measures: ['response_time', 'accuracy', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Tap when stimulus appears without coaching',

@@ -56,6 +56,16 @@ export interface OnboardingResult {
 }
 
 // ---------------------------------------------------------------------------
+// Multi-session persistence
+// ---------------------------------------------------------------------------
+
+export interface OnboardingProgress {
+  readonly completedLines: readonly Line[];
+  readonly results: Record<string, { altitude: Stage; assessmentsRun: number }>;
+  readonly sessionNumber: number;
+}
+
+// ---------------------------------------------------------------------------
 // Session splitting constants
 // ---------------------------------------------------------------------------
 
@@ -73,6 +83,22 @@ const THREE_SESSION_SPLITS: Record<number, Line[]> = {
 
 // Maximum assessments per line before forced convergence
 const MAX_ASSESSMENTS_PER_LINE = 4;
+
+/**
+ * Seed initial drive weights from onboarding results.
+ * More lines assessed = slight Communion bias (breadth); fewer = Agency bias (depth).
+ * Real drive profiling happens during gameplay.
+ */
+export function seedDriveWeights(lineResults: LineAssessmentResult[]): Record<string, number> {
+  const n = lineResults.length;
+  const breadthSignal = n / ALL_LINES.length; // 0-1
+  return {
+    Agency: 0.1 * (1 - breadthSignal),
+    Communion: 0.1 * breadthSignal,
+    Eros: 0.05,
+    Agape: 0.05,
+  };
+}
 
 // Starting stage for quick-calibration (Amber = ordinal 3, better midpoint)
 const START_STAGE_ORDINAL = Math.floor(ALL_STAGES.length / 2); // 4 (Orange) - used only for quick-calibration
@@ -204,6 +230,31 @@ export class CompositeOnboarding {
       : 1;
 
     return { lineResults, significator, sessionsCompleted };
+  }
+
+  /**
+   * Serialize current onboarding progress for cross-session persistence.
+   */
+  serializeProgress(lineResults: LineAssessmentResult[]): OnboardingProgress {
+    const results: Record<string, { altitude: Stage; assessmentsRun: number }> = {};
+    for (const r of lineResults) {
+      results[r.line] = { altitude: r.altitude, assessmentsRun: r.assessmentsRun };
+    }
+    return {
+      completedLines: lineResults.map(r => r.line),
+      results,
+      sessionNumber: this.config.currentSession ?? 1,
+    };
+  }
+
+  /**
+   * Resume onboarding from persisted progress.
+   */
+  static resumeFrom(progress: OnboardingProgress, registry: ModuleRegistry): CompositeOnboarding {
+    return new CompositeOnboarding(registry, {
+      sessionSplit: 'three-session',
+      currentSession: progress.sessionNumber + 1,
+    });
   }
 
   /**

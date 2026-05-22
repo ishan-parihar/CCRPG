@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const intrapersonalGreen: StageAssessment = {
   line: 'Intrapersonal',
@@ -30,6 +30,28 @@ export const intrapersonalGreen: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 240000,
+  itemPool: [
+    { id: 'intrapersonal-green-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['What part of you is active right now?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-green-02', taskType: 'self_report', difficulty: 0.25, parameters: { prompts: ['Is there a part of you that disagrees with what you just said?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-green-03', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'What part of you do you usually ignore?', maxResponseLength: 300 }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-green-04', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['What do you criticize in others that might exist in you?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-green-05', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'Imagine the part of you that wants control talking to the part that wants freedom. What do they say?', maxResponseLength: 400 }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-06', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['Where do you contradict yourself?', 'Can you accept that contradiction?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-green-07', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'What would you say to yourself if you were your own best friend?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-green-08', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['What parts of you disagree with each other?', 'What does each part want?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-green-09', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Imagine the part of you that wants X talking to the part that wants Y. What do they say?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-10', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['What shadow do you carry?', 'How does it show up in your life?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-green-11', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'The part of you that you reject — what does it need from you?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-12', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['What would self-compassion look like right now?', 'What makes that hard?'], responseType: 'text' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-green-13', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'Can these two parts find common ground? What do they both want?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-14', taskType: 'self_report', difficulty: 0.65, parameters: { prompts: ['Name three contradictions you hold', 'Can you love all three?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-15', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'What part of you are you most afraid to show others? What does it need?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-16', taskType: 'self_report', difficulty: 0.75, parameters: { prompts: ['Where do you perform rather than feel?', 'What would authenticity cost you?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-green-17', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'Your inner critic and your inner child are in the same room. What happens?', maxResponseLength: 600 }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-18', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['What would it mean to fully accept yourself as you are right now?', 'What resists that?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'All your parts are present. The one you love, the one you hate, the one you hide. Can they coexist?', maxResponseLength: 600 }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-green-20', taskType: 'self_report', difficulty: 0.9, parameters: { prompts: ['Can you hold all of yourself — the contradictions, the shadows, the light — with compassion?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'integration', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Name internal contradiction without external validation',

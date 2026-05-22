@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const moralMagenta: StageAssessment = {
   line: 'Moral',
@@ -24,6 +24,28 @@ export const moralMagenta: StageAssessment = {
   },
   minimumTrials: 2,
   estimatedDurationMs: 120000,
+  itemPool: [
+    { id: 'moral-magenta-01', taskType: 'dilemma', difficulty: 0.2, parameters: { dilemmaType: 'simple-sharing', choices: 2, scenarioCount: 1 }, measures: ['depth'] },
+    { id: 'moral-magenta-02', taskType: 'dilemma', difficulty: 0.25, parameters: { dilemmaType: 'simple-sharing', choices: 2, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-03', taskType: 'dilemma', difficulty: 0.3, parameters: { dilemmaType: 'turn-taking', choices: 2, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-04', taskType: 'dilemma', difficulty: 0.35, parameters: { dilemmaType: 'simple-fairness', choices: 2, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-05', taskType: 'dilemma', difficulty: 0.4, parameters: { dilemmaType: 'simple-fairness', choices: 3, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-06', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'sharing-scenario', responseType: 'choice', scenarios: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-07', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'turn-taking-scenario', responseType: 'choice', scenarios: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-08', taskType: 'dilemma', difficulty: 0.45, parameters: { dilemmaType: 'simple-fairness', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-09', taskType: 'dilemma', difficulty: 0.5, parameters: { dilemmaType: 'want-vs-other-want', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-10', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'fairness-with-feelings', responseType: 'choice-plus-text', scenarios: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-11', taskType: 'dilemma', difficulty: 0.55, parameters: { dilemmaType: 'three-way-fairness', choices: 3, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-12', taskType: 'dilemma', difficulty: 0.6, parameters: { dilemmaType: 'three-way-fairness', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'hurt-feelings-fairness', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-magenta-14', taskType: 'dilemma', difficulty: 0.65, parameters: { dilemmaType: 'possession-conflict', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-magenta-15', taskType: 'dilemma', difficulty: 0.7, parameters: { dilemmaType: 'need-vs-want', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-magenta-16', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'promise-keeping', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-magenta-17', taskType: 'dilemma', difficulty: 0.75, parameters: { dilemmaType: 'helping-vs-self-interest', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-magenta-18', taskType: 'dilemma', difficulty: 0.8, parameters: { dilemmaType: 'multiple-wants-conflict', choices: 4, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-magenta-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'complex-sharing', responseType: 'text', scenarios: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-magenta-20', taskType: 'dilemma', difficulty: 0.9, parameters: { dilemmaType: 'multi-person-fairness', choices: 4, scenarioCount: 4 }, measures: ['depth', 'coherence', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Decide who gets the cookie independently',

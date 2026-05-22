@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const interpersonalAmber: StageAssessment = {
   line: 'Interpersonal',
@@ -30,6 +30,28 @@ export const interpersonalAmber: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 150000,
+  itemPool: [
+    { id: 'interpersonal-amber-01', taskType: 'pattern_prediction', difficulty: 0.2, parameters: { patternLength: 3, patternType: 'role-based', repetitions: 3, predictionPoint: 'next' }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-amber-02', taskType: 'pattern_prediction', difficulty: 0.25, parameters: { patternLength: 3, patternType: 'role-based', repetitions: 4, predictionPoint: 'next' }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-amber-03', taskType: 'pattern_prediction', difficulty: 0.3, parameters: { patternLength: 4, patternType: 'role-based', repetitions: 3, predictionPoint: 'next' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-amber-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'norm-prediction', npcBehaviour: 'rule-following', scenarios: 2 }, measures: ['accuracy', 'depth'] },
+    { id: 'interpersonal-amber-05', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { patternLength: 4, patternType: 'role-based', repetitions: 4, predictionPoint: 'next' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-amber-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'hierarchy-navigation', npcBehaviour: 'authority-role', scenarios: 2 }, measures: ['accuracy', 'depth'] },
+    { id: 'interpersonal-amber-07', taskType: 'pattern_prediction', difficulty: 0.45, parameters: { patternLength: 4, patternType: 'hierarchy-based', repetitions: 4, predictionPoint: 'next' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-amber-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'group-coordination', npcBehaviour: 'role-following', scenarios: 3 }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-amber-09', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { patternLength: 5, patternType: 'role-based', repetitions: 4, predictionPoint: 'next' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-amber-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'role-conflict-resolution', npcBehaviour: 'competing-roles', scenarios: 3 }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-amber-11', taskType: 'pattern_prediction', difficulty: 0.6, parameters: { patternLength: 5, patternType: 'role-with-exceptions', repetitions: 4, predictionPoint: 'next' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-amber-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'multi-role-coordination', npcBehaviour: 'mixed-roles', scenarios: 3 }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-amber-13', taskType: 'cooperation', difficulty: 0.65, parameters: { taskType: 'shared-rule-following', partners: 2, rounds: 4 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-amber-14', taskType: 'pattern_prediction', difficulty: 0.65, parameters: { patternLength: 5, patternType: 'hierarchy-with-exceptions', repetitions: 4, predictionPoint: 'next' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-amber-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'hierarchy-conflict', npcBehaviour: 'authority-challenge', scenarios: 4 }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-amber-16', taskType: 'cooperation', difficulty: 0.7, parameters: { taskType: 'role-coordination', partners: 3, rounds: 4 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-amber-17', taskType: 'pattern_prediction', difficulty: 0.75, parameters: { patternLength: 6, patternType: 'multi-role-interaction', repetitions: 4, predictionPoint: 'next' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-amber-18', taskType: 'cooperation', difficulty: 0.8, parameters: { taskType: 'group-hierarchy-task', partners: 3, rounds: 5 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-amber-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'multi-group-dynamics', npcBehaviour: 'competing-hierarchies', scenarios: 4 }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-amber-20', taskType: 'cooperation', difficulty: 0.9, parameters: { taskType: 'complex-role-negotiation', partners: 4, rounds: 5, conflictType: 'hierarchy-vs-equality' }, measures: ['accuracy', 'consistency', 'transfer', 'depth'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Predict NPC behaviour without hints',

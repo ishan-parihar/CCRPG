@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const interpersonalTurquoise: StageAssessment = {
   line: 'Interpersonal',
@@ -46,6 +46,28 @@ export const interpersonalTurquoise: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'interpersonal-turquoise-01', taskType: 'cooperation', difficulty: 0.2, parameters: { groupSize: 3, taskComplexity: 'moderate', fieldSensing: true, rounds: 2 }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-turquoise-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'A group is stuck. You sense the unspoken tension. How do you name it without blame?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'interpersonal-turquoise-03', taskType: 'cooperation', difficulty: 0.3, parameters: { groupSize: 4, taskComplexity: 'moderate', collectiveIntelligence: true, rounds: 3 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-turquoise-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'How do you facilitate a group to access its collective wisdom rather than just aggregating individual opinions?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'interpersonal-turquoise-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'field-sensing', responseType: 'text', scenarios: 2, groupDynamic: 'hidden-conflict' }, measures: ['depth', 'coherence'] },
+    { id: 'interpersonal-turquoise-06', taskType: 'cooperation', difficulty: 0.4, parameters: { groupSize: 4, taskComplexity: 'high', systemicFacilitation: true, rounds: 3 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'interpersonal-turquoise-07', taskType: 'llm_dialogue', difficulty: 0.45, parameters: { prompt: 'Describe how you sense what a group needs before anyone has spoken it.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-turquoise-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'systemic-facilitation', responseType: 'text', scenarios: 3, multiStakeholder: true }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'interpersonal-turquoise-09', taskType: 'cooperation', difficulty: 0.5, parameters: { groupSize: 5, taskComplexity: 'high', collectiveIntelligence: true, emergentSolution: true, rounds: 4 }, measures: ['accuracy', 'transfer', 'complexity_handled'] },
+    { id: 'interpersonal-turquoise-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'A system is producing harm but no individual intends it. How do you facilitate systemic awareness?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'interpersonal-turquoise-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'field-sensing', responseType: 'text', scenarios: 3, groupDynamic: 'developmental-mismatch' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-turquoise-12', taskType: 'cooperation', difficulty: 0.6, parameters: { groupSize: 6, taskComplexity: 'high', systemicFacilitation: true, conflictPresent: true, rounds: 4 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'interpersonal-turquoise-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'How do you hold space for a group to transform without directing the transformation?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-turquoise-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'systemic-facilitation', responseType: 'text', scenarios: 4, multiLevel: true, paradoxPresent: true }, measures: ['depth', 'complexity_handled', 'coherence'] },
+    { id: 'interpersonal-turquoise-15', taskType: 'cooperation', difficulty: 0.7, parameters: { groupSize: 6, taskComplexity: 'very-high', collectiveIntelligence: true, emergentSolution: true, rounds: 5 }, measures: ['accuracy', 'transfer', 'complexity_handled'] },
+    { id: 'interpersonal-turquoise-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Describe the experience of thinking together - not parallel thinking, but genuine collective cognition.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-turquoise-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'field-sensing', responseType: 'text', scenarios: 4, groupDynamic: 'collective-shadow', systemicLevel: true }, measures: ['depth', 'coherence', 'complexity_handled', 'integration'] },
+    { id: 'interpersonal-turquoise-18', taskType: 'cooperation', difficulty: 0.8, parameters: { groupSize: 8, taskComplexity: 'very-high', systemicFacilitation: true, collectiveIntelligence: true, rounds: 5 }, measures: ['accuracy', 'complexity_handled', 'transfer'] },
+    { id: 'interpersonal-turquoise-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'A group achieves a breakthrough that no individual could have reached alone. What made it possible? What was your role?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration', 'complexity_handled'] },
+    { id: 'interpersonal-turquoise-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'systemic-facilitation', responseType: 'text', scenarios: 5, multiLevel: true, collectiveAwakening: true, fieldSensing: true }, measures: ['depth', 'coherence', 'complexity_handled', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain own integral centre while attuning across altitude difference',

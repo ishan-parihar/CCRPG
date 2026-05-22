@@ -10,7 +10,9 @@
  *          + 0.10 * narrative_coherence
  *          + 0.05 * session_fit
  */
+import type { Drive } from '../domain/Drive.js';
 import type { Significator } from '../domain/Significator.js';
+import { stageOrdinal } from '../domain/Stage.js';
 import type { EncounterCandidate, WorldState } from './CandidateGeneration.js';
 import { computeCellStaleness, DEFAULT_THETA_PARAMS } from './ThetaDecay.js';
 
@@ -51,7 +53,7 @@ export const DEFAULT_WEIGHTS: PriorityWeights = {
 export function computePriority(
   candidate: EncounterCandidate,
   sig: Significator,
-  _world: WorldState,
+  world: WorldState,
   session: SessionContext,
   now: number,
   weights: PriorityWeights = DEFAULT_WEIGHTS,
@@ -60,8 +62,8 @@ export function computePriority(
   const s = computeShadowActivation(candidate, sig);
   const p = computePolarityAlignment(candidate, sig);
   const tr = computeTransformationReadiness(candidate, sig);
-  const d = computeDriveCorrection(candidate, sig);
-  const n = computeNarrativeCoherence(candidate, session);
+  const d = computeDriveCorrection(candidate, sig, world);
+  const n = computeNarrativeCoherence(candidate, world);
   const sf = computeSessionFit(candidate, session);
 
   return weights.thetaUrgency * t
@@ -73,59 +75,153 @@ export function computePriority(
     + weights.sessionFit * sf;
 }
 
+/**
+ * §3.2.1 — Math.pow(decayLevel, 1.5). Only scores > 0 if candidate's
+ * line AND stage match the decaying cell.
+ */
 function computeThetaUrgency(c: EncounterCandidate, sig: Significator, now: number): number {
   const key = `${c.line}:${c.stage}`;
   const lastTs = sig.theta.lastEncounter[key] ?? 0;
   if (lastTs === 0) return 1; // never visited = max urgency
-  return computeCellStaleness(lastTs, now, DEFAULT_THETA_PARAMS.halfLife);
+  const decayLevel = computeCellStaleness(lastTs, now, DEFAULT_THETA_PARAMS.halfLife);
+  return Math.pow(decayLevel, 1.5);
 }
 
+/**
+ * §3.2.2 — Match on BOTH line AND stage. Base = min(count * 0.4, 1.0).
+ * +0.3 if any matching shadow has compoundPartner !== null. Cap at 1.0.
+ */
 function computeShadowActivation(c: EncounterCandidate, sig: Significator): number {
-  const activeShadows = sig.shadows.entries.filter(
-    e => e.resolvedAt === null && e.line === c.line,
+  const matching = sig.shadows.entries.filter(
+    e => e.resolvedAt === null && e.line === c.line && e.stage === c.stage,
   );
-  if (activeShadows.length === 0) return 0;
-  // Higher severity and recurrence = higher activation
-  return Math.min(1, activeShadows.reduce((sum, e) => sum + e.severity * (1 + e.recurrenceCount * 0.2), 0));
+  if (matching.length === 0) return 0;
+  let score = Math.min(matching.length * 0.4, 1.0);
+  if (matching.some(e => e.compoundPartner !== null)) score += 0.3;
+  return Math.min(score, 1.0);
 }
 
+/**
+ * §3.2.3 — Mode-specific:
+ * Exploring → 0.5, Crystallizing → counter-polarity 0.8 / deepening 0.6,
+ * Crystallized → aligned 0.9 / misaligned 0.1
+ */
 function computePolarityAlignment(c: EncounterCandidate, sig: Significator): number {
+  const mode = sig.polarity.master.mode;
+  if (mode === 'Exploring') return 0.5;
+
   const key = `${c.line}:${c.stage}`;
   const cell = sig.polarity.cells[key];
-  if (!cell) return 0.5; // neutral — no data yet
-  // In exploring mode, variety is good (moderate score for everything)
-  // In crystallizing/crystallized, alignment with dominant pattern scores higher
-  if (sig.polarity.master.mode === 'Exploring') return 0.5;
-  return cell.coherence;
+  const candidateTexture = cell?.dominantPattern ?? null;
+  const dominant = sig.polarity.master.dominantDirection;
+
+  if (mode === 'Crystallizing') {
+    return candidateTexture !== null && candidateTexture !== dominant ? 0.8 : 0.6;
+  }
+  // Crystallized
+  return candidateTexture === dominant ? 0.9 : 0.1;
 }
 
+/**
+ * §3.2.4 — Returns 0 if linesAtEdge < 3 AND no pendingTransformation.
+ * Otherwise: isEdgeLine → +0.5, isDualShadow → +0.5.
+ */
 function computeTransformationReadiness(c: EncounterCandidate, sig: Significator): number {
-  // Higher score if this encounter is at the edge of current stage (transformation window)
-  const key = `${c.line}:${c.stage}`;
-  const cell = sig.polarity.cells[key];
-  if (!cell) return 0;
-  // Encounters at current-stage altitude with high crystallization = transformation prep
-  if (c.stage === sig.currentStage && cell.crystallization > 0.6) return cell.crystallization;
+  const targetStageOrd = stageOrdinal(sig.currentStage) + 1;
+  const linesAtEdge = Object.values(sig.altitudes).filter(
+    alt => stageOrdinal(alt) >= stageOrdinal(sig.currentStage),
+  ).length;
+  const pendingTransformation = sig.lifecycle === 'Transforming';
+
+  if (linesAtEdge < 3 && !pendingTransformation) return 0;
+
+  let score = 0;
+  // isEdgeLine: candidate's line altitude >= targetStage - 1
+  const candidateLineAlt = stageOrdinal(sig.altitudes[c.line]);
+  if (candidateLineAlt >= targetStageOrd - 1) score += 0.5;
+
+  // isDualShadow: candidate targets shadow at centreOfGravity or targetStage
+  const cogOrd = stageOrdinal(sig.currentStage);
+  const hasShadowAtCoG = sig.shadows.entries.some(
+    e => e.resolvedAt === null && e.line === c.line && stageOrdinal(e.stage) === cogOrd,
+  );
+  const hasShadowAtTarget = sig.shadows.entries.some(
+    e => e.resolvedAt === null && e.line === c.line && stageOrdinal(e.stage) === targetStageOrd,
+  );
+  if (hasShadowAtCoG || hasShadowAtTarget) score += 0.5;
+
+  return score;
+}
+
+const DRIVE_COMPLEMENT: Record<Drive, Drive> = {
+  Agency: 'Communion',
+  Communion: 'Agency',
+  Eros: 'Agape',
+  Agape: 'Eros',
+};
+
+/**
+ * §3.2.5 — Only activates when max drive imbalance >= 0.3.
+ * Scores if candidate's driveTarget is the COMPLEMENT of the most fixated drive.
+ * Score = the fixation magnitude.
+ */
+function computeDriveCorrection(c: EncounterCandidate, sig: Significator, world: WorldState): number {
+  const fixations = sig.drives.fixationRisk;
+  let maxDrive: Drive = 'Agency';
+  let maxVal = 0;
+  for (const [d, v] of Object.entries(fixations) as [Drive, number][]) {
+    if (v > maxVal) { maxVal = v; maxDrive = d; }
+  }
+  if (maxVal < 0.3) return 0;
+
+  // Derive candidate's drive target from its holon
+  const holon = world.holons.find(h => h.id === c.holonId);
+  const candidateDrive = holon?.drives.dominant ?? null;
+  if (!candidateDrive) return 0;
+
+  return candidateDrive === DRIVE_COMPLEMENT[maxDrive] ? maxVal : 0;
+}
+
+/**
+ * §3.2.6 — Active narrative beat match → 1.0.
+ * Else if holon has existing relationship → 0.4. Else 0.
+ */
+function computeNarrativeCoherence(c: EncounterCandidate, world: WorldState): number {
+  const holon = world.holons.find(h => h.id === c.holonId);
+  if (!holon) return 0;
+  // WorldState doesn't expose activeBeat; degrade gracefully
+  if (holon.relationships.length > 0) return 0.4;
   return 0;
 }
 
-function computeDriveCorrection(_c: EncounterCandidate, sig: Significator): number {
-  // Score higher if the candidate's holon targets a drive with high fixation risk
-  const maxFixation = Math.max(...Object.values(sig.drives.fixationRisk));
-  if (maxFixation === 0) return 0;
-  return maxFixation; // simplified: any encounter helps when fixation is high
-}
+/**
+ * §3.2.7 — Three sub-scores averaged:
+ * Duration: short+short → 0.4, long+long → 0.2, else 0.1
+ * Energy: low+low → 0.3, high+high → 0.3, mismatch → 0
+ * Modality preference: 0.3 * (preference score, default 0.5)
+ */
+function computeSessionFit(c: EncounterCandidate, session: SessionContext): number {
+  // Duration sub-score
+  const shortSession = (session.estimatedTimeAvailable ?? session.sessionDurationMs) < 900_000; // < 15min
+  const shortEncounter = c.modality === 'Deterministic' || c.modality === 'Embodied';
+  const longEncounter = c.modality === 'ImmersiveRPG' || c.modality === 'SocialCooperative';
+  let duration: number;
+  if (shortSession && shortEncounter) duration = 0.4;
+  else if (!shortSession && longEncounter) duration = 0.2;
+  else duration = 0.1;
 
-function computeNarrativeCoherence(c: EncounterCandidate, session: SessionContext): number {
-  // Penalize repeating the same line too often in a session
-  const recentSameLine = session.recentLines.filter(l => l === c.line).length;
-  return Math.max(0, 1 - recentSameLine * 0.3);
-}
+  // Energy sub-score
+  const energy = session.inferredEnergy ?? 'moderate';
+  const highIntensity = c.modality === 'ImmersiveRPG' || c.modality === 'Strategic';
+  const lowIntensity = c.modality === 'LanguageReflective' || c.modality === 'ScenarioChoice';
+  let energyScore: number;
+  if (energy === 'low' && lowIntensity) energyScore = 0.3;
+  else if (energy === 'high' && highIntensity) energyScore = 0.3;
+  else if (energy === 'moderate') energyScore = 0.15;
+  else energyScore = 0;
 
-function computeSessionFit(_c: EncounterCandidate, session: SessionContext): number {
-  // Map session progress to warmup/peak/cooldown preference
-  const progress = session.encountersSoFar / Math.max(1, session.targetSessionLength);
-  if (progress < 0.2) return 0.8; // warmup: prefer easier/familiar
-  if (progress > 0.8) return 0.6; // cooldown: prefer lighter
-  return 1.0; // peak: full intensity
+  // Modality preference sub-score (no preference data available, use default 0.5)
+  const modalityPref = 0.3 * 0.5;
+
+  return (duration + energyScore + modalityPref) / 3;
 }

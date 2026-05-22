@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const interpersonalRed: StageAssessment = {
   line: 'Interpersonal',
@@ -30,6 +30,28 @@ export const interpersonalRed: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 150000,
+  itemPool: [
+    { id: 'interpersonal-red-01', taskType: 'pattern_prediction', difficulty: 0.2, parameters: { patternLength: 2, repetitions: 4, predictionPoint: 'next', npcType: 'simple' }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-red-02', taskType: 'pattern_prediction', difficulty: 0.25, parameters: { patternLength: 2, repetitions: 5, predictionPoint: 'next', npcType: 'simple' }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-red-03', taskType: 'cooperation', difficulty: 0.3, parameters: { taskType: 'turn-taking', rounds: 4, npcStrategy: 'tit-for-tat' }, measures: ['accuracy', 'transfer'] },
+    { id: 'interpersonal-red-04', taskType: 'pattern_prediction', difficulty: 0.3, parameters: { patternLength: 3, repetitions: 4, predictionPoint: 'next', npcType: 'predictable' }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-red-05', taskType: 'cooperation', difficulty: 0.35, parameters: { taskType: 'resource-sharing', rounds: 5, npcStrategy: 'tit-for-tat' }, measures: ['accuracy', 'depth'] },
+    { id: 'interpersonal-red-06', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { patternLength: 3, repetitions: 5, predictionPoint: 'next-two', npcType: 'predictable' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-red-07', taskType: 'cooperation', difficulty: 0.4, parameters: { taskType: 'turn-taking', rounds: 6, npcStrategy: 'generous-tit-for-tat' }, measures: ['accuracy', 'depth'] },
+    { id: 'interpersonal-red-08', taskType: 'pattern_prediction', difficulty: 0.45, parameters: { patternLength: 4, repetitions: 4, predictionPoint: 'next', npcType: 'semi-random' }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-red-09', taskType: 'cooperation', difficulty: 0.5, parameters: { taskType: 'resource-sharing', rounds: 6, npcStrategy: 'conditional' }, measures: ['accuracy', 'transfer', 'depth'] },
+    { id: 'interpersonal-red-10', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { patternLength: 4, repetitions: 5, predictionPoint: 'next-two', npcType: 'semi-random' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-red-11', taskType: 'cooperation', difficulty: 0.55, parameters: { taskType: 'coordination', rounds: 6, npcStrategy: 'conditional', penalty: true }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-red-12', taskType: 'pattern_prediction', difficulty: 0.6, parameters: { patternLength: 4, repetitions: 4, predictionPoint: 'next-two', npcType: 'adaptive' }, measures: ['accuracy', 'response_time', 'depth'] },
+    { id: 'interpersonal-red-13', taskType: 'cooperation', difficulty: 0.6, parameters: { taskType: 'coordination', rounds: 8, npcStrategy: 'adaptive', penalty: true }, measures: ['accuracy', 'transfer', 'depth'] },
+    { id: 'interpersonal-red-14', taskType: 'pattern_prediction', difficulty: 0.65, parameters: { patternLength: 5, repetitions: 4, predictionPoint: 'next', npcType: 'adaptive' }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-red-15', taskType: 'cooperation', difficulty: 0.7, parameters: { taskType: 'negotiation', rounds: 6, npcStrategy: 'competitive' }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-red-16', taskType: 'pattern_prediction', difficulty: 0.7, parameters: { patternLength: 5, repetitions: 4, predictionPoint: 'next-two', npcType: 'adaptive' }, measures: ['accuracy', 'response_time', 'transfer', 'depth'] },
+    { id: 'interpersonal-red-17', taskType: 'cooperation', difficulty: 0.75, parameters: { taskType: 'negotiation', rounds: 8, npcStrategy: 'competitive', bluffing: true }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-red-18', taskType: 'pattern_prediction', difficulty: 0.8, parameters: { patternLength: 5, repetitions: 5, predictionPoint: 'next-two', npcType: 'deceptive' }, measures: ['accuracy', 'response_time', 'transfer', 'depth'] },
+    { id: 'interpersonal-red-19', taskType: 'cooperation', difficulty: 0.85, parameters: { taskType: 'negotiation', rounds: 10, npcStrategy: 'deceptive', bluffing: true }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-red-20', taskType: 'pattern_prediction', difficulty: 0.9, parameters: { patternLength: 6, repetitions: 4, predictionPoint: 'next-two', npcType: 'deceptive', multiAgent: true }, measures: ['accuracy', 'response_time', 'transfer', 'depth'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Predict NPC pattern without hints',

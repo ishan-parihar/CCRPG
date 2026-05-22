@@ -24,6 +24,7 @@ const mockEncounter: ScheduledEncounter = {
   sessionPosition: 'peak',
   priority: 0.8,
   driveTarget: null,
+  executionMode: 'capacity',
 };
 
 const mockResponse: PlayerResponse = {
@@ -56,26 +57,26 @@ describe('ConsequenceEngine', () => {
   describe('applyConsequences', () => {
     it('increments totalEncounters', () => {
       const sig = createSignificator('p1', altitudes, 'Red');
-      const world: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {} };
+      const world: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {}, narrativeBeats: [], activeBeatId: null, completedBeatIds: [], factions: [], npcRelationships: [], pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 }, activeMacroEvents: [] };
       const record = processOutcome(mockEncounter, mockResponse, 1000);
-      const result = applyConsequences(sig, world, record);
+      const result = applyConsequences(sig, world, record, mockEncounter);
       expect(result.sig.totalEncounters).toBe(1);
     });
 
     it('updates theta timestamps', () => {
       const sig = createSignificator('p1', altitudes, 'Red');
-      const world: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {} };
+      const world: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {}, narrativeBeats: [], activeBeatId: null, completedBeatIds: [], factions: [], npcRelationships: [], pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 }, activeMacroEvents: [] };
       const record = processOutcome(mockEncounter, mockResponse, 5000);
-      const result = applyConsequences(sig, world, record);
+      const result = applyConsequences(sig, world, record, mockEncounter);
       expect(result.sig.theta.lastEncounter['Cognitive:Red']).toBe(5000);
     });
 
     it('adds shadow entry when shadow surfaced', () => {
       const sig = createSignificator('p1', altitudes, 'Red');
-      const world: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {} };
+      const world: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {}, narrativeBeats: [], activeBeatId: null, completedBeatIds: [], factions: [], npcRelationships: [], pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 }, activeMacroEvents: [] };
       const resp = { ...mockResponse, shadowSurfaced: 'GoldenAllergy' as const };
       const record = processOutcome(mockEncounter, resp, 1000);
-      const result = applyConsequences(sig, world, record);
+      const result = applyConsequences(sig, world, record, mockEncounter);
       expect(result.sig.shadows.activeCount).toBe(1);
     });
   });

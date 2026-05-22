@@ -78,6 +78,9 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
     telemetryService.recordEvent('session_ended', { timestamp: payload.timestamp, encounterCount: payload.encounterCount });
     void telemetryService.flush();
   });
+  eventBus.on('encounter_declined', (payload) => {
+    telemetryService.recordEvent('encounter_declined', payload);
+  });
 
   // Screen reader overlay
   if (a11yManager.isScreenReaderEnabled() && typeof document !== 'undefined') {

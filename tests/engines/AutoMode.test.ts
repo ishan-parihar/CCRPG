@@ -15,7 +15,7 @@ import type {
   ParameterisedSessionArc,
 } from '../../src/core/engines/AutoModeStrategy.js';
 import type { CCIScore, SessionTheme } from '../../src/core/engines/CCIEngine.js';
-import type { SessionContext, PriorityWeights } from '../../src/core/engines/PriorityComputation.js';
+import type { SessionContext } from '../../src/core/engines/PriorityComputation.js';
 import { DEFAULT_WEIGHTS } from '../../src/core/engines/PriorityComputation.js';
 import type { SignificatorSnapshot } from '../../src/core/domain/SignificatorSnapshot.js';
 import type { Line } from '../../src/core/domain/Line.js';

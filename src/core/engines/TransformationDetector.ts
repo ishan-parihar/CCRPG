@@ -86,3 +86,87 @@ export function computeReadiness(sig: Significator, targetStage: Stage): Readine
 
   return { convergence, saturation, shadowClearance, overall };
 }
+
+// ─── Transformation State Machine (R3.1 + R3.5 + R3.6) ───
+
+export type TransformationPhase = 'idle' | 'threshold' | 'unravelling' | 'crucible' | 'emergence' | 'complete';
+
+export interface TransformationState {
+  readonly phase: TransformationPhase;
+  readonly targetStage: Stage | null;
+  readonly sessionsInPhase: number;
+  readonly knotsResolved: number;
+  readonly totalKnots: number;
+}
+
+export function createInitialTransformationState(): TransformationState {
+  return { phase: 'idle', targetStage: null, sessionsInPhase: 0, knotsResolved: 0, totalKnots: 0 };
+}
+
+/**
+ * Advance the transformation state machine based on current conditions.
+ * Called after each encounter during an active transformation.
+ */
+export function advanceTransformation(
+  state: TransformationState,
+  sig: Significator,
+): TransformationState {
+  switch (state.phase) {
+    case 'idle': {
+      const signal = detectThreshold(sig);
+      if (signal && signal.readiness >= 0.8) {
+        return { ...state, phase: 'threshold', targetStage: signal.targetStage, sessionsInPhase: 0, totalKnots: signal.blockers.length || 1 };
+      }
+      return state;
+    }
+    case 'threshold': {
+      if (state.sessionsInPhase >= 1) {
+        return { ...state, phase: 'unravelling', sessionsInPhase: 0 };
+      }
+      return { ...state, sessionsInPhase: state.sessionsInPhase + 1 };
+    }
+    case 'unravelling': {
+      if (state.sessionsInPhase >= 2) {
+        return { ...state, phase: 'crucible', sessionsInPhase: 0 };
+      }
+      return { ...state, sessionsInPhase: state.sessionsInPhase + 1 };
+    }
+    case 'crucible': {
+      if (state.knotsResolved >= state.totalKnots || state.sessionsInPhase >= 5) {
+        return { ...state, phase: 'emergence', sessionsInPhase: 0 };
+      }
+      return { ...state, sessionsInPhase: state.sessionsInPhase + 1 };
+    }
+    case 'emergence': {
+      if (state.sessionsInPhase >= 1) {
+        return { ...state, phase: 'complete' };
+      }
+      return { ...state, sessionsInPhase: state.sessionsInPhase + 1 };
+    }
+    case 'complete':
+      return state;
+  }
+}
+
+/**
+ * Record a knot resolution during the crucible phase.
+ */
+export function recordKnotResolution(state: TransformationState): TransformationState {
+  if (state.phase !== 'crucible') return state;
+  return { ...state, knotsResolved: state.knotsResolved + 1 };
+}
+
+/**
+ * Commit the transformation: returns the new target stage.
+ * Only valid when phase === 'complete'.
+ * The caller is responsible for advancing the Significator's altitude.
+ */
+export function commitTransformation(state: TransformationState): { targetStage: Stage | null; newState: TransformationState } {
+  if (state.phase !== 'complete' || !state.targetStage) {
+    return { targetStage: null, newState: state };
+  }
+  return {
+    targetStage: state.targetStage,
+    newState: createInitialTransformationState(),
+  };
+}

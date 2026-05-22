@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const spiritualMagenta: StageAssessment = {
   line: 'Spiritual',
@@ -24,6 +24,28 @@ export const spiritualMagenta: StageAssessment = {
   },
   minimumTrials: 2,
   estimatedDurationMs: 90000,
+  itemPool: [
+    { id: 'spiritual-magenta-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'magical-wonder', responseType: 'single-word', trials: 2 }, measures: ['coherence'] },
+    { id: 'spiritual-magenta-02', taskType: 'scenario', difficulty: 0.25, parameters: { scenarioType: 'magical-wonder', responseType: 'single-word', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'magical-wish', responseType: 'single-word', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'magical-wish', responseType: 'text', trials: 2 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'magical-wish', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'animistic-belief', responseType: 'choice', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'simple-ritual', responseType: 'choice-plus-text', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'animistic-belief', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'magical-cause-effect', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'spirit-world', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'ritual-engagement', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-magenta-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'wish-failure', responseType: 'text', trials: 2 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-13', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'magical-protection', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-magenta-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'wish-failure', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-magenta-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'enchanted-world', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-magenta-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'ritual-coherence', responseType: 'text', trials: 4 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-magenta-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'magical-worldview-consistency', responseType: 'text', trials: 4 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-magenta-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'spirit-communication', responseType: 'text', trials: 4 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-magenta-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'magical-belief-challenge', responseType: 'text', trials: 4 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-magenta-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'full-mythic-narrative', responseType: 'text', trials: 5 }, measures: ['coherence', 'depth', 'consistency', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'State magical belief without needing agreement',

@@ -33,6 +33,14 @@ export function computeStaleness(
   return result;
 }
 
+/**
+ * Apply urgency power curve to raw staleness.
+ * Spec: foundations/24 §3.2.1 - gentle at low decay, steep at high.
+ */
+export function computeUrgency(staleness: number): number {
+  return Math.pow(Math.max(0, Math.min(1, staleness)), 1.5);
+}
+
 /** Return cell keys where staleness exceeds bleed-through threshold. */
 export function detectBleedThrough(
   timestamps: Readonly<Record<string, number>>,

@@ -4,7 +4,7 @@ import {
   hasConverged,
   DEFAULT_STAIRCASE_CONFIG,
 } from '../src/core/usecases/Staircase.js';
-import type { StaircaseState } from '../src/core/domain/PlayerProfile.js';
+import type { StaircaseState } from '../src/core/domain/SharedTypes.js';
 
 const initial: StaircaseState = {
   level: 5,

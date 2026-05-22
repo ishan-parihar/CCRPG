@@ -63,12 +63,26 @@ const mockWorld: WorldState = {
   holons: testHolons,
   recentEncounterIds: [],
   cooldowns: {},
+  narrativeBeats: [],
+  activeBeatId: null,
+  completedBeatIds: [],
+  factions: [],
+  npcRelationships: [],
+  pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+  activeMacroEvents: [],
 };
 
 const emptyWorld: WorldState = {
   holons: [],
   recentEncounterIds: [],
   cooldowns: {},
+  narrativeBeats: [],
+  activeBeatId: null,
+  completedBeatIds: [],
+  factions: [],
+  npcRelationships: [],
+  pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+  activeMacroEvents: [],
 };
 
 const mockSession: SessionContext = {
@@ -238,8 +252,6 @@ describe('FullSession Integration', () => {
       let sessionState = startSession(sig, mockSession);
       const now = Date.now();
 
-      const cciAtStart = sessionState.cci;
-
       // Run 6 ticks - refresh should happen at encounter 3 and 6
       let currentSig = sig;
       for (let i = 0; i < 6; i++) {
@@ -341,7 +353,7 @@ describe('FullSession Integration', () => {
       const now = Date.now();
 
       // Use original tick without strategy
-      const result = tick(sig, mockWorld, mockSession, null, now);
+      const result = tick(sig, mockWorld, mockSession, null, null, now);
 
       expect(result.sig).toBeDefined();
       expect(result.world).toBeDefined();

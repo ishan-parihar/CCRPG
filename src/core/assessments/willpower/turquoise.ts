@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const willpowerTurquoise: StageAssessment = {
   line: 'Willpower',
@@ -23,6 +23,28 @@ export const willpowerTurquoise: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 240000,
+  itemPool: [
+    { id: 'willpower-turquoise-01', taskType: 'hold', difficulty: 0.2, parameters: { targetDurationMs: 30000, perturbations: true, perturbationType: 'subtle', effortlessnessRequired: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-turquoise-02', taskType: 'scenario', difficulty: 0.25, parameters: { scenarioType: 'effortless-effort', responseType: 'text', scenarios: 2, wuWei: true }, measures: ['depth', 'coherence'] },
+    { id: 'willpower-turquoise-03', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 45000, perturbations: true, perturbationType: 'moderate', effortlessnessRequired: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-turquoise-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'Describe a time you achieved something by not trying. What was the quality of your will?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'willpower-turquoise-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'surrendered-will', responseType: 'text', scenarios: 2, paradox: 'willing-to-not-will' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-turquoise-06', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 60000, perturbations: true, perturbationType: 'moderate', measureStrain: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-turquoise-07', taskType: 'llm_dialogue', difficulty: 0.45, parameters: { prompt: 'What is the difference between willpower and alignment? When does effort become interference?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-turquoise-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'effortless-effort', responseType: 'text', scenarios: 3, flowState: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-turquoise-09', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 90000, perturbations: true, perturbationType: 'strong', effortlessnessRequired: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-turquoise-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'How do you sustain commitment without strain? Describe will that does not deplete.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-turquoise-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'surrendered-will', responseType: 'text', scenarios: 3, paradox: 'active-surrender' }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'willpower-turquoise-12', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 120000, perturbations: true, perturbationType: 'strong', measureStrain: true, effortlessnessRequired: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-turquoise-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'Describe the paradox of wu-wei: acting without acting. How is this different from passivity?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'willpower-turquoise-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'effortless-effort', responseType: 'text', scenarios: 3, sustainedFlow: true, noForcing: true }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'willpower-turquoise-15', taskType: 'hold', difficulty: 0.7, parameters: { targetDurationMs: 150000, perturbations: true, perturbationType: 'intense', effortlessnessRequired: true, measureStrain: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-turquoise-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Your will and the situation are one movement. Describe action that arises from this unity.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-turquoise-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'surrendered-will', responseType: 'text', scenarios: 4, paradox: 'will-beyond-self' }, measures: ['depth', 'coherence', 'complexity_handled', 'integration'] },
+    { id: 'willpower-turquoise-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 180000, perturbations: true, perturbationType: 'intense', effortlessnessRequired: true, measureStrain: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-turquoise-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'What wills through you when you stop willing? Describe the source of effortless action.', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-turquoise-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'effortless-effort', responseType: 'text', scenarios: 4, wuWei: true, sustainedFlow: true, noSelf: true }, measures: ['depth', 'coherence', 'integration', 'complexity_handled'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain long hold without any external support',

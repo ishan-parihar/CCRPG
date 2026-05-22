@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const cognitiveGreen: StageAssessment = {
   line: 'Cognitive',
@@ -37,6 +37,28 @@ export const cognitiveGreen: StageAssessment = {
   },
   minimumTrials: 5,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'cognitive-green-01', taskType: 'pattern_prediction', difficulty: 0.2, parameters: { patternType: 'perspective-shift', perspectives: 2, trials: 4, complexity: 'low' }, measures: ['accuracy', 'depth'] },
+    { id: 'cognitive-green-02', taskType: 'scenario', difficulty: 0.25, parameters: { scenarioType: 'paradox-holding', responseType: 'text', scenarios: 2, complexity: 'low' }, measures: ['depth', 'coherence'] },
+    { id: 'cognitive-green-03', taskType: 'pattern_prediction', difficulty: 0.3, parameters: { patternType: 'perspective-shift', perspectives: 3, trials: 4, complexity: 'medium' }, measures: ['accuracy', 'depth', 'complexity_handled'] },
+    { id: 'cognitive-green-04', taskType: 'n_back', difficulty: 0.3, parameters: { n: 3, trials: 12, stimulusDurationMs: 1000, interStimulusMs: 350, adaptive: true }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-green-05', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'contextual-reasoning', responseType: 'text', scenarios: 3, contextLayers: 2 }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'cognitive-green-06', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { patternType: 'systems-thinking', complexity: 'medium', trials: 6, feedbackLoops: 2 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-green-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'paradox-holding', responseType: 'text', scenarios: 3, complexity: 'medium' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'cognitive-green-08', taskType: 'n_back', difficulty: 0.45, parameters: { n: 3, maxN: 4, trials: 14, stimulusDurationMs: 950, interStimulusMs: 320, adaptive: true }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-green-09', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { patternType: 'multi-rule', ruleCount: 2, trials: 6, complexity: 'high' }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-green-10', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'contextual-reasoning', responseType: 'text', scenarios: 3, contextLayers: 3 }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'cognitive-green-11', taskType: 'pattern_prediction', difficulty: 0.55, parameters: { patternType: 'systems-thinking', complexity: 'high', trials: 8, feedbackLoops: 3 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-green-12', taskType: 'n_back', difficulty: 0.55, parameters: { n: 4, trials: 14, stimulusDurationMs: 900, interStimulusMs: 300, adaptive: true }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-green-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'paradox-holding', responseType: 'text', scenarios: 4, complexity: 'high' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'cognitive-green-14', taskType: 'pattern_prediction', difficulty: 0.65, parameters: { patternType: 'multi-rule', ruleCount: 2, trials: 8, complexity: 'high' }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-green-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'systems-thinking', responseType: 'text', scenarios: 3, feedbackLoops: 3 }, measures: ['depth', 'complexity_handled', 'integration'] },
+    { id: 'cognitive-green-16', taskType: 'pattern_prediction', difficulty: 0.7, parameters: { patternType: 'multi-rule', ruleCount: 3, trials: 6, complexity: 'very-high' }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-green-17', taskType: 'n_back', difficulty: 0.75, parameters: { n: 4, maxN: 5, trials: 16, stimulusDurationMs: 850, interStimulusMs: 280, adaptive: true }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-green-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'paradox-holding', responseType: 'text', scenarios: 4, complexity: 'very-high', contradictions: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'cognitive-green-19', taskType: 'pattern_prediction', difficulty: 0.85, parameters: { patternType: 'systems-thinking', complexity: 'very-high', trials: 8, feedbackLoops: 4 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-green-20', taskType: 'pattern_prediction', difficulty: 0.9, parameters: { patternType: 'multi-rule', ruleCount: 3, trials: 8, complexity: 'very-high', emergentProperties: true }, measures: ['accuracy', 'complexity_handled', 'self_correction', 'transfer'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Hold both/and without external validation',

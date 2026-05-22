@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const cognitiveRed: StageAssessment = {
   line: 'Cognitive',
@@ -37,6 +37,28 @@ export const cognitiveRed: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'cognitive-red-01', taskType: 'n_back', difficulty: 0.2, parameters: { n: 1, trials: 8, stimulusDurationMs: 1200, interStimulusMs: 400 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-red-02', taskType: 'n_back', difficulty: 0.25, parameters: { n: 1, trials: 10, stimulusDurationMs: 1100, interStimulusMs: 380 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-red-03', taskType: 'n_back', difficulty: 0.3, parameters: { n: 2, trials: 8, stimulusDurationMs: 1200, interStimulusMs: 400 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-red-04', taskType: 'n_back', difficulty: 0.35, parameters: { n: 2, trials: 10, stimulusDurationMs: 1100, interStimulusMs: 380 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-red-05', taskType: 'n_back', difficulty: 0.4, parameters: { n: 2, trials: 12, stimulusDurationMs: 1000, interStimulusMs: 350 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-red-06', taskType: 'pattern_prediction', difficulty: 0.3, parameters: { disks: 3, maxMoves: 2, attempts: 3 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-red-07', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { disks: 3, maxMoves: 3, attempts: 4 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-red-08', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { disks: 4, maxMoves: 3, attempts: 4 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-red-09', taskType: 'n_back', difficulty: 0.5, parameters: { n: 2, trials: 14, stimulusDurationMs: 950, interStimulusMs: 320 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-red-10', taskType: 'n_back', difficulty: 0.55, parameters: { n: 2, trials: 16, stimulusDurationMs: 900, interStimulusMs: 300 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-red-11', taskType: 'pattern_prediction', difficulty: 0.55, parameters: { disks: 4, maxMoves: 4, attempts: 3 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-red-12', taskType: 'n_back', difficulty: 0.6, parameters: { n: 3, trials: 8, stimulusDurationMs: 1100, interStimulusMs: 350 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-red-13', taskType: 'n_back', difficulty: 0.65, parameters: { n: 3, trials: 10, stimulusDurationMs: 1000, interStimulusMs: 320 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-red-14', taskType: 'pattern_prediction', difficulty: 0.6, parameters: { disks: 4, maxMoves: 5, attempts: 3 }, measures: ['complexity_handled', 'self_correction'] },
+    { id: 'cognitive-red-15', taskType: 'n_back', difficulty: 0.7, parameters: { n: 3, trials: 12, stimulusDurationMs: 950, interStimulusMs: 300 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-red-16', taskType: 'pattern_prediction', difficulty: 0.7, parameters: { disks: 5, maxMoves: 4, attempts: 3 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-red-17', taskType: 'n_back', difficulty: 0.75, parameters: { n: 3, trials: 14, stimulusDurationMs: 900, interStimulusMs: 280 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-red-18', taskType: 'pattern_prediction', difficulty: 0.8, parameters: { disks: 5, maxMoves: 5, attempts: 2 }, measures: ['complexity_handled', 'self_correction'] },
+    { id: 'cognitive-red-19', taskType: 'n_back', difficulty: 0.85, parameters: { n: 3, trials: 16, stimulusDurationMs: 850, interStimulusMs: 260 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-red-20', taskType: 'n_back', difficulty: 0.9, parameters: { n: 4, trials: 10, stimulusDurationMs: 900, interStimulusMs: 300 }, measures: ['accuracy', 'response_time', 'self_correction', 'complexity_handled'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Complete n=2 without hints',

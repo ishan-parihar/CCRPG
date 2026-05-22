@@ -2,7 +2,7 @@ import {
   DEFAULT_COGNITIVE_PROFILE,
   type CognitiveProfile,
 } from '@core/domain/Stats.js';
-import type { PlayerProfile } from '@core/domain/PlayerProfile.js';
+import type { Significator } from '@core/domain/Significator.js';
 import type { KeyValueStore } from './KeyValueStore.js';
 
 const SAVE_KEY = 'save:v1';
@@ -66,20 +66,20 @@ export class SaveRepository {
     await this.store.remove(SAVE_KEY);
   }
 
-  // --- PlayerProfile persistence ---
+  // --- Significator persistence ---
 
-  async loadProfile(): Promise<PlayerProfile | null> {
+  async loadProfile(): Promise<Significator | null> {
     const raw = await this.store.get(PROFILE_KEY);
     if (!raw) return null;
     try {
-      return JSON.parse(raw) as PlayerProfile;
+      return JSON.parse(raw) as Significator;
     } catch {
       return null;
     }
   }
 
-  async saveProfile(profile: PlayerProfile): Promise<void> {
-    await this.store.set(PROFILE_KEY, JSON.stringify(profile));
+  async saveProfile(sig: Significator): Promise<void> {
+    await this.store.set(PROFILE_KEY, JSON.stringify(sig));
   }
 
   async resetProfile(): Promise<void> {

@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const spiritualOrange: StageAssessment = {
   line: 'Spiritual',
@@ -31,6 +31,28 @@ export const spiritualOrange: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'spiritual-orange-01', taskType: 'value_ranking', difficulty: 0.2, parameters: { values: 3, temptationType: 'logical-argument', trials: 2 }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-orange-02', taskType: 'value_ranking', difficulty: 0.25, parameters: { values: 4, temptationType: 'logical-argument', trials: 2 }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-orange-03', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'Why does this value matter to you? Can you give a reason?', maxResponseLength: 300 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-orange-04', taskType: 'value_ranking', difficulty: 0.3, parameters: { values: 4, temptationType: 'logical-argument', trials: 3 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-orange-05', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'meaning-making', responseType: 'text', scenarios: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-orange-06', taskType: 'value_ranking', difficulty: 0.4, parameters: { values: 5, temptationType: 'logical-argument', trials: 3 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-orange-07', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'What gives your life meaning? Can you defend that rationally?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-orange-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'existential-questioning', responseType: 'text', scenarios: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-orange-09', taskType: 'value_ranking', difficulty: 0.5, parameters: { values: 6, temptationType: 'logical-argument', trials: 4 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-orange-10', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Can you prove your value is correct? What if I logically disprove it?', maxResponseLength: 500 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-orange-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'value-hierarchy-construction', responseType: 'text', scenarios: 3, values: 4 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'spiritual-orange-12', taskType: 'value_ranking', difficulty: 0.6, parameters: { values: 6, temptationType: 'logical-argument', trials: 4, counterArguments: true }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-orange-13', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'Your deepest value has no rational foundation. Does it still hold?', maxResponseLength: 500 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-orange-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'meaning-making', responseType: 'text', scenarios: 4, existentialChallenge: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-orange-15', taskType: 'value_ranking', difficulty: 0.7, parameters: { values: 6, temptationType: 'logical-argument', trials: 4, conflictingValues: true }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-orange-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'If reason cannot ground meaning, what does? Is that acceptable to you?', maxResponseLength: 500 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-orange-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'existential-questioning', responseType: 'text', scenarios: 4, nihilismChallenge: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-orange-18', taskType: 'value_ranking', difficulty: 0.8, parameters: { values: 7, temptationType: 'logical-argument', trials: 5, conflictingValues: true }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-orange-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'Everything you value can be deconstructed. What remains when reason is exhausted?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-orange-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'trans-rational-value', responseType: 'text', scenarios: 4, fullDeconstruction: true }, measures: ['depth', 'coherence', 'integration', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain value against rational argument',

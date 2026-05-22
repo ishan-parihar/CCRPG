@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const intrapersonalWhite: StageAssessment = {
   line: 'Intrapersonal',
@@ -46,6 +46,28 @@ export const intrapersonalWhite: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'intrapersonal-white-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['Who is reading this question?'], responseType: 'text', timeoutMs: 60000, evaluateNoSelf: true }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-white-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'Look for the one who is looking. What do you find?', maxResponseLength: 400, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-white-03', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['Describe yourself without using any concept, role, or attribute.'], responseType: 'text', timeoutMs: 60000 }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-white-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'The witness is watching. Who watches the witness? Follow this all the way.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-white-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'no-self-inquiry', responseType: 'text', scenarios: 2, witnessDissolving: true }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-white-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'What remains when you subtract everything you know about yourself?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-white-07', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['The boundary between self and world dissolves. Describe what is here.'], responseType: 'text', timeoutMs: 90000 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-white-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'no-self-inquiry', responseType: 'text', scenarios: 3, pureAwareness: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-white-09', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'You are not the body, not the mind, not the witness. What are you?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-white-10', taskType: 'self_report', difficulty: 0.55, parameters: { prompts: ['Is there a difference between awareness and what awareness is aware of?'], responseType: 'text', timeoutMs: 90000 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-white-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'no-self-inquiry', responseType: 'text', scenarios: 3, identityDissolution: true, witnessDissolving: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-white-12', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'The self that knows it has no self is still a self. How do you resolve this without creating another layer?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-white-13', taskType: 'self_report', difficulty: 0.65, parameters: { prompts: ['Describe the experience of being no-one having this experience.'], responseType: 'text', timeoutMs: 90000, evaluateNoSelf: true }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-white-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'no-self-inquiry', responseType: 'text', scenarios: 4, pureAwareness: true, noWitness: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-white-15', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'Self-knowledge at its deepest is the dissolution of the knower. Describe this dissolution from within it.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-white-16', taskType: 'self_report', difficulty: 0.75, parameters: { prompts: ['What is personal about pure awareness? What is impersonal about your experience right now?'], responseType: 'text', timeoutMs: 90000 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-white-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'no-self-inquiry', responseType: 'text', scenarios: 4, identityDissolution: true, pureAwareness: true, noWitness: true }, measures: ['depth', 'coherence', 'integration', 'metacognition'] },
+    { id: 'intrapersonal-white-18', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'There is no inside and no outside. There is no self and no other. Yet here you are. What is this?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-white-19', taskType: 'self_report', difficulty: 0.85, parameters: { prompts: ['The question "who am I?" dissolves. The questioner dissolves. What remains is not an answer.'], responseType: 'text', timeoutMs: 120000, evaluateNoSelf: true }, measures: ['depth', 'metacognition', 'coherence', 'integration'] },
+    { id: 'intrapersonal-white-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'Awareness aware of itself. No subject, no object. Not even awareness as a thing. Speak from this placeless place.', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration', 'metacognition'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Act without an actor - agency arising without anyone claiming to be the agent',

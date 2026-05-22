@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const spiritualAmber: StageAssessment = {
   line: 'Spiritual',
@@ -24,6 +24,28 @@ export const spiritualAmber: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 150000,
+  itemPool: [
+    { id: 'spiritual-amber-01', taskType: 'value_ranking', difficulty: 0.2, parameters: { values: 3, temptationType: 'none', context: 'tradition' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-amber-02', taskType: 'value_ranking', difficulty: 0.25, parameters: { values: 3, temptationType: 'peer-suggestion', context: 'tradition' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-amber-03', taskType: 'value_ranking', difficulty: 0.3, parameters: { values: 4, temptationType: 'social-pressure', context: 'sacred-rules' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-amber-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'ritual-coherence', responseType: 'choice', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-amber-05', taskType: 'value_ranking', difficulty: 0.4, parameters: { values: 4, temptationType: 'social-pressure', context: 'group-ritual' }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-amber-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'sacred-rule-application', responseType: 'choice-plus-text', trials: 3 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-amber-07', taskType: 'value_ranking', difficulty: 0.45, parameters: { values: 5, temptationType: 'social-pressure', context: 'tradition-vs-convenience' }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-amber-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'tradition-challenge', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth', 'integration'] },
+    { id: 'spiritual-amber-09', taskType: 'value_ranking', difficulty: 0.5, parameters: { values: 5, temptationType: 'authority-disagreement', context: 'sacred-rules' }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-amber-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'ritual-disruption', responseType: 'text', trials: 3 }, measures: ['coherence', 'depth', 'integration'] },
+    { id: 'spiritual-amber-11', taskType: 'value_ranking', difficulty: 0.6, parameters: { values: 5, temptationType: 'social-pressure', context: 'competing-traditions' }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-amber-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'cross-tradition-encounter', responseType: 'text', trials: 4 }, measures: ['coherence', 'depth', 'integration'] },
+    { id: 'spiritual-amber-13', taskType: 'value_ranking', difficulty: 0.65, parameters: { values: 6, temptationType: 'group-split', context: 'sacred-vs-secular' }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-amber-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'sacred-rule-conflict', responseType: 'text', trials: 4 }, measures: ['coherence', 'depth', 'integration'] },
+    { id: 'spiritual-amber-15', taskType: 'value_ranking', difficulty: 0.7, parameters: { values: 6, temptationType: 'authority-contradiction', context: 'tradition-hierarchy' }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-amber-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'tradition-vs-compassion', responseType: 'text', trials: 4 }, measures: ['coherence', 'depth', 'integration'] },
+    { id: 'spiritual-amber-17', taskType: 'value_ranking', difficulty: 0.8, parameters: { values: 7, temptationType: 'multi-group-pressure', context: 'sacred-hierarchy' }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-amber-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'multi-tradition-conflict', responseType: 'text', trials: 4 }, measures: ['coherence', 'depth', 'integration'] },
+    { id: 'spiritual-amber-19', taskType: 'value_ranking', difficulty: 0.85, parameters: { values: 7, temptationType: 'existential-challenge', context: 'tradition-under-threat' }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-amber-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'tradition-collapse-response', responseType: 'text', trials: 5 }, measures: ['coherence', 'depth', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain value ranking against social opposition',

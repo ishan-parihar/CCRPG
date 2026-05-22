@@ -8,7 +8,6 @@
 import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
 import { calibrate } from '@core/usecases/OnboardingCalibrator.js';
-import { createInitialProfile, type TaskSlug } from '@core/domain/PlayerProfile.js';
 import { createSignificator } from '@core/domain/Significator.js';
 import type { Holon } from '@core/domain/Holon.js';
 import type { OnboardingProbe, ProbeResult } from '../onboarding/ProbeInterface.js';
@@ -218,32 +217,9 @@ export class OnboardingScene extends Phaser.Scene {
     this.progressText.setText('');
 
     const result = calibrate(this.probeResults);
-    const baseProfile = createInitialProfile(
-      crypto.randomUUID?.() ?? `player-${Date.now()}`,
-      result.altitudes,
-      result.stage,
-      result.driveWeights,
-    );
-
-    // Seed task staircases from onboarding thresholds
-    const seededStaircases = { ...baseProfile.taskStaircases };
-    for (const probe of this.probeResults) {
-      const slug = this.lineToTaskSlug(probe.line);
-      if (slug && slug in seededStaircases) {
-        (seededStaircases as Record<string, typeof seededStaircases[TaskSlug]>)[slug] = {
-          level: probe.threshold,
-          reversals: 0,
-          lastDirection: null,
-          history: [],
-        };
-      }
-    }
-
-    const profile = { ...baseProfile, taskStaircases: seededStaircases, onboardingComplete: true, totalSessionsPlayed: 1 };
-    this.registry.set(RegistryKeys.Profile, profile);
 
     // Create Significator from calibration results
-    const playerId = profile.id;
+    const playerId = crypto.randomUUID?.() ?? `player-${Date.now()}`;
     const sig = createSignificator(playerId, result.altitudes, result.stage);
     this.registry.set(RegistryKeys.Significator, sig);
 
@@ -253,6 +229,13 @@ export class OnboardingScene extends Phaser.Scene {
       holons: holonsData,
       recentEncounterIds: [] as string[],
       cooldowns: {} as Record<string, number>,
+      narrativeBeats: [] as any[],
+      activeBeatId: null,
+      completedBeatIds: [] as string[],
+      factions: [] as any[],
+      npcRelationships: [] as any[],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [] as any[],
     };
     this.registry.set(RegistryKeys.WorldState, worldState);
 
@@ -284,19 +267,5 @@ export class OnboardingScene extends Phaser.Scene {
   private loadRedLayerHolons(): Holon[] {
     // Static JSON import resolved by Vite at build time
     return holonsJson as unknown as Holon[];
-  }
-
-  private lineToTaskSlug(line: string): TaskSlug | undefined {
-    const map: Record<string, TaskSlug> = {
-      Cognitive: 'n_back',
-      Emotional: 'affect_recognition',
-      Moral: 'dilemma_choice',
-      Intrapersonal: 'self_report',
-      Spiritual: 'value_coherence',
-      Somatic: 'reaction_time',
-      Willpower: 'held_input',
-      Interpersonal: 'pattern_prediction',
-    };
-    return map[line];
   }
 }

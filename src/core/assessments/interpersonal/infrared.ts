@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const interpersonalInfrared: StageAssessment = {
   line: 'Interpersonal',
@@ -23,6 +23,28 @@ export const interpersonalInfrared: StageAssessment = {
   },
   minimumTrials: 2,
   estimatedDurationMs: 60000,
+  itemPool: [
+    { id: 'interpersonal-infrared-01', taskType: 'imitation', difficulty: 0.2, parameters: { actionType: 'single-tap', demonstrations: 3, trials: 2 }, measures: ['accuracy'] },
+    { id: 'interpersonal-infrared-02', taskType: 'imitation', difficulty: 0.25, parameters: { actionType: 'single-tap', demonstrations: 3, trials: 3 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-infrared-03', taskType: 'imitation', difficulty: 0.3, parameters: { actionType: 'single-tap', demonstrations: 2, trials: 3 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-infrared-04', taskType: 'imitation', difficulty: 0.35, parameters: { actionType: 'single-tap', demonstrations: 2, trials: 4, mirrorMode: true }, measures: ['accuracy'] },
+    { id: 'interpersonal-infrared-05', taskType: 'imitation', difficulty: 0.4, parameters: { actionType: 'single-tap', demonstrations: 2, trials: 4, approachAvoid: true }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-infrared-06', taskType: 'imitation', difficulty: 0.4, parameters: { actionType: 'double-tap', demonstrations: 3, trials: 3 }, measures: ['accuracy'] },
+    { id: 'interpersonal-infrared-07', taskType: 'imitation', difficulty: 0.45, parameters: { actionType: 'double-tap', demonstrations: 3, trials: 4, mirrorMode: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-infrared-08', taskType: 'imitation', difficulty: 0.5, parameters: { actionType: 'single-tap', demonstrations: 2, trials: 5, turnTaking: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-infrared-09', taskType: 'imitation', difficulty: 0.5, parameters: { actionType: 'double-tap', demonstrations: 2, trials: 4 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-infrared-10', taskType: 'imitation', difficulty: 0.55, parameters: { actionType: 'single-tap', demonstrations: 1, trials: 5, mirrorMode: true }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-infrared-11', taskType: 'imitation', difficulty: 0.55, parameters: { actionType: 'double-tap', demonstrations: 2, trials: 5, turnTaking: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-infrared-12', taskType: 'imitation', difficulty: 0.6, parameters: { actionType: 'two-step', demonstrations: 3, trials: 3 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-infrared-13', taskType: 'imitation', difficulty: 0.6, parameters: { actionType: 'single-tap', demonstrations: 1, trials: 6, approachAvoid: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-infrared-14', taskType: 'imitation', difficulty: 0.65, parameters: { actionType: 'two-step', demonstrations: 2, trials: 4 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-infrared-15', taskType: 'imitation', difficulty: 0.7, parameters: { actionType: 'two-step', demonstrations: 2, trials: 4, mirrorMode: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-infrared-16', taskType: 'imitation', difficulty: 0.7, parameters: { actionType: 'two-step', demonstrations: 2, trials: 5, turnTaking: true }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'interpersonal-infrared-17', taskType: 'imitation', difficulty: 0.75, parameters: { actionType: 'two-step', demonstrations: 1, trials: 5 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-infrared-18', taskType: 'imitation', difficulty: 0.8, parameters: { actionType: 'two-step', demonstrations: 1, trials: 6, mirrorMode: true }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'interpersonal-infrared-19', taskType: 'imitation', difficulty: 0.85, parameters: { actionType: 'two-step', demonstrations: 1, trials: 6, turnTaking: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-infrared-20', taskType: 'imitation', difficulty: 0.9, parameters: { actionType: 'two-step', demonstrations: 1, trials: 8, turnTaking: true, mirrorMode: true }, measures: ['accuracy', 'response_time', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Imitate without waiting for signal',

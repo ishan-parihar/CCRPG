@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const interpersonalGreen: StageAssessment = {
   line: 'Interpersonal',
@@ -30,6 +30,28 @@ export const interpersonalGreen: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 210000,
+  itemPool: [
+    { id: 'interpersonal-green-01', taskType: 'cooperation', difficulty: 0.2, parameters: { actionType: 'timed-cooperation', rounds: 3, adaptationRequired: false }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-green-02', taskType: 'cooperation', difficulty: 0.25, parameters: { actionType: 'timed-cooperation', rounds: 4, adaptationRequired: true }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-green-03', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'This person is upset but not saying why. What do you notice?', maxResponseLength: 300 }, measures: ['depth', 'coherence'] },
+    { id: 'interpersonal-green-04', taskType: 'pattern_prediction', difficulty: 0.3, parameters: { patternType: 'adaptive-npc', patternLength: 4, repetitions: 3, npcAdapts: true }, measures: ['accuracy', 'depth'] },
+    { id: 'interpersonal-green-05', taskType: 'cooperation', difficulty: 0.35, parameters: { actionType: 'timed-cooperation', rounds: 5, adaptationRequired: true }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-green-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'Two people are in conflict. Both feel unheard. How do you help?', maxResponseLength: 400 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-green-07', taskType: 'cooperation', difficulty: 0.4, parameters: { actionType: 'adaptive-cooperation', rounds: 4, partnerSkillLevel: 'lower' }, measures: ['accuracy', 'depth'] },
+    { id: 'interpersonal-green-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'conflict-mediation', responseType: 'text', scenarios: 3, parties: 2 }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'interpersonal-green-09', taskType: 'cooperation', difficulty: 0.5, parameters: { actionType: 'timed-cooperation', rounds: 6, adaptationRequired: true }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'interpersonal-green-10', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Someone feels excluded from the group. How do you include them without forcing it?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-green-11', taskType: 'pattern_prediction', difficulty: 0.55, parameters: { patternType: 'adaptive-npc', patternLength: 5, repetitions: 4, npcAdapts: true }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-green-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'inclusive-facilitation', responseType: 'text', scenarios: 3, participants: 4 }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'interpersonal-green-13', taskType: 'cooperation', difficulty: 0.6, parameters: { actionType: 'novel-strategy-cooperation', rounds: 5, npcStrategy: 'unfamiliar' }, measures: ['accuracy', 'transfer', 'depth'] },
+    { id: 'interpersonal-green-14', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'The group is split. Both sides have valid points. How do you facilitate without taking sides?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-green-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'conflict-mediation', responseType: 'text', scenarios: 4, parties: 3, deepConflict: true }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'interpersonal-green-16', taskType: 'cooperation', difficulty: 0.75, parameters: { actionType: 'adaptive-cooperation', rounds: 6, partnerSkillLevel: 'mixed', multiParty: true }, measures: ['accuracy', 'depth', 'transfer'] },
+    { id: 'interpersonal-green-17', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'Someone is being silenced by the group. They have an unpopular truth. How do you create space?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'interpersonal-green-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'inclusive-facilitation', responseType: 'text', scenarios: 4, participants: 6, powerDynamics: true }, measures: ['depth', 'coherence', 'transfer', 'integration'] },
+    { id: 'interpersonal-green-19', taskType: 'cooperation', difficulty: 0.85, parameters: { actionType: 'novel-strategy-cooperation', rounds: 6, npcStrategy: 'unfamiliar', multiParty: true, conflictingGoals: true }, measures: ['accuracy', 'transfer', 'depth'] },
+    { id: 'interpersonal-green-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'conflict-mediation', responseType: 'text', scenarios: 5, parties: 4, deepConflict: true, powerDynamics: true }, measures: ['depth', 'coherence', 'transfer', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Cooperate while maintaining own goals',

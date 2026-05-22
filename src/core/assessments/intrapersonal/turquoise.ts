@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const intrapersonalTurquoise: StageAssessment = {
   line: 'Intrapersonal',
@@ -30,6 +30,28 @@ export const intrapersonalTurquoise: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 270000,
+  itemPool: [
+    { id: 'intrapersonal-turquoise-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['Describe what is observing your thoughts right now.'], responseType: 'text', timeoutMs: 60000 }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-turquoise-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'What remains of you when you stop identifying with your roles?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-turquoise-03', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['Notice the witness. Now notice what notices the witness.'], responseType: 'text', timeoutMs: 60000 }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-turquoise-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'Describe a part of yourself you have been avoiding integrating. What does it need?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-turquoise-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'identity-fluidity', responseType: 'text', scenarios: 2, identityShift: true }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-turquoise-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'Who are you when you are not being anyone in particular?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-turquoise-07', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['Describe the boundary between you and not-you. Is it fixed?'], responseType: 'text', timeoutMs: 60000 }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-turquoise-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'shadow-integration', responseType: 'text', scenarios: 2, shadowType: 'golden' }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'intrapersonal-turquoise-09', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'What is the relationship between the one who witnesses and the one who acts? Are they the same?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-turquoise-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'identity-fluidity', responseType: 'text', scenarios: 3, multipleSelves: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-turquoise-11', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'Describe a shadow you have integrated. How did the integration change your sense of self?', maxResponseLength: 500 }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'intrapersonal-turquoise-12', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['What is your identity made of? Can you find its edges?'], responseType: 'text', timeoutMs: 60000 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-turquoise-13', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'shadow-integration', responseType: 'text', scenarios: 3, shadowType: 'dark', witnessRequired: true }, measures: ['depth', 'integration', 'self_correction'] },
+    { id: 'intrapersonal-turquoise-14', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'You discover that your witness consciousness has its own shadow. What is it?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-turquoise-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'identity-fluidity', responseType: 'text', scenarios: 3, dissolutionPresent: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'intrapersonal-turquoise-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Describe the experience of being multiple selves simultaneously without fragmentation.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'intrapersonal-turquoise-17', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['What is the self that includes all your selves? Describe it without making it another self.'], responseType: 'text', timeoutMs: 90000 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-turquoise-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'shadow-integration', responseType: 'text', scenarios: 4, shadowType: 'both', witnessRequired: true }, measures: ['depth', 'integration', 'complexity_handled'] },
+    { id: 'intrapersonal-turquoise-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'The witness itself is a construction. What remains when even witnessing is released?', maxResponseLength: 600 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-turquoise-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'identity-fluidity', responseType: 'text', scenarios: 4, fullSpectrum: true, witnessDissolving: true }, measures: ['depth', 'metacognition', 'coherence', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Access witness perspective without guidance',

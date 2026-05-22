@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const somaticRed: StageAssessment = {
   line: 'Somatic',
@@ -29,6 +29,28 @@ export const somaticRed: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 120000,
+  itemPool: [
+    { id: 'somatic-red-01', taskType: 'reaction_time', difficulty: 0.2, parameters: { stimulusType: 'simple', targetCount: 6, minGap: 800, maxGap: 2500 }, measures: ['response_time', 'accuracy'] },
+    { id: 'somatic-red-02', taskType: 'reaction_time', difficulty: 0.25, parameters: { stimulusType: 'simple', targetCount: 8, minGap: 700, maxGap: 2200 }, measures: ['response_time', 'accuracy'] },
+    { id: 'somatic-red-03', taskType: 'rhythm', difficulty: 0.3, parameters: { bpm: 60, beats: 8, pattern: 'steady' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-red-04', taskType: 'reaction_time', difficulty: 0.3, parameters: { stimulusType: 'simple', targetCount: 10, minGap: 600, maxGap: 2000 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-red-05', taskType: 'rhythm', difficulty: 0.35, parameters: { bpm: 80, beats: 10, pattern: 'steady' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-red-06', taskType: 'reaction_time', difficulty: 0.4, parameters: { stimulusType: 'alternation', targetCount: 10, paceMs: 700 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-red-07', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 2000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-red-08', taskType: 'rhythm', difficulty: 0.45, parameters: { bpm: 90, beats: 12, pattern: 'alternating' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-red-09', taskType: 'reaction_time', difficulty: 0.5, parameters: { stimulusType: 'alternation', targetCount: 14, paceMs: 600 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-red-10', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 3000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-red-11', taskType: 'rhythm', difficulty: 0.55, parameters: { bpm: 100, beats: 14, pattern: 'syncopated' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-red-12', taskType: 'reaction_time', difficulty: 0.6, parameters: { stimulusType: 'alternation', targetCount: 16, paceMs: 550 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-red-13', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 3500, perturbations: true, perturbationIntervalMs: 1200 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-red-14', taskType: 'rhythm', difficulty: 0.65, parameters: { bpm: 110, beats: 16, pattern: 'syncopated' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-red-15', taskType: 'reaction_time', difficulty: 0.7, parameters: { stimulusType: 'alternation', targetCount: 18, paceMs: 500 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-red-16', taskType: 'hold', difficulty: 0.7, parameters: { targetDurationMs: 4000, perturbations: true, perturbationIntervalMs: 1000 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-red-17', taskType: 'rhythm', difficulty: 0.75, parameters: { bpm: 120, beats: 16, pattern: 'complex' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-red-18', taskType: 'reaction_time', difficulty: 0.8, parameters: { stimulusType: 'alternation', targetCount: 20, paceMs: 450 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'somatic-red-19', taskType: 'rhythm', difficulty: 0.85, parameters: { bpm: 130, beats: 20, pattern: 'complex' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-red-20', taskType: 'reaction_time', difficulty: 0.9, parameters: { stimulusType: 'alternation', targetCount: 24, paceMs: 400 }, measures: ['response_time', 'accuracy', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Respond without encouragement or external timing cues',

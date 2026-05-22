@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const willpowerAmber: StageAssessment = {
   line: 'Willpower',
@@ -23,6 +23,28 @@ export const willpowerAmber: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'willpower-amber-01', taskType: 'hold', difficulty: 0.2, parameters: { targetDurationMs: 5000, perturbations: false, trials: 2 }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-amber-02', taskType: 'hold', difficulty: 0.25, parameters: { targetDurationMs: 6000, perturbations: false, trials: 2 }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-amber-03', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 7000, perturbations: false, trials: 3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-amber-04', taskType: 'hold', difficulty: 0.35, parameters: { targetDurationMs: 8000, perturbations: false, trials: 3, temptationType: 'visual-distractor' }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-amber-05', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 8000, perturbations: true, perturbationIntervalMs: 3000, trials: 3 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-06', taskType: 'go_no_go', difficulty: 0.35, parameters: { goRatio: 0.75, trials: 16, stimulusDurationMs: 700, temptationType: 'rule-break-reward' }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-amber-07', taskType: 'go_no_go', difficulty: 0.4, parameters: { goRatio: 0.7, trials: 18, stimulusDurationMs: 650, temptationType: 'rule-break-reward' }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-amber-08', taskType: 'hold', difficulty: 0.45, parameters: { targetDurationMs: 9000, perturbations: true, perturbationIntervalMs: 2500, trials: 3 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-09', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 10000, perturbations: true, perturbationIntervalMs: 2500, trials: 4 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-10', taskType: 'go_no_go', difficulty: 0.5, parameters: { goRatio: 0.7, trials: 20, stimulusDurationMs: 600, temptationType: 'delayed-gratification' }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-amber-11', taskType: 'hold', difficulty: 0.55, parameters: { targetDurationMs: 10000, perturbations: true, perturbationIntervalMs: 2000, trials: 4, groupCommitment: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-12', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 11000, perturbations: true, perturbationIntervalMs: 2000, trials: 4 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-13', taskType: 'go_no_go', difficulty: 0.6, parameters: { goRatio: 0.65, trials: 22, stimulusDurationMs: 550, temptationType: 'social-pressure-break' }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'willpower-amber-14', taskType: 'hold', difficulty: 0.65, parameters: { targetDurationMs: 12000, perturbations: true, perturbationIntervalMs: 1800, trials: 4 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-15', taskType: 'hold', difficulty: 0.7, parameters: { targetDurationMs: 13000, perturbations: true, perturbationIntervalMs: 1800, trials: 4, groupCommitment: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-16', taskType: 'go_no_go', difficulty: 0.7, parameters: { goRatio: 0.6, trials: 24, stimulusDurationMs: 500, temptationType: 'escalating-reward' }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'willpower-amber-17', taskType: 'hold', difficulty: 0.75, parameters: { targetDurationMs: 14000, perturbations: true, perturbationIntervalMs: 1500, trials: 5 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 15000, perturbations: true, perturbationIntervalMs: 1500, trials: 5, temptationType: 'social-pressure-break' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-19', taskType: 'hold', difficulty: 0.85, parameters: { targetDurationMs: 16000, perturbations: true, perturbationIntervalMs: 1200, trials: 5, groupCommitment: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-amber-20', taskType: 'hold', difficulty: 0.9, parameters: { targetDurationMs: 18000, perturbations: true, perturbationIntervalMs: 1000, trials: 5, temptationType: 'escalating-reward', groupCommitment: true }, measures: ['accuracy', 'consistency', 'response_time', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Hold 10 seconds without countdown or encouragement',

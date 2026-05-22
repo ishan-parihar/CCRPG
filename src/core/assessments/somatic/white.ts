@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const somaticWhite: StageAssessment = {
   line: 'Somatic',
@@ -43,6 +43,28 @@ export const somaticWhite: StageAssessment = {
   },
   minimumTrials: 5,
   estimatedDurationMs: 240000,
+  itemPool: [
+    { id: 'somatic-white-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['Sense your body not as a thing but as a field of awareness. What do you notice?'], responseType: 'text', bodyAsConsciousness: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-white-02', taskType: 'scenario', difficulty: 0.25, parameters: { scenarioType: 'body-as-consciousness', responseType: 'text', scenarios: 2, cellularLevel: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-white-03', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['Where does your body end and the world begin? Look carefully.'], responseType: 'text', boundaryDissolution: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-white-04', taskType: 'rhythm', difficulty: 0.35, parameters: { beatsPerMinute: 60, beats: 12, tolerance: 0.08, bodyAsAwareness: true, effortless: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-white-05', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['Feel into a single cell. What does it know?'], responseType: 'text', cellularAwareness: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-white-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'body-as-consciousness', responseType: 'text', scenarios: 2, boundaryDissolution: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-07', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['The body breathes itself. Digests itself. Heals itself. What intelligence is this?'], responseType: 'text', bodyIntelligence: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-08', taskType: 'rhythm', difficulty: 0.5, parameters: { beatsPerMinute: 72, beats: 16, tolerance: 0.06, bodyAsAwareness: true, effortless: true, breathSync: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-white-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'body-as-consciousness', responseType: 'text', scenarios: 3, cellularAwareness: true, noSeparation: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-10', taskType: 'self_report', difficulty: 0.55, parameters: { prompts: ['Awareness is not in the body. The body is in awareness. Describe this reversal as felt experience.'], responseType: 'text', nonDualBody: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'body-boundary-dissolution', responseType: 'text', scenarios: 3, environmentAsBody: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-12', taskType: 'rhythm', difficulty: 0.6, parameters: { beatsPerMinute: 80, beats: 20, tolerance: 0.05, bodyAsAwareness: true, effortless: true, universalRhythm: true }, measures: ['accuracy', 'consistency', 'integration'] },
+    { id: 'somatic-white-13', taskType: 'self_report', difficulty: 0.65, parameters: { prompts: ['The body is made of the same substance as stars. Feel this not as idea but as sensation.'], responseType: 'text', cosmicBody: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'body-as-consciousness', responseType: 'text', scenarios: 4, cellularAwareness: true, boundaryDissolution: true, cosmicBody: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-15', taskType: 'self_report', difficulty: 0.7, parameters: { prompts: ['Movement happens. There is no mover. Describe action without an actor in the body.'], responseType: 'text', nonDualBody: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-16', taskType: 'rhythm', difficulty: 0.75, parameters: { beatsPerMinute: 90, beats: 24, tolerance: 0.04, bodyAsAwareness: true, effortless: true, universalRhythm: true, noDoer: true }, measures: ['accuracy', 'consistency', 'integration'] },
+    { id: 'somatic-white-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'body-boundary-dissolution', responseType: 'text', scenarios: 4, environmentAsBody: true, cosmicBody: true, noSeparation: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+    { id: 'somatic-white-18', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['Every atom in your body was forged in a star. Feel the universe feeling itself through this body.'], responseType: 'text', cosmicBody: true, nonDualBody: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-white-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'body-as-consciousness', responseType: 'text', scenarios: 4, cellularAwareness: true, boundaryDissolution: true, noDoer: true, cosmicBody: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+    { id: 'somatic-white-20', taskType: 'rhythm', difficulty: 0.9, parameters: { beatsPerMinute: 108, beats: 32, tolerance: 0.03, bodyAsAwareness: true, effortless: true, universalRhythm: true, noDoer: true, cosmicBody: true }, measures: ['accuracy', 'consistency', 'integration', 'coherence'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Move without deliberation - the body acts from its own knowing without mental instruction',

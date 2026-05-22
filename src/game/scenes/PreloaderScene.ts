@@ -74,13 +74,13 @@ export class PreloaderScene extends Phaser.Scene {
   private transition(save: SaveData): void {
     this.registry.set(RegistryKeys.Save, save);
 
-    // Try to load a persisted PlayerProfile for returning players
+    // Try to load a persisted Significator for returning players
     const repo = this.registry.get(RegistryKeys.SaveRepo) as SaveRepository | undefined;
     if (repo) {
       repo.loadProfile?.().then(
-        (profile) => {
-          if (profile) {
-            this.registry.set(RegistryKeys.Profile, profile);
+        (sig) => {
+          if (sig) {
+            this.registry.set(RegistryKeys.Significator, sig);
           }
           this.scene.start(SceneKeys.MainMenu);
         },

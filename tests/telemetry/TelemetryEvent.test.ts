@@ -6,6 +6,7 @@ describe('TelemetryEvent', () => {
   it('ALL_TELEMETRY_EVENT_TYPES contains all expected event types', () => {
     const expected: TelemetryEventType[] = [
       'encounter_completed',
+      'encounter_declined',
       'polarity_shift',
       'shadow_surfaced',
       'shadow_resolved',
@@ -16,8 +17,8 @@ describe('TelemetryEvent', () => {
     expect(ALL_TELEMETRY_EVENT_TYPES).toEqual(expected);
   });
 
-  it('has exactly 7 event types', () => {
-    expect(ALL_TELEMETRY_EVENT_TYPES).toHaveLength(7);
+  it('has exactly 8 event types', () => {
+    expect(ALL_TELEMETRY_EVENT_TYPES).toHaveLength(8);
   });
 
   it('TelemetryEvent interface shape is satisfied by a valid object', () => {

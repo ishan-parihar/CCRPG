@@ -1,7 +1,7 @@
 import type { Drive } from './Drive.js';
 import type { Line } from './Line.js';
 import type { Stage } from './Stage.js';
-import type { HolonKind, EnergeticDirection, ShadowQuadrant } from './enums.js';
+import type { HolonKind, EnergeticDirection, Modality, ShadowQuadrant } from './enums.js';
 
 export interface HolonDriveState {
   readonly dominant: Drive;
@@ -19,5 +19,6 @@ export interface Holon {
   readonly polarity: EnergeticDirection;
   readonly narrativeRole: string;
   readonly relationships: readonly string[];
+  readonly modality?: Modality;
   readonly active: boolean;
 }

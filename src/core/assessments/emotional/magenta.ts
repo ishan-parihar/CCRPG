@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const emotionalMagenta: StageAssessment = {
   line: 'Emotional',
@@ -23,6 +23,28 @@ export const emotionalMagenta: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 90000,
+  itemPool: [
+    { id: 'emotional-magenta-01', taskType: 'emotion_identification', difficulty: 0.2, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad'], trials: 4 }, measures: ['accuracy'] },
+    { id: 'emotional-magenta-02', taskType: 'emotion_identification', difficulty: 0.25, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry'], trials: 4 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-magenta-03', taskType: 'emotion_identification', difficulty: 0.3, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry'], trials: 6 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-magenta-04', taskType: 'emotion_identification', difficulty: 0.35, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry', 'scared'], trials: 6 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-magenta-05', taskType: 'emotion_identification', difficulty: 0.4, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry', 'scared'], trials: 8 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-magenta-06', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'self-other-boundary', responseType: 'choice', scenarios: 2 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-magenta-07', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'self-other-boundary', responseType: 'choice', scenarios: 3 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-magenta-08', taskType: 'emotion_identification', difficulty: 0.45, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry', 'scared', 'surprised'], trials: 8 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-magenta-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'basic-empathy', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-magenta-10', taskType: 'emotion_identification', difficulty: 0.5, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry', 'scared', 'surprised'], trials: 10 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-magenta-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'my-feeling-vs-your-feeling', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-magenta-12', taskType: 'emotion_identification', difficulty: 0.6, parameters: { stimulusType: 'face', emotionSet: ['surprised', 'scared', 'disgusted'], trials: 8 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-magenta-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'contagion-awareness', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-magenta-14', taskType: 'emotion_identification', difficulty: 0.65, parameters: { stimulusType: 'body-posture', emotionSet: ['happy', 'sad', 'angry', 'scared'], trials: 8 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-magenta-15', taskType: 'emotion_identification', difficulty: 0.7, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry', 'scared', 'surprised', 'disgusted'], trials: 10 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-magenta-16', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'mixed-emotions-simple', responseType: 'text', scenarios: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-magenta-17', taskType: 'emotion_identification', difficulty: 0.75, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry', 'scared', 'surprised', 'disgusted'], trials: 12 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-magenta-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'emotion-cause-identification', responseType: 'text', scenarios: 4 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-magenta-19', taskType: 'emotion_identification', difficulty: 0.85, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry', 'scared', 'surprised', 'disgusted', 'contempt'], trials: 12 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-magenta-20', taskType: 'emotion_identification', difficulty: 0.9, parameters: { stimulusType: 'mixed', emotionSet: ['happy', 'sad', 'angry', 'scared', 'surprised', 'disgusted', 'contempt'], trials: 14 }, measures: ['accuracy', 'response_time', 'consistency', 'depth'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Identify emotion without second-guessing',

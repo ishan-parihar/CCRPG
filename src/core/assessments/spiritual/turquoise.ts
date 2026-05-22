@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const spiritualTurquoise: StageAssessment = {
   line: 'Spiritual',
@@ -31,6 +31,28 @@ export const spiritualTurquoise: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 270000,
+  itemPool: [
+    { id: 'spiritual-turquoise-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'non-dual-glimpse', responseType: 'text', scenarios: 2, stateShift: 'subtle' }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-turquoise-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'Describe a moment when the boundary between you and the world became thin.', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-turquoise-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'trans-rational-knowing', responseType: 'text', scenarios: 2, beyondConcept: true }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-turquoise-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'What do you know that you cannot prove or explain? How do you know it?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-turquoise-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'integral-practice', responseType: 'text', scenarios: 2, practiceType: 'body-mind-spirit' }, measures: ['depth', 'integration'] },
+    { id: 'spiritual-turquoise-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'How do you integrate a spiritual insight that contradicts your rational understanding?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-turquoise-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'non-dual-glimpse', responseType: 'text', scenarios: 3, stateShift: 'causal' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-turquoise-08', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Describe the difference between a spiritual experience and spiritual development. Which matters more?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'spiritual-turquoise-09', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'trans-rational-knowing', responseType: 'text', scenarios: 3, paradoxPresent: true }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'spiritual-turquoise-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'What is the relationship between emptiness and form in your direct experience?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-turquoise-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'integral-practice', responseType: 'text', scenarios: 3, practiceType: 'shadow-and-spirit' }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'spiritual-turquoise-12', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'How do you practice spiritually without making spirituality into another ego project?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'spiritual-turquoise-13', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'non-dual-glimpse', responseType: 'text', scenarios: 3, stateShift: 'non-dual', sustainDuration: true }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'spiritual-turquoise-14', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'Describe knowing that is prior to the knower. Not what you know, but the knowing itself.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-turquoise-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'trans-rational-knowing', responseType: 'text', scenarios: 4, multipleWays: true }, measures: ['depth', 'complexity_handled', 'coherence'] },
+    { id: 'spiritual-turquoise-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'What is the difference between witnessing awareness and being awareness? Can you demonstrate the shift?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-turquoise-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'integral-practice', responseType: 'text', scenarios: 4, practiceType: 'non-dual-in-daily', embodied: true }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'spiritual-turquoise-18', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'The sacred and the mundane are not-two. Describe washing dishes from this realization.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-turquoise-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'non-dual-glimpse', responseType: 'text', scenarios: 4, stateShift: 'non-dual', stabilization: true }, measures: ['depth', 'coherence', 'consistency', 'integration'] },
+    { id: 'spiritual-turquoise-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'Describe the taste of awareness aware of itself. Use no spiritual vocabulary.', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration', 'metacognition'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Hold value-paradox without external support',

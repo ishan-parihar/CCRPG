@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const somaticOrange: StageAssessment = {
   line: 'Somatic',
@@ -29,6 +29,28 @@ export const somaticOrange: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'somatic-orange-01', taskType: 'rhythm', difficulty: 0.2, parameters: { bpm: 80, beats: 16, complexity: 'polyrhythm', ratio: '3:2' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-orange-02', taskType: 'reaction_time', difficulty: 0.25, parameters: { stimulusType: 'precision', targetCount: 8, windowMs: 80, minGap: 500, maxGap: 1500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'somatic-orange-03', taskType: 'rhythm', difficulty: 0.3, parameters: { bpm: 90, beats: 16, complexity: 'polyrhythm', ratio: '3:2' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-orange-04', taskType: 'reaction_time', difficulty: 0.3, parameters: { stimulusType: 'precision', targetCount: 10, windowMs: 70, minGap: 450, maxGap: 1400 }, measures: ['accuracy', 'response_time'] },
+    { id: 'somatic-orange-05', taskType: 'rhythm', difficulty: 0.35, parameters: { bpm: 95, beats: 20, complexity: 'polyrhythm', ratio: '3:2' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-orange-06', taskType: 'reaction_time', difficulty: 0.4, parameters: { stimulusType: 'precision', targetCount: 10, windowMs: 60, minGap: 400, maxGap: 1300 }, measures: ['accuracy', 'response_time'] },
+    { id: 'somatic-orange-07', taskType: 'rhythm', difficulty: 0.4, parameters: { bpm: 100, beats: 20, complexity: 'polyrhythm', ratio: '3:2' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-orange-08', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['What do you notice in your body during the rhythm?'], responseType: 'text' }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-orange-09', taskType: 'rhythm', difficulty: 0.5, parameters: { bpm: 100, beats: 24, complexity: 'polyrhythm', ratio: '3:2' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-orange-10', taskType: 'reaction_time', difficulty: 0.5, parameters: { stimulusType: 'precision', targetCount: 12, windowMs: 50, minGap: 400, maxGap: 1200 }, measures: ['accuracy', 'response_time'] },
+    { id: 'somatic-orange-11', taskType: 'rhythm', difficulty: 0.55, parameters: { bpm: 105, beats: 24, complexity: 'polyrhythm', ratio: '4:3' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-orange-12', taskType: 'reaction_time', difficulty: 0.6, parameters: { stimulusType: 'precision', targetCount: 14, windowMs: 45, minGap: 350, maxGap: 1100 }, measures: ['accuracy', 'response_time'] },
+    { id: 'somatic-orange-13', taskType: 'rhythm', difficulty: 0.6, parameters: { bpm: 110, beats: 24, complexity: 'polyrhythm', ratio: '4:3' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-orange-14', taskType: 'self_report', difficulty: 0.65, parameters: { prompts: ['Describe the biofeedback you notice when timing is precise vs off'], responseType: 'text' }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-orange-15', taskType: 'rhythm', difficulty: 0.7, parameters: { bpm: 115, beats: 28, complexity: 'polyrhythm', ratio: '4:3' }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-orange-16', taskType: 'reaction_time', difficulty: 0.7, parameters: { stimulusType: 'precision', targetCount: 16, windowMs: 40, minGap: 300, maxGap: 1000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'somatic-orange-17', taskType: 'rhythm', difficulty: 0.75, parameters: { bpm: 120, beats: 28, complexity: 'polyrhythm', ratio: '5:3' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-orange-18', taskType: 'reaction_time', difficulty: 0.8, parameters: { stimulusType: 'precision', targetCount: 16, windowMs: 35, minGap: 280, maxGap: 900 }, measures: ['accuracy', 'response_time'] },
+    { id: 'somatic-orange-19', taskType: 'rhythm', difficulty: 0.85, parameters: { bpm: 125, beats: 32, complexity: 'polyrhythm', ratio: '5:4' }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-orange-20', taskType: 'rhythm', difficulty: 0.9, parameters: { bpm: 130, beats: 32, complexity: 'polyrhythm', ratio: '5:4', metronomeEnabled: false }, measures: ['accuracy', 'consistency', 'response_time', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain polyrhythm without metronome',

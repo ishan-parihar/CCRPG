@@ -37,7 +37,7 @@ export type MeasureDimension =
   | 'coherence'
   | 'integration';
 
-export type ModuleExecutionMode = 'capacity' | 'shadow' | 'calibration' | 'practice';
+export type ModuleExecutionMode = 'capacity' | 'encounter' | 'shadow' | 'calibration' | 'practice';
 
 export interface ScoringRubric {
   readonly passThreshold: number;
@@ -68,6 +68,7 @@ export interface StageAssessment {
   readonly scoringRubric: ScoringRubric;
   readonly minimumTrials: number;
   readonly estimatedDurationMs: number;
+  readonly itemPool?: readonly AssessmentItem[];
   readonly driveProbes: {
     readonly agency: DriveProbe;
     readonly communion: DriveProbe;
@@ -107,4 +108,13 @@ export interface ShadowAssessmentResult extends AssessmentResult {
     domain: 'dark' | 'golden';
     type: 'addiction' | 'allergy';
   } | null;
+}
+
+export interface AssessmentItem {
+  readonly id: string;
+  readonly taskType: TaskType;
+  readonly difficulty: number; // 0-1
+  readonly parameters: Record<string, unknown>;
+  readonly measures: readonly MeasureDimension[];
+  readonly tags?: readonly string[];
 }

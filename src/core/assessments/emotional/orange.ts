@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const emotionalOrange: StageAssessment = {
   line: 'Emotional',
@@ -34,6 +34,28 @@ export const emotionalOrange: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 210000,
+  itemPool: [
+    { id: 'emotional-orange-01', taskType: 'emotion_identification', difficulty: 0.2, parameters: { stimulusType: 'scenario', emotionSet: ['bittersweet', 'ambivalence'], trials: 4 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-orange-02', taskType: 'emotion_identification', difficulty: 0.25, parameters: { stimulusType: 'scenario', emotionSet: ['contempt', 'awe'], trials: 4 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-orange-03', taskType: 'emotion_identification', difficulty: 0.3, parameters: { stimulusType: 'scenario', emotionSet: ['nostalgia', 'ambivalence', 'awe'], trials: 5 }, measures: ['accuracy', 'response_time', 'depth'] },
+    { id: 'emotional-orange-04', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'regulation-strategy', strategies: ['reappraisal', 'acceptance'], scenarios: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-orange-05', taskType: 'emotion_identification', difficulty: 0.35, parameters: { stimulusType: 'scenario', emotionSet: ['bittersweet', 'contempt', 'nostalgia', 'awe'], trials: 6 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-orange-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'regulation-strategy', strategies: ['reappraisal', 'suppression', 'expression'], scenarios: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-orange-07', taskType: 'emotion_identification', difficulty: 0.4, parameters: { stimulusType: 'scenario', emotionSet: ['ambivalence', 'contempt', 'awe', 'nostalgia'], trials: 6, timeLimit: 8000 }, measures: ['accuracy', 'response_time', 'depth'] },
+    { id: 'emotional-orange-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'regulation-strategy', strategies: ['reappraisal', 'suppression', 'acceptance', 'expression'], scenarios: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-orange-09', taskType: 'emotion_identification', difficulty: 0.5, parameters: { stimulusType: 'scenario', emotionSet: ['bittersweet', 'ambivalence', 'contempt', 'awe', 'nostalgia'], trials: 8 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-orange-10', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'regulation-strategy', strategies: ['reappraisal', 'suppression', 'expression', 'acceptance'], scenarios: 4, contextual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-orange-11', taskType: 'emotion_identification', difficulty: 0.55, parameters: { stimulusType: 'scenario', emotionSet: ['schadenfreude', 'ennui', 'sublime', 'ambivalence'], trials: 6 }, measures: ['accuracy', 'depth', 'response_time'] },
+    { id: 'emotional-orange-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'regulation-mismatch', strategies: ['reappraisal', 'suppression', 'expression', 'acceptance'], scenarios: 4 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-orange-13', taskType: 'emotion_identification', difficulty: 0.6, parameters: { stimulusType: 'scenario', emotionSet: ['bittersweet', 'ambivalence', 'contempt', 'awe', 'nostalgia', 'schadenfreude'], trials: 8 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-orange-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'novel-emotion', responseType: 'text', scenarios: 3 }, measures: ['depth', 'integration'] },
+    { id: 'emotional-orange-15', taskType: 'emotion_identification', difficulty: 0.7, parameters: { stimulusType: 'micro-expression', emotionSet: ['contempt', 'awe', 'ambivalence'], trials: 8, timeLimit: 5000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-orange-16', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'regulation-strategy', strategies: ['reappraisal', 'suppression', 'expression', 'acceptance', 'distancing'], scenarios: 5 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-orange-17', taskType: 'emotion_identification', difficulty: 0.75, parameters: { stimulusType: 'scenario', emotionSet: ['bittersweet', 'ambivalence', 'contempt', 'awe', 'nostalgia', 'sublime', 'ennui'], trials: 10 }, measures: ['accuracy', 'depth', 'consistency'] },
+    { id: 'emotional-orange-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'regulation-under-pressure', strategies: ['reappraisal', 'acceptance', 'expression'], scenarios: 4, timeLimit: 6000 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-orange-19', taskType: 'emotion_identification', difficulty: 0.85, parameters: { stimulusType: 'scenario', emotionSet: ['bittersweet', 'ambivalence', 'contempt', 'awe', 'nostalgia', 'schadenfreude', 'sublime'], trials: 10, timeLimit: 5000 }, measures: ['accuracy', 'response_time', 'depth'] },
+    { id: 'emotional-orange-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'regulation-novel-context', strategies: ['reappraisal', 'suppression', 'expression', 'acceptance', 'distancing'], scenarios: 5, novelContext: true }, measures: ['depth', 'coherence', 'integration', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Choose regulation strategy without guidance',

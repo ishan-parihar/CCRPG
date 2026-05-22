@@ -682,3 +682,34 @@ function computeModalityBias(theme: SessionTheme): Partial<Record<string, number
       return {};
   }
 }
+
+/**
+ * Post-transformation weight ramp-up.
+ * For 5 sessions after transformation, use post-transformation weights.
+ * For sessions 6-10, linearly interpolate back to defaults.
+ * Spec: foundations/17 §5.2, foundations/24 §6.3
+ */
+export function computePostTransformationBias(
+  sessionsSinceTransformation: number,
+): Record<string, number> | null {
+  if (sessionsSinceTransformation >= 10) return null;
+
+  const postWeights = {
+    thetaUrgency: -0.10,
+    shadowActivation: -0.05,
+    polarityAlignment: 0.05,
+    transformationReadiness: -0.10,
+    driveCorrection: 0.05,
+    narrativeCoherence: 0.10,
+    sessionFit: 0.05,
+  };
+
+  if (sessionsSinceTransformation < 5) return postWeights;
+
+  const t = (sessionsSinceTransformation - 5) / 5;
+  const result: Record<string, number> = {};
+  for (const [k, v] of Object.entries(postWeights)) {
+    result[k] = v * (1 - t);
+  }
+  return result;
+}

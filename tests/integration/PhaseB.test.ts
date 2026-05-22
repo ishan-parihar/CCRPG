@@ -127,7 +127,7 @@ describe('SignificatorStore', () => {
 describe('WorldStateStore', () => {
   it('saves and loads world state', async () => {
     const store = new WorldStateStore(new InMemoryStore(), new CryptoStore());
-    const world: WorldState = { holons: [testHolon], recentEncounterIds: ['e1'], cooldowns: {} };
+    const world: WorldState = { holons: [testHolon], recentEncounterIds: ['e1'], cooldowns: {}, narrativeBeats: [], activeBeatId: null, completedBeatIds: [], factions: [], npcRelationships: [], pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 }, activeMacroEvents: [] };
     await store.save(world);
     const loaded = await store.load();
     expect(loaded).not.toBeNull();

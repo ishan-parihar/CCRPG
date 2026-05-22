@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const willpowerOrange: StageAssessment = {
   line: 'Willpower',
@@ -30,6 +30,28 @@ export const willpowerOrange: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 210000,
+  itemPool: [
+    { id: 'willpower-orange-01', taskType: 'hold', difficulty: 0.2, parameters: { targetDurationMs: 5000, perturbations: false, strategicRest: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-orange-02', taskType: 'hold', difficulty: 0.25, parameters: { targetDurationMs: 6000, perturbations: true, perturbationIntervalMs: 2000, strategicRest: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-orange-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'effort-timing', choices: 3, scenarios: 2 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-orange-04', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 6000, perturbations: true, perturbationIntervalMs: 1800, strategicRest: true, trials: 2 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'willpower-orange-05', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'resource-management', choices: 3, scenarios: 2, resources: 3 }, measures: ['accuracy', 'transfer'] },
+    { id: 'willpower-orange-06', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 7000, perturbations: true, perturbationIntervalMs: 1600, strategicRest: true, trials: 3 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'willpower-orange-07', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'strategic-delay', choices: 4, scenarios: 3 }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'willpower-orange-08', taskType: 'hold', difficulty: 0.45, parameters: { targetDurationMs: 7000, perturbations: true, perturbationIntervalMs: 1500, strategicRest: true, trials: 3 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'willpower-orange-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'effort-timing', choices: 4, scenarios: 3, timeConstraint: true }, measures: ['accuracy', 'response_time', 'transfer'] },
+    { id: 'willpower-orange-10', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 8000, perturbations: true, perturbationIntervalMs: 1500, strategicRest: true, trials: 4 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'willpower-orange-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'resource-management', choices: 4, scenarios: 3, resources: 4, depletion: true }, measures: ['accuracy', 'transfer', 'complexity_handled'] },
+    { id: 'willpower-orange-12', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 9000, perturbations: true, perturbationIntervalMs: 1300, strategicRest: true, trials: 4 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'willpower-orange-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'strategic-delay', choices: 4, scenarios: 4, longTermPayoff: true }, measures: ['accuracy', 'transfer', 'complexity_handled'] },
+    { id: 'willpower-orange-14', taskType: 'hold', difficulty: 0.65, parameters: { targetDurationMs: 10000, perturbations: true, perturbationIntervalMs: 1200, strategicRest: true, phases: 2 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'willpower-orange-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'resource-management', choices: 5, scenarios: 4, resources: 5, depletion: true }, measures: ['accuracy', 'transfer', 'complexity_handled'] },
+    { id: 'willpower-orange-16', taskType: 'hold', difficulty: 0.75, parameters: { targetDurationMs: 10000, perturbations: true, perturbationIntervalMs: 1100, strategicRest: true, phases: 3 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'willpower-orange-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'effort-timing', choices: 5, scenarios: 4, multiPhase: true, timeConstraint: true }, measures: ['accuracy', 'response_time', 'transfer', 'complexity_handled'] },
+    { id: 'willpower-orange-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 12000, perturbations: true, perturbationIntervalMs: 1000, strategicRest: true, phases: 3 }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'willpower-orange-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'strategic-delay', choices: 5, scenarios: 5, longTermPayoff: true, temptation: true }, measures: ['accuracy', 'transfer', 'complexity_handled'] },
+    { id: 'willpower-orange-20', taskType: 'hold', difficulty: 0.9, parameters: { targetDurationMs: 14000, perturbations: true, perturbationIntervalMs: 900, strategicRest: true, phases: 4 }, measures: ['accuracy', 'consistency', 'complexity_handled', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Choose effort allocation strategy independently',

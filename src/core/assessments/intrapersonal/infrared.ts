@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const intrapersonalInfrared: StageAssessment = {
   line: 'Intrapersonal',
@@ -23,6 +23,28 @@ export const intrapersonalInfrared: StageAssessment = {
   },
   minimumTrials: 2,
   estimatedDurationMs: 45000,
+  itemPool: [
+    { id: 'intrapersonal-infrared-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['Are you here?'], responseType: 'single-word', timeoutMs: 8000 }, measures: ['accuracy'] },
+    { id: 'intrapersonal-infrared-02', taskType: 'self_report', difficulty: 0.25, parameters: { prompts: ['Do you feel something?'], responseType: 'single-word', timeoutMs: 7000 }, measures: ['accuracy'] },
+    { id: 'intrapersonal-infrared-03', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['Where are you?'], responseType: 'single-word', timeoutMs: 7000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'intrapersonal-infrared-04', taskType: 'self_report', difficulty: 0.35, parameters: { prompts: ['Is this your hand?'], responseType: 'single-word', bodyBoundary: true, timeoutMs: 6000 }, measures: ['accuracy'] },
+    { id: 'intrapersonal-infrared-05', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['Are you hungry or full?'], responseType: 'single-word', needRecognition: true, timeoutMs: 6000 }, measures: ['accuracy'] },
+    { id: 'intrapersonal-infrared-06', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['Is this part of you?'], responseType: 'single-word', bodyBoundary: true, trials: 3, timeoutMs: 6000 }, measures: ['accuracy', 'consistency'] },
+    { id: 'intrapersonal-infrared-07', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['Do you want this or not?'], responseType: 'single-word', needRecognition: true, timeoutMs: 5500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'intrapersonal-infrared-08', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['Are you warm or cold?'], responseType: 'single-word', bodyAwareness: true, timeoutMs: 5500 }, measures: ['accuracy'] },
+    { id: 'intrapersonal-infrared-09', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['Is this yours?'], responseType: 'single-word', bodyBoundary: true, trials: 4, timeoutMs: 5000 }, measures: ['accuracy', 'consistency'] },
+    { id: 'intrapersonal-infrared-10', taskType: 'self_report', difficulty: 0.55, parameters: { prompts: ['Do you need rest?'], responseType: 'single-word', needRecognition: true, timeoutMs: 5000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'intrapersonal-infrared-11', taskType: 'self_report', difficulty: 0.55, parameters: { prompts: ['Where does your body end?'], responseType: 'single-word', bodyBoundary: true, timeoutMs: 5000 }, measures: ['accuracy'] },
+    { id: 'intrapersonal-infrared-12', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['Are you tired or awake?'], responseType: 'single-word', needRecognition: true, trials: 3, timeoutMs: 5000 }, measures: ['accuracy', 'consistency'] },
+    { id: 'intrapersonal-infrared-13', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['Is this inside you or outside?'], responseType: 'single-word', bodyBoundary: true, trials: 4, timeoutMs: 4500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'intrapersonal-infrared-14', taskType: 'self_report', difficulty: 0.65, parameters: { prompts: ['What do you need right now?'], responseType: 'single-word', needRecognition: true, timeoutMs: 4500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'intrapersonal-infrared-15', taskType: 'self_report', difficulty: 0.7, parameters: { prompts: ['Are you safe?'], responseType: 'single-word', needRecognition: true, trials: 4, timeoutMs: 4000 }, measures: ['accuracy', 'consistency'] },
+    { id: 'intrapersonal-infrared-16', taskType: 'self_report', difficulty: 0.7, parameters: { prompts: ['Point to where you feel it.'], responseType: 'single-word', bodyAwareness: true, trials: 3, timeoutMs: 4000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'intrapersonal-infrared-17', taskType: 'self_report', difficulty: 0.75, parameters: { prompts: ['Is this you or not-you?'], responseType: 'single-word', bodyBoundary: true, trials: 5, timeoutMs: 4000 }, measures: ['accuracy', 'consistency'] },
+    { id: 'intrapersonal-infrared-18', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['What does your body want?'], responseType: 'single-word', needRecognition: true, trials: 4, timeoutMs: 3500 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'intrapersonal-infrared-19', taskType: 'self_report', difficulty: 0.85, parameters: { prompts: ['Are you here now?', 'Do you feel this?'], responseType: 'single-word', bodyAwareness: true, trials: 4, timeoutMs: 3500 }, measures: ['accuracy', 'consistency'] },
+    { id: 'intrapersonal-infrared-20', taskType: 'self_report', difficulty: 0.9, parameters: { prompts: ['Where are you?', 'What do you need?', 'Are you safe?'], responseType: 'single-word', needRecognition: true, trials: 5, timeoutMs: 3000 }, measures: ['accuracy', 'response_time', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Respond from self without prompt repetition',

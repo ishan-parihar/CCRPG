@@ -2,7 +2,7 @@ import { describe, it, expect } from 'vitest';
 import { synthesiseStage, meetsAdvancementCriteria, checkAdvancementGate } from '../src/core/usecases/StageSynthesizer.js';
 import type { Line } from '../src/core/domain/Line.js';
 import type { Stage } from '../src/core/domain/Stage.js';
-import { createInitialProfile } from '../src/core/domain/PlayerProfile.js';
+import { createSignificator } from '../src/core/domain/Significator.js';
 
 function makeAltitudes(stage: Stage): Record<Line, Stage> {
   return {
@@ -35,47 +35,32 @@ describe('synthesiseStage', () => {
 });
 
 describe('meetsAdvancementCriteria', () => {
-  it('returns false when lines are at target but no pull/boss/quadrant', () => {
-    // All at Red, but no boss cleared, no quadrant coverage, no pull lines
-    const profile = createInitialProfile('p1', makeAltitudes('Red'), 'Red', {
-      Agency: 0.25, Communion: 0.25, Eros: 0.25, Agape: 0.25,
-    });
-    // Advancing to Red requires: boss for Magenta, quadrant coverage at Magenta, ≥2 lines above Red
-    expect(meetsAdvancementCriteria(profile, 'Red')).toBe(false);
+  it('returns false when lines are at target but no pull', () => {
+    const sig = createSignificator('p1', makeAltitudes('Red'), 'Red');
+    expect(meetsAdvancementCriteria(sig, 'Red')).toBe(false);
   });
 
   it('returns false when any line is below target', () => {
     const altitudes = { ...makeAltitudes('Amber'), Cognitive: 'Red' as Stage };
-    const profile = createInitialProfile('p2', altitudes, 'Red', {
-      Agency: 0.25, Communion: 0.25, Eros: 0.25, Agape: 0.25,
-    });
-    expect(meetsAdvancementCriteria(profile, 'Amber')).toBe(false);
+    const sig = createSignificator('p2', altitudes, 'Red');
+    expect(meetsAdvancementCriteria(sig, 'Amber')).toBe(false);
   });
 
-  it('returns true for Infrared (no previous stage, no gate)', () => {
-    const profile = createInitialProfile('p3', makeAltitudes('Infrared'), 'Infrared', {
-      Agency: 0.25, Communion: 0.25, Eros: 0.25, Agape: 0.25,
-    });
-    // Infrared has no previous stage, so no boss/quadrant needed. But still needs ≥2 lines above.
-    // All at Infrared with none above → needs pull. So this should be false unless at top.
-    // Actually for Infrared (ordinal 0), there's no prevStage, so checks 3,4,5 are skipped.
-    // Check 2: need ≥2 lines above Infrared. All at Infrared → 0 above → false.
-    expect(meetsAdvancementCriteria(profile, 'Infrared')).toBe(false);
+  it('returns false for Infrared when no lines above', () => {
+    const sig = createSignificator('p3', makeAltitudes('Infrared'), 'Infrared');
+    expect(meetsAdvancementCriteria(sig, 'Infrared')).toBe(false);
   });
 });
 
 describe('checkAdvancementGate', () => {
-  it('identifies all blockers for advancement', () => {
-    const profile = createInitialProfile('p4', makeAltitudes('Red'), 'Red', {
-      Agency: 0.25, Communion: 0.25, Eros: 0.25, Agape: 0.25,
-    });
-    const { canAdvance, blockers } = checkAdvancementGate(profile, 'Red');
+  it('identifies blockers for advancement', () => {
+    const sig = createSignificator('p4', makeAltitudes('Red'), 'Red');
+    const { canAdvance, blockers } = checkAdvancementGate(sig, 'Red');
     expect(canAdvance).toBe(false);
     expect(blockers.length).toBeGreaterThan(0);
   });
 
   it('passes when all criteria are met', () => {
-    // All lines at Amber, ≥2 at Orange (pull), boss cleared, quadrants covered, no shadows
     const altitudes: Record<Line, Stage> = {
       Cognitive: 'Orange',
       Emotional: 'Orange',
@@ -86,17 +71,10 @@ describe('checkAdvancementGate', () => {
       Willpower: 'Amber',
       Interpersonal: 'Amber',
     };
-    const base = createInitialProfile('p5', altitudes, 'Amber', {
-      Agency: 0.25, Communion: 0.25, Eros: 0.25, Agape: 0.25,
-    });
-    // Satisfy all gate criteria for advancing to Amber:
-    // prevStage = Red, need boss for Red cleared, quadrant coverage at Red
-    const profile = {
-      ...base,
-      bossesCleared: ['Red' as Stage],
-      quadrantCoverage: { Red: ['UL', 'UR', 'LL', 'LR'] as ('UL' | 'UR' | 'LL' | 'LR')[] },
-    };
-    const { canAdvance, blockers } = checkAdvancementGate(profile, 'Amber');
+    const sig = createSignificator('p5', altitudes, 'Amber');
+    // With the simplified gate (no boss/quadrant checks), this should pass:
+    // All lines >= Amber ✓, >=2 lines above Amber (Cognitive, Emotional at Orange) ✓, no active shadows ✓
+    const { canAdvance, blockers } = checkAdvancementGate(sig, 'Amber');
     expect(blockers).toEqual([]);
     expect(canAdvance).toBe(true);
   });

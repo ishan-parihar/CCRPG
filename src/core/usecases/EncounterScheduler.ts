@@ -3,7 +3,7 @@
  * Per lines/00 §3.2: identifies weakest line, avoids overuse, surfaces shadows.
  */
 import type { Line } from '../domain/Line.js';
-import type { PlayerProfile } from '../domain/PlayerProfile.js';
+import type { Significator } from '../domain/Significator.js';
 import { ALL_LINES } from '../domain/Line.js';
 import { stageOrdinal } from '../domain/Stage.js';
 
@@ -15,11 +15,11 @@ export interface EncounterSuggestion {
 /**
  * Get the horizon line (lowest altitude line).
  */
-export function getHorizonLine(profile: PlayerProfile): Line {
+export function getHorizonLine(sig: Significator): Line {
   let minOrd = 8;
   let horizon: Line = 'Cognitive';
   for (const line of ALL_LINES) {
-    const ord = stageOrdinal(profile.altitudes[line]);
+    const ord = stageOrdinal(sig.altitudes[line]);
     if (ord < minOrd) {
       minOrd = ord;
       horizon = line;
@@ -29,17 +29,17 @@ export function getHorizonLine(profile: PlayerProfile): Line {
 }
 
 /**
- * Suggest the next encounter line based on profile state.
+ * Suggest the next encounter line based on Significator state.
  * Priority: shadow > horizon > variety (avoid overuse).
  */
 export function suggestNextEncounter(
-  profile: PlayerProfile,
+  sig: Significator,
   recentLines: readonly Line[],
 ): EncounterSuggestion {
   // 1. If there's an unresolved shadow, surface it
-  if (profile.shadows.length > 0) {
-    const shadowLine = profile.shadows[0]!.line;
-    // Only suggest if not overused (not 3× in a row)
+  const activeShadow = sig.shadows.entries.find(e => e.resolvedAt === null);
+  if (activeShadow) {
+    const shadowLine = activeShadow.line;
     const last3 = recentLines.slice(-3);
     if (!last3.every(l => l === shadowLine)) {
       return { line: shadowLine, reason: 'shadow' };
@@ -47,7 +47,7 @@ export function suggestNextEncounter(
   }
 
   // 2. Suggest the horizon line (weakest)
-  const horizon = getHorizonLine(profile);
+  const horizon = getHorizonLine(sig);
   const last3 = recentLines.slice(-3);
   if (!last3.every(l => l === horizon)) {
     return { line: horizon, reason: 'horizon' };

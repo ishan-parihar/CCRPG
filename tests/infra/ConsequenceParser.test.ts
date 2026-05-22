@@ -15,6 +15,7 @@ const MOCK_ENCOUNTER: ScheduledEncounter = {
   sessionPosition: 'peak',
   priority: 1,
   driveTarget: null,
+  executionMode: 'capacity',
 };
 
 describe('ConsequenceParser', () => {

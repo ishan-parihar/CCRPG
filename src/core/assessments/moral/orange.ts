@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const moralOrange: StageAssessment = {
   line: 'Moral',
@@ -31,6 +31,28 @@ export const moralOrange: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 240000,
+  itemPool: [
+    { id: 'moral-orange-01', taskType: 'dilemma', difficulty: 0.2, parameters: { dilemmaType: 'utilitarian-simple', choices: 2, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-orange-02', taskType: 'dilemma', difficulty: 0.25, parameters: { dilemmaType: 'cost-benefit', choices: 2, scenarioCount: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-orange-03', taskType: 'dilemma', difficulty: 0.3, parameters: { dilemmaType: 'utilitarian-simple', choices: 3, scenarioCount: 2 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-04', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'Is it right to break a small rule to prevent a larger harm?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-orange-05', taskType: 'dilemma', difficulty: 0.35, parameters: { dilemmaType: 'justice-vs-mercy', choices: 3, scenarioCount: 2 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-06', taskType: 'dilemma', difficulty: 0.4, parameters: { dilemmaType: 'principle-vs-law', choices: 3, scenarioCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-07', taskType: 'llm_dialogue', difficulty: 0.45, parameters: { prompt: 'The greatest good for the greatest number requires sacrificing one. Is that just?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-08', taskType: 'dilemma', difficulty: 0.45, parameters: { dilemmaType: 'cost-benefit', choices: 3, scenarioCount: 3, stakeholders: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-09', taskType: 'dilemma', difficulty: 0.5, parameters: { dilemmaType: 'justice-vs-mercy', choices: 3, scenarioCount: 3, complexity: 'medium' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-10', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'When is it right to break a law? What principle guides you?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-11', taskType: 'dilemma', difficulty: 0.55, parameters: { dilemmaType: 'utilitarian-complex', choices: 4, scenarioCount: 3, uncertainOutcomes: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-12', taskType: 'dilemma', difficulty: 0.6, parameters: { dilemmaType: 'principle-vs-law', choices: 3, scenarioCount: 3, conflictingRights: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-13', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'Two rights are in conflict. How do you weigh them against each other?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-14', taskType: 'dilemma', difficulty: 0.65, parameters: { dilemmaType: 'justice-vs-mercy', choices: 4, scenarioCount: 3, complexity: 'high' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-15', taskType: 'dilemma', difficulty: 0.7, parameters: { dilemmaType: 'principle-vs-principle', choices: 3, scenarioCount: 3, complexity: 'high' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Your principle demands action that will cause measurable harm. Do you act?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-17', taskType: 'dilemma', difficulty: 0.8, parameters: { dilemmaType: 'utilitarian-complex', choices: 4, scenarioCount: 4, uncertainOutcomes: true, longTermConsequences: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-18', taskType: 'dilemma', difficulty: 0.8, parameters: { dilemmaType: 'justice-vs-mercy', choices: 4, scenarioCount: 4, complexity: 'very-high' }, measures: ['depth', 'coherence', 'integration', 'self_correction'] },
+    { id: 'moral-orange-19', taskType: 'dilemma', difficulty: 0.85, parameters: { dilemmaType: 'principle-vs-principle', choices: 4, scenarioCount: 4, complexity: 'very-high' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-orange-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'Every principle you hold leads to harm in this situation. What do you do when reason itself fails?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Apply moral principle against social pressure',

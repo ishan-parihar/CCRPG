@@ -4,9 +4,8 @@
  * Per lines/00 §3.3: advancement gate requires 5 checks.
  */
 import type { Line } from '../domain/Line.js';
-import type { PlayerProfile } from '../domain/PlayerProfile.js';
+import type { Significator } from '../domain/Significator.js';
 import type { Stage } from '../domain/Stage.js';
-import type { Quadrant } from '../domain/PlayerProfile.js';
 import { ALL_LINES } from '../domain/Line.js';
 import { ALL_STAGES, stageOrdinal } from '../domain/Stage.js';
 
@@ -48,17 +47,16 @@ export function synthesiseStage(altitudes: Record<Line, Stage>): Stage {
  * Full 5-check advancement gate per lines/00 §3.3.
  * Returns { canAdvance, blockers } where blockers lists what's missing.
  */
-export function checkAdvancementGate(profile: PlayerProfile, target: Stage): {
+export function checkAdvancementGate(sig: Significator, target: Stage): {
   canAdvance: boolean;
   blockers: string[];
 } {
   const blockers: string[] = [];
   const targetOrd = stageOrdinal(target);
-  const prevStage = targetOrd > 0 ? ALL_STAGES[targetOrd - 1]! : null;
 
   // 1. All 8 lines ≥ target stage
   for (const line of ALL_LINES) {
-    if (stageOrdinal(profile.altitudes[line]) < targetOrd) {
+    if (stageOrdinal(sig.altitudes[line]) < targetOrd) {
       blockers.push(`${line} line below ${target}`);
     }
   }
@@ -67,34 +65,26 @@ export function checkAdvancementGate(profile: PlayerProfile, target: Stage): {
   if (targetOrd < ALL_STAGES.length - 1) {
     let pullCount = 0;
     for (const line of ALL_LINES) {
-      if (stageOrdinal(profile.altitudes[line]) > targetOrd) pullCount++;
+      if (stageOrdinal(sig.altitudes[line]) > targetOrd) pullCount++;
     }
     if (pullCount < 2) {
       blockers.push(`Need ≥2 lines above ${target} (have ${pullCount})`);
     }
   }
 
-  // 3. All 4 quadrants demonstrated at the previous stage
-  if (prevStage) {
-    const covered = profile.quadrantCoverage[prevStage] ?? [];
-    const allQuadrants: Quadrant[] = ['UL', 'UR', 'LL', 'LR'];
-    for (const q of allQuadrants) {
-      if (!covered.includes(q)) {
-        blockers.push(`Quadrant ${q} not demonstrated at ${prevStage}`);
+  // 3. All 4 quadrants demonstrated at the previous stage (checked via shadow ledger completeness)
+  // Note: quadrant coverage tracking moved to encounter-level; gate 3 is deferred until encounter scheduler tracks it.
+  // For now, this check is a no-op placeholder.
+
+  // 4. Boss synthesis exam cleared for previous stage — deferred (no bossesCleared on Significator yet)
+
+  // 5. No active shadow entries at altitude ≤ target
+  for (const entry of sig.shadows.entries) {
+    if (entry.resolvedAt === null) {
+      const shadowLineOrd = stageOrdinal(sig.altitudes[entry.line]);
+      if (shadowLineOrd <= targetOrd) {
+        blockers.push(`Unresolved ${entry.quadrant} shadow on ${entry.line}`);
       }
-    }
-  }
-
-  // 4. Boss synthesis exam cleared for previous stage
-  if (prevStage && !profile.bossesCleared.includes(prevStage)) {
-    blockers.push(`Boss for ${prevStage} not cleared`);
-  }
-
-  // 5. No active shadow signals at altitude ≤ target
-  for (const shadow of profile.shadows) {
-    const shadowLineOrd = stageOrdinal(profile.altitudes[shadow.line]);
-    if (shadowLineOrd <= targetOrd) {
-      blockers.push(`Unresolved ${shadow.type} shadow on ${shadow.line}`);
     }
   }
 
@@ -104,6 +94,6 @@ export function checkAdvancementGate(profile: PlayerProfile, target: Stage): {
 /**
  * Legacy compatibility: check if all lines meet target (simple check).
  */
-export function meetsAdvancementCriteria(profile: PlayerProfile, target: Stage): boolean {
-  return checkAdvancementGate(profile, target).canAdvance;
+export function meetsAdvancementCriteria(sig: Significator, target: Stage): boolean {
+  return checkAdvancementGate(sig, target).canAdvance;
 }

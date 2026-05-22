@@ -1,65 +1,73 @@
 /**
- * EncounterScene — routing layer that receives an encounter spec and
- * dispatches to the appropriate sub-scene based on modality.
+ * EncounterScene — receives a ScheduledEncounter and dispatches to AssessmentScene.
  */
 import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
-import type { EncounterSpec } from '@core/domain/Encounter.js';
+import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
+import type { AssessmentResult } from '@core/assessments/types.js';
 import type { EventBus } from '@core/events/EventBus.js';
-import type { ConsequenceRecord } from '@core/domain/ConsequenceRecord.js';
-import { CONQUEROR_PHASES } from '@core/data/encounters/red/conqueror.js';
-import { routeModality } from '../logic/encounterRouting.js';
+import type { ModuleRegistry } from '@core/assessments/registry.js';
+import type { AssessmentSceneData } from '../assessments/AssessmentScene.js';
+import type { Line } from '@core/domain/Line.js';
+import type { Stage } from '@core/domain/Stage.js';
 
 export { routeModality } from '../logic/encounterRouting.js';
 
 export class EncounterScene extends Phaser.Scene {
-  private encounter!: EncounterSpec;
+  private encounter!: ScheduledEncounter;
 
   constructor() {
     super({ key: SceneKeys.Encounter });
   }
 
-  create(data: { encounter: EncounterSpec }): void {
+  create(data: { encounter: ScheduledEncounter }): void {
     this.encounter = data.encounter;
 
-    if (!this.encounter || !this.encounter.modality) {
-      // No valid encounter data - return to world
+    if (!this.encounter) {
       this.scene.start(SceneKeys.World);
       return;
     }
 
-    const targetScene = routeModality(this.encounter.modality);
+    // Parse moduleRef (e.g. 'Cognitive:Red') into Line and Stage
+    const [line, stage] = this.encounter.moduleRef.split(':') as [Line, Stage];
 
-    // Build scene data; include Conqueror phases for main boss encounters
-    const sceneData: { encounter: EncounterSpec; phases?: typeof CONQUEROR_PHASES } = {
-      encounter: this.encounter,
-    };
-    if (this.encounter.role === 'main' || this.encounter.id === 'red-main-tyrant') {
-      sceneData.phases = CONQUEROR_PHASES;
+    // Look up the assessment module from registry
+    const registry = this.registry.get(RegistryKeys.ModuleRegistry) as ModuleRegistry | undefined;
+    const module = registry?.get(line, stage);
+
+    if (!module) {
+      this.scene.start(SceneKeys.World);
+      return;
     }
 
-    // Launch the target sub-scene and listen for its completion
-    this.scene.launch(targetScene, sceneData);
+    // Launch AssessmentScene with the module and execution mode
+    const sceneData: AssessmentSceneData = {
+      module,
+      mode: this.encounter.executionMode,
+      onComplete: (result: AssessmentResult) => this.onAssessmentComplete(result),
+    };
+
+    this.scene.launch(SceneKeys.Assessment, sceneData);
     this.scene.pause();
 
-    const target = this.scene.get(targetScene);
-    target.events.once('encounter_done', (result: { record?: ConsequenceRecord }) => {
-      this.scene.stop(targetScene);
+    // Listen for completion
+    const assessmentScene = this.scene.get(SceneKeys.Assessment);
+    assessmentScene.events.once('assessment_done', () => {
+      this.scene.stop(SceneKeys.Assessment);
       this.scene.resume();
-      this.onSubSceneComplete(result.record);
     });
   }
 
-  private onSubSceneComplete(record?: ConsequenceRecord): void {
-    // Emit encounter_completed on the core EventBus if available
-    if (record) {
-      const eventBus = this.registry.get(RegistryKeys.EventBus) as EventBus | undefined;
-      if (eventBus) {
-        eventBus.emit('encounter_completed', { record });
-      }
+  private onAssessmentComplete(result: AssessmentResult): void {
+    const eventBus = this.registry.get(RegistryKeys.EventBus) as EventBus | undefined;
+    if (eventBus) {
+      // Emit module_lifecycle_scored for the assessment pipeline
+      const [line, stage] = this.encounter.moduleRef.split(':');
+      eventBus.emit('module_lifecycle_scored', {
+        module: { line, stage },
+        result,
+      });
     }
-
-    // Return to WorldScene
     this.scene.start(SceneKeys.World);
   }
 }

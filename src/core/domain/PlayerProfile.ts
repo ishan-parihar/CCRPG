@@ -1,48 +1,21 @@
 /**
- * @deprecated Use Significator.ts as the sole state vessel.
- * PlayerProfile is kept for backward compatibility during migration.
+ * @deprecated — MIGRATION IN PROGRESS.
+ * Use Significator (src/core/domain/Significator.ts) as the sole state vessel.
+ * PlayerProfile is retained only for backward compatibility with legacy usecases
+ * (ProfileUpdater, StageSynthesizer, ShadowDetector, EncounterScheduler, scenes).
+ * These consumers will be migrated to Significator in Phase 1.
+ * DO NOT add new imports of PlayerProfile — use Significator instead.
  */
 import type { Drive } from './Drive.js';
 import type { Line } from './Line.js';
 import type { Ray } from './Ray.js';
 import type { Stage } from './Stage.js';
 import type { State } from './State.js';
-import type { Quadrant, TaskSlug } from './SharedTypes.js';
+import type { Quadrant, TaskSlug, StaircaseState, ShadowSignal, CodexEntry, Vow } from './SharedTypes.js';
+import type { StateProgress } from './Significator.js';
 
-export type { Quadrant, TaskSlug } from './SharedTypes.js';
-
-export interface StaircaseState {
-  readonly level: number;
-  readonly reversals: number;
-  readonly lastDirection: 'up' | 'down' | null;
-  readonly history: readonly boolean[];
-}
-
-export interface ShadowSignal {
-  readonly type: 'fixation' | 'regression' | 'repression';
-  readonly line: Line;
-  readonly detectedAtMs: number;
-  readonly description: string;
-}
-
-export interface CodexEntry {
-  readonly id: string;
-  readonly title: string;
-  readonly body: string;
-  readonly unlockedAtMs: number;
-}
-
-export interface Vow {
-  readonly text: string;
-  readonly createdAtMs: number;
-  readonly fulfilled: boolean;
-}
-
-export interface StateProgress {
-  readonly unlocked: boolean;
-  readonly depth: number;
-  readonly minutesPracticed: number;
-}
+export type { Quadrant, TaskSlug, StaircaseState, ShadowSignal, CodexEntry, Vow } from './SharedTypes.js';
+export type { StateProgress } from './Significator.js';
 
 export interface PlayerProfile {
   readonly id: string;

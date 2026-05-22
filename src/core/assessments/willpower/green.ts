@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const willpowerGreen: StageAssessment = {
   line: 'Willpower',
@@ -30,6 +30,28 @@ export const willpowerGreen: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 210000,
+  itemPool: [
+    { id: 'willpower-green-01', taskType: 'hold', difficulty: 0.2, parameters: { targetDurationMs: 4000, releaseDurationMs: 2000, cycles: 2, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-green-02', taskType: 'hold', difficulty: 0.25, parameters: { targetDurationMs: 5000, releaseDurationMs: 2000, cycles: 2, perturbations: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-green-03', taskType: 'reaction_time', difficulty: 0.3, parameters: { stimulusType: 'switch-signal', targetCount: 8, minGap: 1000, maxGap: 2500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-green-04', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 5000, releaseDurationMs: 2000, cycles: 3, perturbations: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-green-05', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'yield-or-persist', choices: 3, scenarios: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'willpower-green-06', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 5500, releaseDurationMs: 2000, cycles: 3, perturbations: true, partnerMode: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-green-07', taskType: 'reaction_time', difficulty: 0.4, parameters: { stimulusType: 'switch-signal', targetCount: 10, minGap: 900, maxGap: 2200 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-green-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'collaborative-will', choices: 4, scenarios: 3 }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'willpower-green-09', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 6000, releaseDurationMs: 2000, cycles: 4, perturbations: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-green-10', taskType: 'reaction_time', difficulty: 0.5, parameters: { stimulusType: 'switch-signal', targetCount: 12, minGap: 800, maxGap: 2000 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-green-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'yield-or-persist', choices: 4, scenarios: 3, contextual: true }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'willpower-green-12', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 6000, releaseDurationMs: 1500, cycles: 4, perturbations: true, partnerMode: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-green-13', taskType: 'reaction_time', difficulty: 0.6, parameters: { stimulusType: 'switch-signal', targetCount: 14, minGap: 700, maxGap: 1800 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-green-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'collaborative-will', choices: 4, scenarios: 4, conflictingGoals: true }, measures: ['depth', 'coherence', 'transfer'] },
+    { id: 'willpower-green-15', taskType: 'hold', difficulty: 0.7, parameters: { targetDurationMs: 6500, releaseDurationMs: 1500, cycles: 5, perturbations: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-green-16', taskType: 'reaction_time', difficulty: 0.75, parameters: { stimulusType: 'switch-signal', targetCount: 14, minGap: 600, maxGap: 1600 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-green-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'yield-or-persist', choices: 5, scenarios: 4, ambiguous: true }, measures: ['depth', 'coherence', 'transfer', 'self_correction'] },
+    { id: 'willpower-green-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 7000, releaseDurationMs: 1500, cycles: 5, perturbations: true, partnerMode: true, asyncTiming: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'willpower-green-19', taskType: 'reaction_time', difficulty: 0.85, parameters: { stimulusType: 'switch-signal', targetCount: 16, minGap: 500, maxGap: 1500 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-green-20', taskType: 'hold', difficulty: 0.9, parameters: { targetDurationMs: 7000, releaseDurationMs: 1000, cycles: 6, perturbations: true, partnerMode: true, asyncTiming: true }, measures: ['accuracy', 'consistency', 'response_time', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Switch between hold and release without signals',

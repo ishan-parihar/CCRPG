@@ -71,7 +71,6 @@ export class HoldRenderer {
 
   // Game objects
   private container!: Phaser.GameObjects.Container;
-  private holdButton!: Phaser.GameObjects.Container;
   private holdCircle!: Phaser.GameObjects.Ellipse;
   private holdRing!: Phaser.GameObjects.Arc;
   private holdLabel!: Phaser.GameObjects.Text;

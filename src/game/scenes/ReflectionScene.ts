@@ -136,6 +136,7 @@ export class ReflectionScene extends Phaser.Scene {
       sessionPosition: 'cooldown',
       priority: 1,
       driveTarget: null,
+      executionMode: 'capacity',
     };
     const record: ConsequenceRecord = processOutcome(scheduled, response, Date.now());
 

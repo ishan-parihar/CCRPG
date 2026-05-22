@@ -2,6 +2,7 @@ import type { Drive } from './Drive.js';
 import type { Line } from './Line.js';
 import type { Stage } from './Stage.js';
 import type { Modality, ShadowQuadrant, PolarityMode } from './enums.js';
+import type { ModuleExecutionMode } from '../assessments/types.js';
 
 export interface ScheduledEncounter {
   readonly id: string;
@@ -16,4 +17,5 @@ export interface ScheduledEncounter {
   readonly sessionPosition: 'warmup' | 'peak' | 'cooldown';
   readonly priority: number;
   readonly driveTarget: Drive | null;
+  readonly executionMode: ModuleExecutionMode;
 }

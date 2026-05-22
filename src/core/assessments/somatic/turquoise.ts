@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const somaticTurquoise: StageAssessment = {
   line: 'Somatic',
@@ -29,6 +29,28 @@ export const somaticTurquoise: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 210000,
+  itemPool: [
+    { id: 'somatic-turquoise-01', taskType: 'rhythm', difficulty: 0.2, parameters: { beatsPerMinute: 60, beats: 8, tolerance: 0.15, subtleBody: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-turquoise-02', taskType: 'self_report', difficulty: 0.25, parameters: { prompts: ['Describe the energy you feel in your hands right now.'], responseType: 'text', somaticAwareness: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-turquoise-03', taskType: 'rhythm', difficulty: 0.3, parameters: { beatsPerMinute: 72, beats: 12, tolerance: 0.12, subtleBody: true, energySensing: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-turquoise-04', taskType: 'self_report', difficulty: 0.35, parameters: { prompts: ['Where in your body do you sense the boundary between inside and outside?'], responseType: 'text', somaticAwareness: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-turquoise-05', taskType: 'rhythm', difficulty: 0.4, parameters: { beatsPerMinute: 80, beats: 16, tolerance: 0.1, subtleBody: true, multiLayer: true }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'somatic-turquoise-06', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['Describe the felt-sense of your spine as a channel of energy.'], responseType: 'text', energySensing: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-turquoise-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'somatic-integration', responseType: 'text', scenarios: 2, bodyMindUnity: true }, measures: ['depth', 'integration'] },
+    { id: 'somatic-turquoise-08', taskType: 'rhythm', difficulty: 0.5, parameters: { beatsPerMinute: 90, beats: 16, tolerance: 0.08, subtleBody: true, breathSync: true }, measures: ['accuracy', 'consistency', 'integration'] },
+    { id: 'somatic-turquoise-09', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['Sense the space around your body. Where does your energy field end?'], responseType: 'text', energySensing: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-turquoise-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'somatic-integration', responseType: 'text', scenarios: 3, emotionInBody: true }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'somatic-turquoise-11', taskType: 'rhythm', difficulty: 0.55, parameters: { beatsPerMinute: 100, beats: 20, tolerance: 0.08, subtleBody: true, polyrhythm: true }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'somatic-turquoise-12', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['Describe the sensation of awareness moving through your body.'], responseType: 'text', subtleBody: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-turquoise-13', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'somatic-integration', responseType: 'text', scenarios: 3, energyCircuit: true }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'somatic-turquoise-14', taskType: 'rhythm', difficulty: 0.65, parameters: { beatsPerMinute: 108, beats: 24, tolerance: 0.06, subtleBody: true, breathSync: true, energyFlow: true }, measures: ['accuracy', 'consistency', 'integration'] },
+    { id: 'somatic-turquoise-15', taskType: 'self_report', difficulty: 0.7, parameters: { prompts: ['Feel into the cellular level. What do your cells know that your mind does not?'], responseType: 'text', cellularAwareness: true }, measures: ['depth', 'coherence'] },
+    { id: 'somatic-turquoise-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'somatic-integration', responseType: 'text', scenarios: 4, fullBodyIntegration: true }, measures: ['depth', 'integration', 'coherence', 'complexity_handled'] },
+    { id: 'somatic-turquoise-17', taskType: 'rhythm', difficulty: 0.8, parameters: { beatsPerMinute: 120, beats: 24, tolerance: 0.05, subtleBody: true, multiLayer: true, energyFlow: true }, measures: ['accuracy', 'consistency', 'complexity_handled'] },
+    { id: 'somatic-turquoise-18', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['Describe the body as a field of intelligence rather than a collection of parts.'], responseType: 'text', fieldAwareness: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'somatic-turquoise-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'somatic-integration', responseType: 'text', scenarios: 4, subtleBody: true, energyCircuit: true, fieldSensing: true }, measures: ['depth', 'integration', 'coherence', 'complexity_handled'] },
+    { id: 'somatic-turquoise-20', taskType: 'rhythm', difficulty: 0.9, parameters: { beatsPerMinute: 120, beats: 32, tolerance: 0.04, subtleBody: true, polyrhythm: true, breathSync: true, energyFlow: true }, measures: ['accuracy', 'consistency', 'complexity_handled', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Anticipate timing without external cues',

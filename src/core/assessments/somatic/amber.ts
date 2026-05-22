@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const somaticAmber: StageAssessment = {
   line: 'Somatic',
@@ -29,6 +29,28 @@ export const somaticAmber: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 150000,
+  itemPool: [
+    { id: 'somatic-amber-01', taskType: 'rhythm', difficulty: 0.2, parameters: { bpm: 70, beats: 16, complexity: 'simple', durationMs: 14000 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-02', taskType: 'rhythm', difficulty: 0.25, parameters: { bpm: 80, beats: 20, complexity: 'simple', durationMs: 15000 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-03', taskType: 'hold', difficulty: 0.25, parameters: { targetDurationMs: 5000, perturbations: false, trials: 2 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-04', taskType: 'rhythm', difficulty: 0.3, parameters: { bpm: 85, beats: 24, complexity: 'simple', durationMs: 17000 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-05', taskType: 'hold', difficulty: 0.35, parameters: { targetDurationMs: 6000, perturbations: false, trials: 3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-06', taskType: 'rhythm', difficulty: 0.4, parameters: { bpm: 90, beats: 30, complexity: 'simple', durationMs: 20000 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-07', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 7000, perturbations: false, trials: 3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-08', taskType: 'rhythm', difficulty: 0.45, parameters: { bpm: 90, beats: 35, complexity: 'syncopated', durationMs: 23000 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-09', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 8000, perturbations: false, trials: 3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-10', taskType: 'rhythm', difficulty: 0.5, parameters: { bpm: 95, beats: 40, complexity: 'syncopated', durationMs: 25000 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-11', taskType: 'rhythm', difficulty: 0.55, parameters: { bpm: 100, beats: 40, complexity: 'syncopated', durationMs: 24000, partnerMode: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-12', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 9000, perturbations: true, perturbationIntervalMs: 3000, trials: 3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-13', taskType: 'rhythm', difficulty: 0.6, parameters: { bpm: 100, beats: 45, complexity: 'syncopated', durationMs: 27000 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-14', taskType: 'hold', difficulty: 0.65, parameters: { targetDurationMs: 10000, perturbations: true, perturbationIntervalMs: 2500, trials: 3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-15', taskType: 'rhythm', difficulty: 0.7, parameters: { bpm: 110, beats: 45, complexity: 'polyrhythm', durationMs: 25000 }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-16', taskType: 'hold', difficulty: 0.7, parameters: { targetDurationMs: 11000, perturbations: true, perturbationIntervalMs: 2000, trials: 4 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-17', taskType: 'rhythm', difficulty: 0.75, parameters: { bpm: 110, beats: 50, complexity: 'polyrhythm', durationMs: 27000, partnerMode: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 12000, perturbations: true, perturbationIntervalMs: 1800, trials: 4 }, measures: ['accuracy', 'consistency'] },
+    { id: 'somatic-amber-19', taskType: 'rhythm', difficulty: 0.85, parameters: { bpm: 120, beats: 55, complexity: 'polyrhythm', durationMs: 28000, partnerMode: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+    { id: 'somatic-amber-20', taskType: 'rhythm', difficulty: 0.9, parameters: { bpm: 120, beats: 60, complexity: 'polyrhythm', durationMs: 30000, partnerMode: true, tempoShifts: true }, measures: ['accuracy', 'consistency', 'response_time'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Maintain rhythm without external metronome for 20 seconds',

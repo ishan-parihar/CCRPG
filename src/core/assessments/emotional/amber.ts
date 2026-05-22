@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const emotionalAmber: StageAssessment = {
   line: 'Emotional',
@@ -35,6 +35,28 @@ export const emotionalAmber: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'emotional-amber-01', taskType: 'emotion_identification', difficulty: 0.2, parameters: { stimulusType: 'scenario', emotionSet: ['embarrassment', 'pride'], contextType: 'social-norm', trials: 4 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-amber-02', taskType: 'emotion_identification', difficulty: 0.25, parameters: { stimulusType: 'scenario', emotionSet: ['guilt', 'shame'], contextType: 'social-norm', trials: 4 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-amber-03', taskType: 'emotion_identification', difficulty: 0.3, parameters: { stimulusType: 'scenario', emotionSet: ['embarrassment', 'guilt', 'pride'], contextType: 'social-norm', trials: 6 }, measures: ['accuracy', 'consistency'] },
+    { id: 'emotional-amber-04', taskType: 'emotion_identification', difficulty: 0.35, parameters: { stimulusType: 'scenario', emotionSet: ['loyalty', 'betrayal', 'pride'], contextType: 'group-role', trials: 6 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-amber-05', taskType: 'emotion_identification', difficulty: 0.4, parameters: { stimulusType: 'scenario', emotionSet: ['embarrassment', 'guilt', 'pride', 'shame'], contextType: 'social-norm', trials: 8 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-amber-06', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'norm-violation', responseType: 'choice', scenarios: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-amber-07', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'norm-violation', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-amber-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'role-conflict', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-amber-09', taskType: 'emotion_identification', difficulty: 0.5, parameters: { stimulusType: 'scenario', emotionSet: ['embarrassment', 'guilt', 'pride', 'shame', 'loyalty'], contextType: 'group-role', trials: 8 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-amber-10', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'empathy-in-context', responseType: 'choice-plus-text', scenarios: 3 }, measures: ['depth', 'integration'] },
+    { id: 'emotional-amber-11', taskType: 'emotion_identification', difficulty: 0.55, parameters: { stimulusType: 'scenario', emotionSet: ['guilt', 'shame', 'loyalty', 'duty'], contextType: 'conflicting-roles', trials: 8 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-amber-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'conflicting-norms', responseType: 'text', scenarios: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-amber-13', taskType: 'emotion_identification', difficulty: 0.6, parameters: { stimulusType: 'scenario', emotionSet: ['righteous-anger', 'guilt', 'pride', 'shame', 'loyalty'], contextType: 'authority-conflict', trials: 10 }, measures: ['accuracy', 'response_time', 'depth'] },
+    { id: 'emotional-amber-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'group-emotion-contagion', responseType: 'text', scenarios: 4 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-amber-15', taskType: 'emotion_identification', difficulty: 0.7, parameters: { stimulusType: 'scenario', emotionSet: ['moral-outrage', 'collective-pride', 'vicarious-shame'], contextType: 'group-dynamics', trials: 10 }, measures: ['accuracy', 'depth', 'consistency'] },
+    { id: 'emotional-amber-16', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'role-appropriate-affect', responseType: 'text', scenarios: 4 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-amber-17', taskType: 'emotion_identification', difficulty: 0.75, parameters: { stimulusType: 'scenario', emotionSet: ['moral-outrage', 'collective-guilt', 'vicarious-pride', 'duty-bound-grief'], contextType: 'complex-group', trials: 10 }, measures: ['accuracy', 'depth', 'integration'] },
+    { id: 'emotional-amber-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'conflicting-loyalties', responseType: 'text', scenarios: 4 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-amber-19', taskType: 'emotion_identification', difficulty: 0.85, parameters: { stimulusType: 'scenario', emotionSet: ['moral-outrage', 'collective-guilt', 'vicarious-pride', 'duty-bound-grief', 'sacred-awe'], contextType: 'multi-role-conflict', trials: 12 }, measures: ['accuracy', 'depth', 'integration'] },
+    { id: 'emotional-amber-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'multi-group-emotion-navigation', responseType: 'text', scenarios: 5 }, measures: ['depth', 'coherence', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Identify social emotion without group confirmation',

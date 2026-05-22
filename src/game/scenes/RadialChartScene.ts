@@ -3,7 +3,7 @@ import { SceneKeys, RegistryKeys } from '../keys.js';
 import { ALL_LINES } from '@core/domain/Line.js';
 import { ALL_STAGES, stageOrdinal } from '@core/domain/Stage.js';
 import { STAGE_RAY_MAP } from '@core/domain/Ray.js';
-import type { PlayerProfile } from '@core/domain/PlayerProfile.js';
+import type { Significator } from '@core/domain/Significator.js';
 
 /** Ray → hex colour for tinting spokes. */
 const RAY_COLORS: Record<string, number> = {
@@ -27,7 +27,7 @@ export class RadialChartScene extends Phaser.Scene {
     super({ key: SceneKeys.RadialChart });
   }
 
-  create(data?: { profile?: PlayerProfile }): void {
+  create(data?: { profile?: Significator }): void {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x080c18);
 
@@ -64,7 +64,7 @@ export class RadialChartScene extends Phaser.Scene {
     }
 
     // Draw player profile polygon
-    const profile = data?.profile ?? this.registry.get(RegistryKeys.Profile) as PlayerProfile | undefined;
+    const profile = data?.profile ?? this.registry.get(RegistryKeys.Significator) as Significator | undefined;
     if (profile) {
       const points: { x: number; y: number }[] = [];
       for (let s = 0; s < spokes; s++) {

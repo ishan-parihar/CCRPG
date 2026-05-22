@@ -2,7 +2,7 @@
  * Staircase — 1-up/2-down transformed staircase procedure.
  * Converges at the 70.7% threshold per the blueprint.
  */
-import type { StaircaseState } from '../domain/PlayerProfile.js';
+import type { StaircaseState } from '../domain/SharedTypes.js';
 
 export interface StaircaseConfig {
   /** Step size for level changes. */

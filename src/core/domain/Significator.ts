@@ -44,6 +44,19 @@ export type LifecycleStage =
   | 'Transforming'
   | 'Harvesting';
 
+const VALID_TRANSITIONS: Record<LifecycleStage, readonly LifecycleStage[]> = {
+  Onboarding: ['Exploring'],
+  Exploring: ['Developing', 'Transforming', 'Harvesting'],
+  Developing: ['Crystallizing', 'Exploring'],
+  Crystallizing: ['Transforming', 'Exploring'],
+  Transforming: ['Exploring'],
+  Harvesting: [],
+};
+
+export function isValidTransition(from: LifecycleStage, to: LifecycleStage): boolean {
+  return VALID_TRANSITIONS[from]?.includes(to) ?? false;
+}
+
 export interface Significator {
   readonly id: string;
   readonly createdAt: number;

@@ -21,7 +21,6 @@ import type {
   PolarityInput,
   ShadowTopologyInput,
   TransformationReadinessInput,
-  CCIScore,
 } from '../../src/core/engines/CCIEngine.js';
 import type { SignificatorSnapshot } from '../../src/core/domain/SignificatorSnapshot.js';
 import type { Line } from '../../src/core/domain/Line.js';
@@ -248,7 +247,7 @@ describe('CCIEngine', () => {
   describe('normaliseShadowTopology', () => {
     it('returns 1.0 for empty shadow ledger', () => {
       const input = makeShadowTopologyInput();
-      expect(normaliseShadowTopology(input)).toBeCloseTo(0.9, 1);
+      expect(normaliseShadowTopology(input)).toBeCloseTo(1.0, 1);
     });
 
     it('returns low value for maximum shadow load', () => {

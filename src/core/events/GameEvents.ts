@@ -23,6 +23,7 @@ export interface GameEventMap {
   cci_computed: { score: CCIScore; timestamp: number };
   strategy_generated: { strategy: SessionStrategy; timestamp: number };
   strategy_adjusted: { adjustment: SessionStrategyAdjustment; timestamp: number };
+  encounter_declined: { encounterId: string; moduleRef: string; line: string; stage: string };
 }
 
 export type GameEventType = keyof GameEventMap;

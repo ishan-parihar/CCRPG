@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const intrapersonalRed: StageAssessment = {
   line: 'Intrapersonal',
@@ -30,6 +30,28 @@ export const intrapersonalRed: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'intrapersonal-red-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['What do you like?'], responseType: 'text', maxLength: 100 }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-red-02', taskType: 'self_report', difficulty: 0.25, parameters: { prompts: ['What makes you angry?'], responseType: 'text', maxLength: 150 }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-red-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'self-assertion', responseType: 'choice', choices: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-red-04', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['What are you good at?'], responseType: 'text', maxLength: 200 }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-red-05', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'need-identification', responseType: 'choice-plus-text', choices: 3 }, measures: ['depth', 'coherence', 'metacognition'] },
+    { id: 'intrapersonal-red-06', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['What do you want right now?', 'Why?'], responseType: 'text', maxLength: 250 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-red-07', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'power-identity', responseType: 'choice-plus-text', choices: 4 }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-red-08', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['When do you feel most powerful?'], responseType: 'text', maxLength: 250 }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-red-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'desire-conflict', responseType: 'text', maxLength: 300 }, measures: ['depth', 'coherence', 'metacognition'] },
+    { id: 'intrapersonal-red-10', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['What do you want?', 'What stops you?'], responseType: 'text', maxLength: 300 }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-red-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'ego-challenge', responseType: 'text', maxLength: 300 }, measures: ['depth', 'coherence', 'self_correction'] },
+    { id: 'intrapersonal-red-12', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['What are you afraid of?', 'What does that say about you?'], responseType: 'text', maxLength: 350 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-red-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'weakness-reveal', responseType: 'text', maxLength: 350 }, measures: ['depth', 'self_correction', 'coherence'] },
+    { id: 'intrapersonal-red-14', taskType: 'self_report', difficulty: 0.65, parameters: { prompts: ['Describe a time you failed. What did you learn about yourself?'], responseType: 'text', maxLength: 400 }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-red-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'identity-threat', responseType: 'text', maxLength: 400 }, measures: ['depth', 'coherence', 'metacognition'] },
+    { id: 'intrapersonal-red-16', taskType: 'self_report', difficulty: 0.7, parameters: { prompts: ['What do others see that you hide?'], responseType: 'text', maxLength: 400 }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-red-17', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'self-contradiction', responseType: 'text', maxLength: 400 }, measures: ['depth', 'coherence', 'self_correction', 'metacognition'] },
+    { id: 'intrapersonal-red-18', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['What part of yourself do you reject?', 'Why?'], responseType: 'text', maxLength: 500 }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-red-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'ego-dissolution', responseType: 'text', maxLength: 500 }, measures: ['depth', 'coherence', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-red-20', taskType: 'self_report', difficulty: 0.9, parameters: { prompts: ['Who are you when no one is watching?', 'Who are you when everyone is watching?', 'Which is real?'], responseType: 'text', maxLength: 600 }, measures: ['depth', 'metacognition', 'coherence', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Assert what you want without external validation',

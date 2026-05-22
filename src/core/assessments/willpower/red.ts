@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const willpowerRed: StageAssessment = {
   line: 'Willpower',
@@ -30,6 +30,28 @@ export const willpowerRed: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 150000,
+  itemPool: [
+    { id: 'willpower-red-01', taskType: 'hold', difficulty: 0.2, parameters: { targetDurationMs: 2000, perturbations: false }, measures: ['consistency', 'response_time'] },
+    { id: 'willpower-red-02', taskType: 'hold', difficulty: 0.25, parameters: { targetDurationMs: 2500, perturbations: false }, measures: ['consistency', 'response_time'] },
+    { id: 'willpower-red-03', taskType: 'go_no_go', difficulty: 0.3, parameters: { goRatio: 0.8, trials: 12, stimulusDurationMs: 600 }, measures: ['consistency', 'response_time'] },
+    { id: 'willpower-red-04', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 3000, perturbations: false }, measures: ['consistency', 'complexity_handled'] },
+    { id: 'willpower-red-05', taskType: 'go_no_go', difficulty: 0.35, parameters: { goRatio: 0.75, trials: 14, stimulusDurationMs: 550 }, measures: ['consistency', 'response_time'] },
+    { id: 'willpower-red-06', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 3500, perturbations: true, perturbationIntervalMs: 1500 }, measures: ['consistency', 'complexity_handled'] },
+    { id: 'willpower-red-07', taskType: 'go_no_go', difficulty: 0.4, parameters: { goRatio: 0.7, trials: 16, stimulusDurationMs: 500 }, measures: ['consistency', 'response_time', 'complexity_handled'] },
+    { id: 'willpower-red-08', taskType: 'hold', difficulty: 0.45, parameters: { targetDurationMs: 4000, perturbations: true, perturbationIntervalMs: 1200 }, measures: ['consistency', 'complexity_handled', 'transfer'] },
+    { id: 'willpower-red-09', taskType: 'go_no_go', difficulty: 0.5, parameters: { goRatio: 0.7, trials: 18, stimulusDurationMs: 480 }, measures: ['consistency', 'response_time'] },
+    { id: 'willpower-red-10', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 4500, perturbations: true, perturbationIntervalMs: 1000 }, measures: ['consistency', 'complexity_handled'] },
+    { id: 'willpower-red-11', taskType: 'go_no_go', difficulty: 0.55, parameters: { goRatio: 0.65, trials: 20, stimulusDurationMs: 450 }, measures: ['consistency', 'response_time', 'transfer'] },
+    { id: 'willpower-red-12', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 5000, perturbations: true, perturbationIntervalMs: 900 }, measures: ['consistency', 'complexity_handled', 'transfer'] },
+    { id: 'willpower-red-13', taskType: 'go_no_go', difficulty: 0.6, parameters: { goRatio: 0.6, trials: 20, stimulusDurationMs: 420 }, measures: ['consistency', 'response_time', 'complexity_handled'] },
+    { id: 'willpower-red-14', taskType: 'hold', difficulty: 0.65, parameters: { targetDurationMs: 5500, perturbations: true, perturbationIntervalMs: 800, earlyReleaseTemptation: true }, measures: ['consistency', 'complexity_handled'] },
+    { id: 'willpower-red-15', taskType: 'go_no_go', difficulty: 0.7, parameters: { goRatio: 0.6, trials: 24, stimulusDurationMs: 400 }, measures: ['consistency', 'response_time', 'transfer'] },
+    { id: 'willpower-red-16', taskType: 'hold', difficulty: 0.7, parameters: { targetDurationMs: 6000, perturbations: true, perturbationIntervalMs: 700, earlyReleaseTemptation: true }, measures: ['consistency', 'complexity_handled', 'transfer'] },
+    { id: 'willpower-red-17', taskType: 'go_no_go', difficulty: 0.75, parameters: { goRatio: 0.55, trials: 24, stimulusDurationMs: 380 }, measures: ['consistency', 'response_time', 'complexity_handled'] },
+    { id: 'willpower-red-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 7000, perturbations: true, perturbationIntervalMs: 600, earlyReleaseTemptation: true }, measures: ['consistency', 'complexity_handled', 'transfer'] },
+    { id: 'willpower-red-19', taskType: 'go_no_go', difficulty: 0.85, parameters: { goRatio: 0.5, trials: 28, stimulusDurationMs: 350 }, measures: ['consistency', 'response_time', 'complexity_handled', 'transfer'] },
+    { id: 'willpower-red-20', taskType: 'hold', difficulty: 0.9, parameters: { targetDurationMs: 8000, perturbations: true, perturbationIntervalMs: 500, earlyReleaseTemptation: true, temptationAt: [2000, 4000, 6000] }, measures: ['consistency', 'complexity_handled', 'transfer', 'response_time'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Hold without encouragement or countdown',

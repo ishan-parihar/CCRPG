@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const interpersonalMagenta: StageAssessment = {
   line: 'Interpersonal',
@@ -23,6 +23,28 @@ export const interpersonalMagenta: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 90000,
+  itemPool: [
+    { id: 'interpersonal-magenta-01', taskType: 'imitation', difficulty: 0.2, parameters: { actionType: 'single-tap', demonstrations: 3, trials: 3, sequenceLength: 1 }, measures: ['accuracy'] },
+    { id: 'interpersonal-magenta-02', taskType: 'imitation', difficulty: 0.25, parameters: { actionType: 'single-tap', demonstrations: 3, trials: 4, sequenceLength: 1 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-magenta-03', taskType: 'imitation', difficulty: 0.3, parameters: { actionType: 'gesture-sequence', demonstrations: 3, trials: 4, sequenceLength: 2 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-magenta-04', taskType: 'imitation', difficulty: 0.35, parameters: { actionType: 'gesture-sequence', demonstrations: 3, trials: 5, sequenceLength: 2 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-magenta-05', taskType: 'imitation', difficulty: 0.4, parameters: { actionType: 'gesture-sequence', demonstrations: 3, trials: 6, sequenceLength: 2 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-magenta-06', taskType: 'cooperation', difficulty: 0.3, parameters: { taskType: 'parallel-play', partners: 1, rounds: 3 }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-magenta-07', taskType: 'cooperation', difficulty: 0.35, parameters: { taskType: 'parallel-play', partners: 1, rounds: 4 }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-magenta-08', taskType: 'imitation', difficulty: 0.45, parameters: { actionType: 'gesture-sequence', demonstrations: 2, trials: 5, sequenceLength: 2 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-magenta-09', taskType: 'cooperation', difficulty: 0.4, parameters: { taskType: 'simple-turn-taking', partners: 1, rounds: 4 }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-magenta-10', taskType: 'imitation', difficulty: 0.5, parameters: { actionType: 'gesture-sequence', demonstrations: 2, trials: 6, sequenceLength: 2, turnTaking: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-magenta-11', taskType: 'cooperation', difficulty: 0.5, parameters: { taskType: 'simple-turn-taking', partners: 1, rounds: 5 }, measures: ['accuracy', 'consistency'] },
+    { id: 'interpersonal-magenta-12', taskType: 'imitation', difficulty: 0.55, parameters: { actionType: 'gesture-sequence', demonstrations: 2, trials: 5, sequenceLength: 3 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-magenta-13', taskType: 'cooperation', difficulty: 0.6, parameters: { taskType: 'basic-cooperation', partners: 1, rounds: 4 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-magenta-14', taskType: 'imitation', difficulty: 0.6, parameters: { actionType: 'gesture-sequence', demonstrations: 2, trials: 6, sequenceLength: 3 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-magenta-15', taskType: 'imitation', difficulty: 0.65, parameters: { actionType: 'gesture-sequence', demonstrations: 1, trials: 5, sequenceLength: 3 }, measures: ['accuracy', 'response_time'] },
+    { id: 'interpersonal-magenta-16', taskType: 'cooperation', difficulty: 0.7, parameters: { taskType: 'basic-cooperation', partners: 1, rounds: 5 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-magenta-17', taskType: 'imitation', difficulty: 0.75, parameters: { actionType: 'gesture-sequence', demonstrations: 1, trials: 5, sequenceLength: 3, turnTaking: true }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'interpersonal-magenta-18', taskType: 'cooperation', difficulty: 0.8, parameters: { taskType: 'coordinated-action', partners: 1, rounds: 5 }, measures: ['accuracy', 'consistency', 'transfer'] },
+    { id: 'interpersonal-magenta-19', taskType: 'imitation', difficulty: 0.85, parameters: { actionType: 'gesture-sequence', demonstrations: 1, trials: 6, sequenceLength: 4 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'interpersonal-magenta-20', taskType: 'imitation', difficulty: 0.9, parameters: { actionType: 'gesture-sequence', demonstrations: 1, trials: 6, sequenceLength: 4, turnTaking: true }, measures: ['accuracy', 'response_time', 'consistency', 'transfer'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Imitate after single demonstration',

@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const cognitiveInfrared: StageAssessment = {
   line: 'Cognitive',
@@ -30,6 +30,28 @@ export const cognitiveInfrared: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 90000,
+  itemPool: [
+    { id: 'cognitive-infrared-01', taskType: 'reaction_time', difficulty: 0.2, parameters: { stimulusType: 'simple', targetCount: 4, minGap: 2000, maxGap: 4000 }, measures: ['response_time', 'accuracy'] },
+    { id: 'cognitive-infrared-02', taskType: 'reaction_time', difficulty: 0.25, parameters: { stimulusType: 'simple', targetCount: 5, minGap: 1800, maxGap: 3500 }, measures: ['response_time', 'accuracy'] },
+    { id: 'cognitive-infrared-03', taskType: 'reaction_time', difficulty: 0.3, parameters: { stimulusType: 'simple', targetCount: 6, minGap: 1500, maxGap: 3000 }, measures: ['response_time', 'accuracy'] },
+    { id: 'cognitive-infrared-04', taskType: 'reaction_time', difficulty: 0.35, parameters: { stimulusType: 'simple', targetCount: 6, minGap: 1200, maxGap: 2800 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'cognitive-infrared-05', taskType: 'reaction_time', difficulty: 0.4, parameters: { stimulusType: 'simple', targetCount: 8, minGap: 1000, maxGap: 2500 }, measures: ['response_time', 'accuracy'] },
+    { id: 'cognitive-infrared-06', taskType: 'n_back', difficulty: 0.3, parameters: { n: 1, trials: 6, stimulusDurationMs: 1500, interStimulusMs: 600 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-infrared-07', taskType: 'n_back', difficulty: 0.35, parameters: { n: 1, trials: 8, stimulusDurationMs: 1400, interStimulusMs: 550 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-infrared-08', taskType: 'n_back', difficulty: 0.4, parameters: { n: 1, trials: 8, stimulusDurationMs: 1300, interStimulusMs: 500 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-infrared-09', taskType: 'n_back', difficulty: 0.45, parameters: { n: 1, trials: 10, stimulusDurationMs: 1200, interStimulusMs: 450 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-infrared-10', taskType: 'n_back', difficulty: 0.5, parameters: { n: 1, trials: 10, stimulusDurationMs: 1100, interStimulusMs: 400 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-infrared-11', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { patternType: 'sequence', complexity: 'minimal', trials: 4, objectCount: 1 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-infrared-12', taskType: 'pattern_prediction', difficulty: 0.45, parameters: { patternType: 'sequence', complexity: 'minimal', trials: 5, objectCount: 1 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-infrared-13', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { patternType: 'object-permanence', complexity: 'low', trials: 4, hideDurationMs: 2000 }, measures: ['accuracy'] },
+    { id: 'cognitive-infrared-14', taskType: 'pattern_prediction', difficulty: 0.55, parameters: { patternType: 'object-permanence', complexity: 'low', trials: 5, hideDurationMs: 2500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-infrared-15', taskType: 'reaction_time', difficulty: 0.6, parameters: { stimulusType: 'simple', targetCount: 10, minGap: 800, maxGap: 2000 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'cognitive-infrared-16', taskType: 'n_back', difficulty: 0.65, parameters: { n: 1, trials: 12, stimulusDurationMs: 1000, interStimulusMs: 380 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-infrared-17', taskType: 'reaction_time', difficulty: 0.7, parameters: { stimulusType: 'simple', targetCount: 12, minGap: 700, maxGap: 1800 }, measures: ['response_time', 'accuracy', 'consistency'] },
+    { id: 'cognitive-infrared-18', taskType: 'pattern_prediction', difficulty: 0.75, parameters: { patternType: 'object-permanence', complexity: 'low', trials: 6, hideDurationMs: 3000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-infrared-19', taskType: 'n_back', difficulty: 0.8, parameters: { n: 1, trials: 14, stimulusDurationMs: 900, interStimulusMs: 350 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-infrared-20', taskType: 'reaction_time', difficulty: 0.9, parameters: { stimulusType: 'simple', targetCount: 14, minGap: 600, maxGap: 1500 }, measures: ['response_time', 'accuracy', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Respond to stimulus without prompting',

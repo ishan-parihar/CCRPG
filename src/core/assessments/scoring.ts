@@ -31,6 +31,7 @@ export function scoreTrial(
 ): ScoredTrial {
   switch (mode) {
     case 'capacity':
+    case 'encounter':
       return scoreCapacity(trial, rubric);
     case 'shadow':
       return scoreShadow(trial, rubric);
@@ -150,5 +151,73 @@ function scorePractice(trial: TrialResult, rubric: ScoringRubric): ScoredTrial {
       improvementSignal,
       effortScore,
     },
+  };
+}
+
+/**
+ * Aggregate shadow-mode scored trials into per-drive health scores.
+ * Each trial must carry a `taskId` that matches one of the module's drive probe task IDs.
+ * Trials not matching any probe are ignored for drive-health computation.
+ *
+ * Returns drive health (1.0 = healthy, 0.0 = pathological) and pathology classification.
+ */
+export function aggregateShadowTrials(
+  trials: readonly ScoredTrial[],
+  probeTaskIds: { agency: string; communion: string; eros: string; agape: string },
+): {
+  driveHealth: {
+    agency: { dark: number; golden: number };
+    communion: { dark: number; golden: number };
+    eros: { dark: number; golden: number };
+    agape: { dark: number; golden: number };
+  };
+  dominantPathology: { drive: 'Agency' | 'Communion' | 'Eros' | 'Agape'; domain: 'dark' | 'golden'; type: 'addiction' | 'allergy' } | null;
+} {
+  const drives = ['agency', 'communion', 'eros', 'agape'] as const;
+  const driveNames = ['Agency', 'Communion', 'Eros', 'Agape'] as const;
+  const result = {} as Record<string, { dark: number; golden: number }>;
+
+  for (const drive of drives) {
+    const probeTrials = trials.filter(t => t.taskId === probeTaskIds[drive]);
+    if (probeTrials.length === 0) {
+      result[drive] = { dark: 0.7, golden: 0.7 };
+      continue;
+    }
+    // dark health = 1 - average darkSignal (high darkSignal = unhealthy)
+    const avgDark = probeTrials.reduce((s, t) => s + (t.modeSpecific['darkSignal'] ?? 0), 0) / probeTrials.length;
+    // golden health = 1 - average goldenSignal
+    const avgGolden = probeTrials.reduce((s, t) => s + (t.modeSpecific['goldenSignal'] ?? 0), 0) / probeTrials.length;
+    result[drive] = {
+      dark: Math.max(0, Math.min(1, 1 - avgDark)),
+      golden: Math.max(0, Math.min(1, 1 - avgGolden)),
+    };
+  }
+
+  // Identify dominant pathology
+  let worstScore = 1;
+  let worstDriveIdx = 0;
+  let worstDomain: 'dark' | 'golden' = 'dark';
+  for (let i = 0; i < 4; i++) {
+    const h = result[drives[i]];
+    if (h.dark < worstScore) { worstScore = h.dark; worstDriveIdx = i; worstDomain = 'dark'; }
+    if (h.golden < worstScore) { worstScore = h.golden; worstDriveIdx = i; worstDomain = 'golden'; }
+  }
+
+  const dominantPathology = worstScore < 0.5
+    ? {
+        drive: driveNames[worstDriveIdx],
+        domain: worstDomain,
+        // Addiction: over-expression (agency/eros high, communion/agape low)
+        // Allergy: under-expression (agency/eros low, communion/agape high)
+        type: (result['agency'][worstDomain] + result['eros'][worstDomain]) >
+              (result['communion'][worstDomain] + result['agape'][worstDomain])
+          ? 'addiction' as const
+          : 'allergy' as const,
+      }
+    : null;
+
+  return {
+    driveHealth: result as any,
+    dominantPathology,
   };
 }

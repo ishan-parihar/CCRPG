@@ -5,7 +5,7 @@
 import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
 import type { Significator } from '@core/domain/Significator.js';
-import type { PlayerProfile, CodexEntry, Vow } from '@core/domain/PlayerProfile.js';
+import type { CodexEntry, Vow } from '@core/domain/SharedTypes.js';
 
 export class JournalScene extends Phaser.Scene {
   constructor() {
@@ -17,7 +17,6 @@ export class JournalScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x080810);
 
     const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
-    const profile = this.registry.get(RegistryKeys.Profile) as PlayerProfile | undefined;
 
     // Title
     this.add.text(width / 2, 50, 'Journal', {
@@ -32,7 +31,7 @@ export class JournalScene extends Phaser.Scene {
     });
     y += 30;
 
-    const entries: readonly CodexEntry[] = profile?.codexEntries ?? [];
+    const entries: readonly CodexEntry[] = (sig as unknown as { codexEntries?: readonly CodexEntry[] })?.codexEntries ?? [];
     if (entries.length === 0) {
       this.add.text(60, y, 'No entries yet. Explore the world.', {
         fontSize: '14px', color: '#666688', fontFamily: 'monospace',
@@ -56,7 +55,7 @@ export class JournalScene extends Phaser.Scene {
     });
     y += 30;
 
-    const vows: Vow[] = profile?.vows ? [...profile.vows].filter(v => !v.fulfilled) : [];
+    const vows: Vow[] = (sig as unknown as { vows?: readonly Vow[] })?.vows ? [...((sig as unknown as { vows: readonly Vow[] }).vows)].filter(v => !v.fulfilled) : [];
     if (vows.length === 0) {
       this.add.text(60, y, 'No vows taken.', {
         fontSize: '14px', color: '#666688', fontFamily: 'monospace',
@@ -80,7 +79,7 @@ export class JournalScene extends Phaser.Scene {
     });
     y += 30;
 
-    const feedback = this.generateFeedback(sig, profile);
+    const feedback = this.generateFeedback(sig);
     this.add.text(60, y, feedback, {
       fontSize: '14px', color: '#aaaacc', fontFamily: 'monospace',
       wordWrap: { width: width - 100 },
@@ -96,13 +95,13 @@ export class JournalScene extends Phaser.Scene {
       .on('pointerout', function (this: Phaser.GameObjects.Text) { this.setColor('#88ccff'); });
   }
 
-  private generateFeedback(sig: Significator | undefined, profile: PlayerProfile | undefined): string {
-    if (!sig && !profile) {
+  private generateFeedback(sig: Significator | undefined): string {
+    if (!sig) {
       return 'Your journey has not yet begun.';
     }
 
-    const stage = sig?.currentStage ?? profile?.stage ?? 'Unknown';
-    const encounters = sig?.totalEncounters ?? 0;
+    const stage = sig.currentStage;
+    const encounters = sig.totalEncounters;
 
     if (encounters === 0) {
       return `Stage: ${stage}\n\nYour will is strong but untested by mercy.\nThe volcanic wastes await your first trial.`;

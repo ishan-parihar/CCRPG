@@ -4,7 +4,6 @@
  */
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
-import type { Stage } from '../domain/Stage.js';
 import type { EnergeticDirection, ShadowQuadrant, DriveDirectionality, SourceOfNourishment, StageOrientation } from '../domain/enums.js';
 import type { PolarityTrace } from '../domain/PolarityTrace.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
@@ -54,35 +53,50 @@ export function applyConsequences(
   sig: Significator,
   world: WorldState,
   record: ConsequenceRecord,
+  encounter: ScheduledEncounter,
 ): { sig: Significator; world: WorldState } {
+  const line = encounter.targetLines[0] ?? 'Cognitive' as Line;
+  const stage = encounter.stage;
+
   // 1. Record polarity trace
-  const line = record.polarityTrace.encounterId.split('/')[0] as Line;
-  const stage = record.polarityTrace.encounterId.split('/')[1]?.split(':')[0] as Stage;
-  const newPolarity = recordTrace(sig.polarity, record.polarityTrace, line ?? sig.altitudes.Cognitive as Line, stage ?? sig.currentStage);
+  const newPolarity = recordTrace(sig.polarity, record.polarityTrace, line, stage);
 
   // 2. Update theta timestamps
   const cellKey = `${line}:${stage}`;
   const newTheta = { lastEncounter: { ...sig.theta.lastEncounter, [cellKey]: record.timestamp } };
 
-  // 3. Handle shadow surfacing
+  // 3. Update drive balance and fixation risk
+  const newDrives = updateDriveBalance(sig.drives, record.polarityTrace.driveDirectionality);
+
+  // 4. Handle shadow surfacing
   let newShadowEntries = [...sig.shadows.entries];
   if (record.shadowSurfaced) {
-    const entry: ShadowEntry = {
-      id: `shadow-${record.timestamp}`,
-      quadrant: record.shadowSurfaced,
-      line: line ?? 'Cognitive',
-      stage: stage ?? sig.currentStage,
-      drive: 'Agency',
-      surfacedAt: record.timestamp,
-      resolvedAt: null,
-      recurrenceCount: 0,
-      compoundPartner: null,
-      severity: 0.5,
-    };
-    newShadowEntries.push(entry);
+    const existing = newShadowEntries.find(
+      e => e.resolvedAt === null && e.line === line && e.stage === stage,
+    );
+    if (existing) {
+      newShadowEntries = newShadowEntries.map(e =>
+        e.id === existing.id ? { ...e, recurrenceCount: e.recurrenceCount + 1 } : e,
+      );
+    } else {
+      const severity = Math.min(1, 0.3 + (newDrives.fixationRisk[encounter.driveTarget ?? 'Agency'] ?? 0) * 0.4);
+      const entry: ShadowEntry = {
+        id: `shadow-${record.timestamp}`,
+        quadrant: record.shadowSurfaced,
+        line,
+        stage,
+        drive: encounter.driveTarget ?? 'Agency',
+        surfacedAt: record.timestamp,
+        resolvedAt: null,
+        recurrenceCount: 0,
+        compoundPartner: null,
+        severity,
+      };
+      newShadowEntries.push(entry);
+    }
   }
 
-  // 4. Handle shadow resolution
+  // 5. Handle shadow resolution
   if (record.shadowResolved) {
     newShadowEntries = newShadowEntries.map(e =>
       e.id === record.shadowResolved ? { ...e, resolvedAt: record.timestamp } : e,
@@ -93,9 +107,39 @@ export function applyConsequences(
     ...sig,
     polarity: newPolarity,
     theta: newTheta,
+    drives: newDrives,
     shadows: { entries: newShadowEntries, activeCount: newShadowEntries.filter(e => !e.resolvedAt).length },
     totalEncounters: sig.totalEncounters + 1,
   };
 
   return { sig: newSig, world };
+}
+
+/** Update drive fixation risk based on drive directionality signals. */
+function updateDriveBalance(
+  current: Significator['drives'],
+  directionality: Readonly<Record<Drive, DriveDirectionality>>,
+): Significator['drives'] {
+  const drives: Drive[] = ['Agency', 'Communion', 'Eros', 'Agape'];
+  const newWeights = { ...current.weights };
+  const newFixation = { ...current.fixationRisk };
+
+  for (const drive of drives) {
+    const signal = directionality[drive];
+    switch (signal) {
+      case 'DarkAddicted':
+      case 'GoldenAddicted':
+        newFixation[drive] = Math.min(1, (newFixation[drive] ?? 0) + 0.05);
+        break;
+      case 'DarkAverted':
+      case 'GoldenAverted':
+        newFixation[drive] = Math.min(1, (newFixation[drive] ?? 0) + 0.03);
+        break;
+      case 'HealthyBalanced':
+        newFixation[drive] = Math.max(0, (newFixation[drive] ?? 0) - 0.02);
+        break;
+    }
+  }
+
+  return { weights: newWeights, fixationRisk: newFixation };
 }

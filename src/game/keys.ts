@@ -14,6 +14,7 @@ export const SceneKeys = {
   Dilemma: 'DilemmaScene',
   Journal: 'JournalScene',
   Assessment: 'AssessmentScene',
+  EncounterSelection: 'EncounterSelectionScene',
 } as const;
 
 export const TextureKeys = {
@@ -35,6 +36,7 @@ export const RegistryKeys = {
   EventBus: 'svc:eventbus',
   Telemetry: 'svc:telemetry',
   ScreenReader: 'svc:screen-reader',
+  ModuleRegistry: 'svc:module-registry',
 } as const;
 
 export const GameEvents = {

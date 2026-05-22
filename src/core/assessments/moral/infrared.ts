@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const moralInfrared: StageAssessment = {
   line: 'Moral',
@@ -22,6 +22,28 @@ export const moralInfrared: StageAssessment = {
   },
   minimumTrials: 2,
   estimatedDurationMs: 60000,
+  itemPool: [
+    { id: 'moral-infrared-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'harm-avoidance', choices: 2, trials: 2, context: 'hot-stove' }, measures: ['accuracy'] },
+    { id: 'moral-infrared-02', taskType: 'scenario', difficulty: 0.25, parameters: { scenarioType: 'harm-avoidance', choices: 2, trials: 3, context: 'sharp-object' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'safety-choice', choices: 2, trials: 3, context: 'safe-vs-dangerous-path' }, measures: ['accuracy'] },
+    { id: 'moral-infrared-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'safety-choice', choices: 2, trials: 4, context: 'shelter-vs-exposure' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'equal-split', choices: 2, trials: 3, context: 'food-sharing' }, measures: ['accuracy'] },
+    { id: 'moral-infrared-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'harm-avoidance', choices: 2, trials: 4, context: 'falling-hazard' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'equal-split', choices: 2, trials: 4, context: 'water-sharing' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'safety-choice', choices: 2, trials: 4, context: 'creature-approach' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'harm-avoidance', choices: 2, trials: 5, context: 'poison-food' }, measures: ['accuracy', 'consistency'] },
+    { id: 'moral-infrared-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'equal-split', choices: 2, trials: 5, context: 'resource-division' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'safety-choice', choices: 3, trials: 3, context: 'three-paths' }, measures: ['accuracy'] },
+    { id: 'moral-infrared-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'harm-avoidance', choices: 3, trials: 3, context: 'multiple-hazards' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'equal-split', choices: 3, trials: 4, context: 'unequal-portions' }, measures: ['accuracy'] },
+    { id: 'moral-infrared-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'safety-choice', choices: 3, trials: 4, context: 'delayed-danger' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'harm-avoidance', choices: 3, trials: 4, context: 'self-vs-other-harm' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-16', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'equal-split', choices: 3, trials: 5, context: 'scarce-resource' }, measures: ['accuracy', 'consistency'] },
+    { id: 'moral-infrared-17', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'safety-choice', choices: 3, trials: 5, context: 'ambiguous-threat' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'harm-avoidance', choices: 3, trials: 5, context: 'delayed-consequence' }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'moral-infrared-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'safety-choice', choices: 3, trials: 6, context: 'competing-safety-needs' }, measures: ['accuracy', 'response_time'] },
+    { id: 'moral-infrared-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'harm-avoidance', choices: 3, trials: 6, context: 'self-other-tradeoff' }, measures: ['accuracy', 'response_time', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Make fairness choice independently',

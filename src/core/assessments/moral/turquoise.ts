@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const moralTurquoise: StageAssessment = {
   line: 'Moral',
@@ -31,6 +31,28 @@ export const moralTurquoise: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'moral-turquoise-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'integral-ethics', choices: 3, trials: 2, context: 'developmental-sensitivity' }, measures: ['depth', 'coherence'] },
+    { id: 'moral-turquoise-02', taskType: 'scenario', difficulty: 0.25, parameters: { scenarioType: 'integral-ethics', choices: 3, trials: 3, context: 'stage-appropriate-response' }, measures: ['depth', 'coherence'] },
+    { id: 'moral-turquoise-03', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'Two people at different developmental stages disagree on what is right. How do you honor both without relativism?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'moral-turquoise-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'transcend-and-include', choices: 4, trials: 3, context: 'rule-vs-principle' }, measures: ['depth', 'coherence'] },
+    { id: 'moral-turquoise-05', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'A moral rule that served well at one stage becomes harmful at another. How do you transcend it while honoring what it protected?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-turquoise-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'integral-ethics', choices: 4, trials: 3, context: 'systemic-harm-vs-individual-good' }, measures: ['depth', 'complexity_handled'] },
+    { id: 'moral-turquoise-07', taskType: 'llm_dialogue', difficulty: 0.45, parameters: { prompt: 'What is the moral obligation of someone who can see more developmental depth than those around them?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-turquoise-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'transcend-and-include', choices: 4, trials: 4, context: 'competing-goods-across-stages' }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'moral-turquoise-09', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'Is it moral to disrupt a stable but limited system to catalyze growth that will cause temporary suffering?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-turquoise-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'integral-ethics', choices: 5, trials: 3, context: 'collective-vs-individual-development' }, measures: ['depth', 'complexity_handled', 'coherence'] },
+    { id: 'moral-turquoise-11', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'How do you act morally when every action benefits some developmental levels and harms others?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-turquoise-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'transcend-and-include', choices: 5, trials: 4, context: 'moral-pluralism-without-relativism' }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'moral-turquoise-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'What is the relationship between compassion and truth when truth causes pain but enables growth?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-turquoise-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'integral-ethics', choices: 5, trials: 4, context: 'evolutionary-morality' }, measures: ['depth', 'complexity_handled', 'coherence'] },
+    { id: 'moral-turquoise-15', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'Can a moral framework include its own transcendence? Describe ethics that holds itself lightly.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'metacognition'] },
+    { id: 'moral-turquoise-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'transcend-and-include', choices: 5, trials: 5, context: 'paradox-of-moral-development' }, measures: ['depth', 'coherence', 'complexity_handled', 'integration'] },
+    { id: 'moral-turquoise-17', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'You see that your own moral reasoning is itself a stage. How do you act from a morality that knows its own partiality?', maxResponseLength: 600 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'moral-turquoise-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'integral-ethics', choices: 6, trials: 4, context: 'multi-perspectival-moral-crisis' }, measures: ['depth', 'complexity_handled', 'coherence', 'integration'] },
+    { id: 'moral-turquoise-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'Describe a moral action that simultaneously serves individual healing, collective evolution, and systemic transformation.', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration', 'complexity_handled'] },
+    { id: 'moral-turquoise-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'transcend-and-include', choices: 6, trials: 5, context: 'integral-moral-synthesis' }, measures: ['depth', 'coherence', 'complexity_handled', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Make systemic moral decision independently',

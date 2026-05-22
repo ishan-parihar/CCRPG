@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const willpowerInfrared: StageAssessment = {
   line: 'Willpower',
@@ -23,6 +23,28 @@ export const willpowerInfrared: StageAssessment = {
   },
   minimumTrials: 2,
   estimatedDurationMs: 45000,
+  itemPool: [
+    { id: 'willpower-infrared-01', taskType: 'hold', difficulty: 0.2, parameters: { targetDurationMs: 500, perturbations: false }, measures: ['accuracy'] },
+    { id: 'willpower-infrared-02', taskType: 'hold', difficulty: 0.25, parameters: { targetDurationMs: 700, perturbations: false }, measures: ['accuracy'] },
+    { id: 'willpower-infrared-03', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 1000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-04', taskType: 'go_no_go', difficulty: 0.3, parameters: { goRatio: 0.8, trials: 6, stimulusDurationMs: 1500 }, measures: ['accuracy'] },
+    { id: 'willpower-infrared-05', taskType: 'hold', difficulty: 0.35, parameters: { targetDurationMs: 1200, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-06', taskType: 'go_no_go', difficulty: 0.35, parameters: { goRatio: 0.8, trials: 8, stimulusDurationMs: 1400 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-infrared-07', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 1500, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-08', taskType: 'go_no_go', difficulty: 0.4, parameters: { goRatio: 0.75, trials: 8, stimulusDurationMs: 1300 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-infrared-09', taskType: 'hold', difficulty: 0.45, parameters: { targetDurationMs: 1800, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-10', taskType: 'go_no_go', difficulty: 0.5, parameters: { goRatio: 0.75, trials: 10, stimulusDurationMs: 1200 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-infrared-11', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 2000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-12', taskType: 'go_no_go', difficulty: 0.55, parameters: { goRatio: 0.7, trials: 10, stimulusDurationMs: 1100 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-infrared-13', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 2500, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-14', taskType: 'go_no_go', difficulty: 0.6, parameters: { goRatio: 0.7, trials: 12, stimulusDurationMs: 1000 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-infrared-15', taskType: 'hold', difficulty: 0.65, parameters: { targetDurationMs: 3000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-16', taskType: 'go_no_go', difficulty: 0.7, parameters: { goRatio: 0.65, trials: 12, stimulusDurationMs: 900 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-infrared-17', taskType: 'hold', difficulty: 0.75, parameters: { targetDurationMs: 3500, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 4000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-infrared-19', taskType: 'go_no_go', difficulty: 0.85, parameters: { goRatio: 0.6, trials: 14, stimulusDurationMs: 800 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-infrared-20', taskType: 'hold', difficulty: 0.9, parameters: { targetDurationMs: 5000, perturbations: false }, measures: ['accuracy', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Hold briefly without countdown',

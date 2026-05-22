@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const emotionalGreen: StageAssessment = {
   line: 'Emotional',
@@ -35,6 +35,28 @@ export const emotionalGreen: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 240000,
+  itemPool: [
+    { id: 'emotional-green-01', taskType: 'emotion_identification', difficulty: 0.2, parameters: { stimulusType: 'scenario', emotionSet: ['love-and-anger'], contradictory: true, trials: 3 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-green-02', taskType: 'emotion_identification', difficulty: 0.25, parameters: { stimulusType: 'scenario', emotionSet: ['grief-and-gratitude'], contradictory: true, trials: 3 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-green-03', taskType: 'emotion_identification', difficulty: 0.3, parameters: { stimulusType: 'scenario', emotionSet: ['love-and-anger', 'fear-and-excitement'], contradictory: true, trials: 4 }, measures: ['accuracy', 'depth', 'integration'] },
+    { id: 'emotional-green-04', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'Someone with very different values is hurting. What might they feel?', maxResponseLength: 300 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-green-05', taskType: 'emotion_identification', difficulty: 0.35, parameters: { stimulusType: 'scenario', emotionSet: ['love-and-anger', 'grief-and-gratitude', 'fear-and-excitement'], contradictory: true, trials: 5 }, measures: ['accuracy', 'depth', 'integration'] },
+    { id: 'emotional-green-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'This person believes something you find harmful. Can you feel what they feel?', maxResponseLength: 400 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-green-07', taskType: 'emotion_identification', difficulty: 0.4, parameters: { stimulusType: 'scenario', emotionSet: ['love-and-anger', 'grief-and-gratitude'], contradictory: true, trials: 6, nuanceRequired: true }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-green-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'empathic-resonance', responseType: 'text', scenarios: 3 }, measures: ['depth', 'integration'] },
+    { id: 'emotional-green-09', taskType: 'emotion_identification', difficulty: 0.5, parameters: { stimulusType: 'scenario', emotionSet: ['love-and-anger', 'grief-and-gratitude', 'fear-and-excitement', 'pride-and-shame'], contradictory: true, trials: 6 }, measures: ['accuracy', 'depth', 'integration'] },
+    { id: 'emotional-green-10', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Two people you care about are in conflict. Both are hurting. What do you feel?', maxResponseLength: 400 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-green-11', taskType: 'emotion_identification', difficulty: 0.55, parameters: { stimulusType: 'scenario', emotionSet: ['love-and-anger', 'grief-and-gratitude', 'fear-and-excitement'], contradictory: true, trials: 6, holdingDuration: true }, measures: ['depth', 'integration', 'consistency'] },
+    { id: 'emotional-green-12', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'This person has values very different from yours. What might they be feeling and why?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-green-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'emotional-complexity', responseType: 'text', scenarios: 4, contradictions: 2 }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'emotional-green-14', taskType: 'emotion_identification', difficulty: 0.65, parameters: { stimulusType: 'scenario', emotionSet: ['love-and-anger', 'grief-and-gratitude', 'fear-and-excitement', 'pride-and-shame'], contradictory: true, trials: 8 }, measures: ['accuracy', 'depth', 'integration'] },
+    { id: 'emotional-green-15', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'Someone who has hurt you deeply is now suffering. What arises in you?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-green-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'empathic-resonance', responseType: 'text', scenarios: 4, outgroupTarget: true }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'emotional-green-17', taskType: 'emotion_identification', difficulty: 0.8, parameters: { stimulusType: 'scenario', emotionSet: ['love-and-anger', 'grief-and-gratitude', 'fear-and-excitement', 'pride-and-shame', 'hope-and-despair'], contradictory: true, trials: 8 }, measures: ['accuracy', 'depth', 'integration'] },
+    { id: 'emotional-green-18', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'You feel three contradictory emotions at once. Can you hold all of them without choosing?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-green-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'emotional-complexity', responseType: 'text', scenarios: 4, contradictions: 3, outgroupTarget: true }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'emotional-green-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'Someone whose values you oppose is experiencing the same pain you once felt. Can you feel with them fully?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Hold contradictory emotions without resolving prematurely',

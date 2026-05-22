@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
-import type { PlayerProfile, CodexEntry } from '@core/domain/PlayerProfile.js';
+import type { Significator } from '@core/domain/Significator.js';
+import type { CodexEntry } from '@core/domain/SharedTypes.js';
 
 /**
  * CodexScene — displays the player's unlocked codex entries as a
@@ -19,8 +20,8 @@ export class CodexScene extends Phaser.Scene {
       fontSize: '26px', color: '#c8c8e8', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
-    const profile = this.registry.get(RegistryKeys.Profile) as PlayerProfile | undefined;
-    const entries: readonly CodexEntry[] = profile?.codexEntries ?? [];
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
+    const entries: readonly CodexEntry[] = (sig as unknown as { codexEntries?: readonly CodexEntry[] })?.codexEntries ?? [];
 
     if (entries.length === 0) {
       this.add.text(width / 2, height / 2, 'No entries unlocked yet.\nExplore the world to discover knowledge.', {

@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const willpowerMagenta: StageAssessment = {
   line: 'Willpower',
@@ -23,6 +23,28 @@ export const willpowerMagenta: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 90000,
+  itemPool: [
+    { id: 'willpower-magenta-01', taskType: 'hold', difficulty: 0.2, parameters: { targetDurationMs: 1000, rewardType: 'immediate', perturbations: false }, measures: ['accuracy'] },
+    { id: 'willpower-magenta-02', taskType: 'hold', difficulty: 0.25, parameters: { targetDurationMs: 1500, rewardType: 'immediate', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-03', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 2000, rewardType: 'bigger-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-04', taskType: 'hold', difficulty: 0.35, parameters: { targetDurationMs: 2500, rewardType: 'bigger-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-05', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 3000, rewardType: 'bigger-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-06', taskType: 'go_no_go', difficulty: 0.3, parameters: { goRatio: 0.8, trials: 10, stimulusDurationMs: 1000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-magenta-07', taskType: 'go_no_go', difficulty: 0.35, parameters: { goRatio: 0.8, trials: 12, stimulusDurationMs: 900 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-magenta-08', taskType: 'hold', difficulty: 0.45, parameters: { targetDurationMs: 3500, rewardType: 'bigger-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-09', taskType: 'go_no_go', difficulty: 0.4, parameters: { goRatio: 0.75, trials: 12, stimulusDurationMs: 850 }, measures: ['accuracy', 'response_time'] },
+    { id: 'willpower-magenta-10', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 4000, rewardType: 'bigger-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-11', taskType: 'go_no_go', difficulty: 0.5, parameters: { goRatio: 0.75, trials: 14, stimulusDurationMs: 800 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-magenta-12', taskType: 'hold', difficulty: 0.55, parameters: { targetDurationMs: 4500, rewardType: 'bigger-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-13', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 5000, rewardType: 'bigger-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-14', taskType: 'go_no_go', difficulty: 0.6, parameters: { goRatio: 0.7, trials: 14, stimulusDurationMs: 750 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-magenta-15', taskType: 'hold', difficulty: 0.65, parameters: { targetDurationMs: 5000, rewardType: 'biggest-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-16', taskType: 'hold', difficulty: 0.7, parameters: { targetDurationMs: 5500, rewardType: 'biggest-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-17', taskType: 'go_no_go', difficulty: 0.75, parameters: { goRatio: 0.7, trials: 16, stimulusDurationMs: 700 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'willpower-magenta-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 6000, rewardType: 'biggest-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-19', taskType: 'hold', difficulty: 0.85, parameters: { targetDurationMs: 6500, rewardType: 'biggest-later', perturbations: false }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-magenta-20', taskType: 'hold', difficulty: 0.9, parameters: { targetDurationMs: 7000, rewardType: 'biggest-later', perturbations: false }, measures: ['accuracy', 'consistency', 'response_time'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Wait without countdown timer',

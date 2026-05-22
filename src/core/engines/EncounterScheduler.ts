@@ -6,7 +6,8 @@ import type { PolarityMode, ShadowQuadrant } from '../domain/enums.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
 import type { Significator } from '../domain/Significator.js';
 import { generateCandidates, type WorldState } from './CandidateGeneration.js';
-import { computePriority, type SessionContext, type PriorityWeights } from './PriorityComputation.js';
+import { computePriority, DEFAULT_WEIGHTS, type SessionContext, type PriorityWeights } from './PriorityComputation.js';
+import type { TransformationPhase } from './TransformationDetector.js';
 
 export type { WorldState } from './CandidateGeneration.js';
 export type { SessionContext } from './PriorityComputation.js';
@@ -22,7 +23,7 @@ export function scheduleNext(
   count: number = 3,
   weights?: PriorityWeights,
 ): ScheduledEncounter[] {
-  const candidates = generateCandidates(sig, world, now);
+  const candidates = generateCandidates(sig, world, now, session);
   if (candidates.length === 0) return [];
 
   // Score all candidates
@@ -69,6 +70,7 @@ export function scheduleNext(
       sessionPosition: position,
       priority,
       driveTarget: activeShadow?.drive ?? null,
+      executionMode: shadowTarget ? 'shadow' : 'capacity',
     });
   }
 
@@ -82,4 +84,54 @@ function computeDifficulty(sig: Significator, line: string, stage: string): numb
   const traceCount = cell?.traceCount ?? 0;
   // More traces = more familiarity = lower difficulty; cap at 0.3-0.9
   return Math.max(0.3, Math.min(0.9, 0.9 - traceCount * 0.05));
+}
+
+/**
+ * Threshold-mode scheduling: overrides normal scheduling during transformation.
+ * Spec: foundations/24 §6.2
+ */
+export function scheduleThresholdMode(
+  sig: Significator,
+  world: WorldState,
+  session: SessionContext,
+  phase: TransformationPhase,
+  now: number,
+): ScheduledEncounter[] {
+  switch (phase) {
+    case 'unravelling':
+      return scheduleNext(sig, world, session, now, 3, {
+        ...DEFAULT_WEIGHTS,
+        thetaUrgency: 0.10,
+        shadowActivation: 0.35,
+        transformationReadiness: 0.30,
+        polarityAlignment: 0.10,
+        driveCorrection: 0.05,
+        narrativeCoherence: 0.05,
+        sessionFit: 0.05,
+      });
+    case 'crucible':
+      return scheduleNext(sig, world, session, now, 2, {
+        ...DEFAULT_WEIGHTS,
+        thetaUrgency: 0.05,
+        shadowActivation: 0.40,
+        transformationReadiness: 0.35,
+        polarityAlignment: 0.05,
+        driveCorrection: 0.05,
+        narrativeCoherence: 0.05,
+        sessionFit: 0.05,
+      });
+    case 'emergence':
+      return scheduleNext(sig, world, session, now, 3, {
+        ...DEFAULT_WEIGHTS,
+        thetaUrgency: 0.05,
+        shadowActivation: 0.10,
+        transformationReadiness: 0.05,
+        polarityAlignment: 0.20,
+        driveCorrection: 0.10,
+        narrativeCoherence: 0.30,
+        sessionFit: 0.20,
+      });
+    default:
+      return scheduleNext(sig, world, session, now, 3);
+  }
 }

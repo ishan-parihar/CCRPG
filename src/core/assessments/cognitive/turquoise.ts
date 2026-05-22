@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const cognitiveTurquoise: StageAssessment = {
   line: 'Cognitive',
@@ -37,6 +37,28 @@ export const cognitiveTurquoise: StageAssessment = {
   },
   minimumTrials: 5,
   estimatedDurationMs: 360000,
+  itemPool: [
+    { id: 'cognitive-turquoise-01', taskType: 'n_back', difficulty: 0.2, parameters: { n: 4, trials: 10, stimulusDurationMs: 1000, interStimulusMs: 400 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-turquoise-02', taskType: 'n_back', difficulty: 0.25, parameters: { n: 4, trials: 12, stimulusDurationMs: 950, interStimulusMs: 380 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-turquoise-03', taskType: 'n_back', difficulty: 0.3, parameters: { n: 5, trials: 8, stimulusDurationMs: 1000, interStimulusMs: 380 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-turquoise-04', taskType: 'pattern_prediction', difficulty: 0.35, parameters: { patternType: 'systems', variables: 3, trials: 6, feedbackDelay: true }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-turquoise-05', taskType: 'n_back', difficulty: 0.4, parameters: { n: 5, trials: 10, stimulusDurationMs: 950, interStimulusMs: 350 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-turquoise-06', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { patternType: 'systems', variables: 4, trials: 6, feedbackDelay: true }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-turquoise-07', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'meta-pattern', levels: 2, responseType: 'text', scenarios: 2 }, measures: ['depth', 'complexity_handled'] },
+    { id: 'cognitive-turquoise-08', taskType: 'n_back', difficulty: 0.5, parameters: { n: 5, trials: 14, stimulusDurationMs: 900, interStimulusMs: 300 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-turquoise-09', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { patternType: 'paradox-resolution', variables: 4, trials: 4, contradictionPresent: true }, measures: ['accuracy', 'complexity_handled', 'coherence'] },
+    { id: 'cognitive-turquoise-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'multi-system-integration', levels: 2, responseType: 'text', scenarios: 3, systemCount: 3 }, measures: ['depth', 'complexity_handled', 'coherence'] },
+    { id: 'cognitive-turquoise-11', taskType: 'n_back', difficulty: 0.55, parameters: { n: 5, trials: 16, stimulusDurationMs: 850, interStimulusMs: 280 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-turquoise-12', taskType: 'pattern_prediction', difficulty: 0.6, parameters: { patternType: 'systems', variables: 5, trials: 6, feedbackDelay: true, emergentProperties: true }, measures: ['accuracy', 'complexity_handled', 'transfer'] },
+    { id: 'cognitive-turquoise-13', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'paradox-resolution', levels: 2, responseType: 'text', scenarios: 2, holdBothTruths: true }, measures: ['depth', 'coherence', 'complexity_handled'] },
+    { id: 'cognitive-turquoise-14', taskType: 'n_back', difficulty: 0.65, parameters: { n: 6, trials: 10, stimulusDurationMs: 900, interStimulusMs: 300 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-turquoise-15', taskType: 'pattern_prediction', difficulty: 0.7, parameters: { patternType: 'multi-system-integration', variables: 5, trials: 6, emergentProperties: true }, measures: ['accuracy', 'complexity_handled', 'transfer'] },
+    { id: 'cognitive-turquoise-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'meta-pattern', levels: 3, responseType: 'text', scenarios: 2, systemCount: 4 }, measures: ['depth', 'complexity_handled', 'coherence'] },
+    { id: 'cognitive-turquoise-17', taskType: 'n_back', difficulty: 0.8, parameters: { n: 6, trials: 14, stimulusDurationMs: 850, interStimulusMs: 280 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-turquoise-18', taskType: 'pattern_prediction', difficulty: 0.8, parameters: { patternType: 'paradox-resolution', variables: 6, trials: 6, contradictionPresent: true, multiLevel: true }, measures: ['accuracy', 'complexity_handled', 'coherence'] },
+    { id: 'cognitive-turquoise-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'multi-system-integration', levels: 3, responseType: 'text', scenarios: 3, systemCount: 5 }, measures: ['depth', 'complexity_handled', 'transfer'] },
+    { id: 'cognitive-turquoise-20', taskType: 'n_back', difficulty: 0.9, parameters: { n: 6, trials: 18, stimulusDurationMs: 800, interStimulusMs: 260, adaptive: true }, measures: ['accuracy', 'response_time', 'consistency', 'complexity_handled'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Identify meta-pattern independently',

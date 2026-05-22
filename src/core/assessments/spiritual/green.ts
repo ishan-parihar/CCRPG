@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const spiritualGreen: StageAssessment = {
   line: 'Spiritual',
@@ -31,6 +31,28 @@ export const spiritualGreen: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 210000,
+  itemPool: [
+    { id: 'spiritual-green-01', taskType: 'value_ranking', difficulty: 0.2, parameters: { values: 3, temptationType: 'relativistic-challenge', trials: 2 }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-green-02', taskType: 'value_ranking', difficulty: 0.25, parameters: { values: 4, temptationType: 'relativistic-challenge', trials: 2 }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-green-03', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'Someone from a different tradition holds the opposite value. Are they wrong?', maxResponseLength: 300 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-green-04', taskType: 'value_ranking', difficulty: 0.3, parameters: { values: 4, temptationType: 'relativistic-challenge', trials: 3, traditions: 2 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-green-05', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'inter-tradition', responseType: 'text', scenarios: 2, traditions: 2 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-green-06', taskType: 'value_ranking', difficulty: 0.4, parameters: { values: 5, temptationType: 'relativistic-challenge', trials: 3, traditions: 3 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-green-07', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'All values are culturally constructed. How do you hold yours without claiming superiority?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-green-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'contemplative-depth', responseType: 'text', scenarios: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-green-09', taskType: 'value_ranking', difficulty: 0.5, parameters: { values: 6, temptationType: 'relativistic-challenge', trials: 4 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-green-10', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'All values are just cultural constructions. None is better than another. How do you hold yours?', maxResponseLength: 500 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-green-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'non-attachment', responseType: 'text', scenarios: 3, valueChallenge: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-green-12', taskType: 'value_ranking', difficulty: 0.6, parameters: { values: 6, temptationType: 'relativistic-challenge', trials: 4, deepPluralism: true }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-green-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'A tradition you find harmful claims equal validity. Can you hold space for it?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-green-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'inter-tradition', responseType: 'text', scenarios: 4, traditions: 4, conflicting: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-green-15', taskType: 'value_ranking', difficulty: 0.7, parameters: { values: 6, temptationType: 'relativistic-challenge', trials: 4, traditions: 4 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-green-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'If no tradition is superior, how do you choose? Is choosing itself an act of violence?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-green-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'non-attachment', responseType: 'text', scenarios: 4, identityChallenge: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-green-18', taskType: 'value_ranking', difficulty: 0.8, parameters: { values: 7, temptationType: 'relativistic-challenge', trials: 5, traditions: 5 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-green-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'You hold your values lightly. But someone is being harmed by another tradition. Do you act?', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'spiritual-green-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'value-hierarchy', responseType: 'text', scenarios: 4, postRelativistic: true, fullPluralism: true }, measures: ['depth', 'coherence', 'integration', 'self_correction'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Hold values against relativistic deconstruction',

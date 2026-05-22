@@ -1,12 +1,15 @@
 /**
  * AssessmentScene - Generic container scene for running any StageAssessment module.
  *
- * Receives a StageAssessment, iterates through its tasks, dispatches each to the
- * appropriate renderer based on TaskType, collects TrialResult[] per task, then
- * calls the core engine to produce an AssessmentResult.
+ * Receives a StageAssessment + execution mode, selects tasks based on mode,
+ * dispatches each to the appropriate renderer, collects TrialResult[] per task,
+ * then calls the mode-aware engine to produce the correct result type.
  *
- * The scene does NOT know execution mode semantics (capacity vs shadow vs calibration).
- * Mode is passed through for the orchestrator but does not alter presentation logic here.
+ * Mode semantics:
+ *   capacity/calibration - runs full task set
+ *   encounter - single-trial (first task only)
+ *   shadow - runs drive probe tasks, produces ShadowAssessmentResult
+ *   practice - runs full task set (same as capacity)
  */
 import Phaser from 'phaser';
 import { SceneKeys } from '../keys.js';
@@ -17,7 +20,7 @@ import type {
   AssessmentResult,
   ModuleExecutionMode,
 } from '@core/assessments/types.js';
-import { runAssessment } from '@core/assessments/engine.js';
+import { runModeAwareAssessment } from '@core/assessments/engine.js';
 import { NBackRenderer } from './renderers/NBackRenderer.js';
 import { ReactionTimeRenderer } from './renderers/ReactionTimeRenderer.js';
 import { DilemmaRenderer } from './renderers/DilemmaRenderer.js';
@@ -31,6 +34,7 @@ export interface AssessmentSceneData {
   readonly module: StageAssessment;
   readonly mode: ModuleExecutionMode;
   readonly onComplete?: (result: AssessmentResult) => void;
+  readonly resumeFrom?: { taskIndex: number; priorTrials: readonly TrialResult[] };
 }
 
 type RendererInstance = {
@@ -49,7 +53,6 @@ export class AssessmentScene extends Phaser.Scene {
 
   // Progress UI elements
   private progressText!: Phaser.GameObjects.Text;
-  private progressBar!: Phaser.GameObjects.Rectangle;
   private progressFill!: Phaser.GameObjects.Rectangle;
 
   constructor() {
@@ -64,6 +67,12 @@ export class AssessmentScene extends Phaser.Scene {
     this.allTrials = [];
     this.currentRenderer = null;
 
+    // Resume from checkpoint if provided
+    const startIndex = data.resumeFrom?.taskIndex ?? 0;
+    if (data.resumeFrom) {
+      this.allTrials = [...data.resumeFrom.priorTrials];
+    }
+
     const { width } = this.scale;
     this.cameras.main.setBackgroundColor(0x05070b);
 
@@ -75,19 +84,29 @@ export class AssessmentScene extends Phaser.Scene {
     }).setOrigin(0.5).setDepth(100);
 
     const barWidth = width - 80;
-    this.progressBar = this.add.rectangle(width / 2, 54, barWidth, 4, 0x1a2233)
+    this.add.rectangle(width / 2, 54, barWidth, 4, 0x1a2233)
       .setOrigin(0.5)
       .setDepth(100);
     this.progressFill = this.add.rectangle(
       width / 2 - barWidth / 2, 54, 0, 4, 0x4cc9f0,
     ).setOrigin(0, 0.5).setDepth(100);
 
+    // Leave button (session-length sovereignty)
+    const leaveBtn = this.add.text(width - 20, 28, '✕ Leave', {
+      fontFamily: 'system-ui, sans-serif',
+      fontSize: '14px',
+      color: '#556677',
+    }).setOrigin(1, 0.5).setInteractive({ useHandCursor: true }).setDepth(100);
+    leaveBtn.on('pointerover', () => leaveBtn.setColor('#aabbcc'));
+    leaveBtn.on('pointerout', () => leaveBtn.setColor('#556677'));
+    leaveBtn.on('pointerdown', () => this.onLeave());
+
     this.updateProgress();
-    this.startTask(0);
+    this.startTask(startIndex);
   }
 
   private updateProgress(): void {
-    const total = this.module.tasks.length;
+    const total = this.getTasksForMode().length;
     const current = this.currentTaskIndex + 1;
     this.progressText.setText(`Task ${current} of ${total}`);
 
@@ -96,16 +115,38 @@ export class AssessmentScene extends Phaser.Scene {
     this.progressFill.width = fillWidth;
   }
 
+  private getTasksForMode(): readonly AssessmentTask[] {
+    switch (this.mode) {
+      case 'encounter':
+        // Single-trial mode: run only the first task
+        return this.module.tasks.slice(0, 1);
+      case 'shadow':
+        // Shadow mode: run drive probe tasks
+        return [
+          this.module.driveProbes.agency.task,
+          this.module.driveProbes.communion.task,
+          this.module.driveProbes.eros.task,
+          this.module.driveProbes.agape.task,
+        ];
+      case 'calibration':
+      case 'practice':
+      default:
+        // Full task set
+        return this.module.tasks;
+    }
+  }
+
   private startTask(index: number): void {
+    const tasks = this.getTasksForMode();
     this.currentTaskIndex = index;
     this.updateProgress();
 
-    if (index >= this.module.tasks.length) {
+    if (index >= tasks.length) {
       this.finishAssessment();
       return;
     }
 
-    const task = this.module.tasks[index];
+    const task = tasks[index];
     const renderer = this.createRenderer(task);
     this.currentRenderer = renderer;
     renderer.create();
@@ -158,6 +199,13 @@ export class AssessmentScene extends Phaser.Scene {
     // Collect trials
     this.allTrials.push(...trials);
 
+    // Emit checkpoint for persistence
+    this.events.emit('checkpoint', {
+      taskIndex: this.currentTaskIndex,
+      trials: [...this.allTrials],
+      moduleRef: `${this.module.line}/${this.module.stage}`,
+    });
+
     // Destroy current renderer
     if (this.currentRenderer) {
       this.currentRenderer.destroy();
@@ -165,8 +213,9 @@ export class AssessmentScene extends Phaser.Scene {
     }
 
     const nextIndex = this.currentTaskIndex + 1;
+    const tasks = this.getTasksForMode();
 
-    if (nextIndex >= this.module.tasks.length) {
+    if (nextIndex >= tasks.length) {
       this.finishAssessment();
       return;
     }
@@ -179,8 +228,21 @@ export class AssessmentScene extends Phaser.Scene {
     });
   }
 
+  private onLeave(): void {
+    this.events.emit('checkpoint', {
+      taskIndex: this.currentTaskIndex,
+      trials: [...this.allTrials],
+      moduleRef: `${this.module.line}/${this.module.stage}`,
+    });
+    if (this.currentRenderer) {
+      this.currentRenderer.destroy();
+      this.currentRenderer = null;
+    }
+    this.scene.start(SceneKeys.World);
+  }
+
   private finishAssessment(): void {
-    const result = runAssessment(this.module, this.allTrials);
+    const result = runModeAwareAssessment(this.module, this.allTrials, this.mode);
 
     // Update progress bar to full
     const barWidth = this.scale.width - 80;

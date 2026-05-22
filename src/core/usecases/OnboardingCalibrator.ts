@@ -5,7 +5,7 @@
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
-import type { StaircaseState } from '../domain/PlayerProfile.js';
+import type { StaircaseState } from '../domain/SharedTypes.js';
 import { ALL_STAGES } from '../domain/Stage.js';
 import { thresholdToStage } from './ThresholdMaps.js';
 

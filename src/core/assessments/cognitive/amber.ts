@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const cognitiveAmber: StageAssessment = {
   line: 'Cognitive',
@@ -37,6 +37,28 @@ export const cognitiveAmber: StageAssessment = {
   },
   minimumTrials: 5,
   estimatedDurationMs: 240000,
+  itemPool: [
+    { id: 'cognitive-amber-01', taskType: 'n_back', difficulty: 0.2, parameters: { n: 2, trials: 8, stimulusDurationMs: 1200, interStimulusMs: 450 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-amber-02', taskType: 'n_back', difficulty: 0.25, parameters: { n: 2, trials: 10, stimulusDurationMs: 1100, interStimulusMs: 420 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-amber-03', taskType: 'n_back', difficulty: 0.3, parameters: { n: 3, trials: 8, stimulusDurationMs: 1200, interStimulusMs: 450 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-amber-04', taskType: 'n_back', difficulty: 0.35, parameters: { n: 3, trials: 10, stimulusDurationMs: 1100, interStimulusMs: 400 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-amber-05', taskType: 'n_back', difficulty: 0.4, parameters: { n: 3, trials: 12, stimulusDurationMs: 1000, interStimulusMs: 380 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-amber-06', taskType: 'stroop', difficulty: 0.3, parameters: { trials: 10, congruentRatio: 0.6, stimulusDurationMs: 2200, ruleType: 'color-word' }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-amber-07', taskType: 'stroop', difficulty: 0.4, parameters: { trials: 14, congruentRatio: 0.5, stimulusDurationMs: 2000, ruleType: 'color-word' }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-amber-08', taskType: 'stroop', difficulty: 0.5, parameters: { trials: 16, congruentRatio: 0.4, stimulusDurationMs: 1800, ruleType: 'category-switch' }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-amber-09', taskType: 'go_no_go', difficulty: 0.35, parameters: { goRatio: 0.75, trials: 16, stimulusDurationMs: 700, switchFrequency: 'low' }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-amber-10', taskType: 'go_no_go', difficulty: 0.45, parameters: { goRatio: 0.7, trials: 20, stimulusDurationMs: 600, switchFrequency: 'low' }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-amber-11', taskType: 'go_no_go', difficulty: 0.55, parameters: { goRatio: 0.7, trials: 24, stimulusDurationMs: 550, switchFrequency: 'medium' }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-amber-12', taskType: 'n_back', difficulty: 0.5, parameters: { n: 3, trials: 14, stimulusDurationMs: 950, interStimulusMs: 350 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-amber-13', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { disks: 4, maxMoves: 4, attempts: 4, ruleBasedCategories: 3 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-amber-14', taskType: 'pattern_prediction', difficulty: 0.6, parameters: { disks: 5, maxMoves: 5, attempts: 3, ruleBasedCategories: 4 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-amber-15', taskType: 'n_back', difficulty: 0.6, parameters: { n: 3, trials: 16, stimulusDurationMs: 900, interStimulusMs: 320 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-amber-16', taskType: 'n_back', difficulty: 0.65, parameters: { n: 4, trials: 10, stimulusDurationMs: 1100, interStimulusMs: 400 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-amber-17', taskType: 'n_back', difficulty: 0.7, parameters: { n: 4, trials: 12, stimulusDurationMs: 1000, interStimulusMs: 350 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-amber-18', taskType: 'stroop', difficulty: 0.75, parameters: { trials: 20, congruentRatio: 0.35, stimulusDurationMs: 1500, ruleType: 'multi-rule-switch' }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-amber-19', taskType: 'n_back', difficulty: 0.85, parameters: { n: 4, trials: 14, stimulusDurationMs: 900, interStimulusMs: 300 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-amber-20', taskType: 'n_back', difficulty: 0.9, parameters: { n: 4, trials: 16, stimulusDurationMs: 850, interStimulusMs: 280 }, measures: ['accuracy', 'response_time', 'self_correction', 'complexity_handled'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Complete Stroop without timing pressure',

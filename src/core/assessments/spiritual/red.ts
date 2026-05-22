@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const spiritualRed: StageAssessment = {
   line: 'Spiritual',
@@ -29,6 +29,28 @@ export const spiritualRed: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 150000,
+  itemPool: [
+    { id: 'spiritual-red-01', taskType: 'value_ranking', difficulty: 0.2, parameters: { values: 3, temptationType: 'none', domain: 'power' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-red-02', taskType: 'value_ranking', difficulty: 0.25, parameters: { values: 3, temptationType: 'zero-cost-obvious', domain: 'power' }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-red-03', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'What matters most to you?', maxResponseLength: 200 }, measures: ['coherence', 'depth'] },
+    { id: 'spiritual-red-04', taskType: 'value_ranking', difficulty: 0.3, parameters: { values: 4, temptationType: 'zero-cost-obvious', domain: 'desire' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-red-05', taskType: 'value_ranking', difficulty: 0.35, parameters: { values: 4, temptationType: 'zero-cost-obvious', domain: 'power', trials: 3 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-red-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'Do you believe something watches over you? Why or why not?', maxResponseLength: 300 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-red-07', taskType: 'value_ranking', difficulty: 0.4, parameters: { values: 5, temptationType: 'zero-cost-obvious', domain: 'survival' }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-red-08', taskType: 'value_ranking', difficulty: 0.45, parameters: { values: 5, temptationType: 'low-cost', domain: 'power', trials: 3 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-red-09', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'What do you think happens when you do something good? Something bad?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-red-10', taskType: 'value_ranking', difficulty: 0.5, parameters: { values: 5, temptationType: 'low-cost', domain: 'desire', trials: 4 }, measures: ['coherence', 'consistency', 'depth'] },
+    { id: 'spiritual-red-11', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'If you could make a deal with a god, what would you offer and what would you ask for?', maxResponseLength: 400 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'spiritual-red-12', taskType: 'value_ranking', difficulty: 0.6, parameters: { values: 6, temptationType: 'moderate-cost', domain: 'power', trials: 4 }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-red-13', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'Is the universe fair? Explain your reasoning.', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'spiritual-red-14', taskType: 'value_ranking', difficulty: 0.65, parameters: { values: 6, temptationType: 'moderate-cost', domain: 'survival', trials: 4 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-red-15', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'What would make you change your deepest belief?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'spiritual-red-16', taskType: 'value_ranking', difficulty: 0.7, parameters: { values: 7, temptationType: 'high-cost', domain: 'power', trials: 4 }, measures: ['coherence', 'consistency'] },
+    { id: 'spiritual-red-17', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Describe something you believe that you cannot prove. Why do you still believe it?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'spiritual-red-18', taskType: 'value_ranking', difficulty: 0.8, parameters: { values: 7, temptationType: 'high-cost', domain: 'desire', trials: 5 }, measures: ['coherence', 'depth', 'consistency'] },
+    { id: 'spiritual-red-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'If your god demanded something that hurt you, would you obey? Why?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'spiritual-red-20', taskType: 'value_ranking', difficulty: 0.9, parameters: { values: 8, temptationType: 'high-cost', domain: 'power', trials: 5, conflictingValues: true }, measures: ['coherence', 'depth', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Choose your value without social pressure',

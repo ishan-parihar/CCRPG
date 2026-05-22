@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const cognitiveOrange: StageAssessment = {
   line: 'Cognitive',
@@ -37,6 +37,28 @@ export const cognitiveOrange: StageAssessment = {
   },
   minimumTrials: 5,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'cognitive-orange-01', taskType: 'n_back', difficulty: 0.2, parameters: { n: 3, trials: 10, stimulusDurationMs: 1100, interStimulusMs: 380 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-orange-02', taskType: 'n_back', difficulty: 0.25, parameters: { n: 3, trials: 12, stimulusDurationMs: 1000, interStimulusMs: 350 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-orange-03', taskType: 'n_back', difficulty: 0.3, parameters: { n: 4, trials: 8, stimulusDurationMs: 1100, interStimulusMs: 380 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-orange-04', taskType: 'n_back', difficulty: 0.35, parameters: { n: 4, trials: 10, stimulusDurationMs: 1000, interStimulusMs: 350 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-orange-05', taskType: 'n_back', difficulty: 0.4, parameters: { n: 4, trials: 12, stimulusDurationMs: 950, interStimulusMs: 320 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-orange-06', taskType: 'pattern_prediction', difficulty: 0.35, parameters: { patternType: 'analogical', complexity: 'medium', trials: 6, variables: 2 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-orange-07', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { patternType: 'analogical', complexity: 'medium', trials: 8, variables: 3 }, measures: ['accuracy', 'complexity_handled'] },
+    { id: 'cognitive-orange-08', taskType: 'pattern_prediction', difficulty: 0.5, parameters: { patternType: 'hypothesis-testing', complexity: 'high', trials: 6, variables: 3 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-orange-09', taskType: 'go_no_go', difficulty: 0.4, parameters: { goRatio: 0.7, trials: 20, stimulusDurationMs: 550, switchFrequency: 'high' }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-orange-10', taskType: 'go_no_go', difficulty: 0.5, parameters: { goRatio: 0.65, trials: 24, stimulusDurationMs: 500, switchFrequency: 'high' }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-orange-11', taskType: 'n_back', difficulty: 0.5, parameters: { n: 4, trials: 14, stimulusDurationMs: 900, interStimulusMs: 300 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-orange-12', taskType: 'pattern_prediction', difficulty: 0.55, parameters: { patternType: 'hypothesis-testing', complexity: 'high', trials: 8, variables: 4 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-orange-13', taskType: 'n_back', difficulty: 0.6, parameters: { n: 4, trials: 16, stimulusDurationMs: 850, interStimulusMs: 280 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-orange-14', taskType: 'pattern_prediction', difficulty: 0.6, parameters: { patternType: 'multi-variable', complexity: 'high', trials: 8, variables: 4 }, measures: ['accuracy', 'complexity_handled', 'transfer'] },
+    { id: 'cognitive-orange-15', taskType: 'go_no_go', difficulty: 0.65, parameters: { goRatio: 0.6, trials: 28, stimulusDurationMs: 450, switchFrequency: 'high' }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-orange-16', taskType: 'n_back', difficulty: 0.7, parameters: { n: 5, trials: 10, stimulusDurationMs: 950, interStimulusMs: 320 }, measures: ['accuracy', 'response_time'] },
+    { id: 'cognitive-orange-17', taskType: 'n_back', difficulty: 0.75, parameters: { n: 5, trials: 12, stimulusDurationMs: 900, interStimulusMs: 300 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'cognitive-orange-18', taskType: 'pattern_prediction', difficulty: 0.8, parameters: { patternType: 'hypothesis-testing', complexity: 'very-high', trials: 10, variables: 5 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },
+    { id: 'cognitive-orange-19', taskType: 'n_back', difficulty: 0.85, parameters: { n: 5, trials: 14, stimulusDurationMs: 850, interStimulusMs: 280 }, measures: ['accuracy', 'response_time', 'self_correction'] },
+    { id: 'cognitive-orange-20', taskType: 'n_back', difficulty: 0.9, parameters: { n: 5, trials: 16, stimulusDurationMs: 800, interStimulusMs: 260 }, measures: ['accuracy', 'response_time', 'self_correction', 'complexity_handled'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Complete n=3 without hints or feedback',

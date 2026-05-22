@@ -182,7 +182,6 @@ export class ScenarioRenderer {
   }
 
   private showTextInput(): void {
-    const { width, height } = this.scene.scale;
     const placeholder = this.responseType === 'single-word'
       ? 'Type a word...'
       : 'Type your response...';
@@ -288,7 +287,6 @@ export class ScenarioRenderer {
   }
 
   private showRanking(): void {
-    const { width, height } = this.scene.scale;
     this.rankingOrder = [...this.options];
     this.submitButton.setAlpha(1);
 

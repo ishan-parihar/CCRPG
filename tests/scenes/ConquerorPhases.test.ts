@@ -23,9 +23,9 @@ describe('Conqueror Boss Phases', () => {
     expect(new Set(quadrants).size).toBe(4);
   });
 
-  it('each phase has a positive HP pool', () => {
+  it('each phase has a positive difficulty', () => {
     for (const phase of CONQUEROR_PHASES) {
-      expect(phase.hpPool).toBeGreaterThan(0);
+      expect(phase.difficulty).toBeGreaterThan(0);
     }
   });
 

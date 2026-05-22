@@ -12,6 +12,7 @@ import { ReflectionScene } from './scenes/ReflectionScene.js';
 import { DilemmaScene } from './scenes/DilemmaScene.js';
 import { JournalScene } from './scenes/JournalScene.js';
 import { AssessmentScene } from './assessments/AssessmentScene.js';
+import { EncounterSelectionScene } from './scenes/EncounterSelectionScene.js';
 
 /** Logical resolution — designed for portrait mobile (9:16). */
 export const VIEWPORT = { width: 720, height: 1280 } as const;
@@ -55,6 +56,7 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
       DilemmaScene,
       JournalScene,
       AssessmentScene,
+      EncounterSelectionScene,
     ],
   };
 }

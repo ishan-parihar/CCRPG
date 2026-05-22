@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const emotionalInfrared: StageAssessment = {
   line: 'Emotional',
@@ -23,6 +23,28 @@ export const emotionalInfrared: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 60000,
+  itemPool: [
+    { id: 'emotional-infrared-01', taskType: 'emotion_identification', difficulty: 0.2, parameters: { stimulusType: 'face', emotionSet: ['happy', 'not-happy'], trials: 4, displayDurationMs: 3000 }, measures: ['accuracy'] },
+    { id: 'emotional-infrared-02', taskType: 'emotion_identification', difficulty: 0.25, parameters: { stimulusType: 'face', emotionSet: ['happy', 'not-happy'], trials: 5, displayDurationMs: 2800 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-03', taskType: 'emotion_identification', difficulty: 0.3, parameters: { stimulusType: 'face', emotionSet: ['happy', 'not-happy'], trials: 6, displayDurationMs: 2500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-04', taskType: 'emotion_identification', difficulty: 0.35, parameters: { stimulusType: 'face', emotionSet: ['calm', 'distressed'], trials: 4, displayDurationMs: 3000 }, measures: ['accuracy'] },
+    { id: 'emotional-infrared-05', taskType: 'emotion_identification', difficulty: 0.4, parameters: { stimulusType: 'face', emotionSet: ['calm', 'distressed'], trials: 6, displayDurationMs: 2500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-06', taskType: 'emotion_identification', difficulty: 0.4, parameters: { stimulusType: 'sound', emotionSet: ['soothing', 'startling'], trials: 4, displayDurationMs: 2000 }, measures: ['accuracy'] },
+    { id: 'emotional-infrared-07', taskType: 'emotion_identification', difficulty: 0.45, parameters: { stimulusType: 'sound', emotionSet: ['soothing', 'startling'], trials: 6, displayDurationMs: 1800 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-08', taskType: 'emotion_identification', difficulty: 0.5, parameters: { stimulusType: 'face', emotionSet: ['comfort', 'discomfort'], trials: 6, displayDurationMs: 2200 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-09', taskType: 'emotion_identification', difficulty: 0.5, parameters: { stimulusType: 'face', emotionSet: ['happy', 'not-happy'], trials: 8, displayDurationMs: 2000 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-infrared-10', taskType: 'emotion_identification', difficulty: 0.55, parameters: { stimulusType: 'sound', emotionSet: ['calm', 'alarming'], trials: 8, displayDurationMs: 1500 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-11', taskType: 'emotion_identification', difficulty: 0.55, parameters: { stimulusType: 'face', emotionSet: ['comfort', 'discomfort'], trials: 8, displayDurationMs: 2000 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-infrared-12', taskType: 'emotion_identification', difficulty: 0.6, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad'], trials: 6, displayDurationMs: 2200 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-13', taskType: 'emotion_identification', difficulty: 0.6, parameters: { stimulusType: 'sound', emotionSet: ['soothing', 'startling', 'neutral'], trials: 6, displayDurationMs: 1800 }, measures: ['accuracy'] },
+    { id: 'emotional-infrared-14', taskType: 'emotion_identification', difficulty: 0.65, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad'], trials: 8, displayDurationMs: 2000 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-infrared-15', taskType: 'emotion_identification', difficulty: 0.7, parameters: { stimulusType: 'face', emotionSet: ['calm', 'distressed', 'neutral'], trials: 6, displayDurationMs: 2000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-16', taskType: 'emotion_identification', difficulty: 0.7, parameters: { stimulusType: 'sound', emotionSet: ['soothing', 'startling', 'neutral'], trials: 8, displayDurationMs: 1500 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-infrared-17', taskType: 'emotion_identification', difficulty: 0.75, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry'], trials: 6, displayDurationMs: 2000 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-18', taskType: 'emotion_identification', difficulty: 0.8, parameters: { stimulusType: 'face', emotionSet: ['happy', 'sad', 'angry'], trials: 8, displayDurationMs: 1800 }, measures: ['accuracy', 'response_time', 'consistency'] },
+    { id: 'emotional-infrared-19', taskType: 'emotion_identification', difficulty: 0.85, parameters: { stimulusType: 'face', emotionSet: ['comfort', 'discomfort', 'neutral', 'startled'], trials: 6, displayDurationMs: 1800 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-infrared-20', taskType: 'emotion_identification', difficulty: 0.9, parameters: { stimulusType: 'face', emotionSet: ['comfort', 'discomfort', 'neutral', 'startled'], trials: 8, displayDurationMs: 1500 }, measures: ['accuracy', 'response_time', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Identify emotion without assistance',

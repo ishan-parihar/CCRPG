@@ -1,5 +1,6 @@
 export type TelemetryEventType =
   | 'encounter_completed'
+  | 'encounter_declined'
   | 'polarity_shift'
   | 'shadow_surfaced'
   | 'shadow_resolved'
@@ -16,6 +17,7 @@ export interface TelemetryEvent {
 
 export const ALL_TELEMETRY_EVENT_TYPES: readonly TelemetryEventType[] = [
   'encounter_completed',
+  'encounter_declined',
   'polarity_shift',
   'shadow_surfaced',
   'shadow_resolved',

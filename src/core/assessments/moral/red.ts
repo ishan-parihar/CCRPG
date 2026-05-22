@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const moralRed: StageAssessment = {
   line: 'Moral',
@@ -31,6 +31,28 @@ export const moralRed: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 200000,
+  itemPool: [
+    { id: 'moral-red-01', taskType: 'dilemma', difficulty: 0.2, parameters: { dilemmaType: 'self-interest-vs-other', choices: 2, scenarioId: 'food-sharing' }, measures: ['depth', 'coherence'] },
+    { id: 'moral-red-02', taskType: 'dilemma', difficulty: 0.25, parameters: { dilemmaType: 'self-interest-vs-other', choices: 2, scenarioId: 'toy-dispute' }, measures: ['depth', 'coherence'] },
+    { id: 'moral-red-03', taskType: 'dilemma', difficulty: 0.3, parameters: { dilemmaType: 'self-interest-vs-other', choices: 3, scenarioId: 'resource-claim' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-04', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'Why should you get what you want?', maxResponseLength: 300 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-red-05', taskType: 'dilemma', difficulty: 0.35, parameters: { dilemmaType: 'self-interest-vs-other', choices: 3, scenarioId: 'territory-conflict' }, measures: ['depth', 'coherence'] },
+    { id: 'moral-red-06', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'Someone weaker has something you want. What do you do and why?', maxResponseLength: 400 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-07', taskType: 'dilemma', difficulty: 0.4, parameters: { dilemmaType: 'power-vs-fairness', choices: 3, scenarioId: 'unequal-strength' }, measures: ['depth', 'integration'] },
+    { id: 'moral-red-08', taskType: 'dilemma', difficulty: 0.45, parameters: { dilemmaType: 'self-interest-vs-other', choices: 3, scenarioId: 'betrayal-opportunity' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-09', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'Is it wrong to take what you can if no one stops you?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'moral-red-10', taskType: 'dilemma', difficulty: 0.5, parameters: { dilemmaType: 'power-vs-fairness', choices: 3, scenarioId: 'stolen-goods' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-11', taskType: 'dilemma', difficulty: 0.55, parameters: { dilemmaType: 'loyalty-vs-self', choices: 3, scenarioId: 'ally-betrayal' }, measures: ['depth', 'coherence'] },
+    { id: 'moral-red-12', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'Your ally is weak and slowing you down. Do you leave them?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-13', taskType: 'dilemma', difficulty: 0.6, parameters: { dilemmaType: 'ambiguous-self-interest', choices: 3, scenarioId: 'delayed-reward' }, measures: ['depth', 'integration'] },
+    { id: 'moral-red-14', taskType: 'dilemma', difficulty: 0.65, parameters: { dilemmaType: 'ambiguous-self-interest', choices: 4, scenarioId: 'reputation-vs-gain' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-15', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'When is it acceptable to hurt someone to get what you need?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-16', taskType: 'dilemma', difficulty: 0.7, parameters: { dilemmaType: 'ambiguous-self-interest', choices: 4, scenarioId: 'power-cost' }, measures: ['depth', 'coherence'] },
+    { id: 'moral-red-17', taskType: 'dilemma', difficulty: 0.75, parameters: { dilemmaType: 'ambiguous-self-interest', choices: 4, scenarioId: 'mutual-destruction' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-18', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'Describe a situation where being selfish actually helps others.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-19', taskType: 'dilemma', difficulty: 0.85, parameters: { dilemmaType: 'ambiguous-self-interest', choices: 4, scenarioId: 'sacrifice-for-power' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'moral-red-20', taskType: 'llm_dialogue', difficulty: 0.9, parameters: { prompt: 'What makes YOUR desires more important than someone elses? Argue both sides.', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Make principled self-interested choice alone',

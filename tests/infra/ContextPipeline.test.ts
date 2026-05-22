@@ -48,6 +48,7 @@ function makeMockEncounter(overrides?: Partial<ScheduledEncounter>): ScheduledEn
     sessionPosition: 'peak',
     priority: 1,
     driveTarget: null,
+    executionMode: 'capacity',
     ...overrides,
   };
 }

@@ -31,6 +31,13 @@ describe('EncounterScheduler', () => {
     ],
     recentEncounterIds: [],
     cooldowns: {},
+    narrativeBeats: [],
+    activeBeatId: null,
+    completedBeatIds: [],
+    factions: [],
+    npcRelationships: [],
+    pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+    activeMacroEvents: [],
   };
   const session: SessionContext = {
     encountersSoFar: 2,
@@ -46,7 +53,7 @@ describe('EncounterScheduler', () => {
   });
 
   it('returns empty when no holons are active', () => {
-    const emptyWorld: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {} };
+    const emptyWorld: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {}, narrativeBeats: [], activeBeatId: null, completedBeatIds: [], factions: [], npcRelationships: [], pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 }, activeMacroEvents: [] };
     const result = scheduleNext(sig, emptyWorld, session, Date.now(), 3);
     expect(result).toHaveLength(0);
   });
@@ -56,6 +63,13 @@ describe('EncounterScheduler', () => {
       holons: [makeHolon('h-high', 'Cognitive', 'Orange')], // 2 stages above Red
       recentEncounterIds: [],
       cooldowns: {},
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
     };
     const result = scheduleNext(sig, highWorld, session, Date.now(), 3);
     expect(result).toHaveLength(0);

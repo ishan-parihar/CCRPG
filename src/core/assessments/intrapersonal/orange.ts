@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const intrapersonalOrange: StageAssessment = {
   line: 'Intrapersonal',
@@ -30,6 +30,28 @@ export const intrapersonalOrange: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 210000,
+  itemPool: [
+    { id: 'intrapersonal-orange-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['How confident are you in this task?'], responseType: 'text', compareToActual: true }, measures: ['metacognition', 'depth'] },
+    { id: 'intrapersonal-orange-02', taskType: 'self_report', difficulty: 0.25, parameters: { prompts: ['What is your goal right now?'], responseType: 'text' }, measures: ['metacognition', 'coherence'] },
+    { id: 'intrapersonal-orange-03', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'bias-identification', biases: ['confirmation'], scenarios: 2 }, measures: ['metacognition', 'depth'] },
+    { id: 'intrapersonal-orange-04', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['How well did you do?', 'Were you accurate?'], responseType: 'text', compareToActual: true }, measures: ['metacognition', 'self_correction'] },
+    { id: 'intrapersonal-orange-05', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'bias-identification', biases: ['confirmation', 'anchoring'], scenarios: 3 }, measures: ['metacognition', 'depth', 'coherence'] },
+    { id: 'intrapersonal-orange-06', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['What strategy are you using?', 'Is it working?'], responseType: 'text', compareToActual: true }, measures: ['metacognition', 'self_correction', 'depth'] },
+    { id: 'intrapersonal-orange-07', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'self-efficacy', responseType: 'text', scenarios: 3 }, measures: ['metacognition', 'coherence'] },
+    { id: 'intrapersonal-orange-08', taskType: 'scenario', difficulty: 0.45, parameters: { scenarioType: 'bias-identification', biases: ['confirmation', 'anchoring', 'availability'], scenarios: 3 }, measures: ['metacognition', 'depth', 'coherence'] },
+    { id: 'intrapersonal-orange-09', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['Where might you be wrong?', 'What would change your mind?'], responseType: 'text' }, measures: ['metacognition', 'depth', 'self_correction'] },
+    { id: 'intrapersonal-orange-10', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'goal-setting', responseType: 'text', scenarios: 3, timeHorizon: 'medium' }, measures: ['metacognition', 'coherence', 'depth'] },
+    { id: 'intrapersonal-orange-11', taskType: 'self_report', difficulty: 0.55, parameters: { prompts: ['What bias might be affecting you right now?'], responseType: 'text', compareToActual: true }, measures: ['metacognition', 'self_correction', 'depth'] },
+    { id: 'intrapersonal-orange-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'bias-identification', biases: ['confirmation', 'anchoring', 'availability', 'dunning-kruger'], scenarios: 4 }, measures: ['metacognition', 'depth', 'coherence'] },
+    { id: 'intrapersonal-orange-13', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['Rate your performance 1-10', 'What evidence supports that rating?'], responseType: 'text', compareToActual: true }, measures: ['metacognition', 'self_correction'] },
+    { id: 'intrapersonal-orange-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'metacognitive-monitoring', responseType: 'text', scenarios: 4, realTimeTracking: true }, measures: ['metacognition', 'depth', 'self_correction'] },
+    { id: 'intrapersonal-orange-15', taskType: 'self_report', difficulty: 0.7, parameters: { prompts: ['What are your blind spots?', 'How do you know they are blind spots?'], responseType: 'text' }, measures: ['metacognition', 'depth', 'coherence'] },
+    { id: 'intrapersonal-orange-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'bias-identification', biases: ['confirmation', 'anchoring', 'availability', 'dunning-kruger', 'sunk-cost'], scenarios: 5 }, measures: ['metacognition', 'depth', 'self_correction'] },
+    { id: 'intrapersonal-orange-17', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['Predict your performance on the next task', 'What makes you confident or uncertain?'], responseType: 'text', compareToActual: true }, measures: ['metacognition', 'self_correction', 'depth'] },
+    { id: 'intrapersonal-orange-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'uncomfortable-truth', responseType: 'text', scenarios: 4 }, measures: ['depth', 'metacognition', 'self_correction'] },
+    { id: 'intrapersonal-orange-19', taskType: 'self_report', difficulty: 0.85, parameters: { prompts: ['Where is your self-assessment most likely wrong?', 'What would prove you wrong?'], responseType: 'text', compareToActual: true }, measures: ['metacognition', 'self_correction', 'depth'] },
+    { id: 'intrapersonal-orange-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'metacognitive-monitoring', responseType: 'text', scenarios: 5, realTimeTracking: true, biasChallenge: true }, measures: ['metacognition', 'depth', 'self_correction', 'coherence'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Assess own biases without external feedback',

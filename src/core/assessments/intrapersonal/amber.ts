@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const intrapersonalAmber: StageAssessment = {
   line: 'Intrapersonal',
@@ -30,6 +30,28 @@ export const intrapersonalAmber: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 180000,
+  itemPool: [
+    { id: 'intrapersonal-amber-01', taskType: 'self_report', difficulty: 0.2, parameters: { prompts: ['What group do you belong to?'], responseType: 'text' }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-amber-02', taskType: 'self_report', difficulty: 0.25, parameters: { prompts: ['What is your role in your group?'], responseType: 'text' }, measures: ['depth', 'coherence'] },
+    { id: 'intrapersonal-amber-03', taskType: 'self_report', difficulty: 0.3, parameters: { prompts: ['How do others see you in your role?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-amber-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'predict-own-behaviour', scenarios: 2, responseType: 'choice-plus-text' }, measures: ['metacognition', 'coherence'] },
+    { id: 'intrapersonal-amber-05', taskType: 'self_report', difficulty: 0.4, parameters: { prompts: ['When do you feel most like yourself in your group?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-amber-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'role-pressure', scenarios: 2, responseType: 'choice-plus-text' }, measures: ['metacognition', 'coherence', 'self_correction'] },
+    { id: 'intrapersonal-amber-07', taskType: 'self_report', difficulty: 0.45, parameters: { prompts: ['Do you ever act differently than you feel to fit in?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-amber-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'conformity-awareness', scenarios: 3, responseType: 'choice-plus-text' }, measures: ['metacognition', 'coherence', 'self_correction'] },
+    { id: 'intrapersonal-amber-09', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['What parts of you exist outside your role?'], responseType: 'text' }, measures: ['depth', 'metacognition'] },
+    { id: 'intrapersonal-amber-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'predict-own-behaviour', scenarios: 3, responseType: 'text' }, measures: ['metacognition', 'coherence', 'self_correction'] },
+    { id: 'intrapersonal-amber-11', taskType: 'self_report', difficulty: 0.6, parameters: { prompts: ['How would you feel if your role changed?', 'Who are you without your role?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-amber-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'identity-vs-role', scenarios: 3, responseType: 'text' }, measures: ['metacognition', 'depth', 'self_correction'] },
+    { id: 'intrapersonal-amber-13', taskType: 'self_report', difficulty: 0.65, parameters: { prompts: ['When has your group expected something that did not feel right?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'intrapersonal-amber-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'self-in-multiple-groups', scenarios: 3, responseType: 'text' }, measures: ['metacognition', 'depth', 'integration'] },
+    { id: 'intrapersonal-amber-15', taskType: 'self_report', difficulty: 0.7, parameters: { prompts: ['Do you have different selves in different groups?', 'Which is the real you?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-amber-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'role-conflict-self-awareness', scenarios: 4, responseType: 'text' }, measures: ['metacognition', 'depth', 'self_correction'] },
+    { id: 'intrapersonal-amber-17', taskType: 'self_report', difficulty: 0.8, parameters: { prompts: ['How do you know when you are conforming vs being authentic?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-amber-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'identity-under-group-pressure', scenarios: 4, responseType: 'text' }, measures: ['metacognition', 'depth', 'self_correction', 'integration'] },
+    { id: 'intrapersonal-amber-19', taskType: 'self_report', difficulty: 0.85, parameters: { prompts: ['Describe a time you chose yourself over your role.', 'What did it cost?'], responseType: 'text' }, measures: ['depth', 'metacognition', 'integration'] },
+    { id: 'intrapersonal-amber-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'multi-role-identity-integration', scenarios: 4, responseType: 'text' }, measures: ['metacognition', 'depth', 'self_correction', 'integration'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Define your role without needing group validation',

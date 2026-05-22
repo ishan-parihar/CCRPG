@@ -195,7 +195,6 @@ export class PatternRenderer {
   }
 
   private playSequence(): void {
-    const { width } = this.scene.scale;
     const totalToShow = this.currentPattern.length * this.repetitions;
     const fullSequence: string[] = [];
     for (let r = 0; r < this.repetitions; r++) {
@@ -222,8 +221,8 @@ export class PatternRenderer {
     this.timers.push(displayTimer);
   }
 
-  private showSymbolInSequence(symbol: string, index: number, total: number): void {
-    const { width } = this.scene.scale;
+  private showSymbolInSequence(_symbol: string, index: number, _total: number): void {
+    const { width: _width } = this.scene.scale;
 
     // Show current symbol prominently in center
     // Also show recent history as smaller symbols to the left

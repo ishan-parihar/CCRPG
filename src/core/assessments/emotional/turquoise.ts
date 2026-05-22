@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const emotionalTurquoise: StageAssessment = {
   line: 'Emotional',
@@ -30,6 +30,28 @@ export const emotionalTurquoise: StageAssessment = {
   },
   minimumTrials: 4,
   estimatedDurationMs: 270000,
+  itemPool: [
+    { id: 'emotional-turquoise-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'emotion-as-signal', scenarios: 2, responseType: 'text', intensityLevel: 'moderate' }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-turquoise-02', taskType: 'scenario', difficulty: 0.25, parameters: { scenarioType: 'emotion-as-signal', scenarios: 3, responseType: 'text', intensityLevel: 'moderate' }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-turquoise-03', taskType: 'llm_dialogue', difficulty: 0.3, parameters: { prompt: 'You feel two contradictory emotions at once. What information does each carry?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-turquoise-04', taskType: 'scenario', difficulty: 0.35, parameters: { scenarioType: 'emotion-as-signal', scenarios: 3, responseType: 'text', intensityLevel: 'high' }, measures: ['depth', 'integration'] },
+    { id: 'emotional-turquoise-05', taskType: 'llm_dialogue', difficulty: 0.4, parameters: { prompt: 'Describe a feeling you have about a feeling. What does the meta-emotion reveal?', maxResponseLength: 400 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'emotional-turquoise-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'multiple-truths', scenarios: 2, responseType: 'text', emotionCount: 3 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-turquoise-07', taskType: 'llm_dialogue', difficulty: 0.45, parameters: { prompt: 'Someone you love has hurt someone else you love. Hold both emotional truths without choosing sides. What emerges?', maxResponseLength: 500 }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'emotional-turquoise-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'emotion-as-signal', scenarios: 4, responseType: 'text', intensityLevel: 'high', nonReactivity: true }, measures: ['depth', 'integration', 'consistency'] },
+    { id: 'emotional-turquoise-09', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'An emotion arises that your culture says you should not feel. How do you relate to it without suppression or indulgence?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-turquoise-10', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'multiple-truths', scenarios: 3, responseType: 'text', emotionCount: 4, holdSimultaneously: true }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'emotional-turquoise-11', taskType: 'llm_dialogue', difficulty: 0.6, parameters: { prompt: 'You feel deep grief and deep joy at the same time. Neither cancels the other. Describe the texture of this simultaneity.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-turquoise-12', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'emotion-as-signal', scenarios: 4, responseType: 'text', intensityLevel: 'extreme', nonReactivity: true }, measures: ['depth', 'integration', 'consistency'] },
+    { id: 'emotional-turquoise-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'What is the emotion beneath all your emotions? Not a specific feeling, but the ground from which feelings arise.', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'emotional-turquoise-14', taskType: 'scenario', difficulty: 0.65, parameters: { scenarioType: 'multiple-truths', scenarios: 3, responseType: 'text', emotionCount: 5, paradoxPresent: true }, measures: ['depth', 'integration', 'complexity_handled'] },
+    { id: 'emotional-turquoise-15', taskType: 'llm_dialogue', difficulty: 0.7, parameters: { prompt: 'A collective emotion moves through a group you are in. How do you feel it without losing your own emotional center?', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-turquoise-16', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'emotion-as-signal', scenarios: 5, responseType: 'text', intensityLevel: 'extreme', collectiveEmotion: true }, measures: ['depth', 'integration', 'coherence'] },
+    { id: 'emotional-turquoise-17', taskType: 'llm_dialogue', difficulty: 0.8, parameters: { prompt: 'You notice you are having a feeling about not having feelings. What does this recursive loop reveal about the nature of emotional awareness?', maxResponseLength: 500 }, measures: ['depth', 'metacognition', 'coherence'] },
+    { id: 'emotional-turquoise-18', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'multiple-truths', scenarios: 4, responseType: 'text', emotionCount: 6, paradoxPresent: true, holdAll: true }, measures: ['depth', 'integration', 'complexity_handled'] },
+    { id: 'emotional-turquoise-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'Describe the difference between feeling an emotion and being an emotion. Then describe what remains when that distinction dissolves.', maxResponseLength: 600 }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'emotional-turquoise-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'emotion-as-signal', scenarios: 5, responseType: 'text', intensityLevel: 'maximum', metaEmotional: true, collectiveField: true }, measures: ['depth', 'integration', 'coherence', 'metacognition'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Read emotional signal without reactivity independently',

@@ -99,6 +99,7 @@ export class DilemmaScene extends Phaser.Scene {
       sessionPosition: 'peak',
       priority: 1,
       driveTarget: null,
+      executionMode: 'capacity',
     };
     const record: ConsequenceRecord = processOutcome(scheduled, response, Date.now());
 

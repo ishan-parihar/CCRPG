@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const willpowerWhite: StageAssessment = {
   line: 'Willpower',
@@ -44,6 +44,28 @@ export const willpowerWhite: StageAssessment = {
   },
   minimumTrials: 5,
   estimatedDurationMs: 300000,
+  itemPool: [
+    { id: 'willpower-white-01', taskType: 'scenario', difficulty: 0.2, parameters: { scenarioType: 'will-less-will', responseType: 'text', scenarios: 2, divineAlignment: true }, measures: ['depth', 'coherence'] },
+    { id: 'willpower-white-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'Describe action that arises without a doer. Not passivity, but effortless doing.', maxResponseLength: 400, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'willpower-white-03', taskType: 'hold', difficulty: 0.3, parameters: { targetDurationMs: 60000, perturbations: true, perturbationType: 'subtle', measureEffortlessness: true, noDoer: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-white-04', taskType: 'llm_dialogue', difficulty: 0.35, parameters: { prompt: 'What is the difference between your will and the will of the universe? Is there a difference?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence'] },
+    { id: 'willpower-white-05', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'divine-will-alignment', responseType: 'text', scenarios: 2, surrenderParadox: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-06', taskType: 'hold', difficulty: 0.4, parameters: { targetDurationMs: 90000, perturbations: true, perturbationType: 'moderate', measureEffortlessness: true, noDoer: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-white-07', taskType: 'llm_dialogue', difficulty: 0.45, parameters: { prompt: 'Thy will be done. But there is no thy and no mine. What wills?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-08', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'will-less-will', responseType: 'text', scenarios: 3, effortlessAction: true, noSelf: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-09', taskType: 'hold', difficulty: 0.5, parameters: { targetDurationMs: 120000, perturbations: true, perturbationType: 'moderate', measureEffortlessness: true, noDoer: true, transparentHolding: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-white-10', taskType: 'llm_dialogue', difficulty: 0.55, parameters: { prompt: 'Effort implies separation between the one who efforts and the task. What is action without this separation?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-11', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'divine-will-alignment', responseType: 'text', scenarios: 3, noSeparation: true, cosmicWill: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-12', taskType: 'hold', difficulty: 0.6, parameters: { targetDurationMs: 150000, perturbations: true, perturbationType: 'strong', measureEffortlessness: true, noDoer: true, transparentHolding: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-white-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'The river does not will itself to flow. Yet it moves mountains. Describe this will that is not will.', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-14', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'will-less-will', responseType: 'text', scenarios: 4, effortlessAction: true, noSelf: true, cosmicAlignment: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-15', taskType: 'hold', difficulty: 0.7, parameters: { targetDurationMs: 180000, perturbations: true, perturbationType: 'strong', measureEffortlessness: true, noDoer: true, transparentHolding: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-white-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'You are being lived. You are being breathed. You are being willed. Who or what is doing this?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-17', taskType: 'scenario', difficulty: 0.8, parameters: { scenarioType: 'divine-will-alignment', responseType: 'text', scenarios: 4, noSeparation: true, cosmicWill: true, harvestAction: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+    { id: 'willpower-white-18', taskType: 'hold', difficulty: 0.8, parameters: { targetDurationMs: 240000, perturbations: true, perturbationType: 'intense', measureEffortlessness: true, noDoer: true, transparentHolding: true }, measures: ['accuracy', 'consistency'] },
+    { id: 'willpower-white-19', taskType: 'llm_dialogue', difficulty: 0.85, parameters: { prompt: 'Will dissolves into willingness. Willingness dissolves into being. Being dissolves into... what? And from there, what acts?', maxResponseLength: 600, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },
+    { id: 'willpower-white-20', taskType: 'scenario', difficulty: 0.9, parameters: { scenarioType: 'will-less-will', responseType: 'text', scenarios: 5, effortlessAction: true, noSelf: true, cosmicAlignment: true, harvestReadiness: true }, measures: ['depth', 'coherence', 'integration', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Act without claiming the action - will operates but no one is willing',

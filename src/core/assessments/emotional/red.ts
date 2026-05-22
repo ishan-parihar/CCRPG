@@ -1,4 +1,4 @@
-import type { StageAssessment } from '../types.js';
+import type { AssessmentItem, StageAssessment } from '../types.js';
 
 export const emotionalRed: StageAssessment = {
   line: 'Emotional',
@@ -34,6 +34,28 @@ export const emotionalRed: StageAssessment = {
   },
   minimumTrials: 3,
   estimatedDurationMs: 150000,
+  itemPool: [
+    { id: 'emotional-red-01', taskType: 'emotion_identification', difficulty: 0.2, parameters: { stimulusType: 'face', emotionSet: ['anger', 'happiness'], trials: 4 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-red-02', taskType: 'emotion_identification', difficulty: 0.25, parameters: { stimulusType: 'face', emotionSet: ['anger', 'sadness', 'happiness'], trials: 5 }, measures: ['accuracy', 'consistency'] },
+    { id: 'emotional-red-03', taskType: 'emotion_identification', difficulty: 0.3, parameters: { stimulusType: 'scenario', emotionSet: ['anger', 'desire', 'excitement'], trials: 4 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-red-04', taskType: 'scenario', difficulty: 0.3, parameters: { scenarioType: 'power-emotion', responseType: 'choice', choices: 3 }, measures: ['accuracy', 'coherence'] },
+    { id: 'emotional-red-05', taskType: 'emotion_identification', difficulty: 0.35, parameters: { stimulusType: 'scenario', emotionSet: ['anger', 'frustration', 'excitement', 'desire'], distinguishSelfOther: true, trials: 5 }, measures: ['accuracy', 'consistency'] },
+    { id: 'emotional-red-06', taskType: 'scenario', difficulty: 0.4, parameters: { scenarioType: 'conflict-emotion', responseType: 'choice-plus-text', choices: 3 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-red-07', taskType: 'emotion_identification', difficulty: 0.4, parameters: { stimulusType: 'voice', emotionSet: ['anger', 'excitement', 'frustration', 'contempt'], trials: 6 }, measures: ['accuracy', 'response_time'] },
+    { id: 'emotional-red-08', taskType: 'emotion_identification', difficulty: 0.45, parameters: { stimulusType: 'scenario', emotionSet: ['anger', 'desire', 'frustration', 'excitement', 'contempt'], distinguishSelfOther: true, trials: 6 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-red-09', taskType: 'scenario', difficulty: 0.5, parameters: { scenarioType: 'dominance-emotion', responseType: 'text', maxLength: 200 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-red-10', taskType: 'emotion_identification', difficulty: 0.5, parameters: { stimulusType: 'scenario', emotionSet: ['anger', 'shame', 'pride', 'desire', 'frustration'], distinguishSelfOther: true, trials: 6 }, measures: ['accuracy', 'consistency', 'depth'] },
+    { id: 'emotional-red-11', taskType: 'scenario', difficulty: 0.55, parameters: { scenarioType: 'mixed-emotion-power', responseType: 'choice-plus-text', choices: 4 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'emotional-red-12', taskType: 'emotion_identification', difficulty: 0.6, parameters: { stimulusType: 'scenario', emotionSet: ['pride', 'shame', 'contempt', 'envy', 'desire'], distinguishSelfOther: true, trials: 7 }, measures: ['accuracy', 'depth'] },
+    { id: 'emotional-red-13', taskType: 'scenario', difficulty: 0.6, parameters: { scenarioType: 'betrayal-emotion', responseType: 'text', maxLength: 300 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'emotional-red-14', taskType: 'emotion_identification', difficulty: 0.65, parameters: { stimulusType: 'scenario', emotionSet: ['rage', 'humiliation', 'triumph', 'jealousy'], distinguishSelfOther: true, trials: 6 }, measures: ['accuracy', 'depth', 'coherence'] },
+    { id: 'emotional-red-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'power-loss-emotion', responseType: 'text', maxLength: 300 }, measures: ['depth', 'coherence'] },
+    { id: 'emotional-red-16', taskType: 'emotion_identification', difficulty: 0.7, parameters: { stimulusType: 'scenario', emotionSet: ['rage', 'vulnerability', 'triumph', 'shame', 'desire'], distinguishSelfOther: true, trials: 8 }, measures: ['accuracy', 'consistency', 'depth'] },
+    { id: 'emotional-red-17', taskType: 'scenario', difficulty: 0.75, parameters: { scenarioType: 'complex-power-emotion', responseType: 'text', maxLength: 400 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'emotional-red-18', taskType: 'emotion_identification', difficulty: 0.8, parameters: { stimulusType: 'scenario', emotionSet: ['ambivalence', 'bittersweet', 'awe', 'contempt', 'vulnerability'], distinguishSelfOther: true, trials: 8 }, measures: ['accuracy', 'depth', 'coherence'] },
+    { id: 'emotional-red-19', taskType: 'scenario', difficulty: 0.85, parameters: { scenarioType: 'ego-threat-emotion', responseType: 'text', maxLength: 400 }, measures: ['depth', 'coherence', 'consistency'] },
+    { id: 'emotional-red-20', taskType: 'emotion_identification', difficulty: 0.9, parameters: { stimulusType: 'scenario', emotionSet: ['ambivalence', 'vulnerability', 'awe', 'shame', 'desire', 'rage'], distinguishSelfOther: true, trials: 10 }, measures: ['accuracy', 'depth', 'coherence', 'consistency'] },
+  ] satisfies readonly AssessmentItem[],
   driveProbes: {
     agency: {
       description: 'Identify your own emotion without group consensus',
