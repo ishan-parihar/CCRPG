@@ -3,9 +3,13 @@
  * Used for open-ended response evaluation in later-stage probes.
  */
 
-interface LLMEvaluation {
+import type { Stage } from '../../core/domain/Stage.js';
+
+export interface LLMEvaluation {
   readonly score: number;
   readonly feedback: string;
+  readonly inferredStage?: Stage;
+  readonly confidence?: number;
 }
 
 const FALLBACK: LLMEvaluation = { score: 0.5, feedback: 'LLM unavailable' };
@@ -30,7 +34,7 @@ export async function evaluateResponse(
       body: JSON.stringify({
         model,
         messages: [
-          { role: 'system', content: `You are a scoring rubric evaluator. ${rubric}\nRespond ONLY with JSON: {"score": <0-1>, "feedback": "<brief>"}` },
+          { role: 'system', content: `You are a developmental psychology scoring rubric evaluator. ${rubric}\nIf evaluating a calibration probe, determine which developmental stage (Infrared, Magenta, Red, Amber, Orange, Green, Turquoise, White) the player response corresponds to and provide a confidence rating. Respond ONLY with JSON: {"score": <0-1>, "feedback": "<brief>", "inferredStage": "<stage>", "confidence": <0-1>}` },
           { role: 'user', content: `Prompt: ${prompt}\nPlayer response: ${playerResponse}` },
         ],
         temperature: 0.2,
@@ -41,9 +45,24 @@ export async function evaluateResponse(
 
     const data = (await res.json()) as { choices: { message: { content: string } }[] };
     const content = data.choices[0]?.message.content ?? '';
-    const parsed = JSON.parse(content) as { score: number; feedback: string };
+    const parsed = JSON.parse(content) as { score: number; feedback: string; inferredStage?: string; confidence?: number };
     const score = Math.max(0, Math.min(1, parsed.score));
-    return { score, feedback: parsed.feedback ?? '' };
+    
+    let inferredStage: Stage | undefined = undefined;
+    if (parsed.inferredStage) {
+      const normalized = parsed.inferredStage.charAt(0).toUpperCase() + parsed.inferredStage.slice(1).toLowerCase();
+      const stages: string[] = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'];
+      if (stages.includes(normalized)) {
+        inferredStage = normalized as Stage;
+      }
+    }
+
+    return {
+      score,
+      feedback: parsed.feedback ?? '',
+      inferredStage,
+      confidence: parsed.confidence,
+    };
   } catch {
     return FALLBACK;
   }

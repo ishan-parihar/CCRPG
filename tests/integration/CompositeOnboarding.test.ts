@@ -195,6 +195,39 @@ describe('CompositeOnboarding', () => {
         expect(result.assessmentsRun).toBeLessThanOrEqual(4);
       }
     });
+
+    it('instantly converges to inferredStage when returned by LLM in rawResponse', async () => {
+      const registry = createFullRegistry();
+      const onboarding = new CompositeOnboarding(registry, { sessionSplit: 'full' });
+      
+      const runner = async (module: StageAssessment): Promise<AssessmentResult> => {
+        return {
+          line: module.line,
+          stage: module.stage,
+          passed: true,
+          confidence: 0.8,
+          dimensions: {} as any,
+          rawTrials: [{
+            taskId: 'test-task',
+            timestamp: Date.now(),
+            dimensions: {},
+            rawResponse: {
+              score: 0.9,
+              feedback: 'Perfect alignment',
+              inferredStage: 'Turquoise',
+              confidence: 0.95
+            },
+            durationMs: 1000
+          }]
+        };
+      };
+      
+      const result = await onboarding.assessLine('Cognitive', runner);
+      
+      expect(result.altitude).toBe('Turquoise');
+      expect(result.assessmentsRun).toBe(1); // Converged on first trial!
+      expect(result.confidence).toBe(0.95);
+    });
   });
 
   describe('quick calibration mode', () => {

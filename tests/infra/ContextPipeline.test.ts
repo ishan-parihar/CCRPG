@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi } from 'vitest';
 import { buildContext } from '../../src/infra/llm/ContextPipeline.js';
 import type { ContextPipelineInput } from '../../src/infra/llm/ContextPipeline.js';
 import { createSignificator } from '../../src/core/domain/Significator.js';
@@ -318,6 +318,48 @@ describe('ContextPipeline', () => {
       const result = buildContext(input);
       expect(result.systemPrompt).toContain('[CONTINUITY]');
       expect(result.systemPrompt).toContain('warrior tested the player');
+    });
+  });
+
+  describe('evaluateResponse - stage inference parsing', () => {
+    it('returns inferredStage and confidence when present in API output', async () => {
+      // We will mock global.fetch to return a valid JSON payload containing inferredStage
+      const originalFetch = global.fetch;
+      global.fetch = async () => {
+        return {
+          ok: true,
+          json: async () => ({
+            choices: [
+              {
+                message: {
+                  content: JSON.stringify({
+                    score: 0.8,
+                    feedback: 'Nuanced reflection',
+                    inferredStage: 'Orange',
+                    confidence: 0.9,
+                  }),
+                },
+              },
+            ],
+          }),
+        } as any;
+      };
+
+      try {
+        // Set temp env vars so evaluateResponse doesn't exit early
+        vi.stubEnv('VITE_LLM_BASE_URL', 'http://localhost');
+        vi.stubEnv('VITE_LLM_API_KEY', 'mock-key');
+        vi.stubEnv('VITE_LLM_MODEL', 'mock-model');
+
+        // @ts-ignore
+        const { evaluateResponse } = await import('../../src/infra/llm/LLMClient.js');
+        const res = await evaluateResponse('prompt', 'rubric', 'response');
+        expect(res.inferredStage).toBe('Orange');
+        expect(res.confidence).toBe(0.9);
+      } finally {
+        global.fetch = originalFetch;
+        vi.unstubAllEnvs();
+      }
     });
   });
 });

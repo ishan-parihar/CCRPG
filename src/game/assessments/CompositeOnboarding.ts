@@ -175,6 +175,16 @@ export class CompositeOnboarding {
       assessments++;
       lastConfidence = result.confidence;
 
+      // Dynamic Stage Calibration: Bypasses binary-search loop if LLM directly infers altitude
+      const trialResponse = result.rawTrials?.[0]?.rawResponse as any;
+      if (trialResponse && typeof trialResponse === 'object' && trialResponse.inferredStage) {
+        const inferredStage = trialResponse.inferredStage as Stage;
+        if (ALL_STAGES.includes(inferredStage)) {
+          const confidence = typeof trialResponse.confidence === 'number' ? trialResponse.confidence : result.confidence;
+          return { line, altitude: inferredStage, confidence, assessmentsRun: assessments };
+        }
+      }
+
       if (result.passed && result.confidence >= this.config.confidenceThreshold) {
         highestPassed = current;
         low = current + 1; // search higher
