@@ -79,5 +79,37 @@ describe('ConsequenceEngine', () => {
       const result = applyConsequences(sig, world, record, mockEncounter);
       expect(result.sig.shadows.activeCount).toBe(1);
     });
+
+    it('updates world.npcRelationships and world.recentEncounterIds using record.holonDeltas', () => {
+      const sig = createSignificator('p1', altitudes, 'Red');
+      const world: WorldState = {
+        holons: [],
+        recentEncounterIds: [],
+        cooldowns: {},
+        narrativeBeats: [],
+        activeBeatId: null,
+        completedBeatIds: [],
+        factions: [],
+        npcRelationships: [],
+        pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+        activeMacroEvents: []
+      };
+      
+      const record = {
+        ...processOutcome(mockEncounter, mockResponse, 1000),
+        holonDeltas: [
+          { holonId: 'h1', field: 'relationshipStrength', oldValue: 0.5, newValue: 0.6 }
+        ]
+      };
+      
+      const result = applyConsequences(sig, world, record, mockEncounter);
+      
+      expect(result.world.recentEncounterIds).toContain(mockEncounter.id);
+      const rel = result.world.npcRelationships.find(r => r.holonId === 'h1');
+      expect(rel).toBeDefined();
+      expect(rel?.strength).toBeCloseTo(0.6);
+      expect(rel?.encounters).toBe(1);
+      expect(rel?.lastEncounterAt).toBe(1000);
+    });
   });
 });

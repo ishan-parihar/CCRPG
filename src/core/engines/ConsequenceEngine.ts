@@ -112,7 +112,88 @@ export function applyConsequences(
     totalEncounters: sig.totalEncounters + 1,
   };
 
-  return { sig: newSig, world };
+  // 6. Update NPC Relationships and recentEncounterIds
+  const npcRelationships = [...world.npcRelationships];
+
+  // Update or initialize relationship for the primary holonSource if present
+  if (encounter.holonSource) {
+    const holonId = encounter.holonSource;
+    const existingIdx = npcRelationships.findIndex(r => r.holonId === holonId);
+    if (existingIdx !== -1) {
+      const existing = npcRelationships[existingIdx];
+      npcRelationships[existingIdx] = {
+        ...existing,
+        encounters: existing.encounters + 1,
+        lastEncounterAt: record.timestamp,
+      };
+    } else {
+      npcRelationships.push({
+        holonId,
+        strength: 0.5,
+        encounters: 1,
+        lastEncounterAt: record.timestamp,
+      });
+    }
+  }
+
+  // Process holonDeltas for relationship updates
+  for (const delta of record.holonDeltas) {
+    if (delta.field === 'relationship' || delta.field === 'relationshipStrength' || delta.field === 'strength') {
+      const holonId = delta.holonId;
+      const existingIdx = npcRelationships.findIndex(r => r.holonId === holonId);
+      
+      let deltaValue = 0;
+      if (typeof delta.newValue === 'number') {
+        if (typeof delta.oldValue === 'number') {
+          deltaValue = delta.newValue - delta.oldValue;
+        } else {
+          deltaValue = delta.newValue;
+        }
+      }
+
+      if (existingIdx !== -1) {
+        const existing = npcRelationships[existingIdx];
+        let newStrength: number;
+        if (typeof delta.oldValue === 'number' && typeof delta.newValue === 'number') {
+          newStrength = Math.max(0, Math.min(1, delta.newValue));
+        } else {
+          newStrength = Math.max(0, Math.min(1, existing.strength + deltaValue));
+        }
+        
+        const alreadyUpdated = encounter.holonSource === holonId;
+        npcRelationships[existingIdx] = {
+          ...existing,
+          strength: newStrength,
+          encounters: alreadyUpdated ? existing.encounters : existing.encounters + 1,
+          lastEncounterAt: record.timestamp,
+        };
+      } else {
+        let newStrength: number;
+        if (typeof delta.oldValue === 'number' && typeof delta.newValue === 'number') {
+          newStrength = Math.max(0, Math.min(1, delta.newValue));
+        } else {
+          newStrength = Math.max(0, Math.min(1, 0.5 + deltaValue));
+        }
+
+        npcRelationships.push({
+          holonId,
+          strength: newStrength,
+          encounters: 1,
+          lastEncounterAt: record.timestamp,
+        });
+      }
+    }
+  }
+
+  const recentEncounterIds = [...world.recentEncounterIds, encounter.id];
+
+  const newWorld: WorldState = {
+    ...world,
+    recentEncounterIds,
+    npcRelationships,
+  };
+
+  return { sig: newSig, world: newWorld };
 }
 
 /** Update drive fixation risk based on drive directionality signals. */

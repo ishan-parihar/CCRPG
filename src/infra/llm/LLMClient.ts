@@ -67,3 +67,38 @@ export async function evaluateResponse(
     return FALLBACK;
   }
 }
+
+export async function queryLLM(
+  systemPrompt: string,
+  userMessage: string,
+): Promise<string> {
+  const baseUrl = import.meta.env.VITE_LLM_BASE_URL as string | undefined;
+  const apiKey = import.meta.env.VITE_LLM_API_KEY as string | undefined;
+  const model = import.meta.env.VITE_LLM_MODEL as string | undefined;
+
+  if (!baseUrl || !apiKey || apiKey === 'sk-placeholder' || !model) {
+    return '{"error": "LLM unavailable"}';
+  }
+
+  try {
+    const res = await fetch(`${baseUrl}/chat/completions`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+      body: JSON.stringify({
+        model,
+        messages: [
+          { role: 'system', content: systemPrompt },
+          { role: 'user', content: userMessage },
+        ],
+        temperature: 0.7,
+      }),
+    });
+
+    if (!res.ok) return '{"error": "fetch error"}';
+
+    const data = (await res.json()) as { choices: { message: { content: string } }[] };
+    return data.choices[0]?.message.content ?? '';
+  } catch {
+    return '{"error": "exception"}';
+  }
+}
