@@ -7,7 +7,7 @@
  */
 import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
-import { CompositeOnboarding, seedDriveWeights } from '../assessments/CompositeOnboarding.js';
+import { CompositeOnboarding, seedDriveWeights, getLineModality } from '../assessments/CompositeOnboarding.js';
 import type { ModuleRegistry } from '@core/assessments/registry.js';
 import type { AssessmentResult, StageAssessment } from '@core/assessments/types.js';
 import type { Significator } from '@core/domain/Significator.js';
@@ -80,7 +80,11 @@ export class OnboardingScene extends Phaser.Scene {
         };
         assessScene.events.on('assessment_done', handler);
 
-        this.scene.launch(SceneKeys.Assessment, { module, mode: 'calibration' as const });
+        this.scene.launch(SceneKeys.Assessment, {
+          module,
+          mode: 'calibration' as const,
+          modality: getLineModality(module.line),
+        });
       });
     };
 

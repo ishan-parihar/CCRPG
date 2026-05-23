@@ -12,6 +12,7 @@
  */
 import type { Line } from '../../core/domain/Line.js';
 import type { Stage } from '../../core/domain/Stage.js';
+import type { Modality } from '../../core/domain/enums.js';
 import type { Significator } from '../../core/domain/Significator.js';
 import type { StageAssessment, AssessmentResult } from '../../core/assessments/types.js';
 import type { ModuleRegistry } from '../../core/assessments/registry.js';
@@ -279,5 +280,19 @@ export class CompositeOnboarding {
       confidence: result.confidence,
       assessmentsRun: 1,
     };
+  }
+}
+
+export function getLineModality(line: Line): Modality {
+  switch (line) {
+    case 'Cognitive': return 'Deterministic';
+    case 'Somatic': return 'Embodied';
+    case 'Willpower': return 'Embodied';
+    case 'Emotional': return 'ScenarioChoice';
+    case 'Moral': return 'ScenarioChoice';
+    case 'Intrapersonal': return 'LanguageReflective';
+    case 'Spiritual': return 'LanguageReflective';
+    case 'Interpersonal': return 'SocialCooperative';
+    default: return 'Deterministic';
   }
 }

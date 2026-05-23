@@ -83,4 +83,22 @@ describe('Onboarding -> Significator Creation', () => {
     expect(sig.createdAt).toBeGreaterThanOrEqual(before);
     expect(sig.createdAt).toBeLessThanOrEqual(after);
   });
+
+  it('maps line to correct Modality', async () => {
+    // @ts-ignore - getLineModality will be imported once implemented
+    const { getLineModality } = await import('../../src/game/assessments/CompositeOnboarding.js');
+    const mapping = {
+      Cognitive: 'Deterministic',
+      Somatic: 'Embodied',
+      Willpower: 'Embodied',
+      Emotional: 'ScenarioChoice',
+      Moral: 'ScenarioChoice',
+      Intrapersonal: 'LanguageReflective',
+      Spiritual: 'LanguageReflective',
+      Interpersonal: 'SocialCooperative',
+    };
+    for (const [line, modality] of Object.entries(mapping)) {
+      expect(getLineModality(line as any)).toBe(modality);
+    }
+  });
 });
