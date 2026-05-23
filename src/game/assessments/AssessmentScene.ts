@@ -199,7 +199,13 @@ export class AssessmentScene extends Phaser.Scene {
         return new EmotionRenderer(this, task, onComplete);
 
       case 'llm_dialogue':
-        return new LLMDialogueRenderer(this, task, onComplete);
+        return new LLMDialogueRenderer(
+          this,
+          task,
+          onComplete,
+          this.module.scoringRubric.llmRubric,
+          this.module.stage as Stage
+        );
 
       case 'cooperation':
       case 'imitation':
