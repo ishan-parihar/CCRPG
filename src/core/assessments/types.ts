@@ -69,6 +69,8 @@ export interface StageAssessment {
   readonly minimumTrials: number;
   readonly estimatedDurationMs: number;
   readonly itemPool?: readonly AssessmentItem[];
+  /** Optional single developmental probe for calibration mode. Probes HOW the player thinks, not just performance. */
+  readonly calibrationProbe?: AssessmentTask;
   readonly driveProbes: {
     readonly agency: DriveProbe;
     readonly communion: DriveProbe;
