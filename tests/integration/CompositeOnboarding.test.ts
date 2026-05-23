@@ -88,6 +88,43 @@ function createMockRunner(passUpTo: Partial<Record<Line, number>>) {
 // ---------------------------------------------------------------------------
 
 describe('CompositeOnboarding', () => {
+  describe('calibration probes fallback', () => {
+    it('returns calibrationProbe from module if defined', async () => {
+      // @ts-ignore
+      const { getOrCreateCalibrationProbe } = await import('../../src/core/assessments/calibrationProbes.js');
+      const task = mockTask('test-probe');
+      const mockModule = {
+        line: 'Moral' as const,
+        stage: 'Red' as const,
+        tasks: [],
+        scoringRubric: { passThreshold: 0.5, dimensionWeights: {} },
+        minimumTrials: 1,
+        estimatedDurationMs: 1000,
+        calibrationProbe: task,
+        driveProbes: {} as any,
+      };
+      const probe = getOrCreateCalibrationProbe(mockModule);
+      expect(probe.id).toBe('test-probe');
+    });
+
+    it('creates a dynamic calibrationProbe based on line and stage if undefined', async () => {
+      // @ts-ignore
+      const { getOrCreateCalibrationProbe } = await import('../../src/core/assessments/calibrationProbes.js');
+      const mockModule = {
+        line: 'Moral' as const,
+        stage: 'Red' as const,
+        tasks: [mockTask('default-task')],
+        scoringRubric: { passThreshold: 0.5, dimensionWeights: {} },
+        minimumTrials: 1,
+        estimatedDurationMs: 1000,
+        driveProbes: {} as any,
+      };
+      const probe = getOrCreateCalibrationProbe(mockModule);
+      expect(probe.id).toBe('cal-probe-moral-red');
+      expect(probe.type).toBe('llm_dialogue');
+    });
+  });
+
   describe('binary search convergence', () => {
     it('converges for below-Red player (passes Infrared+Magenta, fails Red)', async () => {
       const registry = createFullRegistry();

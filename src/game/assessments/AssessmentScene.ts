@@ -22,6 +22,7 @@ import type {
 } from '@core/assessments/types.js';
 import { runModeAwareAssessment } from '@core/assessments/engine.js';
 import { selectSessionItems } from '@core/assessments/itemSelection.js';
+import { getOrCreateCalibrationProbe } from '@core/assessments/calibrationProbes.js';
 import { DOMOverlay } from '../accessibility/DOMOverlay.js';
 import type { AccessibilityManager } from '../accessibility/AccessibilityManager.js';
 import { NBackRenderer } from './renderers/NBackRenderer.js';
@@ -142,6 +143,8 @@ export class AssessmentScene extends Phaser.Scene {
           this.module.driveProbes.agape.task,
         ];
       case 'calibration':
+        // Calibration mode: run single calibration probe
+        return [getOrCreateCalibrationProbe(this.module)];
       case 'practice':
       default:
         // Full task set
