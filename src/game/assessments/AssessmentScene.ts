@@ -23,13 +23,13 @@ export interface AssessmentSceneData {
   readonly mode: ModuleExecutionMode;
   readonly modality?: Modality;
   readonly encounter?: ScheduledEncounter;
-  readonly onComplete?: (result: AssessmentResult) => void;
+  readonly onComplete?: (result: AssessmentResult, narrativeSummary: string) => void;
 }
 
 export class AssessmentScene extends Phaser.Scene {
   private module!: StageAssessment;
   private mode!: ModuleExecutionMode;
-  private onComplete?: (result: AssessmentResult) => void;
+  private onComplete?: (result: AssessmentResult, narrativeSummary: string) => void;
   private encounter!: ScheduledEncounter;
 
   // Active UI renderer
@@ -142,7 +142,7 @@ export class AssessmentScene extends Phaser.Scene {
       this.events.emit('assessment_done', { result: outcome.finalResult });
 
       if (this.onComplete) {
-        this.onComplete(outcome.finalResult);
+        this.onComplete(outcome.finalResult, outcome.narrativeSummary);
       }
     }).catch((err) => {
       console.error('Agentic Orchestrator failed:', err);
