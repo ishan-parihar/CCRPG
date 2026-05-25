@@ -9,7 +9,7 @@ import type { Line } from '@core/domain/Line.js';
 import type { Stage } from '@core/domain/Stage.js';
 import type { Significator } from '@core/domain/Significator.js';
 import type { Drive } from '@core/domain/Drive.js';
-import type { DriveDirectionality, ShadowQuadrant, EnergeticDirection, StageOrientation, SourceOfNourishment } from '@core/domain/enums.js';
+import type { DriveDirectionality, ShadowQuadrant, EnergeticDirection } from '@core/domain/enums.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from '@core/engines/ConsequenceEngine.js';
 import { narrateConsequence } from '../systems/ConsequenceNarrator.js';
 import { accumulateTension, type PESTLETension } from '@core/engines/MacroCatalystEngine.js';
@@ -57,6 +57,7 @@ export class EncounterScene extends Phaser.Scene {
       module,
       mode: this.encounter.executionMode,
       modality: this.encounter.modality,
+      encounter: this.encounter,
       onComplete: (result: AssessmentResult) => this.onAssessmentComplete(result),
     };
 
@@ -107,7 +108,7 @@ export class EncounterScene extends Phaser.Scene {
       holonRegistry: { holons: world.holons },
       conceptIndex,
       recentConsequences: history,
-      sessionContext: { now },
+      sessionContext: { energy: 'high' as const },
     };
     const context = buildContext(contextInput);
 
@@ -134,9 +135,10 @@ Respond ONLY with this JSON.`;
     // Offline fallback for consequence parsing
     let parsed: ParsedConsequence;
     
-    const baseUrl = import.meta.env.VITE_LLM_BASE_URL as string | undefined;
-    const apiKey = import.meta.env.VITE_LLM_API_KEY as string | undefined;
-    const model = import.meta.env.VITE_LLM_MODEL as string | undefined;
+    const env = (typeof import.meta !== 'undefined' && import.meta.env) ? import.meta.env : process.env;
+    const baseUrl = env?.VITE_LLM_BASE_URL as string | undefined;
+    const apiKey = env?.VITE_LLM_API_KEY as string | undefined;
+    const model = env?.VITE_LLM_MODEL as string | undefined;
     const isOnline = baseUrl && apiKey && apiKey !== 'sk-placeholder' && model;
 
     if (isOnline) {
@@ -183,7 +185,7 @@ Accuracy/Performance Score: ${result.dimensions.accuracy ?? 0.5}
       energeticDirection,
       driveDirectionality,
       stageOrientation: parsed.polarityDirection === 'sto' ? 'ReachingHigher' : 'Homeostatic',
-      sourceOfNourishment: parsed.polarityDirection === 'sto' ? 'HigherRealm' : (parsed.polarityDirection === 'sts' ? 'SelfPreservation' : 'Ambivalent'),
+      sourceOfNourishment: parsed.polarityDirection === 'sto' ? 'HigherRealm' : (parsed.polarityDirection === 'sts' ? 'LowerRealm' : 'Ambivalent'),
       shadowSurfaced,
       shadowResolvedId: null,
       narrativeSummary: parsed.narrativeSummary,
