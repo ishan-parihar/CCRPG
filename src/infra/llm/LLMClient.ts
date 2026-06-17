@@ -15,6 +15,20 @@ export interface LLMEvaluation {
 
 const FALLBACK: LLMEvaluation = { score: 0.5, feedback: 'LLM unavailable' };
 
+/** Timeout for LLM fetch calls (30 seconds) */
+const LLM_TIMEOUT_MS = 30_000;
+
+/** Fetch with AbortController timeout to prevent hangs */
+async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = LLM_TIMEOUT_MS): Promise<Response> {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
 function getEnvVal(key: string): string | undefined {
   // @ts-ignore
   if (typeof import.meta !== 'undefined' && import.meta.env) {
@@ -41,7 +55,7 @@ export async function evaluateResponse(
   }
 
   try {
-    const res = await fetch(`${baseUrl}/chat/completions`, {
+    const res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
@@ -94,7 +108,7 @@ export async function queryLLM(
   }
 
   try {
-    const res = await fetch(`${baseUrl}/chat/completions`, {
+    const res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify({
@@ -172,7 +186,7 @@ export async function queryLLMWithTools(
       body.tools = tools;
     }
 
-    const res = await fetch(`${baseUrl}/chat/completions`, {
+    const res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
       body: JSON.stringify(body),

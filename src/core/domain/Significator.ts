@@ -5,6 +5,8 @@ import type { Ray } from './Ray.js';
 import type { State } from './State.js';
 import type { PolarityState } from './PolarityCellVector.js';
 import type { ShadowLedger } from './ShadowLedger.js';
+import type { CodexEntry } from './SharedTypes.js';
+import type { TransformationPhase } from '../engines/TransformationDetector.js';
 
 import { ALL_DRIVES } from './Drive.js';
 import { ALL_RAYS } from './Ray.js';
@@ -70,6 +72,8 @@ export interface Significator {
   readonly shadows: ShadowLedger;
   readonly theta: ThetaTimestamps;
   readonly transformations: readonly TransformationRecord[];
+  readonly codexEntries: readonly CodexEntry[];
+  readonly transformationPhase: TransformationPhase;
   readonly totalEncounters: number;
   readonly totalSessions: number;
 }
@@ -89,6 +93,9 @@ export function createSignificator(
     ALL_STATES.map((s, i) => [s, i === 0 ? { ...defaultState, unlocked: true } : defaultState]),
   ) as Record<State, StateProgress>;
 
+  // Initialize theta timestamps to 0 — unvisited cells have maximum urgency
+  // (staleness = 1.0, urgency = 1.0^1.5 = 1.0). Bleed-through threshold at 0.7
+  // means all cells initially show as "needs attention", which is correct for new players.
   const theta: ThetaTimestamps = {
     lastEncounter: Object.fromEntries(
       ALL_LINES.flatMap(l => ALL_STAGES.map(s => [`${l}:${s}`, 0])),
@@ -111,6 +118,8 @@ export function createSignificator(
     shadows: createEmptyShadowLedger(),
     theta,
     transformations: [],
+    codexEntries: [],
+    transformationPhase: 'idle',
     totalEncounters: 0,
     totalSessions: 0,
   };

@@ -10,7 +10,15 @@ import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
 import type { Modality } from '@core/domain/enums.js';
 import { scheduleNext, type WorldState } from '@core/engines/EncounterScheduler.js';
 import type { SessionContext } from '@core/engines/PriorityComputation.js';
+import { DEFAULT_WEIGHTS } from '@core/engines/PriorityComputation.js';
 import { EcologicalTracker } from '../systems/EcologicalTracker.js';
+import { routeModality } from '../logic/encounterRouting.js';
+import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
+import { startSession, tickWithStrategy, endSession, type SessionState } from '@core/GameLoop.js';
+import type { SaveRepository } from '@infra/persistence/SaveRepository.js';
+import type { EventBus } from '@core/events/EventBus.js';
+import { applyWeightBias } from '@core/engines/AutoModeStrategy.js';
+import { advanceTransformation } from '@core/engines/TransformationDetector.js';
 
 const MODALITY_THEME: Record<Modality, { color: number; label: string }> = {
   Deterministic: { color: 0xffaa00, label: 'Ancient Shrine' },
@@ -30,6 +38,7 @@ export class WorldScene extends Phaser.Scene {
   private dragTarget = { x: 0, y: 0 };
   private ecological = new EcologicalTracker();
   private ecoTimer = 0;
+  private sessionState: SessionState | null = null;
 
   constructor() {
     super({ key: SceneKeys.World });
@@ -37,6 +46,7 @@ export class WorldScene extends Phaser.Scene {
 
   create(data?: { consequenceText?: string }): void {
     const { width, height } = this.scale;
+    fadeIn(this, 400);
     this.drawBadlands();
     this.drawAtmosphere();
 
@@ -70,24 +80,29 @@ export class WorldScene extends Phaser.Scene {
     // Minimal HUD (Veil: no stage label)
     this.add.rectangle(width / 2, 16, width, 32, 0x000000, 0.6).setDepth(90);
     this.add.text(10, 6, sig?.id ?? 'Wanderer', {
-      fontSize: '14px', color: '#cccccc', fontFamily: 'monospace',
+      fontSize: '21px', color: '#cccccc', fontFamily: 'monospace',
     }).setDepth(100);
 
-    // Journal & Settings
+    // Journal, Settings & Menu
     this.add.text(width - 60, 20, '[Journal]', {
-      fontSize: '16px', color: '#88ccff', fontFamily: 'monospace',
+      fontSize: '24px', color: '#88ccff', fontFamily: 'monospace',
     }).setInteractive().setDepth(100)
-      .on('pointerdown', () => this.scene.start(SceneKeys.Journal));
+      .on('pointerdown', () => fadeToScene(this, SceneKeys.Journal));
 
     this.add.text(width - 140, 20, '⚙️', {
       fontSize: '18px', color: '#cccccc', fontFamily: 'monospace',
     }).setInteractive().setDepth(100)
-      .on('pointerdown', () => this.scene.start(SceneKeys.Settings));
+      .on('pointerdown', () => fadeToScene(this, SceneKeys.Settings));
+
+    this.add.text(width - 220, 20, '[Menu]', {
+      fontSize: '24px', color: '#aaaaaa', fontFamily: 'monospace',
+    }).setInteractive().setDepth(100)
+      .on('pointerdown', () => this.leaveWorld());
 
     // Consequence narration
     if (data?.consequenceText) {
       const txt = this.add.text(width / 2, height * 0.75, data.consequenceText, {
-        fontSize: '15px', color: '#aaccee', fontFamily: 'serif', fontStyle: 'italic',
+        fontSize: '22px', color: '#aaccee', fontFamily: 'serif', fontStyle: 'italic',
       }).setOrigin(0.5).setAlpha(0).setDepth(100);
       this.tweens.add({
         targets: txt, alpha: 0.9, duration: 600, ease: 'Sine.easeIn',
@@ -133,17 +148,80 @@ export class WorldScene extends Phaser.Scene {
   private placeEncounterNodes(sig: Significator | undefined, world: WorldState | undefined): void {
     if (!sig || !world) return;
 
-    const session: SessionContext = {
+    const session = this.buildSessionContext(sig);
+    const now = Date.now();
+
+    // Check for existing session state (returning from encounter)
+    const existingSessionState = this.registry.get(RegistryKeys.SessionState) as SessionState | undefined;
+
+    if (existingSessionState) {
+      // Returning from encounter: use tickWithStrategy to get biased scheduling
+      const result = tickWithStrategy(sig, world, session, existingSessionState, null, null, now);
+      this.sessionState = result.sessionState;
+
+      // Advance transformation state machine (once per session tick)
+      const ts = result.tickResult.sig.transformationPhase ?? 'idle';
+      const transformationState = { phase: ts, targetStage: null, sessionsInPhase: 0, knotsResolved: 0, totalKnots: 0 };
+      const advanced = advanceTransformation(transformationState, result.tickResult.sig);
+      if (advanced.phase !== ts) {
+        // Phase changed — update significator
+        const updatedSig = { ...result.tickResult.sig, transformationPhase: advanced.phase };
+        this.registry.set(RegistryKeys.Significator, updatedSig);
+      }
+
+      // Use the biased encounter from the pipeline
+      const biasedEncounter = result.tickResult.encounter;
+      const biasedWeights = applyWeightBias(DEFAULT_WEIGHTS, this.sessionState.strategy.weightBias);
+      const encounters = biasedEncounter
+        ? [biasedEncounter, ...scheduleNext(result.tickResult.sig, world, session, now, 4, biasedWeights)]
+        : scheduleNext(result.tickResult.sig, world, session, now, 5, biasedWeights);
+
+      this.placeNodes(encounters);
+      this.registry.set(RegistryKeys.SessionState, this.sessionState);
+    } else {
+      // Fresh session: initialize CCI → AutoMode pipeline
+      this.sessionState = startSession(sig, session);
+      const biasedWeights = applyWeightBias(DEFAULT_WEIGHTS, this.sessionState.strategy.weightBias);
+      const encounters = scheduleNext(sig, world, session, now, 5, biasedWeights);
+      this.placeNodes(encounters);
+      this.registry.set(RegistryKeys.SessionState, this.sessionState);
+    }
+  }
+
+  /** Build SessionContext enriched with EcologicalTracker signals */
+  private buildSessionContext(sig: Significator): SessionContext {
+    const signals = this.ecological.getSignals();
+
+    // Map movement entropy + dwell time → inferred energy
+    let inferredEnergy: 'high' | 'moderate' | 'low' = 'moderate';
+    if (signals.dwellTime > 2000 && signals.movementEntropy < 0.3) {
+      inferredEnergy = 'low';
+    } else if (signals.dwellTime < 800 && signals.movementEntropy > 0.6) {
+      inferredEnergy = 'high';
+    }
+
+    // Map avoidance patterns → patience signals
+    const avoidanceRate = 1 - signals.approachRate;
+
+    return {
       encountersSoFar: sig.totalEncounters,
       sessionDurationMs: 0,
       targetSessionLength: 10,
       recentLines: [],
+      inferredEnergy,
+      patienceSignals: {
+        avoidanceRate,
+        responseLatencyTrend: 'stable',
+        earlyExits: 0,
+      },
     };
-    const encounters = scheduleNext(sig, world, session, Date.now(), 5);
+  }
 
+  /** Place encounter nodes on the map */
+  private placeNodes(encounters: readonly ScheduledEncounter[]): void {
     if (encounters.length === 0) {
       this.add.text(this.scale.width / 2, this.scale.height / 2 + 80, 'The world is quiet...', {
-        fontSize: '14px', color: '#555555', fontFamily: 'monospace',
+        fontSize: '21px', color: '#555555', fontFamily: 'monospace',
       }).setOrigin(0.5).setDepth(5).setAlpha(0.7);
       return;
     }
@@ -184,12 +262,14 @@ export class WorldScene extends Phaser.Scene {
     );
     marker.on('pointerdown', () => {
       this.ecological.recordEncounterApproached(enc.modality);
-      this.scene.start(SceneKeys.Encounter, { encounter: enc });
+      // Route to the correct scene based on modality
+      const targetScene = routeModality(enc.modality);
+      fadeToScene(this, targetScene, { encounter: enc } as Record<string, unknown>);
     });
 
     // Label
     this.add.text(x, y + 20, theme.label, {
-      fontSize: '10px', color: '#999999', fontFamily: 'monospace',
+      fontSize: '16px', color: '#999999', fontFamily: 'monospace',
     }).setOrigin(0.5).setDepth(5);
 
     // Subtle animation
@@ -203,6 +283,29 @@ export class WorldScene extends Phaser.Scene {
       repeat: -1,
       ease: 'Sine.easeInOut',
     });
+  }
+
+  /** End the current session and return to MainMenu */
+  private leaveWorld(): void {
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
+    const sessionState = this.registry.get(RegistryKeys.SessionState) as SessionState | undefined;
+    if (sig && sessionState) {
+      const now = Date.now();
+      const ended = endSession(sig, sessionState, now);
+      this.registry.set(RegistryKeys.Significator, ended.sig);
+      this.registry.remove(RegistryKeys.SessionState);
+      // Persist the updated state
+      const saveRepo = this.registry.get(RegistryKeys.SaveRepo) as SaveRepository | undefined;
+      if (saveRepo) {
+        void saveRepo.saveProfile(ended.sig).catch(() => {});
+      }
+      // Emit session ended event
+      const eventBus = this.registry.get(RegistryKeys.EventBus) as EventBus | undefined;
+      if (eventBus) {
+        eventBus.emit('session_ended', { timestamp: now, encounterCount: ended.summary.encountersCompleted });
+      }
+    }
+    fadeToScene(this, SceneKeys.MainMenu);
   }
 
   private drawBadlands(): void {

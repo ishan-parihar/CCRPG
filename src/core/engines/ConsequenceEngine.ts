@@ -12,6 +12,7 @@ import type { Significator } from '../domain/Significator.js';
 import type { ShadowEntry } from '../domain/ShadowLedger.js';
 import { recordTrace } from './PolarityEngine.js';
 import type { WorldState } from './CandidateGeneration.js';
+import { EncounterRegistry } from '../registries/index.js';
 
 export interface PlayerResponse {
   readonly encounterId: string;
@@ -103,12 +104,24 @@ export function applyConsequences(
     );
   }
 
+  // 5b. Create codex entry from encounter
+  const codexText = lookupCodexEntry(encounter);
+  const newCodexEntries = codexText
+    ? [...sig.codexEntries, {
+        id: `codex:${encounter.id}:${record.timestamp}`,
+        title: `${line} — ${encounter.stage}`,
+        body: codexText,
+        unlockedAtMs: record.timestamp,
+      }]
+    : sig.codexEntries;
+
   const newSig: Significator = {
     ...sig,
     polarity: newPolarity,
     theta: newTheta,
     drives: newDrives,
     shadows: { entries: newShadowEntries, activeCount: newShadowEntries.filter(e => !e.resolvedAt).length },
+    codexEntries: newCodexEntries,
     totalEncounters: sig.totalEncounters + 1,
   };
 
@@ -186,10 +199,15 @@ export function applyConsequences(
   }
 
   const recentEncounterIds = [...world.recentEncounterIds, encounter.id];
+  const recentEncounters = [
+    ...(world.recentEncounters ?? []),
+    { line: encounter.targetLines[0] ?? ('Cognitive' as Line), stage: encounter.stage, modality: encounter.modality },
+  ].slice(-20);
 
   const newWorld: WorldState = {
     ...world,
     recentEncounterIds,
+    recentEncounters,
     npcRelationships,
   };
 
@@ -210,17 +228,41 @@ function updateDriveBalance(
     switch (signal) {
       case 'DarkAddicted':
       case 'GoldenAddicted':
+        newWeights[drive] = (newWeights[drive] ?? 0) + 0.03;
         newFixation[drive] = Math.min(1, (newFixation[drive] ?? 0) + 0.05);
         break;
       case 'DarkAverted':
       case 'GoldenAverted':
+        newWeights[drive] = (newWeights[drive] ?? 0) - 0.02;
         newFixation[drive] = Math.min(1, (newFixation[drive] ?? 0) + 0.03);
         break;
       case 'HealthyBalanced':
+        newWeights[drive] = (newWeights[drive] ?? 0) + 0.01;
         newFixation[drive] = Math.max(0, (newFixation[drive] ?? 0) - 0.02);
         break;
     }
   }
 
   return { weights: newWeights, fixationRisk: newFixation };
+}
+
+/**
+ * Look up a codex entry string for the given encounter.
+ * Searches the EncounterRegistry for a matching encounter by line and stage,
+ * then returns its narrative.codexEntry if present.
+ */
+function lookupCodexEntry(encounter: ScheduledEncounter): string | null {
+  if (encounter.codexEntry) return encounter.codexEntry;
+
+  const line = encounter.targetLines[0];
+  if (!line) return null;
+
+  // Search registered encounters for one matching this line and stage
+  for (const [, spec] of EncounterRegistry.all()) {
+    if (spec.stage === encounter.stage && spec.lines.includes(line)) {
+      if (spec.narrative?.codexEntry) return spec.narrative.codexEntry;
+    }
+  }
+
+  return null;
 }

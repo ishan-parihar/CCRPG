@@ -4,12 +4,14 @@
  */
 import Phaser from 'phaser';
 import { SceneKeys } from '../keys.js';
-import type { EncounterSpec } from '@core/domain/Encounter.js';
 import type { ConsequenceRecord } from '@core/domain/ConsequenceRecord.js';
 import { processOutcome } from '@core/engines/ConsequenceEngine.js';
 import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
 import { getFallback } from '@infra/llm/FallbackProvider.js';
 import { mapChoiceToResponse } from '../logic/dilemmaMapping.js';
+import type { Line } from '@core/domain/Line.js';
+import type { Stage } from '@core/domain/Stage.js';
+import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
 
 export { mapChoiceToResponse } from '../logic/dilemmaMapping.js';
 
@@ -19,20 +21,21 @@ export interface DilemmaChoice {
 }
 
 export class DilemmaScene extends Phaser.Scene {
-  private encounter!: EncounterSpec;
+  private encounter!: ScheduledEncounter;
 
   constructor() {
     super({ key: SceneKeys.Dilemma });
   }
 
-  create(data: { encounter: EncounterSpec }): void {
+  create(data: { encounter: ScheduledEncounter }): void {
     this.encounter = data.encounter;
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x0f0a14);
+    fadeIn(this, 400);
 
     // Get scenario content from FallbackProvider
-    const line = this.encounter.lines[0] ?? 'Moral';
-    const fallback = getFallback('ScenarioChoice', line, this.encounter.stage);
+    const line = (this.encounter.targetLines[0] ?? 'Moral') as Line;
+    const fallback = getFallback('ScenarioChoice', line, this.encounter.stage as Stage);
 
     const scenario = fallback.scenario ?? 'A crossroads appears. Each path carries weight.';
     const options: DilemmaChoice[] = fallback.options
@@ -59,7 +62,7 @@ export class DilemmaScene extends Phaser.Scene {
     options.forEach((option, i) => {
       const y = height / 2 + 40 + i * 70;
       const btn = this.add.text(width / 2, y, `[ ${option.text} ]`, {
-        fontSize: '16px', color: '#ffcc88', fontFamily: 'monospace',
+        fontSize: '24px', color: '#ffcc88', fontFamily: 'monospace',
         align: 'center', wordWrap: { width: width - 100 },
       }).setOrigin(0.5).setInteractive()
         .on('pointerdown', () => this.onChoice(option))
@@ -69,8 +72,8 @@ export class DilemmaScene extends Phaser.Scene {
 
     // Back button
     this.add.text(60, height - 50, '← Back', {
-      fontSize: '16px', color: '#aaaaaa', fontFamily: 'monospace',
-    }).setInteractive().on('pointerdown', () => this.scene.start(SceneKeys.World));
+      fontSize: '24px', color: '#aaaaaa', fontFamily: 'monospace',
+    }).setInteractive().on('pointerdown', () => fadeToScene(this, SceneKeys.World));
   }
 
   private onChoice(choice: DilemmaChoice): void {
@@ -86,31 +89,16 @@ export class DilemmaScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     this.add.text(width / 2, height / 2 + 20, 'The consequences ripple outward...', {
-      fontSize: '16px', color: '#888899', fontFamily: 'monospace',
+      fontSize: '24px', color: '#888899', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
     // Map choice to PlayerResponse and produce ConsequenceRecord
     const response = mapChoiceToResponse(choice.id, this.encounter.id);
-    const scheduled: ScheduledEncounter = {
-      id: this.encounter.id,
-      moduleRef: this.encounter.id,
-      modality: this.encounter.modality ?? 'ScenarioChoice',
-      targetLines: [...this.encounter.lines],
-      stage: this.encounter.stage,
-      holonSource: this.encounter.id,
-      shadowTarget: null,
-      polarityMode: 'Exploring',
-      difficulty: 0.5,
-      sessionPosition: 'peak',
-      priority: 1,
-      driveTarget: null,
-      executionMode: 'capacity',
-    };
-    const record: ConsequenceRecord = processOutcome(scheduled, response, Date.now());
+    const record: ConsequenceRecord = processOutcome(this.encounter, response, Date.now());
 
     this.time.delayedCall(2000, () => {
       this.events.emit('encounter_done', { record });
-      this.scene.start(SceneKeys.World);
+      fadeToScene(this, SceneKeys.World);
     });
   }
 }

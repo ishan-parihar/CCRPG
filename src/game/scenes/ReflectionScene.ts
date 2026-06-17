@@ -4,32 +4,37 @@
  */
 import Phaser from 'phaser';
 import { SceneKeys } from '../keys.js';
-import type { EncounterSpec } from '@core/domain/Encounter.js';
 import type { ConsequenceRecord } from '@core/domain/ConsequenceRecord.js';
 import { processOutcome, type PlayerResponse } from '@core/engines/ConsequenceEngine.js';
 import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
 import { getFallback } from '@infra/llm/FallbackProvider.js';
+import type { Line } from '@core/domain/Line.js';
+import type { Stage } from '@core/domain/Stage.js';
+import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
 
 export class ReflectionScene extends Phaser.Scene {
-  private encounter!: EncounterSpec;
+  private encounter!: ScheduledEncounter;
   private promptIndex = 0;
   private prompts: string[] = [];
   private followUps: string[] = [];
   private engagementCount = 0;
+  private selectedResponses: string[] = [];
 
   constructor() {
     super({ key: SceneKeys.Reflection });
   }
 
-  create(data: { encounter: EncounterSpec }): void {
+  create(data: { encounter: ScheduledEncounter }): void {
     this.encounter = data.encounter;
     this.engagementCount = 0;
+    this.selectedResponses = [];
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x0a0a1a);
+    fadeIn(this, 400);
 
     // Get reflective content from FallbackProvider
-    const line = this.encounter.lines[0] ?? 'Cognitive';
-    const fallback = getFallback('LanguageReflective', line, this.encounter.stage);
+    const line = (this.encounter.targetLines[0] ?? 'Cognitive') as Line;
+    const fallback = getFallback('LanguageReflective', line, this.encounter.stage as Stage);
 
     this.prompts = [fallback.prompt ?? 'What moved you to act?'];
     this.followUps = [...(fallback.followUps ?? ['Say more about that.'])];
@@ -51,21 +56,17 @@ export class ReflectionScene extends Phaser.Scene {
     }).setOrigin(0.5);
 
     // Prompt text
-    this.add.text(width / 2, height / 2 - 100, currentPrompt, {
+    this.add.text(width / 2, height / 2 - 140, currentPrompt, {
       fontSize: '22px', color: '#e8e8ff', fontFamily: 'monospace',
       align: 'center', wordWrap: { width: width - 80 },
       lineSpacing: 6,
     }).setOrigin(0.5);
 
-    // Pre-set response options (MVP - no free text input)
-    const responses = [
-      'It felt necessary.',
-      'I was driven by instinct.',
-      'I chose deliberately.',
-    ];
+    // Context-aware response options based on encounter and prompt
+    const responses = this.getContextualResponses();
 
     responses.forEach((resp, i) => {
-      const btn = this.add.text(width / 2, height / 2 + 40 + i * 60, `[ ${resp} ]`, {
+      const btn = this.add.text(width / 2, height / 2 + 10 + i * 60, `[ ${resp} ]`, {
         fontSize: '18px', color: '#88ccff', fontFamily: 'monospace',
         align: 'center', wordWrap: { width: width - 100 },
       }).setOrigin(0.5).setInteractive()
@@ -76,13 +77,66 @@ export class ReflectionScene extends Phaser.Scene {
 
     // Back button
     this.add.text(60, height - 50, '← Back', {
-      fontSize: '16px', color: '#aaaaaa', fontFamily: 'monospace',
-    }).setInteractive().on('pointerdown', () => this.scene.start(SceneKeys.World));
+      fontSize: '24px', color: '#aaaaaa', fontFamily: 'monospace',
+    }).setInteractive().on('pointerdown', () => fadeToScene(this, SceneKeys.World));
   }
 
-  private onResponse(_response: string): void {
+  /** Generate context-aware response options based on the encounter modality, line, and stage */
+  private getContextualResponses(): string[] {
+    const line = this.encounter.targetLines[0] ?? 'Cognitive';
+    const stage = this.encounter.stage;
+    const promptIdx = this.promptIndex;
+
+    // Stage-specific emotional registers
+    const stageResponses: Record<string, string[][]> = {
+      Red: [
+        ['I felt the fire of it.', 'Fear held me back.', 'I acted without thinking.'],
+        ['It was survival.', 'I wanted power.', 'Something deeper called.'],
+        ['The rage was real.', 'I chose restraint.', 'I saw another way.'],
+      ],
+      Amber: [
+        ['Duty demanded it.', 'I trusted the tradition.', 'It felt wrong but necessary.'],
+        ['The code guided me.', 'I questioned the rule.', 'Belonging mattered more.'],
+        ['Honor was at stake.', 'I followed the path.', 'I broke from the order.'],
+      ],
+      Orange: [
+        ['Logic pointed the way.', 'Ambition drove me.', 'I calculated the cost.'],
+        ['Innovation felt right.', 'The old way failed.', 'Progress demanded sacrifice.'],
+        ['I saw the opportunity.', 'Efficiency was key.', 'Something was lost in the gain.'],
+      ],
+    };
+
+    const lineResponses: Record<string, string[]> = {
+      Cognitive: ['My mind saw the pattern.', 'I thought through it carefully.', 'Intuition spoke first.'],
+      Emotional: ['The feeling was overwhelming.', 'I chose from the heart.', 'I tried to stay centered.'],
+      Moral: ['It was the right thing.', 'I wrestled with the choice.', 'Principle guided me.'],
+      Intrapersonal: ['I knew myself in that moment.', 'Fear surfaced.', 'I faced what I avoid.'],
+      Spiritual: ['Something larger moved through me.', 'I surrendered to it.', 'I sought meaning.'],
+      Somatic: ['My body knew before I did.', 'The rhythm carried me.', 'I felt it in my bones.'],
+      Willpower: ['I refused to yield.', 'Discipline held me.', 'The will was tested.'],
+      Interpersonal: ['I reached toward them.', 'Distance felt safer.', 'Trust was the question.'],
+    };
+
+    // Cycle through response sets based on prompt index
+    const setIdx = promptIdx % 3;
+    if (stageResponses[stage]?.[setIdx]) {
+      return stageResponses[stage][setIdx];
+    }
+    // Fallback to line-specific responses
+    const lineKey = line as string;
+    const base = lineResponses[lineKey] ?? ['I engaged with it.', 'I stepped back.', 'Something shifted.'];
+    // Rotate through the base responses
+    return [
+      base[setIdx % base.length],
+      base[(setIdx + 1) % base.length],
+      base[(setIdx + 2) % base.length],
+    ];
+  }
+
+  private onResponse(response: string): void {
     this.promptIndex++;
     this.engagementCount++;
+    this.selectedResponses.push(response);
 
     if (this.promptIndex <= this.followUps.length) {
       // Show follow-up
@@ -125,29 +179,16 @@ export class ReflectionScene extends Phaser.Scene {
       sourceOfNourishment: 'HigherRealm',
       shadowSurfaced: null,
       shadowResolvedId: null,
-      narrativeSummary: `Reflected on ${this.encounter.narrative.theme} (engagement: ${this.engagementCount}/${maxFollowUps})`,
+      narrativeSummary: this.selectedResponses.length > 0
+        ? `Reflected on ${this.encounter.moduleRef}: "${this.selectedResponses[this.selectedResponses.length - 1]}" (${this.engagementCount}/${maxFollowUps} engagements)`
+        : `Reflected on ${this.encounter.moduleRef} (${this.engagementCount}/${maxFollowUps} engagements)`,
     };
 
-    const scheduled: ScheduledEncounter = {
-      id: this.encounter.id,
-      moduleRef: this.encounter.id,
-      modality: this.encounter.modality ?? 'LanguageReflective',
-      targetLines: [...this.encounter.lines],
-      stage: this.encounter.stage,
-      holonSource: this.encounter.id,
-      shadowTarget: null,
-      polarityMode: 'Exploring',
-      difficulty: 0.5,
-      sessionPosition: 'cooldown',
-      priority: 1,
-      driveTarget: null,
-      executionMode: 'capacity',
-    };
-    const record: ConsequenceRecord = processOutcome(scheduled, response, Date.now());
+    const record: ConsequenceRecord = processOutcome(this.encounter, response, Date.now());
 
     this.time.delayedCall(2000, () => {
       this.events.emit('encounter_done', { record });
-      this.scene.start(SceneKeys.World);
+      fadeToScene(this, SceneKeys.World);
     });
   }
 }

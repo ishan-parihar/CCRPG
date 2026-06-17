@@ -24,10 +24,7 @@ export class DOMOverlay {
     this.container.id = 'a11y-overlay';
     this.container.setAttribute('role', 'application');
     this.container.setAttribute('aria-label', 'CCRPG Game');
-    this.container.style.cssText = `
-      position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-      pointer-events: none; z-index: 1000; overflow: hidden;
-    `;
+    // Styles are in public/style.css (#a11y-overlay)
     const parent = document.getElementById(parentId) ?? document.body;
     parent.appendChild(this.container);
   }
@@ -45,17 +42,13 @@ export class DOMOverlay {
     el.setAttribute('aria-label', element.label);
     if (element.tabIndex !== undefined) {
       el.tabIndex = element.tabIndex;
-      el.style.pointerEvents = 'auto';
+      el.classList.add('a11y-focusable');
     }
     if (element.live) {
       el.setAttribute('aria-live', element.live);
     }
     // Screen-reader only styling (visually hidden but accessible)
-    el.style.cssText += `
-      position: absolute; width: 1px; height: 1px;
-      overflow: hidden; clip: rect(0,0,0,0);
-      white-space: nowrap; border: 0;
-    `;
+    el.classList.add('a11y-sr-only');
   }
 
   /** Announce a live message to screen readers. */
@@ -65,7 +58,7 @@ export class DOMOverlay {
     el.setAttribute('aria-live', priority);
     el.setAttribute('aria-atomic', 'true');
     el.textContent = message;
-    el.style.cssText = 'position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0);';
+    el.classList.add('a11y-sr-only');
     this.container.appendChild(el);
     // Remove after announcement is processed
     setTimeout(() => el.remove(), 3000);

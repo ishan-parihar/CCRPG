@@ -18,4 +18,6 @@ export interface ScheduledEncounter {
   readonly priority: number;
   readonly driveTarget: Drive | null;
   readonly executionMode: ModuleExecutionMode;
+  /** Codex entry text unlocked upon completing this encounter. */
+  readonly codexEntry?: string;
 }

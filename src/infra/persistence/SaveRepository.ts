@@ -3,10 +3,12 @@ import {
   type CognitiveProfile,
 } from '@core/domain/Stats.js';
 import type { Significator } from '@core/domain/Significator.js';
+import type { WorldState } from '@core/engines/CandidateGeneration.js';
 import type { KeyValueStore } from './KeyValueStore.js';
 
 const SAVE_KEY = 'save:v1';
 const PROFILE_KEY = 'profile:v1';
+const WORLD_KEY = 'world:v1';
 const CURRENT_VERSION = 1;
 
 /** The root persisted save document. */
@@ -84,6 +86,26 @@ export class SaveRepository {
 
   async resetProfile(): Promise<void> {
     await this.store.remove(PROFILE_KEY);
+  }
+
+  // --- WorldState persistence ---
+
+  async loadWorldState(): Promise<WorldState | null> {
+    const raw = await this.store.get(WORLD_KEY);
+    if (!raw) return null;
+    try {
+      return JSON.parse(raw) as WorldState;
+    } catch {
+      return null;
+    }
+  }
+
+  async saveWorldState(world: WorldState): Promise<void> {
+    await this.store.set(WORLD_KEY, JSON.stringify(world));
+  }
+
+  async resetWorldState(): Promise<void> {
+    await this.store.remove(WORLD_KEY);
   }
 }
 

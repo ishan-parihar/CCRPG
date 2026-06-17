@@ -184,12 +184,17 @@ function computeDriveCorrection(c: EncounterCandidate, sig: Significator, world:
 
 /**
  * §3.2.6 — Active narrative beat match → 1.0.
- * Else if holon has existing relationship → 0.4. Else 0.
+ * Else if holon has existing relationship → 0.4 (static or dynamic). Else 0.
  */
 function computeNarrativeCoherence(c: EncounterCandidate, world: WorldState): number {
   const holon = world.holons.find(h => h.id === c.holonId);
   if (!holon) return 0;
-  // WorldState doesn't expose activeBeat; degrade gracefully
+
+  // Check dynamic NPC relationships from ConsequenceEngine
+  const dynamicRel = world.npcRelationships?.find(r => r.holonId === c.holonId);
+  if (dynamicRel && dynamicRel.strength > 0.3) return 0.4;
+
+  // Fall back to static holon relationship data
   if (holon.relationships.length > 0) return 0.4;
   return 0;
 }

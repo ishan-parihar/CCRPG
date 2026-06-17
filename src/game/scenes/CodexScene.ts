@@ -2,6 +2,7 @@ import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
 import type { Significator } from '@core/domain/Significator.js';
 import type { CodexEntry } from '@core/domain/SharedTypes.js';
+import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
 
 /**
  * CodexScene — displays the player's unlocked codex entries as a
@@ -15,17 +16,18 @@ export class CodexScene extends Phaser.Scene {
   create(): void {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x0a0c14);
+    fadeIn(this, 400);
 
     this.add.text(width / 2, 40, 'Codex', {
       fontSize: '26px', color: '#c8c8e8', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
     const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
-    const entries: readonly CodexEntry[] = (sig as unknown as { codexEntries?: readonly CodexEntry[] })?.codexEntries ?? [];
+    const entries: readonly CodexEntry[] = sig?.codexEntries ?? [];
 
     if (entries.length === 0) {
       this.add.text(width / 2, height / 2, 'No entries unlocked yet.\nExplore the world to discover knowledge.', {
-        fontSize: '16px', color: '#666688', fontFamily: 'monospace',
+        fontSize: '24px', color: '#666688', fontFamily: 'monospace',
         align: 'center', wordWrap: { width: width - 80 },
       }).setOrigin(0.5);
     } else {
@@ -47,7 +49,7 @@ export class CodexScene extends Phaser.Scene {
     this.add.text(60, height - 50, '← Back', {
       fontSize: '18px', color: '#aaaacc', fontFamily: 'monospace',
     }).setInteractive().on('pointerdown', () => {
-      this.scene.start(SceneKeys.MainMenu);
+      fadeToScene(this, SceneKeys.MainMenu);
     });
   }
 }

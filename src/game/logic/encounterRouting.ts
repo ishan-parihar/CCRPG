@@ -15,12 +15,11 @@ export function routeModality(modality: Modality): string {
     case 'Strategic':
     case 'Embodied':
     case 'ImmersiveRPG':
+    case 'SocialCooperative':
       return SceneKeys.Encounter;
     case 'LanguageReflective':
       return SceneKeys.Reflection;
     case 'ScenarioChoice':
-      return SceneKeys.Dilemma;
-    case 'SocialCooperative':
       return SceneKeys.Dilemma;
   }
 }

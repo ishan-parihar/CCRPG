@@ -14,6 +14,12 @@ export class BootScene extends Phaser.Scene {
   create(): void {
     // Disable right-click menu inside the canvas — feels native on web.
     this.input.mouse?.disableContextMenu();
-    this.scene.start(SceneKeys.Preloader);
+    this.cameras.main.setBackgroundColor(0x05070b);
+    // Fade to preloader — prevents black flash
+    const cam = this.cameras.main;
+    cam.fadeOut(200, 5, 7, 11);
+    cam.once('camerafadeoutcomplete', () => {
+      this.scene.start(SceneKeys.Preloader);
+    });
   }
 }

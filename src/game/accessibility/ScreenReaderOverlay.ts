@@ -9,34 +9,14 @@ export function createScreenReaderOverlay(): ScreenReaderOverlay {
   politeRegion.setAttribute('aria-live', 'polite');
   politeRegion.setAttribute('aria-atomic', 'true');
   politeRegion.setAttribute('role', 'status');
-  Object.assign(politeRegion.style, {
-    position: 'absolute',
-    width: '1px',
-    height: '1px',
-    padding: '0',
-    margin: '-1px',
-    overflow: 'hidden',
-    clip: 'rect(0, 0, 0, 0)',
-    whiteSpace: 'nowrap',
-    border: '0',
-  });
+  politeRegion.className = 'a11y-sr-only';
   document.body.appendChild(politeRegion);
 
   const assertiveRegion = document.createElement('div');
   assertiveRegion.setAttribute('aria-live', 'assertive');
   assertiveRegion.setAttribute('aria-atomic', 'true');
   assertiveRegion.setAttribute('role', 'alert');
-  Object.assign(assertiveRegion.style, {
-    position: 'absolute',
-    width: '1px',
-    height: '1px',
-    padding: '0',
-    margin: '-1px',
-    overflow: 'hidden',
-    clip: 'rect(0, 0, 0, 0)',
-    whiteSpace: 'nowrap',
-    border: '0',
-  });
+  assertiveRegion.className = 'a11y-sr-only';
   document.body.appendChild(assertiveRegion);
 
   return {

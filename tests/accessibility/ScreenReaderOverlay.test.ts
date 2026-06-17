@@ -46,11 +46,8 @@ describe('ScreenReaderOverlay', () => {
     expect(assertive).toBeNull();
   });
 
-  it('polite region is visually hidden (offscreen)', () => {
+  it('polite region is visually hidden via CSS class', () => {
     const polite = document.querySelector('[aria-live="polite"]') as HTMLElement;
-    expect(polite.style.position).toBe('absolute');
-    expect(polite.style.width).toBe('1px');
-    expect(polite.style.height).toBe('1px');
-    expect(polite.style.overflow).toBe('hidden');
+    expect(polite.classList.contains('a11y-sr-only')).toBe(true);
   });
 });

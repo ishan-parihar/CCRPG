@@ -15,6 +15,7 @@ import { createInitialWorldState } from '@core/engines/CandidateGeneration.js';
 import type { SaveRepository } from '@infra/persistence/SaveRepository.js';
 import holonsJson from '@core/data/red-layer-holons.json';
 import type { Holon } from '@core/domain/Holon.js';
+import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
 
 export class OnboardingScene extends Phaser.Scene {
   private progressText!: Phaser.GameObjects.Text;
@@ -25,6 +26,7 @@ export class OnboardingScene extends Phaser.Scene {
 
   create(): void {
     this.cameras.main.setBackgroundColor(0x080c18);
+    fadeIn(this, 400);
     this.showOpening();
   }
 
@@ -33,19 +35,19 @@ export class OnboardingScene extends Phaser.Scene {
 
     this.add.text(width / 2, height / 2 - 80,
       'The Dream Sequence\n\nCalibrate your developmental profile\nthrough a series of short challenges.',
-      { fontSize: '20px', color: '#ccccee', fontFamily: 'monospace', align: 'center', wordWrap: { width: width - 80 }, lineSpacing: 6 },
+      { fontSize: '30px', color: '#ccccee', fontFamily: 'monospace', align: 'center', wordWrap: { width: width - 120 }, lineSpacing: 8 },
     ).setOrigin(0.5);
 
     this.makeButton(width / 2, height / 2 + 80, '[ Full Calibration ]', () => this.begin('full'));
     this.makeButton(width / 2, height / 2 + 130, '[ Quick Start ]', () => this.begin('quick-calibration'));
 
     this.progressText = this.add.text(width / 2, height - 40, '', {
-      fontSize: '16px', color: '#555577', fontFamily: 'monospace',
+      fontSize: '30px', color: '#555577', fontFamily: 'monospace',
     }).setOrigin(0.5);
   }
 
   private makeButton(x: number, y: number, label: string, cb: () => void): void {
-    this.add.text(x, y, label, { fontSize: '20px', color: '#88ccff', fontFamily: 'monospace' })
+    this.add.text(x, y, label, { fontSize: '30px', color: '#88ccff', fontFamily: 'monospace' })
       .setOrigin(0.5).setInteractive({ useHandCursor: true })
       .on('pointerdown', cb)
       .on('pointerover', function (this: Phaser.GameObjects.Text) { this.setColor('#aaeeff'); })
@@ -59,10 +61,14 @@ export class OnboardingScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x080c18);
 
     this.progressText = this.add.text(width / 2, height / 2, 'Preparing...', {
-      fontSize: '20px', color: '#ccccee', fontFamily: 'monospace',
+      fontSize: '30px', color: '#ccccee', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
-    const moduleRegistry = this.registry.get(RegistryKeys.ModuleRegistry) as ModuleRegistry;
+    const moduleRegistry = this.registry.get(RegistryKeys.ModuleRegistry) as ModuleRegistry | undefined;
+    if (!moduleRegistry) {
+      console.error('ModuleRegistry not found in registry');
+      return;
+    }
     const onboarding = new CompositeOnboarding(moduleRegistry, { sessionSplit: split });
     const lines = onboarding.getLinesForSession();
     let lineIndex = 0;
@@ -91,16 +97,25 @@ export class OnboardingScene extends Phaser.Scene {
     const result = await onboarding.runOnboarding(runModule);
 
     // Seed drives onto significator
-    const sig = result.significator as Significator & { driveWeights?: Record<string, number> };
-    (sig as any).driveWeights = seedDriveWeights(result.lineResults);
+    const sig = result.significator;
+    const driveWeights = seedDriveWeights(result.lineResults);
+    // Write to the actual drives.weights property (not a non-existent driveWeights)
+    for (const [drive, weight] of Object.entries(driveWeights)) {
+      (sig.drives.weights as Record<string, number>)[drive] = weight;
+    }
 
     // Persist
-    const saveRepo = this.registry.get(RegistryKeys.SaveRepo) as SaveRepository;
+    const saveRepo = this.registry.get(RegistryKeys.SaveRepo) as SaveRepository | undefined;
+    if (!saveRepo) {
+      console.error('SaveRepository not found in registry');
+      return;
+    }
     await saveRepo.saveProfile(sig);
     this.registry.set(RegistryKeys.Significator, sig);
 
     // Create and persist WorldState
     const worldState = createInitialWorldState(holonsJson as unknown as Holon[]);
+    await saveRepo.saveWorldState(worldState);
     this.registry.set(RegistryKeys.WorldState, worldState);
 
     this.showComplete(result.significator);
@@ -112,18 +127,18 @@ export class OnboardingScene extends Phaser.Scene {
 
     this.add.text(width / 2, height / 2 - 60,
       'Calibration Complete\n\nYour developmental profile has been mapped.',
-      { fontSize: '20px', color: '#ccccee', fontFamily: 'monospace', align: 'center', wordWrap: { width: width - 80 }, lineSpacing: 6 },
+      { fontSize: '30px', color: '#ccccee', fontFamily: 'monospace', align: 'center', wordWrap: { width: width - 120 }, lineSpacing: 8 },
     ).setOrigin(0.5);
 
     const summary = Object.entries(sig.altitudes)
       .map(([line, stage]) => `  ${line}: ${stage}`)
       .join('\n');
     this.add.text(width / 2, height / 2 + 40, summary, {
-      fontSize: '14px', color: '#888899', fontFamily: 'monospace',
+      fontSize: '30px', color: '#888899', fontFamily: 'monospace',
     }).setOrigin(0.5);
 
     this.makeButton(width / 2, height - 80, '[ Enter the World ]', () => {
-      this.scene.start(SceneKeys.World);
+      fadeToScene(this, SceneKeys.World);
     });
   }
 }

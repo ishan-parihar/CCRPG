@@ -6,6 +6,7 @@ import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
 import type { Significator } from '@core/domain/Significator.js';
 import type { CodexEntry, Vow } from '@core/domain/SharedTypes.js';
+import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
 
 export class JournalScene extends Phaser.Scene {
   constructor() {
@@ -15,6 +16,7 @@ export class JournalScene extends Phaser.Scene {
   create(): void {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x080810);
+    fadeIn(this, 400);
 
     const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
 
@@ -31,16 +33,16 @@ export class JournalScene extends Phaser.Scene {
     });
     y += 30;
 
-    const entries: readonly CodexEntry[] = (sig as unknown as { codexEntries?: readonly CodexEntry[] })?.codexEntries ?? [];
+    const entries: readonly CodexEntry[] = sig?.codexEntries ?? [];
     if (entries.length === 0) {
       this.add.text(60, y, 'No entries yet. Explore the world.', {
-        fontSize: '14px', color: '#666688', fontFamily: 'monospace',
+        fontSize: '21px', color: '#666688', fontFamily: 'monospace',
       });
       y += 30;
     } else {
       entries.slice(0, 5).forEach(entry => {
         this.add.text(60, y, `- ${entry.title}`, {
-          fontSize: '14px', color: '#aaaacc', fontFamily: 'monospace',
+          fontSize: '21px', color: '#aaaacc', fontFamily: 'monospace',
           wordWrap: { width: width - 100 },
         });
         y += 24;
@@ -58,13 +60,13 @@ export class JournalScene extends Phaser.Scene {
     const vows: Vow[] = (sig as unknown as { vows?: readonly Vow[] })?.vows ? [...((sig as unknown as { vows: readonly Vow[] }).vows)].filter(v => !v.fulfilled) : [];
     if (vows.length === 0) {
       this.add.text(60, y, 'No vows taken.', {
-        fontSize: '14px', color: '#666688', fontFamily: 'monospace',
+        fontSize: '21px', color: '#666688', fontFamily: 'monospace',
       });
       y += 30;
     } else {
       vows.slice(0, 3).forEach(vow => {
         this.add.text(60, y, `* "${vow.text}"`, {
-          fontSize: '14px', color: '#cccc88', fontFamily: 'monospace',
+          fontSize: '21px', color: '#cccc88', fontFamily: 'monospace',
           wordWrap: { width: width - 100 },
         });
         y += 24;
@@ -81,7 +83,7 @@ export class JournalScene extends Phaser.Scene {
 
     const feedback = this.generateFeedback(sig);
     this.add.text(60, y, feedback, {
-      fontSize: '14px', color: '#aaaacc', fontFamily: 'monospace',
+      fontSize: '21px', color: '#aaaacc', fontFamily: 'monospace',
       wordWrap: { width: width - 100 },
       lineSpacing: 4,
     });
@@ -90,7 +92,7 @@ export class JournalScene extends Phaser.Scene {
     this.add.text(width / 2, height - 60, '[ Back to World ]', {
       fontSize: '20px', color: '#88ccff', fontFamily: 'monospace',
     }).setOrigin(0.5).setInteractive()
-      .on('pointerdown', () => this.scene.start(SceneKeys.World))
+      .on('pointerdown', () => fadeToScene(this, SceneKeys.World))
       .on('pointerover', function (this: Phaser.GameObjects.Text) { this.setColor('#aaeeff'); })
       .on('pointerout', function (this: Phaser.GameObjects.Text) { this.setColor('#88ccff'); });
   }

@@ -1,6 +1,7 @@
 import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
 import type { AccessibilityManager } from '../accessibility/AccessibilityManager.js';
+import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
 
 export class SettingsScene extends Phaser.Scene {
   constructor() {
@@ -10,6 +11,7 @@ export class SettingsScene extends Phaser.Scene {
   create(): void {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x05070b);
+    fadeIn(this, 400);
 
     this.add.text(width / 2, 80, 'Settings', {
       fontSize: '32px', color: '#e7eaf2', fontFamily: 'monospace',
@@ -48,7 +50,7 @@ export class SettingsScene extends Phaser.Scene {
     this.add.text(width / 2, height - 100, '← Back', {
       fontSize: '20px', color: '#aaaaaa', fontFamily: 'monospace',
     }).setOrigin(0.5).setInteractive()
-      .on('pointerdown', () => this.scene.start(SceneKeys.MainMenu));
+      .on('pointerdown', () => fadeToScene(this, SceneKeys.MainMenu));
   }
 
   private confirmReset(width: number, height: number): void {
@@ -60,9 +62,19 @@ export class SettingsScene extends Phaser.Scene {
     const yes = this.add.text(width / 2 - 80, height / 2 + 30, '[ Yes ]', {
       fontSize: '20px', color: '#ff4444', fontFamily: 'monospace',
     }).setOrigin(0.5).setDepth(201).setInteractive()
-      .on('pointerdown', () => {
+      .on('pointerdown', async () => {
         this.registry.remove(RegistryKeys.Significator);
-        this.scene.start(SceneKeys.Onboarding);
+        this.registry.remove(RegistryKeys.WorldState);
+        const saveRepo = this.registry.get(RegistryKeys.SaveRepo) as { resetProfile?: () => Promise<void>; resetWorldState?: () => Promise<void> } | undefined;
+        if (saveRepo?.resetProfile) {
+          try {
+            await saveRepo.resetProfile();
+            await saveRepo.resetWorldState?.();
+          } catch (err) {
+            console.warn('Failed to reset persisted state:', err);
+          }
+        }
+        fadeToScene(this, SceneKeys.Onboarding);
       });
 
     const no = this.add.text(width / 2 + 80, height / 2 + 30, '[ No ]', {

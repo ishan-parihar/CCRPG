@@ -29,8 +29,8 @@ describe('routeModality', () => {
     expect(routeModality('ScenarioChoice')).toBe(SceneKeys.Dilemma);
   });
 
-  it('routes SocialCooperative to DilemmaScene', () => {
-    expect(routeModality('SocialCooperative')).toBe(SceneKeys.Dilemma);
+  it('routes SocialCooperative to EncounterScene', () => {
+    expect(routeModality('SocialCooperative')).toBe(SceneKeys.Encounter);
   });
 
   it('returns a valid scene key for every modality', () => {

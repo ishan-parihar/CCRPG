@@ -15,7 +15,7 @@ import { AssessmentScene } from './assessments/AssessmentScene.js';
 import { EncounterSelectionScene } from './scenes/EncounterSelectionScene.js';
 
 /** Logical resolution — designed for portrait mobile (9:16). */
-export const VIEWPORT = { width: 720, height: 1280 } as const;
+export const VIEWPORT = { width: 1080, height: 1920 } as const;
 
 export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameConfig {
   return {
@@ -27,13 +27,11 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
       autoCenter: Phaser.Scale.CENTER_BOTH,
       width: VIEWPORT.width,
       height: VIEWPORT.height,
-      // Multiply canvas resolution by devicePixelRatio for crisp text on HiDPI
       zoom: 1 / (typeof window !== 'undefined' ? window.devicePixelRatio : 1),
     },
     render: {
       antialias: true,
       pixelArt: false,
-      // Round pixel positions so text doesn't blur at sub-pixel coords
       roundPixels: true,
       powerPreference: 'high-performance',
     },

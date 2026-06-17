@@ -9,8 +9,9 @@ import type { Drive } from '../domain/Drive.js';
 import type { DriveDirectionality, ShadowQuadrant, EnergeticDirection } from '../domain/enums.js';
 import { buildContext } from '../../infra/llm/ContextPipeline.js';
 import { queryLLMWithTools } from '../../infra/llm/LLMClient.js';
+import { getFallback } from '../../infra/llm/FallbackProvider.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from '../engines/ConsequenceEngine.js';
-import { accumulateTension, type PESTLETension } from '../engines/MacroCatalystEngine.js';
+import { accumulateTension, tryTriggerMacroEvent, type PESTLETension } from '../engines/MacroCatalystEngine.js';
 import type { AgentMessage, AskUserQuestionParams, AskUserQuestionResult } from './agentTypes.js';
 
 const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
@@ -32,7 +33,7 @@ export const ASK_USER_QUESTION_TOOL = {
   type: 'function' as const,
   function: {
     name: 'ask_user_question',
-    description: 'Ask the user one or more multiple-choice questions (MCQs), with options, tab headers, and optional write-in options. Renders in the UI, blocks until user responds, and returns their answers.',
+    description: 'Ask the user one or more multiple-choice questions (MCQs). IMPORTANT: Always start with a narrative introduction that sets the scene — describe who is speaking, what the environment looks like, and what is happening. Then present the question. Always include 3-4 MCQ options AND set allowWriteIn=true so the user can write their own response as a 5th option. The question field should contain the full narrative + question text.',
     parameters: {
       type: 'object',
       properties: {
@@ -177,6 +178,11 @@ export class AgenticOrchestrator {
       // Request next turn from LLM
       const res = await queryLLMWithTools(systemPrompt, this.messages, TOOLS);
 
+      // Detect LLM unavailability on first call — switch to fallback
+      if (loopCount === 1 && res.content && res.content.includes('"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
+        return this.runFallback(line, stage, now);
+      }
+
       const assistantMsg: AgentMessage = {
         role: 'assistant',
         content: res.content,
@@ -240,6 +246,137 @@ export class AgenticOrchestrator {
       polarityDirection: 'neutral' as const,
       narrativeSummary: `The player successfully navigated the challenge of ${this.encounter.moduleRef}.`,
     };
+    const finalResult = this.createAssessmentResult(true, {});
+    const outcome = this.finalizeEncounter(fallbackParams, now);
+
+    return {
+      ...outcome,
+      finalResult,
+      messages: this.messages,
+    };
+  }
+
+  /**
+   * Fallback mode: use FallbackProvider content when LLM is unavailable.
+   * Presents a single question/scenario via uiHandler, then completes.
+   */
+  private async runFallback(line: Line, stage: Stage, now: number): Promise<OrchestratorResult> {
+    const fallback = getFallback(this.encounter.modality, line, stage);
+
+    // Look up the holon for narrative context
+    const holon = this.world.holons.find(h => h.id === this.encounter.holonSource);
+    const holonName = holon?.name ?? 'A presence';
+    const holonRole = holon?.narrativeRole ?? 'guide';
+    const encounterModality = this.encounter.modality;
+
+    // Build narrative introduction based on modality
+    let narrativeIntro: string;
+    let questionText: string;
+    let options: { label: string; description: string }[] = [];
+
+    switch (encounterModality) {
+      case 'LanguageReflective':
+        narrativeIntro = `${holonName} sits across from you, their gaze steady. The firelight casts long shadows. They speak:`;
+        questionText = fallback.prompt ?? 'What moved you to act?';
+        options = [
+          { label: 'Reflect deeply', description: 'Consider the question from multiple angles' },
+          { label: 'Respond instinctively', description: 'Trust your first impulse' },
+          { label: 'Sit with it', description: 'Allow the question to remain open' },
+          { label: 'Challenge the premise', description: 'Question the foundation of what was asked' },
+        ];
+        break;
+
+      case 'ScenarioChoice':
+        narrativeIntro = `${holonName} confronts you. The air is tense. A choice must be made.`;
+        questionText = fallback.scenario ?? 'A crossroads appears. Each path carries weight.';
+        options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
+        break;
+
+      case 'Strategic':
+        narrativeIntro = `The war-table is spread before you. ${holonName} surveys the terrain. Three routes. Limited forces.`;
+        questionText = fallback.scenario ?? fallback.prompt ?? 'Resources are limited. The map shows three routes to the objective.';
+        options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
+        break;
+
+      case 'Embodied':
+        narrativeIntro = `The war-drums begin. ${holonName} guides you. Your body knows this rhythm.`;
+        questionText = fallback.prompt ?? 'Close your eyes. Where do you feel tension in your body right now?';
+        options = [
+          { label: 'Follow the rhythm', description: 'Let the drum guide your body' },
+          { label: 'Resist the beat', description: 'Fight against the pull' },
+          { label: 'Breathe into it', description: 'Allow the sensation to move through you' },
+          { label: 'Still yourself', description: 'Find the stillness within the movement' },
+        ];
+        break;
+
+      case 'SocialCooperative':
+        narrativeIntro = `${holonName} looks to you. Others wait for direction. The group needs your word.`;
+        questionText = fallback.scenario ?? 'The scouts look to you. The path splits — one leads through danger, the other through uncertainty.';
+        options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
+        break;
+
+      case 'ImmersiveRPG':
+        narrativeIntro = `The world stretches before you. ${holonName} appears — ${holonRole} of this domain. What calls?`;
+        questionText = fallback.prompt ?? 'The world stretches before you. A path winds through unfamiliar terrain. Something waits ahead.';
+        options = [
+          { label: 'Press forward', description: 'Step into the unknown' },
+          { label: 'Survey the area', description: 'Gather information first' },
+          { label: 'Seek shelter', description: 'Find safety before advancing' },
+          { label: 'Call out', description: 'Announce your presence' },
+        ];
+        break;
+
+      default: // Deterministic and any future modalities
+        narrativeIntro = `${holonName} presents a challenge. The moment demands clarity.`;
+        questionText = fallback.prompt ?? fallback.framing ?? 'Focus. The moment demands clarity.';
+        options = [
+          { label: 'Engage', description: 'Step into the challenge' },
+          { label: 'Reflect', description: 'Consider before acting' },
+          { label: 'Withdraw', description: 'Step back and reassess' },
+          { label: 'Negotiate', description: 'Seek a middle path forward' },
+        ];
+        break;
+    }
+
+    // Ensure at least 4 MCQ options before the write-in option
+    const defaultOpts = [
+      { label: 'Act decisively', description: 'Take the direct approach' },
+      { label: 'Observe first', description: 'Gather more information' },
+      { label: 'Seek alliance', description: 'Find strength in others' },
+      { label: 'Deceive and maneuver', description: 'Use misdirection to your advantage' },
+    ];
+    while (options.length < 4) {
+      const extra = defaultOpts[options.length];
+      if (extra) options.push(extra);
+      else break;
+    }
+
+    // Combine narrative intro with question
+    const fullPrompt = `${narrativeIntro}\n\n${questionText}`;
+
+    // Present to user via uiHandler
+    const askParams: AskUserQuestionParams = {
+      questions: [{
+        question: fullPrompt,
+        header: encounterModality,
+        options,
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    };
+
+    const result = await this.uiHandler.askUser(askParams);
+    const answer = result.answers[0];
+    const narrativeSummary = answer?.writeInValue ?? (answer?.selectedLabels[0] ?? 'The player engaged with the encounter.');
+
+    // Complete with synthetic result
+    const fallbackParams = {
+      passed: true,
+      feedback: 'Encounter completed via fallback content.',
+      polarityDirection: 'neutral' as const,
+      narrativeSummary: typeof narrativeSummary === 'string' ? narrativeSummary : 'The player engaged with the encounter.',
+    };
+
     const finalResult = this.createAssessmentResult(true, {});
     const outcome = this.finalizeEncounter(fallbackParams, now);
 
@@ -338,7 +475,13 @@ export class AgenticOrchestrator {
       dim,
       0.05,
     );
-    const updatedWorld = { ...updated.world, pestleTension: newTension } as WorldState;
+
+    // Check for macro-event trigger
+    const activeEvents = (updated.world as any).activeMacroEvents ?? [];
+    const macroEvent = tryTriggerMacroEvent(newTension, activeEvents, updated.sig.currentStage, now);
+    const newActiveEvents = macroEvent ? [...activeEvents, macroEvent] : activeEvents;
+
+    const updatedWorld = { ...updated.world, pestleTension: newTension, activeMacroEvents: newActiveEvents } as WorldState;
 
     return {
       updatedSig: updated.sig,

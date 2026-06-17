@@ -18,6 +18,8 @@ export interface EncounterCandidate {
   readonly modality: Modality;
   readonly holonId: string;
   readonly cooldownClear: boolean;
+  /** Codex entry text unlocked upon completing this encounter. */
+  readonly codexEntry?: string;
 }
 
 export interface NarrativeBeat {
@@ -122,7 +124,7 @@ export function generateCandidates(
     const lineAltOrd = stageOrdinal(sig.altitudes[holon.line]);
     if (stageOrdinal(holon.stage) > lineAltOrd + 1) continue;
 
-    const moduleRef = `${holon.line}/${holon.stage}`;
+    const moduleRef = `${holon.line}:${holon.stage}`;
 
     // Generate candidates across eligible modalities (2-3 per holon)
     const eligible = getEligibleModalities(holon, blockedModalities);

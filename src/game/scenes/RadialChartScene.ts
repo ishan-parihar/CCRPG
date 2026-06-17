@@ -4,6 +4,7 @@ import { ALL_LINES } from '@core/domain/Line.js';
 import { ALL_STAGES, stageOrdinal } from '@core/domain/Stage.js';
 import { STAGE_RAY_MAP } from '@core/domain/Ray.js';
 import type { Significator } from '@core/domain/Significator.js';
+import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
 
 /** Ray → hex colour for tinting spokes. */
 const RAY_COLORS: Record<string, number> = {
@@ -30,6 +31,7 @@ export class RadialChartScene extends Phaser.Scene {
   create(data?: { profile?: Significator }): void {
     const { width, height } = this.scale;
     this.cameras.main.setBackgroundColor(0x080c18);
+    fadeIn(this, 400);
 
     const cx = width / 2;
     const cy = height / 2;
@@ -59,7 +61,7 @@ export class RadialChartScene extends Phaser.Scene {
       const lx = cx + Math.cos(angle) * (maxRadius + 30);
       const ly = cy + Math.sin(angle) * (maxRadius + 30);
       this.add.text(lx, ly, ALL_LINES[s]!.slice(0, 4), {
-        fontSize: '12px', color: '#8888aa', fontFamily: 'monospace',
+        fontSize: '18px', color: '#8888aa', fontFamily: 'monospace',
       }).setOrigin(0.5);
     }
 
@@ -108,7 +110,7 @@ export class RadialChartScene extends Phaser.Scene {
     this.add.text(60, height - 50, '← Back', {
       fontSize: '18px', color: '#aaaacc', fontFamily: 'monospace',
     }).setInteractive().on('pointerdown', () => {
-      this.scene.start(SceneKeys.MainMenu);
+      fadeToScene(this, SceneKeys.MainMenu);
     });
   }
 }

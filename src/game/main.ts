@@ -18,33 +18,41 @@ import { EventBus } from '@core/events/EventBus.js';
 import { bootModuleRegistry } from '@core/assessments/bootModules.js';
 
 /**
+ * Global services object — populated BEFORE Phaser game is created.
+ * Scenes read from here instead of the registry to avoid timing issues.
+ * Phaser's constructor starts scenes synchronously, so the registry isn't
+ * available until after `new Phaser.Game()` returns.
+ */
+export const Services = {} as {
+  saveRepo: SaveRepository;
+  native: NativeBridge;
+  a11yManager: AccessibilityManager;
+  telemetryService: TelemetryService;
+  eventBus: EventBus;
+  moduleRegistry: ReturnType<typeof bootModuleRegistry>;
+};
+
+/**
  * Boot the Phaser game and attach it to the given parent. Wires up
  * shared services (save repo, native bridge) into the registry so any
  * scene can read them without import-time coupling, and registers the
  * Android hardware back-button intercept per the blueprint.
  */
 export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
-  // Boot core registries (lines, stages, rays, drives, tasks, abilities, encounters, narrative)
+  // ── Initialize ALL services BEFORE creating Phaser game ──
+  // Phaser starts scenes immediately in the constructor, so the registry
+  // MUST be fully populated BEFORE `new Phaser.Game()`.
+
   bootRegistries();
-
-  // Initialise i18n
   initI18n();
-
-  const game = new Phaser.Game(createPhaserConfig(parent));
 
   const saveRepo = new SaveRepository(createKeyValueStore());
   const native = new NativeBridge();
 
-  // Accessibility system
   const a11yStore = new AccessibilityStore(createKeyValueStore());
   const savedSettings = await a11yStore.load();
   const a11yManager = new AccessibilityManager(savedSettings ?? createDefaultSettings());
 
-  game.registry.set(RegistryKeys.SaveRepo, saveRepo);
-  game.registry.set(RegistryKeys.Native, native);
-  game.registry.set(RegistryKeys.Accessibility, a11yManager);
-
-  // Telemetry system (opt-in only)
   const telemetryCollector = new TelemetryCollector();
   const telemetryCrypto = new CryptoStore();
   const telemetryStore = new TelemetryStore(createKeyValueStore(), telemetryCrypto);
@@ -53,17 +61,19 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
     telemetryStore,
     () => a11yManager.getSettings().telemetryOptIn,
   );
-  game.registry.set(RegistryKeys.Telemetry, telemetryService);
 
-  // EventBus for cross-layer communication
   const eventBus = new EventBus();
-  game.registry.set(RegistryKeys.EventBus, eventBus);
-
-  // Assessment module registry (64 modules: 8 lines × 8 stages)
   const moduleRegistry = bootModuleRegistry();
-  game.registry.set(RegistryKeys.ModuleRegistry, moduleRegistry);
 
-  // Forward game events to telemetry
+  // Populate global Services object — scenes read from this immediately
+  Services.saveRepo = saveRepo;
+  Services.native = native;
+  Services.a11yManager = a11yManager;
+  Services.telemetryService = telemetryService;
+  Services.eventBus = eventBus;
+  Services.moduleRegistry = moduleRegistry;
+
+  // Wire telemetry events
   eventBus.on('encounter_completed', (payload) => {
     telemetryService.recordEvent('encounter_completed', { record: payload.record });
   });
@@ -87,17 +97,32 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
     telemetryService.recordEvent('encounter_declined', payload);
   });
 
-  // Screen reader overlay
-  if (a11yManager.isScreenReaderEnabled() && typeof document !== 'undefined') {
-    const screenReaderOverlay = createScreenReaderOverlay();
-    game.registry.set(RegistryKeys.ScreenReader, screenReaderOverlay);
-  }
-
-  // Flush telemetry on page unload (fire-and-forget since beforeunload cannot await async)
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', () => {
+      // Persist Significator and WorldState before the page unloads
+      try {
+        const sig = game.registry.get(RegistryKeys.Significator);
+        const world = game.registry.get(RegistryKeys.WorldState);
+        if (sig) void saveRepo.saveProfile(sig);
+        if (world) void saveRepo.saveWorldState(world);
+      } catch { /* best-effort: don't block unload */ }
       void telemetryService.flush();
     });
+  }
+
+  // ── Create Phaser game — registry is ready, scenes can read it ──
+  const game = new Phaser.Game(createPhaserConfig(parent));
+
+  // Set shared services into Phaser's registry (scenes read via this.registry.get)
+  game.registry.set(RegistryKeys.SaveRepo, saveRepo);
+  game.registry.set(RegistryKeys.Native, native);
+  game.registry.set(RegistryKeys.Accessibility, a11yManager);
+  game.registry.set(RegistryKeys.Telemetry, telemetryService);
+  game.registry.set(RegistryKeys.EventBus, eventBus);
+  game.registry.set(RegistryKeys.ModuleRegistry, moduleRegistry);
+
+  if (a11yManager.isScreenReaderEnabled() && typeof document !== 'undefined') {
+    game.registry.set(RegistryKeys.ScreenReader, createScreenReaderOverlay());
   }
 
   // ── Android hardware back button ─────────────────────────────────
@@ -125,17 +150,8 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
     return true;
   });
 
-  // Expose for debugging in the browser console (dev convenience only).
   if (typeof window !== 'undefined') {
-    (window as unknown as { __ccrpg?: unknown }).__ccrpg = {
-      game,
-      saveRepo,
-      native,
-    };
-  }
-
-  // Keep the canvas in step with viewport changes.
-  if (typeof window !== 'undefined') {
+    (window as unknown as { __ccrpg?: unknown }).__ccrpg = { game, saveRepo, native };
     const onResize = () => game.scale.refresh();
     window.addEventListener('resize', onResize);
     window.addEventListener('orientationchange', onResize);

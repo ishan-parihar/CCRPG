@@ -272,3 +272,61 @@ Shadow mode is triggered by the EncounterScheduler when it detects dark shadows 
 | foundations/12 | The drive probes (how to measure) — this doc specifies how measurement becomes transformation |
 | foundations/13 | The theoretical substrate (topography, contact boundary) — this doc operationalises it into game mechanics |
 | STAGE-ASSESSMENT-ARCHITECTURE | The module contract — this doc specifies the developmental contract each game fulfils |
+
+---
+
+## 9. Integrative Transcendence: The Core Design Principle
+
+### 9.1 What happens at Step 8
+
+At Step 8 (Return), the holon does **NOT** dissolve. This is the most critical design principle in CCRPG, and the one most easily misunderstood.
+
+When consciousness reaches the final attractor field — the Source, Intelligent Infinity, the undifferentiated ground of all being — the holon does not vanish into undifferentiated oneness. It **TRANSCENDS AND INCLUDES**. It becomes MORE, not less. It encompasses everything that came before while retaining its individual coherence. The holon becomes the sub-octave of the next scale level — a new foundation for a new octave of development.
+
+### 9.2 Transcend and include as operational principle
+
+The "transcend and include" principle (from Wilber's integral theory) is not merely a philosophical abstraction — it is the **operational rule** governing all stage transitions in CCRPG:
+
+```
+When a holon transcends:
+  - It does NOT leave the previous stage behind
+  - It does NOT dissolve the previous stage's capacities
+  - It INCLUDES the previous stage as a functional sub-holon within a larger frame
+  - The old frame is CONTAINED IN the new frame, not erased by it
+  - The previous stage becomes a stable foundation, not a discarded stepping stone
+```
+
+### 9.3 Game design implications
+
+In CCRPG, transformation at a stage threshold does NOT erase lower-stage capacities. It integrates them into a larger frame:
+
+| What transformation IS | What transformation is NOT |
+|---|---|
+| The old capacity becomes a sub-skill within the new | The old capacity is replaced by the new |
+| The player can still access the old capacity fluidly | The player "forgets" or loses the old capacity |
+| The new frame provides context for the old | The new frame invalidates the old |
+| Lower-stage shadows can still surface (and are resolved faster) | Lower-stage shadows are permanently eliminated |
+| The holon is MORE complex, MORE capable, MORE whole | The holon is DIFFERENT, replacing one self with another |
+
+### 9.4 The guardrails against pathology
+
+This principle guards against the two primary pathologies of transformation:
+
+**Guardrail 1: Spiritual bypassing (Eros without Agape)**
+
+If transcendence dissolved the lower, then "ascending" would mean leaving behind the messy, embodied, relational reality of earlier stages. This is precisely what spiritual bypassing looks like — the individual claims to have "transcended" anger, grief, desire, or need, but what they have actually done is repressed these capacities. In CCRPG, a player who "advances" to a higher stage but loses access to lower-stage capacities has NOT transcended — they have bypassed. The game must detect this (through shadow encounters at earlier stages) and require genuine integration before the advancement is locked in.
+
+**Guardrail 2: Regression (Agape without Eros)**
+
+If inclusion without transcendence were the whole story, then "integrating" earlier stages would mean staying at their level. This is regression disguised as integration. In CCRPG, a player who returns to earlier stages but never reaches for the next has NOT integrated — they have regressed. The game must detect this (through drive-health scores showing Eros at zero) and present catalyst that invites genuine forward movement.
+
+### 9.5 The sub-octave principle
+
+When a holon reaches Step 8 and truly transcends-and-includes, it becomes the **sub-octave** of the next scale level. This means:
+
+- The entire 8-step journey from Red to Source becomes the FOUNDATION (Step 1) of a new octave
+- The player's accumulated capacities, integrated shadows, and drive-health form a new Matrix — a new structural baseline from which the next cycle of development begins
+- The next octave operates on the same 8-step pattern but at a higher level of complexity, coherence, and integration
+- There is no final state — only deeper and more inclusive iterations of the same pattern
+
+In game terms: when a player completes all 8 stages of a line, the entire line becomes a stable foundation. A new cycle begins — not a repetition of the same content, but a deeper engagement with the same archetypal pattern at a higher frequency. The game is truly infinite, not because it has infinite content, but because the pattern itself is inexhaustible.

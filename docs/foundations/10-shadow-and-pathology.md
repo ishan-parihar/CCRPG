@@ -490,3 +490,168 @@ Tested invariants:
 ## 11. Principles Served
 
 Principles **1, 4, 5, 6** — completes the developmental picture (integration, not just ascent), keeps stage advancement honest, makes the game a genuine developmental tool (not just a proxy), and prevents the game from masquerading as therapy while still being legitimately efficacious.
+
+---
+
+## 12. Disintegrative Negative Feedback Loops
+
+### 12.1 The active decomposition cycle
+
+When drives are pathologized through **ADDICTION** (fixation), the holon enters an active decomposition cycle. This is not a one-time event — it is a self-reinforcing feedback loop that accelerates over time. The holon does not simply "have a shadow"; it actively deepens that shadow through each cycle of pathological catalyst processing.
+
+The loop operates across all 4 axes simultaneously:
+
+| Axis | How the loop manifests |
+|---|---|
+| **UL — Matrix** (conscious will) | The unfed mind becomes increasingly hijacked by the fixation; free will narrows to serve the addiction |
+| **UR — Infrastructure** (external behaviour) | Behavioural patterns rigidify; the player's actions become predictable, repetitive, and compulsive |
+| **LL — Potentiator** (emergent unconscious) | The emergent unconscious is sealed off; higher capacities cannot emerge because the boundary is distorted |
+| **LR — Catalyst Field** (environmental interaction) | The contact boundary selectively ingests only pathological catalyst; the environment is recruited to feed the addiction |
+
+### 12.2 The 8-step disintegrative loop
+
+```
+1. DRIVE PATHOLOGY
+   ↓ A drive becomes fixated (addiction) — the holon clings to a specific capacity or pattern
+
+2. CONTACT BOUNDARY DISTORTS
+   ↓ The boundary's selective permeability warps to serve the fixation;
+     it admits catalyst that reinforces the addiction and rejects catalyst that would break it
+
+3. CATALYST SELECTION BECOMES PATHOLOGICAL
+   ↓ The environment is scanned for stimuli that mirror the fixation;
+     the holon unconsciously recreates the conditions that feed the addiction
+
+4. EXPERIENCE GENERATION BECOMES SKEWED
+   ↓ Because the catalyst is pathological and the processing is distorted,
+     the resulting Experience reinforces the original pathology rather than resolving it
+
+5. SHADOW DEEPENS
+   ↓ The skewed Experience strengthens the shadow material;
+     the fixation becomes more entrenched, the knot tighter
+
+6. STRUCTURAL INTEGRITY DEGRADES
+   ↓ The holon's ability to function at its developmental level weakens;
+     other capacities are starved of energy as resources flow to the fixation
+
+7. CROSS-AXIS CONTAMINATION
+   ↓ The pathology spreads to adjacent axes:
+     a dark-addiction in one line contaminates the drive-health of related lines;
+     a dark-addiction at one stage contaminates adjacent stages
+
+8. RETURN TO STEP 1 WITH INCREASED INTENSITY
+   → The loop restarts with a more entrenched fixation, a more distorted boundary,
+     narrower catalyst selection, and more skewed experience generation
+```
+
+### 12.3 Manifestation at each developmental step
+
+The disintegrative loop manifests differently at each of the 8 developmental steps, because the nature of the fixation and the available catalyst change with each stage:
+
+| Step | Primary fixation risk | How the loop manifests at this step |
+|---|---|---|
+| **Red (Survival/Foundation)** | Agency-addiction: domination through raw power | The holon clings to force as the only tool; boundary admits only threats; experience confirms the world is hostile; structural integrity reduces to fight-or-flight |
+| **Orange (Growth/Expansion)** | Agency-addiction: domination through achievement | The holon clings to metrics and winning; boundary admits only competitive stimuli; experience becomes zero-sum; other capacities atrophy in service of performance |
+| **Yellow (Cognition/Symbolic)** | Eros-addiction: compulsive abstraction | The holon clings to conceptual mastery; boundary admits only intellectual stimuli; experience becomes disembodied; somatic and relational capacities degrade |
+| **Green (Order/Institutional)** | Communion-addiction: fusion with the group | The holon clings to belonging; boundary dissolves into the collective; experience is mediated through the group; individual agency atrophies |
+| **Blue (Formal Systems)** | Eros-addiction: compulsive systematizing | The holon clings to formal structure; boundary admits only system-compatible stimuli; experience is reduced to categories; intuitive and emergent capacities are blocked |
+| **Indigo (Integration)** | Agape-addiction: premature inclusion | The holon clings to unity; boundary collapses (confluence); experience is homogenized; differentiation and individuation are lost |
+| **Violet (Convergence)** | Eros-addiction: rushing toward completion | The holon clings to finality; boundary admits only terminal stimuli; experience is compressed; the rich complexity of the journey is flattened |
+| **Source (Return)** | Agape-addiction: dissolution of boundaries | The holon clings to transcendence; boundary dissolves entirely; experience becomes undifferentiated; the individual cannot maintain coherent selfhood |
+
+### 12.4 Breaking the loop
+
+The disintegrative loop can only be broken by introducing a **counter-drive** — the complementary drive that opposes the fixation:
+
+- Agency-addiction is broken by Communion (joining with what is other)
+- Communion-addiction is broken by Agency (individuating from the group)
+- Eros-addiction is broken by Agape (descending to embrace what IS)
+- Agape-addiction is broken by Eros (ascending to reach toward what COULD BE)
+
+In game terms: the shadow encounter must present a context where the FIXATED DRIVE CANNOT SUCCEED and the COMPLEMENTARY DRIVE is the only path forward.
+
+---
+
+## 13. Stagnation Paths
+
+### 13.1 The passive decomposition cycle
+
+When drives are pathologized through **ALLERGY** (aversion), the holon enters a passive decomposition cycle. Unlike the active, accelerating spiral of the disintegrative loop, stagnation is a slow atrophy — a gradual death from disuse. The holon does not destroy itself through fixation; it starves itself through avoidance.
+
+The stagnation path operates across all 4 axes simultaneously:
+
+| Axis | How stagnation manifests |
+|---|---|
+| **UL — Matrix** (conscious will) | The unfed mind becomes increasingly empty; the capacity is avoided so thoroughly that the neural substrate degrades |
+| **UR — Infrastructure** (external behaviour) | The avoided capacity is never exercised; behavioural competence atrophies; the player loses the *ability* to engage even if they wanted to |
+| **LL — Potentiator** (emergent unconscious) | The emergent unconscious cannot feed the Matrix through the avoided capacity; a developmental channel is sealed shut |
+| **LR — Catalyst Field** (environmental interaction) | The contact boundary blocks all catalyst related to the avoided capacity; the environment stops offering it (confirmation bias) |
+
+### 13.2 The 8-step stagnation path
+
+```
+1. DRIVE AVERSION
+   ↓ A drive becomes avoided (allergy) — the holon refuses to engage a specific capacity or pattern
+
+2. CONTACT BOUNDARY BECOMES BLOCKED
+   ↓ The boundary's selective permeability seals against the avoided domain;
+     it rejects catalyst that would require engagement with the avoided capacity
+
+3. CATALYST STARVATION
+   ↓ Because the boundary blocks the relevant catalyst, the holon receives
+     no nourishment in the avoided domain; the environment stops offering it
+
+4. EXPERIENCE STARVATION
+   ↓ Without catalyst, no Experience can be generated in the avoided domain;
+     the holon has no raw material for growth in this capacity
+
+5. EVOLUTION STOPS
+   ↓ The developmental trajectory halts in the avoided domain;
+     the holon cannot advance because it cannot process what it refuses to receive
+
+6. STRUCTURAL INTEGRITY DEGRADES FROM DISUSE
+   ↓ The avoided capacity atrophies; neural pathways weaken;
+     the holon's overall structural integrity weakens as this foundation crumbles
+
+7. REGRESSION BEGINS
+   ↓ Because the foundation is weak, higher capacities that depend on it
+     begin to collapse; the holon regresses to whatever is supported
+     by its remaining healthy capacities
+
+8. CROSS-AXIS ATROPHY
+   ↓ The pathology spreads as a VACUUM:
+     adjacent lines lose the support of the atrophied capacity;
+     the holon's overall complexity decreases
+```
+
+### 13.3 The co-occurrence of loops and stagnation
+
+**The disintegrative loop and the stagnation path are NOT separate — they are two faces of the same pathology and often co-occur.**
+
+A holon rarely has only addictions or only allergies. More commonly:
+
+- An addiction in one domain produces an allergy in the complementary domain (e.g., Eros-addiction → compulsive growth → produces Agape-allergy → cannot return to what was "left behind")
+- An allergy in one domain produces an addiction in a compensatory domain (e.g., Communion-allergy → cannot connect → produces Agency-addiction → compensates through domination)
+
+This means the full pathological picture at any module (line × stage) is typically a **coupled loop-stagnation pair**:
+
+```
+Addiction (active loop) ←→ Allergy (passive stagnation)
+   ↓                          ↓
+Accelerates the fixation    Starves the complementary capacity
+   ↓                          ↓
+Reinforces the allergy      Reinforces the addiction
+   ↓                          ↓
+The holon spirals           The holon atrophies
+```
+
+In game terms: a player who is addicted to planning (Cognitive/Red/Agency-addiction) will simultaneously be allergic to spontaneity (Cognitive/Red/Agency-allergy in the golden domain). The shadow encounter must address BOTH — breaking the loop AND re-opening the atrophied channel.
+
+### 13.4 The stagnation-allergy table
+
+| Drive | Allergy manifestation | What stagnates | Recovery mechanism |
+|---|---|---|---|
+| **Agency** | Cannot stand alone; needs validation for every action | Sovereignty, boundaries, self-trust | Present contexts where the player MUST act alone; scaffold success in isolation |
+| **Communion** | Cannot join; rejects belonging and co-creation | Connection, empathy, relational intelligence | Present contexts where the player MUST coordinate; scaffold success in joining |
+| **Eros** | Cannot grow; clings to current stage (Jonah Complex) | Aspiration, transcendence, forward movement | Present the next stage's capacity as safe, achievable, and rewarding |
+| **Agape** | Cannot return; dismisses earlier capacities as "beneath" | Integration, embodiment, compassion for the past | Present earlier capacities in a new light that requires genuine engagement |

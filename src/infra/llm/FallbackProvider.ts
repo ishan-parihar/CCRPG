@@ -103,8 +103,41 @@ const GENERIC_DETERMINISTIC: FallbackContent = {
   framing: 'Focus. The moment demands clarity.',
 };
 
+// --- Strategic (scenario + options for strategic reasoning) ---
+const GENERIC_STRATEGIC: FallbackContent = {
+  scenario: 'Resources are limited. The map shows three routes to the objective, each with hidden risks.',
+  options: [
+    { id: 'direct', text: 'Take the shortest path — speed over safety' },
+    { id: 'flank', text: 'Circle wide — longer but concealed' },
+    { id: 'fortify', text: 'Establish a forward position first' },
+  ],
+};
+
+// --- Embodied (somatic awareness prompts) ---
+const GENERIC_EMBODIED: FallbackContent = {
+  prompt: 'Close your eyes. Where do you feel tension in your body right now?',
+  followUps: ['What does that tension want to do?', 'Breathe into it. What shifts?'],
+};
+
+// --- SocialCooperative (NPC dialogue / group dynamics) ---
+const GENERIC_SOCIAL_COOPERATIVE: FallbackContent = {
+  scenario: 'The scouts look to you. The path splits — one leads through danger, the other through uncertainty. They need your word.',
+  options: [
+    { id: 'lead', text: 'Take the dangerous path — you will not ask them to go where you will not' },
+    { id: 'delegate', text: 'Send the fastest scouts ahead while the group holds' },
+    { id: 'unanimous', text: 'Let the group decide together — every voice matters' },
+  ],
+};
+
+// --- ImmersiveRPG (full narrative environment) ---
+const GENERIC_IMMERSIVE_RPG: FallbackContent = {
+  prompt: 'The world stretches before you. A path winds through unfamiliar terrain. Something waits ahead — you can feel it.',
+  followUps: ['What draws you forward?', 'What do you leave behind?'],
+};
+
 const GENERIC_FALLBACK: FallbackContent = {
   prompt: 'What is present for you right now?',
+  followUps: ['What does that tell you?', 'Where does it lead?'],
 };
 
 // ---------------------------------------------------------------------------
@@ -117,27 +150,22 @@ function pickRandom<T>(arr: readonly T[]): T {
 }
 
 export function getFallback(modality: Modality, _line: Line, stage: Stage): FallbackContent {
-  if (modality === 'LanguageReflective') {
-    if (stage === 'Red') {
-      return pickRandom(LANGUAGE_REFLECTIVE_RED);
-    }
-    return GENERIC_LANGUAGE_REFLECTIVE;
+  switch (modality) {
+    case 'LanguageReflective':
+      return stage === 'Red' ? pickRandom(LANGUAGE_REFLECTIVE_RED) : GENERIC_LANGUAGE_REFLECTIVE;
+    case 'ScenarioChoice':
+      return stage === 'Red' ? pickRandom(SCENARIO_CHOICE_RED) : GENERIC_SCENARIO_CHOICE;
+    case 'Deterministic':
+      return stage === 'Red' ? pickRandom(DETERMINISTIC_RED) : GENERIC_DETERMINISTIC;
+    case 'Strategic':
+      return GENERIC_STRATEGIC;
+    case 'Embodied':
+      return GENERIC_EMBODIED;
+    case 'SocialCooperative':
+      return GENERIC_SOCIAL_COOPERATIVE;
+    case 'ImmersiveRPG':
+      return GENERIC_IMMERSIVE_RPG;
+    default:
+      return GENERIC_FALLBACK;
   }
-
-  if (modality === 'ScenarioChoice') {
-    if (stage === 'Red') {
-      return pickRandom(SCENARIO_CHOICE_RED);
-    }
-    return GENERIC_SCENARIO_CHOICE;
-  }
-
-  if (modality === 'Deterministic') {
-    if (stage === 'Red') {
-      return pickRandom(DETERMINISTIC_RED);
-    }
-    return GENERIC_DETERMINISTIC;
-  }
-
-  // For other modalities, return generic content
-  return GENERIC_FALLBACK;
 }
