@@ -580,9 +580,12 @@ export class AgenticOrchestrator {
     const forcedQuadrant = this.forceShadow && validQuadrants.includes(this.forceShadow as any)
       ? this.forceShadow as ShadowQuadrant
       : null;
+    // Shadow detection only fires for write-in text (free-form responses)
+    // MCQ option labels should NOT trigger shadow detection — they're structured choices, not expressions.
+    const isWriteIn = !!writeIn;
     const shadowSignal = forcedQuadrant
       ? { quadrant: forcedQuadrant, intensity: 0.7 }
-      : this.detectShadowFromResponse(playerResponseText, currentModality);
+      : this.detectShadowFromResponse(playerResponseText, currentModality, isWriteIn);
 
     // 5. Build a rich narrative summary from the module context
     const narrativeSummary = this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName);
@@ -889,31 +892,36 @@ export class AgenticOrchestrator {
   private detectShadowFromResponse(
     responseText: string,
     _modality: Modality,
+    isWriteIn: boolean = false,
   ): { quadrant: ShadowQuadrant; intensity: number } | null {
     const lower = responseText.toLowerCase().trim();
 
-    // Dark-Addiction: Clings to lower-stage expression
-    if (lower.includes('attack') || lower.includes('dominate') || lower.includes('crush') ||
-        lower.includes('enslave') || lower.includes('destroy')) {
-      return { quadrant: 'DarkAddiction' as ShadowQuadrant, intensity: Math.min(1, 0.4 + Math.random() * 0.3) };
-    }
+    // Shadow detection only fires for write-in text (free-form responses)
+    // MCQ option labels should NOT trigger shadow detection — they're structured choices, not expressions.
+    if (isWriteIn) {
+      // Dark-Addiction: Clings to lower-stage expression
+      if (lower.includes('attack') || lower.includes('dominate') || lower.includes('crush') ||
+          lower.includes('enslave') || lower.includes('destroy')) {
+        return { quadrant: 'DarkAddiction' as ShadowQuadrant, intensity: Math.min(1, 0.4 + Math.random() * 0.3) };
+      }
 
-    // Dark-Allergy: Rejects/avoids lower-stage expression
-    if (lower.includes('withdraw') || lower.includes('resist') || lower.includes('refuse') ||
-        lower.includes('decline') || lower.includes('flee')) {
-      return { quadrant: 'DarkAllergy' as ShadowQuadrant, intensity: Math.min(1, 0.3 + Math.random() * 0.2) };
-    }
+      // Dark-Allergy: Rejects/avoids lower-stage expression
+      if (lower.includes('withdraw') || lower.includes('resist') || lower.includes('refuse') ||
+          lower.includes('decline') || lower.includes('flee')) {
+        return { quadrant: 'DarkAllergy' as ShadowQuadrant, intensity: Math.min(1, 0.3 + Math.random() * 0.2) };
+      }
 
-    // Golden-Addiction: Bypasses toward higher without integration
-    if (lower.includes('bypass') || lower.includes('transcend') || lower.includes('skip') ||
-        lower.includes('enlighten') || (lower.includes('higher') && lower.includes('ignore'))) {
-      return { quadrant: 'GoldenAddiction' as ShadowQuadrant, intensity: Math.min(1, 0.5 + Math.random() * 0.3) };
-    }
+      // Golden-Addiction: Bypasses toward higher without integration
+      if (lower.includes('bypass') || lower.includes('transcend') || lower.includes('skip') ||
+          lower.includes('enlighten') || (lower.includes('higher') && lower.includes('ignore'))) {
+        return { quadrant: 'GoldenAddiction' as ShadowQuadrant, intensity: Math.min(1, 0.5 + Math.random() * 0.3) };
+      }
 
-    // Golden-Allergy: Refuses the call to grow
-    if (lower.includes('stay') || lower.includes('safe') || lower.includes('comfortable') ||
-        lower.includes('static') || lower.includes('never change')) {
-      return { quadrant: 'GoldenAllergy' as ShadowQuadrant, intensity: Math.min(1, 0.3 + Math.random() * 0.3) };
+      // Golden-Allergy: Refuses the call to grow
+      if (lower.includes('stay') || lower.includes('safe') || lower.includes('comfortable') ||
+          lower.includes('static') || lower.includes('never change')) {
+        return { quadrant: 'GoldenAllergy' as ShadowQuadrant, intensity: Math.min(1, 0.3 + Math.random() * 0.3) };
+      }
     }
 
     return null;

@@ -711,8 +711,6 @@ async function runFullSession(): Promise<void> {
   });
   let completedCount = 0;
   const now = Date.now();
-  let prevEncounter: ScheduledEncounter | null = null;
-  let prevResponse: PlayerResponse | null = null;
   const history: ConsequenceRecord[] = [];
   // Create a local mutable copy of FORCE_RESPONSES per session so --responses works predictably
   const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
@@ -721,13 +719,16 @@ async function runFullSession(): Promise<void> {
     separator(`Encounter ${i + 1}/${encounterCount}`);
 
     // Feed back the PREVIOUS encounter's response to apply consequences
+    // NOTE: Don't pass prevResponse to tickWithStrategy — the orchestrator already
+    // applies consequences via processOutcome + applyConsequences. Passing it here
+    // would double-count encounters (totalEncounters increments twice per encounter).
     let { tickResult, sessionState: newState } = tickWithStrategy(
       currentSig,
       currentWorld,
       { ...session, encountersSoFar: i, sessionDurationMs: i * 5000 },
       sessionState,
-      prevResponse,
-      prevEncounter,
+      null,
+      null,
       now + i * 5000,
     );
 
@@ -762,8 +763,6 @@ async function runFullSession(): Promise<void> {
 
     if (!tickResult.encounter) {
       warn('No encounter available — skipping');
-      prevEncounter = null;
-      prevResponse = null;
       continue;
     }
 
@@ -785,8 +784,7 @@ async function runFullSession(): Promise<void> {
       currentSig = result.outcome.updatedSig;
       currentWorld = result.outcome.updatedWorld;
 
-      prevEncounter = tickResult.encounter;
-      prevResponse = result.response;
+
 
       verbose('narrative', result.narrativeSummary);
 
@@ -796,12 +794,21 @@ async function runFullSession(): Promise<void> {
         const passIcon = encResult.passed ? `${C.green}✓ PASSED${C.reset}` : `${C.red}✗ FAILED${C.reset}`;
         console.log(`\n  ${C.bold}Result:${C.reset} ${passIcon}`);
         if (VERBOSE) {
-          // Show drive signals from the orchestrator evaluation
+          // Show drive signals with shadow quadrant labels
           const ds = result.outcome.consequenceRecord.polarityTrace.driveDirectionality;
+          const shadowMap: Record<string, string> = {
+            DarkAddicted: 'Addict', DarkAverted: 'Avert',
+            GoldenAddicted: 'Gold', GoldenAverted: 'GAvr',
+            HealthyBalanced: '',
+          };
           const driveEntries = Object.entries(ds).map(([k, v]) => {
             const short = k.slice(0, 3);
-            const col = v === 'HealthyBalanced' ? C.green : C.red;
-            return `${C.dim}${short}:${col}${v === 'HealthyBalanced' ? '✓' : v.slice(0, 4)}${C.reset}`;
+            const suffix = shadowMap[v] ?? v.slice(0, 4);
+            if (suffix) {
+              const col = v.startsWith('Dark') ? C.red : C.yellow;
+              return `${C.dim}${short}:${col}${suffix}${C.reset}`;
+            }
+            return `${C.dim}${short}:${C.green}✓${C.reset}`;
           });
           console.log(`  ${C.dim}drives:${C.reset} ${driveEntries.join(' ')}`);
         }
