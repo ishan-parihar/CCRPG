@@ -232,8 +232,8 @@ function renderCCIDisplay(cci: { composite: number; dimensions: Record<string, n
   // Show dimensions in a compact row
   const dims = Object.entries(cci.dimensions).map(([k, v]) => {
     const labels: Record<string, string> = {
-      altitude: 'alt', driveHealth: 'drvH', polarityIntegrity: 'polI',
-      shadowIntegration: 'shdI', transformationReadiness: 'trnsR',
+      altitude: 'alt', driveHealth: 'drvH', polarity: 'pol',
+      shadowTopology: 'shd', transformationReadiness: 'trns',
     };
     const short = labels[k] ?? k.slice(0, 4);
     const val = (v * 100).toFixed(0);

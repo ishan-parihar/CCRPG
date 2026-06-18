@@ -14,6 +14,7 @@ import { getFallback } from '../../infra/llm/FallbackProvider.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from '../engines/ConsequenceEngine.js';
 import { accumulateTension, tryTriggerMacroEvent, type PESTLETension } from '../engines/MacroCatalystEngine.js';
 import type { AgentMessage, AskUserQuestionParams, AskUserQuestionResult } from './agentTypes.js';
+import { getRenderer } from './cli/TaskRenderers.js';
 
 const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
 
@@ -617,77 +618,20 @@ export class AgenticOrchestrator {
     _modality: Modality,
     holonName: string,
   ): Promise<AskUserQuestionResult> {
-    const driveProbes = module.driveProbes;
+    // Use TaskRenderers to get a real assessment prompt with task-specific options
+    // and a response evaluator that captures TrialResult data (timing, accuracy)
+    const { prompt } = getRenderer(task);
 
-    // Build options from drive probes with module-specific labels
-    // Each drive probe has healthyResponse, addictionSignal, allergySignal — use these
-    // to create contextually meaningful options instead of generic 'Act with agency'
-    const options = [
-      { label: driveProbes.agency.healthyResponse.split(' - ')[0] ?? 'Act with agency', description: driveProbes.agency.description },
-      { label: driveProbes.communion.healthyResponse.split(' - ')[0] ?? 'Seek connection', description: driveProbes.communion.description },
-      { label: driveProbes.eros.healthyResponse.split(' - ')[0] ?? 'Reach higher', description: driveProbes.eros.description },
-      { label: driveProbes.agape.healthyResponse.split(' - ')[0] ?? 'Return to foundation', description: driveProbes.agape.description },
-    ];
-
-    // Build narrative framing based on task type
-    let narrativeFraming: string;
-    switch (task.type) {
-      case 'n_back':
-        narrativeFraming = `${holonName} traces glowing runes in the air. "Your mind is your shield. Hold the pattern, or fall." The runes ${task.description.toLowerCase()}.`;
-        break;
-      case 'stroop':
-        narrativeFraming = `${holonName} raises a shimmering glyph. Colors dance across its surface. "See past the surface. Name what is true." ${task.description}`;
-        break;
-      case 'go_no_go':
-        narrativeFraming = `${holonName} signals. "When the shield glows green, strike. When it glows red, hold." ${task.description}`;
-        break;
-      case 'hold':
-        narrativeFraming = `${holonName} sets a heavy weight before you. "Hold this line. Do not waver. Do not release until I say." ${task.description}`;
-        break;
-      case 'pattern_prediction':
-        narrativeFraming = `${holonName} arranges stones on the ground. "The next move determines everything. Trace the pattern." ${task.description}`;
-        break;
-      case 'emotion_identification':
-        narrativeFraming = `${holonName} looks into you. Their expression shifts like water. "What do you see in this reflection?" ${task.description}`;
-        break;
-      case 'dilemma':
-      case 'scenario':
-        narrativeFraming = `${holonName} presents a choice. "Each path changes who you become." ${task.description}`;
-        break;
-      case 'llm_dialogue':
-        narrativeFraming = `${holonName} speaks directly to you. "I need your truth, not your strategy." ${task.description}`;
-        break;
-      case 'self_report':
-        narrativeFraming = `${holonName} asks you to look inward. "Forget what others expect. What do you actually feel?" ${task.description}`;
-        break;
-      case 'value_ranking':
-        narrativeFraming = `${holonName} places four tokens before you. "Rank what matters. There is no wrong answer, only an honest one." ${task.description}`;
-        break;
-      default:
-        narrativeFraming = `${holonName} faces you. ${task.description}`;
-    }
-
-    // Add module-specific task parameters for context
-    const params = task.parameters;
-    const extraDetails = Object.entries(params)
-      .filter(([k]) => ['n', 'trials', 'disks', 'goRatio'].includes(k))
-      .map(([k, v]) => `${k}=${v}`)
-      .join(', ');
-    const fullPrompt = extraDetails
-      ? `${narrativeFraming}\n\n[Assessment parameters: ${extraDetails}]`
-      : narrativeFraming;
-
-    const askParams: AskUserQuestionParams = {
-      questions: [{
-        question: fullPrompt,
+    // Prepend holon-narrative framing to the question
+    const enrichedPrompt: AskUserQuestionParams = {
+      questions: prompt.questions.map(q => ({
+        ...q,
+        question: `${holonName} presents a challenge.\n\n${q.question}`,
         header: `${module.line}:${module.stage}`.length > 12 ? module.stage : `${module.line}:${module.stage}`,
-        options,
-        allowWriteIn: true,
-        multiSelect: false,
-      }],
+      })),
     };
 
-    return this.uiHandler.askUser(askParams);
+    return this.uiHandler.askUser(enrichedPrompt);
   }
 
   /**
