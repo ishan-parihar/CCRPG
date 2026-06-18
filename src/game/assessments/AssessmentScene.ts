@@ -141,7 +141,7 @@ export class AssessmentScene extends Phaser.Scene {
       }
     };
 
-    // 5. Instantiate AgenticOrchestrator
+    // 5. Instantiate AgenticOrchestrator (pass module for assessment context)
     const orchestrator = new AgenticOrchestrator({
       encounter: this.encounter,
       significator: sig,
@@ -149,6 +149,7 @@ export class AssessmentScene extends Phaser.Scene {
       history,
       conceptIndex,
       uiHandler,
+      module: this.module,
     });
 
     // 6. Run the agentic loop asynchronously

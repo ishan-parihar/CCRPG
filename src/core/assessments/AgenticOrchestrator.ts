@@ -199,6 +199,7 @@ export class AgenticOrchestrator {
 
     let loopCount = 0;
     const maxLoops = 10; // Safety guard
+    let askCount = 0; // Track ask_user_question calls for budget enforcement
 
     while (loopCount < maxLoops) {
       loopCount++;
@@ -222,6 +223,7 @@ export class AgenticOrchestrator {
         // Execute tool calls
         for (const tc of res.toolCalls) {
           if (tc.function.name === 'ask_user_question') {
+            askCount++;
             const params = JSON.parse(tc.function.arguments) as AskUserQuestionParams;
             
             // Present to UI (Phaser or CLI)
@@ -234,6 +236,14 @@ export class AgenticOrchestrator {
               toolCallId: tc.id,
               name: 'ask_user_question'
             });
+
+            // Budget enforcement: after 2 exchanges, force complete_encounter
+            if (askCount >= 2 && !res.toolCalls.some(t => t.function.name === 'complete_encounter')) {
+              this.messages.push({
+                role: 'user',
+                content: 'The encounter budget of 2 exchanges is exhausted. You MUST now call complete_encounter with your evaluation of the player. Do NOT ask another question.'
+              });
+            }
           } else if (tc.function.name === 'complete_encounter') {
             const params = JSON.parse(tc.function.arguments) as {
               passed: boolean;

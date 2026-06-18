@@ -74,6 +74,7 @@ import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '.
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
 import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js';
+import type { Modality } from '../src/core/domain/enums.js';
 
 // ── CLI arg parsing ───────────────────────────────────────────────────
 const args = process.argv.slice(2);
@@ -88,6 +89,12 @@ const LLM_ACTIVE = apiKey !== 'sk-placeholder';
 const ACTIVE_MODEL = getVal('model') ?? model;
 const mode = getVal('mode') ?? (flags.has('--mode') ? args[args.indexOf('--mode') + 1] : 'full') ?? 'full';
 const encounterCount = parseInt(getVal('encounters') ?? '20', 10);
+
+// ── Debug forcing flags (for AI-agent feedback loops) ─────────────────
+const FORCE_LINE = getVal('line') as Line | undefined;
+const FORCE_STAGE = getVal('stage') as Stage | undefined;
+const FORCE_MODALITY = getVal('modality') as Modality | undefined;
+const FORCE_RESPONSES = getVal('responses')?.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
 
 // ── Helpers ───────────────────────────────────────────────────────────
 const C = {
@@ -203,7 +210,12 @@ async function runAgenticEncounter(
         });
 
         if (HEADLESS) {
-          answers.push({ selectedLabels: q.options?.[0] ? [q.options[0].label] : [] });
+          // Use forced responses if --responses flag was provided (one index per question)
+          const forcedIdx = FORCE_RESPONSES?.shift(); // consume sequentially: Q1→index1, Q2→index2, etc.
+          const selectedOpt = (forcedIdx && q.options && forcedIdx >= 1 && forcedIdx <= q.options.length)
+            ? q.options[forcedIdx - 1]
+            : q.options?.[0];
+          answers.push({ selectedLabels: selectedOpt ? [selectedOpt.label] : [] });
         } else {
           const promptText = q.multiSelect
             ? '\n  Select (comma-separated): '
@@ -230,16 +242,48 @@ async function runAgenticEncounter(
   // Look up the assessment module from the registry to inject into the LLM context
   const [encLine, encStage] = encounter.moduleRef.split(':') as [Line, Stage];
   const modRegistry = (globalThis as any).__moduleRegistry as ModuleRegistry | undefined;
-  const module = modRegistry?.get(encLine, encStage);
+  const baseModule = modRegistry?.get(encLine, encStage);
+
+  // Build ConceptDraftIndex from the module registry so the LLM sees module metadata
+  const conceptModules: Record<string, any> = {};
+  if (modRegistry) {
+    for (const m of modRegistry.getAll()) {
+      const key = `${m.line.toLowerCase()}:${m.stage.toLowerCase()}`;
+      conceptModules[key] = {
+        line: m.line,
+        stage: m.stage,
+        title: `${m.line} ${m.stage} Module`,
+        modalities: m.tasks.map(t => t.type === 'llm_dialogue' ? 'LanguageReflective' as const : 'Deterministic' as const),
+      };
+    }
+  }
+
+  // If --line/--stage/--modality forcing is active, override the encounter
+  let forcedEncounter = encounter;
+  if (FORCE_LINE || FORCE_STAGE || FORCE_MODALITY) {
+    const forcedLine = FORCE_LINE ?? encLine;
+    const forcedStage = FORCE_STAGE ?? encStage;
+    const forcedModality = FORCE_MODALITY ?? encounter.modality;
+    const forcedModule = modRegistry?.get(forcedLine, forcedStage);
+    if (forcedModule) {
+      forcedEncounter = {
+        ...encounter,
+        moduleRef: `${forcedLine}:${forcedStage}`,
+        modality: forcedModality,
+        targetLines: [forcedLine],
+        stage: forcedStage,
+      };
+    }
+  }
 
   const orchestrator = new AgenticOrchestrator({
-    encounter,
+    encounter: forcedEncounter,
     significator: sig,
     world,
     history,
-    conceptIndex: { modules: {} },
+    conceptIndex: { modules: conceptModules },
     uiHandler,
-    module,
+    module: modRegistry?.get(FORCE_LINE ?? encLine, FORCE_STAGE ?? encStage) ?? baseModule,
   });
 
   const outcome = await orchestrator.run();

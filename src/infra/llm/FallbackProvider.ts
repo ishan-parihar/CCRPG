@@ -84,6 +84,106 @@ const DETERMINISTIC_RED: readonly FallbackContent[] = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// Orange stage (Growth/Expansion) — achievement, metrics, competition
+// ---------------------------------------------------------------------------
+
+const LANGUAGE_REFLECTIVE_ORANGE: readonly FallbackContent[] = [
+  {
+    prompt: 'You built something. Was it yours alone, or did others carry it with you?',
+    followUps: ['What would change if no one watched?', 'Who benefits most from what you built?'],
+  },
+  {
+    prompt: 'The scoreboard shows you ahead. What does the number mean to you?',
+    followUps: ['Would you play if no one kept score?', 'What is the cost of staying ahead?'],
+  },
+  {
+    prompt: 'A rival surpassed you. What rises first — anger or curiosity?',
+    followUps: ['Can you learn from someone you compete with?', 'What would you sacrifice to reclaim the lead?'],
+  },
+];
+
+const SCENARIO_CHOICE_ORANGE: readonly FallbackContent[] = [
+  {
+    scenario: 'Your company has developed a breakthrough technology. Three paths open: dominate the market, share it freely, or sell to the highest bidder. Each path changes who you become.',
+    options: [
+      { id: 'dominate', text: 'Control the technology — power comes from ownership' },
+      { id: 'share', text: 'Open-source it — progress benefits everyone' },
+      { id: 'sell', text: 'Maximize profit — resources enable future innovation' },
+    ],
+  },
+  {
+    scenario: 'A promotion requires relocating. Your family roots run deep here, but the opportunity is rare. Your partner supports either choice but you see the weight in their eyes.',
+    options: [
+      { id: 'move', text: 'Take the promotion — growth demands sacrifice' },
+      { id: 'stay', text: 'Decline — some foundations cannot be relocated' },
+      { id: 'negotiate', text: 'Propose a hybrid arrangement — remote with quarterly visits' },
+    ],
+  },
+];
+
+const DETERMINISTIC_ORANGE: readonly FallbackContent[] = [
+  {
+    framing: 'The market shifts. Read the numbers. Act before the window closes.',
+  },
+  {
+    framing: 'Your competitor launches first. How fast can you pivot?',
+  },
+  {
+    framing: 'The data dashboard flickers — three metrics diverge. Which do you trust?',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Amber stage (Order/Institutional) — rules, belonging, duty
+// ---------------------------------------------------------------------------
+
+const LANGUAGE_REFLECTIVE_AMBER: readonly FallbackContent[] = [
+  {
+    prompt: 'You followed the rules. Did the rules serve you, or did you serve them?',
+    followUps: ['When was the last time you questioned a rule?', 'What happens to those who break the code?'],
+  },
+  {
+    prompt: 'The ceremony demands your presence. What do you bring to it — devotion or habit?',
+    followUps: ['Would the community notice if you were absent?', 'What does belonging cost you?'],
+  },
+  {
+    prompt: 'An outsider challenges your tradition. What rises — defense or doubt?',
+    followUps: ['Can tradition survive without questioning?', 'What would be lost if the tradition changed?'],
+  },
+];
+
+const SCENARIO_CHOICE_AMBER: readonly FallbackContent[] = [
+  {
+    scenario: 'A newcomer violates the community code. The elders demand punishment, but the newcomer acted out of desperation. Your role is to mediate.',
+    options: [
+      { id: 'enforce', text: 'Uphold the code — mercy without precedent weakens the structure' },
+      { id: 'mercy', text: 'Show compassion — the code serves people, not the reverse' },
+      { id: 'reform', text: 'Propose updating the code to account for desperation' },
+    ],
+  },
+  {
+    scenario: 'Your order receives orders that conflict with your conscience. The chain of command is clear, but the consequences are not. Your oath binds you.',
+    options: [
+      { id: 'obey', text: 'Follow orders — the structure holds because individuals commit' },
+      { id: 'refuse', text: 'Refuse — conscience supersedes orders' },
+      { id: 'appeal', text: 'Appeal through proper channels — trust the system' },
+    ],
+  },
+];
+
+const DETERMINISTIC_AMBER: readonly FallbackContent[] = [
+  {
+    framing: 'The ritual begins. Know your role. Execute with precision.',
+  },
+  {
+    framing: 'The law is clear. Apply it without favor or fear.',
+  },
+  {
+    framing: 'The hierarchy demands order. Where do you stand?',
+  },
+];
+
 // Generic fallbacks for stages/modalities without specific content
 const GENERIC_LANGUAGE_REFLECTIVE: FallbackContent = {
   prompt: 'What moved you to act?',
@@ -152,11 +252,26 @@ function pickRandom<T>(arr: readonly T[]): T {
 export function getFallback(modality: Modality, _line: Line, stage: Stage): FallbackContent {
   switch (modality) {
     case 'LanguageReflective':
-      return stage === 'Red' ? pickRandom(LANGUAGE_REFLECTIVE_RED) : GENERIC_LANGUAGE_REFLECTIVE;
+      switch (stage) {
+        case 'Red': return pickRandom(LANGUAGE_REFLECTIVE_RED);
+        case 'Orange': return pickRandom(LANGUAGE_REFLECTIVE_ORANGE);
+        case 'Amber': return pickRandom(LANGUAGE_REFLECTIVE_AMBER);
+        default: return GENERIC_LANGUAGE_REFLECTIVE;
+      }
     case 'ScenarioChoice':
-      return stage === 'Red' ? pickRandom(SCENARIO_CHOICE_RED) : GENERIC_SCENARIO_CHOICE;
+      switch (stage) {
+        case 'Red': return pickRandom(SCENARIO_CHOICE_RED);
+        case 'Orange': return pickRandom(SCENARIO_CHOICE_ORANGE);
+        case 'Amber': return pickRandom(SCENARIO_CHOICE_AMBER);
+        default: return GENERIC_SCENARIO_CHOICE;
+      }
     case 'Deterministic':
-      return stage === 'Red' ? pickRandom(DETERMINISTIC_RED) : GENERIC_DETERMINISTIC;
+      switch (stage) {
+        case 'Red': return pickRandom(DETERMINISTIC_RED);
+        case 'Orange': return pickRandom(DETERMINISTIC_ORANGE);
+        case 'Amber': return pickRandom(DETERMINISTIC_AMBER);
+        default: return GENERIC_DETERMINISTIC;
+      }
     case 'Strategic':
       return GENERIC_STRATEGIC;
     case 'Embodied':
