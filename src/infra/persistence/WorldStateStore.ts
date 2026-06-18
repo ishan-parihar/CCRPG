@@ -9,14 +9,14 @@ export class WorldStateStore {
 
   async save(world: WorldState): Promise<void> {
     const json = JSON.stringify(world);
-    const encrypted = this.crypto.encrypt(json);
+    const encrypted = await this.crypto.encrypt(json);
     await this.kv.set(WORLD_KEY, encrypted);
   }
 
   async load(): Promise<WorldState | null> {
     const encrypted = await this.kv.get(WORLD_KEY);
     if (!encrypted) return null;
-    const json = this.crypto.decrypt(encrypted);
+    const json = await this.crypto.decrypt(encrypted);
     return JSON.parse(json) as WorldState;
   }
 

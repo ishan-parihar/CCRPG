@@ -9,14 +9,14 @@ export class TelemetryStore {
 
   async save(events: TelemetryEvent[]): Promise<void> {
     const json = JSON.stringify(events);
-    const encrypted = this.crypto.encrypt(json);
+    const encrypted = await this.crypto.encrypt(json);
     await this.kv.set(TELEMETRY_KEY, encrypted);
   }
 
   async load(): Promise<TelemetryEvent[]> {
     const encrypted = await this.kv.get(TELEMETRY_KEY);
     if (!encrypted) return [];
-    const json = this.crypto.decrypt(encrypted);
+    const json = await this.crypto.decrypt(encrypted);
     return JSON.parse(json) as TelemetryEvent[];
   }
 

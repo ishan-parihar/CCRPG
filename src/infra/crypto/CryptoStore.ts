@@ -1,47 +1,86 @@
 /**
- * CryptoStore - XOR + base64 obfuscation for at-rest data.
- *
- * **Important:** This is obfuscation only, not real encryption. XOR with a
- * static key is trivially reversible by anyone with access to the stored
- * data and the source code. It prevents casual inspection of localStorage
- * values but does NOT provide confidentiality against a determined actor.
- *
- * The {@link ICryptoStore} interface is the upgrade path: swap this
- * implementation for a Web Crypto AES-GCM adapter (with a user-derived key)
- * when stronger privacy guarantees are required.
+ * CryptoStore - AES-GCM 256-bit encryption for at-rest data.
  */
+import { webcrypto } from 'crypto';
 
 const DEFAULT_KEY = 'ccrpg-telemetry-key';
 
+const crypto = (typeof globalThis !== 'undefined' && globalThis.crypto && globalThis.crypto.subtle)
+  ? globalThis.crypto
+  : (webcrypto as any);
+
 export interface ICryptoStore {
-  encrypt(plaintext: string): string;
-  decrypt(ciphertext: string): string;
+  encrypt(plaintext: string): Promise<string>;
+  decrypt(ciphertext: string): Promise<string>;
 }
 
 export class CryptoStore implements ICryptoStore {
-  private readonly key: string;
+  private readonly cryptoKeyPromise: Promise<CryptoKey>;
 
   constructor(key: string = DEFAULT_KEY) {
-    this.key = key;
+    this.cryptoKeyPromise = this.deriveKey(key);
   }
 
-  encrypt(plaintext: string): string {
-    const xored = this.xor(plaintext);
-    return btoa(xored);
+  private async deriveKey(keyString: string): Promise<CryptoKey> {
+    const encoder = new TextEncoder();
+    const keyData = await crypto.subtle.digest('SHA-256', encoder.encode(keyString));
+    return crypto.subtle.importKey(
+      'raw',
+      keyData,
+      { name: 'AES-GCM' },
+      false,
+      ['encrypt', 'decrypt']
+    );
   }
 
-  decrypt(ciphertext: string): string {
-    const decoded = atob(ciphertext);
-    return this.xor(decoded);
-  }
+  async encrypt(plaintext: string): Promise<string> {
+    const cryptoKey = await this.cryptoKeyPromise;
+    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const encoder = new TextEncoder();
+    const plaintextBuffer = encoder.encode(plaintext);
 
-  private xor(input: string): string {
-    let result = '';
-    for (let i = 0; i < input.length; i++) {
-      result += String.fromCharCode(
-        input.charCodeAt(i) ^ this.key.charCodeAt(i % this.key.length),
-      );
+    const ciphertextBuffer = await crypto.subtle.encrypt(
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      plaintextBuffer
+    );
+
+    const combined = new Uint8Array(iv.length + ciphertextBuffer.byteLength);
+    combined.set(iv, 0);
+    combined.set(new Uint8Array(ciphertextBuffer), iv.length);
+
+    if (typeof Buffer !== 'undefined') {
+      return Buffer.from(combined).toString('base64');
+    } else {
+      return btoa(String.fromCharCode(...combined));
     }
-    return result;
+  }
+
+  async decrypt(ciphertext: string): Promise<string> {
+    const cryptoKey = await this.cryptoKeyPromise;
+
+    let combined: Uint8Array;
+    if (typeof Buffer !== 'undefined') {
+      combined = new Uint8Array(Buffer.from(ciphertext, 'base64'));
+    } else {
+      combined = new Uint8Array(atob(ciphertext).split('').map(c => c.charCodeAt(0)));
+    }
+
+    if (combined.length < 12) {
+      throw new Error('Ciphertext is too short to contain IV');
+    }
+
+    const iv = combined.slice(0, 12);
+    const ciphertextBuffer = combined.slice(12);
+
+    const decryptedBuffer = await crypto.subtle.decrypt(
+      { name: 'AES-GCM', iv },
+      cryptoKey,
+      ciphertextBuffer
+    );
+
+    const decoder = new TextDecoder();
+    return decoder.decode(decryptedBuffer);
   }
 }
+
