@@ -144,6 +144,8 @@ export class AgenticOrchestrator {
   private uiHandler: AgenticUIHandler;
   private module: StageAssessment | undefined;
   private messages: AgentMessage[] = [];
+  private noLlm: boolean;
+  private forceShadow: string | undefined;
 
   constructor(params: {
     encounter: ScheduledEncounter;
@@ -154,6 +156,8 @@ export class AgenticOrchestrator {
     uiHandler: AgenticUIHandler;
     initialMessages?: readonly AgentMessage[];
     module?: StageAssessment;
+    noLlm?: boolean;
+    forceShadow?: string;
   }) {
     this.encounter = params.encounter;
     this.significator = params.significator;
@@ -163,6 +167,8 @@ export class AgenticOrchestrator {
     this.uiHandler = params.uiHandler;
     this.module = params.module;
     this.messages = params.initialMessages ? [...params.initialMessages] : [];
+    this.noLlm = params.noLlm ?? false;
+    this.forceShadow = params.forceShadow;
   }
 
   public async run(): Promise<OrchestratorResult> {
@@ -190,6 +196,11 @@ export class AgenticOrchestrator {
 3. Keep the flow interactive, building upon prior answers.
 4. This encounter has a budget of 2 exchanges. After the player has responded to 2 questions, you MUST call 'complete_encounter'. Do NOT generate more than 2 ask_user_question calls.
 5. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).`;
+
+    // If noLlm flag is set, skip LLM entirely and go directly to fallback
+    if (this.noLlm) {
+      return this.runFallback(line, stage, now);
+    }
 
     if (this.messages.length === 0) {
       this.messages.push({
@@ -451,11 +462,22 @@ export class AgenticOrchestrator {
     const writeIn = answer?.writeInValue;
     const playerResponseText = writeIn ?? rawLabel;
 
+    // Track response durations for future scoring aggregator
+    // NOTE: TrialResult generation and time-pressure scoring are deferred to
+    // the scoring aggregator phase — response dimensions (accuracy, speed, depth)
+    // will be derived from accumulated trial data across the session
+
     // 3. Evaluate the response using the module's drive probes
     const evaluation = this.evaluateViaDriveProbes(module, playerResponseText);
 
-    // 4. Detect shadow surfacing from response pattern
-    const shadowSignal = this.detectShadowFromResponse(playerResponseText, module, currentModality);
+    // 4. Detect shadow surfacing from response pattern (with optional forceShadow override)
+    const validQuadrants = ['DarkAddiction', 'DarkAllergy', 'GoldenAddiction', 'GoldenAllergy'] as const;
+    const forcedQuadrant = this.forceShadow && validQuadrants.includes(this.forceShadow as any)
+      ? this.forceShadow as ShadowQuadrant
+      : null;
+    const shadowSignal = forcedQuadrant
+      ? { quadrant: forcedQuadrant, intensity: 0.7 }
+      : this.detectShadowFromResponse(playerResponseText, module, currentModality);
 
     // 5. Build a rich narrative summary from the module context
     const narrativeSummary = this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName);
@@ -693,8 +715,10 @@ export class AgenticOrchestrator {
 
     // Score drives: the selected drive gets 0.8 (healthy), others get 0.5 (neutral baseline)
     // Unless the response contains shadow keywords
-    const hasShadowAddiction = lower.includes('attack') || lower.includes('dominate') || lower.includes('crush');
-    const hasShadowAversion = lower.includes('refuse') || lower.includes('cannot') || lower.includes('withdraw');
+    const hasShadowAddiction = lower.includes('attack') || lower.includes('dominate') || lower.includes('crush') || lower.includes('enslave') || lower.includes('destroy');
+    const hasShadowAversion = lower.includes('refuse') || lower.includes('cannot') || lower.includes('withdraw') || lower.includes('resist') || lower.includes('flee');
+    const hasGoldenAddiction = lower.includes('transcend') || lower.includes('bypass') || lower.includes('enlighten') || lower.includes('skip');
+    const hasGoldenAllergy = lower.includes('stay') || lower.includes('safe') || lower.includes('comfortable') || lower.includes('never change');
 
     function scoreDrive(drive: 'agency' | 'communion' | 'eros' | 'agape'): { signal: string; score: number } {
       if (selectedDrive === drive) {
@@ -702,12 +726,34 @@ export class AgenticOrchestrator {
         if (hasShadowAddiction && (drive === 'agency' || drive === 'eros')) {
           return { signal: 'DarkAddicted', score: 0.3 };
         }
-        if (hasShadowAversion) {
+        if (hasShadowAversion && (drive === 'communion' || drive === 'agape')) {
           return { signal: 'DarkAverted', score: 0.3 };
+        }
+        if (hasGoldenAddiction && drive === 'eros') {
+          return { signal: 'GoldenAddicted', score: 0.3 };
+        }
+        if (hasGoldenAllergy && drive === 'agape') {
+          return { signal: 'GoldenAverted', score: 0.3 };
         }
         return { signal: 'HealthyBalanced', score: 0.8 };
       }
       // Non-selected drives: baseline neutral
+      // BUT: if selectedDrive is null (write-in that doesn't match any option label),
+      // AND the text contains shadow keywords, apply shadow signal to prevent false altitude shifts
+      if (selectedDrive === null) {
+        if (hasShadowAddiction && (drive === 'agency' || drive === 'eros')) {
+          return { signal: 'DarkAddicted', score: 0.3 };
+        }
+        if (hasShadowAversion && (drive === 'communion' || drive === 'agape')) {
+          return { signal: 'DarkAverted', score: 0.3 };
+        }
+        if (hasGoldenAddiction && drive === 'eros') {
+          return { signal: 'GoldenAddicted', score: 0.3 };
+        }
+        if (hasGoldenAllergy && drive === 'agape') {
+          return { signal: 'GoldenAverted', score: 0.3 };
+        }
+      }
       return { signal: 'HealthyBalanced', score: 0.5 };
     }
 
@@ -732,19 +778,43 @@ export class AgenticOrchestrator {
     else polarityDirection = 'neutral';
 
     // Determine pass/fail from rubric threshold
-    const avgScore = (agencyScore + communionScore + erosScore + agapeScore) / 4;
+    // If write-in is present, boost scores based on semantic depth heuristics
+    const wordCount = lower.split(/\s+/).filter(w => w.length > 0).length;
+    const uniqueWords = new Set(lower.split(/\s+/).filter(w => w.length > 0)).size;
+    const conceptDensity = wordCount > 0 ? uniqueWords / wordCount : 0;
+
+    // Compute semantic depth bonus from write-in quality
+    // Length bonus: responses >20 words get depth bonus
+    const lengthBonus = wordCount > 20 ? Math.min(0.15, wordCount * 0.003) : 0;
+    // Concept density bonus: >60% unique words indicates conceptual richness
+    const densityBonus = conceptDensity > 0.6 ? 0.1 : (conceptDensity > 0.4 ? 0.05 : 0);
+    // Shadow awareness bonus: acknowledging shadow patterns indicates integration
+    const shadowAware = lower.includes('shadow') || lower.includes('pattern') || lower.includes('growth') || lower.includes('heal');
+    const awarenessBonus = shadowAware ? 0.1 : 0;
+    const semanticBonus = lengthBonus + densityBonus + awarenessBonus;
+
+    // Apply semantic bonus to all scores (caps at 1.0)
+    const adjustedAgencyScore = Math.min(1.0, agencyScore + (selectedDrive === 'agency' ? semanticBonus : 0));
+    const adjustedCommunionScore = Math.min(1.0, communionScore + (selectedDrive === 'communion' ? semanticBonus : 0));
+    const adjustedErosScore = Math.min(1.0, erosScore + (selectedDrive === 'eros' ? semanticBonus : 0));
+    const adjustedAgapeScore = Math.min(1.0, agapeScore + (selectedDrive === 'agape' ? semanticBonus : 0));
+
+    const avgScore = (adjustedAgencyScore + adjustedCommunionScore + adjustedErosScore + adjustedAgapeScore) / 4;
     const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
     const passed = avgScore >= passThreshold;
 
-    // Build feedback
+    // Build feedback with depth-adjusted scores
+    const depthNote = semanticBonus > 0
+      ? ` (${wordCount} words, ${(conceptDensity * 100).toFixed(0)}% unique, +${(semanticBonus * 100).toFixed(0)}% depth)`
+      : '';
     const feedback = passed
-      ? `Your response demonstrated balanced engagement with the ${module.line} ${module.stage} challenge. Agency: ${(agencyScore * 100).toFixed(0)}%, Communion: ${(communionScore * 100).toFixed(0)}%, Eros: ${(erosScore * 100).toFixed(0)}%, Agape: ${(agapeScore * 100).toFixed(0)}%.`
+      ? `Your response demonstrated balanced engagement with the ${module.line} ${module.stage} challenge. Agency: ${(adjustedAgencyScore * 100).toFixed(0)}%, Communion: ${(adjustedCommunionScore * 100).toFixed(0)}%, Eros: ${(adjustedErosScore * 100).toFixed(0)}%, Agape: ${(adjustedAgapeScore * 100).toFixed(0)}%.${depthNote}`
       : `The challenge revealed areas for growth. Your ${module.line} ${module.stage} response showed room for deeper integration.`;
 
     return {
       passed,
       polarityDirection,
-      driveScores: { agency: agencyScore, communion: communionScore, eros: erosScore, agape: agapeScore },
+      driveScores: { agency: adjustedAgencyScore, communion: adjustedCommunionScore, eros: adjustedErosScore, agape: adjustedAgapeScore },
       driveSignals: {
         agency: agencyResult.signal,
         communion: communionResult.signal,

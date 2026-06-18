@@ -85,7 +85,8 @@ const getVal = (name: string): string | undefined =>
 const HEADLESS = flags.has('--headless');
 const VERBOSE = flags.has('--verbose');
 const JSON_MODE = flags.has('--json');
-const LLM_ACTIVE = apiKey !== 'sk-placeholder';
+const NO_LLM = flags.has('--no-llm');
+const LLM_ACTIVE = !NO_LLM && apiKey !== 'sk-placeholder';
 const ACTIVE_MODEL = getVal('model') ?? model;
 const mode = getVal('mode') ?? (flags.has('--mode') ? args[args.indexOf('--mode') + 1] : 'full') ?? 'full';
 const encounterCount = parseInt(getVal('encounters') ?? '20', 10);
@@ -95,6 +96,7 @@ const FORCE_LINE = getVal('line') as Line | undefined;
 const FORCE_STAGE = getVal('stage') as Stage | undefined;
 const FORCE_MODALITY = getVal('modality') as Modality | undefined;
 const FORCE_RESPONSES = getVal('responses')?.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
+const FORCE_SHADOW = getVal('force-shadow') as string | undefined;
 
 // ── Helpers ───────────────────────────────────────────────────────────
 const C = {
@@ -157,22 +159,178 @@ function emitEvent(type: string, data: Record<string, unknown>): void {
   }
 }
 
+// ── Rendering helpers ────────────────────────────────────────────────
+
+/** Stage color helper: returns ANSI color for a given stage */
+function stageColor(stage: string): string {
+  const colors: Record<string, string> = {
+    Infrared: '\x1b[38;5;52m',  // dark red
+    Magenta: '\x1b[38;5;127m',  // magenta
+    Red: '\x1b[38;5;196m',     // bright red
+    Amber: '\x1b[38;5;214m',   // orange
+    Orange: '\x1b[38;5;208m',  // orange
+    Green: '\x1b[38;5;40m',    // green
+    Turquoise: '\x1b[38;5;44m',// teal
+    White: '\x1b[38;5;255m',   // white
+  };
+  return colors[stage] ?? C.dim;
+}
+
+/** Stage abbreviation for compact display */
+function stageAbbr(stage: string): string {
+  const abb: Record<string, string> = {
+    Infrared: 'IR', Magenta: 'MG', Red: 'RD', Amber: 'AM',
+    Orange: 'OR', Green: 'GR', Turquoise: 'TQ', White: 'WH',
+  };
+  return abb[stage] ?? stage.slice(0, 2).toUpperCase();
+}
+
+/** Render an altitude bar chart showing per-line stage progression */
+function renderAltitudesChart(sig: Significator): void {
+  const orderedLines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal'];
+  const allStages = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'] as const;
+  const stageKeys: readonly string[] = allStages;
+
+  for (const line of orderedLines) {
+    const current = sig.altitudes[line] ?? 'Red';
+    const currentIdx = stageKeys.indexOf(current);
+    const color = stageColor(current);
+
+    // Build a horizontal bar: filled squares up to current stage, empty beyond
+    const bars = stageKeys.map((s, i) => {
+      if (i < currentIdx) return `${C.dim}■${C.reset}`;  // passed stages
+      if (i === currentIdx) return `${color}●${C.reset}`; // current stage
+      return `${C.dim}○${C.reset}`; // future stages
+    });
+
+    // Segment label: first 3 stages, current, last 2
+    const segLabels = stageKeys.map((s, i) => {
+      if (i === 0 || i === stageKeys.length - 1 || i === currentIdx) {
+        return `${i === currentIdx ? color : C.dim}${stageAbbr(s)}${C.reset}`;
+      }
+      return '  '; // skip most labels for compactness
+    });
+
+    // Pad line name to 15 chars for alignment
+    const paddedLine = line.padEnd(14);
+    if (!JSON_MODE) {
+      console.log(`  ${paddedLine} ${bars.join('')} ${C.dim}${current}${C.reset}`);
+    }
+  }
+}
+
+/** Render CCI composite with dimension breakdown */
+function renderCCIDisplay(cci: { composite: number; dimensions: Record<string, number> }): void {
+  if (JSON_MODE) return;
+  const pct = (cci.composite * 100).toFixed(1);
+  const barLen = 20;
+  const filled = Math.round(cci.composite * barLen);
+  const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
+
+  console.log(`  ${C.bold}CCI${C.reset}  ${C.cyan}${bar}${C.reset} ${C.bold}${pct}%${C.reset}`);
+
+  // Show dimensions in a compact row
+  const dims = Object.entries(cci.dimensions).map(([k, v]) => {
+    const short = k.replace('transform', 'tr').replace('shadow', 'sh').replace('drive', 'dr').slice(0, 3);
+    const val = (v * 100).toFixed(0);
+    const color = v > 0.6 ? C.green : v > 0.3 ? C.yellow : C.red;
+    return `${C.dim}${short}:${color}${val}%${C.reset}`;
+  });
+  console.log(`   ${dims.join(' ')}`);
+}
+
+/** Render session arc position with progress bar */
+function renderSessionPosition(label: string, position: 'warmup' | 'peak' | 'cooldown', progress: number): void {
+  if (JSON_MODE) return;
+  const barLen = 12;
+  const pos = Math.round(progress * barLen);
+  let bar = '';
+  for (let i = 0; i < barLen; i++) {
+    if (position === 'warmup') {
+      bar += i <= pos ? C.blue + '▰' + C.reset : C.dim + '▱' + C.reset;
+    } else if (position === 'peak') {
+      bar += i <= pos ? C.magenta + '▰' + C.reset : C.dim + '▱' + C.reset;
+    } else {
+      bar += i <= pos ? C.green + '▰' + C.reset : C.dim + '▱' + C.reset;
+    }
+  }
+  const posLabel = position === 'warmup' ? C.blue + 'WARMUP' + C.reset
+    : position === 'peak' ? C.magenta + 'PEAK' + C.reset
+    : C.green + 'COOLDOWN' + C.reset;
+  console.log(`  ${posLabel} ${bar} ${C.dim}${label}${C.reset}`);
+}
+
+/** Render active shadows with quadrant labels */
+function renderShadows(sig: Significator): void {
+  if (JSON_MODE) return;
+  const active = sig.shadows.entries.filter(e => !e.resolvedAt);
+  if (active.length === 0) {
+    info('shadows', `${C.green}none active${C.reset}`);
+    return;
+  }
+
+  // Group by quadrant
+  const groups: Record<string, typeof active> = {};
+  for (const s of active) {
+    const key = s.quadrant ?? 'Unknown';
+    if (!groups[key]) groups[key] = [];
+    groups[key].push(s);
+  }
+
+  const qColors: Record<string, string> = {
+    DarkAddiction: '\x1b[38;5;196m',   // bright red
+    DarkAllergy: '\x1b[38;5;166m',    // orange-red
+    GoldenAddiction: '\x1b[38;5;220m', // gold-yellow
+    GoldenAllergy: '\x1b[38;5;240m',   // grey
+  };
+
+  const parts = Object.entries(groups).map(([q, entries]) => {
+    const color = qColors[q] ?? C.yellow;
+    const sev = entries.map(e => (e.severity * 100).toFixed(0)).join('/');
+    return `${color}${q.replace('Dark', '').replace('Golden', 'G').slice(0, 8)}${entries.length > 1 ? '×' + entries.length : ''}(${sev}%)${C.reset}`;
+  });
+  console.log(`  ${C.yellow}⚠${C.reset} shadows: ${parts.join(' ')}`);
+}
+
+/** Render drive balance compass */
+function renderDrives(sig: Significator): void {
+  if (JSON_MODE) return;
+  const balances = ['Agency', 'Communion', 'Eros', 'Agape'] as const;
+  const vals = balances.map(d => sig.drives.weights[d] ?? 0);
+  const maxVal = Math.max(1, ...vals);
+  const barLen = 8;
+
+  for (let i = 0; i < balances.length; i++) {
+    const d = balances[i];
+    const w = sig.drives.weights[d] ?? 0;
+    const fix = sig.drives.fixationRisk[d] ?? 0;
+    const filled = Math.round((w / maxVal) * barLen);
+    const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
+    const color = fix > 0.5 ? C.red : w > 0.3 ? C.green : C.yellow;
+    const fixIcon = fix > 0.7 ? '⚠' : fix > 0.4 ? '~' : ' ';
+    console.log(`  ${C.dim}${d.padEnd(10)}${C.reset} ${color}${bar}${C.reset} ${fixIcon}${C.dim}${fix > 0.1 ? `fix:${(fix * 100).toFixed(0)}%` : ''}${C.reset}`);
+  }
+}
+
 // ── Print state ───────────────────────────────────────────────────────
 function printSignificator(sig: Significator): void {
   info('id', sig.id);
   info('stage', sig.currentStage);
   info('encounters', String(sig.totalEncounters));
   info('sessions', String(sig.totalSessions));
-  const lines = Object.entries(sig.altitudes).map(([l, s]) => `${l}:${s}`);
-  info('altitudes', lines.join(', '));
 }
 
 function printEncounter(enc: ScheduledEncounter): void {
-  info('module', enc.moduleRef);
-  info('modality', enc.modality);
-  info('holon', enc.holonSource);
-  info('mode', enc.executionMode);
-  info('priority', enc.priority.toFixed(3));
+  const posColor = enc.sessionPosition === 'warmup' ? C.blue
+    : enc.sessionPosition === 'cooldown' ? C.green : C.magenta;
+  const stageCol = stageColor(enc.stage);
+  const posTag = enc.sessionPosition === 'warmup' ? 'WARMUP'
+    : enc.sessionPosition === 'cooldown' ? 'COOLDOWN' : 'PEAK';
+  info('module', `${stageCol}${enc.moduleRef}${C.reset}`);
+  info('modality', `${posColor}${enc.modality}${C.reset}`);
+  info('arc', `${posColor}${posTag}${C.reset}  ${C.dim}difficulty:${enc.difficulty.toFixed(2)} pr:${enc.priority.toFixed(3)}${C.reset}`);
+  info('holon', `${C.dim}${enc.holonSource}${C.reset}`);
+  info('mode', `${enc.executionMode === 'shadow' ? C.yellow + 'shadow' + C.reset : C.dim + enc.executionMode + C.reset}`);
 }
 
 // ── AgenticOrchestrator encounter handler (all modalities) ────────────
@@ -181,6 +339,7 @@ async function runAgenticEncounter(
   sig: Significator,
   world: WorldState,
   history: ConsequenceRecord[],
+  responsesPool?: number[],
 ): Promise<{
   outcome: import('../src/core/assessments/AgenticOrchestrator.js').OrchestratorResult;
   response: PlayerResponse;
@@ -260,12 +419,38 @@ async function runAgenticEncounter(
         });
 
         if (HEADLESS) {
-          // Use forced responses if --responses flag was provided (one index per question)
-          const forcedIdx = FORCE_RESPONSES?.shift(); // consume sequentially: Q1→index1, Q2→index2, etc.
-          const selectedOpt = (forcedIdx && q.options && forcedIdx >= 1 && forcedIdx <= q.options.length)
-            ? q.options[forcedIdx - 1]
-            : q.options?.[0];
-          answers.push({ selectedLabels: selectedOpt ? [selectedOpt.label] : [] });
+          // Use forced responses pool if provided (one index per question, consumed sequentially)
+          let selectedIdx: number;
+          if (responsesPool && responsesPool.length > 0) {
+            const forcedIdx = responsesPool.shift()!;
+            if (q.options && forcedIdx >= 1 && forcedIdx <= q.options.length) {
+              selectedIdx = forcedIdx - 1;
+            } else {
+              selectedIdx = 0;
+            }
+          } else {
+            // Vary selection to probe different shadow patterns:
+            // Cycle through options to ensure shadow detection has varied input
+            const hash = (Date.now() + (q.options?.length ?? 4)) % 4;
+            selectedIdx = hash < (q.options?.length ?? 4) ? hash : 0;
+          }
+          const selectedOpt = q.options?.[selectedIdx];
+          const selectedLabel = selectedOpt?.label ?? '';
+
+          // Inject shadow keywords into writeIn based on selection index
+          // Maps MCQ choices to shadow quadrants for testing:
+          // Index 0 (agency) = healthy baseline (no shadow)
+          // Index 1 (communion) = DarkAllergy (aversion to self-assertion)
+          // Index 2 (eros) = GoldenAddiction (bypassing toward higher)
+          // Index 3 (agape) = GoldenAllergy (refusing the call to grow)
+          const shadowInjections = ['', 'i feel the need to withdraw from this confrontation', 'i must transcend these petty concerns and reach enlightenment', 'i prefer to stay here where it is safe and comfortable'];
+          const writeInShadow = shadowInjections[selectedIdx] ?? '';
+
+          if (writeInShadow && selectedIdx !== 0 && FORCE_SHADOW !== 'none') {
+            answers.push({ selectedLabels: [selectedLabel], writeInValue: writeInShadow });
+          } else {
+            answers.push({ selectedLabels: [selectedLabel] });
+          }
         } else {
           const promptText = q.multiSelect
             ? '\n  Select (comma-separated): '
@@ -329,6 +514,8 @@ async function runAgenticEncounter(
     conceptIndex: { modules: conceptModules },
     uiHandler,
     module: modRegistry?.get(FORCE_LINE ?? encLine, FORCE_STAGE ?? encStage) ?? baseModule,
+    noLlm: !LLM_ACTIVE,
+    forceShadow: FORCE_SHADOW,
   });
 
   const outcome = await orchestrator.run();
@@ -420,7 +607,35 @@ async function runSingleEncounter(): Promise<void> {
   const sessionState = startSession(sig, session);
 
   const now = Date.now();
-  const { tickResult } = tickWithStrategy(sig, world, session, sessionState, null, null, now);
+  let { tickResult } = tickWithStrategy(sig, world, session, sessionState, null, null, now);
+
+  // Create a local mutable copy of FORCE_RESPONSES for this session
+  const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
+
+  // If forcing and no natural encounter, create a synthetic one
+  if (!tickResult.encounter && (FORCE_LINE || FORCE_STAGE || FORCE_MODALITY)) {
+    const synthLine = FORCE_LINE ?? 'Cognitive' as Line;
+    const synthStage = FORCE_STAGE ?? 'Red' as Stage;
+    const synthModality = FORCE_MODALITY ?? 'Deterministic' as Modality;
+    const synthHolon = world.holons[0] ?? { id: 'synthetic', name: 'The Examiner', narrativeRole: 'guide' };
+    const syntheticEncounter: ScheduledEncounter = {
+      id: `synthetic:${synthLine}:${synthStage}:${now}`,
+      moduleRef: `${synthLine}:${synthStage}`,
+      modality: synthModality,
+      targetLines: [synthLine],
+      stage: synthStage,
+      holonSource: synthHolon.id ?? 'synthetic',
+      shadowTarget: null,
+      polarityMode: 'Exploring',
+      difficulty: 0.5,
+      sessionPosition: 'peak',
+      priority: 0.999,
+      driveTarget: null,
+      executionMode: 'capacity',
+    };
+    if (VERBOSE) warn(`No natural encounter at ${synthLine}:${synthStage} — using synthetic encounter`);
+    tickResult = { ...tickResult, encounter: syntheticEncounter };
+  }
 
   if (!tickResult.encounter) {
     error('No encounter available');
@@ -430,7 +645,7 @@ async function runSingleEncounter(): Promise<void> {
   separator('Encounter');
   printEncounter(tickResult.encounter);
 
-  const result = await runAgenticEncounter(tickResult.encounter, sig, world, []);
+  const result = await runAgenticEncounter(tickResult.encounter, sig, world, [], responsesPool);
 
   separator('Result');
   info('narrative', result.narrativeSummary);
@@ -472,9 +687,14 @@ async function runFullSession(): Promise<void> {
   let sessionState = startSession(sig, session);
 
   banner('SESSION START');
-  info('CCI', sessionState.cci.composite.toFixed(4));
-  info('theme', sessionState.strategy.theme);
+  renderCCIDisplay(sessionState.cci);
+  info('theme', `${C.cyan}${sessionState.strategy.theme}${C.reset}`);
   info('target', `${encounterCount} encounters`);
+  console.log('');
+  renderAltitudesChart(currentSig);
+  console.log('');
+  renderShadows(currentSig);
+  renderDrives(currentSig);
 
   emitEvent('session_started', {
     cci: sessionState.cci.composite,
@@ -489,12 +709,14 @@ async function runFullSession(): Promise<void> {
   let prevEncounter: ScheduledEncounter | null = null;
   let prevResponse: PlayerResponse | null = null;
   const history: ConsequenceRecord[] = [];
+  // Create a local mutable copy of FORCE_RESPONSES per session so --responses works predictably
+  const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
 
   for (let i = 0; i < encounterCount; i++) {
     separator(`Encounter ${i + 1}/${encounterCount}`);
 
     // Feed back the PREVIOUS encounter's response to apply consequences
-    const { tickResult, sessionState: newState } = tickWithStrategy(
+    let { tickResult, sessionState: newState } = tickWithStrategy(
       currentSig,
       currentWorld,
       { ...session, encountersSoFar: i, sessionDurationMs: i * 5000 },
@@ -508,6 +730,31 @@ async function runFullSession(): Promise<void> {
     currentWorld = tickResult.world;
     sessionState = newState;
 
+    // If no natural encounter and forcing is active, create a synthetic one
+    if (!tickResult.encounter && (FORCE_LINE || FORCE_STAGE || FORCE_MODALITY)) {
+      const synthLine = FORCE_LINE ?? 'Cognitive' as Line;
+      const synthStage = FORCE_STAGE ?? 'Red' as Stage;
+      const synthModality = FORCE_MODALITY ?? 'Deterministic' as Modality;
+      const synthHolon = currentWorld.holons[0] ?? { id: 'synthetic', name: 'The Examiner', narrativeRole: 'guide' };
+      const syntheticEncounter: ScheduledEncounter = {
+        id: `synthetic:${synthLine}:${synthStage}:${now + i * 5000}`,
+        moduleRef: `${synthLine}:${synthStage}`,
+        modality: synthModality,
+        targetLines: [synthLine],
+        stage: synthStage,
+        holonSource: synthHolon.id ?? 'synthetic',
+        shadowTarget: null,
+        polarityMode: 'Exploring',
+        difficulty: 0.5,
+        sessionPosition: 'peak',
+        priority: 0.999,
+        driveTarget: null,
+        executionMode: 'capacity',
+      };
+      if (VERBOSE) warn(`No natural encounter found at ${synthLine}:${synthStage} — using synthetic encounter`);
+      tickResult = { ...tickResult, encounter: syntheticEncounter };
+    }
+
     if (!tickResult.encounter) {
       warn('No encounter available — skipping');
       prevEncounter = null;
@@ -515,12 +762,16 @@ async function runFullSession(): Promise<void> {
       continue;
     }
 
+    // Show session position and encounter header
+    const encProgress = (tickResult.encounter.sessionPosition === 'warmup' ? 0.1
+      : tickResult.encounter.sessionPosition === 'cooldown' ? 0.9 : 0.5);
+    renderSessionPosition(`${i + 1}/${encounterCount}`, tickResult.encounter.sessionPosition, encProgress);
     printEncounter(tickResult.encounter);
 
     // Run encounter through AgenticOrchestrator (all modalities)
     try {
       const result = await runAgenticEncounter(
-        tickResult.encounter, currentSig, currentWorld, history,
+        tickResult.encounter, currentSig, currentWorld, history, responsesPool,
       );
 
       // Apply consequences from the orchestrator result
@@ -553,7 +804,7 @@ async function runFullSession(): Promise<void> {
       emitEvent('encounter_error', { encounter: tickResult.encounter.id, error: err.message });
     }
 
-    // Check transformation
+      // Check transformation
     if (tickResult.transformation) {
       if (!JSON_MODE) console.log(`\n  ${C.magenta}⚡ TRANSFORMATION: ${tickResult.transformation.targetStage}${C.reset}`);
       emitEvent('transformation', { targetStage: tickResult.transformation.targetStage, readiness: tickResult.transformation.readiness });
@@ -563,6 +814,7 @@ async function runFullSession(): Promise<void> {
     if (i === 0 && tickResult.bleedThrough.length > 0) {
       info('bleedThrough (first 10)', tickResult.bleedThrough.slice(0, 10).join(', ') + `... (${tickResult.bleedThrough.length} total)`);
     }
+
   }
 
   // Session end — apply theta-decay and persist
@@ -572,8 +824,21 @@ async function runFullSession(): Promise<void> {
   info('encounters completed', String(completedCount));
   info('total encounters', String(currentSig.totalEncounters));
   info('total sessions', String(sessionEnd.sig.totalSessions));
-  info('shadows surfaced', String(sessionEnd.summary.shadowsSurfaced));
-  info('shadows resolved', String(sessionEnd.summary.shadowsResolved));
+
+  // Show developmental trajectory
+  console.log('');
+  renderCCIDisplay(sessionState.cci);
+  console.log('');
+  renderAltitudesChart(currentSig);
+  console.log('');
+  renderShadows(currentSig);
+  renderDrives(currentSig);
+
+  // Shadow summary
+  if (sessionEnd.summary.shadowsSurfaced > 0) {
+    info('shadows surfaced', String(sessionEnd.summary.shadowsSurfaced));
+    info('shadows resolved', String(sessionEnd.summary.shadowsResolved));
+  }
 
   if (VERBOSE) {
     console.log('\nFinal Significator:');
