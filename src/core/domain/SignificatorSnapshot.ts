@@ -147,8 +147,8 @@ function computeTransformationReadiness(sig: Significator): TransformationReadin
     ? sig.transformations[sig.transformations.length - 1]
     : null;
   const sessionsSinceLastTransformation = lastTransformation
-    ? sig.totalSessions
-    : sig.totalSessions;
+    ? Math.max(0, sig.totalSessions - Math.floor(lastTransformation.triggeredAt / 3600000))
+    : Infinity;  // Never transformed = not in post-transformation recovery
 
   // Determine if transformation is pending and target stage
   const readinessThreshold = 0.6;

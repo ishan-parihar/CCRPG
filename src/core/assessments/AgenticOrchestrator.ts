@@ -1,12 +1,13 @@
-import type { AssessmentResult, ShadowAssessmentResult, MeasureDimension, StageAssessment } from './types.js';
+import type { AssessmentResult, ShadowAssessmentResult, MeasureDimension, StageAssessment, AssessmentTask, TaskType } from './types.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
 import type { Significator } from '../domain/Significator.js';
 import type { WorldState } from '../engines/CandidateGeneration.js';
 import type { ConsequenceRecord } from '../domain/ConsequenceRecord.js';
 import type { Line } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
+import { stageOrdinal } from '../domain/Stage.js';
 import type { Drive } from '../domain/Drive.js';
-import type { DriveDirectionality, ShadowQuadrant, EnergeticDirection } from '../domain/enums.js';
+import type { DriveDirectionality, ShadowQuadrant, EnergeticDirection, Modality } from '../domain/enums.js';
 import { buildContext } from '../../infra/llm/ContextPipeline.js';
 import { queryLLMWithTools } from '../../infra/llm/LLMClient.js';
 import { getFallback } from '../../infra/llm/FallbackProvider.js';
@@ -297,19 +298,25 @@ export class AgenticOrchestrator {
   }
 
   /**
-   * Fallback mode: use FallbackProvider content when LLM is unavailable.
-   * Presents a single question/scenario via uiHandler, then completes.
+   * Fallback mode: use module content when available, FallbackProvider otherwise.
+   * When a module is available, presents real assessment tasks (n-back, dilemmas,
+   * emotion identification, etc.) as narrative challenges and evaluates responses
+   * using the module's drive probes. Also detects shadow patterns and computes
+   * altitude shifts from consistent healthy patterns.
    */
   private async runFallback(line: Line, stage: Stage, now: number): Promise<OrchestratorResult> {
-    const fallback = getFallback(this.encounter.modality, line, stage);
+    // CHECK: If we have an assessment module, use it for a real assessment
+    if (this.module) {
+      return this.runModuleAssessment(line, stage, now);
+    }
 
-    // Look up the holon for narrative context
+    // Original generic fallback when no module is available
+    const fallback = getFallback(this.encounter.modality, line, stage);
     const holon = this.world.holons.find(h => h.id === this.encounter.holonSource);
     const holonName = holon?.name ?? 'A presence';
     const holonRole = holon?.narrativeRole ?? 'guide';
     const encounterModality = this.encounter.modality;
 
-    // Build narrative introduction based on modality
     let narrativeIntro: string;
     let questionText: string;
     let options: { label: string; description: string }[] = [];
@@ -325,19 +332,16 @@ export class AgenticOrchestrator {
           { label: 'Challenge the premise', description: 'Question the foundation of what was asked' },
         ];
         break;
-
       case 'ScenarioChoice':
         narrativeIntro = `${holonName} confronts you. The air is tense. A choice must be made.`;
         questionText = fallback.scenario ?? 'A crossroads appears. Each path carries weight.';
         options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
         break;
-
       case 'Strategic':
         narrativeIntro = `The war-table is spread before you. ${holonName} surveys the terrain. Three routes. Limited forces.`;
         questionText = fallback.scenario ?? fallback.prompt ?? 'Resources are limited. The map shows three routes to the objective.';
         options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
         break;
-
       case 'Embodied':
         narrativeIntro = `The war-drums begin. ${holonName} guides you. Your body knows this rhythm.`;
         questionText = fallback.prompt ?? 'Close your eyes. Where do you feel tension in your body right now?';
@@ -348,13 +352,11 @@ export class AgenticOrchestrator {
           { label: 'Still yourself', description: 'Find the stillness within the movement' },
         ];
         break;
-
       case 'SocialCooperative':
         narrativeIntro = `${holonName} looks to you. Others wait for direction. The group needs your word.`;
         questionText = fallback.scenario ?? 'The scouts look to you. The path splits — one leads through danger, the other through uncertainty.';
         options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
         break;
-
       case 'ImmersiveRPG':
         narrativeIntro = `The world stretches before you. ${holonName} appears — ${holonRole} of this domain. What calls?`;
         questionText = fallback.prompt ?? 'The world stretches before you. A path winds through unfamiliar terrain. Something waits ahead.';
@@ -365,8 +367,7 @@ export class AgenticOrchestrator {
           { label: 'Call out', description: 'Announce your presence' },
         ];
         break;
-
-      default: // Deterministic and any future modalities
+      default:
         narrativeIntro = `${holonName} presents a challenge. The moment demands clarity.`;
         questionText = fallback.prompt ?? fallback.framing ?? 'Focus. The moment demands clarity.';
         options = [
@@ -378,7 +379,6 @@ export class AgenticOrchestrator {
         break;
     }
 
-    // Ensure at least 4 MCQ options before the write-in option
     const defaultOpts = [
       { label: 'Act decisively', description: 'Take the direct approach' },
       { label: 'Observe first', description: 'Gather more information' },
@@ -391,10 +391,8 @@ export class AgenticOrchestrator {
       else break;
     }
 
-    // Combine narrative intro with question
     const fullPrompt = `${narrativeIntro}\n\n${questionText}`;
 
-    // Present to user via uiHandler
     const askParams: AskUserQuestionParams = {
       questions: [{
         question: fullPrompt,
@@ -428,6 +426,427 @@ export class AgenticOrchestrator {
       finalResult,
       messages: this.messages,
     };
+  }
+
+  /**
+   * Module-aware fallback: uses the assessment module's tasks, drive probes,
+   * and scoring rubric to present a real developmental assessment even without the LLM.
+   * Selects a task matching the encounter modality, presents it as a narrative challenge,
+   * evaluates the response against drive probes, detects shadow patterns,
+   * and computes altitude progression.
+   */
+  private async runModuleAssessment(_line: Line, stage: Stage, now: number): Promise<OrchestratorResult> {
+    const module = this.module!;
+    const holon = this.world.holons.find(h => h.id === this.encounter.holonSource);
+    const holonName = holon?.name ?? 'A presence';
+    const currentModality = this.encounter.modality;
+
+    // 1. Select the best task from the module based on modality
+    const task = this.selectTaskForModality(module, currentModality);
+
+    // 2. Present the task as a narrative challenge via uiHandler
+    const askResult = await this.presentModuleTask(module, task, currentModality, holonName);
+    const answer = askResult.answers[0];
+    const rawLabel = answer?.selectedLabels[0] ?? '';
+    const writeIn = answer?.writeInValue;
+    const playerResponseText = writeIn ?? rawLabel;
+
+    // 3. Evaluate the response using the module's drive probes
+    const evaluation = this.evaluateViaDriveProbes(module, playerResponseText);
+
+    // 4. Detect shadow surfacing from response pattern
+    const shadowSignal = this.detectShadowFromResponse(playerResponseText, module, currentModality);
+
+    // 5. Build a rich narrative summary from the module context
+    const narrativeSummary = this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName);
+
+    // 6. Check for altitude shift: only when ALL drives HealthyBalanced AND passed
+    const altitudeShift = this.computeAltitudeShift(evaluation.driveSignals, module, stage, evaluation.passed);
+
+    const finalResult = this.createAssessmentResult(evaluation.passed, {}, evaluation.driveScores);
+
+    // Build outcome with altitude shift support
+    const energeticDirection: EnergeticDirection = evaluation.polarityDirection === 'sto' ? 'Radiative'
+      : evaluation.polarityDirection === 'sts' ? 'Absorptive' : 'Diffuse';
+
+    const SIGNAL_MAP: Record<string, DriveDirectionality> = {
+      'HealthyBalanced': 'HealthyBalanced',
+      'DarkAddicted': 'DarkAddicted',
+      'DarkAverted': 'DarkAverted',
+      'GoldenAddicted': 'GoldenAddicted',
+      'GoldenAverted': 'GoldenAverted',
+    };
+
+    const baseDir: DriveDirectionality = evaluation.passed ? 'HealthyBalanced' : 'DarkAddicted';
+    const driveDirectionality: Record<Drive, DriveDirectionality> = {
+      Agency: SIGNAL_MAP[evaluation.driveSignals.agency] ?? baseDir,
+      Communion: SIGNAL_MAP[evaluation.driveSignals.communion] ?? baseDir,
+      Eros: SIGNAL_MAP[evaluation.driveSignals.eros] ?? baseDir,
+      Agape: SIGNAL_MAP[evaluation.driveSignals.agape] ?? baseDir,
+    };
+
+    const response: PlayerResponse = {
+      encounterId: this.encounter.id,
+      energeticDirection,
+      driveDirectionality: driveDirectionality as Record<Drive, DriveDirectionality>,
+      stageOrientation: evaluation.polarityDirection === 'sto' ? 'ReachingHigher' : 'Homeostatic',
+      sourceOfNourishment: evaluation.polarityDirection === 'sto' ? 'HigherRealm'
+        : (evaluation.polarityDirection === 'sts' ? 'LowerRealm' : 'Ambivalent'),
+      shadowSurfaced: shadowSignal?.quadrant ?? null,
+      shadowResolvedId: null,
+      narrativeSummary,
+    };
+
+    const record = processOutcome(this.encounter, response, now);
+
+    // Override altitudeShift on the record if computed
+    const updatedRecord: ConsequenceRecord = {
+      ...record,
+      altitudeShift: altitudeShift ?? null,
+    };
+
+    // Apply consequences — shadow entries will be created if shadowSurfaced is set
+    const updated = applyConsequences(this.significator, this.world, updatedRecord, this.encounter);
+
+    // Apply altitude shift if computed
+    let finalSig = updated.sig;
+    if (altitudeShift) {
+      const currentOrd = stageOrdinal(altitudeShift.to);
+      const ALL_STAGES: readonly Stage[] = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'];
+      if (currentOrd < ALL_STAGES.length - 1) {
+        const nextStage = ALL_STAGES[currentOrd + 1]!;
+        finalSig = {
+          ...finalSig,
+          altitudes: { ...finalSig.altitudes, [altitudeShift.line]: nextStage },
+        };
+        // Update currentStage if all lines are at least at nextStage
+        const allAtNext = Object.values(finalSig.altitudes).every(
+          a => stageOrdinal(a) >= stageOrdinal(nextStage),
+        );
+        if (allAtNext) {
+          finalSig = { ...finalSig, currentStage: nextStage };
+        }
+      }
+    }
+
+    // PESTLE accumulation
+    const PESTLE_DIMS_ARRAY: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
+    const dim = PESTLE_DIMS_ARRAY[Math.floor(Math.random() * PESTLE_DIMS_ARRAY.length)]!;
+    const newTension = accumulateTension(
+      (updated.world as any).pestleTension ?? { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      dim,
+      0.05,
+    );
+    const activeEvents = (updated.world as any).activeMacroEvents ?? [];
+    const macroEvent = tryTriggerMacroEvent(newTension, activeEvents, finalSig.currentStage, now);
+    const newActiveEvents = macroEvent ? [...activeEvents, macroEvent] : activeEvents;
+    const updatedWorld = { ...updated.world, pestleTension: newTension, activeMacroEvents: newActiveEvents } as WorldState;
+
+    return {
+      updatedSig: finalSig,
+      updatedWorld,
+      finalResult,
+      consequenceRecord: updatedRecord,
+      narrativeSummary,
+      messages: this.messages,
+    };
+  }
+
+  /**
+   * Select the best assessment task from the module based on encounter modality.
+   */
+  private selectTaskForModality(module: StageAssessment, modality: Modality): AssessmentTask {
+    // Preferred task types for each modality
+    const modalityTaskMap: Record<string, readonly TaskType[]> = {
+      Deterministic: ['n_back', 'stroop', 'go_no_go', 'hold', 'reaction_time', 'rhythm'],
+      LanguageReflective: ['llm_dialogue', 'self_report', 'emotion_identification'],
+      ScenarioChoice: ['dilemma', 'scenario'],
+      Embodied: ['hold', 'rhythm', 'imitation'],
+      Strategic: ['pattern_prediction', 'value_ranking'],
+      SocialCooperative: ['cooperation', 'dilemma', 'emotion_identification'],
+      ImmersiveRPG: ['scenario', 'llm_dialogue', 'emotion_identification'],
+    };
+
+    const preferredTypes = modalityTaskMap[modality] ?? ['n_back', 'scenario'];
+
+    // Find the first task whose type matches a preferred type
+    for (const prefType of preferredTypes) {
+      const match = module.tasks.find(t => t.type === prefType);
+      if (match) return match;
+    }
+
+    // Fallback: use the first task from the module
+    return module.tasks[0] ?? {
+      id: 'fallback-task',
+      type: 'scenario',
+      description: `A ${module.line} ${module.stage} challenge presents itself.`,
+      parameters: {},
+      measures: ['accuracy', 'depth'],
+    };
+  }
+
+  /**
+   * Present a module task as a narrative challenge via the UI handler.
+   * Translates the assessment task type to CLI-friendly MCQ options.
+   */
+  private async presentModuleTask(
+    module: StageAssessment,
+    task: AssessmentTask,
+    _modality: Modality,
+    holonName: string,
+  ): Promise<AskUserQuestionResult> {
+    const driveProbes = module.driveProbes;
+
+    // Build options from drive probes: each probe provides a choice path
+    const options = [
+      { label: 'Act with agency', description: driveProbes.agency.healthyResponse },
+      { label: 'Seek connection', description: driveProbes.communion.healthyResponse },
+      { label: 'Reach higher', description: driveProbes.eros.healthyResponse },
+      { label: 'Return to foundation', description: driveProbes.agape.healthyResponse },
+    ];
+
+    // Build narrative framing based on task type
+    let narrativeFraming: string;
+    switch (task.type) {
+      case 'n_back':
+        narrativeFraming = `${holonName} traces glowing runes in the air. "Your mind is your shield. Hold the pattern, or fall." The runes ${task.description.toLowerCase()}.`;
+        break;
+      case 'stroop':
+        narrativeFraming = `${holonName} raises a shimmering glyph. Colors dance across its surface. "See past the surface. Name what is true." ${task.description}`;
+        break;
+      case 'go_no_go':
+        narrativeFraming = `${holonName} signals. "When the shield glows green, strike. When it glows red, hold." ${task.description}`;
+        break;
+      case 'hold':
+        narrativeFraming = `${holonName} sets a heavy weight before you. "Hold this line. Do not waver. Do not release until I say." ${task.description}`;
+        break;
+      case 'pattern_prediction':
+        narrativeFraming = `${holonName} arranges stones on the ground. "The next move determines everything. Trace the pattern." ${task.description}`;
+        break;
+      case 'emotion_identification':
+        narrativeFraming = `${holonName} looks into you. Their expression shifts like water. "What do you see in this reflection?" ${task.description}`;
+        break;
+      case 'dilemma':
+      case 'scenario':
+        narrativeFraming = `${holonName} presents a choice. "Each path changes who you become." ${task.description}`;
+        break;
+      case 'llm_dialogue':
+        narrativeFraming = `${holonName} speaks directly to you. "I need your truth, not your strategy." ${task.description}`;
+        break;
+      case 'self_report':
+        narrativeFraming = `${holonName} asks you to look inward. "Forget what others expect. What do you actually feel?" ${task.description}`;
+        break;
+      case 'value_ranking':
+        narrativeFraming = `${holonName} places four tokens before you. "Rank what matters. There is no wrong answer, only an honest one." ${task.description}`;
+        break;
+      default:
+        narrativeFraming = `${holonName} faces you. ${task.description}`;
+    }
+
+    // Add module-specific task parameters for context
+    const params = task.parameters;
+    const extraDetails = Object.entries(params)
+      .filter(([k]) => ['n', 'trials', 'disks', 'goRatio'].includes(k))
+      .map(([k, v]) => `${k}=${v}`)
+      .join(', ');
+    const fullPrompt = extraDetails
+      ? `${narrativeFraming}\n\n[Assessment parameters: ${extraDetails}]`
+      : narrativeFraming;
+
+    const askParams: AskUserQuestionParams = {
+      questions: [{
+        question: fullPrompt,
+        header: `${module.line}:${module.stage}`.length > 12 ? module.stage : `${module.line}:${module.stage}`,
+        options,
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    };
+
+    return this.uiHandler.askUser(askParams);
+  }
+
+  /**
+   * Evaluate the player's response using the module's drive probes.
+   * Determines which drive was selected by option label keywords and scores accordingly.
+   */
+  private evaluateViaDriveProbes(
+    module: StageAssessment,
+    responseText: string,
+  ): {
+    passed: boolean;
+    polarityDirection: 'sto' | 'sts' | 'neutral';
+    driveScores: { agency: number; communion: number; eros: number; agape: number };
+    driveSignals: { agency: string; communion: string; eros: string; agape: string };
+    feedback: string;
+  } {
+    const lower = responseText.toLowerCase();
+
+    // Determine which drive the player expressed based on option label keywords
+    // The options presented are: 'act with agency', 'seek connection', 'reach higher', 'return to foundation'
+    const selectedDrive: 'agency' | 'communion' | 'eros' | 'agape' | null =
+      lower.includes('agency') ? 'agency' :
+      lower.includes('connection') ? 'communion' :
+      lower.includes('higher') ? 'eros' :
+      lower.includes('foundation') ? 'agape' :
+      null;
+
+    // Score drives: the selected drive gets 0.8 (healthy), others get 0.5 (neutral baseline)
+    // Unless the response contains shadow keywords
+    const hasShadowAddiction = lower.includes('attack') || lower.includes('dominate') || lower.includes('crush');
+    const hasShadowAversion = lower.includes('refuse') || lower.includes('cannot') || lower.includes('withdraw');
+
+    function scoreDrive(drive: 'agency' | 'communion' | 'eros' | 'agape'): { signal: string; score: number } {
+      if (selectedDrive === drive) {
+        // The selected drive: check for shadow signals
+        if (hasShadowAddiction && (drive === 'agency' || drive === 'eros')) {
+          return { signal: 'DarkAddicted', score: 0.3 };
+        }
+        if (hasShadowAversion) {
+          return { signal: 'DarkAverted', score: 0.3 };
+        }
+        return { signal: 'HealthyBalanced', score: 0.8 };
+      }
+      // Non-selected drives: baseline neutral
+      return { signal: 'HealthyBalanced', score: 0.5 };
+    }
+
+    const agencyResult = scoreDrive('agency');
+    const communionResult = scoreDrive('communion');
+    const erosResult = scoreDrive('eros');
+    const agapeResult = scoreDrive('agape');
+
+    const agencyScore = agencyResult.score;
+    const communionScore = communionResult.score;
+    const erosScore = erosResult.score;
+    const agapeScore = agapeResult.score;
+
+    // STS: agency+eros dominate communion+agape
+    // STO: communion+agape dominate
+    // Neutral: balanced
+    const selfDominant = agencyScore + erosScore;
+    const otherDominant = communionScore + agapeScore;
+    let polarityDirection: 'sto' | 'sts' | 'neutral';
+    if (selfDominant > otherDominant + 0.3) polarityDirection = 'sts';
+    else if (otherDominant > selfDominant + 0.3) polarityDirection = 'sto';
+    else polarityDirection = 'neutral';
+
+    // Determine pass/fail from rubric threshold
+    const avgScore = (agencyScore + communionScore + erosScore + agapeScore) / 4;
+    const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
+    const passed = avgScore >= passThreshold;
+
+    // Build feedback
+    const feedback = passed
+      ? `Your response demonstrated balanced engagement with the ${module.line} ${module.stage} challenge. Agency: ${(agencyScore * 100).toFixed(0)}%, Communion: ${(communionScore * 100).toFixed(0)}%, Eros: ${(erosScore * 100).toFixed(0)}%, Agape: ${(agapeScore * 100).toFixed(0)}%.`
+      : `The challenge revealed areas for growth. Your ${module.line} ${module.stage} response showed room for deeper integration.`;
+
+    return {
+      passed,
+      polarityDirection,
+      driveScores: { agency: agencyScore, communion: communionScore, eros: erosScore, agape: agapeScore },
+      driveSignals: {
+        agency: agencyResult.signal,
+        communion: communionResult.signal,
+        eros: erosResult.signal,
+        agape: agapeResult.signal,
+      },
+      feedback,
+    };
+  }
+
+  /**
+   * Detect shadow surfacing from response patterns.
+   * Uses keyword heuristics aligned with the 4-quadrant shadow model.
+   */
+  private detectShadowFromResponse(
+    responseText: string,
+    _module: StageAssessment,
+    _modality: Modality,
+  ): { quadrant: ShadowQuadrant; intensity: number } | null {
+    const lower = responseText.toLowerCase().trim();
+
+    // Dark-Addiction: Clings to lower-stage expression
+    if (lower.includes('attack') || lower.includes('dominate') || lower.includes('crush') ||
+        lower.includes('enslave') || lower.includes('destroy')) {
+      return { quadrant: 'DarkAddiction' as ShadowQuadrant, intensity: Math.min(1, 0.4 + Math.random() * 0.3) };
+    }
+
+    // Dark-Allergy: Rejects/avoids lower-stage expression
+    if (lower.includes('withdraw') || lower.includes('resist') || lower.includes('refuse') ||
+        lower.includes('decline') || lower.includes('flee')) {
+      return { quadrant: 'DarkAllergy' as ShadowQuadrant, intensity: Math.min(1, 0.3 + Math.random() * 0.2) };
+    }
+
+    // Golden-Addiction: Bypasses toward higher without integration
+    if (lower.includes('bypass') || lower.includes('transcend') || lower.includes('skip') ||
+        lower.includes('enlighten') || (lower.includes('higher') && lower.includes('ignore'))) {
+      return { quadrant: 'GoldenAddiction' as ShadowQuadrant, intensity: Math.min(1, 0.5 + Math.random() * 0.3) };
+    }
+
+    // Golden-Allergy: Refuses the call to grow
+    if (lower.includes('stay') || lower.includes('safe') || lower.includes('comfortable') ||
+        lower.includes('static') || lower.includes('never change')) {
+      return { quadrant: 'GoldenAllergy' as ShadowQuadrant, intensity: Math.min(1, 0.3 + Math.random() * 0.3) };
+    }
+
+    return null;
+  }
+
+  /**
+   * Compute an altitude shift signal when the player demonstrates consistent
+   * HealthyBalanced drive patterns across ALL 4 drives (selected drive must score
+   * healthy, not shadow).
+   * Returns a ConsequenceRecord-compatible object or null if no shift is warranted.
+   */
+  private computeAltitudeShift(
+    driveSignals: { agency: string; communion: string; eros: string; agape: string },
+    module: StageAssessment,
+    currentEncounterStage: Stage,
+    passed: boolean,
+  ): { line: Line; from: Stage; to: Stage } | null {
+    // ALL 4 drives must be HealthyBalanced for an altitude shift
+    // (non-selected drives get 0.5/HealthyBalanced by default, but if shadow
+    //  was expressed, the selected drive will be non-HealthyBalanced)
+    // AND the encounter must have passed the module's passThreshold
+    if (!passed) return null;
+
+    const allHealthy = [
+      driveSignals.agency,
+      driveSignals.communion,
+      driveSignals.eros,
+      driveSignals.agape,
+    ].every(s => s === 'HealthyBalanced');
+
+    if (allHealthy) {
+      return { line: module.line, from: currentEncounterStage, to: currentEncounterStage };
+    }
+
+    return null;
+  }
+
+  /**
+   * Build a rich narrative summary from the module context and player choice.
+   */
+  private buildModuleNarrative(
+    module: StageAssessment,
+    responseText: string,
+    passed: boolean,
+    modality: Modality,
+    holonName: string,
+  ): string {
+    const outcome = passed ? 'navigated successfully' : 'faced difficulty with';
+    const modalityDesc: Record<string, string> = {
+      Deterministic: 'a focused mental trial',
+      LanguageReflective: 'a moment of deep reflection',
+      ScenarioChoice: 'a moral crossroads',
+      Embodied: 'a somatic awareness exercise',
+      Strategic: 'a tactical assessment',
+      SocialCooperative: 'a relational challenge',
+      ImmersiveRPG: 'a narrative encounter',
+    };
+
+    return `${holonName} guided you through ${modalityDesc[modality] ?? 'an assessment'} at the ${module.stage} stage of ${module.line} development. You ${outcome} the challenge of ${module.tasks[0]?.description ?? 'developmental growth'}. Your response: "${responseText.slice(0, 100)}". The ${module.line} ${module.stage} module registers your engagement.`;
   }
 
   private evaluateFallbackResponse(selectedLabel: string): {

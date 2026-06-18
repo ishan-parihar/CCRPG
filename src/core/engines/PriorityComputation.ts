@@ -77,9 +77,16 @@ export function computePriority(
     + weights.narrativeCoherence * n
     + weights.sessionFit * sf;
 
-  const hash = (candidate.moduleRef.charCodeAt(0) + candidate.modality.charCodeAt(0)) % 100;
-  const tieBreaker = hash / 10000; // max 0.0099
-  return baseScore + tieBreaker;
+  // Novelty bonus: candidates with fewer traces get a boost to differentiate them
+  const cellKey = `${candidate.line}:${candidate.stage}`;
+  const cell = sig.polarity.cells[cellKey];
+  const traceCount = cell?.traceCount ?? 0;
+  const noveltyMultiplier = 1.0 + Math.max(0, (10 - traceCount) / 100); // max +0.10 boost
+
+  // Add a per-candidate seed based on time + module to prevent identical priorities
+  const hash = (candidate.moduleRef.charCodeAt(0) + candidate.modality.charCodeAt(0) + (now % 1000)) % 100;
+  const tieBreaker = hash / 5000; // max 0.0198
+  return baseScore * noveltyMultiplier + tieBreaker;
 }
 
 /**
