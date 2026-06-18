@@ -542,20 +542,22 @@ export class AgenticOrchestrator {
         : effectivePolarity === 'sto' ? 'sto' as const
         : 'neutral' as const;
 
-      // Derive drive signals from the expression pattern
+      // Derive drive signals from the expression pattern.
+      // IMPORTANT: Shadow signals ONLY come from write-in keyword detection or forceShadow.
+      // A wrong MCQ answer (low correctnessScore) is a performance miss, NOT a shadow expression.
       const shadowFromWriteIn = writeInDriveDetection?.shadowKeyword ?? null;
       const driveSignals = {
         agency: effectiveDrive === 'agency'
-          ? (shadowFromWriteIn === 'DarkAddicted' ? 'DarkAddicted' : baseScore < 0.4 ? 'DarkAddicted' : 'HealthyBalanced')
+          ? (shadowFromWriteIn === 'DarkAddicted' ? 'DarkAddicted' : 'HealthyBalanced')
           : 'HealthyBalanced',
         communion: effectiveDrive === 'communion'
-          ? (shadowFromWriteIn === 'DarkAverted' ? 'DarkAverted' : baseScore < 0.4 ? 'DarkAverted' : 'HealthyBalanced')
+          ? (shadowFromWriteIn === 'DarkAverted' ? 'DarkAverted' : 'HealthyBalanced')
           : 'HealthyBalanced',
         eros: effectiveDrive === 'eros'
-          ? (shadowFromWriteIn === 'GoldenAddicted' ? 'GoldenAddicted' : baseScore < 0.4 ? 'GoldenAddicted' : 'HealthyBalanced')
+          ? (shadowFromWriteIn === 'GoldenAddicted' ? 'GoldenAddicted' : 'HealthyBalanced')
           : 'HealthyBalanced',
         agape: effectiveDrive === 'agape'
-          ? (shadowFromWriteIn === 'GoldenAverted' ? 'GoldenAverted' : baseScore < 0.4 ? 'GoldenAverted' : 'HealthyBalanced')
+          ? (shadowFromWriteIn === 'GoldenAverted' ? 'GoldenAverted' : 'HealthyBalanced')
           : 'HealthyBalanced',
       };
 
@@ -564,7 +566,9 @@ export class AgenticOrchestrator {
       const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
       const effectiveScore = isWriteInWithNoShadow ? Math.max(baseScore, 0.55) : baseScore;
       const hasShadow = !!shadowFromWriteIn;
-      const passed = effectiveScore >= passThreshold && !hasShadow;
+      // Shadow expression = ALWAYS fails (pathology detected)
+      // Below threshold = fails but is a performance miss, not pathology
+      const passed = !hasShadow && effectiveScore >= passThreshold;
 
       // Build rich developmental feedback
       const driveLabel = effectiveDrive ?? 'unidentified';
@@ -598,6 +602,18 @@ export class AgenticOrchestrator {
     const shadowSignal = forcedQuadrant
       ? { quadrant: forcedQuadrant, intensity: 0.7 }
       : this.detectShadowFromResponse(playerResponseText, currentModality, isWriteIn);
+
+    // If forceShadow is active, propagate to drive signals AND force-fail the encounter
+    if (forcedQuadrant && this._currentRendererEvaluate) {
+      const forcedDrive = forcedQuadrant === 'DarkAddiction' ? 'agency'
+        : forcedQuadrant === 'DarkAllergy' ? 'communion'
+        : forcedQuadrant === 'GoldenAddiction' ? 'eros'
+        : 'agape';
+      const forcedSignal = forcedQuadrant;
+      evaluation.driveSignals = { ...evaluation.driveSignals, [forcedDrive]: forcedSignal } as typeof evaluation.driveSignals;
+      // Forced shadow = pathology detected → must fail
+      evaluation = { ...evaluation, passed: false, feedback: `Shadow surfaced: ${forcedQuadrant} through ${forcedDrive} expression (forced). This indicates the ${forcedDrive} drive is operating from a developmental shadow — awareness of this pattern is the first step toward integration.` };
+    }
 
     // 5. Build a rich narrative summary from the module context
     const narrativeSummary = this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName);
@@ -977,12 +993,11 @@ export class AgenticOrchestrator {
    */
   private buildModuleNarrative(
     module: StageAssessment,
-    responseText: string,
+    _responseText: string,
     passed: boolean,
     modality: Modality,
     holonName: string,
   ): string {
-    const outcome = passed ? 'navigated successfully' : 'faced difficulty with';
     const modalityDesc: Record<string, string> = {
       Deterministic: 'a focused mental trial',
       LanguageReflective: 'a moment of deep reflection',
@@ -993,7 +1008,43 @@ export class AgenticOrchestrator {
       ImmersiveRPG: 'a narrative encounter',
     };
 
-    return `${holonName} guided you through ${modalityDesc[modality] ?? 'an assessment'} at the ${module.stage} stage of ${module.line} development. You ${outcome} the challenge of ${module.tasks[0]?.description ?? 'developmental growth'}. Your response: "${responseText.slice(0, 100)}". The ${module.line} ${module.stage} module registers your engagement.`;
+    // Use the TASK_TYPE_LABELS for readable task names, not raw task descriptions
+    const TASK_LABELS: Record<string, string> = {
+      n_back: 'a working memory challenge',
+      stroop: 'an inhibitory control test',
+      go_no_go: 'an impulse regulation exercise',
+      hold: 'an attentional hold task',
+      pattern_prediction: 'a pattern recognition puzzle',
+      emotion_identification: 'an emotional literacy assessment',
+      dilemma: 'a moral dilemma',
+      scenario: 'a situational judgment',
+      value_ranking: 'a value prioritization exercise',
+      self_report: 'a self-inquiry reflection',
+      reaction_time: 'a reaction speed test',
+      rhythm: 'a rhythmic attunement exercise',
+      imitation: 'an imitative learning task',
+      cooperation: 'a cooperative dynamics challenge',
+      llm_dialogue: 'a reflective dialogue',
+    };
+
+    const primaryTask = module.tasks[0];
+    const taskLabel = primaryTask ? (TASK_LABELS[primaryTask.type] ?? 'a developmental challenge') : 'a developmental challenge';
+    const stageDesc: Record<string, string> = {
+      Infrared: 'the most foundational',
+      Magenta: 'an instinctive',
+      Red: 'a power-oriented',
+      Amber: 'a rule-governed',
+      Orange: 'an achievement-driven',
+      Green: 'a pluralistic',
+      Turquoise: 'an integral',
+      White: 'a transcendent',
+    };
+
+    if (passed) {
+      return `${holonName} guided you through ${modalityDesc[modality] ?? 'an assessment'} — ${taskLabel} at the ${module.stage} stage of ${module.line} development. You demonstrated ${stageDesc[module.stage] ?? ''} expression of the ${module.line.toLowerCase()} capacity. The world registers your engagement and the ${module.line.toLowerCase()} line strengthens.`;
+    } else {
+      return `${holonName} presented ${taskLabel} at the ${module.stage} stage of ${module.line} development. The challenge revealed areas where the ${module.line.toLowerCase()} capacity is still integrating. The ${module.stage} layer holds its tension — the encounter adds to your developmental pressure.`;
+    }
   }
 
   private evaluateFallbackResponse(selectedLabel: string): {

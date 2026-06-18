@@ -448,16 +448,14 @@ async function runAgenticEncounter(
           const selectedOpt = q.options?.[selectedIdx];
           const selectedLabel = selectedOpt?.label ?? '';
 
-          // Inject shadow keywords into writeIn based on selection index
-          // Maps MCQ choices to shadow quadrants for testing:
-          // Index 0 (agency) = healthy baseline (no shadow)
-          // Index 1 (communion) = DarkAllergy (aversion to self-assertion)
-          // Index 2 (eros) = GoldenAddiction (bypassing toward higher)
-          // Index 3 (agape) = GoldenAllergy (refusing the call to grow)
+          // Shadow keyword injection for testing — randomly inject (40% chance)
+          // to allow SOME encounters to pass and demonstrate altitude shifts.
+          // When FORCE_SHADOW=none, skip injection entirely for clean progression.
           const shadowInjections = ['', 'i feel the need to withdraw from this confrontation', 'i must transcend these petty concerns and reach enlightenment', 'i prefer to stay here where it is safe and comfortable'];
-          const writeInShadow = shadowInjections[selectedIdx] ?? '';
+          const injectShadow = FORCE_SHADOW !== 'none' && selectedIdx > 0 && Math.random() < 0.4;
+          const writeInShadow = injectShadow ? (shadowInjections[selectedIdx] ?? '') : '';
 
-          if (writeInShadow && selectedIdx !== 0 && FORCE_SHADOW !== 'none') {
+          if (writeInShadow) {
             answers.push({ selectedLabels: [selectedLabel], writeInValue: writeInShadow });
           } else {
             answers.push({ selectedLabels: [selectedLabel] });
@@ -819,15 +817,7 @@ async function runFullSession(): Promise<void> {
         if (shadow) {
           console.log(`  ${C.yellow}⚠ shadow:${C.reset} ${C.yellow}${shadow}${C.reset}`);
         }
-        // Show developmental feedback
-        const fb = encResult.passed ? null : result.outcome.consequenceRecord.polarityTrace;
-        if (result.narrativeSummary) {
-          // Extract the key feedback from the narrative
-          const fbMatch = result.narrativeSummary.match(/Your response: "(.+?)"/);
-          if (fbMatch) {
-            console.log(`  ${C.dim}choice:${C.reset} ${fbMatch[1]}`);
-          }
-        }
+
       }
 
       if (VERBOSE) {
