@@ -485,15 +485,40 @@ export class AgenticOrchestrator {
 
       // Map trial accuracy to drive scores: high accuracy = healthy drives
       const baseScore = Math.min(1, Math.max(0, avgDimension));
+
+      // Check if trial captured drive-specific data (e.g. dilemma matchedDrive)
+      const rawResp = trialResult?.rawResponse as any;
+      const matchedDrive: string | null = rawResp?.matchedDrive ?? null;
+      const matchedPolarity: string = rawResp?.matchedPolarity ?? 'neutral';
+
+      // Build differentiated drive scores based on which drive was expressed
+      const driveScores = {
+        agency: matchedDrive === 'agency' ? Math.min(1, baseScore + 0.15) : baseScore,
+        communion: matchedDrive === 'communion' ? Math.min(1, baseScore + 0.15) : baseScore,
+        eros: matchedDrive === 'eros' ? Math.min(1, baseScore + 0.15) : baseScore,
+        agape: matchedDrive === 'agape' ? Math.min(1, baseScore + 0.15) : baseScore,
+      };
+
+      // Determine polarity from the trial's matched data
+      const polarityDirection = matchedPolarity === 'sts' ? 'sts' as const
+        : matchedPolarity === 'sto' ? 'sto' as const
+        : 'neutral' as const;
+
+      // Determine pass: use module threshold, but also pass if accuracy >= 0.5 for generic tasks
+      const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
+      const passed = baseScore >= passThreshold || baseScore >= 0.65;
+
       evaluation = {
-        passed: baseScore >= (module.scoringRubric.passThreshold ?? 0.5),
-        polarityDirection: 'neutral' as const,
-        driveScores: { agency: baseScore, communion: baseScore, eros: baseScore, agape: baseScore },
+        passed,
+        polarityDirection,
+        driveScores,
         driveSignals: {
           agency: 'HealthyBalanced', communion: 'HealthyBalanced',
           eros: 'HealthyBalanced', agape: 'HealthyBalanced',
         },
-        feedback: `Trial scored: accuracy=${(trialResult!.dimensions.accuracy ?? 0.5).toFixed(2)}, response_time=${(trialResult!.dimensions.response_time ?? 0.5).toFixed(2)}, avg=${avgDimension.toFixed(2)}`,
+        feedback: matchedDrive
+          ? `Trial scored: accuracy=${(trialResult!.dimensions.accuracy ?? 0.5).toFixed(2)}, drive=${matchedDrive}, polarity=${matchedPolarity}`
+          : `Trial scored: accuracy=${(trialResult!.dimensions.accuracy ?? 0.5).toFixed(2)}, response_time=${(trialResult!.dimensions.response_time ?? 0.5).toFixed(2)}, avg=${avgDimension.toFixed(2)}`,
       };
     } else {
       // Fallback: keyword-based evaluation
@@ -515,7 +540,9 @@ export class AgenticOrchestrator {
     // 6. Check for altitude shift: only when ALL drives HealthyBalanced AND passed
     const altitudeShift = this.computeAltitudeShift(evaluation.driveSignals, module, stage, evaluation.passed);
 
-    const finalResult = this.createAssessmentResult(evaluation.passed, {}, evaluation.driveScores);
+    const finalResult = this.createAssessmentResult(
+      evaluation.passed, {}, evaluation.driveScores, trialResult ? [trialResult] : undefined,
+    );
 
     // Build outcome with altitude shift support
     const energeticDirection: EnergeticDirection = evaluation.polarityDirection === 'sto' ? 'Radiative'
@@ -1029,6 +1056,7 @@ ${probes}${rubric}
     passed: boolean,
     scores: Partial<Record<MeasureDimension, number>>,
     driveScores?: { agency: number; communion: number; eros: number; agape: number },
+    rawTrials?: readonly TrialResult[],
   ): AssessmentResult {
     const [line, stage] = this.encounter.moduleRef.split(':') as [Line, Stage];
     const dimensions: Record<MeasureDimension, number> = {
@@ -1052,13 +1080,16 @@ ${probes}${rubric}
       dimensions.integration = driveScores.agape;
     }
 
+    // Populate rawTrials from the TaskRenderer's TrialResult
+    const trials = rawTrials ?? [];
+
     return {
       line,
       stage,
       passed,
       confidence: 0.8,
       dimensions,
-      rawTrials: [],
+      rawTrials: trials,
     };
   }
 
