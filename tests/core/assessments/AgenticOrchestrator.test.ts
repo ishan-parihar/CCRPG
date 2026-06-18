@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, beforeAll, afterAll } from 'vitest';
+import { describe, it, expect, vi, beforeAll, afterAll, type Mock } from 'vitest';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../../../src/core/assessments/AgenticOrchestrator.js';
 import type { AskUserQuestionResult } from '../../../src/core/assessments/agentTypes.js';
 import { createSignificator } from '../../../src/core/domain/Significator.js';
@@ -23,7 +23,7 @@ describe('AgenticOrchestrator', () => {
   });
 
   it('runs the agent loop through ask_user_question and completes the encounter', async () => {
-    const mockFetch = vi.mocked(globalThis.fetch);
+    const mockFetch = globalThis.fetch as unknown as Mock;
 
     // Mock first response: call ask_user_question tool
     const firstResponse = {
@@ -139,7 +139,7 @@ describe('AgenticOrchestrator', () => {
 
     // Assert UI handler was called once with the correct parameters
     expect(uiHandler.askUser).toHaveBeenCalledTimes(1);
-    const uiCallParams = vi.mocked(uiHandler.askUser).mock.calls[0]![0];
+    const uiCallParams = (uiHandler.askUser as Mock).mock.calls[0]![0];
     expect(uiCallParams.questions[0]!.header).toBe('Strategy');
 
     // Assert outcome properties
@@ -155,7 +155,7 @@ describe('AgenticOrchestrator', () => {
   });
 
   it('correctly handles false-positive error strings and true error objects in LLM responses', async () => {
-    const mockFetch = vi.mocked(globalThis.fetch);
+    const mockFetch = globalThis.fetch as unknown as Mock;
     mockFetch.mockReset();
 
     // Setup input structures
@@ -347,7 +347,7 @@ describe('AgenticOrchestrator', () => {
   });
 
   it('implements differentiated fallback evaluation for STS (attack)', async () => {
-    const mockFetch = vi.mocked(globalThis.fetch);
+    const mockFetch = globalThis.fetch as unknown as Mock;
     mockFetch.mockReset();
     const fallbackCallError = {
       ok: true,
@@ -416,7 +416,7 @@ describe('AgenticOrchestrator', () => {
   });
 
   it('implements differentiated fallback evaluation for STS (betray)', async () => {
-    const mockFetch = vi.mocked(globalThis.fetch);
+    const mockFetch = globalThis.fetch as unknown as Mock;
     mockFetch.mockReset();
     const fallbackCallError = {
       ok: true,
@@ -487,7 +487,7 @@ describe('AgenticOrchestrator', () => {
   });
 
   it('implements differentiated fallback evaluation for STO (negotiate)', async () => {
-    const mockFetch = vi.mocked(globalThis.fetch);
+    const mockFetch = globalThis.fetch as unknown as Mock;
     mockFetch.mockReset();
     const fallbackCallError = {
       ok: true,
@@ -555,7 +555,7 @@ describe('AgenticOrchestrator', () => {
   });
 
   it('implements differentiated fallback evaluation for Neutral/Withdrawal (withdraw)', async () => {
-    const mockFetch = vi.mocked(globalThis.fetch);
+    const mockFetch = globalThis.fetch as unknown as Mock;
     mockFetch.mockReset();
     const fallbackCallError = {
       ok: true,

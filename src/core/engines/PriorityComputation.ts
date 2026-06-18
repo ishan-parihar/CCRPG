@@ -77,16 +77,29 @@ export function computePriority(
     + weights.narrativeCoherence * n
     + weights.sessionFit * sf;
 
-  // Novelty bonus: candidates with fewer traces get a boost to differentiate them
+  // Novelty bonus: candidates with fewer traces get a meaningful boost
+  // Unvisited cells (0 traces) get +0.25, visited cells get diminishing returns
   const cellKey = `${candidate.line}:${candidate.stage}`;
   const cell = sig.polarity.cells[cellKey];
   const traceCount = cell?.traceCount ?? 0;
-  const noveltyMultiplier = 1.0 + Math.max(0, (10 - traceCount) / 100); // max +0.10 boost
+  const noveltyBonus = traceCount === 0 ? 0.25 : Math.max(0, 0.25 - traceCount * 0.03);
 
-  // Add a per-candidate seed based on time + module to prevent identical priorities
-  const hash = (candidate.moduleRef.charCodeAt(0) + candidate.modality.charCodeAt(0) + (now % 1000)) % 100;
-  const tieBreaker = hash / 5000; // max 0.0198
-  return baseScore * noveltyMultiplier + tieBreaker;
+  // Developmental need: prioritize lines where the player is weakest
+  // (lowest altitude relative to the mean across all lines)
+  const allAlts = Object.values(sig.altitudes).map(stageOrdinal);
+  const meanAlt = allAlts.reduce((a, b) => a + b, 0) / allAlts.length;
+  const candidateAlt = stageOrdinal(sig.altitudes[candidate.line] ?? 'Red');
+  const weaknessBonus = candidateAlt < meanAlt ? 0.15 : 0;
+
+  // Diversity bonus: penalize lines we've already seen recently
+  const recentLines = session.recentLines;
+  const diversityBonus = recentLines.includes(candidate.line) ? -0.10 : 0.10;
+
+  // Per-candidate seed based on time + line + modality to prevent identical priorities
+  const hash = (candidate.line.charCodeAt(0) * 7 + candidate.modality.charCodeAt(0) * 13 + (now % 2000)) % 200;
+  const tieBreaker = hash / 10000; // max 0.02
+
+  return baseScore + noveltyBonus + weaknessBonus + diversityBonus + tieBreaker;
 }
 
 /**

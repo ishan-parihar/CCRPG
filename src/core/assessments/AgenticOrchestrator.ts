@@ -619,12 +619,14 @@ export class AgenticOrchestrator {
   ): Promise<AskUserQuestionResult> {
     const driveProbes = module.driveProbes;
 
-    // Build options from drive probes: each probe provides a choice path
+    // Build options from drive probes with module-specific labels
+    // Each drive probe has healthyResponse, addictionSignal, allergySignal — use these
+    // to create contextually meaningful options instead of generic 'Act with agency'
     const options = [
-      { label: 'Act with agency', description: driveProbes.agency.healthyResponse },
-      { label: 'Seek connection', description: driveProbes.communion.healthyResponse },
-      { label: 'Reach higher', description: driveProbes.eros.healthyResponse },
-      { label: 'Return to foundation', description: driveProbes.agape.healthyResponse },
+      { label: driveProbes.agency.healthyResponse.split(' - ')[0] ?? 'Act with agency', description: driveProbes.agency.description },
+      { label: driveProbes.communion.healthyResponse.split(' - ')[0] ?? 'Seek connection', description: driveProbes.communion.description },
+      { label: driveProbes.eros.healthyResponse.split(' - ')[0] ?? 'Reach higher', description: driveProbes.eros.description },
+      { label: driveProbes.agape.healthyResponse.split(' - ')[0] ?? 'Return to foundation', description: driveProbes.agape.description },
     ];
 
     // Build narrative framing based on task type

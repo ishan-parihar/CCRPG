@@ -231,7 +231,11 @@ function renderCCIDisplay(cci: { composite: number; dimensions: Record<string, n
 
   // Show dimensions in a compact row
   const dims = Object.entries(cci.dimensions).map(([k, v]) => {
-    const short = k.replace('transform', 'tr').replace('shadow', 'sh').replace('drive', 'dr').slice(0, 3);
+    const labels: Record<string, string> = {
+      altitude: 'alt', driveHealth: 'drvH', polarityIntegrity: 'polI',
+      shadowIntegration: 'shdI', transformationReadiness: 'trnsR',
+    };
+    const short = labels[k] ?? k.slice(0, 4);
     const val = (v * 100).toFixed(0);
     const color = v > 0.6 ? C.green : v > 0.3 ? C.yellow : C.red;
     return `${C.dim}${short}:${color}${val}%${C.reset}`;
@@ -304,7 +308,7 @@ function renderDrives(sig: Significator): void {
     const d = balances[i];
     const w = sig.drives.weights[d] ?? 0;
     const fix = sig.drives.fixationRisk[d] ?? 0;
-    const filled = Math.round((w / maxVal) * barLen);
+    const filled = Math.max(0, Math.round((w / maxVal) * barLen));
     const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
     const color = fix > 0.5 ? C.red : w > 0.3 ? C.green : C.yellow;
     const fixIcon = fix > 0.7 ? '⚠' : fix > 0.4 ? '~' : ' ';
@@ -686,6 +690,10 @@ async function runFullSession(): Promise<void> {
   } as any;
   let sessionState = startSession(sig, session);
 
+  // Declare mutable state BEFORE the banner so it can reference them
+  let currentSig = sig;
+  let currentWorld = world;
+
   banner('SESSION START');
   renderCCIDisplay(sessionState.cci);
   info('theme', `${C.cyan}${sessionState.strategy.theme}${C.reset}`);
@@ -701,9 +709,6 @@ async function runFullSession(): Promise<void> {
     theme: sessionState.strategy.theme,
     targetEncounters: encounterCount,
   });
-
-  let currentSig = sig;
-  let currentWorld = world;
   let completedCount = 0;
   const now = Date.now();
   let prevEncounter: ScheduledEncounter | null = null;
@@ -784,8 +789,38 @@ async function runFullSession(): Promise<void> {
       prevResponse = result.response;
 
       verbose('narrative', result.narrativeSummary);
+
+      // ── Per-encounter state display ──
+      const encResult = result.outcome.finalResult;
+      if (!JSON_MODE) {
+        const passIcon = encResult.passed ? `${C.green}✓ PASSED${C.reset}` : `${C.red}✗ FAILED${C.reset}`;
+        console.log(`\n  ${C.bold}Result:${C.reset} ${passIcon}`);
+        if (VERBOSE) {
+          // Show drive signals from the orchestrator evaluation
+          const ds = result.outcome.consequenceRecord.polarityTrace.driveDirectionality;
+          const driveEntries = Object.entries(ds).map(([k, v]) => {
+            const short = k.slice(0, 3);
+            const col = v === 'HealthyBalanced' ? C.green : C.red;
+            return `${C.dim}${short}:${col}${v === 'HealthyBalanced' ? '✓' : v.slice(0, 4)}${C.reset}`;
+          });
+          console.log(`  ${C.dim}drives:${C.reset} ${driveEntries.join(' ')}`);
+        }
+        // Show shadow status
+        const shadow = result.outcome.consequenceRecord.shadowSurfaced;
+        if (shadow) {
+          console.log(`  ${C.yellow}⚠ shadow:${C.reset} ${C.yellow}${shadow}${C.reset}`);
+        }
+        // Show narrative snippet
+        if (result.narrativeSummary) {
+          const snippet = result.narrativeSummary.length > 80
+            ? result.narrativeSummary.slice(0, 80) + '…'
+            : result.narrativeSummary;
+          console.log(`  ${C.dim}narrative:${C.reset} ${C.dim}"${snippet}"${C.reset}`);
+        }
+      }
+
       if (VERBOSE) {
-        verbose('feedback', result.outcome.finalResult.passed ? 'passed' : 'failed');
+        verbose('feedback', encResult.passed ? 'passed' : 'failed');
         verbose('updatedEncounters', String(currentSig.totalEncounters));
       }
 
