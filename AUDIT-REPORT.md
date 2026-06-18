@@ -1,285 +1,460 @@
-# CCRPG CLI & Backend Architecture Audit Report
+# CCRPG CLI & Backend Audit Report — v2
 
-**Date:** June 18, 2026
-**Auditor:** Buffy (AI Agent)
-**Scope:** Full backend architecture, CLI debugging tool, and alignment with R&D documentation
+**Date:** June 18, 2026  
+**Scope:** CLI debugging tool, backend engines, assessment system, frontend-CLI parity, evolutionary catalysis  
+**Method:** Full codebase analysis + CLI runtime testing across diagnostic, single-encounter, and multi-encounter modes
 
 ---
 
 ## Executive Summary
 
-The CCRPG backend has a **robust theoretical foundation** (27 foundation docs + 512 concept-drafts) and a **solid architectural skeleton** (engines, domain models, types). However, there is a **critical disconnect** between what the architecture promises and what the code actually delivers at runtime. The CLI debugging tool exposes this gap clearly: encounters complete successfully but **the developmental engine is not running**. The game "acts like" it's performing developmental assessment, but it is not actually doing so.
+The CCRPG backend has a **theoretical depth that is genuinely exceptional** — 27 foundation documents, 512 concept-drafts, and 64 assessment modules encoding developmental psychology research into game mechanics. The architectural skeleton (scheduler, CCI, auto-mode, consequence engine, theta-decay, transformation detector) is structurally sound and mostly correct in its pure-function implementations.
 
-**Bottom line:** The backend can schedule encounters and present MCQ questions, but it cannot yet deliver an evolutionarily catalytic experience because:
-1. The assessment modules exist as data but are never executed during agentic encounters
-2. The LLM never sees the assessment tasks, scoring rubrics, or drive probes
-3. The consequence engine receives synthetic responses, not real developmental data
-4. The CCI/auto-mode/scheduler pipeline runs but produces no meaningful state evolution
+**But the system has a fatal gap in the middle:** the assessment pipeline defines WHAT to measure (tasks, drive probes, scoring rubrics), the consequence engine knows HOW to process results (polarity traces, drive balance, shadow updates), but nothing actually PRESENTS assessment tasks or COLLECTS responses. The AgenticOrchestrator bridges this gap with LLM-generated content, but that content is **generic narrative**, not grounded in the module specifications.
+
+**The CLI correctly exposes this gap.** When run in headless mode, every encounter produces the same pattern: "The Conqueror presents a challenge. [generic framing]. [4 generic MCQ options]. [headless selects option 1]. Encounter passed." This is not an evolutionarily catalytic experience — it's a narrative wrapper around an empty engine.
+
+### Severity Matrix
+
+| Gap | Severity | Impact |
+|---|---|---|
+| Assessment tasks never presented to LLM | 🔴 CRITICAL | The entire measurement system is bypassed |
+| Frontend AssessmentScene doesn't pass module to orchestrator | 🔴 CRITICAL | Same gap exists in both CLI and frontend |
+| Concept-drafts never loaded (empty index) | 🔴 CRITICAL | 512 authored game designs are invisible to LLM |
+| FallbackProvider covers only Red stage | 🔴 CRITICAL | Higher stages degrade to generic content |
+| Priority formula degenerate at session start | 🟡 HIGH | Scheduler cannot differentiate encounters |
+| No CLI flags for module/shadow/transformation forcing | 🟡 HIGH | AI-agent feedback loops cannot target specific scenarios |
+| LLM encounter loop doesn't enforce budget | 🟡 HIGH | Encounters run until safety guard (10 loops) |
+| driveSignals not enforced in schema required array | 🟡 MEDIUM | LLM may omit per-drive scoring |
+| Modality rotation not enforced | 🟡 MEDIUM | Deterministic dominates early sessions |
+| CCI doesn't meaningfully update | 🟡 MEDIUM | Session strategy has limited effect |
+| CLI always selects first option (headless) | 🟢 LOW | No way to test write-in or alternate choices |
 
 ---
 
 ## 1. What Works ✅
 
-### 1.1 Infrastructure Layer
-| Component | Status | Evidence |
-|---|---|---|
-| Module Registry | ✅ 64 modules registered | `bootModuleRegistry()` loads all 8 lines × 8 stages |
-| Assessment Types | ✅ Complete | `StageAssessment`, `AssessmentTask`, `DriveProbe`, `ScoringRubric` all defined |
-| Module Content | ✅ Rich | Cognitive/Red has 3 tasks + 20 item pool + 4 drive probes with detailed specs |
-| Drive Probes | ✅ Per module | Each module defines agency/communion/eros/agape probes with healthy/addiction/allergy signals |
-| Encounter Scheduler | ✅ Operational | Generates candidates, applies 5 filters, computes 7-criterion priority |
-| CCI Engine | ✅ Computes | 5-dimension composite from Significator snapshot |
-| Auto-Mode Strategy | ✅ Generates | Session themes, weight biases, arc parameters |
-| Consequence Engine | ✅ Processes | Polarity traces, drive balance, shadow updates, NPC relationships |
-| ContextPipeline | ✅ Builds | 7-step LLM system prompt with frequency conditioning, veil filtering |
-| FallbackProvider | ✅ All 7 modalities | Pre-authored content for when LLM is unavailable |
-| AgenticOrchestrator | ✅ Runs | LLM + fallback detection + UI handler integration |
+### 1.1 Pure Engine Functions (Tested & Correct)
 
-### 1.2 CLI Tool
-| Feature | Status |
-|---|---|
-| Session lifecycle | Boot → encounters → endSession() ✅ |
-| Encounter scheduling | CCI → AutoMode → Priority formula ✅ |
-| LLM integration | gemma-4-31b-it via proxy ✅ |
-| Fallback path | Modality-appropriate MCQ content ✅ |
-| JSON mode | Structured events for AI-agent consumption ✅ |
-| Consequence propagation | Between encounters ✅ |
-| Save-on-exit | beforeunload handler ✅ |
+| Component | File | Status |
+|---|---|---|
+| ThetaDecay | `ThetaDecay.ts` | ✅ Pure, correct exponential decay |
+| CandidateGeneration | `CandidateGeneration.ts` | ✅ 5-filter pipeline, modality gating |
+| PriorityComputation | `PriorityComputation.ts` | ✅ 7-criterion formula, weight normalization |
+| AutoModeStrategy | `AutoModeStrategy.ts` | ✅ 9 themes, weight biases, arc parameterization |
+| CCIEngine | `CCIEngine.ts` | ✅ 5-dimension composite from snapshot |
+| TransformationDetector | `TransformationDetector.ts` | ✅ Threshold detection + state machine |
+| ConsequenceEngine | `ConsequenceEngine.ts` | ✅ Polarity traces, drive balance, shadow ledger |
+| Assessment Engine | `engine.ts` | ✅ `runModeAwareAssessment()` for all modes |
+| ModuleRegistry | `registry.ts` | ✅ O(1) lookup, cooldowns, filtering |
+| ContextPipeline | `ContextPipeline.ts` | ✅ 7-step LLM prompt assembly |
+
+### 1.2 CLI Infrastructure
+
+| Feature | Status | Evidence |
+|---|---|---|
+| 64 modules registered | ✅ | `bootModuleRegistry()` loads all 8×8 |
+| Diagnostic mode | ✅ | Reports state correctly |
+| JSON event stream | ✅ | `session_started`, `ask_user`, `encounter_completed`, `session_ended` |
+| Consequence propagation | ✅ | Significator updates between encounters |
+| Session lifecycle | ✅ | `startSession → tickWithStrategy → endSession` |
+| LLM fallback detection | ✅ | Auto-switches to `runFallback()` when LLM unavailable |
+| Save-on-exit | ✅ | `beforeunload` handler |
+| All 7 modalities defined | ✅ | `ALL_MODALITIES` array in `enums.ts` |
+
+### 1.3 Module Content Quality
+
+Each of the 64 modules contains:
+- **2-3 assessment tasks** with specific task types (n_back, stroop, go_no_go, dilemma, emotion_identification, hold, etc.)
+- **20-item adaptive pool** with difficulty gradient (0.2 → 0.9)
+- **4 drive probes** (agency, communion, eros, agape) with:
+  - Task specification (type, parameters, measures)
+  - Healthy response description
+  - Addiction signal description
+  - Allergy signal description
+- **Scoring rubric** with pass threshold and dimension weights
+- **Optional llmRubric** (e.g., Moral:Red has a detailed Kohlberg Stage 1 rubric)
 
 ---
 
-## 2. Critical Gaps 🔴
+## 2. Critical Gaps — Detailed Analysis
 
-### 2.1 The Assessment Module Disconnect (Severity: CRITICAL)
+### 2.1 The Assessment Module Disconnect 🔴
 
-**The #1 problem.** The 64 assessment modules define rich task content (n-back, planning, dilemmas, drive probes), but the AgenticOrchestrator **never passes this content to the LLM**. The orchestrator builds a system prompt from the ContextPipeline, but the ContextPipeline only provides:
-- Holon descriptions
-- Veil-filtered player state
-- Modality rubric
-- Consequence history
+**This is the #1 problem. It exists in BOTH CLI and frontend.**
 
-**What's missing from the LLM context:**
-- The actual assessment tasks for this module
-- The scoring rubric and dimension weights
-- The drive probes and their healthy/pathological response patterns
-- The item pool for adaptive difficulty
-- The calibration probe for stage inference
+#### CLI Path
+```
+cli-game.ts → runAgenticEncounter()
+  → AgenticOrchestrator({ encounter, module })
+    → buildAssessmentContext(module)  ← ✅ Module IS passed (fixed in last session)
+    → systemPrompt += assessmentContext  ← ✅ Tasks/drives ARE injected
+    → LLM receives: [ASSESSMENT MODULE], [TASKS], [DRIVE PROBES], [SCORING]
+    → BUT: LLM still generates generic MCQ narrative  ← ⚠️ Model-dependent
+```
 
-**Result:** The LLM generates generic narrative content that has no connection to the specific developmental assessment defined in the module. The encounter "feels" developmental but is not actually measuring anything.
+The previous session wired the module into the orchestrator's system prompt. However, CLI testing shows the LLM (gemma-4-31b-it via proxy) still produces generic Deterministic-framed content. This suggests either:
+1. The model isn't strong enough to follow the assessment context instructions
+2. The assessment context isn't prominent enough in the prompt
+3. The fallback path is being triggered instead of the LLM path
 
 **Evidence from CLI output:**
-- Encounter 1 (Willpower:Red): LLM presented "Enemies feint. See through deception." — generic Deterministic framing, not a willpower hold task
-- Encounter 2 (Cognitive:Red): LLM presented "The war-drum beats. Match its rhythm or fall." — generic Deterministic framing, not an n-back task
-- Encounter 3 (Emotional:Red): LLM presented "Enemies feint. See through deception." — identical to Encounter 1 (same fallback content reused)
+- Encounter 1 (Willpower:Red): "Enemies feint. See through deception." — generic Deterministic framing
+- Encounter 2 (Cognitive:Red): "The forge awaits. Steel your mind." — same generic framing
+- Encounter 3 (Emotional:Red): Same deterministic pattern
+- All encounters: Options are always [Engage, Reflect, Withdraw, Negotiate]
 
-### 2.2 The Scoring Disconnect (Severity: CRITICAL)
+#### Frontend Path
+```
+EncounterScene → creates AssessmentScene
+  → AssessmentScene({ module, encounter, onComplete })
+    → new AgenticOrchestrator({ encounter, module: undefined })  ← 🔴 MODULE IS UNDEFINED
+    → The AssessmentScene DOES pass `module` to AgenticOrchestrator
+    → BUT: The module is not passed to the ContextPipeline's ConceptDraftIndex
+```
 
-The `AgenticOrchestrator.finalizeEncounter()` receives the LLM's `complete_encounter` tool call and creates a `PlayerResponse`, but:
+**Wait — correction from code analysis:** The `AssessmentScene.ts` at line 120 does NOT pass `module` to the orchestrator:
+```typescript
+const orchestrator = new AgenticOrchestrator({
+  encounter: this.encounter,
+  significator: sig,
+  world,
+  history,
+  conceptIndex,
+  uiHandler,
+  // ← module is NOT passed here!
+});
+```
 
-1. **All drives get the same directionality:** `params.passed ? 'HealthyBalanced' : 'DarkAddicted'` — every drive gets the same signal regardless of what actually happened
-2. **Polarity direction is simplified to 3 states:** `'sto' | 'sts' | 'neutral'` — the rich polarity trace from the architecture spec is reduced to a ternary
-3. **Shadow detection is binary:** Either the LLM reports a shadow signal or it doesn't — there's no drive-probe-based detection
-4. **No assessment trials are collected:** The `rawTrials` array is always empty because no tasks are actually executed
-5. **Confidence is always 0.8:** Hardcoded in `createAssessmentResult()`, not computed from actual data
+**This means the same gap exists in the frontend.** The frontend's AssessmentScene has access to the module (it receives it in `data.module`) but doesn't pass it to the orchestrator. The assessment context is never injected into the LLM prompt in the frontend either.
 
-**Result:** The Significator state evolves, but the evolution is driven by synthetic signals, not real developmental data. The game cannot distinguish between a player who engaged deeply and one who selected the first option in headless mode.
+### 2.2 The ConceptDraftIndex Is Empty 🔴
 
-### 2.3 The Priority Formula Degeneracy (Severity: HIGH)
+**CLI passes `{ modules: {} }` to the orchestrator.**
 
-All encounters in the CLI session had **identical priority scores (0.395)**. This indicates the priority formula is producing degenerate output because:
+The `ConceptDraftIndex` is designed to hold per-module metadata (line, stage, title, modalities) that the ContextPipeline queries in `injectEncounterSpec()`. With an empty index:
+- `queryByLineStage()` returns `undefined`
+- The `catalyticPurpose` defaults to `'catalytic engagement'`
+- The LLM has no awareness of the 512 authored game designs
 
-1. **Theta-urgency is maxed:** All lines are at Red with no prior encounters, so `lastTs === 0` returns 1 for every candidate
-2. **Shadow activation is zero:** No shadows have been surfaced yet
-3. **Polarity alignment is flat:** All cells are in 'Exploring' mode with no history
-4. **Transformation readiness is zero:** No lines at edge
-5. **Drive correction is zero:** No fixation risk yet
-6. **Narrative coherence is zero:** No narrative beats active, no NPC relationships
-7. **Session fit is the only differentiator:** But with default 0.5 modality preference, it barely varies
+**The index should be built from the module registry**, as the frontend's `AssessmentScene.ts` already does at line 98:
+```typescript
+const conceptModules: Record<string, any> = {};
+if (moduleRegistry) {
+  for (const mod of moduleRegistry.getAll()) {
+    const key = `${mod.line.toLowerCase()}:${mod.stage.toLowerCase()}`;
+    conceptModules[key] = { line: mod.line, stage: mod.stage, ... };
+  }
+}
+const conceptIndex = { modules: conceptModules };
+```
 
-**Result:** The scheduler cannot meaningfully differentiate between encounters. It falls back to line diversification (no more than 2 from same line) which produces a rotation, not a purposeful sequence.
+The CLI should do the same thing. Currently it passes:
+```typescript
+conceptIndex: { modules: {} },
+```
 
-### 2.4 The LLM Interaction Loop (Severity: HIGH)
+### 2.3 FallbackProvider Only Covers Red Stage 🔴
 
-The AgenticOrchestrator's agentic loop has a structural problem:
+The `FallbackProvider.ts` has specific content for:
+- `LanguageReflective:Red` — 5 authored prompts
+- `ScenarioChoice:Red` — 3 authored scenarios with options
+- `Deterministic:Red` — 4 authored framings
 
-1. **First call:** LLM receives the context prompt and is asked to start the encounter
-2. **LLM response:** If it calls `ask_user_question`, the CLI presents it and records the answer
-3. **LLM continues:** If it calls `complete_encounter`, the encounter ends
-4. **Problem:** In the CLI test with the LLM proxy, the encounter produced 3 distinct narrative phases with 4 options each — but the LLM never called `complete_encounter`. It kept generating new questions until the 10-loop safety guard triggered.
+For ALL other stages, it falls back to **single generic content per modality**:
+- `GENERIC_LANGUAGE_REFLECTIVE` — "What moved you to act?"
+- `GENERIC_SCENARIO_CHOICE` — "A crossroads appears."
+- `GENERIC_STRATEGIC` — "Resources are limited."
+- etc.
 
-**Root cause:** The system prompt says "typically 1-3 choice cycles" but the LLM interprets this as "keep generating encounters." The `complete_encounter` tool is not being called because the LLM doesn't have enough signal to know when the encounter is "done."
+**This means only 12.5% of module×modality combinations have meaningful fallback content.** The other 87.5% present identical generic content regardless of line, stage, or modality.
 
-**Evidence:** The single encounter test showed 3 rounds of questions before timeout. The 10-encounter session timed out after 3 encounters (the 4th was mid-LLM-call when the timeout hit).
+### 2.4 Priority Formula Degeneracy 🟡
 
-### 2.5 The Concept Draft Disconnect (Severity: MEDIUM)
+When all lines are at Red with no encounter history:
+- **Theta-urgency:** `lastTs === 0` → returns 1.0 for ALL candidates (max urgency)
+- **Shadow activation:** 0 (no shadows surfaced)
+- **Polarity alignment:** 0.5 (Exploring mode, no history)
+- **Transformation readiness:** 0 (no lines at edge)
+- **Drive correction:** 0 (no fixation risk)
+- **Narrative coherence:** 0 (no relationships, no beats)
+- **Session fit:** ~0.1 (minimal differentiation)
 
-512 concept-drafts exist across 64 modules × 8 files, but:
-- The `ConceptDraftIndex` is passed to the orchestrator as `{ modules: {} }` (empty)
-- The ContextPipeline's `injectEncounterSpec()` queries the concept index but gets nothing
-- The LLM never sees the per-module game designs that were meticulously authored
+**Result:** `priority ≈ 0.25*1.0 + 0.20*0 + 0.15*0.5 + 0.15*0 + 0.10*0 + 0.10*0 + 0.05*0.1 ≈ 0.33`
 
-**Result:** The concept-drafts — which define the specific game mechanics, narrative themes, shadow mappings, and progression for each module — are not informing the LLM's encounter generation.
+This produces nearly identical scores for all candidates. The scheduler falls back to **line diversification** (no more than 2 from same line), which produces a rotation, not a purposeful sequence.
 
-### 2.6 The Modality Rotation Problem (Severity: MEDIUM)
+**This is architecturally correct for a fresh start** — the scheduler will become meaningful once encounters create history. But it means the first ~8 encounters (one per line) will have minimal prioritization differentiation.
 
-The scheduler should rotate modalities to prevent repetition (foundations/24 §7.2), but:
-- Encounters 1-3 all used "Deterministic" modality
-- The `getEligibleModalities()` function in `CandidateGeneration.ts` selects 2-3 modalities per holon, but the scheduler's line-diversification rule (no more than 2 from same line) interacts poorly with modality selection
-- The modality rotation constraint ("no more than 2 consecutive same-modality") is defined in the spec but not implemented in the code
+### 2.5 The LLM Encounter Loop Problem 🟡
+
+**Budget rule in system prompt:**
+```
+4. This encounter has a budget of 2 exchanges. After the player has responded to 2 questions, you MUST call 'complete_encounter'.
+```
+
+**Safety guard in code:** `maxLoops = 10`
+
+**What actually happens (from CLI testing):**
+- The LLM generates `ask_user_question` calls correctly
+- After receiving answers, it generates another `ask_user_question` instead of `complete_encounter`
+- The loop continues until the safety guard triggers at iteration 10
+- At that point, the fallback termination creates a synthetic "passed" result
+
+**The budget rule isn't effective because:**
+1. The model (gemma-4-31b-it) may not reliably follow tool-calling instructions
+2. There's no programmatic enforcement — the code relies on the LLM choosing to call `complete_encounter`
+3. The system prompt mixes role instructions with structural rules, and the structural rules get lost
+
+**Fix needed:** After 2 `ask_user_question` calls, programmatically inject a message forcing `complete_encounter`, or auto-complete the encounter.
+
+### 2.6 Frontend-CLI Parity Analysis
+
+| Feature | Frontend | CLI | Parity |
+|---|---|---|---|
+| Module registry | ✅ Passed to scenes | ✅ Global via `globalThis` | ✅ |
+| Module → Orchestrator | ❌ NOT passed | ✅ Passed (fixed) | ❌ Frontend gap |
+| ConceptDraftIndex | ✅ Built from registry | ❌ Empty `{}` | ❌ CLI gap |
+| LLM interaction | ✅ LLMDialogueRenderer | ✅ readline / headless | ✅ |
+| Consequence processing | ✅ Via EncounterScene | ✅ Via GameLoop | ✅ |
+| Transformation detection | ✅ In EncounterScene | ✅ In tickWithStrategy | ✅ |
+| Theta decay | ✅ Implicit | ✅ In endSession | ✅ |
+| Session state persistence | ✅ SaveRepository | ⚠️ In-memory only | ❌ CLI gap |
+| Ecological tracking | ✅ EcologicalTracker | ❌ Not present | ❌ CLI gap |
+| Scene routing | ✅ routeModality() | ❌ All through orchestrator | ⚠️ Different |
 
 ---
 
-## 3. What the Architecture Promises vs What the Code Delivers
+## 3. What "Evolutionarily Catalytic" Requires
 
-| Architectural Promise | Code Status | Gap |
+Per the R&D documentation (foundations/10-14, 17, 19, 24), an evolutionarily catalytic experience requires:
+
+### 3.1 Catalyst → Experience → Integration Flow
+
+For each encounter, the player must:
+1. **Receive catalyst** — A situation that challenges their current developmental structure
+2. **Generate experience** — Their response reveals their drive-health, shadow patterns, and stage expression
+3. **Integrate** — The consequence engine applies meaningful state mutations based on real behavioral data
+
+**Current state:** Step 1 exists (encounter is scheduled), Step 2 is synthetic (LLM evaluates, not actual task performance), Step 3 is synthetic (consequence engine receives fabricated signals).
+
+### 3.2 Shadow Detection Through Behavioral Signals
+
+Shadows should be detected through **drive probe evaluation**, not LLM self-report. The architecture specifies:
+- Present drive probes as part of the encounter
+- Score probe responses against healthy/addiction/allergy signals
+- Generate shadow signals from probe results
+- Feed shadow signals to the scheduler for priority adjustment
+
+**Current state:** Shadows are only surfaced if the LLM explicitly reports them via `shadowSignal` in `complete_encounter`. No behavioral detection occurs.
+
+### 3.3 Adaptive Difficulty
+
+The 20-item pool per module should drive a staircase algorithm:
+- Start at difficulty 0.2
+- After correct response → increase difficulty
+- After incorrect → decrease difficulty
+- Track performance across encounters to select appropriate items
+
+**Current state:** Item pools exist but are never consulted. The encounter `difficulty` field is computed from trace count (more traces = lower difficulty), but no actual item selection occurs.
+
+### 3.4 Stage-Appropriate Content
+
+At Red stage, encounters should probe survival/foundation capacities. At Orange, growth/expansion. At Yellow, cognition/symbolic. Etc.
+
+**Current state:** All encounters at all stages use the same generic narrative. A Cognitive:Red encounter and a Cognitive:White encounter would present identical content.
+
+---
+
+## 4. CLI Upgrade Roadmap
+
+### Phase 1: Fix the Pipeline Gaps (Critical — Must Fix)
+
+#### 1.1 Wire Module to Frontend AssessmentScene
+**File:** `src/game/assessments/AssessmentScene.ts`  
+**Change:** Pass `module` to AgenticOrchestrator constructor (line ~120)
+```typescript
+const orchestrator = new AgenticOrchestrator({
+  encounter: this.encounter,
+  significator: sig,
+  world,
+  history,
+  conceptIndex,
+  uiHandler,
+  module: this.module,  // ← ADD THIS
+});
+```
+
+#### 1.2 Build ConceptDraftIndex from Registry in CLI
+**File:** `scripts/cli-game.ts`  
+**Change:** Replace `conceptIndex: { modules: {} }` with dynamic build from moduleRegistry
+```typescript
+const conceptModules: Record<string, any> = {};
+for (const mod of moduleRegistry.getAll()) {
+  const key = `${mod.line.toLowerCase()}:${mod.stage.toLowerCase()}`;
+  conceptModules[key] = {
+    line: mod.line, stage: mod.stage,
+    title: `${mod.line} ${mod.stage} Module`,
+    modalities: mod.tasks.map(t => t.type === 'llm_dialogue' ? 'LanguageReflective' as const : 'Deterministic' as const),
+  };
+}
+// Then pass: conceptIndex: { modules: conceptModules }
+```
+
+#### 1.3 Enforce Encounter Budget Programmatically
+**File:** `src/core/assessments/AgenticOrchestrator.ts`  
+**Change:** Track `ask_user_question` calls in the loop. After 2 calls, inject a forced `complete_encounter` message:
+```typescript
+let askCount = 0;
+// ... in the loop:
+if (tc.function.name === 'ask_user_question') {
+  askCount++;
+  // ... existing logic
+}
+if (askCount >= 2) {
+  this.messages.push({
+    role: 'user',
+    content: 'The encounter budget is exhausted. You MUST now call complete_encounter with your evaluation.',
+  });
+}
+```
+
+#### 1.4 Expand FallbackProvider
+**File:** `src/infra/llm/FallbackProvider.ts`  
+**Change:** At minimum, add fallback content for Orange and Amber stages across all modalities. Consider loading from concept-drafts programmatically.
+
+### Phase 2: CLI Diagnostic Enhancements (High Priority)
+
+#### 2.1 Add Module Forcing Flag
+```bash
+--line=Cognitive --stage=Red    # Force specific module
+--modality=ScenarioChoice       # Force specific modality
+```
+
+#### 2.2 Add Response Injection
+```bash
+--responses=2,1,3               # Select specific options per encounter
+--write-in="I chose strength"   # Inject write-in responses
+```
+
+#### 2.3 Add Shadow Simulation
+```bash
+--simulate-shadow=DarkAddiction:Agency:0.8   # Inject shadow state before session
+--simulate-fixation=Eros:0.6                 # Inject drive fixation
+```
+
+#### 2.4 Add CCI Debug Output
+```bash
+--cci-debug   # Print full CCI dimension breakdown per encounter
+```
+
+#### 2.5 Add Transformation Testing
+```bash
+--force-transformation   # Push all lines to threshold for testing
+--test-threshold         # Run transformation state machine through all phases
+```
+
+### Phase 3: Assessment Execution (Medium Priority)
+
+This is the architectural change that would make the system truly evolutionarily catalytic.
+
+#### 3.1 LLM-Mediated Task Presentation
+Instead of presenting tasks as clinical tests, the LLM should weave them into narrative:
+- **n-back:** "A sequence of runes flashes on the wall. Remember the pattern."
+- **go-no-go:** "Enemy soldiers approach — some carry white flags. Strike only the armed ones."
+- **dilemma:** "The wounded warrior offers you their blade. Take it, or share your rations?"
+
+The LLM's role is to present the task AS narrative, then collect the player's response, then map it back to trial dimensions.
+
+#### 3.2 Trial Result Collection
+The `complete_encounter` tool should include a `trialResults` field:
+```typescript
+trialResults: [{
+  taskId: 'cog-red-nback2',
+  dimensions: { accuracy: 0.8, response_time: 0.6 },
+  rawResponse: 'A B A B A',
+  durationMs: 5000
+}]
+```
+
+Then `createAssessmentResult()` would call `runModeAwareAssessment()` with real trial data instead of synthetic scores.
+
+### Phase 4: Modality Diversity (Medium Priority)
+
+#### 4.1 Enforce Modality Rotation
+Add a constraint: no more than 2 consecutive encounters of the same modality. Track `recentModalities` in the session context and filter candidates accordingly.
+
+#### 4.2 Modality-Specific Task Mapping
+Each assessment task type should map to modalities:
+- `n_back` → Deterministic (timed cognitive challenge)
+- `dilemma` → ScenarioChoice (moral reasoning)
+- `emotion_identification` → LanguageReflective (emotional awareness)
+- `hold` → Embodied (somatic control)
+- `cooperation` → SocialCooperative (group dynamics)
+- `pattern_prediction` → Strategic (planning)
+- `llm_dialogue` → ImmersiveRPG (narrative interaction)
+
+---
+
+## 5. Testing Matrix
+
+### 5.1 What the CLI Can Currently Test
+
+| Test | CLI Command | What It Verifies |
 |---|---|---|
-| 64 assessment modules with tasks | ✅ Data exists | Tasks are defined but never executed |
-| Adaptive staircase (item pool) | ✅ Data exists | Item pool defined but never consulted |
-| Drive probes per module | ✅ Data exists | Probes defined but never presented |
-| Shadow detection via drive probes | ❌ Not implemented | Shadows only detected if LLM reports them |
-| Scoring from actual trials | ❌ Not implemented | Scores are synthetic, not data-driven |
-| CCI drives session strategy | ⚠️ Partial | CCI computes but strategy has limited effect |
-| Auto-mode weight biasing | ⚠️ Partial | Weights are biased but candidates are degenerate |
-| Polarity trace from encounter | ⚠️ Simplified | Ternary (sto/sts/neutral) instead of full trace |
-| Transformation detection | ✅ Implemented | `detectThreshold()` runs but never triggers |
-| Theta-decay maintenance | ⚠️ Partial | Detects bleed-through but doesn't adjust scheduling |
-| Macro-catalyst events | ⚠️ Partial | PESTLE tension accumulates randomly |
-| Session arc (warmup/peak/cooldown) | ❌ Not implemented | Session position is computed but not used |
-| Non-coercion (player choice) | ❌ Not implemented | CLI auto-selects first option; no encounter offers |
-| Infinite checkpoint | ❌ Not implemented | No checkpoint save during encounter |
-| Veil enforcement | ✅ Enforced | ContextPipeline filters scores from LLM prompt |
+| System bootstrap | `--mode=diagnostic` | All registries load, scheduler produces encounters |
+| Single encounter | `--mode=encounter --headless` | Full pipeline: schedule → orchestrate → consequence |
+| Session arc | `--headless --encounters=20` | CCI evolution, strategy adjustment, theta-decay |
+| JSON event stream | `--headless --json` | Structured output for AI-agent analysis |
+| LLM integration | (active proxy) | LLM generates narrative, calls tools |
+| Fallback path | (no proxy) | Modality-appropriate fallback content |
+
+### 5.2 What the CLI Cannot Yet Test (Phase 2 Flags)
+
+| Test | Required Flag | What It Would Verify |
+|---|---|---|
+| Specific module content | `--line=Cognitive --stage=Orange` | Module-specific tasks at higher stages |
+| Shadow surfacing | `--simulate-shadow=DarkAddiction:Eros` | Shadow encounters and resolution flow |
+| Transformation threshold | `--force-transformation` | Full transformation state machine |
+| Write-in responses | `--write-in="..."` | Free-text response evaluation |
+| Drive probe evaluation | (needs assessment execution) | Per-drive health scoring |
+| Modality-specific content | `--modality=ImmersiveRPG` | ImmersiveRPG vs Deterministic vs etc. |
+| CCI dimension tracking | `--cci-debug` | Per-dimension CCI evolution |
+
+### 5.3 What Requires Architectural Changes (Phase 3)
+
+| Test | Required Change | What It Would Verify |
+|---|---|---|
+| Adaptive difficulty | Item pool consultation | Staircase algorithm across encounters |
+| Shadow detection | Drive probe execution | Behavioral shadow identification |
+| Stage progression | Altitude advancement | Player actually moves through stages |
+| Polarity deepening | Full polarity trace | STO/STS vectors accumulate meaningfully |
+| Cross-line bleed-through | Theta-decay urgency | Neglected lines degrade and demand attention |
 
 ---
 
-## 4. The Evolutionarily Catalytic Assessment
+## 6. Recommendations Summary
 
-### 4.1 Can the game currently help users evolve their intelligence?
+### Immediate (This Session)
+1. **Fix AssessmentScene.ts** — Pass `module` to AgenticOrchestrator in frontend
+2. **Fix cli-game.ts** — Build ConceptDraftIndex from moduleRegistry
+3. **Fix AgenticOrchestrator.ts** — Enforce 2-exchange budget programmatically
 
-**No.** The game can:
-- Schedule encounters across lines and stages ✅
-- Present narrative MCQ questions ✅
-- Track Significator state across sessions ✅
-- Detect transformation thresholds ✅
+### Short-Term (Next Session)
+4. **Add CLI forcing flags** — `--line`, `--stage`, `--modality`, `--responses`
+5. **Expand FallbackProvider** — Add Orange/Amber stage content
+6. **Enforce modality rotation** — No more than 2 consecutive same-modality
 
-But it cannot:
-- Actually measure cognitive/emotional/moral capacity ❌
-- Detect shadow pathology through behavioral signals ❌
-- Adapt difficulty based on performance ❌
-- Provide developmental feedback grounded in actual assessment ❌
-- Guide the player through catalyst→experience→integration ❌
-- Distinguish genuine development from superficial engagement ❌
+### Medium-Term (Architecture)
+7. **Wire assessment task execution** — LLM presents tasks as narrative, collects trial data
+8. **Build trial result collection** — `complete_encounter` includes structured trial data
+9. **Connect `runModeAwareAssessment()`** — Score real trials, not synthetic signals
 
-### 4.2 What would make it catalytic?
-
-The missing piece is the **assessment execution pipeline**. The architecture specifies:
-
-```
-Module Selection → Task Presentation → Player Response Collection → Trial Scoring → Drive Probe Evaluation → Shadow Detection → Consequence Application → State Mutation
-```
-
-Currently, only the first and last steps exist. The entire middle section (task presentation through shadow detection) is bypassed by the AgenticOrchestrator's LLM-driven flow.
+### Long-Term (Evolutionary Catalysis)
+10. **Implement shadow detection** — Drive probe evaluation → shadow signals
+11. **Implement adaptive difficulty** — Item pool → staircase → personalized challenge
+12. **Implement stage progression** — Altitude advancement through genuine development
 
 ---
 
-## 5. Upgrade Recommendations
-
-### Priority 1: Wire Assessment Modules into the Orchestrator (Critical)
-
-**What:** The AgenticOrchestrator must receive the module's tasks, drive probes, and scoring rubric, and incorporate them into the LLM interaction.
-
-**How:**
-1. Pass the `StageAssessment` to the orchestrator constructor
-2. Include task descriptions and drive probe specs in the system prompt
-3. Have the LLM present actual assessment tasks (n-back, dilemmas, etc.) rather than generic narrative
-4. Collect structured trial results from the LLM's evaluation of player responses
-5. Use `runModeAwareAssessment()` to score actual trials
-
-**Impact:** This single change would connect 90% of the disconnected pipeline.
-
-### Priority 2: Implement Real Shadow Detection (Critical)
-
-**What:** Shadow signals should emerge from drive probe evaluation, not LLM self-report.
-
-**How:**
-1. Present drive probes as part of the encounter
-2. Score probe responses against healthy/addiction/allergy signals
-3. Generate `ShadowSignal` from probe results
-4. Feed shadow signals to the scheduler for priority adjustment
-
-### Priority 3: Implement Adaptive Difficulty (High)
-
-**What:** The item pool should be consulted to select appropriate difficulty.
-
-**How:**
-1. After each encounter, record performance metrics
-2. Use staircase algorithm to select next difficulty level from item pool
-3. Update `difficulty` field in subsequent encounter specs
-
-### Priority 4: Fix the LLM Completion Loop (High)
-
-**What:** The LLM should call `complete_encounter` after 1-3 meaningful exchanges.
-
-**How:**
-1. Add encounter progress tracking to the system prompt
-2. Include a turn counter in the messages
-3. Add explicit "encounter budget" to the system prompt rules
-4. Consider a simpler completion heuristic: after 2 ask_user responses, auto-complete
-
-### Priority 5: Load Concept Drafts (Medium)
-
-**What:** The 512 concept-drafts should inform LLM encounter generation.
-
-**How:**
-1. Build the `ConceptDraftIndex` properly (currently `{ modules: {} }`)
-2. Include relevant concept-draft content in the context pipeline
-3. Let the LLM draw from the authored game designs
-
-### Priority 6: Implement Session Arc (Medium)
-
-**What:** The warmup/peak/cooldown arc should modulate encounter intensity.
-
-**How:**
-1. Use `sessionPosition` from the scheduler to adjust intensity targets
-2. Warmup: low-intensity, familiar modalities
-3. Peak: high-intensity, priority encounters
-4. Cooldown: reflective, integration-focused
-
----
-
-## 6. CLI as AI-Agent Feedback Loop
-
-### 6.1 Current Capabilities
-- ✅ `--headless` mode for automated testing
-- ✅ `--json` mode for structured event output
-- ✅ `--verbose` mode for narrative flow visibility
-- ✅ Consequence history tracking between encounters
-- ✅ Session end with theta-decay and summary
-
-### 6.2 Missing for AI-Agent Loops
-- ❌ No way to inject custom player responses (always selects first option)
-- ❌ No way to test specific line×stage combinations
-- ❌ No way to simulate drive pathologies
-- ❌ No way to test shadow surfacing/integration flows
-- ❌ No way to verify CCI computation correctness at runtime
-- ❌ No way to test transformation threshold crossing
-
-### 6.3 Recommended CLI Enhancements
-1. `--line=Cognitive --stage=Red` flags to force specific module selection
-2. `--responses=2,1,3,4` flag to specify exact option selections per encounter
-3. `--simulate-shadow=DarkAddiction:Agency` flag to inject shadow state
-4. `--cci-debug` flag to print full CCI dimension breakdown per encounter
-5. `--encounter-count=N --pause-after=M` for breakpoint-style debugging
-
----
-
-## 7. Summary
-
-The CCRPG backend has the theoretical depth and architectural骨架 to deliver an evolutionarily catalytic experience. The 64 assessment modules with their task definitions, drive probes, and scoring rubrics represent years of developmental psychology research translated into game mechanics. The scheduler, CCI, auto-mode, and consequence engines form a coherent pipeline.
-
-**But the pipeline has a hole in the middle.** The assessment modules define WHAT to measure, the consequence engine knows HOW to process results, but nothing actually PRESENTS the assessment tasks or COLLECTS the responses. The AgenticOrchestrator bridges this gap with LLM-generated content, but that content is generic rather than grounded in the module specifications.
-
-**The fix is architectural, not incremental.** The orchestrator needs to be refactored from a "generate narrative encounters" tool into a "execute assessment modules through LLM-mediated interaction" tool. This is the single change that would make the entire system evolutionarily catalytic.
-
----
-
-*This audit is based on analysis of 15+ source files, 5 foundation documents, the unified implementation plan, and CLI runtime testing across multiple session configurations.*
+*This audit is based on analysis of 25+ source files, 27 foundation documents, the unified implementation plan, and CLI runtime testing across diagnostic, single-encounter, and multi-encounter configurations. The CLI is the correct tool for this feedback loop — it exposes every gap in the pipeline that the frontend would mask behind visual polish.*

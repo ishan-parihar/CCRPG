@@ -1,4 +1,4 @@
-import type { AssessmentResult, ShadowAssessmentResult, MeasureDimension } from './types.js';
+import type { AssessmentResult, ShadowAssessmentResult, MeasureDimension, StageAssessment } from './types.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
 import type { Significator } from '../domain/Significator.js';
 import type { WorldState } from '../engines/CandidateGeneration.js';
@@ -95,6 +95,27 @@ export const COMPLETE_ENCOUNTER_TOOL = {
         },
         feedback: { type: 'string', description: 'Supportive developmental feedback explaining what their responses indicate about their drive-health or stage expression.' },
         polarityDirection: { type: 'string', enum: ['sto', 'sts', 'neutral'], description: 'The polarity direction indicated by the player\'s choices.' },
+        driveScores: {
+          type: 'object',
+          description: 'REQUIRED: Per-drive health scores (0.0 to 1.0) for all 4 drives. 0.0 = severe pathology, 0.5 = baseline/neutral, 1.0 = exceptional integration. Score each independently based on evidence from the player responses.',
+          properties: {
+            agency: { type: 'number', description: 'Agency health: self-direction, initiative, boundary-setting, decisive action.' },
+            communion: { type: 'number', description: 'Communion health: empathy, connection, belonging, collaborative capacity.' },
+            eros: { type: 'number', description: 'Eros health: aspiration, growth-seeking, reaching toward higher capacity.' },
+            agape: { type: 'number', description: 'Agape health: compassion, integration of lower stages, returning to include.' }
+          },
+          required: ['agency', 'communion', 'eros', 'agape']
+        },
+        driveSignals: {
+          type: 'object',
+          description: 'REQUIRED: Per-drive pathology signal for all 4 drives. Use HealthyBalanced for healthy drives, or the specific pathology observed (DarkAddicted, DarkAverted, GoldenAddicted, GoldenAverted).',
+          properties: {
+            agency: { type: 'string', enum: ['HealthyBalanced', 'DarkAddicted', 'DarkAverted', 'GoldenAddicted', 'GoldenAverted'] },
+            communion: { type: 'string', enum: ['HealthyBalanced', 'DarkAddicted', 'DarkAverted', 'GoldenAddicted', 'GoldenAverted'] },
+            eros: { type: 'string', enum: ['HealthyBalanced', 'DarkAddicted', 'DarkAverted', 'GoldenAddicted', 'GoldenAverted'] },
+            agape: { type: 'string', enum: ['HealthyBalanced', 'DarkAddicted', 'DarkAverted', 'GoldenAddicted', 'GoldenAverted'] }
+          }
+        },
         shadowSignal: {
           type: 'object',
           description: 'Optional shadow signal surfaced during this encounter.',
@@ -120,6 +141,7 @@ export class AgenticOrchestrator {
   private history: ConsequenceRecord[];
   private conceptIndex: any;
   private uiHandler: AgenticUIHandler;
+  private module: StageAssessment | undefined;
   private messages: AgentMessage[] = [];
 
   constructor(params: {
@@ -130,6 +152,7 @@ export class AgenticOrchestrator {
     conceptIndex: any;
     uiHandler: AgenticUIHandler;
     initialMessages?: readonly AgentMessage[];
+    module?: StageAssessment;
   }) {
     this.encounter = params.encounter;
     this.significator = params.significator;
@@ -137,6 +160,7 @@ export class AgenticOrchestrator {
     this.history = params.history;
     this.conceptIndex = params.conceptIndex;
     this.uiHandler = params.uiHandler;
+    this.module = params.module;
     this.messages = params.initialMessages ? [...params.initialMessages] : [];
   }
 
@@ -155,12 +179,16 @@ export class AgenticOrchestrator {
     };
     const context = buildContext(contextInput);
 
-    const systemPrompt = `${context.systemPrompt}
+    // Build assessment module context for the LLM
+    const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';
+
+    const systemPrompt = `${context.systemPrompt}${assessmentContext}
 [AGENT RULES]
 1. You are the Agentic Game Master driving this developmental encounter.
 2. Present the encounter situationally and narratively. If you need to present stimuli, choices, or ask questions, ALWAYS call the 'ask_user_question' tool. Do not ask questions in raw text responses.
 3. Keep the flow interactive, building upon prior answers.
-4. When you have gathered enough responses (typically 1-3 choice cycles) or completed the encounter, call 'complete_encounter' to finalize scores, write the narrative summary, and close the session.`;
+4. This encounter has a budget of 2 exchanges. After the player has responded to 2 questions, you MUST call 'complete_encounter'. Do NOT generate more than 2 ask_user_question calls.
+5. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).`;
 
     if (this.messages.length === 0) {
       this.messages.push({
@@ -210,6 +238,8 @@ export class AgenticOrchestrator {
             const params = JSON.parse(tc.function.arguments) as {
               passed: boolean;
               scores?: Partial<Record<MeasureDimension, number>>;
+              driveScores: { agency: number; communion: number; eros: number; agape: number };
+              driveSignals: { agency: string; communion: string; eros: string; agape: string };
               feedback: string;
               polarityDirection: 'sto' | 'sts' | 'neutral';
               shadowSignal?: {
@@ -219,8 +249,8 @@ export class AgenticOrchestrator {
               narrativeSummary: string;
             };
 
-            // Process completion
-            const finalResult = this.createAssessmentResult(params.passed, params.scores || {});
+            // Process completion with per-drive scores
+            const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, params.driveScores);
             const outcome = this.finalizeEncounter(params, now);
 
             return {
@@ -387,7 +417,41 @@ export class AgenticOrchestrator {
     };
   }
 
-  private createAssessmentResult(passed: boolean, scores: Partial<Record<MeasureDimension, number>>): AssessmentResult {
+  /**
+   * Build assessment context section for the LLM system prompt.
+   * Injects tasks, drive probes, and scoring rubric from the module.
+   */
+  private buildAssessmentContext(module: StageAssessment): string {
+    const tasks = module.tasks.map((t, i) =>
+      `  ${i + 1}. ${t.type}: ${t.description} (measures: ${t.measures.join(', ')})`
+    ).join('\n');
+
+    const probes = [
+      `  agency: ${module.driveProbes.agency.description}`,
+      `  communion: ${module.driveProbes.communion.description}`,
+      `  eros: ${module.driveProbes.eros.description}`,
+      `  agape: ${module.driveProbes.agape.description}`,
+    ].join('\n');
+
+    // Include the LLM rubric as scoring guidance (condensed)
+    const rubric = module.scoringRubric.llmRubric
+      ? `\n[SCORING RUBRIC] ${module.scoringRubric.llmRubric}`
+      : '';
+
+    return `
+[ASSESSMENT MODULE] line=${module.line}; stage=${module.stage}
+[TASKS - present one as a narrative challenge]
+${tasks}
+[DRIVE PROBES - evaluate each independently]
+${probes}${rubric}
+[INSTRUCTION] Weave the TASKS into a narrative encounter. After the player responds, evaluate their response against each DRIVE PROBE. Then call complete_encounter with per-drive scores and signals.`;
+  }
+
+  private createAssessmentResult(
+    passed: boolean,
+    scores: Partial<Record<MeasureDimension, number>>,
+    driveScores?: { agency: number; communion: number; eros: number; agape: number },
+  ): AssessmentResult {
     const [line, stage] = this.encounter.moduleRef.split(':') as [Line, Stage];
     const dimensions: Record<MeasureDimension, number> = {
       accuracy: scores.accuracy ?? 0.5,
@@ -401,6 +465,14 @@ export class AgenticOrchestrator {
       coherence: scores.coherence ?? 0.5,
       integration: scores.integration ?? 0.5,
     };
+
+    // Wire per-drive scores into assessment dimensions so they aren't dead code
+    if (driveScores) {
+      dimensions.accuracy = driveScores.agency;
+      dimensions.depth = driveScores.eros;
+      dimensions.coherence = driveScores.communion;
+      dimensions.integration = driveScores.agape;
+    }
 
     return {
       line,
@@ -417,6 +489,8 @@ export class AgenticOrchestrator {
       passed: boolean;
       feedback: string;
       polarityDirection: 'sto' | 'sts' | 'neutral';
+      driveScores?: { agency?: number; communion?: number; eros?: number; agape?: number };
+      driveSignals?: { agency?: string; communion?: string; eros?: string; agape?: string };
       shadowSignal?: {
         quadrant: ShadowQuadrant;
         intensity: number;
@@ -429,13 +503,29 @@ export class AgenticOrchestrator {
     if (params.polarityDirection === 'sto') energeticDirection = 'Radiative';
     else if (params.polarityDirection === 'sts') energeticDirection = 'Absorptive';
 
-    const dir: DriveDirectionality = params.passed ? 'HealthyBalanced' : 'DarkAddicted';
-    const driveDirectionality = { Agency: dir, Communion: dir, Eros: dir, Agape: dir } as Record<Drive, DriveDirectionality>;
+    // Map LLM-provided drive signals to DriveDirectionality enum.
+    // If the LLM provided explicit per-drive signals, use them directly.
+    // Otherwise fall back to polarity-based derivation.
+    const SIGNAL_MAP: Record<string, DriveDirectionality> = {
+      'HealthyBalanced': 'HealthyBalanced',
+      'DarkAddicted': 'DarkAddicted',
+      'DarkAverted': 'DarkAverted',
+      'GoldenAddicted': 'GoldenAddicted',
+      'GoldenAverted': 'GoldenAverted',
+    };
+
+    const baseDir: DriveDirectionality = params.passed ? 'HealthyBalanced' : 'DarkAddicted';
+    const driveDirectionality: Record<Drive, DriveDirectionality> = {
+      Agency: params.driveSignals?.agency ? (SIGNAL_MAP[params.driveSignals.agency] ?? baseDir) : baseDir,
+      Communion: params.driveSignals?.communion ? (SIGNAL_MAP[params.driveSignals.communion] ?? baseDir) : baseDir,
+      Eros: params.driveSignals?.eros ? (SIGNAL_MAP[params.driveSignals.eros] ?? baseDir) : (params.polarityDirection === 'sto' ? 'HealthyBalanced' : baseDir),
+      Agape: params.driveSignals?.agape ? (SIGNAL_MAP[params.driveSignals.agape] ?? baseDir) : (params.polarityDirection === 'sts' ? 'HealthyBalanced' : baseDir),
+    };
 
     const response: PlayerResponse = {
       encounterId: this.encounter.id,
       energeticDirection,
-      driveDirectionality,
+      driveDirectionality: driveDirectionality as Record<Drive, DriveDirectionality>,
       stageOrientation: params.polarityDirection === 'sto' ? 'ReachingHigher' : 'Homeostatic',
       sourceOfNourishment: params.polarityDirection === 'sto' ? 'HigherRealm' : (params.polarityDirection === 'sts' ? 'LowerRealm' : 'Ambivalent'),
       shadowSurfaced: params.shadowSignal?.quadrant || null,

@@ -69,6 +69,7 @@ import type { PlayerResponse } from '../src/core/engines/ConsequenceEngine.js';
 import type { SessionContext } from '../src/core/engines/PriorityComputation.js';
 import { startSession, tickWithStrategy, endSession, type SessionState } from '../src/core/GameLoop.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
+import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
@@ -226,6 +227,11 @@ async function runAgenticEncounter(
   };
 
   // Always route through AgenticOrchestrator — it handles LLM + fallback internally
+  // Look up the assessment module from the registry to inject into the LLM context
+  const [encLine, encStage] = encounter.moduleRef.split(':') as [Line, Stage];
+  const modRegistry = (globalThis as any).__moduleRegistry as ModuleRegistry | undefined;
+  const module = modRegistry?.get(encLine, encStage);
+
   const orchestrator = new AgenticOrchestrator({
     encounter,
     significator: sig,
@@ -233,6 +239,7 @@ async function runAgenticEncounter(
     history,
     conceptIndex: { modules: {} },
     uiHandler,
+    module,
   });
 
   const outcome = await orchestrator.run();
@@ -260,6 +267,7 @@ async function runDiagnostic(): Promise<void> {
   console.log('\nRegistries:');
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
+  (globalThis as any).__moduleRegistry = moduleRegistry;
   success(`${moduleRegistry.count()} assessment modules loaded`);
 
   console.log('\nHolons:');
@@ -306,6 +314,7 @@ async function runSingleEncounter(): Promise<void> {
 
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
+  (globalThis as any).__moduleRegistry = moduleRegistry;
   success(`${moduleRegistry.count()} modules loaded`);
 
   const sig = createDefaultSignificator();
@@ -343,6 +352,7 @@ async function runFullSession(): Promise<void> {
   if (!JSON_MODE) console.log('\n[1/4] Booting registries...');
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
+  (globalThis as any).__moduleRegistry = moduleRegistry;
   success(`${moduleRegistry.count()} assessment modules loaded`);
 
   // Holons
