@@ -28,6 +28,9 @@ export interface SessionContext {
     readonly responseLatencyTrend: 'decreasing' | 'stable' | 'increasing';
     readonly earlyExits: number;
   };
+  readonly forceLine?: string;
+  readonly forceStage?: string;
+  readonly forceModality?: string;
 }
 
 export interface PriorityWeights {
@@ -66,13 +69,17 @@ export function computePriority(
   const n = computeNarrativeCoherence(candidate, world);
   const sf = computeSessionFit(candidate, session);
 
-  return weights.thetaUrgency * t
+  const baseScore = weights.thetaUrgency * t
     + weights.shadowActivation * s
     + weights.polarityAlignment * p
     + weights.transformationReadiness * tr
     + weights.driveCorrection * d
     + weights.narrativeCoherence * n
     + weights.sessionFit * sf;
+
+  const hash = (candidate.moduleRef.charCodeAt(0) + candidate.modality.charCodeAt(0)) % 100;
+  const tieBreaker = hash / 10000; // max 0.0099
+  return baseScore + tieBreaker;
 }
 
 /**

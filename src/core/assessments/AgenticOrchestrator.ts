@@ -208,7 +208,7 @@ export class AgenticOrchestrator {
       const res = await queryLLMWithTools(systemPrompt, this.messages, TOOLS);
 
       // Detect LLM unavailability on first call — switch to fallback
-      if (loopCount === 1 && res.content && res.content.includes('"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
+      if (loopCount === 1 && res.content && res.content.trim().startsWith('{"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
         return this.runFallback(line, stage, now);
       }
 
@@ -409,21 +409,120 @@ export class AgenticOrchestrator {
     const answer = result.answers[0];
     const narrativeSummary = answer?.writeInValue ?? (answer?.selectedLabels[0] ?? 'The player engaged with the encounter.');
 
-    // Complete with synthetic result
+    const evaluated = this.evaluateFallbackResponse(narrativeSummary);
+
     const fallbackParams = {
-      passed: true,
-      feedback: 'Encounter completed via fallback content.',
-      polarityDirection: 'neutral' as const,
+      passed: evaluated.passed,
+      feedback: evaluated.feedback,
+      polarityDirection: evaluated.polarityDirection,
+      driveScores: evaluated.driveScores,
+      driveSignals: evaluated.driveSignals,
       narrativeSummary: typeof narrativeSummary === 'string' ? narrativeSummary : 'The player engaged with the encounter.',
     };
 
-    const finalResult = this.createAssessmentResult(true, {});
+    const finalResult = this.createAssessmentResult(evaluated.passed, {}, evaluated.driveScores);
     const outcome = this.finalizeEncounter(fallbackParams, now);
 
     return {
       ...outcome,
       finalResult,
       messages: this.messages,
+    };
+  }
+
+  private evaluateFallbackResponse(selectedLabel: string): {
+    passed: boolean;
+    polarityDirection: 'sto' | 'sts' | 'neutral';
+    driveScores: { agency: number; communion: number; eros: number; agape: number };
+    driveSignals: { agency: string; communion: string; eros: string; agape: string };
+    feedback: string;
+  } {
+    const lower = selectedLabel.toLowerCase();
+    
+    // Check passed first (false if contains withdraw, resist, decline, sit with it)
+    const passed = !['withdraw', 'resist', 'decline', 'sit with it'].some(kw => lower.includes(kw));
+
+    const defaultSignals = {
+      agency: 'HealthyBalanced',
+      communion: 'HealthyBalanced',
+      eros: 'HealthyBalanced',
+      agape: 'HealthyBalanced'
+    };
+
+    // 1. STS mapping
+    const stsKeywords = ['attack', 'betray', 'raid', 'dominate', 'strike', 'profit', 'sell', 'enforce', 'deceive', 'obey'];
+    if (stsKeywords.some(kw => lower.includes(kw))) {
+      const isAverted = ['betray', 'raid', 'deceive'].some(kw => lower.includes(kw));
+      return {
+        passed,
+        polarityDirection: 'sts',
+        driveScores: { agency: 0.8, communion: 0.3, eros: 0.8, agape: 0.3 },
+        driveSignals: {
+          ...defaultSignals,
+          ...(isAverted ? { communion: 'DarkAverted', agape: 'DarkAverted' } : {})
+        },
+        feedback: isAverted
+          ? 'Your response prioritized self-protection and tactical advantage, showing highly active Agency but potential shadow aversion toward Communion.'
+          : 'Your response prioritized self-interest, power, or direct force, favoring Agency/Eros over Communion/Agape.'
+      };
+    }
+
+    // 2. STO mapping
+    const stoKeywords = ['alliance', 'negotiate', 'trust', 'share', 'mercy', 'compassion', 'reflect deeply', 'refuse', 'reform', 'breathe'];
+    if (stoKeywords.some(kw => lower.includes(kw))) {
+      return {
+        passed,
+        polarityDirection: 'sto',
+        driveScores: { agency: 0.5, communion: 0.8, eros: 0.5, agape: 0.8 },
+        driveSignals: defaultSignals,
+        feedback: 'Your response prioritized cooperation, empathy, and collective service, showing strong Communion and Agape alignment.'
+      };
+    }
+
+    // 3. Neutral / Withdrawal mapping
+    // case 3.1: withdraw / resist / sit with it / decline
+    if (['withdraw', 'resist', 'sit with it', 'decline'].some(kw => lower.includes(kw))) {
+      return {
+        passed,
+        polarityDirection: 'neutral',
+        driveScores: { agency: 0.4, communion: 0.5, eros: 0.3, agape: 0.5 },
+        driveSignals: {
+          ...defaultSignals,
+          eros: 'DarkAverted'
+        },
+        feedback: 'Your choice to withdraw or resist shows a homeostatic focus, maintaining the boundary but delaying growth.'
+      };
+    }
+
+    // case 3.2: verify / fortify / stay / hybrid / observe
+    if (['verify', 'fortify', 'stay', 'hybrid', 'observe'].some(kw => lower.includes(kw))) {
+      return {
+        passed,
+        polarityDirection: 'neutral',
+        driveScores: { agency: 0.6, communion: 0.6, eros: 0.4, agape: 0.5 },
+        driveSignals: defaultSignals,
+        feedback: 'Your response showed a balanced, cautious approach, securing current foundations before acting.'
+      };
+    }
+
+    // case 3.3: respond instinctively / challenge / press forward / engage
+    if (['respond instinctively', 'challenge', 'press forward', 'engage'].some(kw => lower.includes(kw))) {
+      return {
+        passed,
+        polarityDirection: 'neutral',
+        driveScores: { agency: 0.7, communion: 0.4, eros: 0.7, agape: 0.4 },
+        driveSignals: defaultSignals,
+        feedback: 'Your response was active and assertive, pushing forward with strong Eros and Agency.'
+      };
+    }
+
+    // Default
+    return {
+      passed,
+      polarityDirection: 'neutral',
+      driveScores: { agency: 0.6, communion: 0.6, eros: 0.6, agape: 0.6 },
+      driveSignals: defaultSignals,
+      feedback: 'Completed the challenge via fallback choices.'
     };
   }
 

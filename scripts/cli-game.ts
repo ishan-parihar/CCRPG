@@ -186,13 +186,63 @@ async function runAgenticEncounter(
   response: PlayerResponse;
   narrativeSummary: string;
 }> {
+  const [encLine, encStage] = encounter.moduleRef.split(':') as [Line, Stage];
+  const modRegistry = (globalThis as any).__moduleRegistry as ModuleRegistry | undefined;
+
+  // If --line/--stage/--modality forcing is active, override the encounter
+  let forcedEncounter = encounter;
+  if (FORCE_LINE || FORCE_STAGE || FORCE_MODALITY) {
+    const forcedLine = FORCE_LINE ?? encLine;
+    const forcedStage = FORCE_STAGE ?? encStage;
+    const forcedModality = FORCE_MODALITY ?? encounter.modality;
+    const forcedModule = modRegistry?.get(forcedLine, forcedStage);
+    if (forcedModule) {
+      forcedEncounter = {
+        ...encounter,
+        moduleRef: `${forcedLine}:${forcedStage}`,
+        modality: forcedModality,
+        targetLines: [forcedLine],
+        stage: forcedStage,
+      };
+    }
+  }
+
   const uiHandler: AgenticUIHandler = {
     askUser: async (params: AskUserQuestionParams): Promise<AskUserQuestionResult> => {
       const answers: UserAnswer[] = [];
 
       for (const q of params.questions) {
         if (!JSON_MODE) {
-          console.log(`\n  ${C.magenta}[${q.header}]${C.reset}`);
+          const mod = forcedEncounter.modality;
+          let modHeader = '';
+
+          switch (mod) {
+            case 'Deterministic':
+              modHeader = `${C.bold}${C.red}⏳ [TIMED TRIAL] ▬▬▬▬▬▬▬▬▬▬▬▬▬░ (9.5s remaining)${C.reset}\n`;
+              break;
+            case 'LanguageReflective':
+              modHeader = `${C.bold}${C.blue}🧘 [REFLECTION BEAT] • Tune in to your inner state •${C.reset}\n`;
+              break;
+            case 'ScenarioChoice':
+              modHeader = `${C.bold}${C.yellow}🔀 [DECISION CROSSROADS] • A path diverges •${C.reset}\n`;
+              break;
+            case 'Embodied':
+              modHeader = `${C.bold}${C.green}💓 [SOMATIC SCAN] • Focus on body sensation •${C.reset}\n`;
+              break;
+            case 'Strategic':
+              modHeader = `${C.bold}${C.magenta}♟️ [TACTICAL WAR-TABLE] • Assess constraints •${C.reset}\n`;
+              break;
+            case 'SocialCooperative':
+              modHeader = `${C.bold}${C.cyan}🤝 [DIPLOMACY] • Navigating connection •${C.reset}\n`;
+              break;
+            case 'ImmersiveRPG':
+              modHeader = `${C.bold}${C.yellow}📖 [NARRATIVE SCENE] • The story unfolds •${C.reset}\n`;
+              break;
+            default:
+              modHeader = `${C.bold}${C.dim}[${mod.toUpperCase()}]${C.reset}\n`;
+          }
+
+          console.log(`\n  ${modHeader}  ${C.magenta}[${q.header}]${C.reset}`);
           console.log(`  ${C.bold}${q.question}${C.reset}`);
           if (q.options?.length) {
             for (let i = 0; i < q.options.length; i++) {
@@ -226,8 +276,23 @@ async function runAgenticEncounter(
             .filter(n => n >= 1 && n <= (q.options?.length ?? 0))
             .map(n => q.options![n - 1]!.label);
 
+          // Determine if input is a simple numeric choice from the options
+          let isSimpleNumericChoice = false;
+          if (q.options?.length && answer.trim()) {
+            const parts = answer.split(',').map(s => s.trim());
+            isSimpleNumericChoice = parts.every(part => {
+              const num = parseInt(part, 10);
+              return !isNaN(num) && String(num) === part && num >= 1 && num <= q.options!.length;
+            });
+          }
+
           if (q.allowWriteIn || (!q.options?.length && answer.trim())) {
-            answers.push({ selectedLabels, writeInValue: answer.trim() || undefined });
+            // Only populate writeInValue if it's NOT a simple numeric choice
+            if (!isSimpleNumericChoice && answer.trim()) {
+              answers.push({ selectedLabels, writeInValue: answer.trim() });
+            } else {
+              answers.push({ selectedLabels });
+            }
           } else {
             answers.push({ selectedLabels });
           }
@@ -240,8 +305,6 @@ async function runAgenticEncounter(
 
   // Always route through AgenticOrchestrator — it handles LLM + fallback internally
   // Look up the assessment module from the registry to inject into the LLM context
-  const [encLine, encStage] = encounter.moduleRef.split(':') as [Line, Stage];
-  const modRegistry = (globalThis as any).__moduleRegistry as ModuleRegistry | undefined;
   const baseModule = modRegistry?.get(encLine, encStage);
 
   // Build ConceptDraftIndex from the module registry so the LLM sees module metadata
@@ -254,24 +317,6 @@ async function runAgenticEncounter(
         stage: m.stage,
         title: `${m.line} ${m.stage} Module`,
         modalities: m.tasks.map(t => t.type === 'llm_dialogue' ? 'LanguageReflective' as const : 'Deterministic' as const),
-      };
-    }
-  }
-
-  // If --line/--stage/--modality forcing is active, override the encounter
-  let forcedEncounter = encounter;
-  if (FORCE_LINE || FORCE_STAGE || FORCE_MODALITY) {
-    const forcedLine = FORCE_LINE ?? encLine;
-    const forcedStage = FORCE_STAGE ?? encStage;
-    const forcedModality = FORCE_MODALITY ?? encounter.modality;
-    const forcedModule = modRegistry?.get(forcedLine, forcedStage);
-    if (forcedModule) {
-      forcedEncounter = {
-        ...encounter,
-        moduleRef: `${forcedLine}:${forcedStage}`,
-        modality: forcedModality,
-        targetLines: [forcedLine],
-        stage: forcedStage,
       };
     }
   }
@@ -368,7 +413,10 @@ async function runSingleEncounter(): Promise<void> {
     sessionDurationMs: 0,
     targetSessionLength: 1,
     recentLines: [],
-  };
+    ...(FORCE_LINE ? { forceLine: FORCE_LINE } : {}),
+    ...(FORCE_STAGE ? { forceStage: FORCE_STAGE } : {}),
+    ...(FORCE_MODALITY ? { forceModality: FORCE_MODALITY } : {}),
+  } as any;
   const sessionState = startSession(sig, session);
 
   const now = Date.now();
@@ -417,7 +465,10 @@ async function runFullSession(): Promise<void> {
     sessionDurationMs: 0,
     targetSessionLength: encounterCount,
     recentLines: [],
-  };
+    ...(FORCE_LINE ? { forceLine: FORCE_LINE } : {}),
+    ...(FORCE_STAGE ? { forceStage: FORCE_STAGE } : {}),
+    ...(FORCE_MODALITY ? { forceModality: FORCE_MODALITY } : {}),
+  } as any;
   let sessionState = startSession(sig, session);
 
   banner('SESSION START');

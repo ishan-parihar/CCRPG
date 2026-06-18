@@ -117,30 +117,54 @@ export function generateCandidates(
   for (const holon of world.holons) {
     if (!holon.active) continue;
 
-    // Filter 1: Layer-perception (stage <= current + 1)
-    if (stageOrdinal(holon.stage) > maxStageOrd) continue;
+    // If forceLine is provided, filter candidates to only matching holon.line.
+    if (session?.forceLine && holon.line !== session.forceLine) continue;
 
-    // Filter 2: Altitude requirement (stage <= line altitude + 1)
-    const lineAltOrd = stageOrdinal(sig.altitudes[holon.line]);
-    if (stageOrdinal(holon.stage) > lineAltOrd + 1) continue;
+    // If forceStage is provided, filter candidates to only matching holon.stage.
+    if (session?.forceStage && holon.stage !== session.forceStage) continue;
+
+    const bypassChecks = !!(session?.forceLine || session?.forceStage);
+
+    if (!bypassChecks) {
+      // Filter 1: Layer-perception (stage <= current + 1)
+      if (stageOrdinal(holon.stage) > maxStageOrd) continue;
+
+      // Filter 2: Altitude requirement (stage <= line altitude + 1)
+      const lineAltOrd = stageOrdinal(sig.altitudes[holon.line]);
+      if (stageOrdinal(holon.stage) > lineAltOrd + 1) continue;
+    }
 
     const moduleRef = `${holon.line}:${holon.stage}`;
 
     // Generate candidates across eligible modalities (2-3 per holon)
-    const eligible = getEligibleModalities(holon, blockedModalities);
+    const eligible = session?.forceModality
+      ? [session.forceModality as Modality]
+      : getEligibleModalities(holon, blockedModalities);
+
+    const anyForcing = !!(session?.forceLine || session?.forceStage || session?.forceModality);
 
     for (const modality of eligible) {
-      // Filter 3: Cooldown — timestamp-based
-      const tupleKey = `${holon.line}:${holon.stage}:${modality}`;
-      const cooldownTs = world.cooldowns[tupleKey] ?? world.cooldowns[moduleRef] ?? 0;
-      if (now < cooldownTs) continue;
+      if (!anyForcing) {
+        // Filter 3: Cooldown — timestamp-based
+        const tupleKey = `${holon.line}:${holon.stage}:${modality}`;
+        const cooldownTs = world.cooldowns[tupleKey] ?? world.cooldowns[moduleRef] ?? 0;
+        if (now < cooldownTs) continue;
 
-      // Filter 3: Cooldown — recency-based
-      const last3 = recent.slice(0, 3);
-      if (last3.some(r => r.line === holon.line && r.stage === holon.stage && r.modality === modality)) continue;
+        // Filter 3: Cooldown — recency-based
+        const last3 = recent.slice(-3);
+        if (last3.some(r => r.line === holon.line && r.stage === holon.stage && r.modality === modality)) continue;
 
-      const last2 = recent.slice(0, 2);
-      if (last2.some(r => r.line === holon.line && r.stage === holon.stage)) continue;
+        const last2 = recent.slice(-2);
+        if (last2.some(r => r.line === holon.line && r.stage === holon.stage)) continue;
+
+        // Modality rotation constraint: prevent consecutive repeats of the same modality
+        if (recent.length >= 2) {
+          const last2Modalities = recent.slice(-2);
+          if (last2Modalities[0].modality === last2Modalities[1].modality && modality === last2Modalities[0].modality) {
+            continue;
+          }
+        }
+      }
 
       candidates.push({
         moduleRef,

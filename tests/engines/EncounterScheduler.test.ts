@@ -90,4 +90,240 @@ describe('EncounterScheduler', () => {
       }
     }
   });
+
+  it('allows scheduling forced line and stage even if above player perception/altitude', () => {
+    const highWorld: WorldState = {
+      holons: [
+        makeHolon('h-high', 'Cognitive', 'Orange'), // 2 stages above Red
+        makeHolon('h-other', 'Emotional', 'Orange'),
+      ],
+      recentEncounterIds: [],
+      cooldowns: {},
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
+    };
+    const forcedSession: SessionContext = {
+      ...session,
+      forceLine: 'Cognitive',
+      forceStage: 'Orange',
+    };
+    const result = scheduleNext(sig, highWorld, forcedSession, Date.now(), 3);
+    expect(result.length).toBeGreaterThan(0);
+    for (const item of result) {
+      expect(item.targetLines).toContain('Cognitive');
+      expect(item.stage).toBe('Orange');
+      expect(item.holonSource).toBe('h-high');
+    }
+  });
+
+  it('overrides eligible modalities when forceModality is provided', () => {
+    const customWorld: WorldState = {
+      holons: [
+        {
+          ...makeHolon('h-mod', 'Cognitive', 'Red'),
+          modality: 'Deterministic',
+        }
+      ],
+      recentEncounterIds: [],
+      cooldowns: {},
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
+    };
+    const forcedSession: SessionContext = {
+      ...session,
+      forceModality: 'LanguageReflective',
+    };
+    const result = scheduleNext(sig, customWorld, forcedSession, Date.now(), 3);
+    expect(result.length).toBe(1);
+    expect(result[0].modality).toBe('LanguageReflective');
+  });
+
+  it('bypasses cooldowns and recency checks when any forcing is active', () => {
+    const now = Date.now();
+    const cooldownWorld: WorldState = {
+      holons: [
+        makeHolon('h-cooldown', 'Cognitive', 'Red'),
+      ],
+      recentEncounterIds: [],
+      cooldowns: {
+        'Cognitive:Red': now + 100000,
+      },
+      recentEncounters: [
+        { line: 'Cognitive', stage: 'Red', modality: 'Deterministic' },
+      ],
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
+    };
+
+    const normalResult = scheduleNext(sig, cooldownWorld, session, now, 3);
+    expect(normalResult).toHaveLength(0);
+
+    const forcedSession: SessionContext = {
+      ...session,
+      forceLine: 'Cognitive',
+    };
+    const forcedResult = scheduleNext(sig, cooldownWorld, forcedSession, now, 3);
+    expect(forcedResult.length).toBeGreaterThan(0);
+  });
+
+  it('recency check matches the most recent (last) elements rather than oldest (first) elements', () => {
+    const now = Date.now();
+    const testWorld: WorldState = {
+      holons: [
+        makeHolon('h1', 'Cognitive', 'Red'),
+      ],
+      recentEncounterIds: [],
+      cooldowns: {},
+      recentEncounters: [
+        { line: 'Emotional', stage: 'Red', modality: 'Deterministic' }, // index 0 (oldest)
+        { line: 'Emotional', stage: 'Red', modality: 'Deterministic' }, // index 1
+        { line: 'Emotional', stage: 'Red', modality: 'Deterministic' }, // index 2
+        { line: 'Cognitive', stage: 'Red', modality: 'Deterministic' }, // index 3 (most recent)
+      ],
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
+    };
+
+    const result = scheduleNext(sig, testWorld, session, now, 3);
+    const hasCognitive = result.some(r => r.targetLines.includes('Cognitive'));
+    expect(hasCognitive).toBe(false);
+  });
+
+  it('recency check of last 2 module elements matches the end of the array', () => {
+    const now = Date.now();
+    const testWorld: WorldState = {
+      holons: [
+        makeHolon('h1', 'Cognitive', 'Red'),
+      ],
+      recentEncounterIds: [],
+      cooldowns: {},
+      recentEncounters: [
+        { line: 'Emotional', stage: 'Red', modality: 'Deterministic' },
+        { line: 'Emotional', stage: 'Red', modality: 'Deterministic' },
+        { line: 'Emotional', stage: 'Red', modality: 'Deterministic' },
+        { line: 'Cognitive', stage: 'Red', modality: 'Strategic' },
+      ],
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
+    };
+
+    const result = scheduleNext(sig, testWorld, session, now, 3);
+    const hasCognitive = result.some(r => r.targetLines.includes('Cognitive'));
+    expect(hasCognitive).toBe(false);
+  });
+
+  it('modality rotation constraint filters out a modality if it was used consecutively in the last two encounters', () => {
+    const now = Date.now();
+    const testWorld: WorldState = {
+      holons: [
+        {
+          ...makeHolon('h1', 'Cognitive', 'Red'),
+          modality: 'Deterministic',
+        }
+      ],
+      recentEncounterIds: [],
+      cooldowns: {},
+      recentEncounters: [
+        { line: 'Emotional', stage: 'Red', modality: 'Deterministic' },
+        { line: 'Moral', stage: 'Red', modality: 'Deterministic' },
+      ],
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
+    };
+
+    const result = scheduleNext(sig, testWorld, session, now, 3);
+    expect(result.length).toBeGreaterThan(0);
+    for (const item of result) {
+      expect(item.modality).not.toBe('Deterministic');
+    }
+  });
+
+  it('modality rotation constraint is bypassed when any forcing is active', () => {
+    const now = Date.now();
+    const testWorld: WorldState = {
+      holons: [
+        {
+          ...makeHolon('h1', 'Cognitive', 'Red'),
+          modality: 'Deterministic',
+        }
+      ],
+      recentEncounterIds: [],
+      cooldowns: {},
+      recentEncounters: [
+        { line: 'Emotional', stage: 'Red', modality: 'Deterministic' },
+        { line: 'Moral', stage: 'Red', modality: 'Deterministic' },
+      ],
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
+    };
+
+    const forcedSession: SessionContext = {
+      ...session,
+      forceModality: 'Deterministic',
+    };
+
+    const result = scheduleNext(sig, testWorld, forcedSession, now, 3);
+    expect(result.length).toBeGreaterThan(0);
+    expect(result[0].modality).toBe('Deterministic');
+  });
+
+  it('applies a deterministic tie-breaker so candidates at session start do not return the exact same priority', () => {
+    const customWorld: WorldState = {
+      holons: [
+        { ...makeHolon('h-cog', 'Cognitive', 'Red'), modality: 'ImmersiveRPG' },
+        { ...makeHolon('h-emo', 'Emotional', 'Red'), modality: 'ImmersiveRPG' },
+      ],
+      recentEncounterIds: [],
+      cooldowns: {},
+      narrativeBeats: [],
+      activeBeatId: null,
+      completedBeatIds: [],
+      factions: [],
+      npcRelationships: [],
+      pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      activeMacroEvents: [],
+    };
+
+    const result = scheduleNext(sig, customWorld, session, Date.now(), 2);
+    expect(result).toHaveLength(2);
+    const p1 = result[0].priority;
+    const p2 = result[1].priority;
+    expect(p1).not.toBe(p2);
+    expect(Math.abs(p1 - p2)).toBeLessThan(0.01);
+  });
 });
