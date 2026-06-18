@@ -161,6 +161,13 @@ function emitEvent(type: string, data: Record<string, unknown>): void {
 
 // ── Rendering helpers ────────────────────────────────────────────────
 
+/** Shadow quadrant label map — used by drive display */
+const SHADOW_LABELS: Record<string, string> = {
+  DarkAddicted: 'Addict', DarkAverted: 'Avert',
+  GoldenAddicted: 'Gold', GoldenAverted: 'GAvr',
+  HealthyBalanced: '',
+};
+
 /** Stage color helper: returns ANSI color for a given stage */
 function stageColor(stage: string): string {
   const colors: Record<string, string> = {
@@ -796,14 +803,9 @@ async function runFullSession(): Promise<void> {
         if (VERBOSE) {
           // Show drive signals with shadow quadrant labels
           const ds = result.outcome.consequenceRecord.polarityTrace.driveDirectionality;
-          const shadowMap: Record<string, string> = {
-            DarkAddicted: 'Addict', DarkAverted: 'Avert',
-            GoldenAddicted: 'Gold', GoldenAverted: 'GAvr',
-            HealthyBalanced: '',
-          };
           const driveEntries = Object.entries(ds).map(([k, v]) => {
             const short = k.slice(0, 3);
-            const suffix = shadowMap[v] ?? v.slice(0, 4);
+            const suffix = SHADOW_LABELS[v] ?? v.slice(0, 4);
             if (suffix) {
               const col = v.startsWith('Dark') ? C.red : C.yellow;
               return `${C.dim}${short}:${col}${suffix}${C.reset}`;
@@ -817,17 +819,19 @@ async function runFullSession(): Promise<void> {
         if (shadow) {
           console.log(`  ${C.yellow}⚠ shadow:${C.reset} ${C.yellow}${shadow}${C.reset}`);
         }
-        // Show narrative snippet
+        // Show developmental feedback
+        const fb = encResult.passed ? null : result.outcome.consequenceRecord.polarityTrace;
         if (result.narrativeSummary) {
-          const snippet = result.narrativeSummary.length > 80
-            ? result.narrativeSummary.slice(0, 80) + '…'
-            : result.narrativeSummary;
-          console.log(`  ${C.dim}narrative:${C.reset} ${C.dim}"${snippet}"${C.reset}`);
+          // Extract the key feedback from the narrative
+          const fbMatch = result.narrativeSummary.match(/Your response: "(.+?)"/);
+          if (fbMatch) {
+            console.log(`  ${C.dim}choice:${C.reset} ${fbMatch[1]}`);
+          }
         }
       }
 
       if (VERBOSE) {
-        verbose('feedback', encResult.passed ? 'passed' : 'failed');
+        verbose('feedback', result.outcome.feedback.slice(0, 200));
         verbose('updatedEncounters', String(currentSig.totalEncounters));
       }
 

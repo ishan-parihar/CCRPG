@@ -28,6 +28,7 @@ export interface OrchestratorResult {
   readonly finalResult: AssessmentResult | ShadowAssessmentResult;
   readonly consequenceRecord: ConsequenceRecord;
   readonly narrativeSummary: string;
+  readonly feedback: string;
   readonly messages: readonly AgentMessage[];
 }
 
@@ -490,10 +491,11 @@ export class AgenticOrchestrator {
       // Use correctnessScore as the primary scoring signal (from TaskRenderer options)
       const baseScore = Math.min(1, Math.max(0, correctnessScore));
 
-      // For write-in responses (no MCQ match), apply keyword-based drive detection
-      // so we can still differentiate drives and detect shadows from free-text
+      // For write-in responses, ALWAYS run keyword-based drive detection regardless
+      // of whether the renderer's evaluate() found a label match. The renderer's label
+      // matching can false-positive on short words like 'I' that appear in write-in text.
       let writeInDriveDetection: { drive: string; polarity: string; shadowKeyword: string | null } | null = null;
-      if (matchedDrive === null && writeIn) {
+      if (writeIn) {
         const wl = writeIn.toLowerCase();
         const hasShadowAddiction = wl.includes('attack') || wl.includes('dominate') || wl.includes('crush') || wl.includes('enslave') || wl.includes('destroy');
         const hasShadowAversion = wl.includes('withdraw') || wl.includes('resist') || wl.includes('refuse') || wl.includes('flee');
@@ -506,8 +508,10 @@ export class AgenticOrchestrator {
         else if (hasGoldenAllergy) writeInDriveDetection = { drive: 'agape', polarity: 'neutral', shadowKeyword: 'GoldenAverted' };
       }
 
-      const effectiveDrive = matchedDrive ?? writeInDriveDetection?.drive ?? null;
-      const effectivePolarity = matchedPolarity !== 'neutral' ? matchedPolarity : writeInDriveDetection?.polarity ?? 'neutral';
+      // When a write-in is present, its keyword-based detection takes priority over
+      // the renderer's label matching (which can false-positive on short words like 'I').
+      const effectiveDrive = writeInDriveDetection?.drive ?? matchedDrive ?? null;
+      const effectivePolarity = writeInDriveDetection?.polarity ?? (matchedPolarity !== 'neutral' ? matchedPolarity : 'neutral');
 
       // Build differentiated drive scores:
       // - The matched/driven drive gets the full baseScore (or boosted for write-in depth)
@@ -538,12 +542,6 @@ export class AgenticOrchestrator {
         : effectivePolarity === 'sto' ? 'sto' as const
         : 'neutral' as const;
 
-      // Determine pass: use the baseScore with write-in depth boost
-      // Write-in responses get a minimum pass score of 0.55 if they demonstrate genuine engagement
-      const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
-      const effectiveScore = isWriteInWithNoShadow ? Math.max(baseScore, 0.55) : baseScore;
-      const passed = effectiveScore >= passThreshold;
-
       // Derive drive signals from the expression pattern
       const shadowFromWriteIn = writeInDriveDetection?.shadowKeyword ?? null;
       const driveSignals = {
@@ -561,14 +559,28 @@ export class AgenticOrchestrator {
           : 'HealthyBalanced',
       };
 
+      // Determine pass: baseScore must meet threshold AND no shadow pathology on the expressed drive
+      // Shadow expression = developmental signal that the capacity is not yet integrated
+      const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
+      const effectiveScore = isWriteInWithNoShadow ? Math.max(baseScore, 0.55) : baseScore;
+      const hasShadow = !!shadowFromWriteIn;
+      const passed = effectiveScore >= passThreshold && !hasShadow;
+
+      // Build rich developmental feedback
+      const driveLabel = effectiveDrive ?? 'unidentified';
+      const polarityLabel = effectivePolarity === 'sts' ? 'self-oriented' : effectivePolarity === 'sto' ? 'other-oriented' : 'neutral';
+      const feedback = hasShadow
+        ? `Shadow surfaced: ${shadowFromWriteIn} through ${driveLabel} expression (${polarityLabel}). This indicates the ${driveLabel} drive is operating from a developmental shadow — awareness of this pattern is the first step toward integration.`
+        : passed
+          ? `${driveLabel} expressed healthily (score=${baseScore.toFixed(2)}, polarity=${polarityLabel}). The capacity shows balanced integration.`
+          : `${driveLabel} expressed but below integration threshold (score=${baseScore.toFixed(2)}). Continued practice will strengthen this capacity.`;
+
       evaluation = {
         passed,
         polarityDirection,
         driveScores,
         driveSignals,
-        feedback: matchedDrive
-          ? `${matchedDrive} expressed (score=${baseScore.toFixed(2)}, polarity=${matchedPolarity})`
-          : `Score: ${baseScore.toFixed(2)} across dimensions`,
+        feedback,
       };
     } else {
       // Fallback: keyword-based evaluation
@@ -680,6 +692,7 @@ export class AgenticOrchestrator {
       finalResult,
       consequenceRecord: updatedRecord,
       narrativeSummary,
+      feedback: evaluation.feedback,
       messages: this.messages,
     };
   }
@@ -1165,6 +1178,7 @@ ${probes}${rubric}
     },
     now: number
   ): Omit<OrchestratorResult, 'finalResult' | 'messages'> {
+    const feedback = params.feedback;
     let energeticDirection: EnergeticDirection = 'Diffuse';
     if (params.polarityDirection === 'sto') energeticDirection = 'Radiative';
     else if (params.polarityDirection === 'sts') energeticDirection = 'Absorptive';
@@ -1244,6 +1258,7 @@ ${probes}${rubric}
       updatedWorld,
       consequenceRecord: updatedRecord,
       narrativeSummary: params.narrativeSummary,
+      feedback,
     };
   }
 }
