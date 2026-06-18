@@ -1,4 +1,4 @@
-import type { AssessmentResult, ShadowAssessmentResult, MeasureDimension, StageAssessment, AssessmentTask, TaskType } from './types.js';
+import type { AssessmentResult, ShadowAssessmentResult, MeasureDimension, StageAssessment, AssessmentTask, TaskType, TrialResult } from './types.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
 import type { Significator } from '../domain/Significator.js';
 import type { WorldState } from '../engines/CandidateGeneration.js';
@@ -147,6 +147,8 @@ export class AgenticOrchestrator {
   private messages: AgentMessage[] = [];
   private noLlm: boolean;
   private forceShadow: string | undefined;
+  private _currentRendererEvaluate: ((answer: string, startMs: number, endMs: number) => any) | null = null;
+  private _currentTaskStartTime: number = 0;
 
   constructor(params: {
     encounter: ScheduledEncounter;
@@ -463,13 +465,40 @@ export class AgenticOrchestrator {
     const writeIn = answer?.writeInValue;
     const playerResponseText = writeIn ?? rawLabel;
 
-    // Track response durations for future scoring aggregator
-    // NOTE: TrialResult generation and time-pressure scoring are deferred to
-    // the scoring aggregator phase — response dimensions (accuracy, speed, depth)
-    // will be derived from accumulated trial data across the session
+    // 3. Evaluate using the TaskRenderer's evaluate() if available (produces TrialResult with timing/accuracy)
+    //    Fall back to drive-probe evaluation if no renderer evaluate is available
+    const endTimeMs = Date.now();
+    let evaluation: ReturnType<typeof this['evaluateViaDriveProbes']>;
+    let trialResult: TrialResult | null = null;
 
-    // 3. Evaluate the response using the module's drive probes
-    const evaluation = this.evaluateViaDriveProbes(module, playerResponseText);
+    if (this._currentRendererEvaluate) {
+      // Use the TaskRenderer's evaluate function for real scoring
+      trialResult = this._currentRendererEvaluate(playerResponseText, this._currentTaskStartTime, endTimeMs);
+
+      // Derive drive scores from the trial's dimension scores
+      const avgDimension = trialResult ? (
+        Object.values(trialResult.dimensions)
+          .filter((v): v is number => v !== undefined)
+          .reduce((a, b) => a + b, 0) /
+        Math.max(1, Object.values(trialResult.dimensions).filter(v => v !== undefined).length)
+      ) : 0.5;
+
+      // Map trial accuracy to drive scores: high accuracy = healthy drives
+      const baseScore = Math.min(1, Math.max(0, avgDimension));
+      evaluation = {
+        passed: baseScore >= (module.scoringRubric.passThreshold ?? 0.5),
+        polarityDirection: 'neutral' as const,
+        driveScores: { agency: baseScore, communion: baseScore, eros: baseScore, agape: baseScore },
+        driveSignals: {
+          agency: 'HealthyBalanced', communion: 'HealthyBalanced',
+          eros: 'HealthyBalanced', agape: 'HealthyBalanced',
+        },
+        feedback: `Trial scored: accuracy=${(trialResult!.dimensions.accuracy ?? 0.5).toFixed(2)}, response_time=${(trialResult!.dimensions.response_time ?? 0.5).toFixed(2)}, avg=${avgDimension.toFixed(2)}`,
+      };
+    } else {
+      // Fallback: keyword-based evaluation
+      evaluation = this.evaluateViaDriveProbes(module, playerResponseText);
+    }
 
     // 4. Detect shadow surfacing from response pattern (with optional forceShadow override)
     const validQuadrants = ['DarkAddiction', 'DarkAllergy', 'GoldenAddiction', 'GoldenAllergy'] as const;
@@ -620,14 +649,19 @@ export class AgenticOrchestrator {
   ): Promise<AskUserQuestionResult> {
     // Use TaskRenderers to get a real assessment prompt with task-specific options
     // and a response evaluator that captures TrialResult data (timing, accuracy)
-    const { prompt } = getRenderer(task);
+    const renderer = getRenderer(task);
+
+    // Store the renderer's evaluate function so runModuleAssessment can use it
+    this._currentRendererEvaluate = renderer.evaluate;
+    this._currentTaskStartTime = Date.now();
 
     // Prepend holon-narrative framing to the question
+    // Preserve the task-type header from the renderer (e.g. 'N-Back(2)', 'Dilemma')
     const enrichedPrompt: AskUserQuestionParams = {
-      questions: prompt.questions.map(q => ({
+      questions: renderer.prompt.questions.map(q => ({
         ...q,
         question: `${holonName} presents a challenge.\n\n${q.question}`,
-        header: `${module.line}:${module.stage}`.length > 12 ? module.stage : `${module.line}:${module.stage}`,
+        header: q.header, // Keep the renderer's meaningful header
       })),
     };
 

@@ -8,16 +8,23 @@
 import type { AssessmentTask, TrialResult, MeasureDimension } from '../types.js';
 import type { AskUserQuestionParams } from '../agentTypes.js';
 
+// ── ANSI helpers (must be at top for const hoisting) ──────────────────
+
+const C = {
+  reset: '\x1b[0m', bold: '\x1b[1m', dim: '\x1b[2m',
+  green: '\x1b[32m', yellow: '\x1b[33m', blue: '\x1b[34m',
+  magenta: '\x1b[35m', cyan: '\x1b[36m', red: '\x1b[31m',
+};
+
 // ── Symbol sets for cognitive tasks ────────────────────────────────────
 
 const NBACK_SYMBOLS = ['◆', '●', '▲', '■', '★', '◇', '○', '△'];
 const STROOP_COLORS = [
-  { word: 'RED', render: '\x1b[31mRED\x1b[0m' },
-  { word: 'BLUE', render: '\x1b[34mBLUE\x1b[0m' },
-  { word: 'GREEN', render: '\x1b[32mGREEN\x1b[0m' },
-  { word: 'YELLOW', render: '\x1b[33mYELLOW\x1b[0m' },
+  { word: 'RED', render: '\x1b[31mRED\x1b[0m', short: 'Red' },
+  { word: 'BLUE', render: '\x1b[34mBLUE\x1b[0m', short: 'Blue' },
+  { word: 'GREEN', render: '\x1b[32mGREEN\x1b[0m', short: 'Green' },
+  { word: 'YELLOW', render: '\x1b[33mYELLOW\x1b[0m', short: 'Yellow' },
 ];
-const INK_COLORS = ['Red', 'Blue', 'Green', 'Yellow'];
 const GONOGO_STIMULI = ['⚔', '🛡', '☠', '✦'];
 
 // ── N-Back Renderer ───────────────────────────────────────────────────
@@ -46,7 +53,7 @@ export function renderNBack(task: AssessmentTask): {
       matchPositions.push(i);
     } else {
       const sym = NBACK_SYMBOLS[Math.floor(Math.random() * NBACK_SYMBOLS.length)]!;
-      // Avoid accidental matches
+      // Avoid accidental matches with the item n steps back
       if (i >= n && sym === sequence[i - n]) {
         const alternatives = NBACK_SYMBOLS.filter(s => s !== sequence[i - n]);
         sequence.push(alternatives[Math.floor(Math.random() * alternatives.length)]!);
@@ -57,12 +64,7 @@ export function renderNBack(task: AssessmentTask): {
   }
 
   // Show the full sequence in a readable format
-  const displaySequence = sequence.map((s, i) => {
-    if (i >= n) {
-      return `${C.dim}[${i + 1}]${C.reset} ${s}`;
-    }
-    return `${C.dim}[${i + 1}]${C.reset} ${s}`;
-  }).join('  ');
+  const displaySequence = sequence.map((s, i) => `${C.dim}[${i + 1}]${C.reset} ${s}`).join('  ');
 
   const question = [
     `You see a sequence of symbols. Track each one — does it match the symbol from ${n} steps back?`,
@@ -89,7 +91,7 @@ export function renderNBack(task: AssessmentTask): {
     },
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
-      // Parse the player's answer
+      // Parse the player's answer — extract first number found
       const numericMatch = answer.match(/\d+/);
       const playerCount = numericMatch ? parseInt(numericMatch[0]!, 10) : -1;
       const expectedCount = matchPositions.length;
@@ -109,11 +111,7 @@ export function renderNBack(task: AssessmentTask): {
       return {
         taskId: task.id,
         timestamp: startTimeMs,
-        dimensions: {
-          accuracy,
-          response_time: responseTime,
-          consistency,
-        },
+        dimensions: { accuracy, response_time: responseTime, consistency },
         rawResponse: { playerCount, expectedCount, sequence: sequence.join(''), matchPositions },
         durationMs,
       };
@@ -146,7 +144,6 @@ export function renderStroop(task: AssessmentTask): {
 
   // Show all trials in a grid
   const trialDisplay = trials.map((t, i) => {
-    const word = STROOP_COLORS[t.wordIdx]!.word;
     const inkColor = STROOP_COLORS[t.inkIdx]!;
     return `${C.dim}#${i + 1}${C.reset} ${inkColor.render}`;
   }).join('   ');
@@ -165,10 +162,10 @@ export function renderStroop(task: AssessmentTask): {
         question,
         header: 'Stroop',
         options: [
-          { label: 'Correct sequence', description: 'I identified all ink colors accurately' },
-          { label: 'Mostly correct', description: 'I got most of them right' },
-          { label: 'Mixed results', description: 'I struggled with the interference' },
-          { label: 'Could not complete', description: 'The task was too confusing' },
+          { label: 'R,G,B,Y', description: 'Red, Blue, Green, Yellow in order' },
+          { label: 'B,R,Y,G', description: 'Blue, Red, Yellow, Green in order' },
+          { label: 'G,Y,R,B', description: 'Green, Yellow, Red, Blue in order' },
+          { label: 'Y,G,B,R', description: 'Yellow, Green, Blue, Red in order' },
         ],
         allowWriteIn: true,
         multiSelect: false,
@@ -190,18 +187,14 @@ export function renderStroop(task: AssessmentTask): {
       }
 
       const accuracy = expected.length > 0 ? correct / expected.length : 0;
-      const expectedTime = trialCount * 2500; // ~2.5s per trial
+      const expectedTime = trialCount * 2500;
       const timeRatio = durationMs / expectedTime;
       const responseTime = timeRatio < 0.5 ? 0.9 : timeRatio < 1.5 ? 0.7 : timeRatio < 3 ? 0.5 : 0.3;
 
       return {
         taskId: task.id,
         timestamp: startTimeMs,
-        dimensions: {
-          accuracy,
-          response_time: responseTime,
-          consistency: accuracy,
-        },
+        dimensions: { accuracy, response_time: responseTime, consistency: accuracy },
         rawResponse: { playerColors, expected, correct, total: expected.length },
         durationMs,
       };
@@ -338,11 +331,7 @@ export function renderHold(task: AssessmentTask): {
       return {
         taskId: task.id,
         timestamp: startTimeMs,
-        dimensions: {
-          accuracy,
-          response_time: responseTime,
-          consistency: accuracy,
-        },
+        dimensions: { accuracy, response_time: responseTime, consistency: accuracy },
         rawResponse: { items, matched, answer },
         durationMs,
       };
@@ -487,6 +476,7 @@ export function renderEmotionIdentification(task: AssessmentTask): {
 
 /**
  * Render a dilemma: present a moral scenario with genuine ethical tensions.
+ * Options map to different drives — scoring differentiates by drive alignment.
  */
 export function renderDilemma(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
@@ -496,28 +486,28 @@ export function renderDilemma(task: AssessmentTask): {
     {
       scenario: 'You discover your mentor has been lying to protect you. The truth would destroy your faith in them but free you to grow.',
       options: [
-        { label: 'Confront them', description: 'Demand the truth, even if it breaks the relationship', drive: 'agency' },
-        { label: 'Forgive silently', description: 'Accept the protection and move on', drive: 'agape' },
-        { label: 'Seek counsel', description: 'Ask someone you trust for perspective', drive: 'communion' },
-        { label: 'Transcend the need', description: 'The truth doesn\'t matter — only growth does', drive: 'eros' },
+        { label: 'Confront them', description: 'Demand the truth, even if it breaks the relationship', drive: 'agency', polarity: 'sts' },
+        { label: 'Forgive silently', description: 'Accept the protection and move on', drive: 'agape', polarity: 'sto' },
+        { label: 'Seek counsel', description: 'Ask someone you trust for perspective', drive: 'communion', polarity: 'sto' },
+        { label: 'Transcend the need', description: 'The truth doesn\'t matter — only growth does', drive: 'eros', polarity: 'neutral' },
       ],
     },
     {
       scenario: 'A community depends on a resource that is slowly depleting. Sharing equally means everyone suffers slowly. Hoarding means your group survives but others don\'t.',
       options: [
-        { label: 'Share equally', description: 'All should share the burden, even if it\'s harder', drive: 'agape' },
-        { label: 'Protect your own', description: 'Your people come first', drive: 'agency' },
-        { label: 'Find alternatives', description: 'There must be another way — search for it', drive: 'eros' },
-        { label: 'Build alliances', description: 'Unite with others to solve it collectively', drive: 'communion' },
+        { label: 'Share equally', description: 'All should share the burden, even if it\'s harder', drive: 'agape', polarity: 'sto' },
+        { label: 'Protect your own', description: 'Your people come first', drive: 'agency', polarity: 'sts' },
+        { label: 'Find alternatives', description: 'There must be another way — search for it', drive: 'eros', polarity: 'neutral' },
+        { label: 'Build alliances', description: 'Unite with others to solve it collectively', drive: 'communion', polarity: 'sto' },
       ],
     },
     {
       scenario: 'You can advance your career by taking credit for someone else\'s work, or stay honest and remain overlooked.',
       options: [
-        { label: 'Stay honest', description: 'Integrity matters more than advancement', drive: 'agape' },
-        { label: 'Take credit', description: 'Survival requires boldness', drive: 'agency' },
-        { label: 'Share credit', description: 'Both of you deserve recognition', drive: 'communion' },
-        { label: 'Find a third path', description: 'There\'s always another option', drive: 'eros' },
+        { label: 'Stay honest', description: 'Integrity matters more than advancement', drive: 'agape', polarity: 'sto' },
+        { label: 'Take credit', description: 'Survival requires boldness', drive: 'agency', polarity: 'sts' },
+        { label: 'Share credit', description: 'Both of you deserve recognition', drive: 'communion', polarity: 'sto' },
+        { label: 'Find a third path', description: 'There\'s always another option', drive: 'eros', polarity: 'neutral' },
       ],
     },
   ];
@@ -547,12 +537,13 @@ export function renderDilemma(task: AssessmentTask): {
       const durationMs = endTimeMs - startTimeMs;
       const answerLower = answer.toLowerCase();
 
-      // Any genuine engagement passes (no wrong answer in dilemmas)
-      const isGenuine = answer.length > 5 || dilemma.options.some(o =>
-        answerLower.includes(o.label.toLowerCase())
+      // Match player answer to a dilemma option
+      const matchedOption = dilemma.options.find(o =>
+        answerLower.includes(o.label.toLowerCase()) ||
+        answerLower.includes(o.label.split(' ')[0]!.toLowerCase())
       );
 
-      const accuracy = isGenuine ? 0.7 : 0.4;
+      const accuracy = 0.7; // No wrong answer in dilemmas — any genuine engagement passes
       const depth = answer.length > 20 ? 0.8 : answer.length > 10 ? 0.6 : 0.4;
       const responseTime = durationMs < 15000 ? 0.8 : durationMs < 60000 ? 0.6 : 0.4;
 
@@ -563,9 +554,14 @@ export function renderDilemma(task: AssessmentTask): {
           accuracy,
           depth,
           response_time: responseTime,
-          coherence: isGenuine ? 0.7 : 0.4,
+          coherence: matchedOption ? 0.7 : 0.4,
         },
-        rawResponse: { dilemma: dilemma.scenario, answer },
+        rawResponse: {
+          dilemma: dilemma.scenario,
+          answer,
+          matchedDrive: matchedOption?.drive ?? null,
+          matchedPolarity: matchedOption?.polarity ?? 'neutral',
+        },
         durationMs,
       };
     },
@@ -609,7 +605,6 @@ export function renderSelfReport(task: AssessmentTask): {
       const durationMs = endTimeMs - startTimeMs;
       const wordCount = answer.split(/\s+/).filter(Boolean).length;
 
-      // Depth is measured by elaboration
       const depth = wordCount > 30 ? 0.9 : wordCount > 15 ? 0.7 : wordCount > 5 ? 0.5 : 0.3;
       const accuracy = wordCount > 5 ? 0.7 : 0.4;
       const responseTime = durationMs < 30000 ? 0.8 : durationMs < 120000 ? 0.6 : 0.4;
@@ -666,7 +661,6 @@ export function renderValueRanking(task: AssessmentTask): {
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
 
-      // Any deliberate ranking passes
       const hasRanking = /\d/.test(answer) || shuffled.some(v => answer.toLowerCase().includes(v.toLowerCase()));
       const accuracy = hasRanking ? 0.7 : 0.4;
       const depth = answer.length > 10 ? 0.7 : 0.4;
@@ -755,11 +749,3 @@ export function getRenderer(task: AssessmentTask): {
     default: return renderGeneric(task);
   }
 }
-
-// ── ANSI helpers (local) ─────────────────────────────────────────────
-
-const C = {
-  reset: '\x1b[0m', bold: '\x1b[1m', dim: '\x1b[2m',
-  green: '\x1b[32m', yellow: '\x1b[33m', blue: '\x1b[34m',
-  magenta: '\x1b[35m', cyan: '\x1b[36m', red: '\x1b[31m',
-};
