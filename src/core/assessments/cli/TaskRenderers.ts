@@ -684,8 +684,9 @@ export function renderDilemma(task: AssessmentTask): {
         answerLower.includes(o.label.split(' ')[0]!.toLowerCase())
       );
 
-      // Any genuine engagement in a dilemma passes — depth differentiates
-      const accuracy = 0.7;
+      // Moral dilemmas have no 'right' answer — score on depth of reflection and deliberation
+      // Option coherence: matched MCQ = coherent choice (0.6), write-in = self-directed (0.7)
+      const accuracy = matchedOption ? 0.6 : (answer.length > 30 ? 0.8 : 0.5);
       const depth = answer.length > 20 ? 0.8 : answer.length > 10 ? 0.6 : 0.4;
       const responseTime = durationMs < 15000 ? 0.8 : durationMs < 60000 ? 0.6 : 0.4;
 
