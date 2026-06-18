@@ -468,57 +468,107 @@ export class AgenticOrchestrator {
     // 3. Evaluate using the TaskRenderer's evaluate() if available (produces TrialResult with timing/accuracy)
     //    Fall back to drive-probe evaluation if no renderer evaluate is available
     const endTimeMs = Date.now();
-    let evaluation: ReturnType<typeof this['evaluateViaDriveProbes']>;
+    let evaluation: {
+      passed: boolean;
+      polarityDirection: 'sto' | 'sts' | 'neutral';
+      driveScores: { agency: number; communion: number; eros: number; agape: number };
+      driveSignals: { agency: string; communion: string; eros: string; agape: string };
+      feedback: string;
+    };
     let trialResult: TrialResult | null = null;
 
     if (this._currentRendererEvaluate) {
       // Use the TaskRenderer's evaluate function for real scoring
       trialResult = this._currentRendererEvaluate(playerResponseText, this._currentTaskStartTime, endTimeMs);
 
-      // Derive drive scores from the trial's dimension scores
-      const avgDimension = trialResult ? (
-        Object.values(trialResult.dimensions)
-          .filter((v): v is number => v !== undefined)
-          .reduce((a, b) => a + b, 0) /
-        Math.max(1, Object.values(trialResult.dimensions).filter(v => v !== undefined).length)
-      ) : 0.5;
-
-      // Map trial accuracy to drive scores: high accuracy = healthy drives
-      const baseScore = Math.min(1, Math.max(0, avgDimension));
-
-      // Check if trial captured drive-specific data (e.g. dilemma matchedDrive)
+      // Extract drive metadata from the trial's rawResponse (set by TaskRenderers)
       const rawResp = trialResult?.rawResponse as any;
       const matchedDrive: string | null = rawResp?.matchedDrive ?? null;
       const matchedPolarity: string = rawResp?.matchedPolarity ?? 'neutral';
+      const correctnessScore: number = rawResp?.correctnessScore ?? 0.5;
 
-      // Build differentiated drive scores based on which drive was expressed
+      // Use correctnessScore as the primary scoring signal (from TaskRenderer options)
+      const baseScore = Math.min(1, Math.max(0, correctnessScore));
+
+      // For write-in responses (no MCQ match), apply keyword-based drive detection
+      // so we can still differentiate drives and detect shadows from free-text
+      let writeInDriveDetection: { drive: string; polarity: string; shadowKeyword: string | null } | null = null;
+      if (matchedDrive === null && writeIn) {
+        const wl = writeIn.toLowerCase();
+        const hasShadowAddiction = wl.includes('attack') || wl.includes('dominate') || wl.includes('crush') || wl.includes('enslave') || wl.includes('destroy');
+        const hasShadowAversion = wl.includes('withdraw') || wl.includes('resist') || wl.includes('refuse') || wl.includes('flee');
+        const hasGoldenAddiction = wl.includes('transcend') || wl.includes('bypass') || wl.includes('enlighten') || wl.includes('skip');
+        const hasGoldenAllergy = wl.includes('stay') || wl.includes('safe') || wl.includes('comfortable') || wl.includes('never change');
+
+        if (hasShadowAddiction) writeInDriveDetection = { drive: 'agency', polarity: 'sts', shadowKeyword: 'DarkAddicted' };
+        else if (hasShadowAversion) writeInDriveDetection = { drive: 'communion', polarity: 'sto', shadowKeyword: 'DarkAverted' };
+        else if (hasGoldenAddiction) writeInDriveDetection = { drive: 'eros', polarity: 'neutral', shadowKeyword: 'GoldenAddicted' };
+        else if (hasGoldenAllergy) writeInDriveDetection = { drive: 'agape', polarity: 'neutral', shadowKeyword: 'GoldenAverted' };
+      }
+
+      const effectiveDrive = matchedDrive ?? writeInDriveDetection?.drive ?? null;
+      const effectivePolarity = matchedPolarity !== 'neutral' ? matchedPolarity : writeInDriveDetection?.polarity ?? 'neutral';
+
+      // Build differentiated drive scores:
+      // - The matched/driven drive gets the full baseScore (or boosted for write-in depth)
+      // - Other drives get baseline neutral (0.5)
+      // - For write-ins with no shadow detection, apply a depth boost and distribute evenly
+      const isWriteInWithNoShadow = matchedDrive === null && !writeInDriveDetection && !!writeIn;
+      const wordCount = (writeIn ?? '').split(/\s+/).filter(Boolean).length;
+      const depthBonus = isWriteInWithNoShadow && wordCount > 10 ? Math.min(0.2, wordCount * 0.01) : 0;
+      const writeInScore = Math.min(1, baseScore + depthBonus);
+
       const driveScores = {
-        agency: matchedDrive === 'agency' ? Math.min(1, baseScore + 0.15) : baseScore,
-        communion: matchedDrive === 'communion' ? Math.min(1, baseScore + 0.15) : baseScore,
-        eros: matchedDrive === 'eros' ? Math.min(1, baseScore + 0.15) : baseScore,
-        agape: matchedDrive === 'agape' ? Math.min(1, baseScore + 0.15) : baseScore,
+        agency: effectiveDrive === 'agency' ? writeInScore
+          : effectiveDrive !== null ? 0.5
+          : writeInScore,  // No drive detected at all → uniform
+        communion: effectiveDrive === 'communion' ? writeInScore
+          : effectiveDrive !== null ? 0.5
+          : writeInScore,
+        eros: effectiveDrive === 'eros' ? writeInScore
+          : effectiveDrive !== null ? 0.5
+          : writeInScore,
+        agape: effectiveDrive === 'agape' ? writeInScore
+          : effectiveDrive !== null ? 0.5
+          : writeInScore,
       };
 
-      // Determine polarity from the trial's matched data
-      const polarityDirection = matchedPolarity === 'sts' ? 'sts' as const
-        : matchedPolarity === 'sto' ? 'sto' as const
+      // Determine polarity from the effective drive detection
+      const polarityDirection = effectivePolarity === 'sts' ? 'sts' as const
+        : effectivePolarity === 'sto' ? 'sto' as const
         : 'neutral' as const;
 
-      // Determine pass: use module threshold, but also pass if accuracy >= 0.5 for generic tasks
+      // Determine pass: use the baseScore with write-in depth boost
+      // Write-in responses get a minimum pass score of 0.55 if they demonstrate genuine engagement
       const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
-      const passed = baseScore >= passThreshold || baseScore >= 0.65;
+      const effectiveScore = isWriteInWithNoShadow ? Math.max(baseScore, 0.55) : baseScore;
+      const passed = effectiveScore >= passThreshold;
+
+      // Derive drive signals from the expression pattern
+      const shadowFromWriteIn = writeInDriveDetection?.shadowKeyword ?? null;
+      const driveSignals = {
+        agency: effectiveDrive === 'agency'
+          ? (shadowFromWriteIn === 'DarkAddicted' ? 'DarkAddicted' : baseScore < 0.4 ? 'DarkAddicted' : 'HealthyBalanced')
+          : 'HealthyBalanced',
+        communion: effectiveDrive === 'communion'
+          ? (shadowFromWriteIn === 'DarkAverted' ? 'DarkAverted' : baseScore < 0.4 ? 'DarkAverted' : 'HealthyBalanced')
+          : 'HealthyBalanced',
+        eros: effectiveDrive === 'eros'
+          ? (shadowFromWriteIn === 'GoldenAddicted' ? 'GoldenAddicted' : baseScore < 0.4 ? 'GoldenAddicted' : 'HealthyBalanced')
+          : 'HealthyBalanced',
+        agape: effectiveDrive === 'agape'
+          ? (shadowFromWriteIn === 'GoldenAverted' ? 'GoldenAverted' : baseScore < 0.4 ? 'GoldenAverted' : 'HealthyBalanced')
+          : 'HealthyBalanced',
+      };
 
       evaluation = {
         passed,
         polarityDirection,
         driveScores,
-        driveSignals: {
-          agency: 'HealthyBalanced', communion: 'HealthyBalanced',
-          eros: 'HealthyBalanced', agape: 'HealthyBalanced',
-        },
+        driveSignals,
         feedback: matchedDrive
-          ? `Trial scored: accuracy=${(trialResult!.dimensions.accuracy ?? 0.5).toFixed(2)}, drive=${matchedDrive}, polarity=${matchedPolarity}`
-          : `Trial scored: accuracy=${(trialResult!.dimensions.accuracy ?? 0.5).toFixed(2)}, response_time=${(trialResult!.dimensions.response_time ?? 0.5).toFixed(2)}, avg=${avgDimension.toFixed(2)}`,
+          ? `${matchedDrive} expressed (score=${baseScore.toFixed(2)}, polarity=${matchedPolarity})`
+          : `Score: ${baseScore.toFixed(2)} across dimensions`,
       };
     } else {
       // Fallback: keyword-based evaluation
@@ -532,7 +582,7 @@ export class AgenticOrchestrator {
       : null;
     const shadowSignal = forcedQuadrant
       ? { quadrant: forcedQuadrant, intensity: 0.7 }
-      : this.detectShadowFromResponse(playerResponseText, module, currentModality);
+      : this.detectShadowFromResponse(playerResponseText, currentModality);
 
     // 5. Build a rich narrative summary from the module context
     const narrativeSummary = this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName);
@@ -669,7 +719,7 @@ export class AgenticOrchestrator {
    * Translates the assessment task type to CLI-friendly MCQ options.
    */
   private async presentModuleTask(
-    module: StageAssessment,
+    _module: StageAssessment,
     task: AssessmentTask,
     _modality: Modality,
     holonName: string,
@@ -838,7 +888,6 @@ export class AgenticOrchestrator {
    */
   private detectShadowFromResponse(
     responseText: string,
-    _module: StageAssessment,
     _modality: Modality,
   ): { quadrant: ShadowQuadrant; intensity: number } | null {
     const lower = responseText.toLowerCase().trim();

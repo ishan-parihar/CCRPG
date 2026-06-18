@@ -4,7 +4,6 @@
  * using the existing scoring functions from engine.ts.
  */
 import type { StageAssessment, TrialResult, AssessmentResult, MeasureDimension } from '../types.js';
-import type { Drive } from '../../domain/Drive.js';
 import { scoreTrials, computeConfidence } from '../engine.js';
 
 /**
