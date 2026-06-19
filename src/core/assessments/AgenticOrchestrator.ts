@@ -150,6 +150,57 @@ export class AgenticOrchestrator {
   private forceShadow: string | undefined;
   private _currentRendererEvaluate: ((answer: string, startMs: number, endMs: number) => any) | null = null;
   private _currentTaskStartTime: number = 0;
+  private _currentPresentedTask: AssessmentTask | null = null;
+  private _consecutivePasses: Map<string, number>;
+
+  // Shared shadow keyword detection helper (DRY — used in 3 places)
+  private static readonly SHADOW_KEYWORDS = {
+    darkAddiction: ['attack', 'dominate', 'crush', 'enslave', 'destroy', 'conquer',
+      'prove myself', 'beneath me', 'weakness', 'force', 'control', 'punish',
+      'prove i', 'show them', 'better than', 'deserve', 'entitled'],
+    darkAversion: ['withdraw', 'resist', 'refuse', 'flee', 'avoid', 'ignore',
+      'not worth', 'pointless', 'give up', "can't be bothered", 'not my problem',
+      "don't care", 'whatever', 'numb'],
+    goldenAddiction: ['transcend', 'bypass', 'enlighten', 'skip', 'higher self',
+      "it's all good", 'everything happens', 'love and light', 'just positive',
+      'no negative', 'spiritual', 'already awakened', 'beyond this', 'dissolve',
+      'non-dual', 'pure awareness'],
+    goldenAllergy: ['stay', 'safe', 'comfortable', 'never change', 'fine as i am',
+      "don't need", 'good enough', 'why change', 'not ready', 'too much',
+      'not now', 'later', 'tomorrow'],
+  } as const;
+
+  private static matchesAny(text: string, keywords: readonly string[]): boolean {
+    return keywords.some(kw => text.includes(kw));
+  }
+
+  /** Detect shadow quadrant from text. Returns quadrant name + intensity or null. */
+  private static detectShadowKeywords(text: string): { quadrant: ShadowQuadrant; intensity: number } | null {
+    const lower = text.toLowerCase();
+    if (AgenticOrchestrator.matchesAny(lower, AgenticOrchestrator.SHADOW_KEYWORDS.darkAddiction))
+      return { quadrant: 'DarkAddiction', intensity: Math.min(1, 0.4 + Math.random() * 0.3) };
+    if (AgenticOrchestrator.matchesAny(lower, AgenticOrchestrator.SHADOW_KEYWORDS.darkAversion))
+      return { quadrant: 'DarkAllergy', intensity: Math.min(1, 0.3 + Math.random() * 0.2) };
+    if (AgenticOrchestrator.matchesAny(lower, AgenticOrchestrator.SHADOW_KEYWORDS.goldenAddiction))
+      return { quadrant: 'GoldenAddiction', intensity: Math.min(1, 0.5 + Math.random() * 0.3) };
+    if (AgenticOrchestrator.matchesAny(lower, AgenticOrchestrator.SHADOW_KEYWORDS.goldenAllergy))
+      return { quadrant: 'GoldenAllergy', intensity: Math.min(1, 0.3 + Math.random() * 0.3) };
+    return null;
+  }
+
+  /** Detect shadow drive mapping for write-in evaluation. Returns drive/polarity/shadowKeyword or null. */
+  private static detectWriteInShadow(text: string): { drive: string; polarity: string; shadowKeyword: string | null } | null {
+    const lower = text.toLowerCase();
+    if (AgenticOrchestrator.matchesAny(lower, AgenticOrchestrator.SHADOW_KEYWORDS.darkAddiction))
+      return { drive: 'agency', polarity: 'sts', shadowKeyword: 'DarkAddicted' };
+    if (AgenticOrchestrator.matchesAny(lower, AgenticOrchestrator.SHADOW_KEYWORDS.darkAversion))
+      return { drive: 'communion', polarity: 'sto', shadowKeyword: 'DarkAverted' };
+    if (AgenticOrchestrator.matchesAny(lower, AgenticOrchestrator.SHADOW_KEYWORDS.goldenAddiction))
+      return { drive: 'eros', polarity: 'neutral', shadowKeyword: 'GoldenAddicted' };
+    if (AgenticOrchestrator.matchesAny(lower, AgenticOrchestrator.SHADOW_KEYWORDS.goldenAllergy))
+      return { drive: 'agape', polarity: 'neutral', shadowKeyword: 'GoldenAverted' };
+    return null;
+  }
 
   constructor(params: {
     encounter: ScheduledEncounter;
@@ -162,6 +213,7 @@ export class AgenticOrchestrator {
     module?: StageAssessment;
     noLlm?: boolean;
     forceShadow?: string;
+    consecutivePasses?: Map<string, number>;
   }) {
     this.encounter = params.encounter;
     this.significator = params.significator;
@@ -173,6 +225,8 @@ export class AgenticOrchestrator {
     this.messages = params.initialMessages ? [...params.initialMessages] : [];
     this.noLlm = params.noLlm ?? false;
     this.forceShadow = params.forceShadow;
+    // Session-level consecutive pass tracking (shared across encounters)
+    this._consecutivePasses = params.consecutivePasses ?? new Map();
   }
 
   /**
@@ -489,6 +543,8 @@ export class AgenticOrchestrator {
 
     // 1. Select the best task from the module based on modality
     const task = this.selectTaskForModality(module, currentModality);
+    // Track the actual presented task for narrative building (fix B.2)
+    this._currentPresentedTask = task;
 
     // 2. Present the task as a narrative challenge via uiHandler
     const askResult = await this.presentModuleTask(module, task, currentModality, holonName);
@@ -522,21 +578,10 @@ export class AgenticOrchestrator {
       // Use correctnessScore as the primary scoring signal (from TaskRenderer options)
       const baseScore = Math.min(1, Math.max(0, correctnessScore));
 
-      // For write-in responses, ALWAYS run keyword-based drive detection regardless
-      // of whether the renderer's evaluate() found a label match. The renderer's label
-      // matching can false-positive on short words like 'I' that appear in write-in text.
+      // D.9: Use shared shadow keyword detection helper (DRY)
       let writeInDriveDetection: { drive: string; polarity: string; shadowKeyword: string | null } | null = null;
       if (writeIn) {
-        const wl = writeIn.toLowerCase();
-        const hasShadowAddiction = wl.includes('attack') || wl.includes('dominate') || wl.includes('crush') || wl.includes('enslave') || wl.includes('destroy');
-        const hasShadowAversion = wl.includes('withdraw') || wl.includes('resist') || wl.includes('refuse') || wl.includes('flee');
-        const hasGoldenAddiction = wl.includes('transcend') || wl.includes('bypass') || wl.includes('enlighten') || wl.includes('skip');
-        const hasGoldenAllergy = wl.includes('stay') || wl.includes('safe') || wl.includes('comfortable') || wl.includes('never change');
-
-        if (hasShadowAddiction) writeInDriveDetection = { drive: 'agency', polarity: 'sts', shadowKeyword: 'DarkAddicted' };
-        else if (hasShadowAversion) writeInDriveDetection = { drive: 'communion', polarity: 'sto', shadowKeyword: 'DarkAverted' };
-        else if (hasGoldenAddiction) writeInDriveDetection = { drive: 'eros', polarity: 'neutral', shadowKeyword: 'GoldenAddicted' };
-        else if (hasGoldenAllergy) writeInDriveDetection = { drive: 'agape', polarity: 'neutral', shadowKeyword: 'GoldenAverted' };
+        writeInDriveDetection = AgenticOrchestrator.detectWriteInShadow(writeIn);
       }
 
       // When a write-in is present, its keyword-based detection takes priority over
@@ -663,7 +708,8 @@ export class AgenticOrchestrator {
     }
 
     // 5. Build a rich narrative summary from the module context
-    const narrativeSummary = this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName);
+    // Pass the actual presented task so narrative matches what the user saw
+    const narrativeSummary = this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName, task);
 
     // 6. Check for altitude shift: only when ALL drives HealthyBalanced AND passed
     const altitudeShift = this.computeAltitudeShift(evaluation.driveSignals, module, stage, evaluation.passed);
@@ -919,12 +965,12 @@ export class AgenticOrchestrator {
       lower.includes('foundation') ? 'agape' :
       null;
 
-    // Score drives: the selected drive gets 0.8 (healthy), others get 0.5 (neutral baseline)
-    // Unless the response contains shadow keywords
-    const hasShadowAddiction = lower.includes('attack') || lower.includes('dominate') || lower.includes('crush') || lower.includes('enslave') || lower.includes('destroy');
-    const hasShadowAversion = lower.includes('refuse') || lower.includes('cannot') || lower.includes('withdraw') || lower.includes('resist') || lower.includes('flee');
-    const hasGoldenAddiction = lower.includes('transcend') || lower.includes('bypass') || lower.includes('enlighten') || lower.includes('skip');
-    const hasGoldenAllergy = lower.includes('stay') || lower.includes('safe') || lower.includes('comfortable') || lower.includes('never change');
+    // D.9: Use shared shadow keyword detection helper (DRY)
+    const shadowMatch = AgenticOrchestrator.detectShadowKeywords(responseText);
+    const hasShadowAddiction = shadowMatch?.quadrant === 'DarkAddiction';
+    const hasShadowAversion = shadowMatch?.quadrant === 'DarkAllergy';
+    const hasGoldenAddiction = shadowMatch?.quadrant === 'GoldenAddiction';
+    const hasGoldenAllergy = shadowMatch?.quadrant === 'GoldenAllergy';
 
     function scoreDrive(drive: 'agency' | 'communion' | 'eros' | 'agape'): { signal: string; score: number } {
       if (selectedDrive === drive) {
@@ -1040,34 +1086,11 @@ export class AgenticOrchestrator {
     _modality: Modality,
     isWriteIn: boolean = false,
   ): { quadrant: ShadowQuadrant; intensity: number } | null {
-    const lower = responseText.toLowerCase().trim();
-
     // Shadow detection only fires for write-in text (free-form responses)
     // MCQ option labels should NOT trigger shadow detection — they're structured choices, not expressions.
     if (isWriteIn) {
-      // Dark-Addiction: Clings to lower-stage expression
-      if (lower.includes('attack') || lower.includes('dominate') || lower.includes('crush') ||
-          lower.includes('enslave') || lower.includes('destroy')) {
-        return { quadrant: 'DarkAddiction' as ShadowQuadrant, intensity: Math.min(1, 0.4 + Math.random() * 0.3) };
-      }
-
-      // Dark-Allergy: Rejects/avoids lower-stage expression
-      if (lower.includes('withdraw') || lower.includes('resist') || lower.includes('refuse') ||
-          lower.includes('decline') || lower.includes('flee')) {
-        return { quadrant: 'DarkAllergy' as ShadowQuadrant, intensity: Math.min(1, 0.3 + Math.random() * 0.2) };
-      }
-
-      // Golden-Addiction: Bypasses toward higher without integration
-      if (lower.includes('bypass') || lower.includes('transcend') || lower.includes('skip') ||
-          lower.includes('enlighten') || (lower.includes('higher') && lower.includes('ignore'))) {
-        return { quadrant: 'GoldenAddiction' as ShadowQuadrant, intensity: Math.min(1, 0.5 + Math.random() * 0.3) };
-      }
-
-      // Golden-Allergy: Refuses the call to grow
-      if (lower.includes('stay') || lower.includes('safe') || lower.includes('comfortable') ||
-          lower.includes('static') || lower.includes('never change')) {
-        return { quadrant: 'GoldenAllergy' as ShadowQuadrant, intensity: Math.min(1, 0.3 + Math.random() * 0.3) };
-      }
+      // D.9: Use shared shadow keyword detection helper (DRY)
+      return AgenticOrchestrator.detectShadowKeywords(responseText);
     }
 
     return null;
@@ -1086,10 +1109,12 @@ export class AgenticOrchestrator {
     passed: boolean,
   ): { line: Line; from: Stage; to: Stage } | null {
     // ALL 4 drives must be HealthyBalanced for an altitude shift
-    // (non-selected drives get 0.5/HealthyBalanced by default, but if shadow
-    //  was expressed, the selected drive will be non-HealthyBalanced)
-    // AND the encounter must have passed the module's passThreshold
-    if (!passed) return null;
+    // AND the encounter must have passed
+    if (!passed) {
+      // Reset consecutive pass count on failure
+      this._consecutivePasses.set(module.line, 0);
+      return null;
+    }
 
     const allHealthy = [
       driveSignals.agency,
@@ -1098,11 +1123,23 @@ export class AgenticOrchestrator {
       driveSignals.agape,
     ].every(s => s === 'HealthyBalanced');
 
-    if (allHealthy) {
-      return { line: module.line, from: currentEncounterStage, to: currentEncounterStage };
+    if (!allHealthy) {
+      return null;
     }
 
-    return null;
+    // D.10 FIX: Require 3+ consecutive passes per line before altitude shift
+    const key = module.line;
+    const prev = this._consecutivePasses.get(key) ?? 0;
+    const consecutive = prev + 1;
+    this._consecutivePasses.set(key, consecutive);
+
+    if (consecutive < 3) {
+      return null; // Need sustained performance first
+    }
+
+    // Shift achieved — reset counter
+    this._consecutivePasses.set(key, 0);
+    return { line: module.line, from: currentEncounterStage, to: currentEncounterStage };
   }
 
   /**
@@ -1114,6 +1151,7 @@ export class AgenticOrchestrator {
     passed: boolean,
     modality: Modality,
     holonName: string,
+    actualTask?: AssessmentTask,
   ): string {
     const modalityDesc: Record<string, string> = {
       Deterministic: 'a focused mental trial',
@@ -1144,8 +1182,10 @@ export class AgenticOrchestrator {
       llm_dialogue: 'a reflective dialogue',
     };
 
-    const primaryTask = module.tasks[0];
-    const taskLabel = primaryTask ? (TASK_LABELS[primaryTask.type] ?? 'a developmental challenge') : 'a developmental challenge';
+    // Use the ACTUAL presented task for narrative label (fix B.2)
+    // Falls back to module.tasks[0] only if no actual task was presented
+    const displayedTask = actualTask ?? this._currentPresentedTask ?? module.tasks[0];
+    const taskLabel = displayedTask ? (TASK_LABELS[displayedTask.type] ?? 'a developmental challenge') : 'a developmental challenge';
     const stageDesc: Record<string, string> = {
       Infrared: 'the most foundational',
       Magenta: 'an instinctive',

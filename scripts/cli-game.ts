@@ -140,18 +140,33 @@ const rl = !HEADLESS ? readline.createInterface({ input: process.stdin, output: 
 const ask = (q: string): Promise<string> =>
   new Promise(resolve => rl!.question(q, resolve));
 
-// ── LLM availability check (fast 2s timeout) ─────────────────────────
+// ── LLM availability check (3s timeout, uses chat/completions) ──────
 async function checkLLMAvailability(url: string, key: string): Promise<boolean> {
   if (key === 'sk-placeholder') return false;
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 2000);
-    const res = await fetch(`${url}/models`, {
-      headers: { 'Authorization': `Bearer ${key}` },
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const res = await fetch(`${url}/chat/completions`, {
+      method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${key}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: model,
+        messages: [{ role: 'user', content: 'ping' }],
+        max_tokens: 1,
+      }),
       signal: controller.signal,
     });
     clearTimeout(timeout);
-    return res.ok;
+    if (res.ok) return true;
+    // 401/403 = invalid key → unavailable
+    if (res.status === 401 || res.status === 403) return false;
+    // 4xx (except 429 rate limit) = misconfigured endpoint → unavailable
+    if (res.status >= 400 && res.status < 500 && res.status !== 429) return false;
+    // 5xx or other = might be transient, treat as available
+    return true;
   } catch {
     return false;
   }
@@ -331,7 +346,8 @@ function renderShadows(sig: Significator): void {
     const sev = entries.map(e => (e.severity * 100).toFixed(0)).join('/');
     return `${color}${q}${entries.length > 1 ? '×' + entries.length : ''}(${sev}%)${C.reset}`;
   });
-  console.log(`  ${C.yellow}⚠${C.reset} shadows: ${parts.join(' ')}`);
+  // U.3 FIX: Show count clearly instead of misleading CCI dimension percentage
+  console.log(`  ${C.yellow}⚠${C.reset} shadows [${active.length}]: ${parts.join(' ')}`);
 }
 
 /** Render drive balance compass */
@@ -557,6 +573,7 @@ async function runAgenticEncounter(
     module: modRegistry?.get(FORCE_LINE ?? encLine, FORCE_STAGE ?? encStage) ?? baseModule,
     noLlm: !LLM_ACTIVE,
     forceShadow: FORCE_SHADOW,
+    consecutivePasses,
   });
 
   const outcome = await orchestrator.run();
@@ -775,6 +792,8 @@ async function runFullSession(): Promise<void> {
   let passedCount = 0;
   const now = Date.now();
   const history: ConsequenceRecord[] = [];
+  // Session-level consecutive pass tracking (shared across encounters for altitude shifts)
+  const consecutivePasses = new Map<string, number>();
   // Create a local mutable copy of FORCE_RESPONSES per session so --responses works predictably
   const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
 
@@ -835,7 +854,7 @@ async function runFullSession(): Promise<void> {
     renderSessionPosition(`${i + 1}/${encounterCount}`, tickResult.encounter.sessionPosition, encProgress);
     printEncounter(tickResult.encounter);
 
-    // Transition indicator
+    // Transition indicator with processing spinner
     if (i > 0 && !JSON_MODE) {
       const transitions = [
         `${C.dim}The previous encounter settles into memory. A new catalyst emerges...${C.reset}`,
@@ -846,9 +865,12 @@ async function runFullSession(): Promise<void> {
         `${C.dim}Memory folds into potential. A new edge of growth appears...${C.reset}`,
       ];
       console.log(`\n  ${transitions[Math.floor(Math.random() * transitions.length)]}`);
-      // Processing indicator
-      process.stdout.write(`  ${C.dim}... preparing encounter${C.reset}`);
-      await new Promise(r => setTimeout(r, 300));
+      // U.4: Processing spinner with animated dots
+      const spinnerFrames = ['', '.', '..', '...'];
+      for (let f = 0; f < spinnerFrames.length; f++) {
+        process.stdout.write(`\r  ${C.dim}... preparing encounter${spinnerFrames[f]}${C.reset}`);
+        await new Promise(r => setTimeout(r, 200));
+      }
       process.stdout.write('\x1b[2K\r');
     }
 
