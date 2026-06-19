@@ -522,18 +522,23 @@ export class AgenticOrchestrator {
       const depthBonus = isWriteInWithNoShadow && wordCount > 10 ? Math.min(0.2, wordCount * 0.01) : 0;
       const writeInScore = Math.min(1, baseScore + depthBonus);
 
+      // Scoring spread: matched drive gets baseScore (0.0-1.0), unmatched get 0.4
+      // For correct MCQ (1.0): avg = (1.0 + 0.4*3)/4 = 0.55 → passes most thresholds
+      // For partial MCQ (0.7): avg = (0.7 + 0.4*3)/4 = 0.475 → borderline
+      // For wrong MCQ (0.0): avg = (0.0 + 0.4*3)/4 = 0.30 → clearly fails
+      // For write-in with depth (0.9): avg = (0.9 + 0.4*3)/4 = 0.525 → passes
       const driveScores = {
         agency: effectiveDrive === 'agency' ? writeInScore
-          : effectiveDrive !== null ? 0.3
+          : effectiveDrive !== null ? 0.4
           : writeInScore,  // No drive detected at all → uniform
         communion: effectiveDrive === 'communion' ? writeInScore
-          : effectiveDrive !== null ? 0.3
+          : effectiveDrive !== null ? 0.4
           : writeInScore,
         eros: effectiveDrive === 'eros' ? writeInScore
-          : effectiveDrive !== null ? 0.3
+          : effectiveDrive !== null ? 0.4
           : writeInScore,
         agape: effectiveDrive === 'agape' ? writeInScore
-          : effectiveDrive !== null ? 0.3
+          : effectiveDrive !== null ? 0.4
           : writeInScore,
       };
 

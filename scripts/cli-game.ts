@@ -14,6 +14,7 @@
  *   npx tsx scripts/cli-game.ts --encounters=5           # custom encounter count
  *   npx tsx scripts/cli-game.ts --verbose                # show full narrative flow
  *   npx tsx scripts/cli-game.ts --json                   # machine-readable JSON output
+ *   npx tsx scripts/cli-game.ts --new-game               # start fresh (delete saved progress)
  */
 
 import * as readline from 'readline';
@@ -71,7 +72,7 @@ import { startSession, tickWithStrategy, endSession, type SessionState } from '.
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
-import { loadSave, saveGame, hasSave } from '../src/infra/persistence/SaveRepository.js';
+import { loadSave, saveGame, hasSave, deleteSave } from '../src/infra/persistence/SaveRepository.js';
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
 import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js';
@@ -98,6 +99,7 @@ const FORCE_STAGE = getVal('stage') as Stage | undefined;
 const FORCE_MODALITY = getVal('modality') as Modality | undefined;
 const FORCE_RESPONSES = getVal('responses')?.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
 const FORCE_SHADOW = getVal('force-shadow') as string | undefined;
+const NEW_GAME = flags.has('--new-game');
 
 // ── Helpers ───────────────────────────────────────────────────────────
 const C = {
@@ -163,11 +165,16 @@ function loadHolons(): WorldState {
 
 // ── Significator creation (simplified onboarding) ─────────────────────
 function createDefaultSignificator(): Significator {
-  // Try to load saved state first
-  const saved = loadSave();
-  if (saved) {
-    if (!JSON_MODE) console.log(`  ${C.green}✓${C.reset} Loaded saved progress (${saved.totalEncounters} encounters, stage: ${saved.currentStage})`);
-    return saved;
+  // Try to load saved state first (skip if --new-game)
+  if (!NEW_GAME) {
+    const saved = loadSave();
+    if (saved) {
+      if (!JSON_MODE) console.log(`  ${C.green}✓${C.reset} Loaded saved progress (${saved.totalEncounters} encounters, stage: ${saved.currentStage})`);
+      return saved;
+    }
+  } else {
+    deleteSave();
+    if (!JSON_MODE) console.log(`  ${C.yellow}↻${C.reset} Starting new game (previous save deleted)`);
   }
   const allRed: Record<Line, Stage> = {
     Cognitive: 'Red', Emotional: 'Red', Moral: 'Red', Intrapersonal: 'Red',
@@ -262,16 +269,16 @@ function renderCCIDisplay(cci: { composite: number; dimensions: Record<string, n
 
   // Show dimensions in a compact row
   const dims = Object.entries(cci.dimensions).map(([k, v]) => {
-    const      labels: Record<string, string> = {
+    const labels: Record<string, string> = {
       altitude: 'altitude', driveHealth: 'driveH', polarity: 'polarity',
       shadowTopology: 'shadow', transformationReadiness: 'transform',
-    };      const short = labels[k] ?? k.slice(0, 4);
+    };
+    const short = labels[k] ?? k.slice(0, 4);
     const val = (v * 100).toFixed(0);
     const color = v > 0.6 ? C.green : v > 0.3 ? C.yellow : C.red;
     return `${C.dim}${short}:${color}${val}%${C.reset}`;
   });
   console.log(`   ${dims.join(' ')}`);
-}
 }
 
 /** Render session arc position with progress bar */
@@ -981,9 +988,9 @@ async function runFullSession(): Promise<void> {
 
 // ── Main ──────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
+  // Mode banner — print after LLM check so it reflects actual state
   if (!JSON_MODE) {
     console.log(`\n${C.bold}CCRPG CLI Game Runner${C.reset}`);
-    console.log(`${C.dim}Mode: ${mode} | Headless: ${HEADLESS} | LLM: ${LLM_ACTIVE ? 'active' : 'fallback'} | Model: ${ACTIVE_MODEL} | Verbose: ${VERBOSE} | JSON: ${JSON_MODE}${C.reset}`);
   }
 
   try {
