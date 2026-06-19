@@ -14,7 +14,7 @@
 | 2 | Fix modality routing | 1 day | AgenticOrchestrator.ts | ✅ Done |
 | 3 | Fix scoring & pass rate | 1 day | AgenticOrchestrator.ts, GameLoop.ts | ✅ Done |
 | 4 | Persistence & onboarding | 2 days | SaveRepository.ts | ✅ Partial (persistence done, onboarding pending) |
-| 5 | Narrative depth | 2 days | cli-game.ts, AgenticOrchestrator.ts | ⬜ Pending |
+| 5 | Narrative depth | 2 days | cli-game.ts, AgenticOrchestrator.ts | ✅ Done |
 | 6 | UX polish | 1 day | cli-game.ts | ✅ Done |
 
 ---
