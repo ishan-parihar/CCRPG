@@ -8,14 +8,14 @@
 
 ## Quick Reference
 
-| Sprint | Focus | Est. Time | Files |
-|---|---|---|---|
-| 1 | Fix blocking issues | 4 hours | cli-game.ts, AgenticOrchestrator.ts |
-| 2 | Fix modality routing | 1 day | AgenticOrchestrator.ts, TaskRenderers.ts |
-| 3 | Fix scoring & pass rate | 1 day | AgenticOrchestrator.ts, GameLoop.ts |
-| 4 | Persistence & onboarding | 2 days | NEW: SaveRepository.ts, Onboarding.ts |
-| 5 | Narrative depth | 2 days | cli-game.ts, AgenticOrchestrator.ts |
-| 6 | UX polish | 1 day | cli-game.ts |
+| Sprint | Focus | Est. Time | Files | Status |
+|---|---|---|---|---|
+| 1 | Fix blocking issues | 4 hours | cli-game.ts, AgenticOrchestrator.ts | ✅ Done |
+| 2 | Fix modality routing | 1 day | AgenticOrchestrator.ts | ✅ Done |
+| 3 | Fix scoring & pass rate | 1 day | AgenticOrchestrator.ts, GameLoop.ts | ✅ Done |
+| 4 | Persistence & onboarding | 2 days | SaveRepository.ts | ✅ Partial (persistence done, onboarding pending) |
+| 5 | Narrative depth | 2 days | cli-game.ts, AgenticOrchestrator.ts | ⬜ Pending |
+| 6 | UX polish | 1 day | cli-game.ts | ✅ Done |
 
 ---
 
