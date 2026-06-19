@@ -524,16 +524,16 @@ export class AgenticOrchestrator {
 
       const driveScores = {
         agency: effectiveDrive === 'agency' ? writeInScore
-          : effectiveDrive !== null ? 0.5
+          : effectiveDrive !== null ? 0.3
           : writeInScore,  // No drive detected at all → uniform
         communion: effectiveDrive === 'communion' ? writeInScore
-          : effectiveDrive !== null ? 0.5
+          : effectiveDrive !== null ? 0.3
           : writeInScore,
         eros: effectiveDrive === 'eros' ? writeInScore
-          : effectiveDrive !== null ? 0.5
+          : effectiveDrive !== null ? 0.3
           : writeInScore,
         agape: effectiveDrive === 'agape' ? writeInScore
-          : effectiveDrive !== null ? 0.5
+          : effectiveDrive !== null ? 0.3
           : writeInScore,
       };
 
@@ -717,26 +717,27 @@ export class AgenticOrchestrator {
    * Select the best assessment task from the module based on encounter modality.
    */
   private selectTaskForModality(module: StageAssessment, modality: Modality): AssessmentTask {
-    // Preferred task types for each modality
-    const modalityTaskMap: Record<string, readonly TaskType[]> = {
+    // Preferred task types for each modality, with fallback chains
+    // If the preferred types aren't available in the module, we try broader types
+    const modalityFallbackChain: Record<string, readonly TaskType[]> = {
       Deterministic: ['n_back', 'stroop', 'go_no_go', 'hold', 'reaction_time', 'rhythm'],
-      LanguageReflective: ['llm_dialogue', 'self_report', 'emotion_identification'],
-      ScenarioChoice: ['dilemma', 'scenario'],
-      Embodied: ['hold', 'rhythm', 'imitation'],
-      Strategic: ['pattern_prediction', 'value_ranking'],
-      SocialCooperative: ['cooperation', 'dilemma', 'emotion_identification'],
-      ImmersiveRPG: ['scenario', 'llm_dialogue', 'emotion_identification'],
+      LanguageReflective: ['llm_dialogue', 'self_report', 'emotion_identification', 'scenario'],
+      ScenarioChoice: ['dilemma', 'scenario', 'emotion_identification', 'self_report'],
+      Embodied: ['hold', 'rhythm', 'imitation', 'reaction_time', 'go_no_go'],
+      Strategic: ['pattern_prediction', 'value_ranking', 'n_back', 'stroop'],
+      SocialCooperative: ['cooperation', 'dilemma', 'emotion_identification', 'scenario', 'self_report'],
+      ImmersiveRPG: ['scenario', 'dilemma', 'llm_dialogue', 'emotion_identification', 'self_report'],
     };
 
-    const preferredTypes = modalityTaskMap[modality] ?? ['n_back', 'scenario'];
+    const chain = modalityFallbackChain[modality] ?? ['n_back', 'scenario', 'self_report'];
 
-    // Find the first task whose type matches a preferred type
-    for (const prefType of preferredTypes) {
+    // Walk the fallback chain: first match wins
+    for (const prefType of chain) {
       const match = module.tasks.find(t => t.type === prefType);
       if (match) return match;
     }
 
-    // Fallback: use the first task from the module
+    // Final fallback: use the first task from the module
     return module.tasks[0] ?? {
       id: 'fallback-task',
       type: 'scenario',
@@ -1046,24 +1047,40 @@ export class AgenticOrchestrator {
       `Through ${modalityDesc[modality] ?? 'an assessment'}, ${holonName} drew forth your capacity —`,
       `${holonName} presented ${taskLabel}, and you rose to meet it —`,
       `The encounter unfolded through ${modalityDesc[modality] ?? 'an assessment'} — ${holonName} witnessed your engagement —`,
+      `${holonName} called you into ${modalityDesc[modality] ?? 'an assessment'} — and you answered —`,
+      `In the space between challenge and response, ${holonName} held the container for ${modalityDesc[modality] ?? 'an assessment'} —`,
+      `The ${module.line.toLowerCase()} current flowed through ${modalityDesc[modality] ?? 'an assessment'} — ${holonName} was the channel —`,
+      `With ${holonName} as witness, ${modalityDesc[modality] ?? 'an assessment'} became a crucible for growth —`,
     ];
     const passedClosings = [
       `The ${module.line.toLowerCase()} line strengthens under your attention.`,
       `The world registers your engagement. The ${module.line.toLowerCase()} capacity integrates further.`,
       `Something shifts in the field — the ${module.line.toLowerCase()} dimension acknowledges your effort.`,
       `The developmental architecture responds. The ${module.line.toLowerCase()} current deepens.`,
+      `A thread weaves tighter in the fabric of your ${module.line.toLowerCase()} expression.`,
+      `The ${module.stage} layer hums with the resonance of integrated capacity.`,
+      `You leave this encounter slightly more whole than you entered it.`,
+      `The ${module.line.toLowerCase()} dimension recognizes your willingness to engage.`,
     ];
     const failedOpenings = [
       `${holonName} presented ${taskLabel} —`,
       `Through ${modalityDesc[modality] ?? 'an assessment'}, ${holonName} offered a mirror —`,
       `The encounter arrived as ${modalityDesc[modality] ?? 'an assessment'}, delivered by ${holonName} —`,
       `${holonName} set before you ${taskLabel} —`,
+      `${holonName} beckoned you into ${modalityDesc[modality] ?? 'an assessment'} — the threshold remained unsteady —`,
+      `The ${module.stage} layer offered ${modalityDesc[modality] ?? 'an assessment'} through ${holonName} — the resonance was incomplete —`,
+      `${holonName} opened a door to ${taskLabel} — the invitation stood waiting —`,
+      `In ${modalityDesc[modality] ?? 'an assessment'}, ${holonName} showed what the ${module.line.toLowerCase()} line still seeks —`,
     ];
     const failedClosings = [
       `The ${module.line.toLowerCase()} capacity holds its tension — the work continues.`,
       `Areas remain where the ${module.line.toLowerCase()} capacity is still integrating.`,
       `The ${module.stage} layer retains its pressure. Growth awaits the next engagement.`,
       `The challenge reveals where the ${module.line.toLowerCase()} dimension still seeks balance.`,
+      `Not yet integrated — but the awareness itself is a step forward.`,
+      `The ${module.line.toLowerCase()} current pauses here, waiting for your return.`,
+      `This edge between capacity and capacity-not-yet is where transformation begins.`,
+      `The tension is not failure — it is the developmental field doing its work.`,
     ];
 
     const pick = <T>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)]!;

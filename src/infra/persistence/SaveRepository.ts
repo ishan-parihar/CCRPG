@@ -1,3 +1,10 @@
+/**
+ * SaveRepository — persistence layer for game state.
+ *
+ * Two persistence mechanisms:
+ * 1. SaveRepository class — async KeyValueStore-based (for Phaser game scenes)
+ * 2. CLI file-based functions — synchronous JSON file (for CLI runner)
+ */
 import {
   DEFAULT_COGNITIVE_PROFILE,
   type CognitiveProfile,
@@ -5,6 +12,10 @@ import {
 import type { Significator } from '@core/domain/Significator.js';
 import type { WorldState } from '@core/engines/CandidateGeneration.js';
 import type { KeyValueStore } from './KeyValueStore.js';
+
+import * as fs from 'fs';
+import * as path from 'path';
+import * as os from 'os';
 
 const SAVE_KEY = 'save:v1';
 const PROFILE_KEY = 'profile:v1';
@@ -117,4 +128,62 @@ function migrate(input: Partial<SaveData>): SaveData {
     cognitive: { ...DEFAULT_SAVE.cognitive, ...(input.cognitive ?? {}) },
     version: CURRENT_VERSION,
   };
+}
+
+// ═══════════════════════════════════════════════════════════════════════
+// CLI File-Based Persistence (synchronous, for cli-game.ts)
+// Saves to ~/.ccrpg/save.json so player progress persists across CLI runs.
+// ═══════════════════════════════════════════════════════════════════════
+
+const CLI_SAVE_DIR = path.join(os.homedir(), '.ccrpg');
+const CLI_SAVE_FILE = path.join(CLI_SAVE_DIR, 'save.json');
+
+/**
+ * Load a previously saved Significator from disk.
+ * Returns null if no save file exists or if parsing fails.
+ */
+export function loadSave(): Significator | null {
+  try {
+    if (fs.existsSync(CLI_SAVE_FILE)) {
+      const raw = fs.readFileSync(CLI_SAVE_FILE, 'utf8');
+      const parsed = JSON.parse(raw);
+      // Basic validation: must have required fields
+      if (parsed && typeof parsed.id === 'string' && typeof parsed.currentStage === 'string' && parsed.altitudes) {
+        return parsed as Significator;
+      }
+    }
+  } catch { /* ignore corrupt saves */ }
+  return null;
+}
+
+/**
+ * Save the current Significator state to disk.
+ */
+export function saveGame(sig: Significator): void {
+  try {
+    fs.mkdirSync(CLI_SAVE_DIR, { recursive: true });
+    fs.writeFileSync(CLI_SAVE_FILE, JSON.stringify(sig, null, 2));
+  } catch { /* ignore write errors in headless mode */ }
+}
+
+/**
+ * Check if a save file exists.
+ */
+export function hasSave(): boolean {
+  try {
+    return fs.existsSync(CLI_SAVE_FILE);
+  } catch {
+    return false;
+  }
+}
+
+/**
+ * Delete the save file (for new game).
+ */
+export function deleteSave(): void {
+  try {
+    if (fs.existsSync(CLI_SAVE_FILE)) {
+      fs.unlinkSync(CLI_SAVE_FILE);
+    }
+  } catch { /* ignore */ }
 }

@@ -71,6 +71,7 @@ import { startSession, tickWithStrategy, endSession, type SessionState } from '.
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
+import { loadSave, saveGame, hasSave } from '../src/infra/persistence/SaveRepository.js';
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
 import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js';
@@ -86,7 +87,7 @@ const HEADLESS = flags.has('--headless');
 const VERBOSE = flags.has('--verbose');
 const JSON_MODE = flags.has('--json');
 const NO_LLM = flags.has('--no-llm');
-const LLM_ACTIVE = !NO_LLM && apiKey !== 'sk-placeholder';
+let LLM_ACTIVE = !NO_LLM && apiKey !== 'sk-placeholder';
 const ACTIVE_MODEL = getVal('model') ?? model;
 const mode = getVal('mode') ?? (flags.has('--mode') ? args[args.indexOf('--mode') + 1] : 'full') ?? 'full';
 const encounterCount = parseInt(getVal('encounters') ?? '20', 10);
@@ -137,6 +138,23 @@ const rl = !HEADLESS ? readline.createInterface({ input: process.stdin, output: 
 const ask = (q: string): Promise<string> =>
   new Promise(resolve => rl!.question(q, resolve));
 
+// ── LLM availability check (fast 2s timeout) ─────────────────────────
+async function checkLLMAvailability(url: string, key: string): Promise<boolean> {
+  if (key === 'sk-placeholder') return false;
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 2000);
+    const res = await fetch(`${url}/models`, {
+      headers: { 'Authorization': `Bearer ${key}` },
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    return res.ok;
+  } catch {
+    return false;
+  }
+}
+
 // ── Holon loading ─────────────────────────────────────────────────────
 function loadHolons(): WorldState {
   const holons = holonsJson as any[];
@@ -145,6 +163,12 @@ function loadHolons(): WorldState {
 
 // ── Significator creation (simplified onboarding) ─────────────────────
 function createDefaultSignificator(): Significator {
+  // Try to load saved state first
+  const saved = loadSave();
+  if (saved) {
+    if (!JSON_MODE) console.log(`  ${C.green}✓${C.reset} Loaded saved progress (${saved.totalEncounters} encounters, stage: ${saved.currentStage})`);
+    return saved;
+  }
   const allRed: Record<Line, Stage> = {
     Cognitive: 'Red', Emotional: 'Red', Moral: 'Red', Intrapersonal: 'Red',
     Spiritual: 'Red', Somatic: 'Red', Willpower: 'Red', Interpersonal: 'Red',
@@ -163,8 +187,8 @@ function emitEvent(type: string, data: Record<string, unknown>): void {
 
 /** Shadow quadrant label map — used by drive display */
 const SHADOW_LABELS: Record<string, string> = {
-  DarkAddicted: 'Addict', DarkAverted: 'Avert',
-  GoldenAddicted: 'Gold', GoldenAverted: 'GAvr',
+  DarkAddicted: 'DkAddict', DarkAverted: 'DkAvert',
+  GoldenAddicted: 'GdAddict', GoldenAverted: 'GdAvert',
   HealthyBalanced: '',
 };
 
@@ -238,16 +262,16 @@ function renderCCIDisplay(cci: { composite: number; dimensions: Record<string, n
 
   // Show dimensions in a compact row
   const dims = Object.entries(cci.dimensions).map(([k, v]) => {
-    const labels: Record<string, string> = {
-      altitude: 'alt', driveHealth: 'drvH', polarity: 'pol',
-      shadowTopology: 'shd', transformationReadiness: 'trns',
-    };
-    const short = labels[k] ?? k.slice(0, 4);
+    const      labels: Record<string, string> = {
+      altitude: 'altitude', driveHealth: 'driveH', polarity: 'polarity',
+      shadowTopology: 'shadow', transformationReadiness: 'transform',
+    };      const short = labels[k] ?? k.slice(0, 4);
     const val = (v * 100).toFixed(0);
     const color = v > 0.6 ? C.green : v > 0.3 ? C.yellow : C.red;
     return `${C.dim}${short}:${color}${val}%${C.reset}`;
   });
   console.log(`   ${dims.join(' ')}`);
+}
 }
 
 /** Render session arc position with progress bar */
@@ -298,7 +322,7 @@ function renderShadows(sig: Significator): void {
   const parts = Object.entries(groups).map(([q, entries]) => {
     const color = qColors[q] ?? C.yellow;
     const sev = entries.map(e => (e.severity * 100).toFixed(0)).join('/');
-    return `${color}${q.replace('Dark', '').replace('Golden', 'G').slice(0, 8)}${entries.length > 1 ? '×' + entries.length : ''}(${sev}%)${C.reset}`;
+    return `${color}${q}${entries.length > 1 ? '×' + entries.length : ''}(${sev}%)${C.reset}`;
   });
   console.log(`  ${C.yellow}⚠${C.reset} shadows: ${parts.join(' ')}`);
 }
@@ -319,7 +343,8 @@ function renderDrives(sig: Significator): void {
     const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
     const color = fix > 0.5 ? C.red : w > 0.3 ? C.green : C.yellow;
     const fixIcon = fix > 0.7 ? '⚠' : fix > 0.4 ? '~' : ' ';
-    console.log(`  ${C.dim}${d.padEnd(10)}${C.reset} ${color}${bar}${C.reset} ${fixIcon}${C.dim}${fix > 0.1 ? `fix:${(fix * 100).toFixed(0)}%` : ''}${C.reset}`);
+    const dirIcon = w > 0.6 ? '↑' : w < 0.35 ? '↓' : ' ';
+    console.log(`  ${C.dim}${d.padEnd(10)}${C.reset} ${color}${bar}${C.reset} ${fixIcon}${dirIcon} ${C.dim}${fix > 0.1 ? `fix:${(fix * 100).toFixed(0)}%` : ''}${C.reset}`);
   }
 }
 
@@ -665,25 +690,39 @@ async function runFullSession(): Promise<void> {
   banner('CCRPG Session Runner');
 
   // Boot
-  if (!JSON_MODE) console.log('\n[1/4] Booting registries...');
+  if (!JSON_MODE) console.log('\n[1/5] Booting registries...');
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
   (globalThis as any).__moduleRegistry = moduleRegistry;
   success(`${moduleRegistry.count()} assessment modules loaded`);
 
+  // LLM availability check
+  if (!JSON_MODE) console.log('\n[2/5] Checking LLM availability...');
+  if (LLM_ACTIVE) {
+    const llmUp = await checkLLMAvailability(baseUrl, apiKey);
+    if (!llmUp) {
+      LLM_ACTIVE = false;
+      warn('LLM unreachable — falling back to module assessments (use --no-llm to skip this check)');
+    } else {
+      success(`LLM active: ${ACTIVE_MODEL}`);
+    }
+  } else {
+    info('LLM', 'disabled (--no-llm or no API key)');
+  }
+
   // Holons
-  if (!JSON_MODE) console.log('\n[2/4] Loading world...');
+  if (!JSON_MODE) console.log('\n[3/5] Loading world...');
   const world = loadHolons();
   const npcCount = world.holons.filter(h => h.kind === 'NPC').length;
   success(`${world.holons.length} holons (${npcCount} NPCs)`);
 
   // Significator
-  if (!JSON_MODE) console.log('\n[3/4] Creating Significator...');
+  if (!JSON_MODE) console.log('\n[4/5] Creating Significator...');
   const sig = createDefaultSignificator();
   printSignificator(sig);
 
   // Session
-  if (!JSON_MODE) console.log('\n[4/4] Starting session...');
+  if (!JSON_MODE) console.log('\n[5/5] Starting session...');
   const session: SessionContext = {
     encountersSoFar: 0,
     sessionDurationMs: 0,
@@ -819,9 +858,12 @@ async function runFullSession(): Promise<void> {
       const encResult = result.outcome.finalResult;
       if (!JSON_MODE) {
         const passIcon = encResult.passed ? `${C.green}✓ PASSED${C.reset}` : `${C.red}✗ FAILED${C.reset}`;
-        console.log(`\n  ${C.bold}Result:${C.reset} ${passIcon}`);
+        // Show score always (not just verbose)
+        const primaryScore = encResult.dimensions.accuracy ?? 0.5;
+        const scoreColor = primaryScore >= 0.7 ? C.green : primaryScore >= 0.5 ? C.yellow : C.red;
+        console.log(`\n  ${C.bold}Result:${C.reset} ${passIcon}  ${C.dim}score:${C.reset} ${scoreColor}${(primaryScore * 100).toFixed(0)}%${C.reset}`);
+        // Show drive signals in verbose mode
         if (VERBOSE) {
-          // Show drive signals with shadow quadrant labels
           const ds = result.outcome.consequenceRecord.polarityTrace.driveDirectionality;
           const driveEntries = Object.entries(ds).map(([k, v]) => {
             const short = k.slice(0, 3);
@@ -839,7 +881,6 @@ async function runFullSession(): Promise<void> {
         if (shadow) {
           console.log(`  ${C.yellow}⚠ shadow:${C.reset} ${C.yellow}${shadow}${C.reset}`);
         }
-
       }
 
       if (VERBOSE) {
@@ -877,6 +918,10 @@ async function runFullSession(): Promise<void> {
 
   // Session end — apply theta-decay and persist
   const sessionEnd = endSession(currentSig, sessionState, now + encounterCount * 5000);
+
+  // Save progress to disk
+  saveGame(sessionEnd.sig);
+  if (!JSON_MODE) info('save', `${C.green}Progress saved${C.reset}`);
 
   banner('SESSION END');
 
