@@ -270,10 +270,10 @@ function renderCCIDisplay(cci: { composite: number; dimensions: Record<string, n
   // Show dimensions in a compact row
   const dims = Object.entries(cci.dimensions).map(([k, v]) => {
     const labels: Record<string, string> = {
-      altitude: 'altitude', driveHealth: 'driveH', polarity: 'polarity',
-      shadowTopology: 'shadow', transformationReadiness: 'transform',
+      altitude: 'alt', driveHealth: 'drive', polarity: 'polar',
+      shadowTopology: 'shadow', transformationReadiness: 'xform',
     };
-    const short = labels[k] ?? k.slice(0, 4);
+    const short = labels[k] ?? k.slice(0, 5);
     const val = (v * 100).toFixed(0);
     const color = v > 0.6 ? C.green : v > 0.3 ? C.yellow : C.red;
     return `${C.dim}${short}:${color}${val}%${C.reset}`;
@@ -772,6 +772,7 @@ async function runFullSession(): Promise<void> {
     targetEncounters: encounterCount,
   });
   let completedCount = 0;
+  let passedCount = 0;
   const now = Date.now();
   const history: ConsequenceRecord[] = [];
   // Create a local mutable copy of FORCE_RESPONSES per session so --responses works predictably
@@ -841,8 +842,14 @@ async function runFullSession(): Promise<void> {
         `${C.dim}The developmental field shifts. What comes next is precisely what you need...${C.reset}`,
         `${C.dim}Integration ripples outward. The next challenge crystallizes...${C.reset}`,
         `${C.dim}The veil parts once more. A new mirror reflects...${C.reset}`,
+        `${C.dim}The residue of the last encounter lingers. The next catalyst forms...${C.reset}`,
+        `${C.dim}Memory folds into potential. A new edge of growth appears...${C.reset}`,
       ];
       console.log(`\n  ${transitions[Math.floor(Math.random() * transitions.length)]}`);
+      // Processing indicator
+      process.stdout.write(`  ${C.dim}... preparing encounter${C.reset}`);
+      await new Promise(r => setTimeout(r, 300));
+      process.stdout.write('\x1b[2K\r');
     }
 
     // Run encounter through AgenticOrchestrator (all modalities)
@@ -865,24 +872,21 @@ async function runFullSession(): Promise<void> {
       const encResult = result.outcome.finalResult;
       if (!JSON_MODE) {
         const passIcon = encResult.passed ? `${C.green}✓ PASSED${C.reset}` : `${C.red}✗ FAILED${C.reset}`;
-        // Show score always (not just verbose)
+        // Show score + drive summary always (not just verbose)
         const primaryScore = encResult.dimensions.accuracy ?? 0.5;
         const scoreColor = primaryScore >= 0.7 ? C.green : primaryScore >= 0.5 ? C.yellow : C.red;
         console.log(`\n  ${C.bold}Result:${C.reset} ${passIcon}  ${C.dim}score:${C.reset} ${scoreColor}${(primaryScore * 100).toFixed(0)}%${C.reset}`);
-        // Show drive signals in verbose mode
-        if (VERBOSE) {
-          const ds = result.outcome.consequenceRecord.polarityTrace.driveDirectionality;
-          const driveEntries = Object.entries(ds).map(([k, v]) => {
-            const short = k.slice(0, 3);
-            const suffix = SHADOW_LABELS[v] ?? v.slice(0, 4);
-            if (suffix) {
-              const col = v.startsWith('Dark') ? C.red : C.yellow;
-              return `${C.dim}${short}:${col}${suffix}${C.reset}`;
-            }
-            return `${C.dim}${short}:${C.green}✓${C.reset}`;
-          });
-          console.log(`  ${C.dim}drives:${C.reset} ${driveEntries.join(' ')}`);
-        }
+        // Show which drive was expressed and polarity in non-verbose
+        const cr = result.outcome.consequenceRecord;
+        const polarityIcon = cr.polarityTrace.energeticDirection === 'Radiative' ? '↑' 
+          : cr.polarityTrace.energeticDirection === 'Absorptive' ? '↓' : '·';
+        // Always show drive summary line with polarity direction
+        const allDriveEntries = Object.entries(cr.polarityTrace.driveDirectionality).map(([k, v]) => {
+          if (v === 'HealthyBalanced') return `${C.dim}${k.slice(0, 3)}:${C.green}ok${C.reset}`;
+          const col = v.startsWith('Dark') ? C.red : C.yellow;
+          return `${col}${k.slice(0, 3)}:${SHADOW_LABELS[v] ?? v.slice(0, 5)}${C.reset}`;
+        });
+        console.log(`  ${C.dim}drives:${C.reset} ${allDriveEntries.join(' ')}  ${C.dim}${polarityIcon}${cr.polarityTrace.stageOrientation}${C.reset}`);
         // Show shadow status
         const shadow = result.outcome.consequenceRecord.shadowSurfaced;
         if (shadow) {
@@ -905,6 +909,7 @@ async function runFullSession(): Promise<void> {
       });
 
       completedCount++;
+      if (result.outcome.finalResult.passed) passedCount++;
     } catch (err: any) {
       error(`Encounter failed: ${err.message || err}`);
       emitEvent('encounter_error', { encounter: tickResult.encounter.id, error: err.message });
@@ -934,22 +939,47 @@ async function runFullSession(): Promise<void> {
 
   // Session closure narrative
   if (!JSON_MODE) {
-    // Track pass/fail from consequence records — check if the polarity trace
-    // indicates a healthy integration (HealthyBalanced on all drives = passed)
-    const passedCount = history.filter(r => {
-      const dirs = Object.values(r.polarityTrace.driveDirectionality);
-      return dirs.every(d => d === 'HealthyBalanced');
-    }).length;
+    // passedCount tracked directly from encResult.passed during the loop
     const failedCount = completedCount - passedCount;
     const shadowsSurfaced = sessionEnd.summary.shadowsSurfaced;
     const altShifts = history.filter(r => r.altitudeShift !== null).length;
 
-    const closureNarratives = [
-      `The veil settles. ${completedCount} encounters etched their mark upon the developmental landscape. ${passedCount > failedCount ? `${C.green}More capacities were integrated than deferred${C.reset}.` : `${C.yellow}The tension holds — integration remains the work ahead${C.reset}.`}${altShifts > 0 ? ` ${C.magenta}${altShifts} line${altShifts > 1 ? 's' : ''} advanced${C.reset}.` : ''}${shadowsSurfaced > 0 ? ` ${C.red}${shadowsSurfaced} shadow${shadowsSurfaced > 1 ? 's' : ''} surfaced for attention${C.reset}.` : ''}`,
-      `${C.dim}The session closes. Each encounter was a mirror — reflecting not who you are, but who you are becoming.${C.reset}`,
-    ];
-    console.log(`\n  ${closureNarratives[0]}`);
-    console.log(`  ${closureNarratives[1]}`);
+    // Rich thematic closure that references what happened
+    const linesAdvanced = history.filter(r => r.altitudeShift !== null).map(r => r.altitudeShift!.line);
+    const uniqueLinesAdvanced = [...new Set(linesAdvanced)];
+    const shadowsByQuadrant: Record<string, number> = {};
+    for (const r of history) {
+      if (r.shadowSurfaced) {
+        shadowsByQuadrant[r.shadowSurfaced] = (shadowsByQuadrant[r.shadowSurfaced] ?? 0) + 1;
+      }
+    }
+    const shadowDetail = Object.entries(shadowsByQuadrant).map(([q, n]) => `${n}×${q}`).join(', ');
+
+    const openingLine = passedCount > failedCount
+      ? `${C.green}This session favored integration.${C.reset} ${passedCount}/${completedCount} encounters met their developmental threshold.`
+      : `${C.yellow}This session was heavy with unfinished catalyst.${C.reset} ${failedCount}/${completedCount} encounters remain un-integrated.`;
+
+    const altLine = uniqueLinesAdvanced.length > 0
+      ? `  ${C.magenta}⚡ Lines advanced: ${uniqueLinesAdvanced.join(', ')}${C.reset}`
+      : '';
+
+    const shadowLine = shadowDetail
+      ? `  ${C.red}⚠ Shadows surfaced: ${shadowDetail}${C.reset}`
+      : `  ${C.green}✓ No shadows surfaced this session${C.reset}`;
+
+    // NPC relationship summary
+    const holonDeltas = history.flatMap(r => r.holonDeltas ?? []);
+    const relChanges = holonDeltas.filter(d => d.field === 'relationshipStrength');
+    const relLine = relChanges.length > 0
+      ? `  ${C.dim}NPC relationships shifted: ${relChanges.length} encounter${relChanges.length > 1 ? 's' : ''} with bond changes${C.reset}`
+      : '';
+
+    console.log(`\n  ${C.bold}Session Closure${C.reset}`);
+    console.log(`  ${openingLine}`);
+    if (altLine) console.log(altLine);
+    console.log(shadowLine);
+    if (relLine) console.log(relLine);
+    console.log(`\n  ${C.dim}The session closes. Each encounter was a mirror — reflecting not who you are, but who you are becoming.${C.reset}`);
   }
 
   info('encounters completed', String(completedCount));

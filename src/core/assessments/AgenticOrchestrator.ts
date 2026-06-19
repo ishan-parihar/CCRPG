@@ -549,28 +549,42 @@ export class AgenticOrchestrator {
       // - Other drives get baseline neutral (0.5)
       // - For write-ins with no shadow detection, apply a depth boost and distribute evenly
       const isWriteInWithNoShadow = matchedDrive === null && !writeInDriveDetection && !!writeIn;
-      const wordCount = (writeIn ?? '').split(/\s+/).filter(Boolean).length;
-      const depthBonus = isWriteInWithNoShadow && wordCount > 10 ? Math.min(0.2, wordCount * 0.01) : 0;
-      const writeInScore = Math.min(1, baseScore + depthBonus);
 
-      // Scoring spread: matched drive gets baseScore (0.0-1.0), unmatched get 0.4
-      // For correct MCQ (1.0): avg = (1.0 + 0.4*3)/4 = 0.55 → passes most thresholds
-      // For partial MCQ (0.7): avg = (0.7 + 0.4*3)/4 = 0.475 → borderline
-      // For wrong MCQ (0.0): avg = (0.0 + 0.4*3)/4 = 0.30 → clearly fails
-      // For write-in with depth (0.9): avg = (0.9 + 0.4*3)/4 = 0.525 → passes
+      // ── SCORING FIX: Use rubric dimension weights on TrialResult dimensions ──
+      // OLD: averaged 4 drives → compressed to ~0.55 always, even correct answers failed at threshold 0.6
+      // NEW: compute weighted score from TrialResult dimensions using the module's rubric weights.
+      // This gives a true performance signal: correct MCQ → ~0.8, partial → ~0.55, wrong → ~0.25.
+      const rubricWeights = module.scoringRubric.dimensionWeights;
+      const trialDims = trialResult!.dimensions;
+      let weightedSum = 0;
+      let totalWeight = 0;
+      for (const [dim, weight] of Object.entries(rubricWeights)) {
+        const val = trialDims[dim as keyof typeof trialDims];
+        if (weight && typeof val === 'number') {
+          weightedSum += val * weight;
+          totalWeight += weight;
+        }
+      }
+      // Blend the rubric-weighted score with the drive-correctness score for a robust signal
+      const rubricScore = totalWeight > 0 ? weightedSum / totalWeight : baseScore;
+      const blendedScore = rubricScore * 0.6 + baseScore * 0.4;
+
+      // Drive scores: matched drive gets blendedScore (consistent with pass/fail),
+      // write-in depth bonus applied on top. Unmatched drives get a lower baseline.
+      const matchedScore = isWriteInWithNoShadow ? Math.max(blendedScore, 0.55) : blendedScore;
       const driveScores = {
-        agency: effectiveDrive === 'agency' ? writeInScore
-          : effectiveDrive !== null ? 0.4
-          : writeInScore,  // No drive detected at all → uniform
-        communion: effectiveDrive === 'communion' ? writeInScore
-          : effectiveDrive !== null ? 0.4
-          : writeInScore,
-        eros: effectiveDrive === 'eros' ? writeInScore
-          : effectiveDrive !== null ? 0.4
-          : writeInScore,
-        agape: effectiveDrive === 'agape' ? writeInScore
-          : effectiveDrive !== null ? 0.4
-          : writeInScore,
+        agency: effectiveDrive === 'agency' ? matchedScore
+          : effectiveDrive !== null ? Math.min(0.5, blendedScore * 0.7)
+          : matchedScore,
+        communion: effectiveDrive === 'communion' ? matchedScore
+          : effectiveDrive !== null ? Math.min(0.5, blendedScore * 0.7)
+          : matchedScore,
+        eros: effectiveDrive === 'eros' ? matchedScore
+          : effectiveDrive !== null ? Math.min(0.5, blendedScore * 0.7)
+          : matchedScore,
+        agape: effectiveDrive === 'agape' ? matchedScore
+          : effectiveDrive !== null ? Math.min(0.5, blendedScore * 0.7)
+          : matchedScore,
       };
 
       // Determine polarity from the effective drive detection
@@ -597,13 +611,10 @@ export class AgenticOrchestrator {
           : 'HealthyBalanced',
       };
 
-      // Determine pass: baseScore must meet threshold AND no shadow pathology on the expressed drive
-      // Shadow expression = developmental signal that the capacity is not yet integrated
+      // Determine pass: blendedScore must meet threshold AND no shadow pathology
       const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
-      const effectiveScore = isWriteInWithNoShadow ? Math.max(baseScore, 0.55) : baseScore;
+      const effectiveScore = isWriteInWithNoShadow ? Math.max(blendedScore, 0.55) : blendedScore;
       const hasShadow = !!shadowFromWriteIn;
-      // Shadow expression = ALWAYS fails (pathology detected)
-      // Below threshold = fails but is a performance miss, not pathology
       const passed = !hasShadow && effectiveScore >= passThreshold;
 
       // Build rich developmental feedback
@@ -783,14 +794,73 @@ export class AgenticOrchestrator {
       if (match) return match;
     }
 
-    // Final fallback: use the first task from the module
-    return module.tasks[0] ?? {
-      id: 'fallback-task',
-      type: 'scenario',
-      description: `A ${module.line} ${module.stage} challenge presents itself.`,
-      parameters: {},
-      measures: ['accuracy', 'depth'],
-    };
+    // CRITICAL FIX: When no task type matches the modality's preference chain,
+    // generate a modality-appropriate generic task instead of falling to tasks[0].
+    // This prevents Cognitive modules (which have only n_back/pattern/go_nogo) from
+    // showing n-back when ScenarioChoice modality is requested.
+    return this.generateModalityFallbackTask(modality, module);
+  }
+
+  /**
+   * Generate a generic task appropriate for the modality when the module
+   * doesn't have any of the preferred task types. This ensures ScenarioChoice
+   * always shows a dilemma, ImmersiveRPG always shows a scenario, etc.
+   */
+  private generateModalityFallbackTask(modality: Modality, module: StageAssessment): AssessmentTask {
+    const prefix = `${module.line.toLowerCase()}-${module.stage.toLowerCase()}`;
+    switch (modality) {
+      case 'ScenarioChoice':
+      case 'ImmersiveRPG':
+        return {
+          id: `generic-dilemma-${prefix}`,
+          type: 'dilemma',
+          description: `A developmental dilemma at the ${module.stage} stage of ${module.line} development`,
+          parameters: { dilemmaType: 'developmental', choices: 4 },
+          measures: ['depth', 'coherence'],
+        };
+      case 'LanguageReflective':
+        return {
+          id: `generic-self-report-${prefix}`,
+          type: 'self_report',
+          description: `Self-inquiry reflection at the ${module.stage} stage of ${module.line} development`,
+          parameters: {},
+          measures: ['depth', 'metacognition'],
+        };
+      case 'SocialCooperative':
+        return {
+          id: `generic-cooperation-${prefix}`,
+          type: 'cooperation',
+          description: `Cooperative dynamics at the ${module.stage} stage of ${module.line} development`,
+          parameters: {},
+          measures: ['depth', 'coherence'],
+        };
+      case 'Embodied':
+        return {
+          id: `generic-hold-${prefix}`,
+          type: 'hold',
+          description: `Attentional hold at the ${module.stage} stage of ${module.line} development`,
+          parameters: { items: 3, holdDurationMs: 5000 },
+          measures: ['accuracy', 'consistency'],
+        };
+      case 'Strategic':
+        return {
+          id: `generic-pattern-${prefix}`,
+          type: 'pattern_prediction',
+          description: `Pattern recognition at the ${module.stage} stage of ${module.line} development`,
+          parameters: { disks: 3, attempts: 4 },
+          measures: ['accuracy', 'complexity_handled'],
+        };
+      case 'Deterministic':
+      default:
+        // For Deterministic, use whatever the module has — it should always have cognitive tasks
+        return module.tasks[0] ?? {
+          id: `generic-nback-${prefix}`,
+          type: 'n_back',
+          description: `Working memory challenge at the ${module.stage} stage of ${module.line} development`,
+          parameters: { n: 2, trials: 12 },
+          measures: ['accuracy', 'response_time'],
+        };
+    }
   }
 
   /**
