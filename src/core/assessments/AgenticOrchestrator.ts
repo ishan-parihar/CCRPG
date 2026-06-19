@@ -175,11 +175,41 @@ export class AgenticOrchestrator {
     this.forceShadow = params.forceShadow;
   }
 
+  /**
+   * Build a narrative continuity context from the last 3 encounters.
+   * Injected into both LLM system prompt and fallback task framing.
+   */
+  private buildContinuityContext(): string {
+    if (this.history.length === 0) return '';
+    const recent = this.history.slice(-3);
+    const lines = recent.map((r, i) => {
+      const passed = Object.values(r.polarityTrace.driveDirectionality).every(d => d === 'HealthyBalanced');
+      const shadow = r.shadowSurfaced ? ` Shadow: ${r.shadowSurfaced}.` : '';
+      const altShift = r.altitudeShift ? ` Line ${r.altitudeShift.line} advanced to ${r.altitudeShift.to}.` : '';
+      return `  ${i + 1}. ${passed ? 'Passed' : 'Failed'} — ${r.narrativeSummary.slice(0, 120)}${shadow}${altShift}`;
+    });
+    return `\n[RECENT ENCOUNTERS - build upon these]` + lines.join('\n');
+  }
+
+  /**
+   * Build a brief history prefix for fallback task framing.
+   */
+  private buildBriefHistory(): string {
+    if (this.history.length === 0) return '';
+    const last3 = this.history.slice(-3);
+    const summaries = last3.map(r => {
+      const passed = Object.values(r.polarityTrace.driveDirectionality).every(d => d === 'HealthyBalanced');
+      return passed ? 'a success' : 'a struggle';
+    });
+    return `You have faced ${this.history.length} challenges before. Recent: ${summaries.join(', ')}. `;
+  }
+
   public async run(): Promise<OrchestratorResult> {
     const [line, stage] = this.encounter.moduleRef.split(':') as [Line, Stage];
     const now = Date.now();
 
     // 1. Build context system prompt
+    const continuityContext = this.buildContinuityContext();
     const contextInput = {
       encounter: this.encounter,
       significator: this.significator,
@@ -193,13 +223,14 @@ export class AgenticOrchestrator {
     // Build assessment module context for the LLM
     const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';
 
-    const systemPrompt = `${context.systemPrompt}${assessmentContext}
+    const systemPrompt = `${context.systemPrompt}${assessmentContext}${continuityContext}
 [AGENT RULES]
 1. You are the Agentic Game Master driving this developmental encounter.
 2. Present the encounter situationally and narratively. If you need to present stimuli, choices, or ask questions, ALWAYS call the 'ask_user_question' tool. Do not ask questions in raw text responses.
 3. Keep the flow interactive, building upon prior answers.
 4. This encounter has a budget of 2 exchanges. After the player has responded to 2 questions, you MUST call 'complete_encounter'. Do NOT generate more than 2 ask_user_question calls.
-5. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).`;
+5. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).
+6. If RECENT ENCOUNTERS are listed, reference them subtly — the player's journey has continuity.`;
 
     // If noLlm flag is set, skip LLM entirely and go directly to fallback
     if (this.noLlm) {
@@ -670,6 +701,16 @@ export class AgenticOrchestrator {
       altitudeShift: altitudeShift ?? null,
     };
 
+    // Apply failure consequences: accelerate theta-decay for failed modules
+    if (!evaluation.passed) {
+      const [fl, fs] = this.encounter.moduleRef.split(':');
+      const cellKey = `${fl}:${fs}`;
+      const currentTs = this.significator.theta.lastEncounter[cellKey] ?? 0;
+      if (currentTs > now - 3600000) {
+        (this.significator.theta.lastEncounter as Record<string, number>)[cellKey] = now - 7200000;
+      }
+    }
+
     // Apply consequences — shadow entries will be created if shadowSurfaced is set
     const updated = applyConsequences(this.significator, this.world, updatedRecord, this.encounter);
 
@@ -770,12 +811,12 @@ export class AgenticOrchestrator {
     this._currentRendererEvaluate = renderer.evaluate;
     this._currentTaskStartTime = Date.now();
 
-    // Prepend holon-narrative framing to the question
-    // Preserve the task-type header from the renderer (e.g. 'N-Back(2)', 'Dilemma')
+    // Prepend holon-narrative framing to the question with continuity context
+    const historyPrefix = this.buildBriefHistory();
     const enrichedPrompt: AskUserQuestionParams = {
       questions: renderer.prompt.questions.map(q => ({
         ...q,
-        question: `${holonName} presents a challenge.\n\n${q.question}`,
+        question: `${historyPrefix}${holonName} presents a challenge.\n\n${q.question}`,
         header: q.header, // Keep the renderer's meaningful header
       })),
     };
@@ -1322,7 +1363,9 @@ ${probes}${rubric}
       const existing = this.world.npcRelationships.find(r => r.holonId === this.encounter.holonSource);
       const oldValue = existing ? existing.strength : 0.5;
       const delta = params.passed ? 0.05 : -0.05;
-      const newValue = Math.max(0, Math.min(1, oldValue + delta));
+      // Progressive degradation: failures matter more as session progresses
+      const effectiveDelta = params.passed ? delta : delta * (1 + Math.min(1.5, this.history.length * 0.05));
+      const newValue = Math.max(0, Math.min(1, oldValue + effectiveDelta));
       holonDeltas = [{
         holonId: this.encounter.holonSource,
         field: 'relationshipStrength',
