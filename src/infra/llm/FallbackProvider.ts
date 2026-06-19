@@ -184,6 +184,146 @@ const DETERMINISTIC_AMBER: readonly FallbackContent[] = [
   },
 ];
 
+// ---------------------------------------------------------------------------
+// Green stage (Pluralistic/Integrative) — diversity, empathy, systemic thinking
+// ---------------------------------------------------------------------------
+
+const LANGUAGE_REFLECTIVE_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'You hold two contradictory truths simultaneously. What does the space between them feel like?',
+    followUps: ['Can both be true?', 'What emerges from the tension?'],
+  },
+  {
+    prompt: 'Someone whose worldview is entirely different from yours shares their pain. What moves in you?',
+    followUps: ['Can you hold their truth without losing your own?', 'What do you see in them that mirrors you?'],
+  },
+  {
+    prompt: 'The system you belong to causes harm you did not choose. What is your responsibility?',
+    followUps: ['Where does accountability end and complicity begin?', 'What would repair look like?'],
+  },
+];
+
+const SCENARIO_CHOICE_GREEN: readonly FallbackContent[] = [
+  {
+    scenario: 'A community meeting erupts into conflict between two marginalized groups who both need the same limited resource. Both have legitimate claims. The facilitator looks to you.',
+    options: [
+      { id: 'mediate', text: 'Facilitate a dialogue where both groups share their stories' },
+      { id: 'equity', text: 'Allocate based on greatest need, accepting the political fallout' },
+      { id: 'creative', text: 'Propose a collaborative solution neither group has considered' },
+    ],
+  },
+  {
+    scenario: 'Your organization partners with a group whose values differ from yours in significant ways. The partnership would achieve a shared goal but requires compromise on deeply held principles.',
+    options: [
+      { id: 'partner', text: 'Accept the tension — coalition-building requires uncomfortable alliances' },
+      { id: 'decline', text: 'Refuse — some principles are non-negotiable' },
+    ],
+  },
+];
+
+const DETERMINISTIC_GREEN: readonly FallbackContent[] = [
+  {
+    framing: 'Multiple perspectives converge. Hold them all without collapsing into one.',
+  },
+  {
+    framing: 'The pattern contains its own contradiction. Embrace the complexity.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// Turquoise stage (Integral/Systemic) — holonic awareness, global consciousness
+// ---------------------------------------------------------------------------
+
+const LANGUAGE_REFLECTIVE_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'You feel the pulse of something vast beneath the surface of this moment. What is it?',
+    followUps: ['How does it change what you see?', 'What is it asking of you?'],
+  },
+  {
+    prompt: 'Every being you encounter is simultaneously a teacher, a student, and yourself. What shifts when you see this?',
+    followUps: ['Can you hold this without losing practicality?', 'Where does this vision meet resistance in you?'],
+  },
+];
+
+const SCENARIO_CHOICE_TURQUOISE: readonly FallbackContent[] = [
+  {
+    scenario: 'You perceive the interconnection between a local crisis and a global pattern. The appropriate response spans scales — individual, community, and systemic — simultaneously.',
+    options: [
+      { id: 'multi', text: 'Act on all three scales at once — the pattern demands integral response' },
+      { id: 'local', text: 'Start where you stand — the global will follow the local' },
+      { id: 'vision', text: 'Hold the vision — sometimes presence is the most potent action' },
+    ],
+  },
+];
+
+const DETERMINISTIC_TURQUOISE: readonly FallbackContent[] = [
+  {
+    framing: 'The integral pattern emerges. See the whole within the part.',
+  },
+];
+
+// ---------------------------------------------------------------------------
+// White stage (Superintegral/Meta-systemic) — beyond all frameworks
+// ---------------------------------------------------------------------------
+
+const LANGUAGE_REFLECTIVE_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'All maps dissolve. What remains when even the concept of "development" falls away?',
+    followUps: ['Is there something here that cannot be named?', 'What does awareness look like without a subject?'],
+  },
+];
+
+const SCENARIO_CHOICE_WHITE: readonly FallbackContent[] = [
+  {
+    scenario: 'You stand at the threshold of something that has no precedent. Every framework you have ever learned offers guidance, and none of them apply.',
+    options: [
+      { id: 'trust', text: 'Trust what arises — let the response emerge from silence' },
+      { id: 'serve', text: 'Ask what is needed, not what is possible' },
+    ],
+  },
+];
+
+const DETERMINISTIC_WHITE: readonly FallbackContent[] = [
+  {
+    framing: 'Beyond form, beyond measure. What is present without being named?',
+  },
+];
+
+// Infrared and Magenta stage content
+const LANGUAGE_REFLECTIVE_INFRARED: readonly FallbackContent[] = [
+  {
+    prompt: 'Something stirs in the depths. Before words, before thought — what is it?',
+    followUps: ['Can you stay with it?', 'What does the body know?'],
+  },
+];
+
+const LANGUAGE_REFLECTIVE_MAGENTA: readonly FallbackContent[] = [
+  {
+    prompt: 'The old stories speak through you. What voice rises when you stop trying to think?',
+    followUps: ['Does the story belong to you or to something older?', 'What would happen if you let it finish?'],
+  },
+];
+
+const SCENARIO_CHOICE_INFRARED: readonly FallbackContent[] = [
+  {
+    scenario: 'Raw sensation. Before interpretation, before story — something moves through you. It has no name.',
+    options: [
+      { id: 'follow', text: 'Follow the sensation wherever it leads' },
+      { id: 'ground', text: 'Ground into the body and let it pass' },
+    ],
+  },
+];
+
+const SCENARIO_CHOICE_MAGENTA: readonly FallbackContent[] = [
+  {
+    scenario: 'The ritual has begun. The circle demands participation. Something ancient stirs in the collective space.',
+    options: [
+      { id: 'join', text: 'Surrender to the ritual — let the current carry you' },
+      { id: 'witness', text: 'Hold the edge — observe the mystery without drowning' },
+    ],
+  },
+];
+
 // Generic fallbacks for stages/modalities without specific content
 const GENERIC_LANGUAGE_REFLECTIVE: FallbackContent = {
   prompt: 'What moved you to act?',
@@ -253,23 +393,36 @@ export function getFallback(modality: Modality, _line: Line, stage: Stage): Fall
   switch (modality) {
     case 'LanguageReflective':
       switch (stage) {
+        case 'Infrared': return pickRandom(LANGUAGE_REFLECTIVE_INFRARED);
+        case 'Magenta': return pickRandom(LANGUAGE_REFLECTIVE_MAGENTA);
         case 'Red': return pickRandom(LANGUAGE_REFLECTIVE_RED);
-        case 'Orange': return pickRandom(LANGUAGE_REFLECTIVE_ORANGE);
         case 'Amber': return pickRandom(LANGUAGE_REFLECTIVE_AMBER);
+        case 'Orange': return pickRandom(LANGUAGE_REFLECTIVE_ORANGE);
+        case 'Green': return pickRandom(LANGUAGE_REFLECTIVE_GREEN);
+        case 'Turquoise': return pickRandom(LANGUAGE_REFLECTIVE_TURQUOISE);
+        case 'White': return pickRandom(LANGUAGE_REFLECTIVE_WHITE);
         default: return GENERIC_LANGUAGE_REFLECTIVE;
       }
     case 'ScenarioChoice':
       switch (stage) {
+        case 'Infrared': return pickRandom(SCENARIO_CHOICE_INFRARED);
+        case 'Magenta': return pickRandom(SCENARIO_CHOICE_MAGENTA);
         case 'Red': return pickRandom(SCENARIO_CHOICE_RED);
-        case 'Orange': return pickRandom(SCENARIO_CHOICE_ORANGE);
         case 'Amber': return pickRandom(SCENARIO_CHOICE_AMBER);
+        case 'Orange': return pickRandom(SCENARIO_CHOICE_ORANGE);
+        case 'Green': return pickRandom(SCENARIO_CHOICE_GREEN);
+        case 'Turquoise': return pickRandom(SCENARIO_CHOICE_TURQUOISE);
+        case 'White': return pickRandom(SCENARIO_CHOICE_WHITE);
         default: return GENERIC_SCENARIO_CHOICE;
       }
     case 'Deterministic':
       switch (stage) {
         case 'Red': return pickRandom(DETERMINISTIC_RED);
-        case 'Orange': return pickRandom(DETERMINISTIC_ORANGE);
         case 'Amber': return pickRandom(DETERMINISTIC_AMBER);
+        case 'Orange': return pickRandom(DETERMINISTIC_ORANGE);
+        case 'Green': return pickRandom(DETERMINISTIC_GREEN);
+        case 'Turquoise': return pickRandom(DETERMINISTIC_TURQUOISE);
+        case 'White': return pickRandom(DETERMINISTIC_WHITE);
         default: return GENERIC_DETERMINISTIC;
       }
     case 'Strategic':

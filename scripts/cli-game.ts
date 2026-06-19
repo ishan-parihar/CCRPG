@@ -448,11 +448,11 @@ async function runAgenticEncounter(
           const selectedOpt = q.options?.[selectedIdx];
           const selectedLabel = selectedOpt?.label ?? '';
 
-          // Shadow keyword injection for testing — randomly inject (40% chance)
-          // to allow SOME encounters to pass and demonstrate altitude shifts.
+          // Shadow keyword injection for testing — randomly inject (10% chance)
+          // to allow MOST encounters to pass and demonstrate altitude shifts.
           // When FORCE_SHADOW=none, skip injection entirely for clean progression.
           const shadowInjections = ['', 'i feel the need to withdraw from this confrontation', 'i must transcend these petty concerns and reach enlightenment', 'i prefer to stay here where it is safe and comfortable'];
-          const injectShadow = FORCE_SHADOW !== 'none' && selectedIdx > 0 && Math.random() < 0.4;
+          const injectShadow = FORCE_SHADOW !== 'none' && selectedIdx > 0 && Math.random() < 0.1;
           const writeInShadow = injectShadow ? (shadowInjections[selectedIdx] ?? '') : '';
 
           if (writeInShadow) {
@@ -709,6 +709,17 @@ async function runFullSession(): Promise<void> {
   renderShadows(currentSig);
   renderDrives(currentSig);
 
+  // World-building atmosphere
+  if (!JSON_MODE) {
+    const atmospheres = [
+      `${C.dim}The world stirs with latent potential. Fragments of memory surface — echoes of journeys not yet taken.${C.reset}`,
+      `${C.dim}A pale light filters through the veil. The architecture of consciousness awaits your engagement.${C.reset}`,
+      `${C.dim}The field of development hums with quiet energy. Each encounter will shape the landscape of your becoming.${C.reset}`,
+      `${C.dim}Between the seen and unseen, the developmental engines prepare their catalysts. Step forward.${C.reset}`,
+    ];
+    console.log(`\n  ${atmospheres[Math.floor(Math.random() * atmospheres.length)]}`);
+  }
+
   emitEvent('session_started', {
     cci: sessionState.cci.composite,
     theme: sessionState.strategy.theme,
@@ -776,6 +787,17 @@ async function runFullSession(): Promise<void> {
       : tickResult.encounter.sessionPosition === 'cooldown' ? 0.9 : 0.5);
     renderSessionPosition(`${i + 1}/${encounterCount}`, tickResult.encounter.sessionPosition, encProgress);
     printEncounter(tickResult.encounter);
+
+    // Transition indicator
+    if (i > 0 && !JSON_MODE) {
+      const transitions = [
+        `${C.dim}The previous encounter settles into memory. A new catalyst emerges...${C.reset}`,
+        `${C.dim}The developmental field shifts. What comes next is precisely what you need...${C.reset}`,
+        `${C.dim}Integration ripples outward. The next challenge crystallizes...${C.reset}`,
+        `${C.dim}The veil parts once more. A new mirror reflects...${C.reset}`,
+      ];
+      console.log(`\n  ${transitions[Math.floor(Math.random() * transitions.length)]}`);
+    }
 
     // Run encounter through AgenticOrchestrator (all modalities)
     try {
@@ -857,6 +879,27 @@ async function runFullSession(): Promise<void> {
   const sessionEnd = endSession(currentSig, sessionState, now + encounterCount * 5000);
 
   banner('SESSION END');
+
+  // Session closure narrative
+  if (!JSON_MODE) {
+    // Track pass/fail from consequence records — check if the polarity trace
+    // indicates a healthy integration (HealthyBalanced on all drives = passed)
+    const passedCount = history.filter(r => {
+      const dirs = Object.values(r.polarityTrace.driveDirectionality);
+      return dirs.every(d => d === 'HealthyBalanced');
+    }).length;
+    const failedCount = completedCount - passedCount;
+    const shadowsSurfaced = sessionEnd.summary.shadowsSurfaced;
+    const altShifts = history.filter(r => r.altitudeShift !== null).length;
+
+    const closureNarratives = [
+      `The veil settles. ${completedCount} encounters etched their mark upon the developmental landscape. ${passedCount > failedCount ? `${C.green}More capacities were integrated than deferred${C.reset}.` : `${C.yellow}The tension holds — integration remains the work ahead${C.reset}.`}${altShifts > 0 ? ` ${C.magenta}${altShifts} line${altShifts > 1 ? 's' : ''} advanced${C.reset}.` : ''}${shadowsSurfaced > 0 ? ` ${C.red}${shadowsSurfaced} shadow${shadowsSurfaced > 1 ? 's' : ''} surfaced for attention${C.reset}.` : ''}`,
+      `${C.dim}The session closes. Each encounter was a mirror — reflecting not who you are, but who you are becoming.${C.reset}`,
+    ];
+    console.log(`\n  ${closureNarratives[0]}`);
+    console.log(`  ${closureNarratives[1]}`);
+  }
+
   info('encounters completed', String(completedCount));
   info('total encounters', String(currentSig.totalEncounters));
   info('total sessions', String(sessionEnd.sig.totalSessions));

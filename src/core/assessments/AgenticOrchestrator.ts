@@ -1040,10 +1040,38 @@ export class AgenticOrchestrator {
       White: 'a transcendent',
     };
 
+    // Randomized narrative pools for variety within same-line encounters
+    const passedOpenings = [
+      `${holonName} guided you through ${modalityDesc[modality] ?? 'an assessment'} —`,
+      `Through ${modalityDesc[modality] ?? 'an assessment'}, ${holonName} drew forth your capacity —`,
+      `${holonName} presented ${taskLabel}, and you rose to meet it —`,
+      `The encounter unfolded through ${modalityDesc[modality] ?? 'an assessment'} — ${holonName} witnessed your engagement —`,
+    ];
+    const passedClosings = [
+      `The ${module.line.toLowerCase()} line strengthens under your attention.`,
+      `The world registers your engagement. The ${module.line.toLowerCase()} capacity integrates further.`,
+      `Something shifts in the field — the ${module.line.toLowerCase()} dimension acknowledges your effort.`,
+      `The developmental architecture responds. The ${module.line.toLowerCase()} current deepens.`,
+    ];
+    const failedOpenings = [
+      `${holonName} presented ${taskLabel} —`,
+      `Through ${modalityDesc[modality] ?? 'an assessment'}, ${holonName} offered a mirror —`,
+      `The encounter arrived as ${modalityDesc[modality] ?? 'an assessment'}, delivered by ${holonName} —`,
+      `${holonName} set before you ${taskLabel} —`,
+    ];
+    const failedClosings = [
+      `The ${module.line.toLowerCase()} capacity holds its tension — the work continues.`,
+      `Areas remain where the ${module.line.toLowerCase()} capacity is still integrating.`,
+      `The ${module.stage} layer retains its pressure. Growth awaits the next engagement.`,
+      `The challenge reveals where the ${module.line.toLowerCase()} dimension still seeks balance.`,
+    ];
+
+    const pick = <T>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)]!;
+
     if (passed) {
-      return `${holonName} guided you through ${modalityDesc[modality] ?? 'an assessment'} — ${taskLabel} at the ${module.stage} stage of ${module.line} development. You demonstrated ${stageDesc[module.stage] ?? ''} expression of the ${module.line.toLowerCase()} capacity. The world registers your engagement and the ${module.line.toLowerCase()} line strengthens.`;
+      return `${pick(passedOpenings)} ${taskLabel} at the ${module.stage} stage of ${module.line} development. You demonstrated ${stageDesc[module.stage] ?? ''} expression of the ${module.line.toLowerCase()} capacity. ${pick(passedClosings)}`;
     } else {
-      return `${holonName} presented ${taskLabel} at the ${module.stage} stage of ${module.line} development. The challenge revealed areas where the ${module.line.toLowerCase()} capacity is still integrating. The ${module.stage} layer holds its tension — the encounter adds to your developmental pressure.`;
+      return `${pick(failedOpenings)} ${taskLabel} at the ${module.stage} stage of ${module.line} development. ${pick(failedClosings)}`;
     }
   }
 

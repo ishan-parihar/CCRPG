@@ -101,7 +101,7 @@ function section(title: string): void {
 }
 
 const MOCK_ENCOUNTER: ScheduledEncounter = {
-  id: 'audit-enc', moduleRef: 'Cognitive/Red', modality: 'Deterministic',
+  id: 'audit-enc', moduleRef: 'Cognitive:Red', modality: 'Deterministic',
   targetLines: ['Cognitive'], stage: 'Red', holonSource: 'audit-holon',
   shadowTarget: null, polarityMode: 'Exploring', difficulty: 0.5,
   sessionPosition: 'peak', priority: 0.5, driveTarget: null, executionMode: 'capacity',
