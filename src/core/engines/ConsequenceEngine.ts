@@ -82,8 +82,15 @@ export function applyConsequences(
       );
     } else {
       const severity = Math.min(1, 0.3 + (newDrives.fixationRisk[encounter.driveTarget ?? 'Agency'] ?? 0) * 0.4);
+      const newId = `shadow-${record.timestamp}`;
+
+      // G.18: Compound shadow detection — same quadrant on 2+ lines
+      const partner = newShadowEntries.find(
+        e => e.quadrant === record.shadowSurfaced && e.line !== line && e.resolvedAt === null,
+      );
+
       const entry: ShadowEntry = {
-        id: `shadow-${record.timestamp}`,
+        id: newId,
         quadrant: record.shadowSurfaced,
         line,
         stage,
@@ -91,10 +98,18 @@ export function applyConsequences(
         surfacedAt: record.timestamp,
         resolvedAt: null,
         recurrenceCount: 0,
-        compoundPartner: null,
+        compoundPartner: partner?.id ?? null,
         severity,
       };
       newShadowEntries.push(entry);
+
+      // Back-link the partner to this entry
+      if (partner) {
+        const idx = newShadowEntries.findIndex(e => e.id === partner.id);
+        if (idx >= 0) {
+          newShadowEntries[idx] = { ...newShadowEntries[idx], compoundPartner: newId };
+        }
+      }
     }
   }
 

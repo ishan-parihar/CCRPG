@@ -908,6 +908,20 @@ INSTRUCTIONS:
       ? { quadrant: forcedQuadrant, intensity: 0.7 }
       : this.detectShadowFromResponse(playerResponseText, currentModality, isWriteIn);
 
+    // G.25: Wire ShadowDetector — detect behavioral shadows from encounter patterns
+    const { detectShadows, computeBehavioralPatterns } = await import('../usecases/ShadowDetector.js');
+    const recentEncounters = this.significator.recentEncounters.slice(-20);
+    const patterns = computeBehavioralPatterns(recentEncounters);
+    const behavioralSignals = detectShadows(this.significator, patterns);
+    // Merge: keyword detection takes priority; behavioral signals are fallback
+    const BEHAVIORAL_QUADRANT_MAP: Record<string, ShadowQuadrant> = {
+      fixation: 'DarkAddiction', regression: 'DarkAllergy',
+      repression: 'GoldenAddiction', goldenAllergy: 'GoldenAllergy',
+    };
+    const effectiveShadow = shadowSignal ?? (behavioralSignals.length > 0
+      ? { quadrant: BEHAVIORAL_QUADRANT_MAP[behavioralSignals[0]!.type] ?? 'DarkAddiction', intensity: 0.6 }
+      : null);
+
     // If forceShadow is active, propagate to drive signals AND force-fail the encounter
     if (forcedQuadrant && this._currentRendererEvaluate) {
       const forcedDrive = forcedQuadrant === 'DarkAddiction' ? 'agency'
@@ -958,7 +972,7 @@ INSTRUCTIONS:
       stageOrientation: evaluation.polarityDirection === 'sto' ? 'ReachingHigher' : 'Homeostatic',
       sourceOfNourishment: evaluation.polarityDirection === 'sto' ? 'HigherRealm'
         : (evaluation.polarityDirection === 'sts' ? 'LowerRealm' : 'Ambivalent'),
-      shadowSurfaced: shadowSignal?.quadrant ?? null,
+      shadowSurfaced: effectiveShadow?.quadrant ?? null,
       shadowResolvedId: null,
       narrativeSummary,
     };
@@ -1725,7 +1739,14 @@ ${probes}${rubric}
     const updated = applyConsequences(this.significator, this.world, updatedRecord, this.encounter);
 
     // Accumulate PESTLE tension
-    const dim = PESTLE_DIMS[Math.floor(Math.random() * PESTLE_DIMS.length)]!;
+    // G.26: PESTLE correlation — use lineToPestle mapping instead of random
+    const lineToPestleLlm: Record<string, keyof PESTLETension> = {
+      Cognitive: 'technological', Emotional: 'social', Moral: 'legal',
+      Intrapersonal: 'environmental', Spiritual: 'environmental', Somatic: 'environmental',
+      Willpower: 'political', Interpersonal: 'social',
+    };
+    const [encLine] = this.encounter.moduleRef.split(':');
+    const dim = lineToPestleLlm[encLine] ?? PESTLE_DIMS[Math.floor(Math.random() * PESTLE_DIMS.length)]!;
     const newTension = accumulateTension(
       (updated.world as any).pestleTension ?? { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
       dim,
