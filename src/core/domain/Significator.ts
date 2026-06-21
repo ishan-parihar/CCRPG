@@ -23,6 +23,13 @@ export interface TransformationRecord {
   readonly catalystCount: number;
 }
 
+export interface EncounterRecord {
+  readonly line: Line;
+  readonly passed: boolean;
+  readonly driveChoice?: Drive;
+  readonly timestamp: number;
+}
+
 export interface ThetaTimestamps {
   readonly lastEncounter: Readonly<Record<string, number>>;
 }
@@ -77,6 +84,7 @@ export interface Significator {
   readonly totalEncounters: number;
   readonly totalSessions: number;
   readonly avoidedEncounters: readonly string[];
+  readonly recentEncounters: readonly EncounterRecord[];
 }
 
 function zeroRecord<K extends string>(keys: readonly K[]): Record<K, number> {
@@ -124,5 +132,6 @@ export function createSignificator(
     totalEncounters: 0,
     totalSessions: 0,
     avoidedEncounters: [],
+    recentEncounters: [],
   };
 }

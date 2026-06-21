@@ -1108,22 +1108,10 @@ async function runFullSession(): Promise<void> {
   let currentWorld = world;
 
   banner('SESSION START');
-  renderCCIDisplay(sessionState.cci);
   info('theme', `${chalk.cyan(sessionState.strategy.theme)}`);
   info('target', `${encounterCount} encounters`);
   console.log('');
-  renderAltitudesChart(currentSig);
-  console.log('');
-  renderShadows(currentSig);
-  renderDrives(currentSig);
 
-  if (!JSON_MODE) {
-    const bleedThrough = detectBleedThrough(currentSig.theta.lastEncounter, Date.now());
-    console.log('');
-    console.log(renderLayers(currentSig, bleedThrough));
-  }
-
-  // World-building atmosphere
   if (!JSON_MODE) {
     const atmospheres = [
       `${chalk.dim('The world stirs with latent potential. Fragments of memory surface — echoes of journeys not yet taken.')}`,
@@ -1218,7 +1206,7 @@ async function runFullSession(): Promise<void> {
         selectedEncounter = offers[choice];
         const skipped = offers.filter((_, idx) => idx !== choice).map(e => e.id);
         if (skipped.length > 0) {
-          currentSig = { ...currentSig, avoidedEncounters: [...currentSig.avoidedEncounters, ...skipped] };
+          currentSig = { ...currentSig, avoidedEncounters: [...(currentSig.avoidedEncounters ?? []), ...skipped] };
         }
       }
     }

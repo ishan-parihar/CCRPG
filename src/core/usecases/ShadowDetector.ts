@@ -1,4 +1,4 @@
-import type { Significator } from '../domain/Significator.js';
+import type { Significator, EncounterRecord } from '../domain/Significator.js';
 import type { ShadowSignal } from '../domain/SharedTypes.js';
 import { ALL_LINES, type Line } from '../domain/Line.js';
 import { stageOrdinal } from '../domain/Stage.js';
@@ -8,6 +8,40 @@ interface BehavioralPattern {
   readonly avoidanceRate: number;
   readonly failureStreak: number;
   readonly defensiveChoiceRate: number;
+}
+
+export function computeBehavioralPatterns(
+  encounters: readonly EncounterRecord[],
+): readonly BehavioralPattern[] {
+  if (encounters.length === 0) return [];
+
+  const patterns: BehavioralPattern[] = [];
+  const now = Date.now();
+  const recentWindow = 30 * 60 * 1000;
+  const recent = encounters.filter(e => now - e.timestamp < recentWindow);
+
+  for (const line of ALL_LINES) {
+    const lineEncounters = recent.filter(e => e.line === line);
+    if (lineEncounters.length < 2) continue;
+
+    const failures = lineEncounters.filter(e => !e.passed);
+    const avoidanceRate = failures.length / lineEncounters.length;
+
+    let failureStreak = 0;
+    for (let i = lineEncounters.length - 1; i >= 0; i--) {
+      if (!lineEncounters[i].passed) failureStreak++;
+      else break;
+    }
+
+    const defensiveChoices = lineEncounters.filter(
+      e => e.driveChoice === 'Agency' && !e.passed,
+    );
+    const defensiveChoiceRate = defensiveChoices.length / lineEncounters.length;
+
+    patterns.push({ line, avoidanceRate, failureStreak, defensiveChoiceRate });
+  }
+
+  return patterns;
 }
 
 export function detectShadows(
@@ -68,6 +102,15 @@ export function detectShadows(
           line: pattern.line,
           detectedAtMs: now,
           description: `${pattern.line}: high defensive choice rate (${(pattern.defensiveChoiceRate * 100).toFixed(0)}%) — possible golden-shadow bypass.`,
+        });
+      }
+      // GoldenAllergy: refusing the call to grow — high avoidance of challenging encounters
+      if (pattern.avoidanceRate > 0.5 && pattern.defensiveChoiceRate < 0.3) {
+        signals.push({
+          type: 'goldenAllergy',
+          line: pattern.line,
+          detectedAtMs: now,
+          description: `${pattern.line}: moderate avoidance (${(pattern.avoidanceRate * 100).toFixed(0)}%) with low defensive engagement — possible refusal to grow.`,
         });
       }
     }

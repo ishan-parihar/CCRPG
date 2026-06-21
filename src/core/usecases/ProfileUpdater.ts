@@ -5,7 +5,7 @@
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
 import { LINE_QUADRANT } from '../domain/Line.js';
-import type { Significator, DriveState } from '../domain/Significator.js';
+import type { Significator, DriveState, EncounterRecord } from '../domain/Significator.js';
 import type { TaskSlug } from '../domain/SharedTypes.js';
 import type { ShadowQuadrant } from '../domain/enums.js';
 import { stageOrdinal } from '../domain/Stage.js';
@@ -13,7 +13,7 @@ import { thresholdToStage } from './ThresholdMaps.js';
 import { capToCeiling } from './LineCeilings.js';
 import { computeRayProfile } from './RayProfileComputer.js';
 import { synthesiseStage } from './StageSynthesizer.js';
-import { detectShadows } from './ShadowDetector.js';
+import { detectShadows, computeBehavioralPatterns } from './ShadowDetector.js';
 import type { ShadowLedger } from '../domain/ShadowLedger.js';
 
 /** Result of a single encounter's cognitive task. */
@@ -40,6 +40,7 @@ const SIGNAL_TO_QUADRANT: Record<string, ShadowQuadrant> = {
   fixation: 'DarkAddiction',
   regression: 'DarkAllergy',
   repression: 'GoldenAddiction',
+  goldenAllergy: 'GoldenAllergy',
 };
 
 /**
@@ -73,6 +74,14 @@ export function updateProfile(sig: Significator, result: EncounterResult): Signi
   const newDrives = updateDriveRisk(sig.drives, result.driveChoice);
 
   // 6. Build updated Significator for shadow detection
+  const newEncounter: EncounterRecord = {
+    line: result.line,
+    passed: result.trials.filter(t => t.correct).length / result.trials.length >= 0.7,
+    driveChoice: result.driveChoice,
+    timestamp: Date.now(),
+  };
+  const recentEncounters = [...sig.recentEncounters, newEncounter].slice(-20);
+
   const updated: Significator = {
     ...sig,
     altitudes: currentAltitudes,
@@ -80,10 +89,12 @@ export function updateProfile(sig: Significator, result: EncounterResult): Signi
     rayProfile: newRayProfile,
     drives: newDrives,
     totalEncounters: sig.totalEncounters + 1,
+    recentEncounters,
   };
 
-  // 7. Detect shadows and surface new entries
-  const signals = detectShadows(updated);
+  // 7. Compute behavioral patterns and detect shadows
+  const patterns = computeBehavioralPatterns(recentEncounters);
+  const signals = detectShadows(updated, patterns);
   const now = Date.now();
   const existingEntries = [...sig.shadows.entries];
   for (const signal of signals) {
@@ -91,6 +102,13 @@ export function updateProfile(sig: Significator, result: EncounterResult): Signi
       e => e.line === signal.line && e.resolvedAt === null,
     );
     if (!alreadyTracked) {
+      // ponytail: severity gradient based on stage gap + line altitude
+      const lineOrd = stageOrdinal(currentAltitudes[signal.line]);
+      const stageOrd = stageOrdinal(newStage);
+      const gapSeverity = Math.min(1, (stageOrd - lineOrd) * 0.25);
+      const altitudeSeverity = 1 - (lineOrd / 7);
+      const severity = Math.min(1, gapSeverity * 0.6 + altitudeSeverity * 0.4);
+
       existingEntries.push({
         id: `shadow-${now}-${signal.line}`,
         quadrant: SIGNAL_TO_QUADRANT[signal.type] ?? 'DarkAddiction',
@@ -101,7 +119,7 @@ export function updateProfile(sig: Significator, result: EncounterResult): Signi
         resolvedAt: null,
         recurrenceCount: 0,
         compoundPartner: null,
-        severity: 1,
+        severity,
       });
     }
   }

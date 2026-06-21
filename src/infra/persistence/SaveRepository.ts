@@ -147,9 +147,14 @@ export function loadSave(): Significator | null {
     if (fs.existsSync(CLI_SAVE_FILE)) {
       const raw = fs.readFileSync(CLI_SAVE_FILE, 'utf8');
       const parsed = JSON.parse(raw);
-      // Basic validation: must have required fields
       if (parsed && typeof parsed.id === 'string' && typeof parsed.currentStage === 'string' && parsed.altitudes) {
-        return parsed as Significator;
+        return {
+          ...parsed,
+          avoidedEncounters: parsed.avoidedEncounters ?? [],
+          recentEncounters: parsed.recentEncounters ?? [],
+          codexEntries: parsed.codexEntries ?? [],
+          transformations: parsed.transformations ?? [],
+        } as Significator;
       }
     }
   } catch { /* ignore corrupt saves */ }

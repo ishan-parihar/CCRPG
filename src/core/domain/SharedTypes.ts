@@ -28,7 +28,7 @@ export interface StaircaseState {
 }
 
 export interface ShadowSignal {
-  readonly type: 'fixation' | 'regression' | 'repression';
+  readonly type: 'fixation' | 'regression' | 'repression' | 'goldenAllergy';
   readonly line: Line;
   readonly detectedAtMs: number;
   readonly description: string;

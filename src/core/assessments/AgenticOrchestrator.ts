@@ -15,6 +15,7 @@ import { processOutcome, applyConsequences, type PlayerResponse } from '../engin
 import { accumulateTension, tryTriggerMacroEvent, type PESTLETension } from '../engines/MacroCatalystEngine.js';
 import type { AgentMessage, AskUserQuestionParams, AskUserQuestionResult } from './agentTypes.js';
 import { getRenderer } from './cli/TaskRenderers.js';
+import { computeConfidence } from './engine.js';
 
 const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
 
@@ -1593,7 +1594,7 @@ ${probes}${rubric}
       line,
       stage,
       passed,
-      confidence: 0.8,
+      confidence: computeConfidence(trials, 0.7),
       dimensions,
       rawTrials: trials,
     };

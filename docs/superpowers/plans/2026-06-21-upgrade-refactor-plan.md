@@ -358,3 +358,60 @@ function determineMasterMode(coherentLines: number, crystallizationIndex: number
 | Scheduler criteria implemented | 0/7 | 3/7 | 7/7 |
 | Encounter offers per selection | 1 | 1 | 3-5 |
 | LLM assessment depth | Narrative wrapper | Narrative wrapper | Full dialogue scoring |
+
+---
+
+## Phase 4: Red-Team Audit 2.0 (2026-06-21)
+
+### Audit Summary
+
+**Date:** 2026-06-21
+**Scope:** End-to-end operational flow — encounter selection → assessment → scoring → profile update → evolutionary trajectory
+**Method:** 4 parallel codebase agents mapped implementation; 10+ foundation docs read for theoretical substrate
+
+**Result:** 23 systemic gaps identified across 4 tiers:
+- **Tier 0 (Architectural):** 5 gaps — fundamental design commitments not honored
+- **Tier 1 (Core Mechanics):** 8 gaps — implemented engines produce incorrect/incomplete results
+- **Tier 2 (Wiring):** 6 gaps — engines exist but are called incorrectly
+- **Tier 3 (Polish):** 4 gaps — simplified paths that work but don't match theory
+
+**Key finding:** The engine layer is solid (all 10 engines fully implemented and wired). The gaps are in how engines produce developmental trajectory.
+
+**Full audit document:** `docs/RED-TEAM-AUDIT-2.md`
+
+### Phase 5: Fix Foundation (Week 1-2) — NOT STARTED
+
+| Gap | Effort | Impact | Status |
+|-----|--------|--------|--------|
+| G.01 — Veil violation | 2 days | HIGH | NOT STARTED |
+| G.04 — GoldenAllergy detection | 1 day | HIGH | NOT STARTED |
+| G.05 — Behavioral pattern wiring | 2 days | HIGH | NOT STARTED |
+| G.06 — Shadow content generator | 1 day | HIGH | NOT STARTED |
+| G.13 — Confidence computation | 0.5 day | MEDIUM | NOT STARTED |
+| G.14 — Shadow severity gradient | 1 day | MEDIUM | NOT STARTED |
+| G.15 — Legacy dead code cleanup | 0.5 day | LOW | NOT STARTED |
+
+### Phase 6: Restore Intelligence (Week 3-4) — NOT STARTED
+
+| Gap | Effort | Impact | Status |
+|-----|--------|--------|--------|
+| G.02 — Modality content expansion | 5 days | HIGH | NOT STARTED |
+| G.03 — LLM as assessment engine | 3 days | HIGH | NOT STARTED |
+| G.07 — Knot resolution content | 2 days | MEDIUM | NOT STARTED |
+| G.08 — Transformation state unification | 1 day | MEDIUM | NOT STARTED |
+| G.09 — Polarity → encounter selection | 2 days | MEDIUM | NOT STARTED |
+| G.10 — Altitude shift convergence | 1 day | MEDIUM | NOT STARTED |
+| G.11 — Gradual shadow resolution | 2 days | MEDIUM | NOT STARTED |
+| G.12 — Unified profile update | 1 day | MEDIUM | NOT STARTED |
+
+### Phase 7: Complete Vision (Week 5-6) — NOT STARTED
+
+| Gap | Effort | Impact | Status |
+|-----|--------|--------|--------|
+| G.17 — Remove legacy tick() | 0.5 day | LOW | NOT STARTED |
+| G.18 — Contextual shadow detection | 3 days | HIGH | NOT STARTED |
+| G.19 — Perceptual layer shift | 3 days | HIGH | NOT STARTED |
+| G.20 — PESTLE → encounter mapping | 2 days | MEDIUM | NOT STARTED |
+| G.21 — NPC developmental profiles | 3 days | MEDIUM | NOT STARTED |
+| G.22 — Quality estimation from assessment | 1 day | LOW | NOT STARTED |
+| G.23 — Calibration for all 8 lines | 1 day | LOW | NOT STARTED |
