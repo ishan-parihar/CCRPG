@@ -82,12 +82,16 @@ export function scheduleNext(
   // Take top N, diversifying by line (no more than 2 from same line)
   const result: ScheduledEncounter[] = [];
   const lineCounts: Record<string, number> = {};
+  const moduleRefs = new Set<string>();
 
   for (const { candidate, priority } of scored) {
     if (result.length >= count) break;
     const lc = lineCounts[candidate.line] ?? 0;
     if (lc >= 2) continue;
+    // Deduplicate by moduleRef to prevent same encounter appearing multiple times
+    if (moduleRefs.has(candidate.moduleRef)) continue;
     lineCounts[candidate.line] = lc + 1;
+    moduleRefs.add(candidate.moduleRef);
 
     // G.9: Check shadow-work threshold for this candidate's line
     if (!lineShadowModes.has(candidate.line)) {

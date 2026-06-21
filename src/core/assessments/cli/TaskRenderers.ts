@@ -188,7 +188,7 @@ export function renderNBack(task: AssessmentTask): {
       const consistency = error === 0 ? 0.95 : error === 1 ? 0.7 : 0.4;
 
       // Match selected option to its drive metadata
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       return {
         taskId: task.id,
@@ -371,7 +371,7 @@ export function renderGoNoGo(task: AssessmentTask): {
       const timeRatio = durationMs / expectedTime;
       const responseTime = timeRatio < 0.5 ? 0.9 : timeRatio < 1.5 ? 0.7 : timeRatio < 3 ? 0.5 : 0.3;
 
-      const matchedOpt = options.find(o => answer.includes(o.label.split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.includes(o.label));
 
       return {
         taskId: task.id,
@@ -444,7 +444,8 @@ export function renderHold(task: AssessmentTask): {
       const accuracy = matched.length / items.length;
 
       const responseTime = holdDurationMs > 0 ? Math.min(1, holdDurationMs / (holdDurationMs * 2)) : 0.7;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      // Match against full label to handle shuffled options correctly
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       return {
         taskId: task.id,
@@ -975,7 +976,7 @@ export function renderDilemma(task: AssessmentTask): {
 
       const matchedOption = shuffledOptions.find(o =>
         answerLower.includes(o.label.toLowerCase()) ||
-        answerLower.includes(o.label.split(' ')[0]!.toLowerCase())
+        answerLower.includes(o.label.toLowerCase())
       );
 
       // Moral dilemmas: score on OPTION ALIGNMENT + depth of reflection.
@@ -1116,7 +1117,7 @@ export function renderSelfReport(task: AssessmentTask): {
       const wordCount = answer.split(/\s+/).filter(Boolean).length;
 
       // Check if they selected a known MCQ option
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       const depth = wordCount > 30 ? 0.9 : wordCount > 15 ? 0.7 : wordCount > 5 ? 0.5 : 0.3;
       // FIX: Use the matched option's correctnessScore for accuracy (not word count).
@@ -1262,7 +1263,7 @@ export function renderReactionTime(task: AssessmentTask): {
     },
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
       const isCorrect = matchedOpt?.correctnessScore === 1.0;
 
       // Actual response time scoring: faster = better (uses real wall-clock timing)
@@ -1329,7 +1330,7 @@ export function renderRhythm(task: AssessmentTask): {
     },
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       return {
         taskId: task.id,
@@ -1382,7 +1383,7 @@ export function renderCooperation(task: AssessmentTask): {
     },
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       return {
         taskId: task.id,
@@ -1437,7 +1438,7 @@ export function renderImitation(task: AssessmentTask): {
     },
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       return {
         taskId: task.id,
@@ -1639,7 +1640,7 @@ export function renderLineProbe(task: AssessmentTask, line: Line): {
 
       const matchedOpt = shuffledOptions.find(o =>
         answerLower.includes(o.label.toLowerCase()) ||
-        answerLower.includes(o.label.split(' ')[0]!.toLowerCase())
+        answerLower.includes(o.label.toLowerCase())
       );
 
       // Line-specific evaluation dimensions
@@ -1931,7 +1932,7 @@ export function renderIntrapersonalProbe(task: AssessmentTask): {
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
       const wordCount = answer.split(/\s+/).filter(Boolean).length;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       const depth = wordCount > 30 ? 0.9 : wordCount > 15 ? 0.7 : wordCount > 5 ? 0.5 : 0.3;
       const accuracy = matchedOpt ? matchedOpt.correctnessScore : (wordCount > 15 ? 0.7 : wordCount > 5 ? 0.5 : 0.3);
@@ -2162,7 +2163,7 @@ export function renderSomaticProbe(task: AssessmentTask): {
     },
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       return {
         taskId: task.id,
@@ -2238,7 +2239,7 @@ export function renderWillpowerProbe(task: AssessmentTask): {
       const timingBonus = durationMs >= minExpectedMs ? 0.2 : 0;
       const responseTime = Math.min(1, (holdDurationMs / (holdDurationMs * 2)) + timingBonus);
 
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
 
       return {
         taskId: task.id,
