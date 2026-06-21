@@ -4,13 +4,25 @@
  */
 
 export interface ThetaParams {
-  readonly halfLife: number; // ms — time for staleness to reach 0.5
+  readonly halfLife: number; // ms — default time for staleness to reach 0.5
   readonly bleedThreshold: number; // 0-1 — staleness above this triggers bleed-through
+  readonly lineHalfLives?: Record<string, number>; // per-line half-life overrides
 }
 
 export const DEFAULT_THETA_PARAMS: ThetaParams = {
   halfLife: 7 * 24 * 60 * 60 * 1000, // 7 days
   bleedThreshold: 0.7,
+  // G.27: Per-line theta decay — different lines decay at different rates
+  lineHalfLives: {
+    Somatic: 3 * 24 * 60 * 60 * 1000,      // 3 days (body memory fades fast)
+    Willpower: 4 * 24 * 60 * 60 * 1000,     // 4 days
+    Emotional: 5 * 24 * 60 * 60 * 1000,     // 5 days
+    Interpersonal: 5 * 24 * 60 * 60 * 1000, // 5 days
+    Cognitive: 7 * 24 * 60 * 60 * 1000,     // 7 days (default)
+    Intrapersonal: 7 * 24 * 60 * 60 * 1000, // 7 days
+    Moral: 8 * 24 * 60 * 60 * 1000,         // 8 days
+    Spiritual: 10 * 24 * 60 * 60 * 1000,    // 10 days (spiritual insights persist)
+  },
 };
 
 /** Compute staleness score (0 = fresh, 1 = fully decayed) for a single cell. */
@@ -28,7 +40,9 @@ export function computeStaleness(
 ): Record<string, number> {
   const result: Record<string, number> = {};
   for (const key of Object.keys(timestamps)) {
-    result[key] = computeCellStaleness(timestamps[key]!, now, params.halfLife);
+    const [line] = key.split(':');
+    const halfLife = params.lineHalfLives?.[line] ?? params.halfLife;
+    result[key] = computeCellStaleness(timestamps[key]!, now, halfLife);
   }
   return result;
 }

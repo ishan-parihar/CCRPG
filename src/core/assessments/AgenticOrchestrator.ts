@@ -16,7 +16,6 @@ import { accumulateTension, tryTriggerMacroEvent, type PESTLETension } from '../
 import type { AgentMessage, AskUserQuestionParams, AskUserQuestionResult } from './agentTypes.js';
 import { getRenderer } from './cli/TaskRenderers.js';
 import { computeConfidence } from './engine.js';
-import { selectNextItem } from './itemSelection.js';
 
 const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
 
@@ -154,7 +153,6 @@ export class AgenticOrchestrator {
   private _currentTaskStartTime: number = 0;
   private _currentPresentedTask: AssessmentTask | null = null;
   private _consecutivePasses: Map<string, number>;
-  private _usedItemIds: Set<string>;
 
   // Shared shadow keyword detection helper (DRY — used in 3 places)
   // Expanded keyword lists for deeper shadow detection across developmental contexts
@@ -237,7 +235,6 @@ export class AgenticOrchestrator {
     noLlm?: boolean;
     forceShadow?: string;
     consecutivePasses?: Map<string, number>;
-    usedItemIds?: Set<string>;
   }) {
     this.encounter = params.encounter;
     this.significator = params.significator;
@@ -250,7 +247,6 @@ export class AgenticOrchestrator {
     this.noLlm = params.noLlm ?? false;
     this.forceShadow = params.forceShadow;
     this._consecutivePasses = params.consecutivePasses ?? new Map();
-    this._usedItemIds = params.usedItemIds ?? new Set();
   }
 
   /**
@@ -1057,9 +1053,17 @@ INSTRUCTIONS:
    * Select the best assessment task from the module based on encounter modality.
    */
   private selectTaskForModality(module: StageAssessment, modality: Modality): AssessmentTask {
-    const modalityFallbackChain: Record<string, readonly TaskType[]> = {
-      Deterministic: ['n_back', 'stroop', 'go_no_go', 'hold', 'reaction_time', 'rhythm'],
-      LanguageReflective: ['llm_dialogue', 'self_report', 'emotion_identification', 'scenario'],
+    // All task types supported by TaskRenderers
+    const ALL_RENDERABLE: readonly TaskType[] = [
+      'n_back', 'stroop', 'go_no_go', 'hold', 'pattern_prediction',
+      'emotion_identification', 'dilemma', 'scenario', 'self_report',
+      'value_ranking', 'reaction_time', 'rhythm', 'cooperation', 'imitation',
+    ];
+
+    // Modality-specific preference order (first match wins)
+    const modalityPreference: Record<string, readonly TaskType[]> = {
+      Deterministic: ['n_back', 'stroop', 'go_no_go', 'hold', 'reaction_time', 'rhythm', 'pattern_prediction'],
+      LanguageReflective: ['llm_dialogue', 'self_report', 'emotion_identification', 'scenario', 'dilemma'],
       ScenarioChoice: ['dilemma', 'scenario', 'emotion_identification', 'self_report'],
       Embodied: ['hold', 'rhythm', 'imitation', 'reaction_time', 'go_no_go'],
       Strategic: ['pattern_prediction', 'value_ranking', 'n_back', 'stroop'],
@@ -1067,38 +1071,15 @@ INSTRUCTIONS:
       ImmersiveRPG: ['scenario', 'dilemma', 'llm_dialogue', 'emotion_identification', 'self_report'],
     };
 
-    const chain = modalityFallbackChain[modality] ?? ['n_back', 'scenario', 'self_report'];
+    const preferred = modalityPreference[modality] ?? ALL_RENDERABLE;
 
-    // G.17: If module has an item pool, use adaptive selection
-    if (module.itemPool && module.itemPool.length > 0) {
-      const preferredTypes = new Set(chain);
-      const poolItems = module.itemPool.filter(item => preferredTypes.has(item.taskType));
-      if (poolItems.length > 0) {
-        const item = selectNextItem(poolItems, {
-          usedItemIds: [...this._usedItemIds],
-          currentDifficulty: 0.5,
-          targetDimensions: chain.length > 0 ? undefined : undefined,
-        });
-        if (item) {
-          this._usedItemIds.add(item.id);
-          const baseTask = module.tasks.find(t => t.type === item.taskType);
-          return {
-            id: item.id,
-            type: item.taskType,
-            description: baseTask?.description ?? `${item.taskType} assessment`,
-            parameters: { ...baseTask?.parameters, ...item.parameters },
-            measures: item.measures as any,
-          };
-        }
-      }
-    }
-
-    // Fallback: walk the modality chain
-    for (const prefType of chain) {
+    // G.1: Try preferred types first, then fall back to any renderable type in the module
+    for (const prefType of [...preferred, ...ALL_RENDERABLE]) {
       const match = module.tasks.find(t => t.type === prefType);
       if (match) return match;
     }
 
+    // Last resort: generate a modality-appropriate task
     return this.generateModalityFallbackTask(modality, module);
   }
 

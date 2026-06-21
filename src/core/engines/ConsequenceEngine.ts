@@ -72,6 +72,17 @@ export function applyConsequences(
 
   // 4. Handle shadow surfacing
   let newShadowEntries = [...sig.shadows.entries];
+
+  // G.22: Shadow severity aging — decay severity over time (0.01 per hour)
+  const now = record.timestamp;
+  newShadowEntries = newShadowEntries.map(e => {
+    if (e.resolvedAt !== null) return e;
+    const hoursSinceSurfaced = (now - e.surfacedAt) / 3600000;
+    const decay = Math.min(0.5, hoursSinceSurfaced * 0.01);
+    const newSeverity = Math.max(0.1, e.severity - decay);
+    return newSeverity === e.severity ? e : { ...e, severity: newSeverity };
+  });
+
   if (record.shadowSurfaced) {
     const existing = newShadowEntries.find(
       e => e.resolvedAt === null && e.line === line && e.stage === stage,

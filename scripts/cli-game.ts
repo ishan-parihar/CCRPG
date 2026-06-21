@@ -729,7 +729,6 @@ async function runAgenticEncounter(
   history: ConsequenceRecord[],
   responsesPool?: number[],
   consecutivePasses?: Map<string, number>,
-  usedItemIds?: Set<string>,
 ): Promise<{
   outcome: import('../src/core/assessments/AgenticOrchestrator.js').OrchestratorResult;
   response: PlayerResponse;
@@ -922,7 +921,6 @@ async function runAgenticEncounter(
     noLlm: !LLM_ACTIVE,
     forceShadow: FORCE_SHADOW,
     consecutivePasses,
-    usedItemIds,
   });
 
   const outcome = await orchestrator.run();
@@ -1134,7 +1132,6 @@ async function runFullSession(): Promise<void> {
   const now = Date.now();
   const history: ConsequenceRecord[] = [];
   const consecutivePasses = new Map<string, number>();
-  const usedItemIds = new Set<string>();
   const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
 
   for (let i = 0; i < encounterCount; i++) {
@@ -1239,7 +1236,7 @@ async function runFullSession(): Promise<void> {
     // Run encounter through AgenticOrchestrator (all modalities)
     try {
       const result = await runAgenticEncounter(
-        selectedEncounter, currentSig, currentWorld, history, responsesPool, consecutivePasses, usedItemIds,
+        selectedEncounter, currentSig, currentWorld, history, responsesPool, consecutivePasses,
       );
 
       // Apply consequences from the orchestrator result
