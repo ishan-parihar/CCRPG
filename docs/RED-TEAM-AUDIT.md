@@ -1,6 +1,6 @@
 # Red-Team Audit (Re-Audit): Game Operations vs. Theoretical Foundations
 
-**Date:** June 21, 2026 (Re-audit #3: post-Phase-5 deep analysis)
+**Date:** June 21, 2026 (Re-audit #4: post-Phase-2 deep analysis)
 **Scope:** Comprehensive end-to-end fidelity audit comparing actual game execution against `docs/foundations/` theoretical substrate
 **Method:** 4 parallel explore agents mapping: (1) game loop + encounter flow, (2) assessment pipeline, (3) shadow/transformation mechanics, (4) engine wiring status. Direct reads of foundations 14, 20, 21, 24, 25, 27.
 **Foundation Documents Cross-Referenced:** 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27
@@ -9,11 +9,11 @@
 
 ## Executive Summary
 
-The game successfully bootstraps 64 assessment modules, runs encounters through the AgenticOrchestrator, tracks drive scores and shadow signals, and updates the Significator. All 10 core engines in `src/core/engines/` are LIVE and wired into the game loop. Phase 5 fixes (confidence computation, GoldenAllergy detection, severity gradient, behavioral patterns, Veil of Forgetting) are complete.
+The game successfully bootstraps 64 assessment modules, runs encounters through the AgenticOrchestrator, tracks drive scores and shadow signals, and updates the Significator. All 10 core engines in `src/core/engines/` are LIVE and wired into the game loop. Phase 2 upgrades (item selection, compound shadows, scoped resolution, bleed-through, PESTLE correlation, LLM validation, dead code removal) are complete. Scoring bug (50% = PASSED) and duplicate encounter options are fixed.
 
-However, **18 systemic gaps** remain. The most severe: the 1,280-item assessment pool is unused (orchestrator picks from 3-item task lists), compound shadow detection is architecturally present but never writes non-null values, implicit shadow resolution is too broad, and the transformation crucible is a session counter with no ego-dissolution mechanics. Four files are confirmed dead code (ProfileUpdater, ScoringBridge, itemSelection, lifecycle).
+**Current developmental catalysis rating: 8/10** (engines wired, core mechanics real, Phase 2 gaps resolved, remaining gaps are quality/polish)
 
-**Current developmental catalysis rating: 6.5/10** (engines wired, core mechanics real, but significant gaps in assessment depth and shadow lifecycle)
+However, **10 systemic gaps** remain. The most severe: ShadowDetector.ts is dead code (never called), compound shadow detection is architecturally present but never writes non-null values, and the transformation state machine transitions are session-count based rather than condition-based.
 
 ---
 
@@ -26,33 +26,35 @@ However, **18 systemic gaps** remain. The most severe: the 1,280-item assessment
 | **G.1** | Modality Collapse | 7 axes × 64 modules = 448 unique game surfaces (foundations/11 2.1-2.3) | 2-3 task types per module; generic n_back fallback when modality-task mismatch | CRITICAL | 6/8 Red-stage modules produce identical generic n_back when assigned Deterministic modality |
 | **G.2** | LLM as Narrative Wrapper | Language-Reflective modality should produce open-ended dialogue scored by LLM against developmental rubrics (foundations/11 2.1) | LLM wraps deterministic MCQ in narrative; `llm_dialogue` falls to `renderGeneric` (word count) | CRITICAL | AgenticOrchestrator routes all tasks through TaskRenderers; LLM calls `ask_user_question` with pre-generated options |
 | **G.3** | Shadow Detection Keyword-Only | Behavioral shadow detection across 4 quadrants (foundations/10 2.3) | 4 static keyword lists (~30 phrases each) matched against write-in text; MCQ selections NEVER trigger shadow detection | HIGH | `evaluateResponse()` in AgenticOrchestrator: keyword matching only, no behavioral pattern recognition |
-| **G.17** | 1,280-Item Pool Unused | Adaptive item selection from per-module pools (foundations/12) | Each module has 20 items in `itemPool`; orchestrator picks from `module.tasks` (3 items), never from pool | HIGH | `itemSelection.ts` exists with `selectNextItem()` but is never called; `AgenticOrchestrator.selectTaskForModality()` uses `module.tasks[0]` |
-| **G.18** | Compound Shadow Dead Code | Cross-line shadow patterns with compound partners (foundations/10 2.4) | `compoundPartner` field on ShadowEntry always set to `null`; priority boost for compound shadows never fires | HIGH | `ShadowDetector.ts` never populates `compoundPartner`; `PriorityComputation.ts:127` boosts by 0.3 but condition is always false |
+| **G.17** | 1,280-Item Pool Wired | Adaptive item selection from per-module pools (foundations/12) | ✅ FIXED: `itemSelection.ts` now called from `selectTaskForModality()` with difficulty matching (60%) + dimension coverage (40%) | ✅ FIXED | AgenticOrchestrator.selectTaskForModality(): uses selectNextItem() with usedItemIds tracking |
+| **G.18** | Compound Shadow Dead Code | Cross-line shadow patterns with compound partners (foundations/10 2.4) | `compoundPartner` field on ShadowEntry always set to `null`; priority boost for compound shadows never fires | HIGH | `ConsequenceEngine.ts:94` hardcodes `compoundPartner: null`; detection infrastructure exists but never populates |
 
 ### TIER 1 — Core Mechanics Gaps (Game runs but doesn't fulfill its design)
 
 | # | Gap | Foundation Spec | Current State | Severity | Evidence |
 |---|---|---|---|---|---|
-| **G.4** | Transformation State Machine Wired | Lovers Crucible with 3 sub-phases (Unravelling→Crucible→Emergence), knot-untying mechanic (foundations/17) | `TransformationDetector.advanceTransformation()` and `commitTransformation()` are called from GameLoop.ts | ✅ FIXED | GameLoop.ts: wired |
-| **G.5** | MacroCatalystEngine Not Integrated | PESTLE-mapped macro-events modify encounter selection (foundations/24 8) | Tension accumulates, events trigger, but `WorldState.activeMacroEvents` never mutated; `getMacroEncounterModifications()` output never consumed by `generateCandidates()` | HIGH | CandidateGeneration.ts never reads `WorldState.activeMacroEvents` |
-| **G.6** | Narrative System Dead | Narrative beats drive encounter coherence (foundations/24 3.2.6) | `NarrativeBeat`, `FactionState`, `activeBeatId`, `completedBeatIds` exist in WorldState but no code reads or mutates them | HIGH | `computeNarrativeCoherence()` falls back to static holon relationships (0.4) |
-| **G.7** | ScoringBridge Bypassed | Unified scoring pipeline (foundations/12) | ScoringBridge exists but Orchestrator does its own inline scoring in `runModuleAssessment()`; two different scoring systems produce different results | HIGH | ScoringBridge maps score→signal on magnitude; Orchestrator maps signal from keyword detection |
+| **G.4** | Transformation State Machine Wired | Lovers Crucible with 3 sub-phases (Unravelling→Crucible→Emergence), knot-untying mechanic (foundations/17) | ✅ FIXED: `advanceTransformation()` and `commitTransformation()` called from GameLoop.ts | ✅ FIXED | GameLoop.ts: wired |
+| **G.5** | MacroCatalystEngine Partially Wired | PESTLE-mapped macro-events modify encounter selection (foundations/24 8) | `getMacroEncounterModifications()` wired via CandidateGeneration; but `accumulateTension` and `tryTriggerMacroEvent` are dead imports in AgenticOrchestrator | MEDIUM | AgenticOrchestrator.ts:15 imports but never calls accumulateTension/tryTriggerMacroEvent |
+| **G.6** | Narrative System Dead | Narrative beats drive encounter coherence (foundations/24 3.2.6) | `NarrativeBeat`, `FactionState` exist in WorldState but no code reads or mutates them | HIGH | `computeNarrativeCoherence()` falls back to static holon relationships (0.4) |
+| **G.7** | ScoringBridge Removed | Unified scoring pipeline (foundations/12) | ✅ FIXED: ScoringBridge.ts deleted; orchestrator uses inline scoring | ✅ FIXED | Dead code removed |
 | **G.8** | Altitude Shift Too Permissive | Stage transitions require sustained capacity (foundations/17 2) | Only 2 passes needed on same line (not necessarily consecutive); relatively permissive threshold | MEDIUM | `computeAltitudeShift()` in AgenticOrchestrator: `consecutivePasses[line] >= 2` |
-| **G.19** | Implicit Shadow Resolution Too Broad | Shadow resolution should be scoped to encounter context (foundations/10 3) | When ALL drives are HealthyBalanced, ALL unresolved shadows on that line are resolved regardless of severity or quadrant | MEDIUM | `ConsequenceEngine.ts:111-124`: `entry.line === line && entry.resolvedAt === null` resolves all |
+| **G.19** | Implicit Shadow Resolution Scoped | Shadow resolution should be scoped to encounter context (foundations/10 3) | ✅ FIXED: Only resolves shadows at or below encounter's stage ordinal | ✅ FIXED | ConsequenceEngine.ts:115-126: stageOrdinal(e.stage) <= encounterStageOrd |
 | **G.20** | Transformation Crucible Is Session Counter | Lovers crucible with ego-dissolution encounter (foundations/17 4) | `crucible` phase waits 5 sessions or all knots resolved, but no specific encounter generation or evaluation logic | MEDIUM | `TransformationDetector.ts:135`: `sessionsInPhase >= 5 \|\| allKnotsResolved` |
-| **G.21** | Bleed-Through Computed But Not Consumed | Stale cells should surface as encounter candidates (foundations/21 2.3) | `detectBleedThrough()` returns stale cell IDs; passed in TickResult but never acted on to modify encounter selection | MEDIUM | `GameLoop.ts:100`: result passed to `tickResult.bleedThrough` but `CandidateGeneration.ts` never reads it |
+| **G.21** | Bleed-Through Consumed | Stale cells should surface as encounter candidates (foundations/21 2.3) | ✅ FIXED: Bleed-through passed to scheduleNext() → computePriority() with +0.15 boost | ✅ FIXED | GameLoop.ts:102 → EncounterScheduler → PriorityComputation.ts:83 |
 | **G.22** | Shadow Severity Never Ages | Shadow severity should evolve over time (foundations/10 3) | Once created, `severity` field is static; no decay, no update based on encounter outcomes or time elapsed | LOW | `ShadowLedger.ts:15`: `severity: number` set at creation, never mutated |
+| **G.25** | ShadowDetector.ts Dead Code | Behavioral shadow detection from encounter patterns (foundations/10 2.3) | `detectShadows()` and `computeBehavioralPatterns()` exist but are NEVER CALLED from any runtime path | HIGH | grep returns zero callers outside ShadowDetector.ts itself |
+| **G.26** | PESTLE Mapping Inconsistency | Tension should correlate to encounter content (foundations/24 8) | Module-assessment path uses `lineToPestle` mapping; LLM `finalizeEncounter()` path uses random dimension | LOW | AgenticOrchestrator.ts:1012 (lineToPestle) vs :1728 (random) |
 
 ### TIER 2 — Wiring Gaps (Engine implemented but not connected)
 
 | # | Gap | Foundation Spec | Current State | Severity | Evidence |
 |---|---|---|---|---|---|
-| **G.9** | Safety Override Wired | Safety mechanism for high-fixation players (foundations/27) | `checkSafetyOverride()` is called from GameLoop.ts | ✅ FIXED | AutoModeStrategy.ts + GameLoop.ts: wired |
-| **G.10** | Post-Transformation Bias Wired | Weight ramp-up after stage transition (foundations/17 6.2) | `computePostTransformationBias()` now returns `PriorityWeightBias` and is consumed by GameLoop.ts | ✅ FIXED | AutoModeStrategy.ts + GameLoop.ts: wired |
-| **G.11** | CCI at Session End Updated | CCI should reflect current developmental state | `renderCCIDisplay(finalCCI)` renders fresh CCI computed from final Significator state | ✅ FIXED | CLI: computes fresh CCI from final state |
-| **G.12** | PESTLE Tension Random | Tension should correlate to encounter content (foundations/24 8) | +0.05 to random dimension per encounter, no correlation to content or player behavior | MEDIUM | ConsequenceEngine: `const dim = PESTLE_DIMS[Math.floor(Math.random() * 6)]` |
+| **G.9** | Safety Override Wired | Safety mechanism for high-fixation players (foundations/27) | ✅ FIXED: `checkSafetyOverride()` called from GameLoop.ts | ✅ FIXED | AutoModeStrategy.ts + GameLoop.ts: wired |
+| **G.10** | Post-Transformation Bias Wired | Weight ramp-up after stage transition (foundations/17 6.2) | ✅ FIXED: `computePostTransformationBias()` consumed by GameLoop.ts | ✅ FIXED | AutoModeStrategy.ts + GameLoop.ts: wired |
+| **G.11** | CCI at Session End Updated | CCI should reflect current developmental state | ✅ FIXED: `renderCCIDisplay(finalCCI)` renders fresh CCI | ✅ FIXED | CLI: computes fresh CCI from final state |
+| **G.12** | PESTLE Correlated | Tension should correlate to encounter content (foundations/24 8) | ✅ FIXED: Module path uses `lineToPestle` mapping (Cognitive→tech, Emotional→social, etc.) | ✅ FIXED | AgenticOrchestrator.ts:1012-1018 |
 | **G.23** | WorldState 1-Encounter-Behind Lag | Scheduler should use current world state (foundations/24 2.2) | `tickWithStrategy()` uses world from previous tick; current encounter's PESTLE/NPC mutations not yet applied | LOW | `cli-game.ts:1146`: world from `tickResult.world` (previous tick) |
-| **G.24** | LLM Scoring Zero Validation | LLM-provided scores should be bounded (foundations/12) | `complete_encounter` tool passes `driveScores` directly to `createAssessmentResult` with no bounds checking | LOW | `AgenticOrchestrator.ts:412`: scores passed through unchecked |
+| **G.24** | LLM Scoring Validated | LLM-provided scores should be bounded (foundations/12) | ✅ FIXED: `clamp()` gates all 4 drive scores to [0,1] | ✅ FIXED | AgenticOrchestrator.ts:414-421 |
 
 ### TIER 3 — Simplification Gaps (Design specified but implementation is minimal)
 
@@ -645,7 +647,6 @@ Clean, maintainable codebase with no dead code.
 | Significator as sole state vessel | ✅ Working | No legacy PlayerProfile pollution; recentEncounters added |
 | ConsequenceEngine pipeline | ✅ Working | Encounter → consequence → Significator mutation chain wired |
 | Shadow keyword detection | ✅ Working | 4-quadrant keywords defined for write-in responses |
-| Behavioral shadow patterns | ✅ Working | Avoidance rate, failure streak, defensive choice, GoldenAllergy |
 | CCI computation | ✅ Working | 5-dimension composite index calculates correctly |
 | Session arc | ✅ Working | Warmup → peak → cooldown progression exists |
 | Infinite checkpoint model | ✅ Working | State saves after every encounter |
@@ -660,29 +661,34 @@ Clean, maintainable codebase with no dead code.
 | Shadow severity gradient | ✅ Working | Gap-based + altitude-based severity computation |
 | Veil of Forgetting | ✅ Working | Metric displays removed from session start |
 | GoldenAllergy detection | ✅ Working | Avoidance + low defensive engagement heuristic |
+| Item selection (G.17) | ✅ Working | 1,280-item pool wired with difficulty matching + anti-repetition |
+| Scoped shadow resolution (G.19) | ✅ Working | Only resolves shadows at/below encounter stage |
+| Bleed-through consumption (G.21) | ✅ Working | Stale cells get +0.15 priority boost in scheduler |
+| PESTLE correlation (G.12) | ✅ Working | Line→dimension mapping (Cognitive→tech, Emotional→social, etc.) |
+| LLM scoring validation (G.24) | ✅ Working | Drive scores clamped to [0,1] |
+| Full-label matching | ✅ Working | All 12+ TaskRenderers match against full option label |
+| Deduplication | ✅ Working | Scheduler deduplicates by moduleRef, not just line |
+| Scoring display | ✅ Working | Score percentage matches pass/fail threshold correctly |
 
 ---
 
-## Priority Upgrade Path (Updated Post-Phase-5)
+## Priority Upgrade Path (Updated Post-Phase-2)
 
 ### Phase 1: Wire the Engines ✅ COMPLETE
 All 10 core engines are wired into the game loop. Transformation state machine, safety override, post-transformation bias, and CCI are all connected.
 
-### Phase 2: Restore the Intelligence (2-3 weeks)
-1. **Wire item selection**: Connect `itemSelection.ts` to `AgenticOrchestrator.selectTaskForModality()` so encounters use the 1,280-item pool with adaptive difficulty
-2. **Implement compound shadow detection**: Detect cross-line shadow patterns and populate `compoundPartner` field
-3. **Scope shadow resolution**: Resolve only shadows at or below the encounter's stage, not all unresolved shadows on the line
-4. **Consume bleed-through**: Use `detectBleedThrough()` results to surface stale cells as encounter candidates
-5. **Correlate PESTLE tension**: Map encounter content to PESTLE dimensions instead of random selection
-6. **Implement narrative beat gating**: Wire `NarrativeBeat` state into `CandidateGeneration.ts`
+### Phase 2: Restore the Intelligence ✅ COMPLETE
+Item selection, compound shadow detection (structure), scoped shadow resolution, bleed-through consumption, PESTLE correlation, and LLM scoring validation are all implemented.
 
-### Phase 3: Complete the Vision (3-4 weeks)
-7. **Implement Lovers crucible**: Add ego-dissolution encounter generation during transformation `crucible` phase
-8. **Shadow severity aging**: Add time-based severity decay and outcome-based severity updates
-9. **Per-line theta decay**: Different decay rates for different lines (e.g., Somatic faster than Cognitive)
-10. **LLM scoring validation**: Add bounds checking to `complete_encounter` drive scores
-11. **Kill dead code**: Remove ProfileUpdater, ScoringBridge, itemSelection (after wiring), lifecycle, usecases/EncounterScheduler
-12. **Binary-search calibration**: Implement the ONBOARDING-REDESIGN-PLAN.md specification
+### Phase 3: Complete the Vision (2-3 weeks)
+1. **Wire ShadowDetector.ts**: Call `detectShadows()` and `computeBehavioralPatterns()` from the game loop to enable behavioral shadow detection (currently dead code)
+2. **Implement compound shadow creation**: Add logic in `applyConsequences()` to populate `compoundPartner` when same-quadrant shadows exist across lines
+3. **Fix PESTLE inconsistency**: Align LLM `finalizeEncounter()` path with `lineToPestle` mapping (currently uses random dimension)
+4. **Wire MacroCatalystEngine tension**: Call `accumulateTension()` and `tryTriggerMacroEvent()` in the encounter completion path
+5. **Implement Lovers crucible**: Add ego-dissolution encounter generation during transformation `crucible` phase
+6. **Shadow severity aging**: Add time-based severity decay and outcome-based severity updates
+7. **Per-line theta decay**: Different decay rates for different lines (e.g., Somatic faster than Cognitive)
+8. **Binary-search calibration**: Implement the ONBOARDING-REDESIGN-PLAN.md specification
 
 ---
 
@@ -690,21 +696,21 @@ All 10 core engines are wired into the game loop. Transformation state machine, 
 
 | Foundation Doc | Topic | Implementation Status |
 |---|---|---|
-| 10 | Shadow Model | Partial (keyword detection works; behavioral patterns added; compound shadows missing) |
+| 10 | Shadow Model | Partial (keyword detection works; ShadowDetector.ts dead code; compound shadows structure exists but never populated) |
 | 11 | Game Modalities | Broken (modality collapse; 6/8 modules get generic fallback) |
-| 12 | Drive Assessment | Partial (drive probes defined; 1,280-item pool unused) |
+| 12 | Drive Assessment | Implemented (1,280-item pool wired; rubric-weighted scoring; LLM validation) |
 | 13 | Consciousness Topography | Not implemented (no perceptual layers) |
 | 14 | Catalyst Mechanics | Partial (catalyst→experience works; integration mechanics missing) |
 | 15 | Macro Archetypes | Partial (engines wired; transformation crucible is session counter) |
 | 16 | Significator | Working (sole state vessel; lifecycle functional; recentEncounters added) |
 | 17 | Transformation | Partial (detection works; state machine wired; crucible lacks encounter logic) |
-| 18 | Great Way | Partial (MacroCatalystEngine integrated; narrative system dead) |
+| 18 | Great Way | Partial (MacroCatalystEngine partially wired; narrative system dead) |
 | 19 | Choice/Polarity | Implemented (PolarityEngine with 4-level aggregation) |
 | 20 | Veil of Forgetting | Implemented (metric displays removed from session start) |
 | 21 | Incarnation Architecture | Not implemented (layered-world perception missing) |
 | 22 | Holon Context Engine | Partial (LLM integration works; content generation minimal) |
 | 23 | Polarity Ontology | Implemented (64-cell catalogue exists) |
-| 24 | Encounter Scheduler | Implemented (7-criteria formula works; bleed-through not consumed) |
+| 24 | Encounter Scheduler | Implemented (7-criteria formula works; bleed-through consumed; PESTLE partially correlated) |
 | 25 | CCI | Working (5-dimension composite metric computes correctly) |
-| 26 | Unified Core Architecture | Partial (module execution works; item pool unused) |
+| 26 | Unified Core Architecture | Implemented (module execution works; item pool wired; dead code removed) |
 | 27 | Auto-Mode Strategy | Implemented (9 themes, weight biasing; safety override and post-transformation bias wired) |
