@@ -859,7 +859,7 @@ INSTRUCTIONS:
       };
 
       // Determine pass: blendedScore must meet threshold AND no shadow pathology
-      const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
+      const passThreshold = module.scoringRubric.passThreshold ?? 0.7;
       const effectiveScore = isWriteInWithNoShadow ? Math.max(blendedScore, 0.55) : blendedScore;
       const hasShadow = !!shadowFromWriteIn;
       const passed = !hasShadow && effectiveScore >= passThreshold;
@@ -1292,7 +1292,7 @@ INSTRUCTIONS:
     const adjustedAgapeScore = Math.min(1.0, agapeScore + (selectedDrive === 'agape' ? semanticBonus : 0));
 
     const avgScore = (adjustedAgencyScore + adjustedCommunionScore + adjustedErosScore + adjustedAgapeScore) / 4;
-    const passThreshold = module.scoringRubric.passThreshold ?? 0.5;
+    const passThreshold = module.scoringRubric.passThreshold ?? 0.7;
     const passed = avgScore >= passThreshold;
 
     // Build feedback with depth-adjusted scores

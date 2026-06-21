@@ -914,37 +914,37 @@ export function renderDilemma(task: AssessmentTask): {
     {
       scenario: 'You discover your mentor has been lying to protect you. The truth would destroy your faith in them but free you to grow.',
       options: [
-        { label: 'Confront them', description: 'Demand the truth, even if it breaks the relationship', drive: 'agency', polarity: 'sts' },
-        { label: 'Forgive silently', description: 'Accept the protection and move on', drive: 'agape', polarity: 'sto' },
-        { label: 'Seek counsel', description: 'Ask someone you trust for perspective', drive: 'communion', polarity: 'sto' },
-        { label: 'Transcend the need', description: "The truth doesn't matter — only growth does", drive: 'eros', polarity: 'neutral' },
+        { label: 'I demand the truth — I need to see clearly, even if it hurts', description: 'Agency drive: direct confrontation, self-reliance', drive: 'agency', polarity: 'sts' },
+        { label: 'I accept their protection — some truths are too heavy for now', description: 'Agape drive: compassion, acceptance of limitation', drive: 'agape', polarity: 'sto' },
+        { label: 'I seek perspective — I need to understand before I act', description: 'Communion drive: relational wisdom, seeking counsel', drive: 'communion', polarity: 'sto' },
+        { label: 'I question whether truth matters — growth happens regardless', description: 'Eros drive: transcendent inquiry, meaning-making', drive: 'eros', polarity: 'neutral' },
       ],
     },
     {
       scenario: 'A community depends on a resource that is slowly depleting. Sharing equally means everyone suffers slowly. Hoarding means your group survives but others don\'t.',
       options: [
-        { label: 'Share equally', description: 'All should share the burden, even if it\'s harder', drive: 'agape', polarity: 'sto' },
-        { label: 'Protect your own', description: 'Your people come first', drive: 'agency', polarity: 'sts' },
-        { label: 'Find alternatives', description: 'There must be another way — search for it', drive: 'eros', polarity: 'neutral' },
-        { label: 'Build alliances', description: 'Unite with others to solve it collectively', drive: 'communion', polarity: 'sto' },
+        { label: 'I share equally — we all carry this burden together', description: 'Agape drive: collective responsibility, equity', drive: 'agape', polarity: 'sto' },
+        { label: 'I protect my people — survival comes first', description: 'Agency drive: protective boundary, prioritization', drive: 'agency', polarity: 'sts' },
+        { label: 'I search for alternatives — there must be another way', description: 'Eros drive: creative problem-solving, aspiration', drive: 'eros', polarity: 'neutral' },
+        { label: 'I build alliances — unity is our strength', description: 'Communion drive: collaboration, collective action', drive: 'communion', polarity: 'sto' },
       ],
     },
     {
       scenario: 'You have the power to heal one person\'s deepest wound, but doing so will temporarily absorb their pain into yourself.',
       options: [
-        { label: 'Heal them at cost', description: 'Their suffering outweighs my discomfort', drive: 'agape', polarity: 'sto' },
-        { label: 'Teach them to heal', description: 'Empowerment lasts longer than rescue', drive: 'eros', polarity: 'neutral' },
-        { label: 'Stand witness', description: 'Being present is itself a form of healing', drive: 'communion', polarity: 'sto' },
-        { label: 'Protect my energy', description: 'I cannot pour from an empty vessel', drive: 'agency', polarity: 'sts' },
+        { label: 'I heal them — their suffering outweighs my discomfort', description: 'Agape drive: selfless service, compassion', drive: 'agape', polarity: 'sto' },
+        { label: 'I teach them to heal — empowerment lasts longer than rescue', description: 'Eros drive: developmental focus, growth-oriented', drive: 'eros', polarity: 'neutral' },
+        { label: 'I stand witness — being present is itself a form of healing', description: 'Communion drive: empathic presence, relational healing', drive: 'communion', polarity: 'sto' },
+        { label: 'I protect my energy — I cannot pour from an empty vessel', description: 'Agency drive: self-preservation, boundary-setting', drive: 'agency', polarity: 'sts' },
       ],
     },
     {
       scenario: 'A rival faction offers alliance against a greater threat, but their values are fundamentally opposed to yours.',
       options: [
-        { label: 'Accept the alliance', description: 'The greater threat demands unity', drive: 'communion', polarity: 'sto' },
-        { label: 'Refuse on principle', description: 'Values cannot be compromised for convenience', drive: 'agency', polarity: 'sts' },
-        { label: 'Negotiate terms', description: 'Find shared ground without betraying core values', drive: 'agape', polarity: 'sto' },
-        { label: 'Seek a different path', description: 'There must be another way to face this threat', drive: 'eros', polarity: 'neutral' },
+        { label: 'I accept — the greater threat demands unity', description: 'Communion drive: pragmatic cooperation, collective survival', drive: 'communion', polarity: 'sto' },
+        { label: 'I refuse — values cannot be compromised for convenience', description: 'Agency drive: principled boundary, integrity', drive: 'agency', polarity: 'sts' },
+        { label: 'I negotiate — find shared ground without betraying core values', description: 'Agape drive: integrative approach, bridge-building', drive: 'agape', polarity: 'sto' },
+        { label: 'I seek a different path — there must be another way', description: 'Eros drive: creative alternatives, visionary thinking', drive: 'eros', polarity: 'neutral' },
       ],
     },
   ];

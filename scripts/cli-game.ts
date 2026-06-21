@@ -531,6 +531,18 @@ const SHADOW_LABELS: Record<string, string> = {
   HealthyBalanced: '',
 };
 
+// Task 4: Narrative context — map line names to challenge descriptions
+const CHALLENGE_NAMES: Record<string, string> = {
+  Cognitive: 'Pattern Recognition',
+  Emotional: 'Emotional Landscape',
+  Moral: 'Moral Dilemma',
+  Intrapersonal: 'Self-Reflection',
+  Spiritual: 'Meaning-Making',
+  Interpersonal: 'Social Cue Reading',
+  Somatic: 'Body Awareness',
+  Willpower: 'Sustained Attention',
+};
+
 /** Stage color helper: returns ANSI color for a given stage */
 // ponytail: returns chalk function, caller invokes with text
 function stageColor(stage: string): (text: string) => string {
@@ -1107,6 +1119,19 @@ async function runFullSession(): Promise<void> {
   let currentSig = sig;
   let currentWorld = world;
 
+  // Task 5: Mode selection — player chooses gameplay mode
+  let gameMode: string = 'story'; // default to story-driven
+  if (!HEADLESS && !JSON_MODE && !FORCE_LINE && !FORCE_MODALITY) {
+    const modeChoice = await select({
+      message: 'Choose your gameplay mode:',
+      options: [
+        { value: 'story', label: 'Story-Driven — Immersive RPG narrative' },
+        { value: 'direct', label: 'Direct Questioning — Personality-test style' },
+      ],
+    });
+    gameMode = String(modeChoice);
+  }
+
   banner('SESSION START');
   info('theme', `${chalk.cyan(sessionState.strategy.theme)}`);
   info('target', `${encounterCount} encounters`);
@@ -1192,7 +1217,11 @@ async function runFullSession(): Promise<void> {
       const posLabel = (pos: string) => pos === 'warmup' ? chalk.blue('warmup') : pos === 'cooldown' ? chalk.green('cooldown') : chalk.magenta('peak');
       const options = offers.map((enc, idx) => {
         const [, st] = enc.moduleRef.split(':');
-        const label = `${idx + 1}. ${stageColor(st)(enc.moduleRef)}  ${chalk.dim(enc.modality)}  ${chalk.dim('diff:' + enc.difficulty.toFixed(2))}  ${posLabel(enc.sessionPosition)}`;
+        // Task 4: Narrative context — show location/NPC instead of raw module identifier
+        const holon = world.holons.find(h => h.id === enc.holonSource);
+        const location = holon?.name ?? enc.moduleRef.split(':')[0];
+        const challenge = CHALLENGE_NAMES[enc.moduleRef.split(':')[0] ?? ''] ?? 'A challenge awaits';
+        const label = `${idx + 1}. ${chalk.cyan(location)}  ${chalk.dim(enc.modality)}  ${chalk.dim('diff:' + enc.difficulty.toFixed(2))}  ${posLabel(enc.sessionPosition)}`;
         return { value: idx, label };
       });
       const choice = await select({
@@ -1252,24 +1281,27 @@ async function runFullSession(): Promise<void> {
       // ── Per-encounter state display ──
       const encResult = result.outcome.finalResult;
       if (!JSON_MODE) {
-        const passIcon = encResult.passed ? chalk.green('✓ PASSED') : chalk.red('✗ FAILED');
-        // Show score + drive summary always (not just verbose)
-        const primaryScore = encResult.dimensions.accuracy ?? 0.5;
-        const scoreColor = primaryScore >= 0.7 ? chalk.green : primaryScore >= 0.5 ? chalk.yellow : chalk.red;
-        console.log(`\n  ${chalk.bold('Result:')} ${passIcon}  ${chalk.dim('score:')} ${scoreColor((primaryScore * 100).toFixed(0) + '%')}`);
-        // Show which drive was expressed and polarity in non-verbose
+        // Task 3: Developmental feedback — show insight, not just pass/fail
         const cr = result.outcome.consequenceRecord;
         const polarityIcon = cr.polarityTrace.energeticDirection === 'Radiative' ? '↑' 
           : cr.polarityTrace.energeticDirection === 'Absorptive' ? '↓' : '·';
-        // Always show drive summary line with polarity direction
-        const allDriveEntries = Object.entries(cr.polarityTrace.driveDirectionality).map(([k, v]) => {
-          if (v === 'HealthyBalanced') return `${chalk.dim(k.slice(0, 3) + ':')}${chalk.green('ok')}`;
-          const col = v.startsWith('Dark') ? chalk.red : chalk.yellow;
-          return `${col(k.slice(0, 3) + ':' + (SHADOW_LABELS[v] ?? v.slice(0, 5)))}`;
-        });
-        console.log(`  ${chalk.dim('drives:')} ${allDriveEntries.join(' ')}  ${chalk.dim(polarityIcon + cr.polarityTrace.stageOrientation)}`);
-        // Show shadow status
-        const shadow = result.outcome.consequenceRecord.shadowSurfaced;
+        
+        // Determine dominant drive expression
+        const driveEntries = Object.entries(cr.polarityTrace.driveDirectionality);
+        const dominantDrive = driveEntries.find(([, v]) => v !== 'HealthyBalanced');
+        const driveLabel = dominantDrive ? `${dominantDrive[0]} drive, ${cr.polarityTrace.stageOrientation}` : 'Healthy balanced';
+        
+        // Show developmental insight
+        if (encResult.passed) {
+          console.log(`\n  ${chalk.green('✓ PASSED')}`);
+          console.log(`  ${chalk.dim('Your response reveals:')} ${chalk.cyan(driveLabel)}`);
+        } else {
+          console.log(`\n  ${chalk.yellow('◐ NEEDS GROWTH')}`);
+          console.log(`  ${chalk.dim('This area needs more development.')}`);
+        }
+        
+        // Show shadow status only if detected
+        const shadow = cr.shadowSurfaced;
         if (shadow) {
           console.log(`  ${chalk.yellow('⚠ shadow:')} ${chalk.yellow(shadow)}`);
         }
@@ -1360,6 +1392,39 @@ async function runFullSession(): Promise<void> {
     if (altLine) console.log(altLine);
     console.log(shadowLine);
     if (relLine) console.log(relLine);
+    
+    // Task 6: Developmental summary — show what was learned
+    console.log(`\n  ${chalk.bold('Developmental Summary')}`);
+    
+    // Lines assessed this session
+    const linesAssessed = [...new Set(history.map(r => r.encounterId?.split(':')[0] ?? ''))].filter(Boolean);
+    const allLines = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
+    const linesPending = allLines.filter(l => !linesAssessed.includes(l));
+    console.log(`  ${chalk.dim('Lines assessed:')} ${linesAssessed.length}/8 (${linesAssessed.join(', ') || 'none'})`);
+    if (linesPending.length > 0) {
+      console.log(`  ${chalk.dim('Lines pending:')} ${linesPending.length}/8 (${linesPending.join(', ')})`);
+    }
+    
+    // Dominant drive patterns
+    const driveCounts = { agency: 0, communion: 0, eros: 0, agape: 0 };
+    for (const r of history) {
+      const drive = r.polarityTrace.sourceOfNourishment === 'HigherRealm' ? 'eros' 
+        : r.polarityTrace.sourceOfNourishment === 'LowerRealm' ? 'agency' 
+        : 'communion';
+      driveCounts[drive as keyof typeof driveCounts]++;
+    }
+    const dominantDrive = Object.entries(driveCounts).sort((a, b) => b[1] - a[1])[0];
+    if (dominantDrive && dominantDrive[1] > 0) {
+      console.log(`  ${chalk.dim('Dominant drive:')} ${chalk.cyan(dominantDrive[0])} (${Math.round(dominantDrive[1] / completedCount * 100)}% of responses)`);
+    }
+    
+    // Developmental recommendation
+    if (linesPending.length > 0) {
+      console.log(`  ${chalk.dim('Recommendation:')} Focus on ${linesPending[0]} line to complete assessment.`);
+    } else {
+      console.log(`  ${chalk.dim('Recommendation:')} All lines assessed. Try Story-Driven mode for deeper engagement.`);
+    }
+    
     console.log(`\n  ${chalk.dim('The session closes. Each encounter was a mirror — reflecting not who you are, but who you are becoming.')}`);
   }
 
