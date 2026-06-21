@@ -10,6 +10,7 @@ import type { Holon } from '../domain/Holon.js';
 import type { Significator } from '../domain/Significator.js';
 import type { SessionContext } from './PriorityComputation.js';
 import type { PESTLETension, MacroEvent } from './MacroCatalystEngine.js';
+import { getMacroEncounterModifications } from './MacroCatalystEngine.js';
 
 export interface EncounterCandidate {
   readonly moduleRef: string;
@@ -87,6 +88,17 @@ const ALL_MODALITIES: Modality[] = [
   'ScenarioChoice', 'LanguageReflective', 'SocialCooperative', 'ImmersiveRPG',
 ];
 
+/** Ponytail: task-type sets per modality — modalities whose preferred chain has no match in the module won't be assigned. */
+const MODALITY_TASK_TYPES: Record<Modality, readonly string[]> = {
+  Deterministic: ['n_back', 'stroop', 'go_no_go', 'reaction_time'],
+  Strategic: ['pattern_prediction'],
+  Embodied: ['hold', 'reaction_time'],
+  ScenarioChoice: ['dilemma', 'scenario'],
+  LanguageReflective: ['self_report', 'llm_dialogue'],
+  SocialCooperative: ['cooperation', 'imitation'],
+  ImmersiveRPG: ['dilemma', 'scenario', 'emotion_identification', 'self_report', 'cooperation'],
+};
+
 /** Modalities that require specific session conditions. */
 const ENERGY_GATED: Modality[] = ['Embodied'];
 const TIME_GATED: Modality[] = ['Strategic'];
@@ -113,6 +125,9 @@ export function generateCandidates(
   if (session?.estimatedTimeAvailable !== undefined && session.estimatedTimeAvailable < 900000) {
     TIME_GATED.forEach(m => blockedModalities.add(m));
   }
+
+  // Compute macro-event modifications from active events
+  const macroModifications = computeMacroModifications(world);
 
   for (const holon of world.holons) {
     if (!holon.active) continue;
@@ -166,6 +181,17 @@ export function generateCandidates(
         }
       }
 
+      // Filter 6: Macro-event blocking — if candidate matches blocked tags, skip
+      const candidateTags = [`macro:${modality}`, `event:${holon.id}`];
+      const isBlocked = candidateTags.some(tag => macroModifications.blockedTags.has(tag));
+      if (isBlocked) continue;
+
+      // Filter 7: Narrative beat gating — if encounter is gated by incomplete beat, skip
+      const gatedByBeat = world.narrativeBeats.some(
+        beat => !beat.completed && beat.gatedEncounterIds.includes(moduleRef),
+      );
+      if (gatedByBeat) continue;
+
       candidates.push({
         moduleRef,
         line: holon.line,
@@ -180,20 +206,64 @@ export function generateCandidates(
   return candidates;
 }
 
-/** Get 2-3 eligible modalities for a holon based on its properties. */
-function getEligibleModalities(holon: Holon, blocked: Set<Modality>): Modality[] {
+function getAllTaskTypes(): Set<string> {
+  const allTypes = new Set<string>();
+  for (const types of Object.values(MODALITY_TASK_TYPES)) {
+    for (const t of types) allTypes.add(t);
+  }
+  return allTypes;
+}
+
+function getEligibleModalities(
+  holon: Holon,
+  blocked: Set<Modality>,
+  moduleTaskTypes?: Set<string>,
+): Modality[] {
   const primary = holon.modality ?? 'ImmersiveRPG';
-  const alternatives = ALL_MODALITIES.filter(m => m !== primary && !blocked.has(m));
+  
+  // Filter modalities to only those whose preferred chain has ≥1 match in the module
+  const taskTypes = moduleTaskTypes ?? getAllTaskTypes();
+  const eligible = ALL_MODALITIES.filter(m => {
+    if (blocked.has(m)) return false;
+    const chain = MODALITY_TASK_TYPES[m];
+    return chain.some(t => taskTypes.has(t));
+  });
+  
+  if (eligible.length === 0) return !blocked.has(primary) ? [primary] : ['ImmersiveRPG'];
+  
   const selected: Modality[] = [];
-  if (!blocked.has(primary)) selected.push(primary);
-  const hash = simpleHash(holon.id);
-  if (alternatives.length > 0) selected.push(alternatives[hash % alternatives.length]);
-  if (alternatives.length > 1) selected.push(alternatives[(hash + 3) % alternatives.length]);
+  if (eligible.includes(primary)) selected.push(primary);
+  
+  const alternatives = eligible.filter(m => m !== primary);
+  while (selected.length < 3 && alternatives.length > 0) {
+    const idx = Math.floor(Math.random() * alternatives.length);
+    selected.push(alternatives.splice(idx, 1)[0]);
+  }
+  
   return selected;
 }
 
-function simpleHash(s: string): number {
-  let h = 0;
-  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
-  return Math.abs(h);
+function computeMacroModifications(world: WorldState): {
+  blockedTags: Set<string>;
+  boostedTags: Set<string>;
+} {
+  const blockedTags = new Set<string>();
+  const boostedTags = new Set<string>();
+
+  for (const event of world.activeMacroEvents) {
+    const eventState = {
+      event,
+      phase: 'active' as const,
+      sessionsInPhase: 0,
+      encountersSinceStart: 0,
+      playerChoices: [],
+    };
+    const mods = getMacroEncounterModifications(eventState);
+    for (const tag of mods.blockedEncounterTags) blockedTags.add(tag);
+    for (const tag of mods.additionalEncounterTags) boostedTags.add(tag);
+  }
+
+  return { blockedTags, boostedTags };
 }
+
+

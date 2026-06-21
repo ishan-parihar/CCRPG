@@ -147,7 +147,7 @@ describe('AgenticOrchestrator', () => {
     expect(result.finalResult.dimensions.accuracy).toBe(0.9);
     expect(result.finalResult.dimensions.response_time).toBe(0.8);
     expect(result.narrativeSummary).toBe('The player used visual mapping to solve the memory grid.');
-    expect(result.messages).toHaveLength(4); // User prompt, assistant tool call 1, tool response 1, assistant tool call 2
+    expect(result.messages).toHaveLength(5); // User prompt, assistant tool call 1, tool response 1, user follow-up, assistant tool call 2
 
     // Verify consequence application mutated state
     expect(result.updatedSig.totalEncounters).toBe(1);

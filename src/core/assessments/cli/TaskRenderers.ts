@@ -12,6 +12,7 @@
  */
 import type { AssessmentTask, TrialResult } from '../types.js';
 import type { AskUserQuestionParams } from '../agentTypes.js';
+import type { Line } from '../../domain/Line.js';
 
 // ── ANSI helpers (must be at top for const hoisting) ──────────────────
 
@@ -46,13 +47,47 @@ function shuffle<T>(arr: T[]): T[] {
 // ── Symbol sets for cognitive tasks ────────────────────────────────────
 
 const NBACK_SYMBOLS = ['◆', '●', '▲', '■', '★', '◇', '○', '△'];
+const NBACK_SYMBOLS_EXTENDED = ['◆', '●', '▲', '■', '★', '◇', '○', '△', '◈', '◉', '◎', '✧'];
 const STROOP_COLORS = [
   { word: 'RED', render: '\x1b[31mRED\x1b[0m', short: 'Red', initial: 'R' },
   { word: 'BLUE', render: '\x1b[34mBLUE\x1b[0m', short: 'Blue', initial: 'B' },
   { word: 'GREEN', render: '\x1b[32mGREEN\x1b[0m', short: 'Green', initial: 'G' },
   { word: 'YELLOW', render: '\x1b[33mYELLOW\x1b[0m', short: 'Yellow', initial: 'Y' },
 ];
+const STROOP_COLORS_EXTENDED = [
+  ...STROOP_COLORS,
+  { word: 'PURPLE', render: '\x1b[35mPURPLE\x1b[0m', short: 'Purple', initial: 'P' },
+  { word: 'ORANGE', render: '\x1b[38;5;208mORANGE\x1b[0m', short: 'Orange', initial: 'O' },
+];
 const GONOGO_STIMULI = ['⚔', '🛡', '☠', '✦'];
+const GONOGO_STIMULI_EXTENDED = ['⚔', '🛡', '☠', '✦', '🔮', '💀'];
+
+/**
+ * Stage-specific difficulty parameters.
+ * Lower stages = simpler tasks, fewer trials, larger symbol pools.
+ * Higher stages = more complex tasks, more trials, abstract symbols.
+ */
+const STAGE_DIFFICULTY: Record<string, {
+  nBackN: number; nBackTrials: number; stroopTrials: number;
+  goNoGoTrials: number; holdItems: number; holdDurationMs: number;
+  patternDisks: number; patternAttempts: number;
+  symbolPool: readonly string[]; stroopColors: typeof STROOP_COLORS;
+  goStimuli: readonly string[];
+}> = {
+  Infrared: { nBackN: 1, nBackTrials: 6, stroopTrials: 4, goNoGoTrials: 8, holdItems: 2, holdDurationMs: 3000, patternDisks: 2, patternAttempts: 3, symbolPool: NBACK_SYMBOLS.slice(0, 4), stroopColors: STROOP_COLORS.slice(0, 3), goStimuli: GONOGO_STIMULI.slice(0, 2) },
+  Magenta: { nBackN: 1, nBackTrials: 8, stroopTrials: 6, goNoGoTrials: 10, holdItems: 2, holdDurationMs: 4000, patternDisks: 2, patternAttempts: 3, symbolPool: NBACK_SYMBOLS.slice(0, 5), stroopColors: STROOP_COLORS.slice(0, 3), goStimuli: GONOGO_STIMULI.slice(0, 3) },
+  Red: { nBackN: 2, nBackTrials: 10, stroopTrials: 8, goNoGoTrials: 14, holdItems: 3, holdDurationMs: 5000, patternDisks: 3, patternAttempts: 4, symbolPool: NBACK_SYMBOLS, stroopColors: STROOP_COLORS, goStimuli: GONOGO_STIMULI },
+  Amber: { nBackN: 2, nBackTrials: 12, stroopTrials: 10, goNoGoTrials: 16, holdItems: 3, holdDurationMs: 6000, patternDisks: 3, patternAttempts: 4, symbolPool: NBACK_SYMBOLS, stroopColors: STROOP_COLORS, goStimuli: GONOGO_STIMULI },
+  Orange: { nBackN: 2, nBackTrials: 14, stroopTrials: 10, goNoGoTrials: 18, holdItems: 4, holdDurationMs: 7000, patternDisks: 4, patternAttempts: 5, symbolPool: NBACK_SYMBOLS_EXTENDED, stroopColors: STROOP_COLORS_EXTENDED, goStimuli: GONOGO_STIMULI_EXTENDED },
+  Green: { nBackN: 3, nBackTrials: 16, stroopTrials: 12, goNoGoTrials: 20, holdItems: 4, holdDurationMs: 8000, patternDisks: 4, patternAttempts: 5, symbolPool: NBACK_SYMBOLS_EXTENDED, stroopColors: STROOP_COLORS_EXTENDED, goStimuli: GONOGO_STIMULI_EXTENDED },
+  Turquoise: { nBackN: 3, nBackTrials: 18, stroopTrials: 14, goNoGoTrials: 22, holdItems: 5, holdDurationMs: 9000, patternDisks: 5, patternAttempts: 6, symbolPool: NBACK_SYMBOLS_EXTENDED, stroopColors: STROOP_COLORS_EXTENDED, goStimuli: GONOGO_STIMULI_EXTENDED },
+  White: { nBackN: 3, nBackTrials: 20, stroopTrials: 16, goNoGoTrials: 24, holdItems: 5, holdDurationMs: 10000, patternDisks: 5, patternAttempts: 6, symbolPool: NBACK_SYMBOLS_EXTENDED, stroopColors: STROOP_COLORS_EXTENDED, goStimuli: GONOGO_STIMULI_EXTENDED },
+};
+
+/** Get difficulty params for a stage, defaulting to Red */
+function getDifficulty(stage?: string): typeof STAGE_DIFFICULTY['Red'] {
+  return STAGE_DIFFICULTY[stage ?? 'Red'] ?? STAGE_DIFFICULTY['Red']!;
+}
 
 // ── Task type display names ────────────────────────────────────────────
 
@@ -84,8 +119,10 @@ export function renderNBack(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
-  const n = (task.parameters.n as number) ?? 2;
-  const trialCount = (task.parameters.trials as number) ?? 12;
+  const diff = getDifficulty(task.parameters.stage as string | undefined);
+  const n = (task.parameters.n as number) ?? diff.nBackN;
+  const trialCount = (task.parameters.trials as number) ?? diff.nBackTrials;
+  const symbols = diff.symbolPool;
 
   // Generate a sequence with guaranteed matches
   const sequence: string[] = [];
@@ -96,9 +133,9 @@ export function renderNBack(task: AssessmentTask): {
       sequence.push(sequence[i - n]!);
       matchPositions.push(i);
     } else {
-      const sym = NBACK_SYMBOLS[Math.floor(Math.random() * NBACK_SYMBOLS.length)]!;
+      const sym = symbols[Math.floor(Math.random() * symbols.length)]!;
       if (i >= n && sym === sequence[i - n]) {
-        const alternatives = NBACK_SYMBOLS.filter(s => s !== sequence[i - n]);
+        const alternatives = symbols.filter(s => s !== sequence[i - n]);
         sequence.push(alternatives[Math.floor(Math.random() * alternatives.length)]!);
       } else {
         sequence.push(sym);
@@ -179,25 +216,27 @@ export function renderStroop(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
-  const trialCount = (task.parameters.trials as number) ?? 10;
+  const diff = getDifficulty(task.parameters.stage as string | undefined);
+  const trialCount = (task.parameters.trials as number) ?? diff.stroopTrials;
+  const colors = diff.stroopColors;
 
   const trials: { wordIdx: number; inkIdx: number }[] = [];
   for (let i = 0; i < trialCount; i++) {
-    let wordIdx = Math.floor(Math.random() * STROOP_COLORS.length);
-    let inkIdx = Math.floor(Math.random() * STROOP_COLORS.length);
+    let wordIdx = Math.floor(Math.random() * colors.length);
+    let inkIdx = Math.floor(Math.random() * colors.length);
     while (inkIdx === wordIdx) {
-      inkIdx = Math.floor(Math.random() * STROOP_COLORS.length);
+      inkIdx = Math.floor(Math.random() * colors.length);
     }
     trials.push({ wordIdx, inkIdx });
   }
 
   const trialDisplay = trials.map((t, i) => {
-    const inkColor = STROOP_COLORS[t.inkIdx]!;
+    const inkColor = colors[t.inkIdx]!;
     return `${C.dim}#${i + 1}${C.reset} ${inkColor.render}`;
   }).join('   ');
 
   // Generate the correct sequence
-  const correctSequence = trials.map(t => STROOP_COLORS[t.inkIdx]!.initial).join(',');
+  const correctSequence = trials.map(t => colors[t.inkIdx]!.initial).join(',');
 
   const question = [
     `Name the INK COLOR of each word (not the word itself).`,
@@ -209,9 +248,9 @@ export function renderStroop(task: AssessmentTask): {
 
   // Build correct and incorrect options, then shuffle
   const incorrectSequences = [
-    trials.map(t => STROOP_COLORS[(t.inkIdx + 1) % STROOP_COLORS.length]!.initial).join(','),
-    trials.map(t => STROOP_COLORS[(t.inkIdx + 2) % STROOP_COLORS.length]!.initial).join(','),
-    trials.map(t => STROOP_COLORS[t.wordIdx]!.initial).join(','), // Word-color (Stroop error)
+    trials.map(t => colors[(t.inkIdx + 1) % colors.length]!.initial).join(','),
+    trials.map(t => colors[(t.inkIdx + 2) % colors.length]!.initial).join(','),
+    trials.map(t => colors[t.wordIdx]!.initial).join(','), // Word-color (Stroop error)
   ];
 
   const options: DriveOption[] = [
@@ -277,15 +316,17 @@ export function renderGoNoGo(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
+  const diff = getDifficulty(task.parameters.stage as string | undefined);
   const goRatio = (task.parameters.goRatio as number) ?? 0.7;
-  const trialCount = (task.parameters.trials as number) ?? 20;
+  const trialCount = (task.parameters.trials as number) ?? diff.goNoGoTrials;
+  const stimuliPool = diff.goStimuli;
 
   const stimuli: string[] = [];
   let goCount = 0;
   let nogoCount = 0;
   for (let i = 0; i < trialCount; i++) {
     const isGo = Math.random() < goRatio;
-    stimuli.push(isGo ? GONOGO_STIMULI[0]! : GONOGO_STIMULI[1]!);
+    stimuli.push(isGo ? stimuliPool[0]! : stimuliPool[1]!);
     if (isGo) goCount++;
     else nogoCount++;
   }
@@ -361,10 +402,11 @@ export function renderHold(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
-  const itemCount = (task.parameters.items as number) ?? 3;
-  const holdDurationMs = (task.parameters.holdDurationMs as number) ?? 5000;
+  const diff = getDifficulty(task.parameters.stage as string | undefined);
+  const itemCount = (task.parameters.items as number) ?? diff.holdItems;
+  const holdDurationMs = (task.parameters.holdDurationMs as number) ?? diff.holdDurationMs;
 
-  const items = NBACK_SYMBOLS.slice(0, itemCount);
+  const items = diff.symbolPool.slice(0, itemCount);
 
   const question = [
     `Remember these ${itemCount} symbols:`,
@@ -426,8 +468,9 @@ export function renderPatternPrediction(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
-  const disks = (task.parameters.disks as number) ?? 3;
-  const attempts = (task.parameters.attempts as number) ?? 4;
+  const diff = getDifficulty(task.parameters.stage as string | undefined);
+  const disks = (task.parameters.disks as number) ?? diff.patternDisks;
+  const attempts = (task.parameters.attempts as number) ?? diff.patternAttempts;
 
   const base = Math.floor(Math.random() * 5) + 1;
   const step = Math.floor(Math.random() * 3) + 1;
@@ -569,17 +612,304 @@ export function renderEmotionIdentification(task: AssessmentTask): {
   };
 }
 
-// ── Dilemma Renderer (expanded set) ─────────────────────────────────
+// ── Dilemma Renderer — Line×Stage-Specific ─────────────────────────
+
+interface DilemmaOption {
+  label: string;
+  description: string;
+  drive: 'agency' | 'communion' | 'eros' | 'agape';
+  polarity: 'sto' | 'sts' | 'neutral';
+  /** Score for drive-aligned response (1.0 = fully aligned, 0.5 = neutral, 0.3 = misaligned) */
+  correctnessScore: number;
+}
+
+interface LineDilemma {
+  scenario: string;
+  options: DilemmaOption[];
+}
 
 /**
- * Render a dilemma: present a moral scenario with genuine ethical tensions.
+ * Line-specific dilemma pools. Each line has 4-6 dilemmas that probe
+ * the developmental structure unique to that line of intelligence.
+ * Stage determines framing difficulty (Red = survival, Amber = rules,
+ * Orange = optimization, Green = pluralistic).
+ */
+const LINE_DILEMMAS: Record<string, LineDilemma[]> = {
+  Cognitive: [
+    {
+      scenario: 'You discover a flaw in a widely-accepted theory that has guided your community for years. Publishing it would advance knowledge but undermine the intellectual foundation people rely on.',
+      options: [
+        { label: 'Publish immediately', description: 'Truth must never be suppressed, regardless of consequences', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Work within the system', description: 'Introduce the correction gradually through trusted channels', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Replicate and verify first', description: 'One finding is not enough — build an irrefutable case', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Consider who benefits', description: 'Knowledge without wisdom about its use is dangerous', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'Your analytical framework reveals a pattern that implicates someone you deeply respect. The data is clear but the conclusion would destroy their reputation.',
+      options: [
+        { label: 'Follow the evidence', description: 'Analysis must be impartial — the truth is the truth', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Confront them privately first', description: 'Give them a chance to explain or correct the record', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Question the framework', description: 'If the conclusion feels wrong, maybe the model needs refinement', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Weigh the greater impact', description: 'What serves the community best — the truth or the relationship?', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You can solve a complex problem instantly using intuition, or spend hours verifying through rigorous analysis. The intuitive answer feels right but you cannot prove why.',
+      options: [
+        { label: 'Trust the analysis', description: 'Unverified intuition is just guessing with confidence', drive: 'agency', polarity: 'neutral' , correctnessScore: 0.6 },
+        { label: 'Act on intuition now', description: 'Speed matters — analysis can follow', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Blend both', description: 'Use intuition to guide the analysis, analysis to validate the intuition', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Present both paths', description: 'Let others see the reasoning and decide', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'A colleague presents flawed research that supports a cause you believe in. Exposing the flaw helps science but hurts a movement you care about.',
+      options: [
+        { label: 'Expose the flaw', description: 'Science must be honest, even when inconvenient', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Support the cause quietly', description: 'The greater good outweighs one methodological error', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Help them improve it', description: 'Fix the research rather than destroy it', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Let it stand', description: 'Perfect cannot be the enemy of good enough', drive: 'agape', polarity: 'neutral' , correctnessScore: 0.6 },
+      ],
+    },
+  ],
+  Emotional: [
+    {
+      scenario: 'A friend tells you they are fine, but their eyes tell a different story. Pressing them might break a wall they need. Ignoring it might leave them alone.',
+      options: [
+        { label: 'Name what I see', description: 'Sometimes being seen is the first step to healing', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Respect their boundary', description: 'They will share when they are ready', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+        { label: 'Share my own vulnerability first', description: 'Open the door by going through it myself', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Stay present without asking', description: 'Sometimes presence speaks louder than words', drive: 'agency', polarity: 'neutral' , correctnessScore: 0.6 },
+      ],
+    },
+    {
+      scenario: 'You feel a surge of anger during a conversation. It is justified, but expressing it could damage a fragile relationship.',
+      options: [
+        { label: 'Express the anger honestly', description: 'Suppressing authentic feeling is its own violence', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Name the feeling without blame', description: 'I feel angry — this is about me, not about you', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Sit with it before responding', description: 'Let the wave pass before speaking from the deeper place', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Redirect to what matters', description: 'Under the anger is a need — speak to the need instead', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You are offered a position of great influence. It excites you, but something deep inside feels a quiet dread you cannot name.',
+      options: [
+        { label: 'Follow the excitement', description: 'Opportunity favours the bold — trust the pull', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Explore the dread', description: 'The body knows things the mind has not caught up with', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Delay the decision', description: 'Neither yes nor no — let the answer reveal itself', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Ask what I truly need', description: 'Influence is not the same as fulfilment', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'Someone you love is making a choice you believe will hurt them deeply. Your fear for them is tangled with your own unhealed wounds.',
+      options: [
+        { label: 'Warn them directly', description: 'Love means telling hard truths', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Hold space for their journey', description: 'Their path is theirs — my fear is mine', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Examine where my fear meets their choice', description: 'Where does their freedom end and my wound begin?', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Love them through it', description: 'I cannot walk their path, but I can walk beside them', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+  ],
+  Moral: [
+    {
+      scenario: 'You discover your mentor has been lying to protect you. The truth would destroy your faith in them but free you to grow.',
+      options: [
+        { label: 'Confront them', description: 'Demand the truth, even if it breaks the relationship', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Forgive silently', description: 'Accept the protection and move on', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+        { label: 'Seek counsel', description: 'Ask someone you trust for perspective', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Transcend the need', description: "The truth doesn't matter — only growth does", drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+      ],
+    },
+    {
+      scenario: 'A community depends on a resource that is slowly depleting. Sharing equally means everyone suffers slowly. Hoarding means your group survives but others don\'t.',
+      options: [
+        { label: 'Share equally', description: 'All should share the burden, even if it\'s harder', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+        { label: 'Protect your own', description: 'Your people come first', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Find alternatives', description: 'There must be another way — search for it', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Build alliances', description: 'Unite with others to solve it collectively', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+      ],
+    },
+    {
+      scenario: 'You can advance your career by taking credit for someone else\'s work, or stay honest and remain overlooked.',
+      options: [
+        { label: 'Stay honest', description: 'Integrity matters more than advancement', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+        { label: 'Take credit', description: 'Survival requires boldness', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Share credit', description: 'Both of you deserve recognition', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Find a third path', description: "There's always another option", drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+      ],
+    },
+    {
+      scenario: 'A child asks you why people suffer. You know the real answer would shatter their innocence, but a comforting lie feels wrong.',
+      options: [
+        { label: 'Tell the truth gently', description: 'They deserve honesty, softened with love', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+        { label: 'Shield them', description: 'Innocence is sacred — protect it', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Redirect with wonder', description: 'Turn the question toward beauty and possibility', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Let them figure it out', description: 'Some truths must be lived, not told', drive: 'agency', polarity: 'neutral' , correctnessScore: 0.6 },
+      ],
+    },
+  ],
+  Intrapersonal: [
+    {
+      scenario: 'You realize a core belief you have held about yourself — "I am not enough" — has been driving your decisions for years. Confronting it means confronting who you would be without it.',
+      options: [
+        { label: 'Dismantle it immediately', description: 'If it is false, every moment spent believing it is wasted', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Trace its origins gently', description: 'Understanding where it came from is the path to releasing it', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Let it dissolve naturally', description: 'Forced self-change creates new shadows — let awareness do the work', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Integrate it as a teacher', description: 'This belief served a purpose once — honour that before releasing', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You notice you are performing a version of yourself for others that is not quite authentic. Dropping the performance might reveal something you are not ready to face.',
+      options: [
+        { label: 'Drop the mask now', description: 'Authenticity demands courage — face what is underneath', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Explore what the mask protects', description: 'Every persona exists for a reason — understand it first', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Let it thin gradually', description: 'Authenticity is not all-or-nothing — reveal more over time', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Accept the performance as part of me', description: 'All selves are real selves — even the ones we choose', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You receive feedback that contradicts your self-image. Three people independently describe a pattern you cannot see in yourself.',
+      options: [
+        { label: 'Reject it as misunderstanding', description: 'They do not know the real me', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Sit with the discomfort', description: 'If three mirrors show the same image, perhaps I should look', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Investigate the pattern objectively', description: 'Data is data — let me examine the evidence', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Thank them and reflect', description: 'Feedback is a gift, even when it stings', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+  ],
+  Spiritual: [
+    {
+      scenario: 'You experience a profound moment of connection with something larger than yourself. A voice inside says: "This is truth." Another voice asks: "Is this genuine insight or just what you wanted to feel?"',
+      options: [
+        { label: 'Trust the experience', description: 'Some truths are felt before they are understood', drive: 'agency', polarity: 'neutral' , correctnessScore: 0.6 },
+        { label: 'Question it rigorously', description: 'Spiritual experiences are the most important to verify', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Hold both possibilities', description: 'The question itself is part of the answer', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Return to practice', description: 'The experience will clarify itself through continued engagement', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'Your spiritual practice has brought you peace, but someone you love is suffering and your peace feels like indifference.',
+      options: [
+        { label: 'Share the practice', description: 'If it brought me peace, it might help them too', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Set aside practice to be present', description: 'Their pain is more important than my peace', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Hold both — peace AND compassion', description: 'True peace includes the suffering of others', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Let my peace be an offering', description: 'The calmer I am, the more I can actually help', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You are asked to lead a spiritual community. The role requires structure and authority, but your deepest teaching is about letting go of control.',
+      options: [
+        { label: 'Accept and adapt', description: 'The container must exist for the contents to be held', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Decline the role', description: 'The teaching matters more than the position', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Lead by not-leading', description: 'Create space for the community to lead itself', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Serve as guide, not guru', description: 'Hold authority lightly — point, do not push', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+  ],
+  Somatic: [
+    {
+      scenario: 'Your body sends a persistent signal of fatigue, but you have committed to a demanding physical challenge. Pushing through could cause injury; stopping feels like failure.',
+      options: [
+        { label: 'Push through', description: 'The body adapts to what the mind demands', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Listen to the fatigue', description: 'The body is never wrong — only the mind ignores it', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Modify the challenge', description: 'Adapt the goal to honour the body without abandoning it', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Rest and return stronger', description: 'Recovery is not retreat — it is preparation', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'During deep physical work, a stored emotion surfaces — grief, rage, fear. Your body wants to release it, but the setting demands composure.',
+      options: [
+        { label: 'Release it fully', description: 'The body knows what it needs — let it speak', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Acknowledge and contain', description: 'I see you. Not now. Soon.', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Breathe into the sensation', description: 'Let the breath carry the emotion without acting on it', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Trust the process', description: 'What the body releases, the body heals', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You notice your body has been holding tension in a specific area for weeks. A healer suggests it relates to an unresolved life situation.',
+      options: [
+        { label: 'Address the life situation directly', description: 'Fix the source, not just the symptom', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Work with the body first', description: 'Release the tension physically and see what emerges', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Hold curiosity about both', description: 'Body and situation are one conversation — listen to both', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Accept it as part of my story', description: 'This tension has carried something important — honour that', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+  ],
+  Willpower: [
+    {
+      scenario: 'You have committed to a difficult daily practice. After two weeks, the initial motivation has faded and the practice feels mechanical. Stopping feels like weakness; continuing feels like hollow routine.',
+      options: [
+        { label: 'Discipline over feeling', description: 'Motivation follows action — do it regardless', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Reconnect with why I started', description: 'The original intention still holds — remember it', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Transform the practice', description: 'If it has become hollow, it needs to evolve — not be abandoned', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Rest without quitting', description: 'A pause is not a surrender — sometimes the practice needs silence', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You are tempted by something you know will undermine a long-term goal. The temptation is immediate and pleasurable; the goal is distant and abstract.',
+      options: [
+        { label: 'Resist through willpower', description: 'I am stronger than this impulse', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Understand the temptation', description: 'What need is it trying to meet? Address that instead', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Redirect the energy', description: 'Channel this intensity into something that serves the goal', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Allow a small indulgence', description: 'Rigid denial creates explosive rebellion — allow with awareness', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You witness someone struggling with a task you could complete effortlessly. Intervening would be efficient but robs them of the growth that comes from struggle.',
+      options: [
+        { label: 'Do it for them', description: 'Efficiency matters — their struggle is unnecessary', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Coach from the side', description: 'Guide without doing — their growth is the point', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Let them struggle', description: 'The resistance is the teacher — do not interfere', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Offer support when asked', description: 'Be available without being intrusive', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+  ],
+  Interpersonal: [
+    {
+      scenario: 'A trusted ally has been sharing your private struggles with others. Confronting them risks the alliance; staying silent enables the breach.',
+      options: [
+        { label: 'Confront directly', description: 'Trust must be defended — this is non-negotiable', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Understand their motive first', description: 'People betray trust for reasons — learn the reason', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Set new boundaries without accusation', description: 'Protect without punishing — redesign the container', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Accept the vulnerability', description: 'What is known cannot hurt me — only shame can', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'Two people you care about are in conflict and each asks you to take their side. Neutrality satisfies neither; choosing one damages the other relationship.',
+      options: [
+        { label: 'Choose the side I believe is right', description: 'Neutrality in conflict is its own form of cowardice', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Hold space for both', description: 'I can love two people who disagree', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Help them see each other', description: 'The conflict is a mirror — help them look into it', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Refuse to be drawn in', description: 'Their conflict is not mine to resolve', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+    {
+      scenario: 'You enter a group where the established dynamic requires you to play a subordinate role. Your capacity exceeds the role, but challenging it would disrupt the group.',
+      options: [
+        { label: 'Challenge the hierarchy', description: 'Capability should determine role, not seniority', drive: 'agency', polarity: 'sts' , correctnessScore: 0.55 },
+        { label: 'Serve within the role', description: 'The group needs stability more than my ambition', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },
+        { label: 'Lead by example, not title', description: 'Authority earned through action outlasts authority given by position', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },
+        { label: 'Find my unique contribution', description: 'Every role has space for genuine expression within it', drive: 'agape', polarity: 'sto' , correctnessScore: 0.65 },
+      ],
+    },
+  ],
+};
+
+/**
+ * Render a dilemma: present a line-specific scenario with genuine developmental tensions.
  * Each option maps to a different drive, enabling differentiated scoring.
+ * Uses line-specific dilemma pools when available, falls back to generic.
  */
 export function renderDilemma(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
-  const dilemmas = [
+  // Get line-specific dilemmas if available
+  const line = (task.parameters.line as string) ?? 'Moral';
+  const lineDilemmas = LINE_DILEMMAS[line];
+  const dilemmas: LineDilemma[] = lineDilemmas ?? [
+    // Fallback: generic dilemmas when line not specified
     {
       scenario: 'You discover your mentor has been lying to protect you. The truth would destroy your faith in them but free you to grow.',
       options: [
@@ -596,42 +926,6 @@ export function renderDilemma(task: AssessmentTask): {
         { label: 'Protect your own', description: 'Your people come first', drive: 'agency', polarity: 'sts' },
         { label: 'Find alternatives', description: 'There must be another way — search for it', drive: 'eros', polarity: 'neutral' },
         { label: 'Build alliances', description: 'Unite with others to solve it collectively', drive: 'communion', polarity: 'sto' },
-      ],
-    },
-    {
-      scenario: 'You can advance your career by taking credit for someone else\'s work, or stay honest and remain overlooked.',
-      options: [
-        { label: 'Stay honest', description: 'Integrity matters more than advancement', drive: 'agape', polarity: 'sto' },
-        { label: 'Take credit', description: 'Survival requires boldness', drive: 'agency', polarity: 'sts' },
-        { label: 'Share credit', description: 'Both of you deserve recognition', drive: 'communion', polarity: 'sto' },
-        { label: 'Find a third path', description: "There's always another option", drive: 'eros', polarity: 'neutral' },
-      ],
-    },
-    {
-      scenario: 'A child asks you why people suffer. You know the real answer would shatter their innocence, but a comforting lie feels wrong.',
-      options: [
-        { label: 'Tell the truth gently', description: 'They deserve honesty, softened with love', drive: 'agape', polarity: 'sto' },
-        { label: 'Shield them', description: 'Innocence is sacred — protect it', drive: 'communion', polarity: 'sto' },
-        { label: 'Redirect with wonder', description: 'Turn the question toward beauty and possibility', drive: 'eros', polarity: 'neutral' },
-        { label: 'Let them figure it out', description: 'Some truths must be lived, not told', drive: 'agency', polarity: 'neutral' },
-      ],
-    },
-    {
-      scenario: 'Your closest companion has been secretly weakened by an internal struggle. Confronting it would mean facing your own similar weakness.',
-      options: [
-        { label: 'Face it together', description: 'Shared vulnerability creates unbreakable bonds', drive: 'communion', polarity: 'sto' },
-        { label: 'Confront it head-on', description: 'Avoidance only deepens the wound', drive: 'agency', polarity: 'neutral' },
-        { label: 'Seek deeper understanding', description: 'There is a root cause beneath the surface', drive: 'eros', polarity: 'neutral' },
-        { label: 'Create a safe space', description: 'Healing happens in safety, not pressure', drive: 'agape', polarity: 'sto' },
-      ],
-    },
-    {
-      scenario: 'You find an ancient text that reveals uncomfortable truths about your society\'s founding. Publishing it would honor truth but destabilize trust.',
-      options: [
-        { label: 'Publish the truth', description: 'History must be faced honestly', drive: 'agency', polarity: 'sts' },
-        { label: 'Keep it hidden', description: 'Some truths do more harm than good', drive: 'communion', polarity: 'sto' },
-        { label: 'Contextualize it', description: 'Present it alongside the full story of growth since', drive: 'agape', polarity: 'sto' },
-        { label: 'Study it deeply first', description: 'Understanding must precede action', drive: 'eros', polarity: 'neutral' },
       ],
     },
     {
@@ -684,17 +978,18 @@ export function renderDilemma(task: AssessmentTask): {
         answerLower.includes(o.label.split(' ')[0]!.toLowerCase())
       );
 
-      // Moral dilemmas have no 'right' answer — score on depth of reflection and deliberation
-      // Option coherence: matched MCQ = coherent choice (0.6), write-in = self-directed (0.7)
-      const accuracy = matchedOption ? 0.6 : (answer.length > 30 ? 0.8 : 0.5);
-      const depth = answer.length > 20 ? 0.8 : answer.length > 10 ? 0.6 : 0.4;
+      // Moral dilemmas: score on OPTION ALIGNMENT + depth of reflection.
+      // Each option maps to a drive (agency/communion/eros/agape) — scoring uses
+      // the option's correctnessScore to differentiate drive-aligned responses.
+      const optionScore = matchedOption?.correctnessScore ?? 0.5;
+      const depth = answer.length > 30 ? 0.9 : answer.length > 20 ? 0.7 : answer.length > 10 ? 0.5 : 0.3;
       const responseTime = durationMs < 15000 ? 0.8 : durationMs < 60000 ? 0.6 : 0.4;
 
       return {
         taskId: task.id,
         timestamp: startTimeMs,
         dimensions: {
-          accuracy,
+          accuracy: optionScore,
           depth,
           response_time: responseTime,
           coherence: matchedOption ? 0.7 : 0.4,
@@ -704,6 +999,7 @@ export function renderDilemma(task: AssessmentTask): {
           answer,
           matchedDrive: matchedOption?.drive ?? null,
           matchedPolarity: matchedOption?.polarity ?? 'neutral',
+          correctnessScore: optionScore,
         },
         durationMs,
       };
@@ -717,7 +1013,75 @@ export function renderSelfReport(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
-  const prompts = [
+  // Line-specific self-report prompts for developmental depth
+  const LINE_PROMPTS: Record<string, string[]> = {
+    Cognitive: [
+      'What assumption do you hold that you have never questioned?',
+      'When was the last time you changed your mind about something important? What triggered it?',
+      'What is the difference between thinking and knowing?',
+      'What is one thing you avoid thinking about, and why?',
+      'If your thinking patterns were visible to others, what would surprise them most?',
+      'When you face a challenge, what is your first instinct — analyze, trust intuition, seek input, or act?',
+    ],
+    Emotional: [
+      'What feeling do you avoid sitting with?',
+      'Describe a recent moment where you felt truly alive — not just happy, but fully present.',
+      'What emotion is most present for you right now? Describe it in your own words.',
+      'What does your inner critic say to you most often?',
+      'When someone shares their pain with you, what happens inside you?',
+      'What is the relationship between what you feel and what you express?',
+    ],
+    Moral: [
+      'When you witness injustice, what happens in your body before your mind responds?',
+      'What is one rule you follow even when no one is watching?',
+      'What is the hardest ethical dilemma you have faced — and how did you resolve it?',
+      'If you could change one thing about how the world treats its weakest members, what would it be?',
+      'What is the relationship between what you believe and how you act?',
+      'When you fail to live up to your own values, what happens next?',
+    ],
+    Intrapersonal: [
+      'What is the gap between who you are and who you present to the world?',
+      'When you are completely alone, what is your relationship with yourself like?',
+      'What is one pattern in your behavior that you recognize but cannot seem to change?',
+      'What does your body know that your mind refuses to accept?',
+      'If you could have a conversation with your younger self, what would you say?',
+      'What is the most honest thing you can say about yourself right now?',
+    ],
+    Spiritual: [
+      'When you are in nature, what happens to your sense of self?',
+      'What is the difference between belief and experience?',
+      'What is one thing you would risk everything for?',
+      'When you encounter mystery, do you lean in or pull back?',
+      'What is the relationship between your daily actions and your deepest values?',
+      'If you could describe your inner landscape in one word, what would it be?',
+    ],
+    Somatic: [
+      'Where do you feel tension in your body right now? What might it be carrying?',
+      'What is your relationship with your physical body — friend, stranger, or adversary?',
+      'When your body speaks to you, what does it usually say?',
+      'Describe a time when your body guided you toward a decision your mind resisted.',
+      'What physical sensations accompany your most important decisions?',
+      'If your body could speak freely for one minute, what would it say?',
+    ],
+    Willpower: [
+      'What is the hardest thing you have committed to and sustained over time?',
+      'When you face a challenge, what is your first instinct — fight, flee, freeze, or connect?',
+      'What is the relationship between discipline and freedom in your life?',
+      'When motivation fades, what keeps you going?',
+      'What is one thing you avoid thinking about, and why?',
+      'If you could change one thing about how you relate to obstacles, what would it be?',
+    ],
+    Interpersonal: [
+      'If you could change one thing about how you relate to others, what would it be?',
+      'What is the hardest conversation you have ever had? What did it teach you?',
+      'When someone close to you is in pain, what is your instinct — fix, listen, or withdraw?',
+      'What is the difference between connection and control in your relationships?',
+      'When you feel unseen by others, what happens inside you?',
+      'What is the most honest thing you can say about how you show up for others?',
+    ],
+  };
+  const line = (task.parameters.line as string) ?? 'Moral';
+  const linePrompts = LINE_PROMPTS[line] ?? [
     'What emotion is most present for you right now? Describe it in your own words.',
     'When you face a challenge, what is your first instinct — fight, flee, freeze, or connect?',
     'What is one thing you avoid thinking about, and why?',
@@ -725,6 +1089,7 @@ export function renderSelfReport(task: AssessmentTask): {
     'What does your inner critic say to you most often?',
     'If you could change one thing about how you relate to others, what would it be?',
   ];
+  const prompts = linePrompts;
 
   const promptText = prompts[Math.floor(Math.random() * prompts.length)]!;
 
@@ -754,10 +1119,9 @@ export function renderSelfReport(task: AssessmentTask): {
       const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
 
       const depth = wordCount > 30 ? 0.9 : wordCount > 15 ? 0.7 : wordCount > 5 ? 0.5 : 0.3;
-      // For MCQ selections, use wordCount of the label itself (~3-6 words)
-      // For write-ins, use actual word count
-      const effectiveWordCount = matchedOpt ? matchedOpt.label.split(' ').length : wordCount;
-      const accuracy = effectiveWordCount > 5 ? 0.7 : 0.5;
+      // FIX: Use the matched option's correctnessScore for accuracy (not word count).
+      // This ensures different MCQ options score differently based on their developmental value.
+      const accuracy = matchedOpt ? matchedOpt.correctnessScore : (wordCount > 15 ? 0.7 : wordCount > 5 ? 0.5 : 0.3);
       const responseTime = durationMs < 30000 ? 0.8 : durationMs < 120000 ? 0.6 : 0.4;
 
       return {
@@ -860,17 +1224,29 @@ export function renderReactionTime(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
+  // Generate a simple rapid-response task: identify the target number
+  const diff = getDifficulty(task.parameters.stage as string | undefined);
+  const targetRange = diff.nBackN + 4; // Higher stages = larger range
+  const target = Math.floor(Math.random() * targetRange) + 1;
+  const decoy = Math.floor(Math.random() * targetRange) + 1;
+  const decoy2 = decoy === target ? decoy + 1 : decoy;
+
   const question = [
-    `A stimulus will appear. ${C.bold}Respond as quickly as possible.${C.reset}`,
+    `${C.bold}${C.red}\u26a1 QUICK RESPONSE REQUIRED${C.reset}`,
     ``,
-    `For this exercise, select the option that best describes your approach to quick response:`,
+    `A number will be shown. Respond ${C.bold}as fast as possible${C.reset}.`,
+    ``,
+    `  Target number: ${C.bold}${C.cyan}${target}${C.reset}`,
+    `  ${C.dim}(remember this number)${C.reset}`,
+    ``,
+    `${C.bold}Which number was your target?${C.reset}`,
   ].join('\n');
 
   const options: DriveOption[] = [
-    { label: 'Instant reflex', description: 'React without thinking', drive: 'agency', polarity: 'sts', correctnessScore: 0.7 },
-    { label: 'Quick and deliberate', description: 'Fast but measured', drive: 'eros', polarity: 'neutral', correctnessScore: 0.9 },
-    { label: 'Observe first, then act', description: 'Accuracy over speed', drive: 'communion', polarity: 'sto', correctnessScore: 0.6 },
-    { label: 'Withhold response', description: 'Choose not to react', drive: 'agape', polarity: 'neutral', correctnessScore: 0.3 },
+    { label: `${target}`, description: `Correct — the target was ${target}`, drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
+    { label: `${target + 1}`, description: 'Close but one off', drive: 'communion', polarity: 'neutral', correctnessScore: 0.4 },
+    { label: `${decoy2}`, description: 'A different number', drive: 'eros', polarity: 'neutral', correctnessScore: 0.2 },
+    { label: `I forgot`, description: 'The number slipped away', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
   ];
   shuffle(options);
 
@@ -878,7 +1254,7 @@ export function renderReactionTime(task: AssessmentTask): {
     prompt: {
       questions: [{
         question,
-        header: 'Reaction Speed',
+        header: 'Reflex Test',
         options: options.map(o => ({ label: o.label, description: o.description })),
         allowWriteIn: true,
         multiSelect: false,
@@ -886,21 +1262,32 @@ export function renderReactionTime(task: AssessmentTask): {
     },
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
-      const responseTime = durationMs < 5000 ? 0.9 : durationMs < 15000 ? 0.7 : durationMs < 30000 ? 0.5 : 0.3;
       const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+      const isCorrect = matchedOpt?.correctnessScore === 1.0;
+
+      // Actual response time scoring: faster = better (uses real wall-clock timing)
+      const responseTime = durationMs < 3000 ? 0.95
+        : durationMs < 8000 ? 0.8
+        : durationMs < 15000 ? 0.6
+        : durationMs < 30000 ? 0.4
+        : 0.2;
+
+      // Accuracy from correctnessScore (deterministic option match)
+      const accuracy = matchedOpt?.correctnessScore ?? 0.5;
 
       return {
         taskId: task.id,
         timestamp: startTimeMs,
         dimensions: {
-          accuracy: matchedOpt?.correctnessScore ?? 0.5,
+          accuracy,
           response_time: responseTime,
-          consistency: responseTime,
+          consistency: isCorrect ? 0.8 : 0.4,
         },
         rawResponse: {
-          answer,
+          target, answer, isCorrect, durationMs,
           matchedDrive: matchedOpt?.drive ?? null,
           matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
         },
         durationMs,
       };
@@ -1071,6 +1458,809 @@ export function renderImitation(task: AssessmentTask): {
   };
 }
 
+// ── Line-Specific Probe Renderers (G.12) ────────────────────────────
+//
+// Each intelligence line has unique interaction mechanics per foundations/12.
+// These wrap the task-type renderers with line-specific options, headers,
+// and evaluation dimensions so each line probes its developmental structure.
+
+const ALL_LINES: readonly Line[] = [
+  'Cognitive', 'Emotional', 'Moral', 'Intrapersonal',
+  'Spiritual', 'Somatic', 'Willpower', 'Interpersonal',
+];
+
+/** Extract the line from task parameters, or null if not specified. */
+function getLine(task: AssessmentTask): Line | null {
+  const raw = task.parameters.line as string | undefined;
+  if (raw && (ALL_LINES as readonly string[]).includes(raw)) return raw as Line;
+  return null;
+}
+
+// ── Line-specific probe option sets ──────────────────────────────────
+// Each line's probes surface different drive signals through distinct
+// interaction patterns (not just different labels on the same MCQ).
+
+interface LineProbeOptions {
+  header: string;
+  options: readonly DriveOption[];
+  allowWriteIn: boolean;
+}
+
+function cognitiveProbeOptions(): LineProbeOptions {
+  return {
+    header: `${C.cyan}Cognitive Line${C.reset} — Analytical Probe`,
+    allowWriteIn: true,
+    options: [
+      { label: 'Analyze the pattern', description: 'Break it down systematically', drive: 'agency', polarity: 'neutral', correctnessScore: 0.8 },
+      { label: 'Trust my intuition', description: 'I sense the answer without proving it', drive: 'eros', polarity: 'neutral', correctnessScore: 0.7 },
+      { label: 'Seek collaboration', description: 'Discuss with others to find the answer', drive: 'communion', polarity: 'sto', correctnessScore: 0.7 },
+      { label: 'Question the premise', description: 'The framing itself may be wrong', drive: 'agape', polarity: 'sto', correctnessScore: 0.75 },
+    ],
+  };
+}
+
+function emotionalProbeOptions(): LineProbeOptions {
+  return {
+    header: `${C.magenta}Emotional Line${C.reset} — Affect Probe`,
+    allowWriteIn: true,
+    options: [
+      { label: 'Name the feeling precisely', description: 'Put a word to what I sense', drive: 'agency', polarity: 'neutral', correctnessScore: 0.8 },
+      { label: 'Sit with the ambiguity', description: 'Some feelings resist naming', drive: 'eros', polarity: 'neutral', correctnessScore: 0.75 },
+      { label: 'Feel it with another', description: 'Shared emotion deepens understanding', drive: 'communion', polarity: 'sto', correctnessScore: 0.7 },
+      { label: 'Let it pass through', description: 'Emotions are weather, not climate', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+    ],
+  };
+}
+
+function moralProbeOptions(): LineProbeOptions {
+  return {
+    header: `${C.green}Moral Line${C.reset} — Ethical Probe`,
+    allowWriteIn: true,
+    options: [
+      { label: 'Act from principle', description: 'Do what is right regardless of cost', drive: 'agency', polarity: 'sts', correctnessScore: 0.6 },
+      { label: 'Consider all stakeholders', description: 'No choice exists in isolation', drive: 'communion', polarity: 'sto', correctnessScore: 0.8 },
+      { label: 'Transcend the dilemma', description: 'There is a path beyond either option', drive: 'eros', polarity: 'neutral', correctnessScore: 0.75 },
+      { label: 'Hold the tension', description: 'Some dilemmas have no resolution — only witness', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+    ],
+  };
+}
+
+function intrapersonalProbeOptions(): LineProbeOptions {
+  return {
+    header: `${C.yellow}Intrapersonal Line${C.reset} — Introspective Probe`,
+    allowWriteIn: true,
+    options: [
+      { label: 'I see the pattern clearly', description: 'Self-knowledge is available to me', drive: 'agency', polarity: 'neutral', correctnessScore: 0.8 },
+      { label: 'Something stirs but resists articulation', description: 'The unconscious is speaking', drive: 'eros', polarity: 'neutral', correctnessScore: 0.75 },
+      { label: 'I need a mirror — ask someone', description: 'Others see what I cannot', drive: 'communion', polarity: 'sto', correctnessScore: 0.7 },
+      { label: 'I rest in not-knowing', description: 'The question itself is the practice', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+    ],
+  };
+}
+
+function spiritualProbeOptions(): LineProbeOptions {
+  return {
+    header: `${C.blue}Spiritual Line${C.reset} — Existential Probe`,
+    allowWriteIn: true,
+    options: [
+      { label: 'This has deep personal meaning', description: 'I feel it in my core', drive: 'agency', polarity: 'neutral', correctnessScore: 0.7 },
+      { label: 'I sense a larger pattern', description: 'Something beyond me is at work', drive: 'eros', polarity: 'neutral', correctnessScore: 0.8 },
+      { label: 'Meaning is co-created in community', description: 'Belief deepens when shared', drive: 'communion', polarity: 'sto', correctnessScore: 0.75 },
+      { label: 'I release the need for meaning', description: 'Mystery is enough', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+    ],
+  };
+}
+
+function interpersonalProbeOptions(): LineProbeOptions {
+  return {
+    header: `${C.magenta}Interpersonal Line${C.reset} — Social Probe`,
+    allowWriteIn: true,
+    options: [
+      { label: 'Read the situation and act', description: 'I see what needs doing', drive: 'agency', polarity: 'neutral', correctnessScore: 0.7 },
+      { label: 'Ask what they need', description: 'Direct inquiry over assumption', drive: 'communion', polarity: 'sto', correctnessScore: 0.8 },
+      { label: 'Feel into the unspoken', description: 'The real conversation is beneath the words', drive: 'eros', polarity: 'neutral', correctnessScore: 0.75 },
+      { label: 'Hold space without intervening', description: 'Presence is the intervention', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+    ],
+  };
+}
+
+function somaticProbeOptions(): LineProbeOptions {
+  return {
+    header: `${C.red}Somatic Line${C.reset} — Embodied Probe`,
+    allowWriteIn: true,
+    options: [
+      { label: 'Move with deliberate precision', description: 'The body knows its path', drive: 'agency', polarity: 'neutral', correctnessScore: 0.8 },
+      { label: 'Sync with the rhythm', description: 'Let the body join the beat', drive: 'communion', polarity: 'sto', correctnessScore: 0.75 },
+      { label: 'Feel the pulse beneath the pulse', description: 'There is a deeper rhythm', drive: 'eros', polarity: 'neutral', correctnessScore: 0.7 },
+      { label: 'Stillness speaks loudest', description: 'The body communicates through rest', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+    ],
+  };
+}
+
+function willpowerProbeOptions(): LineProbeOptions {
+  return {
+    header: `${C.yellow}Willpower Line${C.reset} — Discipline Probe`,
+    allowWriteIn: true,
+    options: [
+      { label: 'Push through the resistance', description: 'Discipline overrides discomfort', drive: 'agency', polarity: 'sts', correctnessScore: 0.6 },
+      { label: 'Find the reason beneath the effort', description: 'Purpose fuels persistence', drive: 'communion', polarity: 'sto', correctnessScore: 0.8 },
+      { label: 'Transform the task into play', description: 'Effort dissolves in engagement', drive: 'eros', polarity: 'neutral', correctnessScore: 0.75 },
+      { label: 'Know when to release', description: 'Rest is part of the work', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+    ],
+  };
+}
+
+// ── Line-specific probe renderers ────────────────────────────────────
+// Each wraps the base assessment task with line-unique interaction
+// patterns per the measurement mechanics in foundations/12 §3.
+
+/**
+ * Generic line-probe renderer: adapts any task with line-specific options.
+ * Uses the task's base question but replaces the MCQ options and header
+ * with line-specific probe options that surface developmental signals.
+ */
+export function renderLineProbe(task: AssessmentTask, line: Line): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  // Get line-specific options
+  const probeMap: Record<Line, () => LineProbeOptions> = {
+    Cognitive: cognitiveProbeOptions,
+    Emotional: emotionalProbeOptions,
+    Moral: moralProbeOptions,
+    Intrapersonal: intrapersonalProbeOptions,
+    Spiritual: spiritualProbeOptions,
+    Somatic: somaticProbeOptions,
+    Willpower: willpowerProbeOptions,
+    Interpersonal: interpersonalProbeOptions,
+  };
+  const probe = probeMap[line]();
+  const shuffledOptions = shuffle([...probe.options]);
+
+  const question = [
+    `${C.bold}${task.description}${C.reset}`,
+    ``,
+    `${C.dim}Line: ${line}${C.reset} — How do you approach this?`,
+  ].join('\n');
+
+  return {
+    prompt: {
+      questions: [{
+        question,
+        header: probe.header,
+        options: shuffledOptions.map(o => ({ label: o.label, description: o.description })),
+        allowWriteIn: probe.allowWriteIn,
+        multiSelect: false,
+      }],
+    },
+    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
+      const durationMs = endTimeMs - startTimeMs;
+      const answerLower = answer.toLowerCase();
+
+      const matchedOpt = shuffledOptions.find(o =>
+        answerLower.includes(o.label.toLowerCase()) ||
+        answerLower.includes(o.label.split(' ')[0]!.toLowerCase())
+      );
+
+      // Line-specific evaluation dimensions
+      const baseAccuracy = matchedOpt?.correctnessScore ?? 0.5;
+      const wordCount = answer.split(/\s+/).filter(Boolean).length;
+
+      const lineDimensions: Record<Line, Partial<Record<import('../types.js').MeasureDimension, number>>> = {
+        Cognitive: {
+          accuracy: baseAccuracy,
+          response_time: durationMs < 10000 ? 0.9 : durationMs < 30000 ? 0.7 : 0.5,
+          consistency: baseAccuracy,
+        },
+        Emotional: {
+          accuracy: baseAccuracy,
+          depth: wordCount > 20 ? 0.8 : wordCount > 10 ? 0.6 : 0.4,
+          response_time: durationMs < 15000 ? 0.8 : 0.6,
+        },
+        Moral: {
+          accuracy: baseAccuracy,
+          coherence: matchedOpt ? 0.75 : 0.4,
+          depth: answer.length > 30 ? 0.8 : answer.length > 15 ? 0.6 : 0.4,
+          response_time: durationMs < 20000 ? 0.7 : 0.5,
+        },
+        Intrapersonal: {
+          accuracy: baseAccuracy,
+          metacognition: wordCount > 15 ? 0.8 : wordCount > 5 ? 0.6 : 0.4,
+          depth: wordCount > 20 ? 0.8 : 0.5,
+          response_time: durationMs < 30000 ? 0.7 : 0.5,
+        },
+        Spiritual: {
+          accuracy: baseAccuracy,
+          depth: wordCount > 15 ? 0.8 : wordCount > 5 ? 0.6 : 0.4,
+          coherence: matchedOpt ? 0.7 : 0.4,
+          response_time: durationMs < 30000 ? 0.7 : 0.5,
+        },
+        Somatic: {
+          accuracy: baseAccuracy,
+          response_time: durationMs < 5000 ? 0.9 : durationMs < 15000 ? 0.7 : 0.5,
+          consistency: baseAccuracy,
+        },
+        Willpower: {
+          accuracy: baseAccuracy,
+          response_time: durationMs < 15000 ? 0.8 : durationMs < 60000 ? 0.6 : 0.4,
+          self_correction: baseAccuracy > 0.6 ? 0.7 : 0.4,
+        },
+        Interpersonal: {
+          accuracy: baseAccuracy,
+          depth: wordCount > 15 ? 0.8 : 0.5,
+          coherence: matchedOpt ? 0.7 : 0.4,
+          response_time: durationMs < 20000 ? 0.7 : 0.5,
+        },
+      };
+
+      return {
+        taskId: task.id,
+        timestamp: startTimeMs,
+        dimensions: lineDimensions[line],
+        rawResponse: {
+          line,
+          answer,
+          matchedDrive: matchedOpt?.drive ?? null,
+          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
+        },
+        durationMs,
+      };
+    },
+  };
+}
+
+/**
+ * Cognitive-specific: timing-based probe.
+ * Wraps reaction_time tasks with cognitive-line framing —
+ * tests analytical speed, pattern detection accuracy.
+ */
+export function renderCognitiveProbe(task: AssessmentTask): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  const diff = getDifficulty(task.parameters.stage as string | undefined);
+  const symbols = diff.symbolPool;
+
+  // Generate a rapid pattern-recognition sequence
+  const targetIdx = Math.floor(Math.random() * symbols.length);
+  const target = symbols[targetIdx]!;
+  const distractors = symbols.filter((_, i) => i !== targetIdx);
+  const distractor = distractors[Math.floor(Math.random() * distractors.length)]!;
+
+  const decoy = distractor + distractor;
+
+  const question = [
+    `${C.cyan}${C.bold}⚡ COGNITIVE LINE — PATTERN SPEED${C.reset}`,
+    ``,
+    `Find the ${C.bold}matching pair${C.reset} in the sequence below:`,
+    ``,
+    `  ${symbols.slice(0, 6).map((s, i) => `${C.dim}${i + 1}:${C.reset}${s}`).join('  ')}`,
+    ``,
+    `${C.bold}Which pair of identical symbols appeared?${C.reset}`,
+  ].join('\n');
+
+  const correctPair = target + target;
+  const options: DriveOption[] = [
+    { label: correctPair, description: 'The matching pair I spotted', drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
+    { label: decoy, description: 'A different pair', drive: 'communion', polarity: 'neutral', correctnessScore: 0.3 },
+    { label: distractor + target, description: 'Adjacent but not matching', drive: 'eros', polarity: 'neutral', correctnessScore: 0.2 },
+    { label: 'No pair found', description: 'I could not identify a match', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
+  ];
+  shuffle(options);
+
+  return {
+    prompt: {
+      questions: [{
+        question,
+        header: 'Cognitive Line — Pattern Speed',
+        options: options.map(o => ({ label: o.label, description: o.description })),
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    },
+    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
+      const durationMs = endTimeMs - startTimeMs;
+      const isCorrect = answer.toLowerCase().includes(correctPair);
+
+      const responseTime = durationMs < 3000 ? 0.95
+        : durationMs < 8000 ? 0.8
+        : durationMs < 15000 ? 0.6
+        : 0.3;
+
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
+
+      return {
+        taskId: task.id,
+        timestamp: startTimeMs,
+        dimensions: {
+          accuracy: isCorrect ? 0.9 : 0.3,
+          response_time: responseTime,
+          consistency: isCorrect ? 0.8 : 0.4,
+        },
+        rawResponse: {
+          line: 'Cognitive' as Line,
+          target, answer, isCorrect, durationMs,
+          matchedDrive: matchedOpt?.drive ?? null,
+          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
+        },
+        durationMs,
+      };
+    },
+  };
+}
+
+/**
+ * Emotional-specific: sentiment analysis probe.
+ * Presents an emotional scenario and asks the player to identify
+ * the primary emotion — measures affect granularity.
+ */
+export function renderEmotionalProbe(task: AssessmentTask): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  const scenarios = [
+    { text: 'A friend shares devastating news about a loved one. You feel your chest tighten.', emotion: 'Grief', wrong: ['Anger', 'Fear', 'Joy'] },
+    { text: 'You achieve something you worked months for. Your hands tremble slightly.', emotion: 'Pride', wrong: ['Relief', 'Exhaustion', 'Anxiety'] },
+    { text: 'Someone betrays a trust you placed in them. Your face flushes hot.', emotion: 'Betrayal', wrong: ['Sadness', 'Confusion', 'Indifference'] },
+    { text: 'You see a stranger being mistreated in public. Something inside you moves.', emotion: 'Moral Outrage', wrong: ['Curiosity', 'Amusement', 'Boredom'] },
+    { text: 'You are alone in a dark forest at night. Every sound is amplified.', emotion: 'Fear', wrong: ['Excitement', 'Peace', 'Anger'] },
+    { text: 'Someone you love tells you they need space. You feel a cold knot in your stomach.', emotion: 'Abandonment', wrong: ['Relief', 'Curiosity', 'Indifference'] },
+    { text: 'You finally understand something that confused you for years. Your mind feels clear.', emotion: 'Clarity', wrong: ['Boredom', 'Fear', 'Anger'] },
+  ];
+
+  const scenario = scenarios[Math.floor(Math.random() * scenarios.length)]!;
+  const correctOpt: DriveOption = { label: scenario.emotion, description: 'Identify this emotion', drive: 'eros', polarity: 'neutral', correctnessScore: 1.0 };
+  const wrongOpts: DriveOption[] = scenario.wrong.map((w, i) => ({
+    label: w,
+    description: 'A different emotional state',
+    drive: i === 0 ? 'agency' : i === 1 ? 'communion' : 'agape',
+    polarity: 'neutral',
+    correctnessScore: 0.2,
+  }));
+  const options = shuffle([correctOpt, ...wrongOpts]);
+
+  const question = [
+    `${C.magenta}${C.bold}EMOTIONAL LINE — SENTIMENT ANALYSIS${C.reset}`,
+    ``,
+    `Read this scenario and identify the PRIMARY emotion:`,
+    ``,
+    `  "${scenario.text}"`,
+    ``,
+    `${C.bold}What emotion does the person feel?${C.reset}`,
+  ].join('\n');
+
+  return {
+    prompt: {
+      questions: [{
+        question,
+        header: 'Emotional Line — Sentiment Analysis',
+        options: options.map(o => ({ label: o.label, description: o.description })),
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    },
+    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
+      const durationMs = endTimeMs - startTimeMs;
+      const isCorrect = answer.toLowerCase().includes(scenario.emotion.toLowerCase());
+
+      const accuracy = isCorrect ? 0.9 : 0.3;
+      const responseTime = durationMs < 10000 ? 0.8 : durationMs < 30000 ? 0.6 : 0.4;
+
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
+
+      return {
+        taskId: task.id,
+        timestamp: startTimeMs,
+        dimensions: {
+          accuracy,
+          response_time: responseTime,
+          depth: isCorrect ? 0.7 : 0.3,
+        },
+        rawResponse: {
+          line: 'Emotional' as Line,
+          scenario: scenario.text, playerEmotion: answer, expectedEmotion: scenario.emotion, isCorrect,
+          matchedDrive: matchedOpt?.drive ?? null,
+          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
+        },
+        durationMs,
+      };
+    },
+  };
+}
+
+/**
+ * Moral-specific: dilemma resolution probe.
+ * Wraps the existing dilemma renderer with moral-line framing.
+ */
+export function renderMoralProbe(task: AssessmentTask): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  // Delegate to existing dilemma renderer (already has line-specific dilemmas)
+  return renderDilemma(task);
+}
+
+/**
+ * Intrapersonal-specific: self-reflection probe.
+ * Presents an introspective prompt and measures depth of self-awareness.
+ */
+export function renderIntrapersonalProbe(task: AssessmentTask): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  const prompts = [
+    'What is the gap between who you are and who you present to the world?',
+    'When you are completely alone, what is your relationship with yourself like?',
+    'What is one pattern in your behavior that you recognize but cannot seem to change?',
+    'What does your body know that your mind refuses to accept?',
+    'If you could have a conversation with your younger self, what would you say?',
+    'What is the most honest thing you can say about yourself right now?',
+  ];
+
+  const promptText = prompts[Math.floor(Math.random() * prompts.length)]!;
+
+  const options: DriveOption[] = [
+    { label: 'I see it clearly', description: 'Self-knowledge is available to me right now', drive: 'agency', polarity: 'neutral', correctnessScore: 0.8 },
+    { label: 'Something stirs but resists words', description: 'The unconscious is speaking', drive: 'eros', polarity: 'neutral', correctnessScore: 0.75 },
+    { label: 'I need a mirror', description: 'Others see what I cannot see alone', drive: 'communion', polarity: 'sto', correctnessScore: 0.7 },
+    { label: 'I rest in not-knowing', description: 'The question itself is the practice', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+  ];
+  shuffle(options);
+
+  const question = [
+    `${C.yellow}${C.bold}INTRAPERSONAL LINE — SELF-REFLECTION${C.reset}`,
+    ``,
+    `${C.bold}Look inward.${C.reset}`,
+    ``,
+    `${promptText}`,
+  ].join('\n');
+
+  return {
+    prompt: {
+      questions: [{
+        question,
+        header: 'Intrapersonal Line — Introspective Probe',
+        options: options.map(o => ({ label: o.label, description: o.description })),
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    },
+    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
+      const durationMs = endTimeMs - startTimeMs;
+      const wordCount = answer.split(/\s+/).filter(Boolean).length;
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+
+      const depth = wordCount > 30 ? 0.9 : wordCount > 15 ? 0.7 : wordCount > 5 ? 0.5 : 0.3;
+      const accuracy = matchedOpt ? matchedOpt.correctnessScore : (wordCount > 15 ? 0.7 : wordCount > 5 ? 0.5 : 0.3);
+      const responseTime = durationMs < 30000 ? 0.8 : durationMs < 120000 ? 0.6 : 0.4;
+
+      return {
+        taskId: task.id,
+        timestamp: startTimeMs,
+        dimensions: {
+          accuracy,
+          depth,
+          response_time: responseTime,
+          metacognition: wordCount > 20 ? 0.7 : 0.4,
+        },
+        rawResponse: {
+          line: 'Intrapersonal' as Line,
+          prompt: promptText, answer, wordCount,
+          matchedDrive: matchedOpt?.drive ?? null,
+          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
+        },
+        durationMs,
+      };
+    },
+  };
+}
+
+/**
+ * Spiritual-specific: meaning-making probe.
+ * Presents a value-ranking task with spiritual-line framing —
+ * measures capacity for meaning-making and purpose exploration.
+ */
+export function renderSpiritualProbe(task: AssessmentTask): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  const values = ['Power', 'Connection', 'Freedom', 'Truth'];
+  const shuffled = [...values].sort(() => Math.random() - 0.5);
+
+  const driveMap: Record<string, { drive: 'agency' | 'communion' | 'eros' | 'agape'; polarity: 'sto' | 'sts' | 'neutral' }> = {
+    Power: { drive: 'agency', polarity: 'sts' },
+    Connection: { drive: 'communion', polarity: 'sto' },
+    Freedom: { drive: 'eros', polarity: 'neutral' },
+    Truth: { drive: 'agape', polarity: 'sto' },
+  };
+
+  const question = [
+    `${C.blue}${C.bold}SPIRITUAL LINE — MEANING-MAKING${C.reset}`,
+    ``,
+    `Rank these four values from most to least important to you:`,
+    ``,
+    `  1. ${shuffled[0]}\n  2. ${shuffled[1]}\n  3. ${shuffled[2]}\n  4. ${shuffled[3]}`,
+    ``,
+    `${C.bold}Your ranking:${C.reset}`,
+  ].join('\n');
+
+  const options: DriveOption[] = shuffled.map(v => ({
+    label: v,
+    description: `Prioritize ${v}`,
+    drive: driveMap[v]!.drive,
+    polarity: driveMap[v]!.polarity,
+    correctnessScore: 0.7,
+  }));
+
+  return {
+    prompt: {
+      questions: [{
+        question,
+        header: 'Spiritual Line — Meaning-Making',
+        options: options.map(o => ({ label: o.label, description: o.description })),
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    },
+    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
+      const durationMs = endTimeMs - startTimeMs;
+
+      const hasRanking = /\d/.test(answer) || shuffled.some(v => answer.toLowerCase().includes(v.toLowerCase()));
+      const accuracy = hasRanking ? 0.7 : 0.4;
+      const depth = answer.length > 10 ? 0.7 : 0.4;
+      const responseTime = durationMs < 20000 ? 0.8 : 0.6;
+
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
+
+      return {
+        taskId: task.id,
+        timestamp: startTimeMs,
+        dimensions: {
+          accuracy,
+          depth,
+          response_time: responseTime,
+          coherence: hasRanking ? 0.7 : 0.4,
+        },
+        rawResponse: {
+          line: 'Spiritual' as Line,
+          values: shuffled, answer,
+          matchedDrive: matchedOpt?.drive ?? null,
+          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+        },
+        durationMs,
+      };
+    },
+  };
+}
+
+/**
+ * Interpersonal-specific: social cue reading probe.
+ * Presents a social scenario and asks for empathic interpretation.
+ */
+export function renderInterpersonalProbe(task: AssessmentTask): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  const scenarios = [
+    { text: 'Your teammate goes quiet during a meeting. Their arms cross and they stare at the table.', cue: 'Withdrawal — they feel unheard', wrong: ['Boredom', 'Fatigue', 'Agreement'] },
+    { text: 'A friend laughs a beat too long at a joke that fell flat. Their eyes dart to the floor.', cue: 'Discomfort — they are protecting someone', wrong: ['Amusement', 'Distraction', 'Joy'] },
+    { text: 'Your partner says "I\'m fine" but their voice is flat and they turn away.', cue: 'Suppression — something is wrong', wrong: ['Contentment', 'Tiredness', 'Focus'] },
+    { text: 'A stranger holds the door open and makes eye contact that lingers one second too long.', cue: 'Desire for connection', wrong: ['Impatience', 'Politeness only', 'Confusion'] },
+    { text: 'A colleague compliments your work but their tone is slightly higher than usual.', cue: 'Ambivalence — genuine but competitive', wrong: ['Pure admiration', 'Sarcasm', 'Indifference'] },
+  ];
+
+  const scenario = scenarios[Math.floor(Math.random() * scenarios.length)]!;
+  const correctOpt: DriveOption = { label: scenario.cue, description: 'Read the social cue', drive: 'eros', polarity: 'neutral', correctnessScore: 1.0 };
+  const wrongOpts: DriveOption[] = scenario.wrong.map((w, i) => ({
+    label: w,
+    description: 'A different interpretation',
+    drive: i === 0 ? 'agency' : i === 1 ? 'communion' : 'agape',
+    polarity: 'neutral',
+    correctnessScore: 0.2,
+  }));
+  const options = shuffle([correctOpt, ...wrongOpts]);
+
+  const question = [
+    `${C.magenta}${C.bold}INTERPERSONAL LINE — SOCIAL CUE READING${C.reset}`,
+    ``,
+    `Read this social scenario and identify the underlying cue:`,
+    ``,
+    `  "${scenario.text}"`,
+    ``,
+    `${C.bold}What is really happening here?${C.reset}`,
+  ].join('\n');
+
+  return {
+    prompt: {
+      questions: [{
+        question,
+        header: 'Interpersonal Line — Social Cue Reading',
+        options: options.map(o => ({ label: o.label, description: o.description })),
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    },
+    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
+      const durationMs = endTimeMs - startTimeMs;
+      const isCorrect = answer.toLowerCase().includes(scenario.cue.toLowerCase().split('—')[0]!.trim().toLowerCase());
+
+      const accuracy = isCorrect ? 0.9 : 0.3;
+      const responseTime = durationMs < 10000 ? 0.8 : durationMs < 30000 ? 0.6 : 0.4;
+
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split('—')[0]!.trim().toLowerCase()));
+
+      return {
+        taskId: task.id,
+        timestamp: startTimeMs,
+        dimensions: {
+          accuracy,
+          response_time: responseTime,
+          depth: isCorrect ? 0.7 : 0.3,
+        },
+        rawResponse: {
+          line: 'Interpersonal' as Line,
+          scenario: scenario.text, playerCue: answer, expectedCue: scenario.cue, isCorrect,
+          matchedDrive: matchedOpt?.drive ?? null,
+          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
+        },
+        durationMs,
+      };
+    },
+  };
+}
+
+/**
+ * Somatic-specific: body awareness probe.
+ * Presents a rhythmic/physical task and measures embodied attunement.
+ */
+export function renderSomaticProbe(task: AssessmentTask): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  const rhythmPatterns = [
+    { pattern: '♩ ♩ ♩ — ♩ ♩ ♩', description: 'A steady 3-beat pulse', tempo: 'moderate' },
+    { pattern: '♩ ♪♩ ♩ ♪♩', description: 'A syncopated rhythm', tempo: 'fast' },
+    { pattern: '♩ — — ♩ — —', description: 'A slow, spaced pulse', tempo: 'slow' },
+    { pattern: '♪♪ ♩ ♪♪ ♩', description: 'A galloping pattern', tempo: 'mixed' },
+  ];
+
+  const chosen = rhythmPatterns[Math.floor(Math.random() * rhythmPatterns.length)]!;
+
+  const question = [
+    `${C.red}${C.bold}SOMATIC LINE — BODY AWARENESS${C.reset}`,
+    ``,
+    `A rhythm fills the space. Feel it in your body:`,
+    ``,
+    `  ${C.dim}${chosen.pattern}${C.reset}`,
+    `  ${C.dim}(${chosen.description})${C.reset}`,
+    ``,
+    `${C.bold}How does your body respond?${C.reset}`,
+  ].join('\n');
+
+  const options: DriveOption[] = [
+    { label: 'Move with the beat', description: 'My body syncs naturally', drive: 'communion', polarity: 'sto', correctnessScore: 0.8 },
+    { label: 'Add my own counter-rhythm', description: 'I dance against it', drive: 'agency', polarity: 'sts', correctnessScore: 0.6 },
+    { label: 'Feel it internally', description: 'The rhythm lives inside me', drive: 'eros', polarity: 'neutral', correctnessScore: 0.75 },
+    { label: 'Find the silence between', description: 'Stillness is my response', drive: 'agape', polarity: 'sto', correctnessScore: 0.7 },
+  ];
+  shuffle(options);
+
+  return {
+    prompt: {
+      questions: [{
+        question,
+        header: 'Somatic Line — Body Awareness',
+        options: options.map(o => ({ label: o.label, description: o.description })),
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    },
+    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
+      const durationMs = endTimeMs - startTimeMs;
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+
+      return {
+        taskId: task.id,
+        timestamp: startTimeMs,
+        dimensions: {
+          accuracy: matchedOpt?.correctnessScore ?? 0.5,
+          response_time: durationMs < 15000 ? 0.7 : 0.5,
+          coherence: matchedOpt ? 0.7 : 0.4,
+        },
+        rawResponse: {
+          line: 'Somatic' as Line,
+          rhythm: chosen.pattern, answer,
+          matchedDrive: matchedOpt?.drive ?? null,
+          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+        },
+        durationMs,
+      };
+    },
+  };
+}
+
+/**
+ * Willpower-specific: sustained attention probe.
+ * Presents a hold task and measures patience, delay tolerance.
+ */
+export function renderWillpowerProbe(task: AssessmentTask): {
+  prompt: AskUserQuestionParams;
+  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+} {
+  const diff = getDifficulty(task.parameters.stage as string | undefined);
+  const holdDurationMs = (task.parameters.holdDurationMs as number) ?? diff.holdDurationMs;
+
+  const question = [
+    `${C.yellow}${C.bold}WILLPOWER LINE — SUSTAINED ATTENTION${C.reset}`,
+    ``,
+    `Hold these symbols in your mind:`,
+    ``,
+    `  ${diff.symbolPool.slice(0, 3).join('   ')}`,
+    ``,
+    `Wait ${C.bold}${Math.round(holdDurationMs / 1000)} seconds${C.reset} before responding.`,
+    `Do not rush. Let the time pass.`,
+    ``,
+    `${C.bold}Now — what did you hold?${C.reset}`,
+  ].join('\n');
+
+  const items = diff.symbolPool.slice(0, 3);
+  const options: DriveOption[] = [
+    { label: `${items.join(' ')}`, description: 'Full recall — I held them completely', drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
+    { label: `${items.slice(0, -1).join(' ')}…`, description: 'Partial — I held most of them', drive: 'communion', polarity: 'neutral', correctnessScore: 0.7 },
+    { label: 'Some of them', description: 'I held parts but not all', drive: 'eros', polarity: 'neutral', correctnessScore: 0.4 },
+    { label: 'They slipped', description: 'My attention wandered', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
+  ];
+  shuffle(options);
+
+  return {
+    prompt: {
+      questions: [{
+        question,
+        header: 'Willpower Line — Sustained Attention',
+        options: options.map(o => ({ label: o.label, description: o.description })),
+        allowWriteIn: true,
+        multiSelect: false,
+      }],
+    },
+    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
+      const durationMs = endTimeMs - startTimeMs;
+      const answerLower = answer.toLowerCase();
+      const matched = items.filter(item => answerLower.includes(item));
+      const accuracy = matched.length / items.length;
+
+      // Willpower-specific: reward appropriate timing (not too fast = didn't hold)
+      const minExpectedMs = holdDurationMs * 0.8;
+      const timingBonus = durationMs >= minExpectedMs ? 0.2 : 0;
+      const responseTime = Math.min(1, (holdDurationMs / (holdDurationMs * 2)) + timingBonus);
+
+      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase().split(' ')[0]!));
+
+      return {
+        taskId: task.id,
+        timestamp: startTimeMs,
+        dimensions: {
+          accuracy,
+          response_time: responseTime,
+          self_correction: accuracy > 0.7 ? 0.8 : 0.4,
+        },
+        rawResponse: {
+          line: 'Willpower' as Line,
+          items, matched, answer, holdDurationMs, timingBonus,
+          matchedDrive: matchedOpt?.drive ?? null,
+          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
+          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
+        },
+        durationMs,
+      };
+    },
+  };
+}
+
 // ── Generic Fallback Renderer ────────────────────────────────────────
 
 /**
@@ -1148,6 +2338,25 @@ export function getRenderer(task: AssessmentTask): {
   prompt: AskUserQuestionParams;
   evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
 } {
+  const line = getLine(task);
+
+  if (line) {
+    const LINE_RENDERERS: Record<Line, (t: AssessmentTask) => {
+      prompt: AskUserQuestionParams;
+      evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
+    }> = {
+      Cognitive: renderCognitiveProbe,
+      Emotional: renderEmotionalProbe,
+      Moral: renderMoralProbe,
+      Intrapersonal: renderIntrapersonalProbe,
+      Spiritual: renderSpiritualProbe,
+      Somatic: renderSomaticProbe,
+      Willpower: renderWillpowerProbe,
+      Interpersonal: renderInterpersonalProbe,
+    };
+    return LINE_RENDERERS[line](task);
+  }
+
   switch (task.type) {
     case 'n_back': return renderNBack(task);
     case 'stroop': return renderStroop(task);

@@ -74,7 +74,6 @@ export function computeDriveHealthFromTrials(
     const probeTrials = trials.filter(t => t.taskId === probeTaskId);
 
     if (probeTrials.length === 0) {
-      // No probe-specific trials — use average of all trials as baseline
       const allScores = trials.map(t => {
         const vals = Object.values(t.dimensions).filter((v): v is number => v !== undefined);
         return vals.length > 0 ? vals.reduce((a, b) => a + b, 0) / vals.length : 0.5;
@@ -89,10 +88,12 @@ export function computeDriveHealthFromTrials(
       });
       const avg = scores.reduce((a, b) => a + b, 0) / scores.length;
 
-      // Determine signal from score level
+      // Ponytail: map score deviation to drive directionality
+      // Low scores indicate dark shadows (clinging/rejecting), mid scores indicate golden shadows
       if (avg >= 0.7) driveSignals[drive] = 'HealthyBalanced';
-      else if (avg >= 0.5) driveSignals[drive] = 'HealthyBalanced';
-      else driveSignals[drive] = 'DarkAddicted';
+      else if (avg >= 0.5) driveSignals[drive] = 'GoldenAddicted';
+      else if (avg >= 0.3) driveSignals[drive] = 'DarkAddicted';
+      else driveSignals[drive] = 'DarkAverted';
 
       driveScores[drive] = Math.min(1, Math.max(0, avg));
     }

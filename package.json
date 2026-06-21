@@ -1,31 +1,52 @@
 {
   "name": "ccrpg",
   "version": "0.1.0",
-  "private": true,
-  "description": "Cognitive Capacity-Driven Role-Playing Fighting Game (Phaser 3 + TypeScript + Vite + Capacitor)",
+  "description": "Cognitive-Capacity-Driven RPG — a gamified developmental assessment engine",
   "type": "module",
+  "bin": {
+    "ccrpg": "./dist/cli/cli-game.js"
+  },
+  "files": [
+    "dist/cli/",
+    "src/core/data/",
+    "README.md"
+  ],
+  "engines": {
+    "node": ">=18"
+  },
   "scripts": {
     "dev": "vite",
     "build": "npm run check:invariants && tsc --noEmit && vite build",
+    "build:cli": "tsup",
     "check:invariants": "npx tsx scripts/check-invariants.ts",
     "preview": "vite preview --port 4173",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:cli": "vitest run tests/cli.test.ts",
     "cap:sync": "npm run build && cap sync",
     "cap:android": "npm run build && cap sync android && cap open android",
-    "cli": "npx tsx scripts/cli-game.ts"
+    "cli": "tsx scripts/cli-game.ts",
+    "cli:bundle": "node dist/cli/cli-game.js",
+    "prepublishOnly": "npm run build:cli"
   },
   "dependencies": {
     "@capacitor/android": "^6.1.2",
     "@capacitor/app": "^6.0.1",
     "@capacitor/core": "^6.1.2",
     "@capacitor/preferences": "^6.0.2",
+    "@clack/prompts": "^1.6.0",
+    "boxen": "^8.0.1",
+    "chalk": "^5.6.2",
+    "commander": "^15.0.0",
+    "ora": "^9.4.0",
     "phaser": "^3.80.1"
   },
   "devDependencies": {
     "@capacitor/cli": "^6.1.2",
     "jsdom": "^29.1.1",
+    "tsc-alias": "^1.8.17",
+    "tsup": "^8.5.1",
     "tsx": "^4.22.2",
     "typescript": "^5.4.5",
     "vite": "^5.4.10",

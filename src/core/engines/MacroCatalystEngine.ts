@@ -178,9 +178,6 @@ export function getMacroEncounterModifications(state: MacroEventState): {
   };
 }
 
-/**
- * Create initial state for a newly triggered macro-event.
- */
 export function createMacroEventState(event: MacroEvent): MacroEventState {
   return {
     event,
@@ -189,4 +186,33 @@ export function createMacroEventState(event: MacroEvent): MacroEventState {
     encountersSinceStart: 0,
     playerChoices: [],
   };
+}
+
+export function getPESTLEContentModifiers(tension: PESTLETension): {
+  narrativeThemes: readonly string[];
+  encounterFlavor: string;
+  difficultyModifier: number;
+} {
+  const maxDimension = Object.entries(tension).reduce((a, b) =>
+    b[1] > a[1] ? b : a,
+  );
+
+  const THEMES: Record<keyof PESTLETension, readonly string[]> = {
+    political: ['power dynamics', 'governance', 'authority', 'civic duty'],
+    economic: ['scarcity', 'trade', 'value exchange', 'resource allocation'],
+    social: ['belonging', 'exclusion', 'group dynamics', 'social norms'],
+    technological: ['automation', 'digital divide', 'innovation ethics', 'information overload'],
+    legal: ['justice', 'compliance', 'rights', 'regulation'],
+    environmental: ['sustainability', 'climate', 'natural resources', 'ecological balance'],
+  };
+
+  if (maxDimension[1] < 0.3) {
+    return { narrativeThemes: [], encounterFlavor: 'neutral', difficultyModifier: 0 };
+  }
+
+  const themes = THEMES[maxDimension[0] as keyof PESTLETension] ?? [];
+  const flavor = maxDimension[0] as keyof PESTLETension;
+  const difficultyModifier = Math.min(0.3, maxDimension[1] * 0.4);
+
+  return { narrativeThemes: themes, encounterFlavor: flavor, difficultyModifier };
 }

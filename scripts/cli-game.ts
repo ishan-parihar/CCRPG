@@ -1,4 +1,4 @@
-#!/usr/bin/env npx tsx
+#!/usr/bin/env node
 /**
  * CCRPG CLI Game Runner — Phase 1
  * Comprehensive headless debugger that runs the full game loop without Phaser.
@@ -17,11 +17,85 @@
  *   npx tsx scripts/cli-game.ts --new-game               # start fresh (delete saved progress)
  */
 
-import * as readline from 'readline';
 import * as fs from 'fs';
 import * as path from 'path';
+import * as os from 'os';
+import chalk from 'chalk';
+import { select, text as clackText } from '@clack/prompts';
+import ora from 'ora';
+import boxen from 'boxen';
+import { Command } from 'commander';
+
+const VERSION = '0.1.0';
+
+// ── Commander program definition (before any arg-dependent code) ─────
+// ponytail: commander handles help generation, manual printHelp() removed
+const program = new Command()
+  .name('ccrpg')
+  .version(VERSION)
+  .description('Cognitive-Capacity-Driven RPG — Developmental Assessment Engine')
+  .option('--headless', 'Run without user interaction')
+  .option('--json', 'Machine-readable JSON output')
+  .option('--verbose', 'Show full narrative and feedback')
+  .option('--no-llm', 'Disable LLM, use module assessments only')
+  .option('--new-game', 'Start fresh (delete saved progress)')
+  .option('-e, --encounters <n>', 'Number of encounters', '20')
+  .option('-m, --model <name>', 'Override LLM model name')
+  .option('-l, --line <line>', 'Force a specific line')
+  .option('-s, --stage <stage>', 'Force a specific stage')
+  .option('--modality <mod>', 'Force a specific modality')
+  .option('--force-shadow <quadrant>', 'Force a shadow quadrant')
+  .option('--skip-calibration', 'Skip calibration, default all lines to Red');
+
+program
+  .command('setup')
+  .description('Configure LLM and preferences');
+program
+  .command('status')
+  .description('Show current developmental state');
+program
+  .command('new-game')
+  .description('Reset progress and start fresh');
+program
+  .command('diagnostic')
+  .description('Show system diagnostics');
+program
+  .command('session')
+  .description('Start an interactive session');
+
+// ponytail: .action() prevents commander from showing help when no subcommand given
+program.action(() => {});
+
+// Early parse for --model flag (before env bootstrap)
+program.parseOptions(process.argv.slice(2));
+const earlyModelOverride = program.opts().model;
+
+const CONFIG_DIR = path.join(os.homedir(), '.ccrpg');
+const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
+
+// ── Config file loading ──────────────────────────────────────────────
+interface CCRPGConfig {
+  llm?: {
+    provider?: 'ollama' | 'openai' | 'anthropic' | 'gemini' | 'custom';
+    apiKey?: string;
+    baseUrl?: string;
+    model?: string;
+  };
+  session?: { defaultEncounters?: number; defaultMode?: string; };
+}
+function loadConfig(): CCRPGConfig {
+  try {
+    if (fs.existsSync(CONFIG_FILE)) return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')) as CCRPGConfig;
+  } catch { /* ignore */ }
+  return {};
+}
+function saveConfig(config: CCRPGConfig): void {
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
+  fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
+}
 
 // ── Env bootstrap (must come before any project imports) ──────────────
+const fileConfig = loadConfig();
 try {
   const envPath = path.resolve('.env');
   if (fs.existsSync(envPath)) {
@@ -39,13 +113,17 @@ try {
   }
 } catch { /* ignore */ }
 
-// Read --model flag early so it takes precedence over .env before polyfill
-const earlyModelOverride = process.argv.slice(2).find(a => a.startsWith('--model='))?.split('=')[1];
+// Config priority: CLI flag > env var > ~/.ccrpg/config.json > built-in defaults
+const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_LLM_API_KEY || fileConfig.llm?.apiKey || 'sk-placeholder';
+const baseUrl = process.env.VITE_LLM_BASE_URL || fileConfig.llm?.baseUrl || 'https://generativelanguage.googleapis.com/v1beta/openai';
+const model = earlyModelOverride || process.env.VITE_LLM_MODEL || fileConfig.llm?.model || 'gemma-4-31b-it';
+const provider = process.env.VITE_LLM_PROVIDER || fileConfig.llm?.provider || 'gemini';
 
-// Polyfill import.meta.env for Node so LLMClient works
-const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_LLM_API_KEY || 'sk-placeholder';
-const baseUrl = process.env.VITE_LLM_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/openai';
-const model = earlyModelOverride || process.env.VITE_LLM_MODEL || 'gemma-4-31b-it';
+// Set process.env so LLMClient's getEnvVal() fallback works in Node.js
+process.env.VITE_LLM_BASE_URL = baseUrl;
+process.env.VITE_LLM_API_KEY = apiKey;
+process.env.VITE_LLM_MODEL = model;
+process.env.VITE_LLM_PROVIDER = provider;
 
 (globalThis as any).import = {
   meta: {
@@ -53,6 +131,7 @@ const model = earlyModelOverride || process.env.VITE_LLM_MODEL || 'gemma-4-31b-i
       VITE_LLM_BASE_URL: baseUrl,
       VITE_LLM_API_KEY: apiKey,
       VITE_LLM_MODEL: model,
+      VITE_LLM_PROVIDER: provider,
     }
   }
 };
@@ -72,100 +151,125 @@ import { startSession, tickWithStrategy, endSession, type SessionState } from '.
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
-import { loadSave, saveGame, hasSave, deleteSave } from '../src/infra/persistence/SaveRepository.js';
+import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave } from '../src/infra/persistence/SaveRepository.js';
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
 import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js';
 import type { Modality } from '../src/core/domain/enums.js';
+import { thresholdToStage } from '../src/core/usecases/ThresholdMaps.js';
+import { computeConfidence } from '../src/core/assessments/engine.js';
+import type { TrialResult } from '../src/core/assessments/types.js';
+import { renderLayers, renderLayersCompact } from '../src/game/cli/LayerRenderer.js';
+import { detectBleedThrough } from '../src/core/engines/ThetaDecay.js';
+import { toSnapshot } from '../src/core/domain/SignificatorSnapshot.js';
+import { computeCCI } from '../src/core/engines/CCIEngine.js';
 
-// ── CLI arg parsing ───────────────────────────────────────────────────
-const args = process.argv.slice(2);
-const flags = new Set(args.filter(a => a.startsWith('--')));
-const getVal = (name: string): string | undefined =>
-  args.find(a => a.startsWith(`--${name}=`))?.split('=')[1];
+// ── Full parse with subcommands (after project imports) ──────────────
+program.parse();
+const opts = program.opts();
+const subcommand = program.args[0] as string | undefined;
 
-const HEADLESS = flags.has('--headless');
-const VERBOSE = flags.has('--verbose');
-const JSON_MODE = flags.has('--json');
-const NO_LLM = flags.has('--no-llm');
+const HEADLESS = opts.headless ?? false;
+const VERBOSE = opts.verbose ?? false;
+const JSON_MODE = opts.json ?? false;
+const NO_LLM = opts.noLlm ?? false;
 let LLM_ACTIVE = !NO_LLM && apiKey !== 'sk-placeholder';
-const ACTIVE_MODEL = getVal('model') ?? model;
-const mode = getVal('mode') ?? (flags.has('--mode') ? args[args.indexOf('--mode') + 1] : 'full') ?? 'full';
-const encounterCount = parseInt(getVal('encounters') ?? '20', 10);
+const ACTIVE_MODEL = opts.model ?? model;
+const encounterCount = parseInt(opts.encounters ?? String(fileConfig.session?.defaultEncounters ?? 20), 10);
 
-// ── Debug forcing flags (for AI-agent feedback loops) ─────────────────
-const FORCE_LINE = getVal('line') as Line | undefined;
-const FORCE_STAGE = getVal('stage') as Stage | undefined;
-const FORCE_MODALITY = getVal('modality') as Modality | undefined;
-const FORCE_RESPONSES = getVal('responses')?.split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
-const FORCE_SHADOW = getVal('force-shadow') as string | undefined;
-const NEW_GAME = flags.has('--new-game');
+const FORCE_LINE = opts.line as Line | undefined;
+const FORCE_STAGE = opts.stage as Stage | undefined;
+const FORCE_MODALITY = opts.modality as Modality | undefined;
+const FORCE_SHADOW = opts.forceShadow as string | undefined;
+const FORCE_RESPONSES = undefined; // ponytail: --responses removed, wasn't in commander spec
+const NEW_GAME = opts.newGame ?? false;
+const SKIP_CALIBRATION = opts.skipCalibration ?? false;
 
 // ── Helpers ───────────────────────────────────────────────────────────
-const C = {
-  reset: '\x1b[0m', bold: '\x1b[1m', dim: '\x1b[2m',
-  green: '\x1b[32m', yellow: '\x1b[33m', blue: '\x1b[34m',
-  magenta: '\x1b[35m', cyan: '\x1b[36m', red: '\x1b[31m',
-};
+// ponytail: chalk auto-resets between calls, no explicit reset needed
 
 function banner(text: string): void {
-  if (!JSON_MODE) console.log(`\n${C.bold}${C.cyan}═══ ${text} ═══${C.reset}`);
+  if (!JSON_MODE) console.log(`\n${chalk.bold.cyan(`═══ ${text} ═══`)}`);
 }
 
 function info(label: string, value: string): void {
-  if (!JSON_MODE) console.log(`  ${C.dim}${label}:${C.reset} ${value}`);
+  if (!JSON_MODE) console.log(`  ${chalk.dim(label + ':')} ${value}`);
 }
 
 function success(text: string): void {
-  if (!JSON_MODE) console.log(`  ${C.green}✓${C.reset} ${text}`);
+  if (!JSON_MODE) console.log(`  ${chalk.green('✓')} ${text}`);
 }
 
 function warn(text: string): void {
-  if (!JSON_MODE) console.log(`  ${C.yellow}⚠${C.reset} ${text}`);
+  if (!JSON_MODE) console.log(`  ${chalk.yellow('⚠')} ${text}`);
 }
 
 function error(text: string): void {
-  if (!JSON_MODE) console.log(`  ${C.red}✗${C.reset} ${text}`);
+  if (!JSON_MODE) console.log(`  ${chalk.red('✗')} ${text}`);
 }
 
 function separator(label: string): void {
-  if (!JSON_MODE) console.log(`\n${C.bold}${C.blue}── ${label} ──${C.reset}`);
+  if (!JSON_MODE) console.log(boxen(chalk.bold(label), {
+    padding: { left: 1, right: 1 },
+    borderStyle: 'round',
+    borderColor: 'cyan',
+    margin: { top: 1, bottom: 0 },
+  }));
 }
 
 function verbose(label: string, value: string): void {
-  if (VERBOSE && !JSON_MODE) console.log(`  ${C.magenta}${label}:${C.reset} ${value}`);
+  if (VERBOSE && !JSON_MODE) console.log(`  ${chalk.magenta(label + ':')} ${value}`);
 }
 
-const rl = !HEADLESS ? readline.createInterface({ input: process.stdin, output: process.stdout }) : null;
-const ask = (q: string): Promise<string> =>
-  new Promise(resolve => rl!.question(q, resolve));
+// Interactive prompt helper — uses @clack/prompts for beautiful UI
+async function ask(q: string): Promise<string> {
+  if (HEADLESS || JSON_MODE) return '';
+  const answer = await clackText({ message: q, defaultValue: '' });
+  return typeof answer === 'string' ? answer : '';
+}
 
 // ── LLM availability check (3s timeout, uses chat/completions) ──────
 async function checkLLMAvailability(url: string, key: string): Promise<boolean> {
   if (key === 'sk-placeholder') return false;
+  const isAnthropic = url.includes('anthropic.com');
   try {
     const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 3000);
-    const res = await fetch(`${url}/chat/completions`, {
-      method: 'POST',
-      headers: {
-        'Authorization': `Bearer ${key}`,
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        model: model,
-        messages: [{ role: 'user', content: 'ping' }],
-        max_tokens: 1,
-      }),
-      signal: controller.signal,
-    });
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+    let res: Response;
+    if (isAnthropic) {
+      res = await fetch(`${url}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': key,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [{ role: 'user', content: 'ping' }],
+          max_tokens: 1,
+        }),
+        signal: controller.signal,
+      });
+    } else {
+      res = await fetch(`${url}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${key}`,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          model: model,
+          messages: [{ role: 'user', content: 'ping' }],
+          max_tokens: 1,
+        }),
+        signal: controller.signal,
+      });
+    }
     clearTimeout(timeout);
     if (res.ok) return true;
-    // 401/403 = invalid key → unavailable
     if (res.status === 401 || res.status === 403) return false;
-    // 4xx (except 429 rate limit) = misconfigured endpoint → unavailable
     if (res.status >= 400 && res.status < 500 && res.status !== 429) return false;
-    // 5xx or other = might be transient, treat as available
     return true;
   } catch {
     return false;
@@ -174,34 +278,247 @@ async function checkLLMAvailability(url: string, key: string): Promise<boolean> 
 
 // ── Holon loading ─────────────────────────────────────────────────────
 function loadHolons(): WorldState {
+  // Try to load saved world state first (skip if --new-game)
+  if (!NEW_GAME) {
+    const savedWorld = loadWorldState();
+    if (savedWorld && savedWorld.holons?.length) return savedWorld;
+  }
   const holons = holonsJson as any[];
   return createInitialWorldState(holons);
 }
 
+// ── Quick Calibration ────────────────────────────────────────────────
+
+const CALIBRATION_PROMPTS: Record<string, { prompt: string; options: string[] }> = {
+  Cognitive: {
+    prompt: 'Describe your strategy for solving complex problems. How do you handle interference or prioritize competing goals?',
+    options: [
+      'Systematically isolate variables and execute step-by-step.',
+      'Trust intuitive patterns and adapt resources dynamically as needed.',
+      'Gather community perspectives and build consensus on the plan.',
+    ],
+  },
+  Emotional: {
+    prompt: 'Two people you care about have deeply conflicting needs. Describe what you feel and how you navigate the emotional tension.',
+    options: [
+      'Prioritize rules or roles to establish order.',
+      'Empathize with both perspectives and sit with the tension.',
+      'Seek a higher systemic resolution that transcends their individual desires.',
+    ],
+  },
+  Moral: {
+    prompt: 'Your friend broke a rule to prevent minor harm to a stranger. Authority asks you what happened. What do you say, and why?',
+    options: [
+      'Report the truth immediately because rules are absolute.',
+      'Protect my friend because personal loyalty comes first.',
+      'Explain the nuance and justify the rule-breaking to the authority.',
+    ],
+  },
+  Intrapersonal: {
+    prompt: 'Describe a time you changed your mind about something important. What shifted in your perspective?',
+    options: [
+      'I realized my old view was factually incorrect based on new data.',
+      'I integrated a completely different worldview that expanded my own.',
+      'I realized my previous stance was causing harm to those around me.',
+    ],
+  },
+  Spiritual: {
+    prompt: 'What does it mean to act in alignment with the greatest good, and how do you experience this in your daily life?',
+    options: [
+      'Strict adherence to cosmic law and duty.',
+      'Acting from a place of unconditional love and service to others.',
+      'Dissolving the ego to act as a clear channel for the Creator.',
+    ],
+  },
+  Interpersonal: {
+    prompt: 'Describe how you approach resolving a disagreement with someone who holds a completely different set of core values.',
+    options: [
+      'Explain my rational points and let the facts speak for themselves.',
+      'Listen deeply to their perspective to find common emotional ground.',
+      'Look for the evolutionary synthesis that makes room for both viewpoints.',
+    ],
+  },
+};
+
+// Index 0 = Red level, 1 = Amber level, 2 = Orange level
+const CHOICE_THRESHOLDS: Record<string, [number, number, number]> = {
+  Cognitive: [1.8, 2.2, 2.8],
+  Emotional: [2, 2.5, 3],
+  Moral: [2, 2.5, 3],
+  Intrapersonal: [2, 2.5, 3],
+  Spiritual: [2, 2.5, 3],
+  Interpersonal: [2, 2.5, 3],
+};
+
+const HOLD_TARGETS: Record<string, number> = {
+  Somatic: 4000,
+  Willpower: 5000,
+};
+
+const CAL_STAGES = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'] as const;
+
+async function runQuickCalibration(): Promise<Record<Line, Stage>> {
+  const altitudes: Partial<Record<Line, Stage>> = {};
+  const lines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal'];
+
+  banner('Quick Calibration');
+  console.log(`  ${chalk.dim('A brief probe of each developmental line to set your starting altitudes.')}\n`);
+
+  for (const line of lines) {
+    let stage: Stage = 'Red';
+    let confidence = 0.5;
+    let trial: TrialResult;
+
+    if (line === 'Somatic' || line === 'Willpower') {
+      // ── Hold probe: measure timing accuracy ──
+      const target = HOLD_TARGETS[line]!;
+      const targetSec = (target / 1000).toFixed(1);
+
+      console.log(`  ${chalk.bold.cyan(line + ':')} ${chalk.dim('Timing probe')}`);
+      console.log(`  ${chalk.dim('Press Enter when you think ' + targetSec + ' seconds have passed.')}\n`);
+
+      const startTime = Date.now();
+      const answer = await clackText({ message: `Press Enter after ~${targetSec}s...`, defaultValue: '' });
+      if (typeof answer === 'symbol') { altitudes[line] = 'Red'; continue; }
+      const elapsed = Date.now() - startTime;
+
+      const accuracy = Math.max(0, 1 - Math.abs(elapsed - target) / target);
+
+      let threshold: number;
+      if (line === 'Somatic') {
+        // Inverted: lower RT = higher stage (range 200-900)
+        threshold = 900 - accuracy * 700;
+      } else {
+        // Standard: higher = better (range 1-12)
+        threshold = 1 + accuracy * 11;
+      }
+
+      stage = thresholdToStage(line, threshold);
+
+      trial = {
+        taskId: `cal-${line.toLowerCase()}`,
+        timestamp: Date.now(),
+        dimensions: { accuracy, response_time: accuracy },
+        rawResponse: elapsed,
+        durationMs: elapsed,
+      };
+
+      confidence = computeConfidence([trial], 0.5);
+
+    } else {
+      // ── LLM dialogue probe: multiple choice ──
+      const probe = CALIBRATION_PROMPTS[line];
+      if (!probe) { altitudes[line] = 'Red'; continue; }
+
+      console.log(`  ${chalk.bold.cyan(line + ':')}`);
+      console.log(`  ${chalk.dim(probe.prompt)}\n`);
+
+      const choice = await select({
+        message: `How would you approach this?`,
+        options: probe.options.map((opt) => ({ value: opt, label: opt })),
+      });
+
+      if (typeof choice === 'symbol') { altitudes[line] = 'Red'; continue; }
+
+      const choiceIdx = probe.options.indexOf(choice as string);
+      const idx = choiceIdx >= 0 ? choiceIdx : 0;
+
+      const thresholds = CHOICE_THRESHOLDS[line]!;
+      const threshold = thresholds[Math.min(idx, 2)];
+
+      stage = thresholdToStage(line, threshold);
+
+      const depthScores = [0.3, 0.6, 0.85];
+      const coherenceScores = [0.4, 0.7, 0.9];
+
+      trial = {
+        taskId: `cal-${line.toLowerCase()}`,
+        timestamp: Date.now(),
+        dimensions: { depth: depthScores[idx], coherence: coherenceScores[idx] },
+        rawResponse: idx,
+        durationMs: 0,
+      };
+
+      confidence = computeConfidence([trial], 0.5);
+    }
+
+    altitudes[line] = stage;
+
+    const stageIdx = CAL_STAGES.indexOf(stage as typeof CAL_STAGES[number]);
+    const color = stageColor(stage);
+    const bar = '■'.repeat(stageIdx + 1) + '○'.repeat(7 - stageIdx);
+    console.log(`  ${line.padEnd(14)} ${bar} ${color(stage)} ${chalk.dim('(confidence: ' + confidence.toFixed(2) + ')')}\n`);
+  }
+
+  console.log(`\n  ${chalk.bold('Calibration complete:')}`);
+  for (const line of lines) {
+    const s = altitudes[line] ?? 'Red';
+    const color = stageColor(s);
+    console.log(`    ${line.padEnd(14)} ${color(s)}`);
+  }
+  console.log('');
+
+  return altitudes as Record<Line, Stage>;
+}
+
 // ── Significator creation (simplified onboarding) ─────────────────────
-function createDefaultSignificator(): Significator {
+async function createDefaultSignificator(): Promise<Significator> {
   // Try to load saved state first (skip if --new-game)
   if (!NEW_GAME) {
     const saved = loadSave();
     if (saved) {
-      if (!JSON_MODE) console.log(`  ${C.green}✓${C.reset} Loaded saved progress (${saved.totalEncounters} encounters, stage: ${saved.currentStage})`);
+      if (!JSON_MODE) console.log(`  ${chalk.green('✓')} Loaded saved progress (${saved.totalEncounters} encounters, stage: ${saved.currentStage})`);
       return saved;
     }
   } else {
     deleteSave();
-    if (!JSON_MODE) console.log(`  ${C.yellow}↻${C.reset} Starting new game (previous save deleted)`);
+    deleteWorldSave();
+    if (!JSON_MODE) console.log(`  ${chalk.yellow('↻')} Starting new game (previous save deleted)`);
   }
+
   const allRed: Record<Line, Stage> = {
     Cognitive: 'Red', Emotional: 'Red', Moral: 'Red', Intrapersonal: 'Red',
     Spiritual: 'Red', Somatic: 'Red', Willpower: 'Red', Interpersonal: 'Red',
   };
-  return createSignificator('cli-player', allRed, 'Red');
+
+  // Run quick calibration unless in automated/skip mode
+  let altitudes: Record<Line, Stage>;
+  if (HEADLESS || NO_LLM || SKIP_CALIBRATION || JSON_MODE) {
+    altitudes = allRed;
+  } else {
+    altitudes = await runQuickCalibration();
+  }
+
+  const stageCounts: Record<string, number> = {};
+  for (const s of Object.values(altitudes)) {
+    stageCounts[s] = (stageCounts[s] ?? 0) + 1;
+  }
+  let dominantStage: Stage = 'Red';
+  let maxCount = 0;
+  for (const [s, count] of Object.entries(stageCounts)) {
+    if (count > maxCount || (count === maxCount && CAL_STAGES.indexOf(s as typeof CAL_STAGES[number]) > CAL_STAGES.indexOf(dominantStage))) {
+      maxCount = count;
+      dominantStage = s as Stage;
+    }
+  }
+
+  return createSignificator('cli-player', altitudes, dominantStage);
 }
 
 // ── JSON event emitter for AI-agent consumption ───────────────────────
+/** Strip ANSI escape codes from text for clean JSON output */
+const ANSI_REGEX = new RegExp(String.raw`\x1b\[[0-9;]*[a-zA-Z]`, 'g');
+function stripAnsi(text: string): string {
+  return text.replace(ANSI_REGEX, '');
+}
+
 function emitEvent(type: string, data: Record<string, unknown>): void {
   if (JSON_MODE) {
-    process.stdout.write(JSON.stringify({ type, ts: Date.now(), ...data }) + '\n');
+    const cleaned: Record<string, unknown> = {};
+    for (const [k, v] of Object.entries(data)) {
+      cleaned[k] = typeof v === 'string' ? stripAnsi(v) : v;
+    }
+    process.stdout.write(JSON.stringify({ type, ts: Date.now(), ...cleaned }) + '\n');
   }
 }
 
@@ -215,18 +532,19 @@ const SHADOW_LABELS: Record<string, string> = {
 };
 
 /** Stage color helper: returns ANSI color for a given stage */
-function stageColor(stage: string): string {
-  const colors: Record<string, string> = {
-    Infrared: '\x1b[38;5;52m',  // dark red
-    Magenta: '\x1b[38;5;127m',  // magenta
-    Red: '\x1b[38;5;196m',     // bright red
-    Amber: '\x1b[38;5;214m',   // orange
-    Orange: '\x1b[38;5;208m',  // orange
-    Green: '\x1b[38;5;40m',    // green
-    Turquoise: '\x1b[38;5;44m',// teal
-    White: '\x1b[38;5;255m',   // white
+// ponytail: returns chalk function, caller invokes with text
+function stageColor(stage: string): (text: string) => string {
+  const colors: Record<string, (text: string) => string> = {
+    Infrared: chalk.hex('#8B0000'),
+    Magenta: chalk.hex('#BA55D3'),
+    Red: chalk.hex('#FF0000'),
+    Amber: chalk.hex('#FF8C00'),
+    Orange: chalk.hex('#FFA500'),
+    Green: chalk.hex('#00C853'),
+    Turquoise: chalk.hex('#00CED1'),
+    White: chalk.hex('#FFFFFF'),
   };
-  return colors[stage] ?? C.dim;
+  return colors[stage] ?? chalk.dim;
 }
 
 /** Stage abbreviation for compact display */
@@ -251,15 +569,15 @@ function renderAltitudesChart(sig: Significator): void {
 
     // Build a horizontal bar: filled squares up to current stage, empty beyond
     const bars = stageKeys.map((s, i) => {
-      if (i < currentIdx) return `${C.dim}■${C.reset}`;  // passed stages
-      if (i === currentIdx) return `${color}●${C.reset}`; // current stage
-      return `${C.dim}○${C.reset}`; // future stages
+      if (i < currentIdx) return chalk.dim('■');  // passed stages
+      if (i === currentIdx) return color('●'); // current stage
+      return chalk.dim('○'); // future stages
     });
 
     // Segment label: first 3 stages, current, last 2
     const segLabels = stageKeys.map((s, i) => {
       if (i === 0 || i === stageKeys.length - 1 || i === currentIdx) {
-        return `${i === currentIdx ? color : C.dim}${stageAbbr(s)}${C.reset}`;
+        return i === currentIdx ? color(stageAbbr(s)) : chalk.dim(stageAbbr(s));
       }
       return '  '; // skip most labels for compactness
     });
@@ -267,7 +585,7 @@ function renderAltitudesChart(sig: Significator): void {
     // Pad line name to 15 chars for alignment
     const paddedLine = line.padEnd(14);
     if (!JSON_MODE) {
-      console.log(`  ${paddedLine} ${bars.join('')} ${C.dim}${current}${C.reset}`);
+      console.log(`  ${paddedLine} ${bars.join('')} ${chalk.dim(current)}`);
     }
   }
 }
@@ -280,7 +598,7 @@ function renderCCIDisplay(cci: { composite: number; dimensions: Record<string, n
   const filled = Math.round(cci.composite * barLen);
   const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
 
-  console.log(`  ${C.bold}CCI${C.reset}  ${C.cyan}${bar}${C.reset} ${C.bold}${pct}%${C.reset}`);
+  console.log(`  ${chalk.bold('CCI')}  ${chalk.cyan(bar)} ${chalk.bold(pct + '%')}`);
 
   // Show dimensions in a compact row
   const dims = Object.entries(cci.dimensions).map(([k, v]) => {
@@ -290,8 +608,8 @@ function renderCCIDisplay(cci: { composite: number; dimensions: Record<string, n
     };
     const short = labels[k] ?? k.slice(0, 5);
     const val = (v * 100).toFixed(0);
-    const color = v > 0.6 ? C.green : v > 0.3 ? C.yellow : C.red;
-    return `${C.dim}${short}:${color}${val}%${C.reset}`;
+    const color = v > 0.6 ? chalk.green : v > 0.3 ? chalk.yellow : chalk.red;
+    return `${chalk.dim(short + ':')}${color(val + '%')}`;
   });
   console.log(`   ${dims.join(' ')}`);
 }
@@ -304,17 +622,17 @@ function renderSessionPosition(label: string, position: 'warmup' | 'peak' | 'coo
   let bar = '';
   for (let i = 0; i < barLen; i++) {
     if (position === 'warmup') {
-      bar += i <= pos ? C.blue + '▰' + C.reset : C.dim + '▱' + C.reset;
+      bar += i <= pos ? chalk.blue('▰') : chalk.dim('▱');
     } else if (position === 'peak') {
-      bar += i <= pos ? C.magenta + '▰' + C.reset : C.dim + '▱' + C.reset;
+      bar += i <= pos ? chalk.magenta('▰') : chalk.dim('▱');
     } else {
-      bar += i <= pos ? C.green + '▰' + C.reset : C.dim + '▱' + C.reset;
+      bar += i <= pos ? chalk.green('▰') : chalk.dim('▱');
     }
   }
-  const posLabel = position === 'warmup' ? C.blue + 'WARMUP' + C.reset
-    : position === 'peak' ? C.magenta + 'PEAK' + C.reset
-    : C.green + 'COOLDOWN' + C.reset;
-  console.log(`  ${posLabel} ${bar} ${C.dim}${label}${C.reset}`);
+  const posLabel = position === 'warmup' ? chalk.blue('WARMUP')
+    : position === 'peak' ? chalk.magenta('PEAK')
+    : chalk.green('COOLDOWN');
+  console.log(`  ${posLabel} ${bar} ${chalk.dim(label)}`);
 }
 
 /** Render active shadows with quadrant labels */
@@ -322,7 +640,7 @@ function renderShadows(sig: Significator): void {
   if (JSON_MODE) return;
   const active = sig.shadows.entries.filter(e => !e.resolvedAt);
   if (active.length === 0) {
-    info('shadows', `${C.green}none active${C.reset}`);
+    info('shadows', `${chalk.green('none active')}`);
     return;
   }
 
@@ -334,20 +652,20 @@ function renderShadows(sig: Significator): void {
     groups[key].push(s);
   }
 
-  const qColors: Record<string, string> = {
-    DarkAddiction: '\x1b[38;5;196m',   // bright red
-    DarkAllergy: '\x1b[38;5;166m',    // orange-red
-    GoldenAddiction: '\x1b[38;5;220m', // gold-yellow
-    GoldenAllergy: '\x1b[38;5;240m',   // grey
+  const qColors: Record<string, (text: string) => string> = {
+    DarkAddiction: chalk.hex('#FF0000'),
+    DarkAllergy: chalk.hex('#FF6347'),
+    GoldenAddiction: chalk.hex('#FFD700'),
+    GoldenAllergy: chalk.hex('#808080'),
   };
 
   const parts = Object.entries(groups).map(([q, entries]) => {
-    const color = qColors[q] ?? C.yellow;
+    const color = qColors[q] ?? chalk.yellow;
     const sev = entries.map(e => (e.severity * 100).toFixed(0)).join('/');
-    return `${color}${q}${entries.length > 1 ? '×' + entries.length : ''}(${sev}%)${C.reset}`;
+    return color(q + (entries.length > 1 ? '×' + entries.length : '') + '(' + sev + '%)');
   });
   // U.3 FIX: Show count clearly instead of misleading CCI dimension percentage
-  console.log(`  ${C.yellow}⚠${C.reset} shadows [${active.length}]: ${parts.join(' ')}`);
+  console.log(`  ${chalk.yellow('⚠')} shadows [${active.length}]: ${parts.join(' ')}`);
 }
 
 /** Render drive balance compass */
@@ -364,10 +682,10 @@ function renderDrives(sig: Significator): void {
     const fix = sig.drives.fixationRisk[d] ?? 0;
     const filled = Math.max(0, Math.round((w / maxVal) * barLen));
     const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
-    const color = fix > 0.5 ? C.red : w > 0.3 ? C.green : C.yellow;
+    const color = fix > 0.5 ? chalk.red : w > 0.3 ? chalk.green : chalk.yellow;
     const fixIcon = fix > 0.7 ? '⚠' : fix > 0.4 ? '~' : ' ';
     const dirIcon = w > 0.6 ? '↑' : w < 0.35 ? '↓' : ' ';
-    console.log(`  ${C.dim}${d.padEnd(10)}${C.reset} ${color}${bar}${C.reset} ${fixIcon}${dirIcon} ${C.dim}${fix > 0.1 ? `fix:${(fix * 100).toFixed(0)}%` : ''}${C.reset}`);
+    console.log(`  ${chalk.dim(d.padEnd(10))} ${color(bar)} ${fixIcon}${dirIcon} ${chalk.dim(fix > 0.1 ? `fix:${(fix * 100).toFixed(0)}%` : '')}`);
   }
 }
 
@@ -380,16 +698,27 @@ function printSignificator(sig: Significator): void {
 }
 
 function printEncounter(enc: ScheduledEncounter): void {
-  const posColor = enc.sessionPosition === 'warmup' ? C.blue
-    : enc.sessionPosition === 'cooldown' ? C.green : C.magenta;
+  const isShadow = enc.executionMode === 'shadow';
+  const posColor = enc.sessionPosition === 'warmup' ? chalk.blue
+    : enc.sessionPosition === 'cooldown' ? chalk.green : chalk.magenta;
   const stageCol = stageColor(enc.stage);
   const posTag = enc.sessionPosition === 'warmup' ? 'WARMUP'
     : enc.sessionPosition === 'cooldown' ? 'COOLDOWN' : 'PEAK';
-  info('module', `${stageCol}${enc.moduleRef}${C.reset}`);
-  info('modality', `${posColor}${enc.modality}${C.reset}`);
-  info('arc', `${posColor}${posTag}${C.reset}  ${C.dim}difficulty:${enc.difficulty.toFixed(2)} pr:${enc.priority.toFixed(3)}${C.reset}`);
-  info('holon', `${C.dim}${enc.holonSource}${C.reset}`);
-  info('mode', `${enc.executionMode === 'shadow' ? C.yellow + 'shadow' + C.reset : C.dim + enc.executionMode + C.reset}`);
+
+  if (isShadow && !JSON_MODE) {
+    console.log(`  ${chalk.bgRed.white.bold(' ◆ SHADOW-WORK ')} ${chalk.dim('— accumulated shadows exceed threshold')}`);
+  }
+
+  info('module', `${stageCol(enc.moduleRef)}`);
+  info('modality', `${posColor(enc.modality)}`);
+  info('arc', `${posColor(posTag)}  ${chalk.dim('difficulty:' + enc.difficulty.toFixed(2) + ' pr:' + enc.priority.toFixed(3))}`);
+  info('holon', `${chalk.dim(enc.holonSource)}`);
+  if (isShadow) {
+    const quadrant = enc.shadowTarget ? chalk.hex('#FF6347')(enc.shadowTarget) : chalk.yellow('unknown');
+    info('mode', `${chalk.bgRed.white(' shadow ')}  target: ${quadrant}`);
+  } else {
+    info('mode', `${chalk.dim(enc.executionMode)}`);
+  }
 }
 
 // ── AgenticOrchestrator encounter handler (all modalities) ────────────
@@ -399,6 +728,7 @@ async function runAgenticEncounter(
   world: WorldState,
   history: ConsequenceRecord[],
   responsesPool?: number[],
+  consecutivePasses?: Map<string, number>,
 ): Promise<{
   outcome: import('../src/core/assessments/AgenticOrchestrator.js').OrchestratorResult;
   response: PlayerResponse;
@@ -432,40 +762,57 @@ async function runAgenticEncounter(
       for (const q of params.questions) {
         if (!JSON_MODE) {
           const mod = forcedEncounter.modality;
+          const isShadow = forcedEncounter.executionMode === 'shadow';
           let modHeader = '';
 
           switch (mod) {
             case 'Deterministic':
-              modHeader = `${C.bold}${C.red}⏳ [TIMED TRIAL] ▬▬▬▬▬▬▬▬▬▬▬▬▬░ (9.5s remaining)${C.reset}\n`;
+              modHeader = isShadow
+                ? `${chalk.bold.red('◆ [SHADOW TRIAL] ▬▬▬▬▬▬▬▬▬▬▬▬▬░ (9.5s remaining)')}\n`
+                : `${chalk.bold.red('⏳ [TIMED TRIAL] ▬▬▬▬▬▬▬▬▬▬▬▬▬░ (9.5s remaining)')}\n`;
               break;
             case 'LanguageReflective':
-              modHeader = `${C.bold}${C.blue}🧘 [REFLECTION BEAT] • Tune in to your inner state •${C.reset}\n`;
+              modHeader = isShadow
+                ? `${chalk.bold.red('◆ [SHADOW REFLECTION] • Confront the unresolved pattern •')}\n`
+                : `${chalk.bold.blue('🧘 [REFLECTION BEAT] • Tune in to your inner state •')}\n`;
               break;
             case 'ScenarioChoice':
-              modHeader = `${C.bold}${C.yellow}🔀 [DECISION CROSSROADS] • A path diverges •${C.reset}\n`;
+              modHeader = isShadow
+                ? `${chalk.bold.red('◆ [SHADOW CROSSROADS] • The shadow demands a choice •')}\n`
+                : `${chalk.bold.yellow('🔀 [DECISION CROSSROADS] • A path diverges •')}\n`;
               break;
             case 'Embodied':
-              modHeader = `${C.bold}${C.green}💓 [SOMATIC SCAN] • Focus on body sensation •${C.reset}\n`;
+              modHeader = isShadow
+                ? `${chalk.bold.red('◆ [SHADOW SCAN] • Feel where the shadow lives in the body •')}\n`
+                : `${chalk.bold.green('💓 [SOMATIC SCAN] • Focus on body sensation •')}\n`;
               break;
             case 'Strategic':
-              modHeader = `${C.bold}${C.magenta}♟️ [TACTICAL WAR-TABLE] • Assess constraints •${C.reset}\n`;
+              modHeader = isShadow
+                ? `${chalk.bold.red('◆ [SHADOW WAR-TABLE] • Map the shadow\'s strategy •')}\n`
+                : `${chalk.bold.magenta('♟️ [TACTICAL WAR-TABLE] • Assess constraints •')}\n`;
               break;
             case 'SocialCooperative':
-              modHeader = `${C.bold}${C.cyan}🤝 [DIPLOMACY] • Navigating connection •${C.reset}\n`;
+              modHeader = isShadow
+                ? `${chalk.bold.red('◆ [SHADOW DIPLOMACY] • Navigate the shadow in relation •')}\n`
+                : `${chalk.bold.cyan('🤝 [DIPLOMACY] • Navigating connection •')}\n`;
               break;
             case 'ImmersiveRPG':
-              modHeader = `${C.bold}${C.yellow}📖 [NARRATIVE SCENE] • The story unfolds •${C.reset}\n`;
+              modHeader = isShadow
+                ? `${chalk.bold.red('◆ [SHADOW SCENE] • The shadow writes its chapter •')}\n`
+                : `${chalk.bold.yellow('📖 [NARRATIVE SCENE] • The story unfolds •')}\n`;
               break;
             default:
-              modHeader = `${C.bold}${C.dim}[${mod.toUpperCase()}]${C.reset}\n`;
+              modHeader = isShadow
+                ? `${chalk.bold.red('◆ [SHADOW WORK]')}\n`
+                : `${chalk.bold.dim('[' + (mod as string).toUpperCase() + ']')}\n`;
           }
 
-          console.log(`\n  ${modHeader}  ${C.magenta}[${q.header}]${C.reset}`);
-          console.log(`  ${C.bold}${q.question}${C.reset}`);
+          console.log(`\n  ${modHeader}  ${chalk.magenta('[' + q.header + ']')}`);
+          console.log(`  ${chalk.bold(q.question)}`);
           if (q.options?.length) {
             for (let i = 0; i < q.options.length; i++) {
               const opt = q.options[i];
-              console.log(`    ${C.cyan}[${i + 1}]${C.reset} ${opt.label} — ${opt.description}`);
+              console.log(`    ${chalk.cyan('[' + (i + 1) + ']')} ${opt.label} — ${opt.description}`);
             }
           }
         }
@@ -612,7 +959,7 @@ async function runDiagnostic(): Promise<void> {
   success(`${world.holons.length} total: ${npcCount} NPCs, ${factionCount} factions, ${locationCount} locations`);
 
   console.log('\nSignificator:');
-  const sig = createDefaultSignificator();
+  const sig = await createDefaultSignificator();
   printSignificator(sig);
 
   console.log('\nSession:');
@@ -637,9 +984,9 @@ async function runDiagnostic(): Promise<void> {
     warn('Scheduler returned null — no encounters available');
   }
 
-  console.log(`\n${C.dim}LLM: ${LLM_ACTIVE ? 'active' : 'fallback (placeholder key)'} | Endpoint: ${baseUrl} | Model: ${model}${C.reset}`);
-  console.log(`${C.dim}LLM endpoint: ${baseUrl}${C.reset}`);
-  console.log(`${C.dim}LLM model: ${model}${C.reset}`);
+  console.log(`\n${chalk.dim('LLM: ' + (LLM_ACTIVE ? 'active' : 'fallback (placeholder key)') + ' | Endpoint: ' + baseUrl + ' | Model: ' + model)}`);
+  console.log(`${chalk.dim('LLM endpoint: ' + baseUrl)}`);
+  console.log(`${chalk.dim('LLM model: ' + model)}`);
 }
 
 // ── Single encounter mode ─────────────────────────────────────────────
@@ -651,7 +998,7 @@ async function runSingleEncounter(): Promise<void> {
   (globalThis as any).__moduleRegistry = moduleRegistry;
   success(`${moduleRegistry.count()} modules loaded`);
 
-  const sig = createDefaultSignificator();
+  const sig = await createDefaultSignificator();
   const world = loadHolons();
   const session: SessionContext = {
     encountersSoFar: 0,
@@ -703,7 +1050,7 @@ async function runSingleEncounter(): Promise<void> {
   separator('Encounter');
   printEncounter(tickResult.encounter);
 
-  const result = await runAgenticEncounter(tickResult.encounter, sig, world, [], responsesPool);
+  const result = await runAgenticEncounter(tickResult.encounter, sig, world, [], responsesPool, new Map());
 
   separator('Result');
   info('narrative', result.narrativeSummary);
@@ -713,40 +1060,38 @@ async function runSingleEncounter(): Promise<void> {
 async function runFullSession(): Promise<void> {
   banner('CCRPG Session Runner');
 
-  // Boot
-  if (!JSON_MODE) console.log('\n[1/5] Booting registries...');
+  // Boot with ora spinners for clean loading UX
+  const s1 = JSON_MODE ? null : ora('Booting registries...').start();
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
   (globalThis as any).__moduleRegistry = moduleRegistry;
-  success(`${moduleRegistry.count()} assessment modules loaded`);
+  s1?.succeed(`${moduleRegistry.count()} assessment modules loaded`);
 
   // LLM availability check
-  if (!JSON_MODE) console.log('\n[2/5] Checking LLM availability...');
+  const s2 = JSON_MODE ? null : ora('Checking LLM availability...').start();
   if (LLM_ACTIVE) {
     const llmUp = await checkLLMAvailability(baseUrl, apiKey);
     if (!llmUp) {
       LLM_ACTIVE = false;
-      warn('LLM unreachable — falling back to module assessments (use --no-llm to skip this check)');
+      s2?.warn('LLM unreachable — falling back to module assessments (use --no-llm to skip this check)');
     } else {
-      success(`LLM active: ${ACTIVE_MODEL}`);
+      s2?.succeed(`LLM active: ${ACTIVE_MODEL}`);
     }
   } else {
-    info('LLM', 'disabled (--no-llm or no API key)');
+    s2?.info('LLM disabled (--no-llm or no API key)');
   }
 
   // Holons
-  if (!JSON_MODE) console.log('\n[3/5] Loading world...');
+  const s3 = JSON_MODE ? null : ora('Loading world...').start();
   const world = loadHolons();
   const npcCount = world.holons.filter(h => h.kind === 'NPC').length;
-  success(`${world.holons.length} holons (${npcCount} NPCs)`);
+  s3?.succeed(`${world.holons.length} holons (${npcCount} NPCs)`);
 
   // Significator
-  if (!JSON_MODE) console.log('\n[4/5] Creating Significator...');
-  const sig = createDefaultSignificator();
+  const s4 = JSON_MODE ? null : ora('Creating Significator...').start();
+  const sig = await createDefaultSignificator();
   printSignificator(sig);
-
-  // Session
-  if (!JSON_MODE) console.log('\n[5/5] Starting session...');
+  s4?.succeed('Significator ready');
   const session: SessionContext = {
     encountersSoFar: 0,
     sessionDurationMs: 0,
@@ -764,7 +1109,7 @@ async function runFullSession(): Promise<void> {
 
   banner('SESSION START');
   renderCCIDisplay(sessionState.cci);
-  info('theme', `${C.cyan}${sessionState.strategy.theme}${C.reset}`);
+  info('theme', `${chalk.cyan(sessionState.strategy.theme)}`);
   info('target', `${encounterCount} encounters`);
   console.log('');
   renderAltitudesChart(currentSig);
@@ -772,13 +1117,19 @@ async function runFullSession(): Promise<void> {
   renderShadows(currentSig);
   renderDrives(currentSig);
 
+  if (!JSON_MODE) {
+    const bleedThrough = detectBleedThrough(currentSig.theta.lastEncounter, Date.now());
+    console.log('');
+    console.log(renderLayers(currentSig, bleedThrough));
+  }
+
   // World-building atmosphere
   if (!JSON_MODE) {
     const atmospheres = [
-      `${C.dim}The world stirs with latent potential. Fragments of memory surface — echoes of journeys not yet taken.${C.reset}`,
-      `${C.dim}A pale light filters through the veil. The architecture of consciousness awaits your engagement.${C.reset}`,
-      `${C.dim}The field of development hums with quiet energy. Each encounter will shape the landscape of your becoming.${C.reset}`,
-      `${C.dim}Between the seen and unseen, the developmental engines prepare their catalysts. Step forward.${C.reset}`,
+      `${chalk.dim('The world stirs with latent potential. Fragments of memory surface — echoes of journeys not yet taken.')}`,
+      `${chalk.dim('A pale light filters through the veil. The architecture of consciousness awaits your engagement.')}`,
+      `${chalk.dim('The field of development hums with quiet energy. Each encounter will shape the landscape of your becoming.')}`,
+      `${chalk.dim('Between the seen and unseen, the developmental engines prepare their catalysts. Step forward.')}`,
     ];
     console.log(`\n  ${atmospheres[Math.floor(Math.random() * atmospheres.length)]}`);
   }
@@ -840,7 +1191,7 @@ async function runFullSession(): Promise<void> {
         executionMode: 'capacity',
       };
       if (VERBOSE) warn(`No natural encounter found at ${synthLine}:${synthStage} — using synthetic encounter`);
-      tickResult = { ...tickResult, encounter: syntheticEncounter };
+      tickResult = { ...tickResult, encounter: syntheticEncounter, encounters: [syntheticEncounter] };
     }
 
     if (!tickResult.encounter) {
@@ -848,36 +1199,58 @@ async function runFullSession(): Promise<void> {
       continue;
     }
 
+    // G.10: Non-coercion — present 3-5 ranked offers, player chooses
+    let selectedEncounter: ScheduledEncounter = tickResult.encounter!;
+    const offers = tickResult.encounters;
+    if (offers.length > 1 && !HEADLESS && !JSON_MODE) {
+      const posLabel = (pos: string) => pos === 'warmup' ? chalk.blue('warmup') : pos === 'cooldown' ? chalk.green('cooldown') : chalk.magenta('peak');
+      const options = offers.map((enc, idx) => {
+        const [, st] = enc.moduleRef.split(':');
+        const label = `${idx + 1}. ${stageColor(st)(enc.moduleRef)}  ${chalk.dim(enc.modality)}  ${chalk.dim('diff:' + enc.difficulty.toFixed(2))}  ${posLabel(enc.sessionPosition)}`;
+        return { value: idx, label };
+      });
+      const choice = await select({
+        message: 'Choose your encounter:',
+        options,
+        initialValue: 0,
+      });
+      if (typeof choice === 'number') {
+        selectedEncounter = offers[choice];
+        const skipped = offers.filter((_, idx) => idx !== choice).map(e => e.id);
+        if (skipped.length > 0) {
+          currentSig = { ...currentSig, avoidedEncounters: [...currentSig.avoidedEncounters, ...skipped] };
+        }
+      }
+    }
+    tickResult = { ...tickResult, encounter: selectedEncounter };
+
     // Show session position and encounter header
-    const encProgress = (tickResult.encounter.sessionPosition === 'warmup' ? 0.1
-      : tickResult.encounter.sessionPosition === 'cooldown' ? 0.9 : 0.5);
-    renderSessionPosition(`${i + 1}/${encounterCount}`, tickResult.encounter.sessionPosition, encProgress);
-    printEncounter(tickResult.encounter);
+    const encProgress = (selectedEncounter.sessionPosition === 'warmup' ? 0.1
+      : selectedEncounter.sessionPosition === 'cooldown' ? 0.9 : 0.5);
+    renderSessionPosition(`${i + 1}/${encounterCount}`, selectedEncounter.sessionPosition, encProgress);
+    printEncounter(selectedEncounter);
 
     // Transition indicator with processing spinner
     if (i > 0 && !JSON_MODE) {
       const transitions = [
-        `${C.dim}The previous encounter settles into memory. A new catalyst emerges...${C.reset}`,
-        `${C.dim}The developmental field shifts. What comes next is precisely what you need...${C.reset}`,
-        `${C.dim}Integration ripples outward. The next challenge crystallizes...${C.reset}`,
-        `${C.dim}The veil parts once more. A new mirror reflects...${C.reset}`,
-        `${C.dim}The residue of the last encounter lingers. The next catalyst forms...${C.reset}`,
-        `${C.dim}Memory folds into potential. A new edge of growth appears...${C.reset}`,
+        `${chalk.dim('The previous encounter settles into memory. A new catalyst emerges...')}`,
+        `${chalk.dim('The developmental field shifts. What comes next is precisely what you need...')}`,
+        `${chalk.dim('Integration ripples outward. The next challenge crystallizes...')}`,
+        `${chalk.dim('The veil parts once more. A new mirror reflects...')}`,
+        `${chalk.dim('The residue of the last encounter lingers. The next catalyst forms...')}`,
+        `${chalk.dim('Memory folds into potential. A new edge of growth appears...')}`,
       ];
       console.log(`\n  ${transitions[Math.floor(Math.random() * transitions.length)]}`);
-      // U.4: Processing spinner with animated dots
-      const spinnerFrames = ['', '.', '..', '...'];
-      for (let f = 0; f < spinnerFrames.length; f++) {
-        process.stdout.write(`\r  ${C.dim}... preparing encounter${spinnerFrames[f]}${C.reset}`);
-        await new Promise(r => setTimeout(r, 200));
-      }
-      process.stdout.write('\x1b[2K\r');
+      // U.4: Smooth ora spinner
+      const s = ora({ text: 'Preparing encounter...', color: 'cyan' }).start();
+      await new Promise(r => setTimeout(r, 300));
+      s.succeed('Encounter ready');
     }
 
     // Run encounter through AgenticOrchestrator (all modalities)
     try {
       const result = await runAgenticEncounter(
-        tickResult.encounter, currentSig, currentWorld, history, responsesPool,
+        selectedEncounter, currentSig, currentWorld, history, responsesPool, consecutivePasses,
       );
 
       // Apply consequences from the orchestrator result
@@ -893,26 +1266,26 @@ async function runFullSession(): Promise<void> {
       // ── Per-encounter state display ──
       const encResult = result.outcome.finalResult;
       if (!JSON_MODE) {
-        const passIcon = encResult.passed ? `${C.green}✓ PASSED${C.reset}` : `${C.red}✗ FAILED${C.reset}`;
+        const passIcon = encResult.passed ? chalk.green('✓ PASSED') : chalk.red('✗ FAILED');
         // Show score + drive summary always (not just verbose)
         const primaryScore = encResult.dimensions.accuracy ?? 0.5;
-        const scoreColor = primaryScore >= 0.7 ? C.green : primaryScore >= 0.5 ? C.yellow : C.red;
-        console.log(`\n  ${C.bold}Result:${C.reset} ${passIcon}  ${C.dim}score:${C.reset} ${scoreColor}${(primaryScore * 100).toFixed(0)}%${C.reset}`);
+        const scoreColor = primaryScore >= 0.7 ? chalk.green : primaryScore >= 0.5 ? chalk.yellow : chalk.red;
+        console.log(`\n  ${chalk.bold('Result:')} ${passIcon}  ${chalk.dim('score:')} ${scoreColor((primaryScore * 100).toFixed(0) + '%')}`);
         // Show which drive was expressed and polarity in non-verbose
         const cr = result.outcome.consequenceRecord;
         const polarityIcon = cr.polarityTrace.energeticDirection === 'Radiative' ? '↑' 
           : cr.polarityTrace.energeticDirection === 'Absorptive' ? '↓' : '·';
         // Always show drive summary line with polarity direction
         const allDriveEntries = Object.entries(cr.polarityTrace.driveDirectionality).map(([k, v]) => {
-          if (v === 'HealthyBalanced') return `${C.dim}${k.slice(0, 3)}:${C.green}ok${C.reset}`;
-          const col = v.startsWith('Dark') ? C.red : C.yellow;
-          return `${col}${k.slice(0, 3)}:${SHADOW_LABELS[v] ?? v.slice(0, 5)}${C.reset}`;
+          if (v === 'HealthyBalanced') return `${chalk.dim(k.slice(0, 3) + ':')}${chalk.green('ok')}`;
+          const col = v.startsWith('Dark') ? chalk.red : chalk.yellow;
+          return `${col(k.slice(0, 3) + ':' + (SHADOW_LABELS[v] ?? v.slice(0, 5)))}`;
         });
-        console.log(`  ${C.dim}drives:${C.reset} ${allDriveEntries.join(' ')}  ${C.dim}${polarityIcon}${cr.polarityTrace.stageOrientation}${C.reset}`);
+        console.log(`  ${chalk.dim('drives:')} ${allDriveEntries.join(' ')}  ${chalk.dim(polarityIcon + cr.polarityTrace.stageOrientation)}`);
         // Show shadow status
         const shadow = result.outcome.consequenceRecord.shadowSurfaced;
         if (shadow) {
-          console.log(`  ${C.yellow}⚠ shadow:${C.reset} ${C.yellow}${shadow}${C.reset}`);
+          console.log(`  ${chalk.yellow('⚠ shadow:')} ${chalk.yellow(shadow)}`);
         }
       }
 
@@ -922,9 +1295,9 @@ async function runFullSession(): Promise<void> {
       }
 
       emitEvent('encounter_completed', {
-        encounter: tickResult.encounter.id,
-        modality: tickResult.encounter.modality,
-        module: tickResult.encounter.moduleRef,
+        encounter: selectedEncounter.id,
+        modality: selectedEncounter.modality,
+        module: selectedEncounter.moduleRef,
         passed: result.outcome.finalResult.passed,
         narrative: result.narrativeSummary,
         totalEncounters: currentSig.totalEncounters,
@@ -934,18 +1307,17 @@ async function runFullSession(): Promise<void> {
       if (result.outcome.finalResult.passed) passedCount++;
     } catch (err: any) {
       error(`Encounter failed: ${err.message || err}`);
-      emitEvent('encounter_error', { encounter: tickResult.encounter.id, error: err.message });
+      emitEvent('encounter_error', { encounter: selectedEncounter.id, error: err.message });
     }
 
       // Check transformation
     if (tickResult.transformation) {
-      if (!JSON_MODE) console.log(`\n  ${C.magenta}⚡ TRANSFORMATION: ${tickResult.transformation.targetStage}${C.reset}`);
+      if (!JSON_MODE) console.log(`\n  ${chalk.magenta('⚡ TRANSFORMATION: ' + tickResult.transformation.targetStage)}`);
       emitEvent('transformation', { targetStage: tickResult.transformation.targetStage, readiness: tickResult.transformation.readiness });
     }
 
-    // Only show bleed-through for the first encounter (subsequent ones are verbose)
-    if (i === 0 && tickResult.bleedThrough.length > 0) {
-      info('bleedThrough (first 10)', tickResult.bleedThrough.slice(0, 10).join(', ') + `... (${tickResult.bleedThrough.length} total)`);
+    if (!JSON_MODE && tickResult.bleedThrough.length > 0) {
+      console.log(`  ${chalk.dim('layers:')} ${renderLayersCompact(currentSig, tickResult.bleedThrough)}`);
     }
 
   }
@@ -953,9 +1325,10 @@ async function runFullSession(): Promise<void> {
   // Session end — apply theta-decay and persist
   const sessionEnd = endSession(currentSig, sessionState, now + encounterCount * 5000);
 
-  // Save progress to disk
+  // Save progress to disk (Significator + WorldState)
   saveGame(sessionEnd.sig);
-  if (!JSON_MODE) info('save', `${C.green}Progress saved${C.reset}`);
+  saveWorldState(currentWorld);
+  if (!JSON_MODE) info('save', `${chalk.green('Progress saved')}`);
 
   banner('SESSION END');
 
@@ -978,44 +1351,52 @@ async function runFullSession(): Promise<void> {
     const shadowDetail = Object.entries(shadowsByQuadrant).map(([q, n]) => `${n}×${q}`).join(', ');
 
     const openingLine = passedCount > failedCount
-      ? `${C.green}This session favored integration.${C.reset} ${passedCount}/${completedCount} encounters met their developmental threshold.`
-      : `${C.yellow}This session was heavy with unfinished catalyst.${C.reset} ${failedCount}/${completedCount} encounters remain un-integrated.`;
+      ? `${chalk.green('This session favored integration.')} ${passedCount}/${completedCount} encounters met their developmental threshold.`
+      : `${chalk.yellow('This session was heavy with unfinished catalyst.')} ${failedCount}/${completedCount} encounters remain un-integrated.`;
 
     const altLine = uniqueLinesAdvanced.length > 0
-      ? `  ${C.magenta}⚡ Lines advanced: ${uniqueLinesAdvanced.join(', ')}${C.reset}`
+      ? `  ${chalk.magenta('⚡ Lines advanced: ' + uniqueLinesAdvanced.join(', '))}`
       : '';
 
     const shadowLine = shadowDetail
-      ? `  ${C.red}⚠ Shadows surfaced: ${shadowDetail}${C.reset}`
-      : `  ${C.green}✓ No shadows surfaced this session${C.reset}`;
+      ? `  ${chalk.red('⚠ Shadows surfaced: ' + shadowDetail)}`
+      : `  ${chalk.green('✓ No shadows surfaced this session')}`;
 
     // NPC relationship summary
     const holonDeltas = history.flatMap(r => r.holonDeltas ?? []);
     const relChanges = holonDeltas.filter(d => d.field === 'relationshipStrength');
     const relLine = relChanges.length > 0
-      ? `  ${C.dim}NPC relationships shifted: ${relChanges.length} encounter${relChanges.length > 1 ? 's' : ''} with bond changes${C.reset}`
+      ? `  ${chalk.dim('NPC relationships shifted: ' + relChanges.length + ' encounter' + (relChanges.length > 1 ? 's' : '') + ' with bond changes')}`
       : '';
 
-    console.log(`\n  ${C.bold}Session Closure${C.reset}`);
+    console.log(`\n  ${chalk.bold('Session Closure')}`);
     console.log(`  ${openingLine}`);
     if (altLine) console.log(altLine);
     console.log(shadowLine);
     if (relLine) console.log(relLine);
-    console.log(`\n  ${C.dim}The session closes. Each encounter was a mirror — reflecting not who you are, but who you are becoming.${C.reset}`);
+    console.log(`\n  ${chalk.dim('The session closes. Each encounter was a mirror — reflecting not who you are, but who you are becoming.')}`);
   }
 
   info('encounters completed', String(completedCount));
   info('total encounters', String(currentSig.totalEncounters));
   info('total sessions', String(sessionEnd.sig.totalSessions));
 
-  // Show developmental trajectory
+  // Show developmental trajectory (compute fresh CCI from final Significator state)
   console.log('');
-  renderCCIDisplay(sessionState.cci);
+  const finalSnapshot = toSnapshot(sessionEnd.sig);
+  const finalCCI = computeCCI(finalSnapshot);
+  renderCCIDisplay(finalCCI);
   console.log('');
   renderAltitudesChart(currentSig);
   console.log('');
   renderShadows(currentSig);
   renderDrives(currentSig);
+
+  if (!JSON_MODE) {
+    const bleedThrough = detectBleedThrough(currentSig.theta.lastEncounter, Date.now());
+    console.log('');
+    console.log(renderLayers(currentSig, bleedThrough));
+  }
 
   // Shadow summary
   if (sessionEnd.summary.shadowsSurfaced > 0) {
@@ -1038,33 +1419,363 @@ async function runFullSession(): Promise<void> {
   });
 }
 
+// ── Provider registry ─────────────────────────────────────────────
+interface ProviderInfo {
+  id: string;
+  name: string;
+  baseUrl: string;
+  requiresApiKey: boolean;
+  defaultModel: string;
+  models: { value: string; label: string; hint: string }[];
+  apiFormat: 'openai' | 'anthropic';
+}
+
+const PROVIDERS: Record<string, ProviderInfo> = {
+  ollama: {
+    id: 'ollama',
+    name: 'Ollama (Local)',
+    baseUrl: 'http://localhost:11434/v1',
+    requiresApiKey: false,
+    defaultModel: 'llama3.2',
+    models: [
+      { value: 'llama3.2', label: 'Llama 3.2', hint: 'Meta, 8B' },
+      { value: 'codellama', label: 'CodeLlama', hint: 'Meta, code-focused' },
+      { value: 'mistral', label: 'Mistral', hint: '7B' },
+      { value: 'phi3', label: 'Phi-3', hint: 'Microsoft, 3.8B' },
+    ],
+    apiFormat: 'openai',
+  },
+  openai: {
+    id: 'openai',
+    name: 'OpenAI',
+    baseUrl: 'https://api.openai.com/v1',
+    requiresApiKey: true,
+    defaultModel: 'gpt-4o-mini',
+    models: [
+      { value: 'gpt-4o', label: 'GPT-4o', hint: 'Latest, most capable' },
+      { value: 'gpt-4o-mini', label: 'GPT-4o Mini', hint: 'Fast, affordable' },
+      { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', hint: '128K context' },
+      { value: 'o1-mini', label: 'o1-mini', hint: 'Reasoning model' },
+    ],
+    apiFormat: 'openai',
+  },
+  anthropic: {
+    id: 'anthropic',
+    name: 'Anthropic',
+    baseUrl: 'https://api.anthropic.com/v1',
+    requiresApiKey: true,
+    defaultModel: 'claude-3-haiku-20240307',
+    models: [
+      { value: 'claude-sonnet-4-20250514', label: 'Claude Sonnet 4', hint: 'Latest, balanced' },
+      { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet', hint: 'Strong reasoning' },
+      { value: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku', hint: 'Fast, affordable' },
+      { value: 'claude-3-opus-20240229', label: 'Claude 3 Opus', hint: 'Most capable' },
+    ],
+    apiFormat: 'anthropic',
+  },
+  gemini: {
+    id: 'gemini',
+    name: 'Google Gemini',
+    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
+    requiresApiKey: true,
+    defaultModel: 'gemini-1.5-flash',
+    models: [
+      { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash', hint: 'Latest, fast' },
+      { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro', hint: 'Balanced' },
+      { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash', hint: 'Fast, affordable' },
+      { value: 'gemma-4-31b-it', label: 'Gemma 4 31B', hint: 'Open model' },
+    ],
+    apiFormat: 'openai',
+  },
+  custom: {
+    id: 'custom',
+    name: 'Custom Provider',
+    baseUrl: '',
+    requiresApiKey: true,
+    defaultModel: '',
+    models: [],
+    apiFormat: 'openai',
+  },
+};
+
+// ── Ollama auto-detect ──────────────────────────────────────────
+async function detectOllama(): Promise<{ running: boolean; models: string[] }> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 3000);
+    const res = await fetch('http://localhost:11434/api/tags', { signal: controller.signal });
+    clearTimeout(timeout);
+    if (!res.ok) return { running: false, models: [] };
+    const data = (await res.json()) as { models?: { name: string }[] };
+    const models = (data.models ?? []).map(m => m.name.split(':')[0] ?? m.name);
+    return { running: true, models: [...new Set(models)] };
+  } catch {
+    return { running: false, models: [] };
+  }
+}
+
+// ── API key verification ────────────────────────────────────────
+async function verifyProviderConnection(provider: ProviderInfo, apiKeyVal: string, modelVal: string, baseUrlVal: string): Promise<{ ok: boolean; message: string }> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+
+    if (provider.id === 'ollama') {
+      // Ollama: GET /api/tags
+      const res = await fetch('http://localhost:11434/api/tags', { signal: controller.signal });
+      clearTimeout(timeout);
+      if (res.ok) return { ok: true, message: 'Ollama connected' };
+      return { ok: false, message: `Ollama responded with ${res.status}` };
+    }
+
+    if (provider.id === 'anthropic') {
+      // Anthropic: POST /v1/messages with minimal payload
+      const res = await fetch(`${baseUrlVal}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKeyVal,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model: modelVal,
+          messages: [{ role: 'user', content: 'ping' }],
+          max_tokens: 1,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      if (res.ok) return { ok: true, message: 'Anthropic connected' };
+      if (res.status === 401 || res.status === 403) return { ok: false, message: 'Invalid API key' };
+      return { ok: false, message: `Anthropic responded with ${res.status}` };
+    }
+
+    // OpenAI / Gemini / Custom: GET /models
+    const res = await fetch(`${baseUrlVal}/models`, {
+      headers: { 'Authorization': `Bearer ${apiKeyVal}` },
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (res.ok) return { ok: true, message: 'Connected' };
+    if (res.status === 401 || res.status === 403) return { ok: false, message: 'Invalid API key' };
+    return { ok: false, message: `Endpoint responded with ${res.status}` };
+  } catch (err: any) {
+    return { ok: false, message: err.name === 'AbortError' ? 'Connection timed out' : 'Connection failed' };
+  }
+}
+
+// ── Setup wizard ──────────────────────────────────────────────────
+async function runSetup(): Promise<void> {
+  if (HEADLESS || JSON_MODE) { error('setup requires interactive mode (remove --headless and --json)'); return; }
+  banner('CCRPG Setup Wizard');
+  console.log(`\n  ${chalk.dim('Configure your LLM provider for the developmental engine.')}\n`);
+
+  fs.mkdirSync(CONFIG_DIR, { recursive: true });
+  fs.mkdirSync(path.join(CONFIG_DIR, 'saves'), { recursive: true });
+  success(`Config directory: ${CONFIG_DIR}`);
+
+  const existing = loadConfig();
+  if (existing.llm?.provider) {
+    info('current provider', existing.llm.provider);
+  }
+
+  // Step 1: Provider selection
+  console.log(`\n  ${chalk.bold('Step 1: Select Provider')}`);
+  const providerChoice = await select({
+    message: 'Choose your LLM provider:',
+    options: Object.values(PROVIDERS).map(p => ({
+      value: p.id,
+      label: p.name,
+      hint: p.requiresApiKey ? 'Requires API key' : 'No API key needed',
+    })),
+  });
+
+  if (typeof providerChoice !== 'string') { error('Setup cancelled'); return; }
+  const selectedProvider = PROVIDERS[providerChoice]!;
+
+  // Step 2: Ollama auto-detect or API key
+  let selectedApiKey = existing.llm?.apiKey ?? '';
+  let ollamaModels: string[] = [];
+
+  if (selectedProvider.id === 'ollama') {
+    console.log(`\n  ${chalk.bold('Step 2: Detecting Ollama...')}`);
+    const spinner = ora('Checking Ollama at localhost:11434...').start();
+    const ollamaStatus = await detectOllama();
+    if (ollamaStatus.running) {
+      spinner.succeed('Ollama detected');
+      ollamaModels = ollamaStatus.models;
+      if (ollamaModels.length > 0) {
+        info('available models', ollamaModels.join(', '));
+      }
+    } else {
+      spinner.warn('Ollama not detected at localhost:11434');
+      console.log(`  ${chalk.dim('You can still configure it — start Ollama later before playing.')}`);
+    }
+  } else if (selectedProvider.requiresApiKey) {
+    console.log(`\n  ${chalk.bold('Step 2: API Key')}`);
+    const currentKey = existing.llm?.apiKey ? `${existing.llm.apiKey.slice(0, 8)}...` : '(not set)';
+    console.log(`  Current: ${chalk.dim(currentKey)}`);
+    const newKey = await clackText({
+      message: `Enter ${selectedProvider.name} API key:`,
+      defaultValue: '',
+    });
+    if (typeof newKey !== 'string') { error('Setup cancelled'); return; }
+    selectedApiKey = newKey.trim() || (existing.llm?.apiKey ?? '');
+  }
+
+  // Step 3: Model selection
+  console.log(`\n  ${chalk.bold('Step 3: Select Model')}`);
+  let selectedModel = selectedProvider.defaultModel;
+  let selectedBaseUrl = selectedProvider.baseUrl;
+
+  if (selectedProvider.id === 'ollama' && ollamaModels.length > 0) {
+    // Show auto-detected models plus defaults
+    const modelOptions = [
+      ...ollamaModels.map(m => ({ value: m, label: m, hint: 'detected' })),
+      ...selectedProvider.models.filter(pm => !ollamaModels.includes(pm.value)).map(pm => ({
+        value: pm.value, label: pm.label, hint: pm.hint,
+      })),
+    ];
+    const modelChoice = await select({ message: 'Select model:', options: modelOptions });
+    if (typeof modelChoice === 'string') selectedModel = modelChoice;
+  } else if (selectedProvider.models.length > 0) {
+    const modelChoice = await select({
+      message: 'Select model:',
+      options: selectedProvider.models.map(m => ({
+        value: m.value, label: m.label, hint: m.hint,
+      })),
+    });
+    if (typeof modelChoice === 'string') selectedModel = modelChoice;
+  } else {
+    // Custom provider: ask for model ID
+    const modelInput = await clackText({ message: 'Enter model ID:', defaultValue: selectedModel });
+    if (typeof modelInput === 'string' && modelInput.trim()) selectedModel = modelInput.trim();
+  }
+
+  // Step 4: Custom provider base URL
+  if (selectedProvider.id === 'custom') {
+    console.log(`\n  ${chalk.bold('Step 4: Custom Endpoint')}`);
+    const urlInput = await clackText({ message: 'Enter base URL (e.g. http://localhost:8080/v1):', defaultValue: '' });
+    if (typeof urlInput === 'string' && urlInput.trim()) selectedBaseUrl = urlInput.trim();
+  }
+
+  // Step 5: Verify connection
+  console.log(`\n  ${chalk.bold('Step 5: Verify Connection')}`);
+  const verifyProvider = selectedProvider.id === 'custom'
+    ? { ...selectedProvider, baseUrl: selectedBaseUrl, apiFormat: 'openai' as const }
+    : selectedProvider;
+  const verifyBaseUrl = selectedProvider.id === 'custom' ? selectedBaseUrl : selectedProvider.baseUrl;
+
+  const spinner = ora('Verifying connection...').start();
+  const verification = await verifyProviderConnection(
+    { ...verifyProvider, baseUrl: verifyBaseUrl },
+    selectedApiKey,
+    selectedModel,
+    verifyBaseUrl,
+  );
+  if (verification.ok) {
+    spinner.succeed(verification.message);
+  } else {
+    spinner.warn(`Verification: ${verification.message}`);
+    console.log(`  ${chalk.dim('You can still save — fix the issue before playing.')}`);
+  }
+
+  // Step 6: Save config
+  const config: CCRPGConfig = {
+    llm: {
+      provider: selectedProvider.id as 'ollama' | 'openai' | 'anthropic' | 'gemini' | 'custom',
+      apiKey: selectedApiKey || existing.llm?.apiKey,
+      model: selectedModel,
+      baseUrl: verifyBaseUrl,
+    },
+    session: { defaultEncounters: existing.session?.defaultEncounters ?? 20, defaultMode: existing.session?.defaultMode ?? 'full' },
+  };
+
+  saveConfig(config);
+
+  // Summary
+  console.log('');
+  success(`Configuration saved to ${CONFIG_FILE}`);
+  console.log(`\n  ${chalk.bold('Summary')}`);
+  console.log(`  ${chalk.green('✓')} provider:    ${selectedProvider.name}`);
+  console.log(`  ${chalk.green('✓')} model:       ${selectedModel}`);
+  console.log(`  ${chalk.green('✓')} endpoint:    ${verifyBaseUrl}`);
+  console.log(`  ${chalk.green('✓')} api key:     ${selectedApiKey ? `${selectedApiKey.slice(0, 8)}...` : '(none)'}`);
+  console.log(`\n  Run ${chalk.bold('ccrpg')} to start your developmental journey.\n`);
+}
+
+// ── Status command ────────────────────────────────────────────────────
+async function runStatus(): Promise<void> {
+  banner('CCRPG Status');
+  const config = loadConfig();
+  console.log(`\n  ${chalk.bold('Configuration')}`);
+  info('config', fs.existsSync(CONFIG_FILE) ? CONFIG_FILE : '(no config file)');
+  info('provider', config.llm?.provider ?? 'gemini (default)');
+  info('model', config.llm?.model ?? model);
+  info('api key', config.llm?.apiKey ? `${config.llm.apiKey.slice(0, 8)}...` : 'not set');
+
+  bootRegistries();
+  const moduleRegistry = bootModuleRegistry();
+  (globalThis as any).__moduleRegistry = moduleRegistry;
+
+  console.log(`\n  ${chalk.bold('Game State')}`);
+  if (hasSave()) {
+    const sig = loadSave();
+    if (sig) {
+      info('player', sig.id);
+      info('stage', `${stageColor(sig.currentStage)(sig.currentStage)}`);
+      info('encounters', String(sig.totalEncounters));
+      info('sessions', String(sig.totalSessions));
+      console.log(`\n  ${chalk.bold('Altitudes')}`);
+      renderAltitudesChart(sig);
+      console.log('');
+      renderShadows(sig);
+      renderDrives(sig);
+      console.log('');
+      const bleedThrough = detectBleedThrough(sig.theta.lastEncounter, Date.now());
+      console.log(renderLayers(sig, bleedThrough));
+    }
+  } else {
+    info('save', `${chalk.yellow('no saved game')} — run ${chalk.bold('ccrpg')} to start`);
+  }
+
+  console.log(`\n  ${chalk.bold('System')}`);
+  info('modules', `${moduleRegistry.count()} loaded`);
+  info('config dir', CONFIG_DIR);
+  info('node', process.version);
+  info('version', VERSION);
+}
+
+// ── Usage help ──────────────────────────────────────────────────────
+function printHelp(): void {
+  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION} — Cognitive-Capacity-Driven RPG\n  Developmental Assessment Engine\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current developmental state\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show full narrative and feedback\n  --no-llm                     Disable LLM, use module assessments only\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n  --force-shadow=Q             Force a shadow quadrant\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var\n  Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var\n  Saves:     ~/.ccrpg/saves/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --no-llm                   # quick automated test\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg diagnostic                            # system diagnostics\n\n${chalk.bold}DEVELOPMENTAL SYSTEM${chalk.reset}\n  8 lines × 8 stages = 64 developmental modules\n  7 modalities × 4 drives × 4 shadow quadrants\n  Gamified assessment that simultaneously diagnoses AND heals\n`);
+}
+
 // ── Main ──────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
-  // Mode banner — print after LLM check so it reflects actual state
+  // ponytail: --version and --help handled by commander automatically
+  if (subcommand === 'setup') { await runSetup(); return; }
+  if (subcommand === 'status') { await runStatus(); return; }
+  if (subcommand === 'new-game') { deleteSave(); deleteWorldSave(); console.log(`${chalk.yellow('↻')} Progress reset. Run ${chalk.bold('ccrpg')} to start a new game.`); return; }
+
   if (!JSON_MODE) {
-    console.log(`\n${C.bold}CCRPG CLI Game Runner${C.reset}`);
+    console.log(`\n${chalk.bold.cyan('CCRPG')} v${VERSION}`);
+    console.log(`${chalk.dim('Cognitive-Capacity-Driven RPG — Developmental Assessment Engine')}`);
   }
 
   try {
-    switch (mode) {
-      case 'diagnostic':
-        await runDiagnostic();
-        break;
-      case 'encounter':
-        await runSingleEncounter();
-        break;
-      case 'session':
-      case 'full':
-      default:
-        await runFullSession();
-        break;
+    const effectiveMode: string = subcommand === 'diagnostic' ? 'diagnostic' : subcommand === 'session' ? 'full' : 'full';
+    switch (effectiveMode) {
+      case 'diagnostic': await runDiagnostic(); break;
+      case 'encounter': await runSingleEncounter(); break;
+      case 'session': case 'full': default: await runFullSession(); break;
     }
   } catch (err: any) {
     error(`Fatal: ${err.message || err}`);
     if (!JSON_MODE) console.error(err.stack);
     emitEvent('fatal', { error: err.message, stack: err.stack });
   } finally {
-    rl?.close();
+    // cleanup if needed
   }
 }
 

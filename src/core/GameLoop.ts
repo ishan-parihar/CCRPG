@@ -6,7 +6,7 @@ import type { Significator } from './domain/Significator.js';
 import type { ScheduledEncounter } from './domain/EncounterSpecNew.js';
 import { scheduleNext, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from './engines/ConsequenceEngine.js';
-import { detectThreshold, type TransformationSignal } from './engines/TransformationDetector.js';
+import { detectThreshold, advanceTransformation, commitTransformation, createInitialTransformationState, type TransformationSignal, type TransformationState } from './engines/TransformationDetector.js';
 import { detectBleedThrough } from './engines/ThetaDecay.js';
 import { toSnapshot } from './domain/SignificatorSnapshot.js';
 import { computeCCI, type CCIScore } from './engines/CCIEngine.js';
@@ -14,6 +14,8 @@ import {
   generateSessionStrategy,
   evaluateMidSessionAdjustment,
   applyWeightBias,
+  checkSafetyOverride,
+  computePostTransformationBias,
   type SessionStrategy,
   type SessionStrategyAdjustment,
   type RecentEncounter,
@@ -24,6 +26,7 @@ import type { AssessmentResult, ShadowAssessmentResult, StageAssessment, TrialRe
 
 export interface TickResult {
   readonly encounter: ScheduledEncounter | null;
+  readonly encounters: readonly ScheduledEncounter[];
   readonly sig: Significator;
   readonly world: WorldState;
   readonly transformation: TransformationSignal | null;
@@ -35,6 +38,7 @@ export interface SessionState {
   readonly cci: CCIScore;
   readonly recentOutcomes: RecentEncounter[];
   readonly encountersSinceRefresh: number;
+  readonly transformationState: TransformationState;
 }
 
 /**
@@ -50,6 +54,7 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
     cci,
     recentOutcomes: [],
     encountersSinceRefresh: 0,
+    transformationState: createInitialTransformationState(),
   };
 }
 
@@ -95,11 +100,32 @@ export function tickWithStrategy(
   const bleedThrough = detectBleedThrough(updatedSig.theta.lastEncounter, now);
 
   // 5. Schedule next encounter with updated state and biased weights
-  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 1, biasedWeights);
+  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 5, biasedWeights);
   const encounter = scheduled[0] ?? null;
 
-  // 6. Check transformation threshold
+  // 6. Check transformation threshold and advance state machine
   const transformation = detectThreshold(updatedSig);
+  let updatedTransformationState = advanceTransformation(sessionState.transformationState, updatedSig);
+  
+  // If transformation completes, commit it and update Significator
+  const commitResult = commitTransformation(updatedTransformationState);
+  if (commitResult.targetStage) {
+    // Advance the Significator to the new stage
+    updatedSig = {
+      ...updatedSig,
+      currentStage: commitResult.targetStage,
+      transformations: [
+        ...updatedSig.transformations,
+        {
+          fromStage: updatedSig.currentStage,
+          toStage: commitResult.targetStage,
+          triggeredAt: Date.now(),
+          catalystCount: updatedSig.totalEncounters,
+        },
+      ],
+    };
+    updatedTransformationState = commitResult.newState;
+  }
 
   // 7. Track outcome in recentOutcomes
   const quality = response ? estimateResponseQuality(response) : 0.3;
@@ -134,8 +160,40 @@ export function tickWithStrategy(
     }
   }
 
+  // 9. Safety override: if player is in distress, force consolidation theme
+  const snapshot = toSnapshot(updatedSig);
+  if (checkSafetyOverride(snapshot)) {
+    updatedStrategy = {
+      ...updatedStrategy,
+      theme: 'consolidation',
+      themeRationale: 'Safety override: high fixation + unresolved shadows',
+    };
+  }
+
+  // 10. Post-transformation bias: apply weight adjustments after recent transformation
+  const lastTransformation = updatedSig.transformations[updatedSig.transformations.length - 1];
+  if (lastTransformation) {
+    const sessionsSinceTransform = updatedSig.totalSessions;
+    const postBias = computePostTransformationBias(sessionsSinceTransform);
+    if (postBias) {
+      updatedStrategy = {
+        ...updatedStrategy,
+        weightBias: {
+          thetaUrgency: updatedStrategy.weightBias.thetaUrgency + (postBias.thetaUrgency ?? 0),
+          shadowActivation: updatedStrategy.weightBias.shadowActivation + (postBias.shadowActivation ?? 0),
+          polarityAlignment: updatedStrategy.weightBias.polarityAlignment + (postBias.polarityAlignment ?? 0),
+          transformationReadiness: updatedStrategy.weightBias.transformationReadiness + (postBias.transformationReadiness ?? 0),
+          driveCorrection: updatedStrategy.weightBias.driveCorrection + (postBias.driveCorrection ?? 0),
+          narrativeCoherence: updatedStrategy.weightBias.narrativeCoherence + (postBias.narrativeCoherence ?? 0),
+          sessionFit: updatedStrategy.weightBias.sessionFit + (postBias.sessionFit ?? 0),
+        },
+      };
+    }
+  }
+
   const tickResult: TickResult = {
     encounter,
+    encounters: scheduled,
     sig: updatedSig,
     world: updatedWorld,
     transformation,
@@ -147,6 +205,7 @@ export function tickWithStrategy(
     cci: updatedCCI,
     recentOutcomes,
     encountersSinceRefresh,
+    transformationState: updatedTransformationState,
   };
 
   return { tickResult, sessionState: newSessionState };
@@ -249,7 +308,7 @@ export function tick(
   // 4. Check transformation threshold
   const transformation = detectThreshold(updatedSig);
 
-  return { encounter, sig: updatedSig, world: updatedWorld, transformation, bleedThrough };
+  return { encounter, encounters: scheduled, sig: updatedSig, world: updatedWorld, transformation, bleedThrough };
 }
 
 /**
@@ -281,8 +340,13 @@ export function endSession(
 
   // Count session stats
   const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
-  const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= now - sessionState.cci.composite * 3600000).length;
-  const shadowsResolved = sig.shadows.entries.filter(e => e.resolvedAt !== null && e.resolvedAt >= now - 3600000).length;
+  // Count shadows surfaced and resolved during this session
+  // (entries created or resolved since the first outcome in this session)
+  const sessionStartMs = sessionState.recentOutcomes.length > 0
+    ? now - sessionState.recentOutcomes.length * 5000 // approximate session start
+    : now;
+  const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
+  const shadowsResolved = sig.shadows.entries.filter(e => e.resolvedAt !== null && e.resolvedAt >= sessionStartMs).length;
 
   // Increment totalSessions
   const updatedSig: Significator = {

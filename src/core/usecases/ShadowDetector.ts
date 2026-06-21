@@ -1,27 +1,26 @@
-/**
- * ShadowDetector — detects fixation, regression, and repression patterns.
- * Per foundations/10 §2.1: three failure modes per line.
- */
 import type { Significator } from '../domain/Significator.js';
 import type { ShadowSignal } from '../domain/SharedTypes.js';
-import { ALL_LINES } from '../domain/Line.js';
+import { ALL_LINES, type Line } from '../domain/Line.js';
 import { stageOrdinal } from '../domain/Stage.js';
 
-/**
- * Detect shadow signals from the Significator's state.
- * - Repression: a line ≥2 stages below the current stage.
- * - Fixation: active unresolved shadow entries with high recurrence.
- * - Regression: active shadow entries indicating regression.
- */
-export function detectShadows(sig: Significator): readonly ShadowSignal[] {
+interface BehavioralPattern {
+  readonly line: Line;
+  readonly avoidanceRate: number;
+  readonly failureStreak: number;
+  readonly defensiveChoiceRate: number;
+}
+
+export function detectShadows(
+  sig: Significator,
+  patterns?: readonly BehavioralPattern[],
+): readonly ShadowSignal[] {
   const signals: ShadowSignal[] = [];
   const now = Date.now();
   const stageOrd = stageOrdinal(sig.currentStage);
 
+  // Structural shadows: lines significantly below overall stage
   for (const line of ALL_LINES) {
     const lineOrd = stageOrdinal(sig.altitudes[line]);
-
-    // Repression: line ≥2 stages below overall stage
     if (stageOrd - lineOrd >= 2) {
       signals.push({
         type: 'repression',
@@ -32,7 +31,7 @@ export function detectShadows(sig: Significator): readonly ShadowSignal[] {
     }
   }
 
-  // Surface active shadow ledger entries as signals
+  // Existing unresolved shadow ledger entries
   for (const entry of sig.shadows.entries) {
     if (entry.resolvedAt === null) {
       signals.push({
@@ -41,6 +40,36 @@ export function detectShadows(sig: Significator): readonly ShadowSignal[] {
         detectedAtMs: entry.surfacedAt,
         description: `${entry.line} line has unresolved ${entry.quadrant} shadow (severity ${entry.severity}).`,
       });
+    }
+  }
+
+  // Behavioral shadows: pattern-based detection from encounter history
+  if (patterns) {
+    for (const pattern of patterns) {
+      if (pattern.avoidanceRate > 0.7) {
+        signals.push({
+          type: 'fixation',
+          line: pattern.line,
+          detectedAtMs: now,
+          description: `${pattern.line}: high avoidance rate (${(pattern.avoidanceRate * 100).toFixed(0)}%) — possible fear-based aversion.`,
+        });
+      }
+      if (pattern.failureStreak >= 3) {
+        signals.push({
+          type: 'regression',
+          line: pattern.line,
+          detectedAtMs: now,
+          description: `${pattern.line}: ${pattern.failureStreak} consecutive failures — possible defensive shutdown.`,
+        });
+      }
+      if (pattern.defensiveChoiceRate > 0.6) {
+        signals.push({
+          type: 'fixation',
+          line: pattern.line,
+          detectedAtMs: now,
+          description: `${pattern.line}: high defensive choice rate (${(pattern.defensiveChoiceRate * 100).toFixed(0)}%) — possible golden-shadow bypass.`,
+        });
+      }
     }
   }
 

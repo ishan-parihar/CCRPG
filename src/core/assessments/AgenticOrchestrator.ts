@@ -154,20 +154,40 @@ export class AgenticOrchestrator {
   private _consecutivePasses: Map<string, number>;
 
   // Shared shadow keyword detection helper (DRY — used in 3 places)
+  // Expanded keyword lists for deeper shadow detection across developmental contexts
   private static readonly SHADOW_KEYWORDS = {
     darkAddiction: ['attack', 'dominate', 'crush', 'enslave', 'destroy', 'conquer',
       'prove myself', 'beneath me', 'weakness', 'force', 'control', 'punish',
-      'prove i', 'show them', 'better than', 'deserve', 'entitled'],
+      'prove i', 'show them', 'better than', 'deserve', 'entitled',
+      'i must win', 'defeat them', 'assert myself', 'take what', 'i deserve more',
+      'no one tells me', 'i will not be controlled', 'my way or', 'crush them',
+      'power over', 'eliminate the', 'crush all', 'dominate everything',
+      'prove superiority', 'make them pay', 'zero tolerance', 'show no mercy'],
     darkAversion: ['withdraw', 'resist', 'refuse', 'flee', 'avoid', 'ignore',
       'not worth', 'pointless', 'give up', "can't be bothered", 'not my problem',
-      "don't care", 'whatever', 'numb'],
+      "don't care", 'whatever', 'numb',
+      'whats the point', 'nothing matters', 'cant be fixed', 'why bother',
+      'i dont want to', 'leave me alone', 'not my responsibility', 'someone else',
+      'just leave it', 'not worth the effort', 'too tired', 'cant be bothered',
+      'the world is broken', 'nothing will change', 'helpless', 'overwhelmed',
+      'i shut down', 'turn off', 'cant feel', 'empty inside'],
     goldenAddiction: ['transcend', 'bypass', 'enlighten', 'skip', 'higher self',
       "it's all good", 'everything happens', 'love and light', 'just positive',
       'no negative', 'spiritual', 'already awakened', 'beyond this', 'dissolve',
-      'non-dual', 'pure awareness'],
+      'non-dual', 'pure awareness',
+      'i must transcend', 'rise above', 'i am already', 'no need to', 'just let go',
+      'all is illusion', 'none of this is real', 'i have evolved', 'beyond ego',
+      'i am beyond', 'already enlightened', 'no suffering here', 'only love exists',
+      'detach from', 'rising above', 'higher consciousness will', 'the ego is',
+      'i am not this body', 'pure spirit', 'merge with the infinite'],
     goldenAllergy: ['stay', 'safe', 'comfortable', 'never change', 'fine as i am',
       "don't need", 'good enough', 'why change', 'not ready', 'too much',
-      'not now', 'later', 'tomorrow'],
+      'not now', 'later', 'tomorrow',
+      'im fine the way', 'no need to grow', 'why would i change', 'perfectly fine',
+      'good where i am', 'dont need help', 'no room to grow', 'already complete',
+      'not the right time', 'too overwhelming', 'cant handle more', 'too much change',
+      'i like how things', 'why fix what', 'not interested', 'too scary',
+      'id rather not', 'the way i am', 'cant change me', 'wont work for me'],
   } as const;
 
   private static matchesAny(text: string, keywords: readonly string[]): boolean {
@@ -238,29 +258,47 @@ export class AgenticOrchestrator {
     const recent = this.history.slice(-3);
     const lines = recent.map((r, i) => {
       const passed = Object.values(r.polarityTrace.driveDirectionality).every(d => d === 'HealthyBalanced');
-      const shadow = r.shadowSurfaced ? ` Shadow: ${r.shadowSurfaced}.` : '';
-      const altShift = r.altitudeShift ? ` Line ${r.altitudeShift.line} advanced to ${r.altitudeShift.to}.` : '';
-      return `  ${i + 1}. ${passed ? 'Passed' : 'Failed'} — ${r.narrativeSummary.slice(0, 120)}${shadow}${altShift}`;
+      const shadow = r.shadowSurfaced ? ` Shadow surfaced: ${r.shadowSurfaced}.` : '';
+      const altShift = r.altitudeShift ? ` LINE ADVANCED: ${r.altitudeShift.line} ${r.altitudeShift.from}→${r.altitudeShift.to}.` : '';
+      const polarity = r.polarityTrace.energeticDirection === 'Radiative' ? ' (STO/radiative)' : r.polarityTrace.energeticDirection === 'Absorptive' ? ' (STS/absorptive)' : '';
+      const moduleRef = r.encounterId.split(':')[0] ?? '';
+      return `  ${i + 1}. [${moduleRef}] ${passed ? '✓ PASSED' : '✗ FAILED'}${polarity} — ${r.narrativeSummary.slice(0, 150)}${shadow}${altShift}`;
     });
-    return `\n[RECENT ENCOUNTERS - build upon these]` + lines.join('\n');
+    return `\n[RECENT JOURNEY — the player's developmental arc. Build upon these encounters. Reference specific events from them. The player remembers what happened.]\n${lines.join('\n')}`;
   }
 
   /**
    * Build a brief history prefix for fallback task framing.
+   * Now includes specific encounter details for narrative continuity.
    */
   private buildBriefHistory(): string {
     if (this.history.length === 0) return '';
     const last3 = this.history.slice(-3);
-    const summaries = last3.map(r => {
+    const parts: string[] = [`You have faced ${this.history.length} challenges before.`];
+    for (const r of last3) {
       const passed = Object.values(r.polarityTrace.driveDirectionality).every(d => d === 'HealthyBalanced');
-      return passed ? 'a success' : 'a struggle';
-    });
-    return `You have faced ${this.history.length} challenges before. Recent: ${summaries.join(', ')}. `;
+      const shadow = r.shadowSurfaced ? ` A ${r.shadowSurfaced} pattern surfaced.` : '';
+      parts.push(passed
+        ? `Recently: ${r.narrativeSummary.slice(0, 100)}...${shadow}`
+        : `Recently: ${r.narrativeSummary.slice(0, 100)}...${shadow}`);
+    }
+    return parts.join(' ') + ' Now: ';
   }
 
   public async run(): Promise<OrchestratorResult> {
     const [line, stage] = this.encounter.moduleRef.split(':') as [Line, Stage];
     const now = Date.now();
+
+    // If noLlm flag is set, skip LLM entirely and go directly to fallback
+    if (this.noLlm) {
+      return this.runFallback(line, stage, now);
+    }
+
+    // G.2: Language-Reflective modality gets a special LLM-driven assessment path
+    // This produces genuine open-ended dialogue scoring instead of MCQ wrapping
+    if (this.encounter.modality === 'LanguageReflective') {
+      return this.runLanguageReflective(line, stage, now);
+    }
 
     // 1. Build context system prompt
     const continuityContext = this.buildContinuityContext();
@@ -277,19 +315,28 @@ export class AgenticOrchestrator {
     // Build assessment module context for the LLM
     const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';
 
-    const systemPrompt = `${context.systemPrompt}${assessmentContext}${continuityContext}
+    let shadowContext = '';
+    if (this.encounter.executionMode === 'shadow') {
+      const [shadowLine, shadowStage] = this.encounter.moduleRef.split(':') as [Line, Stage];
+      const { generateShadowContent, buildShadowPromptSuffix } = await import('../engines/ShadowContentGenerator.js');
+      const shadowContent = generateShadowContent(shadowLine, shadowStage, this.encounter.shadowTarget);
+      
+      const unresolvedShadows = this.significator.shadows.entries.filter(
+        (e: { line: string; resolvedAt: number | null }) => e.line === shadowLine && e.resolvedAt === null
+      ).length;
+      
+      shadowContext = buildShadowPromptSuffix(shadowContent, shadowLine, shadowStage, unresolvedShadows);
+    }
+
+    const systemPrompt = `${context.systemPrompt}${assessmentContext}${continuityContext}${shadowContext}
 [AGENT RULES]
 1. You are the Agentic Game Master driving this developmental encounter.
 2. Present the encounter situationally and narratively. If you need to present stimuli, choices, or ask questions, ALWAYS call the 'ask_user_question' tool. Do not ask questions in raw text responses.
-3. Keep the flow interactive, building upon prior answers.
-4. This encounter has a budget of 2 exchanges. After the player has responded to 2 questions, you MUST call 'complete_encounter'. Do NOT generate more than 2 ask_user_question calls.
-5. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).
-6. If RECENT ENCOUNTERS are listed, reference them subtly — the player's journey has continuity.`;
-
-    // If noLlm flag is set, skip LLM entirely and go directly to fallback
-    if (this.noLlm) {
-      return this.runFallback(line, stage, now);
-    }
+3. Every ask_user_question call MUST include exactly 4 MCQ options AND set allowWriteIn=true for a 5th manual write-in option. Label the write-in option clearly (e.g., "Other (describe in your own words)").
+4. Keep the flow interactive, building upon prior answers.
+5. This encounter has a budget of 2 exchanges. After the player has responded to 2 questions, you MUST call 'complete_encounter'. Do NOT generate more than 2 ask_user_question calls.
+6. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).
+7. If RECENT ENCOUNTERS are listed, reference them subtly — the player's journey has continuity.`;
 
     if (this.messages.length === 0) {
       this.messages.push({
@@ -386,6 +433,145 @@ export class AgenticOrchestrator {
       feedback: 'Encounter completed via timeout.',
       polarityDirection: 'neutral' as const,
       narrativeSummary: `The player successfully navigated the challenge of ${this.encounter.moduleRef}.`,
+    };
+    const finalResult = this.createAssessmentResult(true, {});
+    const outcome = this.finalizeEncounter(fallbackParams, now);
+
+    return {
+      ...outcome,
+      finalResult,
+      messages: this.messages,
+    };
+  }
+
+  private async runLanguageReflective(line: Line, stage: Stage, now: number): Promise<OrchestratorResult> {
+    const continuityContext = this.buildContinuityContext();
+    const contextInput = {
+      encounter: this.encounter,
+      significator: this.significator,
+      holonRegistry: { holons: this.world.holons },
+      conceptIndex: this.conceptIndex,
+      recentConsequences: this.history,
+      sessionContext: { energy: 'high' as const },
+    };
+    const context = buildContext(contextInput);
+    const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';
+
+    const systemPrompt = `${context.systemPrompt}${assessmentContext}${continuityContext}
+[LANGUAGE-REFLECTIVE ASSESSMENT]
+You are conducting a deep developmental assessment through open-ended dialogue.
+
+INSTRUCTIONS:
+1. Generate a single, profound reflective prompt that invites the player to explore their inner landscape. The prompt should be:
+   - Stage-appropriate (Red = survival/immediate, Amber = order/belonging, Orange = achievement/autonomy, Green = connection/equity, Turquoise = systemic/integral, White = unity/transcendent)
+   - Line-specific (Cognitive = thinking patterns, Emotional = feeling landscape, Moral = ethical reasoning, Intrapersonal = self-awareness, Spiritual = meaning/purpose, Interpersonal = relational dynamics, Somatic = body wisdom, Willpower =意志力/fortitude)
+   - Evocative, not leading. Open a door, don't push them through it.
+
+2. Call 'ask_user_question' with EXACTLY this structure:
+   - questions[0].question: Your evocative prompt (2-3 sentences max)
+   - questions[0].header: "Reflection"
+   - questions[0].options: [] (EMPTY array - no MCQ options)
+   - questions[0].allowWriteIn: true (this is the ONLY input method)
+   - questions[0].multiSelect: false
+
+3. After the player responds, call 'complete_encounter' with evaluation based on:
+   - Depth: How far beneath the surface did they go? (surface = 0.3, moderate = 0.6, deep = 0.9)
+   - Coherence: Does their response hang together as a unified expression? (fragmented = 0.3, coherent = 0.7, integrated = 0.95)
+   - Metacognition: Do they reference their own thinking process? (none = 0.2, implicit = 0.5, explicit = 0.85)
+   - Integration: Does the response connect to prior encounters or show growth? (isolated = 0.3, connected = 0.6, transformative = 0.9)
+
+4. Drive scoring for Language-Reflective:
+   - Agency: Evidence of self-direction, independent thinking, boundary-setting
+   - Communion: Evidence of empathy, connection, relational awareness
+   - Eros: Evidence of aspiration, reaching toward growth, questioning
+   - Agape: Evidence of compassion, acceptance, integration of paradox
+
+5. Shadow detection: Listen for:
+   - Dark-Addiction: clinging, forcing, controlling language
+   - Dark-Aversion: withdrawal, avoidance, numbness
+   - Golden-Addiction: bypassing, spiritualizing away difficulty
+   - Golden-Allergy: resistance to growth, "I'm fine as I am"
+
+6. Keep the response to 2-3 sentences maximum. Be precise and developmental.`;
+
+    if (this.messages.length === 0) {
+      this.messages.push({
+        role: 'user',
+        content: `Begin the Language-Reflective assessment: ${this.encounter.id} (${line} - ${stage}). Generate a profound reflective prompt.`
+      });
+    }
+
+    let loopCount = 0;
+    const maxLoops = 5;
+
+    while (loopCount < maxLoops) {
+      loopCount++;
+
+      const res = await queryLLMWithTools(systemPrompt, this.messages, TOOLS);
+
+      if (loopCount === 1 && res.content && res.content.trim().startsWith('{"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
+        return this.runFallback(line, stage, now);
+      }
+
+      const assistantMsg: AgentMessage = {
+        role: 'assistant',
+        content: res.content,
+        toolCalls: res.toolCalls,
+      };
+      this.messages.push(assistantMsg);
+
+      if (res.toolCalls && res.toolCalls.length > 0) {
+        for (const tc of res.toolCalls) {
+          if (tc.function.name === 'ask_user_question') {
+            const params = JSON.parse(tc.function.arguments) as AskUserQuestionParams;
+            const result = await this.uiHandler.askUser(params);
+
+            this.messages.push({
+              role: 'tool',
+              content: JSON.stringify(result),
+              toolCallId: tc.id,
+              name: 'ask_user_question'
+            });
+
+            this.messages.push({
+              role: 'user',
+              content: 'The player has responded. Now evaluate their reflection using complete_encounter. Score depth, coherence, metacognition, and integration. Do NOT ask another question.'
+            });
+          } else if (tc.function.name === 'complete_encounter') {
+            const params = JSON.parse(tc.function.arguments) as {
+              passed: boolean;
+              scores?: Partial<Record<MeasureDimension, number>>;
+              driveScores: { agency: number; communion: number; eros: number; agape: number };
+              driveSignals: { agency: string; communion: string; eros: string; agape: string };
+              feedback: string;
+              polarityDirection: 'sto' | 'sts' | 'neutral';
+              shadowSignal?: { quadrant: ShadowQuadrant; intensity: number };
+              narrativeSummary: string;
+            };
+
+            const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, params.driveScores);
+            const outcome = this.finalizeEncounter(params, now);
+
+            return {
+              ...outcome,
+              finalResult,
+              messages: this.messages,
+            };
+          }
+        }
+      } else {
+        this.messages.push({
+          role: 'user',
+          content: 'Continue. Call ask_user_question with a reflective prompt, or complete_encounter if evaluation is ready.'
+        });
+      }
+    }
+
+    const fallbackParams = {
+      passed: true,
+      feedback: 'Language-Reflective encounter completed.',
+      polarityDirection: 'neutral' as const,
+      narrativeSummary: `The player engaged in deep reflection on ${this.encounter.moduleRef}.`,
     };
     const finalResult = this.createAssessmentResult(true, {});
     const outcome = this.finalizeEncounter(fallbackParams, now);
@@ -662,14 +848,21 @@ export class AgenticOrchestrator {
       const hasShadow = !!shadowFromWriteIn;
       const passed = !hasShadow && effectiveScore >= passThreshold;
 
-      // Build rich developmental feedback
+      // Build contextual developmental feedback based on score, drive, polarity, and history
       const driveLabel = effectiveDrive ?? 'unidentified';
-      const polarityLabel = effectivePolarity === 'sts' ? 'self-oriented' : effectivePolarity === 'sto' ? 'other-oriented' : 'neutral';
+      const polarityLabel = effectivePolarity === 'sts' ? 'self-oriented' : effectivePolarity === 'sto' ? 'other-oriented' : 'balanced';
+      const scorePct = (baseScore * 100).toFixed(0);
+      const historyCount = this.history.length;
+      const recentPasses = this.history.slice(-3).filter(r => Object.values(r.polarityTrace.driveDirectionality).every(d => d === 'HealthyBalanced')).length;
+      const consistencyNote = recentPasses >= 3 ? ' You are building strong momentum across encounters.'
+        : recentPasses === 0 && historyCount >= 2 ? ' The last few encounters have been challenging — this is where real growth happens.'
+        : '';
+
       const feedback = hasShadow
-        ? `Shadow surfaced: ${shadowFromWriteIn} through ${driveLabel} expression (${polarityLabel}). This indicates the ${driveLabel} drive is operating from a developmental shadow — awareness of this pattern is the first step toward integration.`
+        ? `A ${shadowFromWriteIn} pattern surfaced through your ${driveLabel} expression (${polarityLabel}). In the developmental framework, this shadow arises when the ${driveLabel} drive becomes imbalanced — either clinging to lower patterns (dark) or bypassing toward higher without integration (golden). Naming it here is the first step toward healing it. ${historyCount > 0 ? `This is your ${historyCount + 1}th encounter — each shadow surfaced is an opportunity for the field to work with you.` : ''}`
         : passed
-          ? `${driveLabel} expressed healthily (score=${baseScore.toFixed(2)}, polarity=${polarityLabel}). The capacity shows balanced integration.`
-          : `${driveLabel} expressed but below integration threshold (score=${baseScore.toFixed(2)}). Continued practice will strengthen this capacity.`;
+          ? `Your ${driveLabel} drive expressed with health (performance: ${scorePct}%, polarity: ${polarityLabel}). ${parseInt(scorePct) >= 80 ? 'Strong performance — the integration is deepening across the ' + module.line.toLowerCase() + ' dimension.' : 'Solid engagement — the ' + module.line.toLowerCase() + ' capacity at ' + module.stage + ' stage is growing.'} ${consistencyNote}The field recognizes your sustained attention to this developmental edge.`
+          : `Your ${driveLabel} drive expressed at ${scorePct}% performance (${polarityLabel}). ${parseInt(scorePct) >= 40 ? 'Close to the threshold — the gap between where you are and where this capacity can be is narrowing. A focused effort on the next encounter may tip the balance.' : 'This is a genuine edge for you. The ' + module.line.toLowerCase() + ' line at ' + module.stage + ' stage is where your developmental work lives right now — not as punishment, but as invitation.'} The ${module.line.toLowerCase()} dimension will continue to offer opportunities to strengthen this capacity.`;
 
       evaluation = {
         passed,
@@ -854,6 +1047,8 @@ export class AgenticOrchestrator {
    */
   private generateModalityFallbackTask(modality: Modality, module: StageAssessment): AssessmentTask {
     const prefix = `${module.line.toLowerCase()}-${module.stage.toLowerCase()}`;
+    // Inject stage into all generated task parameters so TaskRenderers can use it for difficulty scaling
+    const stage = module.stage;
     switch (modality) {
       case 'ScenarioChoice':
       case 'ImmersiveRPG':
@@ -861,7 +1056,7 @@ export class AgenticOrchestrator {
           id: `generic-dilemma-${prefix}`,
           type: 'dilemma',
           description: `A developmental dilemma at the ${module.stage} stage of ${module.line} development`,
-          parameters: { dilemmaType: 'developmental', choices: 4 },
+          parameters: { dilemmaType: 'developmental', choices: 4, stage, line: module.line },
           measures: ['depth', 'coherence'],
         };
       case 'LanguageReflective':
@@ -869,7 +1064,7 @@ export class AgenticOrchestrator {
           id: `generic-self-report-${prefix}`,
           type: 'self_report',
           description: `Self-inquiry reflection at the ${module.stage} stage of ${module.line} development`,
-          parameters: {},
+          parameters: { stage },
           measures: ['depth', 'metacognition'],
         };
       case 'SocialCooperative':
@@ -877,7 +1072,7 @@ export class AgenticOrchestrator {
           id: `generic-cooperation-${prefix}`,
           type: 'cooperation',
           description: `Cooperative dynamics at the ${module.stage} stage of ${module.line} development`,
-          parameters: {},
+          parameters: { stage },
           measures: ['depth', 'coherence'],
         };
       case 'Embodied':
@@ -885,7 +1080,7 @@ export class AgenticOrchestrator {
           id: `generic-hold-${prefix}`,
           type: 'hold',
           description: `Attentional hold at the ${module.stage} stage of ${module.line} development`,
-          parameters: { items: 3, holdDurationMs: 5000 },
+          parameters: { items: 3, holdDurationMs: 5000, stage },
           measures: ['accuracy', 'consistency'],
         };
       case 'Strategic':
@@ -893,17 +1088,16 @@ export class AgenticOrchestrator {
           id: `generic-pattern-${prefix}`,
           type: 'pattern_prediction',
           description: `Pattern recognition at the ${module.stage} stage of ${module.line} development`,
-          parameters: { disks: 3, attempts: 4 },
+          parameters: { disks: 3, attempts: 4, stage },
           measures: ['accuracy', 'complexity_handled'],
         };
       case 'Deterministic':
       default:
-        // For Deterministic, use whatever the module has — it should always have cognitive tasks
         return module.tasks[0] ?? {
           id: `generic-nback-${prefix}`,
           type: 'n_back',
           description: `Working memory challenge at the ${module.stage} stage of ${module.line} development`,
-          parameters: { n: 2, trials: 12 },
+          parameters: { n: 2, trials: 12, stage },
           measures: ['accuracy', 'response_time'],
         };
     }
@@ -921,7 +1115,10 @@ export class AgenticOrchestrator {
   ): Promise<AskUserQuestionResult> {
     // Use TaskRenderers to get a real assessment prompt with task-specific options
     // and a response evaluator that captures TrialResult data (timing, accuracy)
-    const renderer = getRenderer(task);
+    // Inject stage AND line into task parameters so TaskRenderers can use stage-specific
+    // difficulty and line-specific dilemma content
+    const taskWithStage = { ...task, parameters: { ...task.parameters, stage: _module.stage, line: _module.line } };
+    const renderer = getRenderer(taskWithStage);
 
     // Store the renderer's evaluate function so runModuleAssessment can use it
     this._currentRendererEvaluate = renderer.evaluate;
@@ -1103,41 +1300,28 @@ export class AgenticOrchestrator {
    * Returns a ConsequenceRecord-compatible object or null if no shift is warranted.
    */
   private computeAltitudeShift(
-    driveSignals: { agency: string; communion: string; eros: string; agape: string },
+    _driveSignals: { agency: string; communion: string; eros: string; agape: string },
     module: StageAssessment,
     currentEncounterStage: Stage,
     passed: boolean,
   ): { line: Line; from: Stage; to: Stage } | null {
-    // ALL 4 drives must be HealthyBalanced for an altitude shift
-    // AND the encounter must have passed
-    if (!passed) {
-      // Reset consecutive pass count on failure
-      this._consecutivePasses.set(module.line, 0);
-      return null;
-    }
-
-    const allHealthy = [
-      driveSignals.agency,
-      driveSignals.communion,
-      driveSignals.eros,
-      driveSignals.agape,
-    ].every(s => s === 'HealthyBalanced');
-
-    if (!allHealthy) {
-      return null;
-    }
-
-    // D.10 FIX: Require 3+ consecutive passes per line before altitude shift
     const key = module.line;
-    const prev = this._consecutivePasses.get(key) ?? 0;
-    const consecutive = prev + 1;
-    this._consecutivePasses.set(key, consecutive);
 
-    if (consecutive < 3) {
-      return null; // Need sustained performance first
+    if (!passed) {
+      return null; // Failures don't count but don't reset total count either
     }
 
-    // Shift achieved — reset counter
+    // Use TOTAL passes per line (not consecutive) — the scheduler alternates lines
+    // so consecutive passes are mathematically impossible with 8+ lines.
+    // Threshold of 2 passes: demonstrates sustained capacity on the same line.
+    const totalPasses = (this._consecutivePasses.get(key) ?? 0) + 1;
+    this._consecutivePasses.set(key, totalPasses);
+
+    if (totalPasses < 2) {
+      return null; // Need at least 2 passes on this line
+    }
+
+    // Shift achieved — reset counter so future passes require 2 fresh wins
     this._consecutivePasses.set(key, 0);
     return { line: module.line, from: currentEncounterStage, to: currentEncounterStage };
   }

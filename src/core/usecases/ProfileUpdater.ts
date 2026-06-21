@@ -4,8 +4,10 @@
  */
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
+import { LINE_QUADRANT } from '../domain/Line.js';
 import type { Significator, DriveState } from '../domain/Significator.js';
 import type { TaskSlug } from '../domain/SharedTypes.js';
+import type { ShadowQuadrant } from '../domain/enums.js';
 import { stageOrdinal } from '../domain/Stage.js';
 import { thresholdToStage } from './ThresholdMaps.js';
 import { capToCeiling } from './LineCeilings.js';
@@ -22,6 +24,23 @@ export interface EncounterResult {
   /** Optional: which drive the player's choices leaned toward. */
   readonly driveChoice?: Drive;
 }
+
+const QUADRANT_TO_DRIVE: Record<string, Drive> = {
+  UR: 'Agency',
+  UL: 'Eros',
+  LL: 'Communion',
+  LR: 'Agape',
+};
+
+export function driveForLine(line: Line): Drive {
+  return QUADRANT_TO_DRIVE[LINE_QUADRANT[line]] ?? 'Agency';
+}
+
+const SIGNAL_TO_QUADRANT: Record<string, ShadowQuadrant> = {
+  fixation: 'DarkAddiction',
+  regression: 'DarkAllergy',
+  repression: 'GoldenAddiction',
+};
 
 /**
  * Update the Significator after an encounter.
@@ -74,10 +93,10 @@ export function updateProfile(sig: Significator, result: EncounterResult): Signi
     if (!alreadyTracked) {
       existingEntries.push({
         id: `shadow-${now}-${signal.line}`,
-        quadrant: 'DarkAddiction',
+        quadrant: SIGNAL_TO_QUADRANT[signal.type] ?? 'DarkAddiction',
         line: signal.line,
         stage: currentAltitudes[signal.line],
-        drive: 'Agency',
+        drive: driveForLine(signal.line),
         surfacedAt: now,
         resolvedAt: null,
         recurrenceCount: 0,

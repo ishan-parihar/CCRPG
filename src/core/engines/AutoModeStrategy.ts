@@ -691,10 +691,10 @@ function computeModalityBias(theme: SessionTheme): Partial<Record<string, number
  */
 export function computePostTransformationBias(
   sessionsSinceTransformation: number,
-): Record<string, number> | null {
+): PriorityWeightBias | null {
   if (sessionsSinceTransformation >= 10) return null;
 
-  const postWeights = {
+  const postWeights: PriorityWeightBias = {
     thetaUrgency: -0.10,
     shadowActivation: -0.05,
     polarityAlignment: 0.05,
@@ -707,9 +707,14 @@ export function computePostTransformationBias(
   if (sessionsSinceTransformation < 5) return postWeights;
 
   const t = (sessionsSinceTransformation - 5) / 5;
-  const result: Record<string, number> = {};
-  for (const [k, v] of Object.entries(postWeights)) {
-    result[k] = v * (1 - t);
-  }
+  const result: PriorityWeightBias = {
+    thetaUrgency: postWeights.thetaUrgency * (1 - t),
+    shadowActivation: postWeights.shadowActivation * (1 - t),
+    polarityAlignment: postWeights.polarityAlignment * (1 - t),
+    transformationReadiness: postWeights.transformationReadiness * (1 - t),
+    driveCorrection: postWeights.driveCorrection * (1 - t),
+    narrativeCoherence: postWeights.narrativeCoherence * (1 - t),
+    sessionFit: postWeights.sessionFit * (1 - t),
+  };
   return result;
 }

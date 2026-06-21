@@ -5,12 +5,38 @@
 import type { PolarityMode, ShadowQuadrant } from '../domain/enums.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
 import type { Significator } from '../domain/Significator.js';
+import type { ShadowEntry } from '../domain/ShadowLedger.js';
 import { generateCandidates, type WorldState } from './CandidateGeneration.js';
 import { computePriority, DEFAULT_WEIGHTS, type SessionContext, type PriorityWeights } from './PriorityComputation.js';
 import type { TransformationPhase } from './TransformationDetector.js';
 
+/** Threshold: if a line has more than this many unresolved shadows, shadow-work mode activates. */
+const SHADOW_WORK_THRESHOLD = 3;
+
 export type { WorldState } from './CandidateGeneration.js';
 export type { SessionContext } from './PriorityComputation.js';
+
+/**
+ * Check if a line has exceeded the shadow-work threshold (>3 unresolved shadows).
+ * When true, encounters for this line should use shadow execution mode.
+ */
+export function detectShadowWorkThreshold(sig: Significator, line: string): boolean {
+  const unresolved = sig.shadows.entries.filter(
+    (e: ShadowEntry) => e.line === line && e.resolvedAt === null,
+  );
+  return unresolved.length > SHADOW_WORK_THRESHOLD;
+}
+
+/**
+ * Find the most active (highest severity) unresolved shadow quadrant for a line.
+ * Returns null if no unresolved shadows exist for that line.
+ */
+export function findMostActiveShadowQuadrant(sig: Significator, line: string): ShadowQuadrant | null {
+  const unresolved = sig.shadows.entries
+    .filter((e: ShadowEntry) => e.line === line && e.resolvedAt === null)
+    .sort((a: ShadowEntry, b: ShadowEntry) => b.severity - a.severity);
+  return unresolved[0]?.quadrant ?? null;
+}
 
 /**
  * Schedule the next N encounters, ranked by priority.
@@ -47,6 +73,12 @@ export function scheduleNext(
   const activeShadow = sig.shadows.entries.find(e => e.resolvedAt === null);
   const shadowTarget: ShadowQuadrant | null = activeShadow?.quadrant ?? null;
 
+  // G.9: Holonic Return — detect shadow-work threshold per-line
+  // When a line accumulates >3 unresolved shadows, force shadow execution mode
+  // and target the most active (highest severity) shadow quadrant for that line.
+  const lineShadowModes = new Map<string, boolean>();
+  const lineShadowTargets = new Map<string, ShadowQuadrant | null>();
+
   // Take top N, diversifying by line (no more than 2 from same line)
   const result: ScheduledEncounter[] = [];
   const lineCounts: Record<string, number> = {};
@@ -57,6 +89,14 @@ export function scheduleNext(
     if (lc >= 2) continue;
     lineCounts[candidate.line] = lc + 1;
 
+    // G.9: Check shadow-work threshold for this candidate's line
+    if (!lineShadowModes.has(candidate.line)) {
+      lineShadowModes.set(candidate.line, detectShadowWorkThreshold(sig, candidate.line));
+      lineShadowTargets.set(candidate.line, findMostActiveShadowQuadrant(sig, candidate.line));
+    }
+    const isShadowWork = lineShadowModes.get(candidate.line)!;
+    const lineShadowTarget = lineShadowTargets.get(candidate.line) ?? shadowTarget;
+
     result.push({
       id: `${candidate.moduleRef}:${candidate.holonId}:${now}`,
       moduleRef: candidate.moduleRef,
@@ -64,13 +104,13 @@ export function scheduleNext(
       targetLines: [candidate.line],
       stage: candidate.stage,
       holonSource: candidate.holonId,
-      shadowTarget,
+      shadowTarget: lineShadowTarget,
       polarityMode,
       difficulty: computeDifficulty(sig, candidate.line, candidate.stage),
       sessionPosition: position,
       priority,
       driveTarget: activeShadow?.drive ?? null,
-      executionMode: shadowTarget ? 'shadow' : 'capacity',
+      executionMode: isShadowWork ? 'shadow' : 'capacity',
     });
   }
 

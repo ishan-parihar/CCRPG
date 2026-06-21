@@ -30,15 +30,20 @@ async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = LLM_
 }
 
 function getEnvVal(key: string): string | undefined {
-  // @ts-ignore
-  if (typeof import.meta !== 'undefined' && import.meta.env) {
-    // @ts-ignore
-    return import.meta.env[key];
-  }
-  if (typeof process !== 'undefined' && process.env) {
+  // Priority: process.env (set by CLI at runtime) > import.meta.env (Vite/browser)
+  // Check process.env first because tsup's define: { 'import.meta.env': '{}' }
+  // replaces import.meta.env with an empty object, making it truthy but valueless.
+  if (typeof process !== 'undefined' && process.env && process.env[key]) {
     return process.env[key];
   }
+  if (typeof import.meta !== 'undefined' && import.meta.env) {
+    return import.meta.env[key];
+  }
   return undefined;
+}
+
+function isAnthropicProvider(baseUrl: string | undefined): boolean {
+  return baseUrl?.includes('anthropic.com') ?? false;
 }
 
 export async function evaluateResponse(
@@ -54,24 +59,48 @@ export async function evaluateResponse(
     return FALLBACK;
   }
 
+  const systemContent = `You are a developmental psychology scoring rubric evaluator. ${rubric}\nIf evaluating a calibration probe, determine which developmental stage (Infrared, Magenta, Red, Amber, Orange, Green, Turquoise, White) the player response corresponds to and provide a confidence rating. Respond ONLY with JSON: {"score": <0-1>, "feedback": "<brief>", "inferredStage": "<stage>", "confidence": <0-1>}`;
+  const userContent = `Prompt: ${prompt}\nPlayer response: ${playerResponse}`;
+
   try {
-    const res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content: `You are a developmental psychology scoring rubric evaluator. ${rubric}\nIf evaluating a calibration probe, determine which developmental stage (Infrared, Magenta, Red, Amber, Orange, Green, Turquoise, White) the player response corresponds to and provide a confidence rating. Respond ONLY with JSON: {"score": <0-1>, "feedback": "<brief>", "inferredStage": "<stage>", "confidence": <0-1>}` },
-          { role: 'user', content: `Prompt: ${prompt}\nPlayer response: ${playerResponse}` },
-        ],
-        temperature: 0.2,
-      }),
-    });
+    let res: Response;
+    if (isAnthropicProvider(baseUrl)) {
+      res = await fetchWithTimeout(`${baseUrl}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model,
+          system: systemContent,
+          messages: [{ role: 'user', content: userContent }],
+          temperature: 0.2,
+          max_tokens: 1024,
+        }),
+      });
+    } else {
+      res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: systemContent },
+            { role: 'user', content: userContent },
+          ],
+          temperature: 0.2,
+        }),
+      });
+    }
 
     if (!res.ok) return FALLBACK;
 
-    const data = (await res.json()) as { choices: { message: { content: string } }[] };
-    const content = data.choices[0]?.message.content ?? '';
+    const data = (await res.json()) as any;
+    const content = isAnthropicProvider(baseUrl)
+      ? data.content?.[0]?.text ?? ''
+      : data.choices?.[0]?.message?.content ?? '';
     const parsed = JSON.parse(content) as { score: number; feedback: string; inferredStage?: string; confidence?: number };
     const score = Math.max(0, Math.min(1, parsed.score));
     
@@ -108,23 +137,44 @@ export async function queryLLM(
   }
 
   try {
-    const res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify({
-        model,
-        messages: [
-          { role: 'system', content: systemPrompt },
-          { role: 'user', content: userMessage },
-        ],
-        temperature: 0.7,
-      }),
-    });
+    let res: Response;
+    if (isAnthropicProvider(baseUrl)) {
+      res = await fetchWithTimeout(`${baseUrl}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify({
+          model,
+          system: systemPrompt,
+          messages: [{ role: 'user', content: userMessage }],
+          temperature: 0.7,
+          max_tokens: 4096,
+        }),
+      });
+    } else {
+      res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify({
+          model,
+          messages: [
+            { role: 'system', content: systemPrompt },
+            { role: 'user', content: userMessage },
+          ],
+          temperature: 0.7,
+        }),
+      });
+    }
 
     if (!res.ok) return '{"error": "fetch error"}';
 
-    const data = (await res.json()) as { choices: { message: { content: string } }[] };
-    return data.choices[0]?.message.content ?? '';
+    const data = (await res.json()) as any;
+    return isAnthropicProvider(baseUrl)
+      ? data.content?.[0]?.text ?? ''
+      : data.choices?.[0]?.message?.content ?? '';
   } catch {
     return '{"error": "exception"}';
   }
@@ -148,84 +198,91 @@ export async function queryLLMWithTools(
     return { content: '{"error": "LLM unavailable"}' };
   }
 
-  // Map AgentMessage to OpenAI API format
-  const mappedMessages = [
-    { role: 'system', content: systemPrompt },
-    ...messages.map(msg => {
-      const result: any = {
-        role: msg.role,
-        content: msg.content,
-      };
-      if (msg.toolCalls) {
-        result.tool_calls = msg.toolCalls.map(tc => ({
-          id: tc.id,
-          type: tc.type,
-          function: {
-            name: tc.function.name,
-            arguments: tc.function.arguments,
-          },
-        }));
-      }
-      if (msg.toolCallId) {
-        result.tool_call_id = msg.toolCallId;
-      }
-      if (msg.name) {
-        result.name = msg.name;
-      }
-      return result;
-    }),
-  ];
+  const anthropic = isAnthropicProvider(baseUrl);
+
+  const mappedMessages = messages.map(msg => {
+    const result: any = { role: msg.role, content: msg.content };
+    if (msg.toolCalls) {
+      result.tool_calls = msg.toolCalls.map(tc => ({
+        id: tc.id, type: tc.type,
+        function: { name: tc.function.name, arguments: tc.function.arguments },
+      }));
+    }
+    if (msg.toolCallId) result.tool_call_id = msg.toolCallId;
+    if (msg.name) result.name = msg.name;
+    return result;
+  });
 
   try {
-    const body: any = {
-      model,
-      messages: mappedMessages,
-      temperature: 0.7,
-    };
-    if (tools && tools.length > 0) {
-      body.tools = tools;
+    let res: Response;
+    if (anthropic) {
+      // Anthropic: system goes to top-level param, no system role in messages
+      const systemMsg = mappedMessages.find(m => m.role === 'system');
+      const nonSystemMsgs = mappedMessages.filter(m => m.role !== 'system');
+      const body: any = {
+        model,
+        system: systemMsg?.content ?? systemPrompt,
+        messages: nonSystemMsgs,
+        temperature: 0.7,
+        max_tokens: 4096,
+      };
+      if (tools && tools.length > 0) {
+        body.tools = tools.map((t: any) => ({
+          name: t.function?.name ?? t.name,
+          description: t.function?.description ?? t.description ?? '',
+          input_schema: t.function?.parameters ?? t.parameters ?? { type: 'object', properties: {} },
+        }));
+      }
+      res = await fetchWithTimeout(`${baseUrl}/messages`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'x-api-key': apiKey,
+          'anthropic-version': '2023-06-01',
+        },
+        body: JSON.stringify(body),
+      });
+    } else {
+      const body: any = {
+        model,
+        messages: [{ role: 'system', content: systemPrompt }, ...mappedMessages],
+        temperature: 0.7,
+      };
+      if (tools && tools.length > 0) body.tools = tools;
+      res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
+        body: JSON.stringify(body),
+      });
     }
-
-    const res = await fetchWithTimeout(`${baseUrl}/chat/completions`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${apiKey}` },
-      body: JSON.stringify(body),
-    });
 
     if (!res.ok) {
       return { content: `{"error": "fetch error: ${res.status}"}` };
     }
 
-    const data = (await res.json()) as {
-      choices: {
-        message: {
-          content: string | null;
-          tool_calls?: {
-            id: string;
-            type: 'function';
-            function: {
-              name: string;
-              arguments: string;
-            };
-          }[];
-        };
-      }[];
-    };
+    const data = (await res.json()) as any;
 
-    const choice = data.choices[0]?.message;
-    if (!choice) {
-      return { content: null };
+    if (anthropic) {
+      // Anthropic response: content is an array of blocks
+      const textBlock = data.content?.find((b: any) => b.type === 'text');
+      const toolBlocks = data.content?.filter((b: any) => b.type === 'tool_use') ?? [];
+      return {
+        content: textBlock?.text ?? null,
+        toolCalls: toolBlocks.length > 0 ? toolBlocks.map((b: any) => ({
+          id: b.id,
+          type: 'function' as const,
+          function: { name: b.name, arguments: JSON.stringify(b.input) },
+        })) : undefined,
+      };
     }
 
+    const choice = data.choices?.[0]?.message;
+    if (!choice) return { content: null };
     return {
       content: choice.content,
-      toolCalls: choice.tool_calls?.map(tc => ({
-        id: tc.id,
-        type: tc.type,
-        function: {
-          name: tc.function.name,
-          arguments: tc.function.arguments,
-        },
+      toolCalls: choice.tool_calls?.map((tc: any) => ({
+        id: tc.id, type: tc.type,
+        function: { name: tc.function.name, arguments: tc.function.arguments },
       })),
     };
   } catch (err: any) {

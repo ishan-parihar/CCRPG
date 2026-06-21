@@ -71,13 +71,26 @@ describe('ConsequenceEngine', () => {
       expect(result.sig.theta.lastEncounter['Cognitive:Red']).toBe(5000);
     });
 
-    it('adds shadow entry when shadow surfaced', () => {
+    it('adds shadow entry when shadow surfaced with non-healthy drive', () => {
       const sig = createSignificator('p1', altitudes, 'Red');
       const world: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {}, narrativeBeats: [], activeBeatId: null, completedBeatIds: [], factions: [], npcRelationships: [], pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 }, activeMacroEvents: [] };
-      const resp = { ...mockResponse, shadowSurfaced: 'GoldenAllergy' as const };
+      // Shadow surfaced + non-healthy drive = shadow stays unresolved
+      const resp = { ...mockResponse, shadowSurfaced: 'GoldenAllergy' as const, driveDirectionality: { Agency: 'HealthyBalanced', Communion: 'HealthyBalanced', Eros: 'HealthyBalanced', Agape: 'GoldenAverted' } as const };
       const record = processOutcome(mockEncounter, resp, 1000);
       const result = applyConsequences(sig, world, record, mockEncounter);
       expect(result.sig.shadows.activeCount).toBe(1);
+    });
+
+    it('auto-resolves shadow when all drives healthy (integration through passing)', () => {
+      const sig = createSignificator('p1', altitudes, 'Red');
+      const world: WorldState = { holons: [], recentEncounterIds: [], cooldowns: {}, narrativeBeats: [], activeBeatId: null, completedBeatIds: [], factions: [], npcRelationships: [], pestleTension: { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 }, activeMacroEvents: [] };
+      // Shadow surfaced + ALL drives healthy = shadow immediately resolved (integration)
+      const resp = { ...mockResponse, shadowSurfaced: 'GoldenAllergy' as const };
+      const record = processOutcome(mockEncounter, resp, 1000);
+      const result = applyConsequences(sig, world, record, mockEncounter);
+      expect(result.sig.shadows.entries.length).toBe(1);
+      expect(result.sig.shadows.activeCount).toBe(0);
+      expect(result.sig.shadows.entries[0].resolvedAt).toBe(1000);
     });
 
     it('updates world.npcRelationships and world.recentEncounterIds using record.holonDeltas', () => {

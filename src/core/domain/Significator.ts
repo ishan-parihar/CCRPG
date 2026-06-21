@@ -76,6 +76,7 @@ export interface Significator {
   readonly transformationPhase: TransformationPhase;
   readonly totalEncounters: number;
   readonly totalSessions: number;
+  readonly avoidedEncounters: readonly string[];
 }
 
 function zeroRecord<K extends string>(keys: readonly K[]): Record<K, number> {
@@ -122,5 +123,6 @@ export function createSignificator(
     transformationPhase: 'idle',
     totalEncounters: 0,
     totalSessions: 0,
+    avoidedEncounters: [],
   };
 }

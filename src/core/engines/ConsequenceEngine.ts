@@ -98,10 +98,29 @@ export function applyConsequences(
   }
 
   // 5. Handle shadow resolution
+  // 5a. Explicit shadow resolution from the encounter record
   if (record.shadowResolved) {
     newShadowEntries = newShadowEntries.map(e =>
       e.id === record.shadowResolved ? { ...e, resolvedAt: record.timestamp } : e,
     );
+  }
+  // 5b. Implicit integration: when a player PASSES an encounter on a line
+  // that has unresolved shadows, those shadows are considered integrated.
+  // This is the core developmental principle: successful engagement with a
+  // capacity naturally resolves the shadow patterns associated with it.
+  const allDrivesHealthy = Object.values(record.polarityTrace.driveDirectionality)
+    .every(d => d === 'HealthyBalanced');
+  if (allDrivesHealthy) {
+    const lineShadows = newShadowEntries.filter(
+      e => e.resolvedAt === null && e.line === line,
+    );
+    if (lineShadows.length > 0) {
+      newShadowEntries = newShadowEntries.map(e =>
+        (e.resolvedAt === null && e.line === line)
+          ? { ...e, resolvedAt: record.timestamp }
+          : e,
+      );
+    }
   }
 
   // 5b. Create codex entry from encounter

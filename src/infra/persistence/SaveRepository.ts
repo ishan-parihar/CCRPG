@@ -187,3 +187,48 @@ export function deleteSave(): void {
     }
   } catch { /* ignore */ }
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// WorldState Persistence (CLI file-based, synchronous)
+// Saves to ~/.ccrpg/world.json so world state persists across CLI runs.
+// ═══════════════════════════════════════════════════════════════════════
+
+const CLI_WORLD_FILE = path.join(CLI_SAVE_DIR, 'world.json');
+
+/**
+ * Load a previously saved WorldState from disk.
+ * Returns null if no save file exists or if parsing fails.
+ */
+export function loadWorldState(): WorldState | null {
+  try {
+    if (fs.existsSync(CLI_WORLD_FILE)) {
+      const raw = fs.readFileSync(CLI_WORLD_FILE, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.holons) {
+        return parsed as WorldState;
+      }
+    }
+  } catch { /* ignore corrupt saves */ }
+  return null;
+}
+
+/**
+ * Save the current WorldState to disk.
+ */
+export function saveWorldState(world: WorldState): void {
+  try {
+    fs.mkdirSync(CLI_SAVE_DIR, { recursive: true });
+    fs.writeFileSync(CLI_WORLD_FILE, JSON.stringify(world, null, 2));
+  } catch { /* ignore write errors in headless mode */ }
+}
+
+/**
+ * Delete the world save file (for new game).
+ */
+export function deleteWorldSave(): void {
+  try {
+    if (fs.existsSync(CLI_WORLD_FILE)) {
+      fs.unlinkSync(CLI_WORLD_FILE);
+    }
+  } catch { /* ignore */ }
+}
