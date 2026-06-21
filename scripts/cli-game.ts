@@ -729,6 +729,7 @@ async function runAgenticEncounter(
   history: ConsequenceRecord[],
   responsesPool?: number[],
   consecutivePasses?: Map<string, number>,
+  usedItemIds?: Set<string>,
 ): Promise<{
   outcome: import('../src/core/assessments/AgenticOrchestrator.js').OrchestratorResult;
   response: PlayerResponse;
@@ -921,6 +922,7 @@ async function runAgenticEncounter(
     noLlm: !LLM_ACTIVE,
     forceShadow: FORCE_SHADOW,
     consecutivePasses,
+    usedItemIds,
   });
 
   const outcome = await orchestrator.run();
@@ -1131,9 +1133,8 @@ async function runFullSession(): Promise<void> {
   let passedCount = 0;
   const now = Date.now();
   const history: ConsequenceRecord[] = [];
-  // Session-level consecutive pass tracking (shared across encounters for altitude shifts)
   const consecutivePasses = new Map<string, number>();
-  // Create a local mutable copy of FORCE_RESPONSES per session so --responses works predictably
+  const usedItemIds = new Set<string>();
   const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
 
   for (let i = 0; i < encounterCount; i++) {
@@ -1238,7 +1239,7 @@ async function runFullSession(): Promise<void> {
     // Run encounter through AgenticOrchestrator (all modalities)
     try {
       const result = await runAgenticEncounter(
-        selectedEncounter, currentSig, currentWorld, history, responsesPool, consecutivePasses,
+        selectedEncounter, currentSig, currentWorld, history, responsesPool, consecutivePasses, usedItemIds,
       );
 
       // Apply consequences from the orchestrator result

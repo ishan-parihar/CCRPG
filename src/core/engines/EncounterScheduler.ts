@@ -48,14 +48,14 @@ export function scheduleNext(
   now: number,
   count: number = 3,
   weights?: PriorityWeights,
+  bleedThrough?: readonly string[],
 ): ScheduledEncounter[] {
   const candidates = generateCandidates(sig, world, now, session);
   if (candidates.length === 0) return [];
 
-  // Score all candidates
   const scored = candidates.map(c => ({
     candidate: c,
-    priority: computePriority(c, sig, world, session, now, weights),
+    priority: computePriority(c, sig, world, session, now, weights, bleedThrough),
   }));
 
   // Sort descending by priority

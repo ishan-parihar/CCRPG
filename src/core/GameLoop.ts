@@ -99,8 +99,7 @@ export function tickWithStrategy(
   // 4. Check for bleed-through
   const bleedThrough = detectBleedThrough(updatedSig.theta.lastEncounter, now);
 
-  // 5. Schedule next encounter with updated state and biased weights
-  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 5, biasedWeights);
+  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 5, biasedWeights, bleedThrough);
   const encounter = scheduled[0] ?? null;
 
   // 6. Check transformation threshold and advance state machine
@@ -301,8 +300,7 @@ export function tick(
   // 2. Check for bleed-through (theta-decay urgency)
   const bleedThrough = detectBleedThrough(updatedSig.theta.lastEncounter, now);
 
-  // 3. Schedule next encounter
-  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 1);
+  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 1, undefined, bleedThrough);
   const encounter = scheduled[0] ?? null;
 
   // 4. Check transformation threshold

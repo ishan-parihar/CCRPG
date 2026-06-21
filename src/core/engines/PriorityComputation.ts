@@ -60,6 +60,7 @@ export function computePriority(
   session: SessionContext,
   now: number,
   weights: PriorityWeights = DEFAULT_WEIGHTS,
+  bleedThrough?: readonly string[],
 ): number {
   const t = computeThetaUrgency(candidate, sig, now);
   const s = computeShadowActivation(candidate, sig);
@@ -77,9 +78,10 @@ export function computePriority(
     + weights.narrativeCoherence * n
     + weights.sessionFit * sf;
 
-  // Novelty bonus: candidates with fewer traces get a meaningful boost
-  // Unvisited cells (0 traces) get +0.25, visited cells get diminishing returns
+  // G.21: Bleed-through boost — stale cells get priority boost
   const cellKey = `${candidate.line}:${candidate.stage}`;
+  const bleedBoost = bleedThrough?.includes(cellKey) ? 0.15 : 0;
+
   const cell = sig.polarity.cells[cellKey];
   const traceCount = cell?.traceCount ?? 0;
   const noveltyBonus = traceCount === 0 ? 0.25 : Math.max(0, 0.25 - traceCount * 0.03);
@@ -99,7 +101,7 @@ export function computePriority(
   const hash = (candidate.line.charCodeAt(0) * 7 + candidate.modality.charCodeAt(0) * 13 + (now % 2000)) % 200;
   const tieBreaker = hash / 10000; // max 0.02
 
-  return baseScore + noveltyBonus + weaknessBonus + diversityBonus + tieBreaker;
+  return baseScore + noveltyBonus + weaknessBonus + diversityBonus + bleedBoost + tieBreaker;
 }
 
 /**

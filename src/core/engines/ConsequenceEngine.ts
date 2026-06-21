@@ -4,6 +4,7 @@
  */
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
+import { stageOrdinal } from '../domain/Stage.js';
 import type { EnergeticDirection, ShadowQuadrant, DriveDirectionality, SourceOfNourishment, StageOrientation } from '../domain/enums.js';
 import type { PolarityTrace } from '../domain/PolarityTrace.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
@@ -111,12 +112,14 @@ export function applyConsequences(
   const allDrivesHealthy = Object.values(record.polarityTrace.driveDirectionality)
     .every(d => d === 'HealthyBalanced');
   if (allDrivesHealthy) {
+    // G.19: Scope resolution to shadows at or below the encounter's stage
+    const encounterStageOrd = stageOrdinal(encounter.stage);
     const lineShadows = newShadowEntries.filter(
-      e => e.resolvedAt === null && e.line === line,
+      e => e.resolvedAt === null && e.line === line && stageOrdinal(e.stage) <= encounterStageOrd,
     );
     if (lineShadows.length > 0) {
       newShadowEntries = newShadowEntries.map(e =>
-        (e.resolvedAt === null && e.line === line)
+        (e.resolvedAt === null && e.line === line && stageOrdinal(e.stage) <= encounterStageOrd)
           ? { ...e, resolvedAt: record.timestamp }
           : e,
       );

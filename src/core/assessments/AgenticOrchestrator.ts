@@ -16,6 +16,7 @@ import { accumulateTension, tryTriggerMacroEvent, type PESTLETension } from '../
 import type { AgentMessage, AskUserQuestionParams, AskUserQuestionResult } from './agentTypes.js';
 import { getRenderer } from './cli/TaskRenderers.js';
 import { computeConfidence } from './engine.js';
+import { selectNextItem } from './itemSelection.js';
 
 const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
 
@@ -153,6 +154,7 @@ export class AgenticOrchestrator {
   private _currentTaskStartTime: number = 0;
   private _currentPresentedTask: AssessmentTask | null = null;
   private _consecutivePasses: Map<string, number>;
+  private _usedItemIds: Set<string>;
 
   // Shared shadow keyword detection helper (DRY — used in 3 places)
   // Expanded keyword lists for deeper shadow detection across developmental contexts
@@ -235,6 +237,7 @@ export class AgenticOrchestrator {
     noLlm?: boolean;
     forceShadow?: string;
     consecutivePasses?: Map<string, number>;
+    usedItemIds?: Set<string>;
   }) {
     this.encounter = params.encounter;
     this.significator = params.significator;
@@ -246,8 +249,8 @@ export class AgenticOrchestrator {
     this.messages = params.initialMessages ? [...params.initialMessages] : [];
     this.noLlm = params.noLlm ?? false;
     this.forceShadow = params.forceShadow;
-    // Session-level consecutive pass tracking (shared across encounters)
     this._consecutivePasses = params.consecutivePasses ?? new Map();
+    this._usedItemIds = params.usedItemIds ?? new Set();
   }
 
   /**
@@ -408,8 +411,16 @@ export class AgenticOrchestrator {
               narrativeSummary: string;
             };
 
-            // Process completion with per-drive scores
-            const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, params.driveScores);
+            // G.24: Clamp LLM-provided drive scores to [0, 1]
+            const clamp = (v: number) => Math.max(0, Math.min(1, v));
+            const safeDriveScores = {
+              agency: clamp(params.driveScores.agency),
+              communion: clamp(params.driveScores.communion),
+              eros: clamp(params.driveScores.eros),
+              agape: clamp(params.driveScores.agape),
+            };
+
+            const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, safeDriveScores);
             const outcome = this.finalizeEncounter(params, now);
 
             return {
@@ -550,7 +561,15 @@ INSTRUCTIONS:
               narrativeSummary: string;
             };
 
-            const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, params.driveScores);
+            const clamp = (v: number) => Math.max(0, Math.min(1, v));
+            const safeDriveScores = {
+              agency: clamp(params.driveScores.agency),
+              communion: clamp(params.driveScores.communion),
+              eros: clamp(params.driveScores.eros),
+              agape: clamp(params.driveScores.agape),
+            };
+
+            const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, safeDriveScores);
             const outcome = this.finalizeEncounter(params, now);
 
             return {
@@ -986,9 +1005,19 @@ INSTRUCTIONS:
       }
     }
 
-    // PESTLE accumulation
+    // G.12: PESTLE correlation — map encounter content to dimensions
     const PESTLE_DIMS_ARRAY: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
-    const dim = PESTLE_DIMS_ARRAY[Math.floor(Math.random() * PESTLE_DIMS_ARRAY.length)]!;
+    const lineToPestle: Record<string, keyof PESTLETension> = {
+      Cognitive: 'technological',
+      Emotional: 'social',
+      Moral: 'legal',
+      Intrapersonal: 'environmental',
+      Spiritual: 'environmental',
+      Somatic: 'environmental',
+      Willpower: 'political',
+      Interpersonal: 'social',
+    };
+    const dim = lineToPestle[finalResult.line] ?? PESTLE_DIMS_ARRAY[Math.floor(Math.random() * PESTLE_DIMS_ARRAY.length)]!;
     const newTension = accumulateTension(
       (updated.world as any).pestleTension ?? { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
       dim,
@@ -1014,8 +1043,6 @@ INSTRUCTIONS:
    * Select the best assessment task from the module based on encounter modality.
    */
   private selectTaskForModality(module: StageAssessment, modality: Modality): AssessmentTask {
-    // Preferred task types for each modality, with fallback chains
-    // If the preferred types aren't available in the module, we try broader types
     const modalityFallbackChain: Record<string, readonly TaskType[]> = {
       Deterministic: ['n_back', 'stroop', 'go_no_go', 'hold', 'reaction_time', 'rhythm'],
       LanguageReflective: ['llm_dialogue', 'self_report', 'emotion_identification', 'scenario'],
@@ -1028,16 +1055,36 @@ INSTRUCTIONS:
 
     const chain = modalityFallbackChain[modality] ?? ['n_back', 'scenario', 'self_report'];
 
-    // Walk the fallback chain: first match wins
+    // G.17: If module has an item pool, use adaptive selection
+    if (module.itemPool && module.itemPool.length > 0) {
+      const preferredTypes = new Set(chain);
+      const poolItems = module.itemPool.filter(item => preferredTypes.has(item.taskType));
+      if (poolItems.length > 0) {
+        const item = selectNextItem(poolItems, {
+          usedItemIds: [...this._usedItemIds],
+          currentDifficulty: 0.5,
+          targetDimensions: chain.length > 0 ? undefined : undefined,
+        });
+        if (item) {
+          this._usedItemIds.add(item.id);
+          const baseTask = module.tasks.find(t => t.type === item.taskType);
+          return {
+            id: item.id,
+            type: item.taskType,
+            description: baseTask?.description ?? `${item.taskType} assessment`,
+            parameters: { ...baseTask?.parameters, ...item.parameters },
+            measures: item.measures as any,
+          };
+        }
+      }
+    }
+
+    // Fallback: walk the modality chain
     for (const prefType of chain) {
       const match = module.tasks.find(t => t.type === prefType);
       if (match) return match;
     }
 
-    // CRITICAL FIX: When no task type matches the modality's preference chain,
-    // generate a modality-appropriate generic task instead of falling to tasks[0].
-    // This prevents Cognitive modules (which have only n_back/pattern/go_nogo) from
-    // showing n-back when ScenarioChoice modality is requested.
     return this.generateModalityFallbackTask(modality, module);
   }
 
