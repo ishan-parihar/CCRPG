@@ -101,6 +101,10 @@ export function scheduleNext(
     const isShadowWork = lineShadowModes.get(candidate.line)!;
     const lineShadowTarget = lineShadowTargets.get(candidate.line) ?? shadowTarget;
 
+    // G.20: During transformation crucible, force shadow mode for ego-dissolution
+    const isCrucible = session.transformationState?.phase === 'crucible';
+    const executionMode = isCrucible ? 'shadow' : (isShadowWork ? 'shadow' : 'capacity');
+
     result.push({
       id: `${candidate.moduleRef}:${candidate.holonId}:${now}`,
       moduleRef: candidate.moduleRef,
@@ -114,7 +118,7 @@ export function scheduleNext(
       sessionPosition: position,
       priority,
       driveTarget: activeShadow?.drive ?? null,
-      executionMode: isShadowWork ? 'shadow' : 'capacity',
+      executionMode,
     });
   }
 

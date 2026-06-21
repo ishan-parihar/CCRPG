@@ -67,13 +67,23 @@ export interface WorldState {
 }
 
 export function createInitialWorldState(holons: readonly Holon[]): WorldState {
+  // G.6: Initial narrative beats that gate encounters by stage progression
+  const narrativeBeats: NarrativeBeat[] = [
+    { id: 'awakening', stage: 'Red', prerequisiteBeats: [], completed: false, gatedEncounterIds: [] },
+    { id: 'first-challenge', stage: 'Red', prerequisiteBeats: ['awakening'], completed: false, gatedEncounterIds: [] },
+    { id: 'order-emerges', stage: 'Amber', prerequisiteBeats: ['first-challenge'], completed: false, gatedEncounterIds: [] },
+    { id: 'autonomy-calls', stage: 'Orange', prerequisiteBeats: ['order-emerges'], completed: false, gatedEncounterIds: [] },
+    { id: 'connection-awakens', stage: 'Green', prerequisiteBeats: ['autonomy-calls'], completed: false, gatedEncounterIds: [] },
+    { id: 'systemic-vision', stage: 'Turquoise', prerequisiteBeats: ['connection-awakens'], completed: false, gatedEncounterIds: [] },
+  ];
+
   return {
     holons,
     recentEncounterIds: [],
     cooldowns: {},
     recentEncounters: [],
-    narrativeBeats: [],
-    activeBeatId: null,
+    narrativeBeats,
+    activeBeatId: 'awakening',
     completedBeatIds: [],
     factions: [],
     npcRelationships: [],

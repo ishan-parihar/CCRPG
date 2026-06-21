@@ -31,6 +31,7 @@ export interface SessionContext {
   readonly forceLine?: string;
   readonly forceStage?: string;
   readonly forceModality?: string;
+  readonly transformationState?: { phase: string }; // G.20: transformation phase for crucible detection
 }
 
 export interface PriorityWeights {
