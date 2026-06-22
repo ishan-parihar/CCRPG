@@ -701,6 +701,40 @@ function renderDrives(sig: Significator): void {
   }
 }
 
+/** Render Direct Questioning progress — which lines have been probed this session */
+function renderLinesProgress(sig: Significator, history: ConsequenceRecord[]): void {
+  if (JSON_MODE) return;
+  const allLines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal'];
+  // Count encounters per line this session
+  const lineCounts: Record<string, number> = {};
+  const linePassed: Record<string, number> = {};
+  for (const r of history) {
+    const ln = r.encounterId.split(':')[0];
+    if (ln && allLines.includes(ln as Line)) {
+      lineCounts[ln] = (lineCounts[ln] ?? 0) + 1;
+      const allHealthy = Object.values(r.polarityTrace.driveDirectionality).every(d => d === 'HealthyBalanced');
+      if (allHealthy) linePassed[ln] = (linePassed[ln] ?? 0) + 1;
+    }
+  }
+  const totalSessions = history.length;
+  const barWidth = 16;
+  console.log(`  ${chalk.bold('Lines Progress')}  ${chalk.dim(`${totalSessions} encounters this session`)}`);
+  for (const line of allLines) {
+    const count = lineCounts[line] ?? 0;
+    const passed = linePassed[line] ?? 0;
+    const stage = sig.altitudes[line] ?? 'Red';
+    const stageCol = stageColor(stage);
+    // Progress bar: filled based on how many times this line has been probed
+    const probeRatio = Math.min(1, count / 3); // 3 encounters = fully probed
+    const filled = Math.round(probeRatio * barWidth);
+    const bar = '█'.repeat(filled) + '░'.repeat(barWidth - filled);
+    const countLabel = count > 0 ? chalk.green(`${passed}/${count}`) : chalk.dim('0/0');
+    const abbr = stageAbbr(stage);
+    console.log(`    ${chalk.dim(line.padEnd(14))} ${stageCol(bar)} ${stageCol(abbr)} ${countLabel}`);
+  }
+  console.log('');
+}
+
 // ── Print state ───────────────────────────────────────────────────────
 function printSignificator(sig: Significator): void {
   info('id', sig.id);
@@ -1120,17 +1154,18 @@ async function runFullSession(): Promise<void> {
   let currentWorld = world;
 
   // Task 5: Mode selection — player chooses gameplay mode
-  let gameMode: string = 'story'; // default to story-driven
+  let gameMode: string = 'direct'; // ponytail: default to direct-questioning for cleaner UX
   if (!HEADLESS && !JSON_MODE && !FORCE_LINE && !FORCE_MODALITY) {
     const modeChoice = await select({
       message: 'Choose your gameplay mode:',
       options: [
-        { value: 'story', label: 'Story-Driven — Immersive RPG narrative' },
         { value: 'direct', label: 'Direct Questioning — Personality-test style' },
+        { value: 'story', label: 'Story-Driven — Immersive RPG narrative' },
       ],
     });
     gameMode = String(modeChoice);
   }
+  const isDirectMode = gameMode === 'direct';
 
   banner('SESSION START');
   info('theme', `${chalk.cyan(sessionState.strategy.theme)}`);
@@ -1208,24 +1243,28 @@ async function runFullSession(): Promise<void> {
     if (!tickResult.encounter) {
       warn('No encounter available — skipping');
       continue;
-    }
-
-    // G.10: Non-coercion — present 3-5 ranked offers, player chooses
+    }      // G.10: Non-coercion — present 3-5 ranked offers, player chooses
     let selectedEncounter: ScheduledEncounter = tickResult.encounter!;
     const offers = tickResult.encounters;
     if (offers.length > 1 && !HEADLESS && !JSON_MODE) {
       const posLabel = (pos: string) => pos === 'warmup' ? chalk.blue('warmup') : pos === 'cooldown' ? chalk.green('cooldown') : chalk.magenta('peak');
       const options = offers.map((enc, idx) => {
-        const [, st] = enc.moduleRef.split(':');
-        // Task 4: Narrative context — show location/NPC instead of raw module identifier
+        const [encLineName, st] = enc.moduleRef.split(':');
+        if (isDirectMode) {
+          // Direct mode: show LINE + stage, personality-test style
+          const lineLabel = CHALLENGE_NAMES[encLineName ?? ''] ?? encLineName;
+          const stageCol = stageColor(st ?? 'Red');
+          const label = `${idx + 1}. ${chalk.bold(lineLabel)}  ${stageCol(st ?? 'Red')}  ${chalk.dim(enc.modality)}  ${posLabel(enc.sessionPosition)}`;
+          return { value: idx, label };
+        }
+        // Story mode: show location/NPC name
         const holon = world.holons.find(h => h.id === enc.holonSource);
-        const location = holon?.name ?? enc.moduleRef.split(':')[0];
-        const challenge = CHALLENGE_NAMES[enc.moduleRef.split(':')[0] ?? ''] ?? 'A challenge awaits';
+        const location = holon?.name ?? encLineName;
         const label = `${idx + 1}. ${chalk.cyan(location)}  ${chalk.dim(enc.modality)}  ${chalk.dim('diff:' + enc.difficulty.toFixed(2))}  ${posLabel(enc.sessionPosition)}`;
         return { value: idx, label };
       });
       const choice = await select({
-        message: 'Choose your encounter:',
+        message: isDirectMode ? 'Choose your developmental line:' : 'Choose your encounter:',
         options,
         initialValue: 0,
       });
@@ -1236,6 +1275,10 @@ async function runFullSession(): Promise<void> {
           currentSig = { ...currentSig, avoidedEncounters: [...(currentSig.avoidedEncounters ?? []), ...skipped] };
         }
       }
+    }
+    // Direct mode: also show progress chart at the top of each encounter
+    if (isDirectMode && !JSON_MODE) {
+      renderLinesProgress(currentSig, history);
     }
     tickResult = { ...tickResult, encounter: selectedEncounter };
 
@@ -1291,19 +1334,25 @@ async function runFullSession(): Promise<void> {
         const dominantDrive = driveEntries.find(([, v]) => v !== 'HealthyBalanced');
         const driveLabel = dominantDrive ? `${dominantDrive[0]} drive, ${cr.polarityTrace.stageOrientation}` : 'Healthy balanced';
         
-        // Show developmental insight
-        if (encResult.passed) {
-          console.log(`\n  ${chalk.green('✓ PASSED')}`);
-          console.log(`  ${chalk.dim('Your response reveals:')} ${chalk.cyan(driveLabel)}`);
-        } else {
-          console.log(`\n  ${chalk.yellow('◐ NEEDS GROWTH')}`);
-          console.log(`  ${chalk.dim('This area needs more development.')}`);
+        // ponytail: qualitative feedback — no PASSED/FAILED, no clinical labels
+        // The Veil is enforced: the player sees narrative, not scores.
+        const polarityArrow = cr.polarityTrace.energeticDirection === 'Radiative' ? '↑' 
+          : cr.polarityTrace.energeticDirection === 'Absorptive' ? '↓' : '·';
+        
+        // Show the narrative consequence as the primary feedback
+        const briefNarrative = result.narrativeSummary.length > 100
+          ? result.narrativeSummary.slice(0, 100) + '...'
+          : result.narrativeSummary;
+        console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
+        
+        // Show drive expression qualitatively — not as a score, but as a felt-sense
+        if (dominantDrive) {
+          console.log(`  ${chalk.dim('The encounter stirred:')} ${chalk.cyan(polarityArrow + ' ' + driveLabel)}`);
         }
         
-        // Show shadow status only if detected
-        const shadow = cr.shadowSurfaced;
-        if (shadow) {
-          console.log(`  ${chalk.yellow('⚠ shadow:')} ${chalk.yellow(shadow)}`);
+        // Shadow surfaces as narrative, not as a clinical label
+        if (cr.shadowSurfaced) {
+          console.log(`  ${chalk.dim('Something beneath the surface stirred.')}`);
         }
       }
 

@@ -334,7 +334,7 @@ export class AgenticOrchestrator {
 2. Present the encounter situationally and narratively. If you need to present stimuli, choices, or ask questions, ALWAYS call the 'ask_user_question' tool. Do not ask questions in raw text responses.
 3. Every ask_user_question call MUST include exactly 4 MCQ options AND set allowWriteIn=true for a 5th manual write-in option. Label the write-in option clearly (e.g., "Other (describe in your own words)").
 4. Keep the flow interactive, building upon prior answers.
-5. This encounter has a budget of 2 exchanges. After the player has responded to 2 questions, you MUST call 'complete_encounter'. Do NOT generate more than 2 ask_user_question calls.
+5. This encounter has a budget of 4 exchanges. After the player has responded to 4 questions, you MUST call 'complete_encounter'. Do NOT generate more than 4 ask_user_question calls. Each question should probe deeper based on the player's previous answers.
 6. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).
 7. If RECENT ENCOUNTERS are listed, reference them subtly — the player's journey has continuity.`;
 
@@ -385,11 +385,11 @@ export class AgenticOrchestrator {
               name: 'ask_user_question'
             });
 
-            // Budget enforcement: after 2 exchanges, force complete_encounter
-            if (askCount >= 2 && !res.toolCalls.some(t => t.function.name === 'complete_encounter')) {
+            // Budget enforcement: after 4 exchanges, force complete_encounter
+            if (askCount >= 4 && !res.toolCalls.some(t => t.function.name === 'complete_encounter')) {
               this.messages.push({
                 role: 'user',
-                content: 'The encounter budget of 2 exchanges is exhausted. You MUST now call complete_encounter with your evaluation of the player. Do NOT ask another question.'
+                content: 'The encounter budget of 4 exchanges is exhausted. You MUST now call complete_encounter with your evaluation of the player. Do NOT ask another question.'
               });
             }
           } else if (tc.function.name === 'complete_encounter') {
@@ -409,11 +409,12 @@ export class AgenticOrchestrator {
 
             // G.24: Clamp LLM-provided drive scores to [0, 1]
             const clamp = (v: number) => Math.max(0, Math.min(1, v));
+            const ds = params.driveScores;
             const safeDriveScores = {
-              agency: clamp(params.driveScores.agency),
-              communion: clamp(params.driveScores.communion),
-              eros: clamp(params.driveScores.eros),
-              agape: clamp(params.driveScores.agape),
+              agency: ds ? clamp(ds.agency) : 0.5,
+              communion: ds ? clamp(ds.communion) : 0.5,
+              eros: ds ? clamp(ds.eros) : 0.5,
+              agape: ds ? clamp(ds.agape) : 0.5,
             };
 
             const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, safeDriveScores);
@@ -558,11 +559,12 @@ INSTRUCTIONS:
             };
 
             const clamp = (v: number) => Math.max(0, Math.min(1, v));
+            const ds = params.driveScores;
             const safeDriveScores = {
-              agency: clamp(params.driveScores.agency),
-              communion: clamp(params.driveScores.communion),
-              eros: clamp(params.driveScores.eros),
-              agape: clamp(params.driveScores.agape),
+              agency: ds ? clamp(ds.agency) : 0.5,
+              communion: ds ? clamp(ds.communion) : 0.5,
+              eros: ds ? clamp(ds.eros) : 0.5,
+              agape: ds ? clamp(ds.agape) : 0.5,
             };
 
             const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, safeDriveScores);
@@ -1622,7 +1624,8 @@ ${probes}${rubric}
     };
 
     // Wire per-drive scores into assessment dimensions so they aren't dead code
-    if (driveScores) {
+    // Only override if scores weren't explicitly provided (driveScores is a fallback signal)
+    if (driveScores && !scores.accuracy) {
       dimensions.accuracy = driveScores.agency;
       dimensions.depth = driveScores.eros;
       dimensions.coherence = driveScores.communion;
