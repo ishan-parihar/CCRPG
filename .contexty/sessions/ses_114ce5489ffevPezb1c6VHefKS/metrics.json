@@ -1,0 +1,27 @@
+{
+  "version": 1,
+  "sessionID": "ses_114ce5489ffevPezb1c6VHefKS",
+  "timestamp": "2026-06-21T17:19:23.374Z",
+  "tokens": {
+    "input": 5470,
+    "output": 0,
+    "reasoning": 0,
+    "cacheRead": 0,
+    "cacheWrite": 0
+  },
+  "files": [],
+  "tools": [],
+  "acpm": {
+    "activePreset": null,
+    "allowCount": 3407,
+    "denyCount": 0,
+    "sanitizeCount": 0,
+    "deniedByCategory": {},
+    "folderAccessDistribution": {
+      "denied": 0,
+      "read-only": 0,
+      "read-write": 0
+    },
+    "toolCategoryStatus": []
+  }
+}

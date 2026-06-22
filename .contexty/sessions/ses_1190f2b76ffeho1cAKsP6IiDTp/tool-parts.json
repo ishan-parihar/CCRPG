@@ -1,0 +1,192 @@
+{
+  "parts": [
+    {
+      "type": "tool",
+      "tool": "read",
+      "callID": "call_e2acbc508d914f49b49e68da",
+      "state": {
+        "status": "completed",
+        "input": {
+          "filePath": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG"
+        },
+        "output": "§2§ <path>/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG</path>\n<type>directory</type>\n<entries>\n.contexty/\n.env\n.git/\n.github/\n.gitignore\n.hive/\n.memsearch/\n.oh-my-opencode-pi-stats.json\n.playwright-mcp/\nAGENTS.md\nAUDIT-REPORT.md\nbun.lock\ncapacitor.config.json\ndist/\ndocs/\nindex.html\nMVP-BLUEPRINT.md\nnode_modules/\npackage-lock.json\npackage.json\npublic/\nREADME.md\nROADMAP.md\nscripts/\nsrc/\ntests/\ntsconfig.json\ntsup.config.ts\nUNIFIED-IMPLEMENTATION-PLAN.md\nvite.config.ts\n\n(30 entries)\n</entries>",
+        "metadata": {
+          "preview": ".contexty/\n.env\n.git/\n.github/\n.gitignore\n.hive/\n.memsearch/\n.oh-my-opencode-pi-stats.json\n.playwright-mcp/\nAGENTS.md\nAUDIT-REPORT.md\nbun.lock\ncapacitor.config.json\ndist/\ndocs/\nindex.html\nMVP-BLUEPRINT.md\nnode_modules/\npackage-lock.json\npackage.json",
+          "truncated": false,
+          "loaded": [],
+          "display": {
+            "type": "directory",
+            "path": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG",
+            "entries": [
+              ".contexty/",
+              ".env",
+              ".git/",
+              ".github/",
+              ".gitignore",
+              ".hive/",
+              ".memsearch/",
+              ".oh-my-opencode-pi-stats.json",
+              ".playwright-mcp/",
+              "AGENTS.md",
+              "AUDIT-REPORT.md",
+              "bun.lock",
+              "capacitor.config.json",
+              "dist/",
+              "docs/",
+              "index.html",
+              "MVP-BLUEPRINT.md",
+              "node_modules/",
+              "package-lock.json",
+              "package.json",
+              "public/",
+              "README.md",
+              "ROADMAP.md",
+              "scripts/",
+              "src/",
+              "tests/",
+              "tsconfig.json",
+              "tsup.config.ts",
+              "UNIFIED-IMPLEMENTATION-PLAN.md",
+              "vite.config.ts"
+            ],
+            "offset": 1,
+            "totalEntries": 30,
+            "truncated": false
+          }
+        },
+        "title": "",
+        "time": {
+          "start": 1781991008082,
+          "end": 1781991008097
+        }
+      },
+      "id": "prt_ee6f0e749001Jp0fVnSGan0B1q",
+      "sessionID": "ses_1190f2b76ffeho1cAKsP6IiDTp",
+      "messageID": "msg_ee6f0d4d0001wME3hYiORLkV3y"
+    },
+    {
+      "type": "tool",
+      "tool": "grep",
+      "callID": "call_d2d69bade54a46aaa39dd767",
+      "state": {
+        "status": "completed",
+        "input": {
+          "pattern": "TUI|tui|terminal.*user.*interface|ink|blessed|yargs|commander|cli|command.line",
+          "path": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src",
+          "output_mode": "content",
+          "include": "*.{ts,tsx,js,jsx,json}"
+        },
+        "output": "§3§ Found 118 match(es) in 43 file(s)\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/vite-env.d.ts\n  1: /// <reference types=\"vite/client\" />\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/main.ts\n  96: eventBus.on('encounter_declined', (payload) => {\n  97: telemetryService.recordEvent('encounter_declined', payload);\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/assessments/AssessmentScene.ts\n  134: // Show \"Thinking...\" while LLM processes the answer\n  135: this.showLoading('Thinking');\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/assessments/renderers/ReactionTimeRenderer.ts\n  11: * - 'stroop': Respond to ink color, not word meaning (Cognitive Amber+)\n  320: // Pick a random word and a DIFFERENT random color for the ink\n  334: const inkColor = STROOP_COLORS[colorIndex];\n  335: this.currentStroopColor = inkColor.name;\n  339: textStimulus.setColor(inkColor.css);\n  585: case 'anticipation': return 'Tap just BEFORE you think the circle will appear';\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/assessments/renderers/NBackRenderer.ts\n  10: * - Red: n=2 (holding two items, sovereign thinking)\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/assessments/renderers/EmotionRenderer.ts\n  36: 'The corners of the mouth are turned up. Eyes are crinkled slightly.',\n  63: 'Both eyebrows up, creating horizontal forehead wrinkles.',\n  66: 'Nose wrinkled. Upper lip raised. Eyes squinting.',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/onboarding/probes/SpiritualProbe.ts\n  46: { level: 1, prompt: 'A binding contract offers great reward but limits your choices for a year.', holdOption: 'Decline — stay free', betrayOption: 'Sign for the reward' },\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/onboarding/probes/MoralProbe.ts\n  61: { id: 'decline_power', text: 'Decline — power that requires binding is not true power', stage: 'Green' },\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/scenes/UIOverlayScene.ts\n  26: * cognitive-task UI (N-back rune sequence, Stroop word/ink panel).\n  361: color: hex(STROOP_PALETTE[trial.ink]),\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/scenes/EncounterSelectionScene.ts\n  4: * Player can select an encounter or decline (which is recorded as avoidance data).\n  50: // Decline button\n  51: const declineBtn = this.add.text(width / 2, height - 60, 'Not now...', {\n  57: declineBtn.on('pointerover', () => declineBtn.setColor('#aabbcc'));\n  58: declineBtn.on('pointerout', () => declineBtn.setColor('#667788'));\n  59: declineBtn.on('pointerdown', () => this.onDecline());\n  106: private onDecline(): void {\n  111: eventBus.emit('encounter_declined', {\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/scenes/BootScene.ts\n  15: // Disable right-click menu inside the canvas — feels native on web.\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/scenes/ReflectionScene.ts\n  93: ['I felt the fire of it.', 'Fear held me back.', 'I acted without thinking.'],\n  110: Cognitive: ['My mind saw the pattern.', 'I thought through it carefully.', 'Intuition spoke first.'],\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/ui/SceneTransitions.ts\n  45: message: string = 'Thinking',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/AgenticOrchestrator.ts\n  17: import { getRenderer } from './cli/TaskRenderers.js';\n  703: ? `A ${shadowFromWriteIn} pattern surfaced through your ${driveLabel} expression (${polarityLabel}). In the developmental framework, this shadow arises when the ${driveLabel} drive becomes imbalanced — either clinging to lower patterns (dark) or bypassing toward higher without integration (golden). Naming it here is the first step toward healing it. ${historyCount > 0 ? `This is your ${historyCount + 1}th encounter — each shadow surfaced is an opportunity for the field to work with you.` : ''}`\n  1285: // Check passed first (false if contains withdraw, resist, decline, sit with it)\n  1286: const passed = !['withdraw', 'resist', 'decline', 'sit with it'].some(kw => lower.includes(kw));\n  1326: // case 3.1: withdraw / resist / sit with it / decline\n  1327: if (['withdraw', 'resist', 'sit with it', 'decline'].some(kw => lower.includes(kw))) {\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/infra/llm/FallbackProvider.ts\n  119: { id: 'stay', text: 'Decline — some foundations cannot be relocated' },\n  188: // Green stage (Pluralistic/Integrative) — diversity, empathy, systemic thinking\n  219: { id: 'decline', text: 'Refuse — some principles are non-negotiable' },\n  302: prompt: 'The old stories speak through you. What voice rises when you stop trying to think?',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/infra/llm/ContextPipeline.ts\n  271: [RULES] No Veil violations. No clinical language. No scoring references. No frame-breaking. Stay in frequency.`;\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cli/TaskRenderers.ts\n  211: * Render a Stroop task: show a word printed in a different ink color,\n  222: const trials: { wordIdx: number; inkIdx: number }[] = [];\n  225: let inkIdx = Math.floor(Math.random() * colors.length);\n  226: while (inkIdx === wordIdx) {\n  227: inkIdx = Math.floor(Math.random() * colors.length);\n  229: trials.push({ wordIdx, inkIdx });\n  233: const inkColor = colors[t.inkIdx]!;\n  234: return `${C.dim}#${i + 1}${C.reset} ${inkColor.render}`;\n  238: const correctSequence = trials.map(t => colors[t.inkIdx]!.initial).join(',');\n  245: `${C.bold}What is the correct ink color sequence?${C.reset}`,\n  250: trials.map(t => colors[(t.inkIdx + 1) % colors.length]!.initial).join(','),\n  251: trials.map(t => colors[(t.inkIdx + 2) % colors.length]!.initial).join(','),\n  279: const expected = trials.map(t => t.inkIdx);\n  657: scenario: 'You can solve a complex problem instantly using intuition, or spend hours verifying through rigorous analysis. The intuitive answer feels right but you cannot prove why.',\n  659: { label: 'Trust the analysis', description: 'Unverified intuition is just guessing with confidence', drive: 'agency', polarity: 'neutral' , correctnessScore: 0.6 },\n  660: { label: 'Act on intuition now', description: 'Speed matters — analysis can follow', drive: 'eros', polarity: 'neutral' , correctnessScore: 0.7 },\n  661: { label: 'Blend both', description: 'Use intuition to guide the analysis, analysis to validate the intuition', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },\n  803: { label: 'Decline the role', description: 'The teaching matters more than the position', drive: 'communion', polarity: 'sto' , correctnessScore: 0.7 },\n  1020: 'What is the difference between thinking and knowing?',\n  1021: 'What is one thing you avoid thinking about, and why?',\n  1022: 'If your thinking patterns were visible to others, what would surprise them most?',\n  1023: 'When you face a challenge, what is your first instinct — analyze, trust intuition, seek input, or act?',\n  1070: 'What is one thing you avoid thinking about, and why?',\n  1086: 'What is one thing you avoid thinking about, and why?',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/types.ts\n  72: /** Optional single developmental probe for calibration mode. Probes HOW the player thinks, not just performance. */\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/calibrationProbes.ts\n  20: 'Trust intuitive patterns and adapt resources dynamically as needed.',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/infra/native/cliAgentLoop.ts\n  83: const significator = createSignificator('cli-test-player', initialAltitudes, 'Red');\n  90: id: 'cli-cognitive-red',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/infra/persistence/SaveRepository.ts\n  134: // CLI File-Based Persistence (synchronous, for cli-game.ts)\n  186: fs.unlinkSync(CLI_SAVE_FILE);\n  231: fs.unlinkSync(CLI_WORLD_FILE);\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/interpersonal/turquoise.ts\n  65: { id: 'interpersonal-turquoise-16', taskType: 'llm_dialogue', difficulty: 0.75, parameters: { prompt: 'Describe the experience of thinking together - not parallel thinking, but genuine collective cognition.', maxResponseLength: 500 }, measures: ['depth', 'coherence', 'integration'] },\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/interpersonal/orange.ts\n  87: description: 'Second-order false belief: what does A think B thinks?',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/moral/magenta.ts\n  23: 'Score for pre-conventional magical-stage moral reasoning. At Magenta, fairness is based on immediate feelings, magical thinking, or simple desire. Depth: can they articulate any reason? Coherence: is the reason consistent with their worldview? Integration: do they acknowledge other people have wants too?',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/emotional/white.ts\n  45: 'Score for genuine emotional equanimity vs. suppression or spiritual bypassing. At White, all emotions arise and pass without identification - affect is luminous, not gripping. KEY DISTINCTIONS: (1) Is equanimity genuine (emotions fully felt but not grasped) or is it suppression wearing spiritual clothing? Genuine equanimity has WARMTH; suppression feels cold or distant. (2) Does the response indicate emotions are experienced as energy/luminosity without needing to be named, fixed, or transcended? (3) Is there residual grasping at pleasant states or residual aversion to painful ones? At White both dissolve. (4) Is meta-awareness intimate with emotion or observing from above? White intimacy means no distance between awareness and affect. Red flag: clinical detachment presented as equanimity; spiritual vocabulary about emotions without actual emotional aliveness.',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/willpower/green.ts\n  61: description: 'Self-paced hold-release cycling without signals',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/somatic/green.ts\n  42: { id: 'somatic-green-10', taskType: 'self_report', difficulty: 0.5, parameters: { prompts: ['What intuition arises in your body about this situation?'], responseType: 'text' }, measures: ['depth', 'coherence'] },\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cognitive/white.ts\n  31: description: 'Describe thinking itself without content: can cognition observe its own arising without grasping at the content?',\n  32: parameters: { prompt: 'Without describing WHAT you think, describe the nature of thinking itself. What is thought before it becomes about something?', maxResponseLength: 600, evaluateNonDual: true },\n  59: { id: 'cognitive-white-02', taskType: 'llm_dialogue', difficulty: 0.25, parameters: { prompt: 'A thought arises. Before you think it, what is it?', maxResponseLength: 400, evaluateNonConceptual: true }, measures: ['depth', 'coherence'] },\n  70: { id: 'cognitive-white-13', taskType: 'llm_dialogue', difficulty: 0.65, parameters: { prompt: 'Thinking about not-thinking is still thinking. What is genuinely prior to all cognition?', maxResponseLength: 500, evaluateNonDual: true }, measures: ['depth', 'coherence', 'integration'] },\n  98: description: 'NPC is trapped in over-thinking. Help them see beyond concepts without teaching a technique.',\n  99: parameters: { prompt: 'I keep thinking and thinking but I cannot find the answer. What am I doing wrong?', maxResponseLength: 500 },\n  120: description: 'Return to simple knowing with full presence - think a simple thought with complete transparency',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/telemetry/TelemetryEvent.ts\n  3: | 'encounter_declined'\n  20: 'encounter_declined',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cognitive/red.ts\n  72: healthyResponse: 'Sovereign thinking - solved independently',\n  85: healthyResponse: 'Shares thinking without losing approach',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cognitive/orange.ts\n  87: allergySignal: 'Cannot articulate own thinking',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cognitive/magenta.ts\n  78: healthyResponse: 'Shares thinking with simple language',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/spiritual/white.ts\n  120: healthyResponse: 'Ordinary is fully ordinary; no subtle knowing-glance that it is also sacred; no wink; just this, complete in itself',\n  121: addictionSignal: 'Cannot let ordinary be simply ordinary; adds \"and this too is it\" which subtly re-sacralizes; cannot just drink tea',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/spiritual/red.ts\n  41: { id: 'spiritual-red-09', taskType: 'llm_dialogue', difficulty: 0.5, parameters: { prompt: 'What do you think happens when you do something good? Something bad?', maxResponseLength: 400 }, measures: ['depth', 'coherence'] },\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/data/red-layer-holons.json\n  382: \"narrativeRole\": \"climax-event\",\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cognitive/green.ts\n  46: { id: 'cognitive-green-06', taskType: 'pattern_prediction', difficulty: 0.4, parameters: { patternType: 'systems-thinking', complexity: 'medium', trials: 6, feedbackLoops: 2 }, measures: ['accuracy', 'complexity_handled'] },\n  51: { id: 'cognitive-green-11', taskType: 'pattern_prediction', difficulty: 0.55, parameters: { patternType: 'systems-thinking', complexity: 'high', trials: 8, feedbackLoops: 3 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },\n  55: { id: 'cognitive-green-15', taskType: 'scenario', difficulty: 0.7, parameters: { scenarioType: 'systems-thinking', responseType: 'text', scenarios: 3, feedbackLoops: 3 }, measures: ['depth', 'complexity_handled', 'integration'] },\n  59: { id: 'cognitive-green-19', taskType: 'pattern_prediction', difficulty: 0.85, parameters: { patternType: 'systems-thinking', complexity: 'very-high', trials: 8, feedbackLoops: 4 }, measures: ['accuracy', 'complexity_handled', 'self_correction'] },\n  85: healthyResponse: 'Guides other into both/and thinking with care',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cognitive/amber.ts\n  100: allergySignal: 'Refuses any rule change, clings to single rule',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/spiritual/magenta.ts\n  85: healthyResponse: 'Engages with challenge to magical thinking',\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/events/GameEvents.ts\n  26: encounter_declined: { encounterId: string; moduleRef: string; line: string; stage: string };\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/engines/CCIEngine.ts\n  544: * Capped by the weakest link (drive health or shadow state) with a base\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/data/PolarityOntology.ts\n  78: 'Willpower:Infrared': { sto: 'survival-persistence-shared', sts: 'desperate-clinging', exploratory: 'impulse-testing' },\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/usecases/StroopTask.ts\n  5: * that may or may not match (e.g. red ink). The correct response is the\n  16: /** The ink color the word is drawn in. The \"correct\" answer. */\n  17: readonly ink: StroopColor;\n  18: /** True if word and ink mismatch. */\n  30: /** True if the chosen color matched the ink. */\n  60: return { word, ink: word, incongruent: false };\n  62: // Pick an ink that is NOT the word.\n  64: const ink = candidates[Math.floor(rng() * candidates.length)]!;\n  65: return { word, ink, incongruent: true };\n  80: const correct = response.chosen !== null && response.chosen === trial.ink;\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/registries/narrative/red-narrative.module.ts\n  17: NarrativeRegistry.register('red-climax', {\n  18: beatId: 'red-climax',\n",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1781991008950,
+          "end": 1781991008980
+        }
+      },
+      "id": "prt_ee6f0e77d001ahxhA8qm1iw4S8",
+      "sessionID": "ses_1190f2b76ffeho1cAKsP6IiDTp",
+      "messageID": "msg_ee6f0d4d0001wME3hYiORLkV3y"
+    },
+    {
+      "type": "tool",
+      "tool": "grep",
+      "callID": "call_965c04534d664b12a72b40dc",
+      "state": {
+        "status": "completed",
+        "input": {
+          "pattern": "openclaw|hermes.agent|terminal|TUI",
+          "path": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG",
+          "output_mode": "content",
+          "include": "*.{md,txt,toml,yaml,yml,json,ts,js}"
+        },
+        "output": "§4§ Found 44 match(es) in 11 file(s)\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/package-lock.json\n  131: \"@ionic/utils-terminal\": \"^2.3.3\",\n  817: \"@ionic/utils-terminal\": \"2.3.5\",\n  877: \"@ionic/utils-terminal\": \"2.3.3\",\n  887: \"node_modules/@ionic/utils-process/node_modules/@ionic/utils-terminal\": {\n  889: \"resolved\": \"https://registry.npmjs.org/@ionic/utils-terminal/-/utils-terminal-2.3.3.tgz\",\n  933: \"@ionic/utils-terminal\": \"2.3.3\",\n  958: \"node_modules/@ionic/utils-subprocess/node_modules/@ionic/utils-terminal\": {\n  960: \"resolved\": \"https://registry.npmjs.org/@ionic/utils-terminal/-/utils-terminal-2.3.3.tgz\",\n  979: \"node_modules/@ionic/utils-terminal\": {\n  981: \"resolved\": \"https://registry.npmjs.org/@ionic/utils-terminal/-/utils-terminal-2.3.5.tgz\",\n  3053: \"@ionic/utils-terminal\": \"^2.3.4\",\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/AUDIT-REPORT.md\n  4: **Scope:** Full CLI/TUI end-to-end audit — runtime testing across all 7 modalities, 8 lines, forcing flags, LLM vs fallback paths, 20-encounter sessions\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/plans/2026-06-21-tui-operationalization-plan.md\n  1: # CCRPG TUI Operationalization Plan\n  3: > **Goal:** Transform the CLI from raw readline/ANSI into a polished, interactive terminal experience with proper package installation, using industry-standard TUI libraries.\n  37: Hermes-agent uses a **three-layer TUI architecture**:\n  47: │  - curses_ui.py (traditional TUI rendering) │\n  52: │  Layer 3: ui-tui/ (modern TypeScript TUI)   │\n  54: │  - React-based terminal UI                  │\n  74: 3. Separate TUI package — Keep it monolithic for now\n  95: | **`ink`** | React-based TUI | When we need real-time live-updating dashboards |\n  105: - Our TUI is mostly sequential prompts + formatted output\n  231: 5. Test visual appearance across terminal widths\n  371: Phase 1: chalk        → All colors auto-detect terminal support\n  381: - JSON output mode (`--json`) must remain clean (no TUI artifacts)\n  415: - [ ] JSON mode produces clean output (no TUI artifacts)\n  457: Following hermes-agent's pattern:\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/plans/2026-06-21-cli-distribution-plan.md\n  28: pip install hermes-agent       # installs package\n  216: Following hermes-agent's pattern, create a config directory on first run:\n  560: Following hermes-agent's pattern, create a Homebrew formula:\n  584: ### 9.4 Interactive TUI (Ink/React Terminal)\n  585: For a richer interactive experience, consider migrating from readline to Ink (React for CLIs) — similar to how hermes-agent uses a TUI gateway. This would enable:\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/plans/2026-06-20-comprehensive-tui-audit-v2.md\n  1: # CCRPG TUI/CLI Comprehensive Gap Audit — v2\n  4: **Scope:** Exhaustive end-to-end testing of CLI/TUI across all modes, modalities, and edge cases\n  53: | **B.4** | **Processing spinner leaves ANSI artifacts** | Between encounters: `\\r  ... preparing encounter\\r  ... preparing encounter.\\r  ... preparing encounter..\\r  ... preparing encounter...\\u001b[2K\\r` | The spinner uses `\\r` carriage returns with ANSI clear-line (`\\u001b[2K`) but the final state isn't clean in all terminal emulators. | Visual artifacts on screen between encounters. | 30 min |\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/plans/2026-06-20-comprehensive-tui-audit.md\n  1: # CCRPG TUI/CLI Comprehensive Gap Audit\n  4: **Scope:** Exhaustive end-to-end testing of CLI/TUI across all modes, modalities, and edge cases\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/plans/2026-06-20-cli-gap-analysis.md\n  4: **Scope:** Exhaustive end-to-end audit of CLI/TUI — runtime testing across all 7 modalities, 8 lines, scoring verification, modality routing, persistence, onboarding, UX polish\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/plans/2026-06-19-iterative-dev-plan.md\n  4: **Audit Scope:** Full CLI/TUI end-to-end — runtime testing, code analysis, test suite\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/plans/2026-06-18-cli-implementation-gaps.md\n  4: **Audit scope:** Full CLI/TUI end-to-end audit across developmental depth, world orchestration, and UX polish\n  21: 6. TUI displays raw technical parameters instead of thematic content\n  130: #### P6: TUI polish (2 days)\n  169: scripts/cli-game.ts                            — Fix crash, add mid-session display, improve TUI\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/foundations/10-shadow-and-pathology.md\n  559: | **Violet (Convergence)** | Eros-addiction: rushing toward completion | The holon clings to finality; boundary admits only terminal stimuli; experience is compressed; the rich complexity of the journey is flattened |\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/concept-drafts/intrapersonal/05-orange/scenario-choice.md\n  45: **Branching engine:** Scenario trees with 3–4 branches per node, 2–3 nodes deep. Each terminal node maps to a shadow-quadrant × drive-health score.\n",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1781991009926,
+          "end": 1781991009981
+        }
+      },
+      "id": "prt_ee6f0eb0d0013sKDNDT0Quql7I",
+      "sessionID": "ses_1190f2b76ffeho1cAKsP6IiDTp",
+      "messageID": "msg_ee6f0d4d0001wME3hYiORLkV3y"
+    },
+    {
+      "type": "tool",
+      "tool": "glob",
+      "callID": "call_dc1a3ef06a024a9189c5d194",
+      "state": {
+        "status": "completed",
+        "input": {
+          "pattern": "**/scripts/**",
+          "path": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG"
+        },
+        "output": "§5§ Found 8 file(s)\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/scripts/cli-game.ts\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/scripts/cli-audit.ts\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/scripts/check-invariants.ts\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/scripts/build-concept-index.ts\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/scripts/fix_subsection_numbers.py\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/scripts/rebuild_module_specs.py\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/scripts/make_module_specs.py\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/scripts/strip_game_files.py",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1781991010264,
+          "end": 1781991010297
+        }
+      },
+      "id": "prt_ee6f0eea700183svJ4ktrm46vD",
+      "sessionID": "ses_1190f2b76ffeho1cAKsP6IiDTp",
+      "messageID": "msg_ee6f0d4d0001wME3hYiORLkV3y"
+    },
+    {
+      "type": "tool",
+      "tool": "glob",
+      "callID": "call_0593c07073584627943f6bd5",
+      "state": {
+        "status": "completed",
+        "input": {
+          "pattern": "**/bin/**",
+          "path": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG"
+        },
+        "output": "§6§ No files found",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1781991010600,
+          "end": 1781991010639
+        }
+      },
+      "id": "prt_ee6f0f082001869BUIPyLiW33Z",
+      "sessionID": "ses_1190f2b76ffeho1cAKsP6IiDTp",
+      "messageID": "msg_ee6f0d4d0001wME3hYiORLkV3y"
+    },
+    {
+      "type": "tool",
+      "tool": "glob",
+      "callID": "call_cfadc28d1b474be8b36a6c96",
+      "state": {
+        "status": "completed",
+        "input": {
+          "pattern": "**/cli/**",
+          "path": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG"
+        },
+        "output": "§7§ Found 2 file(s)\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cli/TaskRenderers.ts\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/cli/ScoringBridge.ts",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1781991010914,
+          "end": 1781991010934
+        }
+      },
+      "id": "prt_ee6f0f16d001dSmm6JPzxnZrHH",
+      "sessionID": "ses_1190f2b76ffeho1cAKsP6IiDTp",
+      "messageID": "msg_ee6f0d4d0001wME3hYiORLkV3y"
+    }
+  ]
+}

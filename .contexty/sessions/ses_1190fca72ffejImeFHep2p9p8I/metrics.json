@@ -1,0 +1,106 @@
+{
+  "version": 1,
+  "sessionID": "ses_1190fca72ffejImeFHep2p9p8I",
+  "timestamp": "2026-06-21T23:49:53.910Z",
+  "tokens": {
+    "input": 1381125,
+    "output": 78932,
+    "reasoning": 20092,
+    "cacheRead": 86511808,
+    "cacheWrite": 0
+  },
+  "files": [
+    {
+      "path": "docs/foundations/",
+      "tokenEstimate": 10,
+      "role": "user"
+    }
+  ],
+  "tools": [
+    {
+      "name": "background_output",
+      "count": 6,
+      "successCount": 6,
+      "failCount": 0
+    },
+    {
+      "name": "ctx_reduce",
+      "count": 2,
+      "successCount": 2,
+      "failCount": 0
+    },
+    {
+      "name": "read",
+      "count": 87,
+      "successCount": 87,
+      "failCount": 0
+    },
+    {
+      "name": "edit",
+      "count": 70,
+      "successCount": 70,
+      "failCount": 0
+    },
+    {
+      "name": "todowrite",
+      "count": 39,
+      "successCount": 39,
+      "failCount": 0
+    },
+    {
+      "name": "bash",
+      "count": 46,
+      "successCount": 46,
+      "failCount": 0
+    },
+    {
+      "name": "ctx_note",
+      "count": 5,
+      "successCount": 5,
+      "failCount": 0
+    },
+    {
+      "name": "grep",
+      "count": 57,
+      "successCount": 57,
+      "failCount": 0
+    },
+    {
+      "name": "write",
+      "count": 4,
+      "successCount": 4,
+      "failCount": 0
+    },
+    {
+      "name": "ast_grep_replace",
+      "count": 3,
+      "successCount": 3,
+      "failCount": 0
+    },
+    {
+      "name": "glob",
+      "count": 2,
+      "successCount": 2,
+      "failCount": 0
+    },
+    {
+      "name": "task",
+      "count": 7,
+      "successCount": 7,
+      "failCount": 0
+    }
+  ],
+  "acpm": {
+    "activePreset": null,
+    "allowCount": 4137,
+    "denyCount": 0,
+    "sanitizeCount": 0,
+    "deniedByCategory": {},
+    "folderAccessDistribution": {
+      "denied": 0,
+      "read-only": 0,
+      "read-write": 0
+    },
+    "toolCategoryStatus": []
+  }
+}

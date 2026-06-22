@@ -1,0 +1,46 @@
+{
+  "version": 1,
+  "sessionID": "ses_1150a2845ffeTaMvjAHp6omJru",
+  "timestamp": "2026-06-21T16:14:50.640Z",
+  "tokens": {
+    "input": 73537,
+    "output": 706,
+    "reasoning": 130,
+    "cacheRead": 126528,
+    "cacheWrite": 0
+  },
+  "files": [],
+  "tools": [
+    {
+      "name": "read",
+      "count": 12,
+      "successCount": 12,
+      "failCount": 0
+    },
+    {
+      "name": "glob",
+      "count": 1,
+      "successCount": 1,
+      "failCount": 0
+    },
+    {
+      "name": "grep",
+      "count": 1,
+      "successCount": 1,
+      "failCount": 0
+    }
+  ],
+  "acpm": {
+    "activePreset": null,
+    "allowCount": 2991,
+    "denyCount": 0,
+    "sanitizeCount": 0,
+    "deniedByCategory": {},
+    "folderAccessDistribution": {
+      "denied": 0,
+      "read-only": 0,
+      "read-write": 0
+    },
+    "toolCategoryStatus": []
+  }
+}

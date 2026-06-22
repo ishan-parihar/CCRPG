@@ -1,0 +1,746 @@
+{
+  "sessions": [
+    {
+      "sessionId": "ses_1190fca72ffejImeFHep2p9p8I",
+      "startedAt": "2026-06-20T21:29:23.176Z",
+      "lastActiveAt": "2026-06-22T05:43:40.640Z",
+      "agent": "​Sisyphus - Ultraworker",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1190f2b76ffeho1cAKsP6IiDTp",
+      "startedAt": "2026-06-20T21:30:03.305Z",
+      "lastActiveAt": "2026-06-20T21:30:03.305Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1190f1969ffeh6uFTfWa93Ira5",
+      "startedAt": "2026-06-20T21:30:07.910Z",
+      "lastActiveAt": "2026-06-20T21:30:07.910Z",
+      "agent": "librarian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1190e4528ffeUFConSilWHFWA4",
+      "startedAt": "2026-06-20T21:31:02.245Z",
+      "lastActiveAt": "2026-06-20T21:31:02.245Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11906e753ffeOGZsRgGKBb7Ign",
+      "startedAt": "2026-06-20T21:39:05.226Z",
+      "lastActiveAt": "2026-06-20T21:39:05.226Z",
+      "agent": "Sisyphus-Junior",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118fa59c6ffeOUv9Rrq8PrTWy7",
+      "startedAt": "2026-06-20T21:52:47.692Z",
+      "lastActiveAt": "2026-06-20T21:52:47.692Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118ef45f2ffe8S0kudYx6MlVKK",
+      "startedAt": "2026-06-20T22:04:53.749Z",
+      "lastActiveAt": "2026-06-20T22:04:53.749Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118e8c710ffeg2sG2H5iYbFzHO",
+      "startedAt": "2026-06-20T22:11:59.359Z",
+      "lastActiveAt": "2026-06-20T22:11:59.359Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118e794deffeIVjppJvLvkGS1z",
+      "startedAt": "2026-06-20T22:13:17.742Z",
+      "lastActiveAt": "2026-06-20T22:13:17.742Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118e24847ffeqHlNgamPur5Gh9",
+      "startedAt": "2026-06-20T22:19:05.039Z",
+      "lastActiveAt": "2026-06-20T22:19:05.039Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118e1297cffekRsdGVjLBiuLOw",
+      "startedAt": "2026-06-20T22:20:18.444Z",
+      "lastActiveAt": "2026-06-20T22:20:18.444Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118d977deffedLiGPx5rjg4fLR",
+      "startedAt": "2026-06-20T22:28:42.687Z",
+      "lastActiveAt": "2026-06-20T22:28:42.687Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118d95342ffec0ctKZqQ2j87ZB",
+      "startedAt": "2026-06-20T22:28:52.041Z",
+      "lastActiveAt": "2026-06-20T22:28:52.041Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118d90b9affeNbfndRUaBrOahd",
+      "startedAt": "2026-06-20T22:29:10.381Z",
+      "lastActiveAt": "2026-06-20T22:29:10.381Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118d8a79cffevnrPbddZdFJReL",
+      "startedAt": "2026-06-20T22:29:35.984Z",
+      "lastActiveAt": "2026-06-20T22:29:35.984Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118d7c6edffeVkkvLujnzYSAFf",
+      "startedAt": "2026-06-20T22:30:33.499Z",
+      "lastActiveAt": "2026-06-20T22:30:33.499Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118b2d874ffeY7bmU3Hl0MMt6p",
+      "startedAt": "2026-06-20T23:10:53.876Z",
+      "lastActiveAt": "2026-06-20T23:10:53.876Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118adbda4ffegrKhObyvrDlyUS",
+      "startedAt": "2026-06-20T23:16:28.387Z",
+      "lastActiveAt": "2026-06-20T23:16:28.387Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118ad570bffejhr2Sc2l143Oud",
+      "startedAt": "2026-06-20T23:16:55.037Z",
+      "lastActiveAt": "2026-06-20T23:16:55.037Z",
+      "agent": "Sisyphus-Junior",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118a75d33ffespMSdwkCeGxetP",
+      "startedAt": "2026-06-20T23:23:26.294Z",
+      "lastActiveAt": "2026-06-20T23:23:26.294Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_118a452f1ffevg14LeqBtivY5l",
+      "startedAt": "2026-06-20T23:26:45.527Z",
+      "lastActiveAt": "2026-06-20T23:26:45.527Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1168e005fffeY5nziTuIDaHdmY",
+      "startedAt": "2026-06-21T09:10:22.902Z",
+      "lastActiveAt": "2026-06-21T09:10:22.902Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1168def23ffeMcVUrQ4so5xJRX",
+      "startedAt": "2026-06-21T09:10:27.303Z",
+      "lastActiveAt": "2026-06-21T09:10:27.303Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_116740cb4ffe53s6A5Rq5Vv3hQ",
+      "startedAt": "2026-06-21T09:38:43.947Z",
+      "lastActiveAt": "2026-06-21T09:38:43.947Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_116737815ffewr7APalHtlHdtk",
+      "startedAt": "2026-06-21T09:39:22.202Z",
+      "lastActiveAt": "2026-06-21T09:39:22.202Z",
+      "agent": "Sisyphus-Junior",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11630a010ffedOdT2oznVfyYYD",
+      "startedAt": "2026-06-21T10:52:22.427Z",
+      "lastActiveAt": "2026-06-21T10:52:22.427Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_116305c18ffezA4EHtxMG9Oqzi",
+      "startedAt": "2026-06-21T10:52:39.792Z",
+      "lastActiveAt": "2026-06-21T10:52:39.792Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1163058adffehgnfBuvKxa6QsW",
+      "startedAt": "2026-06-21T10:52:40.670Z",
+      "lastActiveAt": "2026-06-21T10:52:40.670Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1163033b1ffe5fztwJ2ZJjSLV8",
+      "startedAt": "2026-06-21T10:52:50.134Z",
+      "lastActiveAt": "2026-06-21T10:52:50.134Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1161e8c91ffe94Fu13B2W1mTX9",
+      "startedAt": "2026-06-21T11:12:07.040Z",
+      "lastActiveAt": "2026-06-21T11:12:07.040Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1161aa7e1ffesycq7Garte4Wfu",
+      "startedAt": "2026-06-21T11:16:22.197Z",
+      "lastActiveAt": "2026-06-21T11:16:22.197Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11618ae6affeELYz0Q6E86JGVl",
+      "startedAt": "2026-06-21T11:18:31.586Z",
+      "lastActiveAt": "2026-06-21T11:18:31.586Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11614ff9bffe1RjN3TAE9yD6IP",
+      "startedAt": "2026-06-21T11:22:32.992Z",
+      "lastActiveAt": "2026-06-21T11:22:32.992Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11612d00affeql6ea9Nespo62Q",
+      "startedAt": "2026-06-21T11:24:56.206Z",
+      "lastActiveAt": "2026-06-21T11:24:56.206Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11611c124ffelIJZeaRARNDhSh",
+      "startedAt": "2026-06-21T11:26:05.540Z",
+      "lastActiveAt": "2026-06-21T11:26:05.540Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115e5212cffeXYXk6XMQQCWMoQ",
+      "startedAt": "2026-06-21T12:14:50.122Z",
+      "lastActiveAt": "2026-06-21T12:14:50.122Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115e4f796ffedU4lQbbmoFoa6X",
+      "startedAt": "2026-06-21T12:15:00.727Z",
+      "lastActiveAt": "2026-06-21T12:15:00.727Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115e4c468ffeQZeP1lZwltlYFB",
+      "startedAt": "2026-06-21T12:15:13.831Z",
+      "lastActiveAt": "2026-06-21T12:15:13.831Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115e3b7f2ffe4I1vh5rYYavbX5",
+      "startedAt": "2026-06-21T12:16:22.550Z",
+      "lastActiveAt": "2026-06-21T12:16:22.550Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115e21cb0ffeKY4HBrlO2oSkJO",
+      "startedAt": "2026-06-21T12:18:07.843Z",
+      "lastActiveAt": "2026-06-21T12:18:07.843Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115dae077ffe8kKC19r4a3wct4",
+      "startedAt": "2026-06-21T12:26:02.026Z",
+      "lastActiveAt": "2026-06-21T12:26:02.026Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115d9d911ffeXE95M5WRnp7ZFn",
+      "startedAt": "2026-06-21T12:27:09.431Z",
+      "lastActiveAt": "2026-06-21T12:27:09.431Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115cd89a3ffel9ha0sP56u3i0q",
+      "startedAt": "2026-06-21T12:40:36.209Z",
+      "lastActiveAt": "2026-06-21T12:40:36.209Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115cc9709ffeWKFMwp2xCC5o88",
+      "startedAt": "2026-06-21T12:41:38.307Z",
+      "lastActiveAt": "2026-06-21T12:41:38.307Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115c53660ffex2AeAKH7r1b23f",
+      "startedAt": "2026-06-21T12:49:41.805Z",
+      "lastActiveAt": "2026-06-21T12:49:41.805Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115c454c2ffeW6u7oGQCXKPElT",
+      "startedAt": "2026-06-21T12:50:39.558Z",
+      "lastActiveAt": "2026-06-21T12:50:39.558Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115c1519fffeaTQYMzx1OQHCFN",
+      "startedAt": "2026-06-21T12:53:56.974Z",
+      "lastActiveAt": "2026-06-21T12:53:56.974Z",
+      "agent": "Sisyphus-Junior",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115c113cfffeA8mAqJNNOMcBLz",
+      "startedAt": "2026-06-21T12:54:12.797Z",
+      "lastActiveAt": "2026-06-21T12:54:12.797Z",
+      "agent": "Sisyphus-Junior",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115c0dd02ffeLrv1OZCFPO7249",
+      "startedAt": "2026-06-21T12:54:26.824Z",
+      "lastActiveAt": "2026-06-21T12:54:26.824Z",
+      "agent": "Sisyphus-Junior",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115c08f7fffesGdqkM6S3EXyFg",
+      "startedAt": "2026-06-21T12:54:46.668Z",
+      "lastActiveAt": "2026-06-21T12:54:46.668Z",
+      "agent": "Sisyphus-Junior",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115c00f25ffeRUOqyt95tBVdbS",
+      "startedAt": "2026-06-21T12:55:19.531Z",
+      "lastActiveAt": "2026-06-21T12:55:19.531Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115b13868ffe70U6spPSneYnv9",
+      "startedAt": "2026-06-21T13:11:32.008Z",
+      "lastActiveAt": "2026-06-21T13:11:32.008Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115ae9046ffenT4ZteyODJ9QCi",
+      "startedAt": "2026-06-21T13:14:28.528Z",
+      "lastActiveAt": "2026-06-21T13:14:28.528Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11597717cffe6mvd8g1rQ0KQ3N",
+      "startedAt": "2026-06-21T13:39:41.350Z",
+      "lastActiveAt": "2026-06-21T13:39:41.350Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1159765cdffeeXGNfacO9BiK5v",
+      "startedAt": "2026-06-21T13:39:44.330Z",
+      "lastActiveAt": "2026-06-21T13:39:44.330Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1159752e8ffeIQugiOzBcp3k0o",
+      "startedAt": "2026-06-21T13:39:49.213Z",
+      "lastActiveAt": "2026-06-21T13:39:49.213Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115968bcbffeTszA0O12IUzv4y",
+      "startedAt": "2026-06-21T13:40:40.176Z",
+      "lastActiveAt": "2026-06-21T13:40:40.176Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115955467ffe5Af4ITuInm5gNO",
+      "startedAt": "2026-06-21T13:41:59.853Z",
+      "lastActiveAt": "2026-06-21T13:41:59.853Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115603ed9ffeOMziWnJUiCNraQ",
+      "startedAt": "2026-06-21T14:39:58.777Z",
+      "lastActiveAt": "2026-06-21T14:39:58.777Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11556ff3cffec934lI6Lmxu7kg",
+      "startedAt": "2026-06-21T14:50:04.888Z",
+      "lastActiveAt": "2026-06-21T14:50:04.888Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1154fe03cffeDp4DDXXlK67pU8",
+      "startedAt": "2026-06-21T14:57:51.574Z",
+      "lastActiveAt": "2026-06-21T14:57:51.574Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1154cb581ffeNKBlcLMCaXUYKc",
+      "startedAt": "2026-06-21T15:01:19.117Z",
+      "lastActiveAt": "2026-06-21T15:01:19.117Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1154c6fc4ffeOJVun7FPXuUJVa",
+      "startedAt": "2026-06-21T15:01:36.968Z",
+      "lastActiveAt": "2026-06-21T15:01:36.968Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1154b651affeMRtwRkXXw5vlHM",
+      "startedAt": "2026-06-21T15:02:45.230Z",
+      "lastActiveAt": "2026-06-21T15:02:45.230Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115492482ffeN7gl5NClQhdvG2",
+      "startedAt": "2026-06-21T15:05:12.838Z",
+      "lastActiveAt": "2026-06-21T15:05:12.838Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115475a09ffei9TmVC0CRE6t4y",
+      "startedAt": "2026-06-21T15:07:10.206Z",
+      "lastActiveAt": "2026-06-21T15:07:10.206Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115431fc0ffeV6msYD4c2ML72J",
+      "startedAt": "2026-06-21T15:11:47.291Z",
+      "lastActiveAt": "2026-06-21T15:11:47.291Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11542c46fffeE633LdceRMaM1V",
+      "startedAt": "2026-06-21T15:12:10.651Z",
+      "lastActiveAt": "2026-06-21T15:12:10.651Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11542295dffeTXhVUgd7TwcH91",
+      "startedAt": "2026-06-21T15:12:50.352Z",
+      "lastActiveAt": "2026-06-21T15:12:50.352Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1153b76d8ffepxnrqekVfYksJ7",
+      "startedAt": "2026-06-21T15:20:09.326Z",
+      "lastActiveAt": "2026-06-21T15:20:09.326Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1153abb8fffes262QAe32qOHra",
+      "startedAt": "2026-06-21T15:20:57.212Z",
+      "lastActiveAt": "2026-06-21T15:20:57.212Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1153852ecffemaxJoidH5T133V",
+      "startedAt": "2026-06-21T15:23:35.079Z",
+      "lastActiveAt": "2026-06-21T15:23:35.079Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_115341224ffehZvIDqHzdD26rr",
+      "startedAt": "2026-06-21T15:28:13.802Z",
+      "lastActiveAt": "2026-06-21T15:28:13.802Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152ff2cbffeVOnlvod07nxizI",
+      "startedAt": "2026-06-21T15:32:44.010Z",
+      "lastActiveAt": "2026-06-21T15:32:44.010Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152f129effeQJTEBAMo4temzi",
+      "startedAt": "2026-06-21T15:33:41.360Z",
+      "lastActiveAt": "2026-06-21T15:33:41.360Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152ef8a5ffejQT3ryHMKnk8Mo",
+      "startedAt": "2026-06-21T15:33:48.024Z",
+      "lastActiveAt": "2026-06-21T15:33:48.024Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152eed4cffe4IW1Afg34fwmIM",
+      "startedAt": "2026-06-21T15:33:50.913Z",
+      "lastActiveAt": "2026-06-21T15:33:50.913Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152edaeeffeQreoE7wkaa0zpi",
+      "startedAt": "2026-06-21T15:33:55.613Z",
+      "lastActiveAt": "2026-06-21T15:33:55.613Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152e6d38ffe9xuG52bvK74H5e",
+      "startedAt": "2026-06-21T15:34:23.716Z",
+      "lastActiveAt": "2026-06-21T15:34:23.716Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152c8a42ffe6BX3bZyzK4TF7v",
+      "startedAt": "2026-06-21T15:36:27.334Z",
+      "lastActiveAt": "2026-06-21T15:36:27.334Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152b635bffeZpQPHcRCes4U6B",
+      "startedAt": "2026-06-21T15:37:42.829Z",
+      "lastActiveAt": "2026-06-21T15:37:42.829Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1152541b5ffeB3Kfb3KRbm6LHx",
+      "startedAt": "2026-06-21T15:44:24.667Z",
+      "lastActiveAt": "2026-06-21T15:44:24.667Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1150a2845ffeTaMvjAHp6omJru",
+      "startedAt": "2026-06-21T16:14:00.660Z",
+      "lastActiveAt": "2026-06-21T16:14:00.660Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1150a1946ffeFcuBQyCl23kRtd",
+      "startedAt": "2026-06-21T16:14:04.485Z",
+      "lastActiveAt": "2026-06-21T16:14:04.485Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1150a0afaffeGlTnVtAcROwde0",
+      "startedAt": "2026-06-21T16:14:08.172Z",
+      "lastActiveAt": "2026-06-21T16:14:08.172Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11509e609ffebiLqQ6XGfo2KWO",
+      "startedAt": "2026-06-21T16:14:17.603Z",
+      "lastActiveAt": "2026-06-21T16:14:17.603Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_114d06ac1ffe4tzMA26gsO0juC",
+      "startedAt": "2026-06-21T17:17:04.719Z",
+      "lastActiveAt": "2026-06-21T17:17:04.719Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_114ce5489ffevPezb1c6VHefKS",
+      "startedAt": "2026-06-21T17:19:21.479Z",
+      "lastActiveAt": "2026-06-21T17:19:21.479Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_114cafe9cffeHH5e9ifGlFxFe2",
+      "startedAt": "2026-06-21T17:23:00.080Z",
+      "lastActiveAt": "2026-06-21T17:23:00.080Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_114cae956ffeBOA153eAK37oP5",
+      "startedAt": "2026-06-21T17:23:05.524Z",
+      "lastActiveAt": "2026-06-21T17:23:05.524Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_114cad2acffeBuJIA9PAOQ7Lmy",
+      "startedAt": "2026-06-21T17:23:11.323Z",
+      "lastActiveAt": "2026-06-21T17:23:11.323Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_114cabe17ffeWspgtVftviHT1S",
+      "startedAt": "2026-06-21T17:23:16.592Z",
+      "lastActiveAt": "2026-06-21T17:23:16.592Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_114ca9e0cffeWEhV03aKa1Qh5Y",
+      "startedAt": "2026-06-21T17:23:24.821Z",
+      "lastActiveAt": "2026-06-21T17:23:24.821Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1141c9570ffeZjJDLHcTCjm7ID",
+      "startedAt": "2026-06-21T20:33:30.767Z",
+      "lastActiveAt": "2026-06-21T20:33:30.767Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_113efddf2ffeKOwOFNm3qR0Q17",
+      "startedAt": "2026-06-21T21:22:20.843Z",
+      "lastActiveAt": "2026-06-21T21:22:20.843Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_113ddc544ffeh28gltL10Ilb5L",
+      "startedAt": "2026-06-21T21:42:06.945Z",
+      "lastActiveAt": "2026-06-21T21:42:06.945Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_113d00a5dffe81N9zl4f5m4QcT",
+      "startedAt": "2026-06-21T21:57:06.646Z",
+      "lastActiveAt": "2026-06-21T21:57:06.646Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_113cf2aa4ffe5R7s7B2nVNzLw2",
+      "startedAt": "2026-06-21T21:58:03.877Z",
+      "lastActiveAt": "2026-06-21T21:58:03.877Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_113bebd0cffetiaD3Q5432FpEd",
+      "startedAt": "2026-06-21T22:16:00.527Z",
+      "lastActiveAt": "2026-06-21T22:16:00.527Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "startedAt": "2026-06-21T22:17:35.317Z",
+      "lastActiveAt": "2026-06-21T22:17:35.317Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11392df03ffe5wceX6xP4lKWNw",
+      "startedAt": "2026-06-21T23:03:55.400Z",
+      "lastActiveAt": "2026-06-21T23:03:55.400Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1139208dbffes3r32mUg9VXlOS",
+      "startedAt": "2026-06-21T23:04:50.272Z",
+      "lastActiveAt": "2026-06-21T23:04:50.272Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_11391a7a3ffezWDzgourAX7j1j",
+      "startedAt": "2026-06-21T23:05:15.110Z",
+      "lastActiveAt": "2026-06-21T23:05:15.110Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_113919368ffe8M0NBPdUmK7QgS",
+      "startedAt": "2026-06-21T23:05:20.293Z",
+      "lastActiveAt": "2026-06-21T23:05:20.293Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_113913f60ffelQKK3WxKYYj2oe",
+      "startedAt": "2026-06-21T23:05:41.798Z",
+      "lastActiveAt": "2026-06-21T23:05:41.798Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_1138fdcceffe29TCWBCJViVP6K",
+      "startedAt": "2026-06-21T23:07:12.574Z",
+      "lastActiveAt": "2026-06-21T23:07:12.574Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    }
+  ]
+}

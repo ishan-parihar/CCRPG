@@ -1,0 +1,52 @@
+{
+  "version": 1,
+  "sessionID": "ses_113cf2aa4ffe5R7s7B2nVNzLw2",
+  "timestamp": "2026-06-21T22:14:43.779Z",
+  "tokens": {
+    "input": 238923,
+    "output": 857,
+    "reasoning": 4720,
+    "cacheRead": 909697,
+    "cacheWrite": 0
+  },
+  "files": [],
+  "tools": [
+    {
+      "name": "ctx_memory",
+      "count": 2,
+      "successCount": 2,
+      "failCount": 0
+    },
+    {
+      "name": "bash",
+      "count": 2,
+      "successCount": 2,
+      "failCount": 0
+    },
+    {
+      "name": "grep",
+      "count": 10,
+      "successCount": 10,
+      "failCount": 0
+    },
+    {
+      "name": "read",
+      "count": 10,
+      "successCount": 8,
+      "failCount": 2
+    }
+  ],
+  "acpm": {
+    "activePreset": null,
+    "allowCount": 3865,
+    "denyCount": 0,
+    "sanitizeCount": 0,
+    "deniedByCategory": {},
+    "folderAccessDistribution": {
+      "denied": 0,
+      "read-only": 0,
+      "read-write": 0
+    },
+    "toolCategoryStatus": []
+  }
+}

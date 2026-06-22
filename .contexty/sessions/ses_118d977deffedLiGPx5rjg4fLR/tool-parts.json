@@ -1,0 +1,32 @@
+{
+  "parts": [
+    {
+      "type": "tool",
+      "tool": "ctx_memory",
+      "callID": "KE5nK1jGfXxWVyw8",
+      "state": {
+        "status": "completed",
+        "input": {
+          "action": "list"
+        },
+        "output": "Found 1 active memory:\n\nID | CATEGORY | STATUS | VERIFY     | UPDATED                  | CONTENT\n---+----------+--------+------------+--------------------------+--------\n33 | NAMING   | active | unverified | 2026-06-20T22:14:17.827Z | The project's CLI command is `ccrpg`.",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1781994528864,
+          "end": 1781994528888
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_ee726a05a001qIKAuoVqWuLxZa",
+      "sessionID": "ses_118d977deffedLiGPx5rjg4fLR",
+      "messageID": "msg_ee726889c001fR5pOaUPYQBYiV"
+    }
+  ]
+}

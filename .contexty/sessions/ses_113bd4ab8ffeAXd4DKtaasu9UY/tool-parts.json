@@ -1,0 +1,243 @@
+{
+  "parts": [
+    {
+      "type": "tool",
+      "tool": "ctx_memory",
+      "callID": "hoXxfstKqHWiZjEH",
+      "state": {
+        "status": "completed",
+        "input": {
+          "action": "list"
+        },
+        "output": "Found 10 active memories:\n\nID | CATEGORY     | STATUS | VERIFY     | UPDATED                  | CONTENT\n---+--------------+--------+------------+--------------------------+--------\n58 | ARCHITECTURE | active | unverified | 2026-06-21T22:13:10.243Z | The drive directionality system supports the full 5-value DriveDirectionality enum; LLM-driven assessments produce specific signals (HealthyBalanced, DarkAddicted, DarkAverted, GoldenAddicted, GoldenAverted) while non-LLM encounters use a binary HealthyBalanced/DarkAddicted fallback based on pass/fail status.\n76 | ARCHITECTURE | active | unverified | 2026-06-21T15:13:21.898Z | Shadow mode (`executionMode: 'shadow'`) is triggered when there are more than 3 unresolved shadows per line.\n73 | ARCHITECTURE | active | unverified | 2026-06-21T13:41:48.492Z | Drive-Probe rendering (`getRenderer()`) routes primarily by intelligence line, falling back to task-type rendering if no line-specific renderer is found.\n72 | ARCHITECTURE | active | unverified | 2026-06-21T13:41:48.481Z | Perceptual Layers follow a four-stage hierarchy: Surface $\\rightarrow$ Functional $\\rightarrow$ Structural $\\rightarrow$ Acausal.\n65 | ARCHITECTURE | active | unverified | 2026-06-21T13:13:12.778Z | The Language-Reflective modality uses a dedicated LLM assessment path that scores open-ended dialogue based on depth, coherence, metacognition, and integration.\n59 | ARCHITECTURE | active | unverified | 2026-06-21T12:28:35.270Z | `ProfileUpdater` hardcodes all shadow ledger entries to `DarkAddiction` and `Agency` regardless of the actual signal.\n57 | ARCHITECTURE | active | unverified | 2026-06-21T12:28:35.269Z | The `EncounterScheduler` uses a simplified priority system instead of the theoretical 7-criteria weighted formula (theta-decay, shadow-activation, etc.).\n56 | ARCHITECTURE | active | unverified | 2026-06-21T12:28:35.267Z | The `AgenticOrchestrator` currently functions as a narrative wrapper for deterministic MCQs, failing to implement the LLM-driven assessment intended for the Language-Reflective modality.\n50 | ARCHITECTURE | active | unverified | 2026-06-21T11:33:49.260Z | The `AgenticOrchestrator` system prompt enforces that every `ask_user_question` tool call must include exactly 4 MCQ options AND set `allowWriteIn=true` for a 5th manual write-in option. This ensures the LLM provides the 4-option + 5th manual entry format requested by the user.\n44 | ARCHITECTURE | active | unverified | 2026-06-21T10:55:49.716Z | LLM provider support is managed via a registry in the CLI and a provider-aware branch in `LLMClient` to handle differing API formats (e.g., OpenAI-compatible vs. Anthropic native).",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1782080264498,
+          "end": 1782080264506
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_eec42d92e0013J03rmVvQgPVAW",
+      "sessionID": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "messageID": "msg_eec42b562001yQB0L4rhdQlfeG"
+    },
+    {
+      "type": "tool",
+      "tool": "grep",
+      "callID": "Xom1HRJI3ZA7UdFz",
+      "state": {
+        "status": "completed",
+        "input": {
+          "pattern": "DriveDirectionality"
+        },
+        "output": "Found 8 match(es) in 8 file(s)\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/RED-TEAM-AUDIT.md\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/plans/2026-06-21-upgrade-refactor-plan.md\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/superpowers/specs/2026-06-18-ccrpg-upgrades-design.md\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/game/logic/dilemmaMapping.ts\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/assessments/AgenticOrchestrator.ts\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/engines/ConsequenceEngine.ts\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/domain/enums.ts\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/domain/PolarityTrace.ts\n",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1782080293474,
+          "end": 1782080293536
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_eec434a5f0011sjVkcpYKxAJAQ",
+      "sessionID": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "messageID": "msg_eec42d96a001Q6oMsBZDxwQePr"
+    },
+    {
+      "type": "tool",
+      "tool": "read",
+      "callID": "y3X3lWfREZo4gDAl",
+      "state": {
+        "status": "completed",
+        "input": {
+          "filePath": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/domain/enums.ts"
+        },
+        "output": "<path>/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/domain/enums.ts</path>\n<type>file</type>\n<content>\n1: export type Modality = 'Deterministic' | 'Strategic' | 'Embodied' | 'ScenarioChoice' | 'LanguageReflective' | 'SocialCooperative' | 'ImmersiveRPG';\n2: export const ALL_MODALITIES: readonly Modality[] = ['Deterministic', 'Strategic', 'Embodied', 'ScenarioChoice', 'LanguageReflective', 'SocialCooperative', 'ImmersiveRPG'];\n3: \n4: export type ShadowQuadrant = 'DarkAddiction' | 'DarkAllergy' | 'GoldenAddiction' | 'GoldenAllergy';\n5: export const ALL_SHADOW_QUADRANTS: readonly ShadowQuadrant[] = ['DarkAddiction', 'DarkAllergy', 'GoldenAddiction', 'GoldenAllergy'];\n6: \n7: export type HolonKind = 'NPC' | 'Faction' | 'Location' | 'Event' | 'Artifact' | 'Creature';\n8: export const ALL_HOLON_KINDS: readonly HolonKind[] = ['NPC', 'Faction', 'Location', 'Event', 'Artifact', 'Creature'];\n9: \n10: export type PolarityMode = 'Exploring' | 'Crystallizing' | 'Crystallized';\n11: export const ALL_POLARITY_MODES: readonly PolarityMode[] = ['Exploring', 'Crystallizing', 'Crystallized'];\n12: \n13: export type EnergeticDirection = 'Radiative' | 'Absorptive' | 'Sovereign' | 'Diffuse';\n14: export const ALL_ENERGETIC_DIRECTIONS: readonly EnergeticDirection[] = ['Radiative', 'Absorptive', 'Sovereign', 'Diffuse'];\n15: \n16: export type SourceOfNourishment = 'HigherRealm' | 'LowerRealm' | 'Ambivalent';\n17: export const ALL_SOURCES_OF_NOURISHMENT: readonly SourceOfNourishment[] = ['HigherRealm', 'LowerRealm', 'Ambivalent'];\n18: \n19: export type DriveDirectionality = 'HealthyBalanced' | 'DarkAddicted' | 'DarkAverted' | 'GoldenAddicted' | 'GoldenAverted';\n20: export const ALL_DRIVE_DIRECTIONALITIES: readonly DriveDirectionality[] = ['HealthyBalanced', 'DarkAddicted', 'DarkAverted', 'GoldenAddicted', 'GoldenAverted'];\n21: \n22: export type StageOrientation = 'ReachingHigher' | 'IntegratingLower' | 'Homeostatic' | 'Regressive';\n23: export const ALL_STAGE_ORIENTATIONS: readonly StageOrientation[] = ['ReachingHigher', 'IntegratingLower', 'Homeostatic', 'Regressive'];\n\n(End of file - total 23 lines)\n</content>\n\n[Project README: /home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/README.md]\n# CCRPG — Cognitive-Capacity-Driven RPG\n\n> 🚧 **Under Development** — Core architecture complete. First playable\n> (Red stage vertical slice) ready for internal testing. Full 64-cell\n> assessment module system implemented with 1,280 items across all 8\n> stages.\n\nAn assessment-module-driven developmental RPG whose every gameplay\nencounter is the gamification of a validated developmental assessment,\nwhose macro-progression is the eight stages of consciousness (64-cell\nmodule architecture: 8 lines x 8 stages), and whose endgame is the\nharvest into 4th-density unity in the canonical Law-of-One framing.\nBuilt personally. Designed to be globally deployable. Adaptive to any\nage, any developmental altitude.\n\n---\n\n## What this is\n\nCCRPG is **two things at once**:\n\n1. An assessment-module-driven developmental RPG with narrative arcs,\n   immersive gameplay, and a 64-cell module architecture (8 lines of\n   intelligence x 8 stages of consciousness). Every encounter is a\n   module executing in one of four modes (calibration, encounter,\n   practice, shadow work).\n2. A **literal cognitive / developmental practice** -- every assessment\n   module is a validated developmental exercise that simultaneously\n   diagnoses AND heals/evolves the player. The game's progression IS\n   the demonstration of integrated growth across all eight lines of\n   intelligence.\n\nThe vision is documented in `docs/00-vision.md`. The binding build\nplan is `UNIFIED-IMPLEMENTATION-PLAN.md` at the repo root.\n\n## The four canon decisions\n\n| # | Decision |\n|:-:|---|\n| 1 | **Law-of-One layer = canon, fully integrated.** Seven energy rays as first-class types; harvest into 4th density as canonical endgame. |\n| 2 | **No clinical / IRB ambition.** Commitment to *legitimate* neurological / biological / psychological efficacy via validated tasks and honest telemetry — without regulated medical-device certification. |\n| 3 | **Adaptive onboarding for any age, any altitude.** Built personally, deployed globally. |\n| 4 | **MVP = modular foundation of everything.** All 8 lines, 8 stages, 7 rays, 4 quadrants registered as modules at MVP launch. Red stage as the first vertical slice. Adding the rest is content drops. |\n\n## Repository layout\n\n```\nCCRPG/\n├── README.md                       <- you are here\n├── UNIFIED-IMPLEMENTATION-PLAN.md  <- the binding build plan\n├── MVP-BLUEPRINT.md                <- vision & philosophy (implementation details superseded)\n│\n├── docs/                           <- the research foundation\n│   ├── INDEX.md                    <- navigation\n│   ├── REQUIREMENTS.md             <- the document-of-documents\n│   ├── CHANGELOG.md                <- canon-decision history\n│   ├── STAGE-ASSESSMENT-ARCHITECTURE.md <- module contract & execution modes\n│   ├── ONBOARDING-REDESIGN-PLAN.md <- binary-search composite assessment\n│   ├── 00-vision.md\n│   ├── 01-first-principles.md\n│   ├── 02-glossary.md\n│   ├── 03-research-methodology.md\n│   ├── foundations/                <- 28 theoretical foundations (00-27)\n│   ├── lines/                      <- 8 lines of intelligence + overview\n│   ├── stages/                     <- 8 stages of consciousness + overview\n│   ├── progression/                <- progression overview\n│   ├── narrative/                  <- narrative architecture\n│   ├── archive/                    <- obsolete docs (combat/, enemies/, plan.md, etc.)\n│   └── concept-drafts/             <- 512 game concept documents (64 modules x 8 files)\n│\n├── src/                            <- Phaser 3 + TypeScript scaffold (seed of MVP)\n│   ├── core/                       <- pure TS -- domain & use cases\n│   ├── infra/                      <- persistence + native bridges\n│   └── game/                       <- Phaser scenes + UI + objects\n│\n├── tests/                          <- Vitest specs\n└── public/                         <- static assets\n```\n\n## Status\n\n| Layer | Status |\n|---|---|\n| Research / design documentation | ✅ Complete — 28 foundations + concept-drafts, canon-locked. |\n| Concept-drafts (512 modules) | ✅ Complete — all 512 concept-drafts exist. |\n| Unified build plan | ✅ Complete — `UNIFIED-IMPLEMENTATION-PLAN.md` at repo root. |\n| Implementation Phase 0: Legacy Removal | ✅ Complete — ATB removed, Significator is sole state vessel. |\n| Implementation Phase 1: Core Architecture | ✅ Complete — Assessment engine, CCI, AutoMode, Scheduler, all 64 modules with 1,280 items. |\n| Implementation Phase 2: First Playable | ✅ Complete — Full developmental loop, encounter selection UI, checkpoint system, accessibility layer. |\n| Implementation Phase 3: Polish | ✅ Complete — Macro-catalyst engine, WorldState enrichment, transformation lifecycle. |\n| Global deploy (web + Android) | ⏳ Planned. |\n\nThe `src/` contains the **full assessment-module architecture** —\n64 registered modules (8 lines × 8 stages), each with 20 assessment\nitems, mode-aware execution (capacity/encounter/shadow/calibration/practice),\nadaptive item selection, and the complete developmental loop from\nCCI computation through encounter scheduling to Significator mutation.\n\n## Quick start (the existing scaffold)\n\n```bash\nnpm install\nnpm run dev          # local Vite dev server with HMR (open http://localhost:5173)\nnpm run build        # type-check + production bundle in dist/\nnpm test             # vitest unit tests for the core\n```\n\nCapacitor / Android targets:\n\n```bash\nnpm run cap:sync     # build + cap sync\nnpm run cap:android  # build, sync, open in Android Studio\n```\n\n## Reading the documentation\n\nIf you have **30 minutes** and want the picture:\n\n1. `docs/00-vision.md`\n2. `docs/01-first-principles.md`\n3. `UNIFIED-IMPLEMENTATION-PLAN.md`\n\nIf you have **2 hours** and want the architecture:\n\n1. The above\n2. `docs/INDEX.md`\n3. `docs/foundations/00-integral-theory.md`\n4. `docs/foundations/06-law-of-one-correspondence.md` (the canon)\n5. `docs/STAGE-ASSESSMENT-ARCHITECTURE.md`\n\nIf you want **all of it**, follow the reading order in `docs/INDEX.md`.\n\n## Architecture in one paragraph\n\nThe codebase is split into three layers — `core/` (pure TypeScript,\nno Phaser, no native, no network — runs in Node, in tests, in the\nbrowser, anywhere a TS engine runs); `infra/` (I/O adapters —\npersistence, native bridges, telemetry, locale); and `game/` (the\nPhaser scenes that *visualise* the core). The MVP introduces eight\n**registries** (`LineRegistry`, `StageRegistry`, `RayRegistry`,\n`TaskRegistry`, `AbilityRegistry`, `EncounterRegistry`,\n`DriveRegistry`, `NarrativeRegistry`) so that adding a new stage,\nline, ray, task, ability, encounter, drive, or narrative beat is a\ndata-and-adapter change, never a rewrite.\n\n## The eight-stage developmental arc, at a glance\n\n| # | Stage | Energy ray | Defining capacity |\n|:-:|---|---|---|\n| 1 | Infrared / Archaic | Red | Survival, sensori-motor |\n| 2 | Magenta / Magic | Orange | Symbol, magical agency |\n| 3 | Red / Power | Yellow | Ego, will, dominance |\n| 4 | Amber / Mythic | Green | Belonging, rule-and-role |\n| 5 | Orange / Rational | Blue (in) | Reason, achievement |\n| 6 | Green / Pluralistic | Blue (out) | Sensitivity, plurality |\n| 7 | Turquoise / Integral | Indigo | Vision-logic, holism |\n| 8 | White / Super-Integral | Violet | Non-dual, harvest |\n\nPer-stage world bibles are in `docs/stages/`.\n\n## The eight lines of intelligence\n\n| Line | Quadrant home | Assessment style |\n|---|---|---|\n| Cognitive | UR | Planning, working-memory, Tower-of-London |\n| Emotional | UL | Empathy reads, affect-regulation, mood recognition |\n| Moral | UL->LL | Choice-based dilemmas, value-priority assessments |\n| Intrapersonal | UL | Witness pause, self-tag, integrate |\n| Spiritual | UL | State-shifting, value-priority modules |\n| Somatic | UR | Rhythm, proprioception, breath-gated abilities |\n| Willpower | UL->UR | Goal-locking, fatigue resistance |\n| Interpersonal | LL | Co-op synergies, conflict resolution |\n\nPer-line documents are in `docs/lines/`.\n\n## Contributing\n\nThis project is **personally authored** by [@ishan-parihar](https://github.com/ishan-parihar)\nand shipped globally. External contributions of the cognitive\ncontent (cultural reviewers for affect-recognition stimuli,\nlinguistic localisation of narration, accessibility expertise) are\nwelcomed once the MVP is stable. Until then, please use Issues for\ndiscussion. PRs against the early scaffold are accepted at the\nmaintainer's discretion.\n\nA `CONTRIBUTING.md` will be added during Phase 5.\n\n## License\n\nLicense to be finalised before public deploy. The architectural\nblueprint (now archived) and the entire `docs/` tree are provided\n*as-is for study and reference*; the implementation, when complete,\nwill carry an explicit OSS license (MIT or Apache-2.0, leaning MIT).\n\n## Acknowledgements\n\n- **Ken Wilber** — Integral / AQAL theory; the eight-stage developmental\n  framework\n- **The Ra material** (L/L Research) — the seven-ray cosmology canonised\n  into CCRPG's metaphysics\n- **Adele Diamond, Akira Miyake, Naomi Friedman** — the executive-functions\n  taxonomy CCRPG's combat verbs are gamifications of\n- **Mihaly Csikszentmihalyi** — the flow-channel theory underpinning the\n  staircase difficulty system\n- **Jean Piaget, Lawrence Kohlberg, James Fowler, Jane Loevinger,\n  Susanne Cook-Greuter, Robert Kegan** — the developmental-stages\n  research synthesised into the eight-stage canon\n- **Phaser**, **TypeScript**, **Vite**, **Capacitor**, **Vitest** — the\n  technical foundation\n\nThe full bibliography will live in `docs/validation/BIBLIOGRAPHY.md`\nduring Phase 5.\n\n---\n\n*\"Reality is not constructed; it is unfolded from a pre-existing whole.\"*\n---\nDeveloped by [Ishan Parihar](https://github.com/ishan-parihar) — If you find this useful, [consider supporting](https://rzp.io/rzp/ishan-parihar)\n",
+        "metadata": {
+          "preview": "export type Modality = 'Deterministic' | 'Strategic' | 'Embodied' | 'ScenarioChoice' | 'LanguageReflective' | 'SocialCooperative' | 'ImmersiveRPG';\nexport const ALL_MODALITIES: readonly Modality[] = ['Deterministic', 'Strategic', 'Embodied', 'ScenarioChoice', 'LanguageReflective', 'SocialCooperative', 'ImmersiveRPG'];\n\nexport type ShadowQuadrant = 'DarkAddiction' | 'DarkAllergy' | 'GoldenAddiction' | 'GoldenAllergy';\nexport const ALL_SHADOW_QUADRANTS: readonly ShadowQuadrant[] = ['DarkAddiction', 'DarkAllergy', 'GoldenAddiction', 'GoldenAllergy'];\n\nexport type HolonKind = 'NPC' | 'Faction' | 'Location' | 'Event' | 'Artifact' | 'Creature';\nexport const ALL_HOLON_KINDS: readonly HolonKind[] = ['NPC', 'Faction', 'Location', 'Event', 'Artifact', 'Creature'];\n\nexport type PolarityMode = 'Exploring' | 'Crystallizing' | 'Crystallized';\nexport const ALL_POLARITY_MODES: readonly PolarityMode[] = ['Exploring', 'Crystallizing', 'Crystallized'];\n\nexport type EnergeticDirection = 'Radiative' | 'Absorptive' | 'Sovereign' | 'Diffuse';\nexport const ALL_ENERGETIC_DIRECTIONS: readonly EnergeticDirection[] = ['Radiative', 'Absorptive', 'Sovereign', 'Diffuse'];\n\nexport type SourceOfNourishment = 'HigherRealm' | 'LowerRealm' | 'Ambivalent';\nexport const ALL_SOURCES_OF_NOURISHMENT: readonly SourceOfNourishment[] = ['HigherRealm', 'LowerRealm', 'Ambivalent'];\n\nexport type DriveDirectionality = 'HealthyBalanced' | 'DarkAddicted' | 'DarkAverted' | 'GoldenAddicted' | 'GoldenAverted';\nexport const ALL_DRIVE_DIRECTIONALITIES: readonly DriveDirectionality[] = ['HealthyBalanced', 'DarkAddicted', 'DarkAverted', 'GoldenAddicted', 'GoldenAverted'];",
+          "truncated": false,
+          "loaded": [],
+          "display": {
+            "type": "file",
+            "path": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/src/core/domain/enums.ts",
+            "text": "export type Modality = 'Deterministic' | 'Strategic' | 'Embodied' | 'ScenarioChoice' | 'LanguageReflective' | 'SocialCooperative' | 'ImmersiveRPG';\nexport const ALL_MODALITIES: readonly Modality[] = ['Deterministic', 'Strategic', 'Embodied', 'ScenarioChoice', 'LanguageReflective', 'SocialCooperative', 'ImmersiveRPG'];\n\nexport type ShadowQuadrant = 'DarkAddiction' | 'DarkAllergy' | 'GoldenAddiction' | 'GoldenAllergy';\nexport const ALL_SHADOW_QUADRANTS: readonly ShadowQuadrant[] = ['DarkAddiction', 'DarkAllergy', 'GoldenAddiction', 'GoldenAllergy'];\n\nexport type HolonKind = 'NPC' | 'Faction' | 'Location' | 'Event' | 'Artifact' | 'Creature';\nexport const ALL_HOLON_KINDS: readonly HolonKind[] = ['NPC', 'Faction', 'Location', 'Event', 'Artifact', 'Creature'];\n\nexport type PolarityMode = 'Exploring' | 'Crystallizing' | 'Crystallized';\nexport const ALL_POLARITY_MODES: readonly PolarityMode[] = ['Exploring', 'Crystallizing', 'Crystallized'];\n\nexport type EnergeticDirection = 'Radiative' | 'Absorptive' | 'Sovereign' | 'Diffuse';\nexport const ALL_ENERGETIC_DIRECTIONS: readonly EnergeticDirection[] = ['Radiative', 'Absorptive', 'Sovereign', 'Diffuse'];\n\nexport type SourceOfNourishment = 'HigherRealm' | 'LowerRealm' | 'Ambivalent';\nexport const ALL_SOURCES_OF_NOURISHMENT: readonly SourceOfNourishment[] = ['HigherRealm', 'LowerRealm', 'Ambivalent'];\n\nexport type DriveDirectionality = 'HealthyBalanced' | 'DarkAddicted' | 'DarkAverted' | 'GoldenAddicted' | 'GoldenAverted';\nexport const ALL_DRIVE_DIRECTIONALITIES: readonly DriveDirectionality[] = ['HealthyBalanced', 'DarkAddicted', 'DarkAverted', 'GoldenAddicted', 'GoldenAverted'];\n\nexport type StageOrientation = 'ReachingHigher' | 'IntegratingLower' | 'Homeostatic' | 'Regressive';\nexport const ALL_STAGE_ORIENTATIONS: readonly StageOrientation[] = ['ReachingHigher', 'IntegratingLower', 'Homeostatic', 'Regressive'];",
+            "lineStart": 1,
+            "lineEnd": 23,
+            "totalLines": 23,
+            "truncated": false
+          }
+        },
+        "title": "src/core/domain/enums.ts",
+        "time": {
+          "start": 1782080299308,
+          "end": 1782080299322
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_eec436128001JAKpVsyIJfYWG4",
+      "sessionID": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "messageID": "msg_eec434ae0001MKQtGY0lKLWH5N"
+    },
+    {
+      "type": "tool",
+      "tool": "ctx_memory",
+      "callID": "HkOiWMPNBssA7BZS",
+      "state": {
+        "status": "completed",
+        "input": {
+          "ids": [
+            58
+          ],
+          "content": "The drive directionality system uses the 5-value DriveDirectionality enum.",
+          "action": "update"
+        },
+        "output": "Updated memory [ID: 58] in ARCHITECTURE.",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1782080315462,
+          "end": 1782080315476
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_eec43a042001BAEWjvlpU70diM",
+      "sessionID": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "messageID": "msg_eec4361740019YFzXISU6gznm3"
+    },
+    {
+      "type": "tool",
+      "tool": "ctx_memory",
+      "callID": "uuYLudocGzjrq6NY",
+      "state": {
+        "status": "completed",
+        "input": {
+          "action": "write",
+          "category": "ARCHITECTURE",
+          "content": "LLM-driven assessments produce specific DriveDirectionality signals; non-LLM encounters use a binary HealthyBalanced/DarkAddicted fallback based on pass/fail status."
+        },
+        "output": "Saved memory [ID: 96] in ARCHITECTURE.",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1782080317444,
+          "end": 1782080317456
+        }
+      },
+      "id": "prt_eec43a801001BXBkrPDP4bVw7S",
+      "sessionID": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "messageID": "msg_eec4361740019YFzXISU6gznm3"
+    },
+    {
+      "type": "tool",
+      "tool": "ctx_memory",
+      "callID": "a8YFg1HIcXHCu3We",
+      "state": {
+        "status": "completed",
+        "input": {
+          "ids": [
+            50
+          ],
+          "content": "The AgenticOrchestrator system prompt enforces that every ask_user_question tool call must include exactly 4 MCQ options and set allowWriteIn=true for a 5th manual write-in option.",
+          "action": "update"
+        },
+        "output": "Updated memory [ID: 50] in ARCHITECTURE.",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1782080319121,
+          "end": 1782080319132
+        }
+      },
+      "id": "prt_eec43ae8e001e1M5ZCXckyFUUi",
+      "sessionID": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "messageID": "msg_eec4361740019YFzXISU6gznm3"
+    },
+    {
+      "type": "tool",
+      "tool": "ctx_memory",
+      "callID": "iYde5gao6wYdWZis",
+      "state": {
+        "status": "completed",
+        "input": {
+          "ids": [
+            56
+          ],
+          "action": "update",
+          "content": "The AgenticOrchestrator functions as a narrative wrapper for deterministic MCQs and does not yet implement the LLM-driven assessment for the Language-Reflective modality."
+        },
+        "output": "Updated memory [ID: 56] in ARCHITECTURE.",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1782080333206,
+          "end": 1782080333219
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_eec43e592001l7gbrWy7RbY1rV",
+      "sessionID": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "messageID": "msg_eec43aee4001CqqPo2Fadt2Q1t"
+    },
+    {
+      "type": "tool",
+      "tool": "ctx_memory",
+      "callID": "eQ3UvNgeK7XeIbUf",
+      "state": {
+        "status": "completed",
+        "input": {
+          "action": "list"
+        },
+        "output": "Found 10 active memories:\n\nID | CATEGORY     | STATUS | VERIFY     | UPDATED                  | CONTENT\n---+--------------+--------+------------+--------------------------+--------\n56 | ARCHITECTURE | active | unverified | 2026-06-21T22:18:53.213Z | The AgenticOrchestrator functions as a narrative wrapper for deterministic MCQs and does not yet implement the LLM-driven assessment for the Language-Reflective modality.\n50 | ARCHITECTURE | active | unverified | 2026-06-21T22:18:39.127Z | The AgenticOrchestrator system prompt enforces that every ask_user_question tool call must include exactly 4 MCQ options and set allowWriteIn=true for a 5th manual write-in option.\n96 | ARCHITECTURE | active | unverified | 2026-06-21T22:18:37.450Z | LLM-driven assessments produce specific DriveDirectionality signals; non-LLM encounters use a binary HealthyBalanced/DarkAddicted fallback based on pass/fail status.\n58 | ARCHITECTURE | active | unverified | 2026-06-21T22:18:35.470Z | The drive directionality system uses the 5-value DriveDirectionality enum.\n76 | ARCHITECTURE | active | unverified | 2026-06-21T15:13:21.898Z | Shadow mode (`executionMode: 'shadow'`) is triggered when there are more than 3 unresolved shadows per line.\n73 | ARCHITECTURE | active | unverified | 2026-06-21T13:41:48.492Z | Drive-Probe rendering (`getRenderer()`) routes primarily by intelligence line, falling back to task-type rendering if no line-specific renderer is found.\n72 | ARCHITECTURE | active | unverified | 2026-06-21T13:41:48.481Z | Perceptual Layers follow a four-stage hierarchy: Surface $\\rightarrow$ Functional $\\rightarrow$ Structural $\\rightarrow$ Acausal.\n65 | ARCHITECTURE | active | unverified | 2026-06-21T13:13:12.778Z | The Language-Reflective modality uses a dedicated LLM assessment path that scores open-ended dialogue based on depth, coherence, metacognition, and integration.\n59 | ARCHITECTURE | active | unverified | 2026-06-21T12:28:35.270Z | `ProfileUpdater` hardcodes all shadow ledger entries to `DarkAddiction` and `Agency` regardless of the actual signal.\n57 | ARCHITECTURE | active | unverified | 2026-06-21T12:28:35.269Z | The `EncounterScheduler` uses a simplified priority system instead of the theoretical 7-criteria weighted formula (theta-decay, shadow-activation, etc.).",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1782080343570,
+          "end": 1782080343579
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_eec440e0f001U6BJN2iQThBjW5",
+      "sessionID": "ses_113bd4ab8ffeAXd4DKtaasu9UY",
+      "messageID": "msg_eec43e5e7001hOIgdIUxRo1MD1"
+    }
+  ]
+}

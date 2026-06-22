@@ -1,0 +1,99 @@
+{
+  "parts": [
+    {
+      "type": "tool",
+      "tool": "ctx_memory",
+      "callID": "Bn8tMqRW6jrq0HWJ",
+      "state": {
+        "status": "completed",
+        "input": {
+          "action": "list"
+        },
+        "output": "Found 1 active memory:\n\nID | CATEGORY | STATUS | VERIFY     | UPDATED                  | CONTENT\n---+----------+--------+------------+--------------------------+--------\n33 | NAMING   | active | unverified | 2026-06-20T22:14:17.827Z | The project's CLI command is `ccrpg`.",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1781994555168,
+          "end": 1781994555178
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_ee727071d001wpyV5cJnjohJ2v",
+      "sessionID": "ses_118d90b9affeNbfndRUaBrOahd",
+      "messageID": "msg_ee726f479001Axoxw7QoVSLXYl"
+    },
+    {
+      "type": "tool",
+      "tool": "glob",
+      "callID": "HM8ID3XQwCETHxE4",
+      "state": {
+        "status": "completed",
+        "input": {
+          "pattern": "package.json"
+        },
+        "output": "Found 2 file(s)\n\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/.opencode/package.json\n/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/package.json",
+        "metadata": {
+          "truncated": false
+        },
+        "title": "",
+        "time": {
+          "start": 1781994563978,
+          "end": 1781994563993
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_ee7272987001NJXyAINiOGHVmJ",
+      "sessionID": "ses_118d90b9affeNbfndRUaBrOahd",
+      "messageID": "msg_ee7270758001UfCyK9fd5z0a90"
+    },
+    {
+      "type": "tool",
+      "tool": "read",
+      "callID": "eB6ZWuGe81AwfoQH",
+      "state": {
+        "status": "completed",
+        "input": {
+          "filePath": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/package.json"
+        },
+        "output": "<path>/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/package.json</path>\n<type>file</type>\n<content>\n1: {\n2:   \"name\": \"ccrpg\",\n3:   \"version\": \"0.1.0\",\n4:   \"description\": \"Cognitive-Capacity-Driven RPG — a gamified developmental assessment engine\",\n5:   \"type\": \"module\",\n6:   \"bin\": {\n7:     \"ccrpg\": \"./dist/cli/cli-game.js\"\n8:   },\n9:   \"files\": [\n10:     \"dist/cli/\",\n11:     \"src/core/data/\",\n12:     \"README.md\"\n13:   ],\n14:   \"engines\": {\n15:     \"node\": \">=18\"\n16:   },\n17:   \"scripts\": {\n18:     \"dev\": \"vite\",\n19:     \"build\": \"npm run check:invariants && tsc --noEmit && vite build\",\n20:     \"build:cli\": \"tsup\",\n21:     \"check:invariants\": \"npx tsx scripts/check-invariants.ts\",\n22:     \"preview\": \"vite preview --port 4173\",\n23:     \"typecheck\": \"tsc --noEmit\",\n24:     \"test\": \"vitest run\",\n25:     \"test:watch\": \"vitest\",\n26:     \"test:cli\": \"vitest run tests/cli.test.ts\",\n27:     \"cap:sync\": \"npm run build && cap sync\",\n28:     \"cap:android\": \"npm run build && cap sync android && cap open android\",\n29:     \"cli\": \"tsx scripts/cli-game.ts\",\n30:     \"cli:bundle\": \"node dist/cli/cli-game.js\",\n31:     \"prepublishOnly\": \"npm run build:cli\"\n32:   },\n33:   \"dependencies\": {\n34:     \"@capacitor/android\": \"^6.1.2\",\n35:     \"@capacitor/app\": \"^6.0.1\",\n36:     \"@capacitor/core\": \"^6.1.2\",\n37:     \"@capacitor/preferences\": \"^6.0.2\",\n38:     \"@clack/prompts\": \"^1.6.0\",\n39:     \"boxen\": \"^8.0.1\",\n40:     \"chalk\": \"^5.6.2\",\n41:     \"commander\": \"^15.0.0\",\n42:     \"ora\": \"^9.4.0\",\n43:     \"phaser\": \"^3.80.1\"\n44:   },\n45:   \"devDependencies\": {\n46:     \"@capacitor/cli\": \"^6.1.2\",\n47:     \"jsdom\": \"^29.1.1\",\n48:     \"tsc-alias\": \"^1.8.17\",\n49:     \"tsup\": \"^8.5.1\",\n50:     \"tsx\": \"^4.22.2\",\n51:     \"typescript\": \"^5.4.5\",\n52:     \"vite\": \"^5.4.10\",\n53:     \"vitest\": \"^2.1.4\"\n54:   }\n55: }\n\n(End of file - total 55 lines)\n</content>\n\n[Project README: /home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/README.md]\n# CCRPG — Cognitive-Capacity-Driven RPG\n\n> 🚧 **Under Development** — Core architecture complete. First playable\n> (Red stage vertical slice) ready for internal testing. Full 64-cell\n> assessment module system implemented with 1,280 items across all 8\n> stages.\n\nAn assessment-module-driven developmental RPG whose every gameplay\nencounter is the gamification of a validated developmental assessment,\nwhose macro-progression is the eight stages of consciousness (64-cell\nmodule architecture: 8 lines x 8 stages), and whose endgame is the\nharvest into 4th-density unity in the canonical Law-of-One framing.\nBuilt personally. Designed to be globally deployable. Adaptive to any\nage, any developmental altitude.\n\n---\n\n## What this is\n\nCCRPG is **two things at once**:\n\n1. An assessment-module-driven developmental RPG with narrative arcs,\n   immersive gameplay, and a 64-cell module architecture (8 lines of\n   intelligence x 8 stages of consciousness). Every encounter is a\n   module executing in one of four modes (calibration, encounter,\n   practice, shadow work).\n2. A **literal cognitive / developmental practice** -- every assessment\n   module is a validated developmental exercise that simultaneously\n   diagnoses AND heals/evolves the player. The game's progression IS\n   the demonstration of integrated growth across all eight lines of\n   intelligence.\n\nThe vision is documented in `docs/00-vision.md`. The binding build\nplan is `UNIFIED-IMPLEMENTATION-PLAN.md` at the repo root.\n\n## The four canon decisions\n\n| # | Decision |\n|:-:|---|\n| 1 | **Law-of-One layer = canon, fully integrated.** Seven energy rays as first-class types; harvest into 4th density as canonical endgame. |\n| 2 | **No clinical / IRB ambition.** Commitment to *legitimate* neurological / biological / psychological efficacy via validated tasks and honest telemetry — without regulated medical-device certification. |\n| 3 | **Adaptive onboarding for any age, any altitude.** Built personally, deployed globally. |\n| 4 | **MVP = modular foundation of everything.** All 8 lines, 8 stages, 7 rays, 4 quadrants registered as modules at MVP launch. Red stage as the first vertical slice. Adding the rest is content drops. |\n\n## Repository layout\n\n```\nCCRPG/\n├── README.md                       <- you are here\n├── UNIFIED-IMPLEMENTATION-PLAN.md  <- the binding build plan\n├── MVP-BLUEPRINT.md                <- vision & philosophy (implementation details superseded)\n│\n├── docs/                           <- the research foundation\n│   ├── INDEX.md                    <- navigation\n│   ├── REQUIREMENTS.md             <- the document-of-documents\n│   ├── CHANGELOG.md                <- canon-decision history\n│   ├── STAGE-ASSESSMENT-ARCHITECTURE.md <- module contract & execution modes\n│   ├── ONBOARDING-REDESIGN-PLAN.md <- binary-search composite assessment\n│   ├── 00-vision.md\n│   ├── 01-first-principles.md\n│   ├── 02-glossary.md\n│   ├── 03-research-methodology.md\n│   ├── foundations/                <- 28 theoretical foundations (00-27)\n│   ├── lines/                      <- 8 lines of intelligence + overview\n│   ├── stages/                     <- 8 stages of consciousness + overview\n│   ├── progression/                <- progression overview\n│   ├── narrative/                  <- narrative architecture\n│   ├── archive/                    <- obsolete docs (combat/, enemies/, plan.md, etc.)\n│   └── concept-drafts/             <- 512 game concept documents (64 modules x 8 files)\n│\n├── src/                            <- Phaser 3 + TypeScript scaffold (seed of MVP)\n│   ├── core/                       <- pure TS -- domain & use cases\n│   ├── infra/                      <- persistence + native bridges\n│   └── game/                       <- Phaser scenes + UI + objects\n│\n├── tests/                          <- Vitest specs\n└── public/                         <- static assets\n```\n\n## Status\n\n| Layer | Status |\n|---|---|\n| Research / design documentation | ✅ Complete — 28 foundations + concept-drafts, canon-locked. |\n| Concept-drafts (512 modules) | ✅ Complete — all 512 concept-drafts exist. |\n| Unified build plan | ✅ Complete — `UNIFIED-IMPLEMENTATION-PLAN.md` at repo root. |\n| Implementation Phase 0: Legacy Removal | ✅ Complete — ATB removed, Significator is sole state vessel. |\n| Implementation Phase 1: Core Architecture | ✅ Complete — Assessment engine, CCI, AutoMode, Scheduler, all 64 modules with 1,280 items. |\n| Implementation Phase 2: First Playable | ✅ Complete — Full developmental loop, encounter selection UI, checkpoint system, accessibility layer. |\n| Implementation Phase 3: Polish | ✅ Complete — Macro-catalyst engine, WorldState enrichment, transformation lifecycle. |\n| Global deploy (web + Android) | ⏳ Planned. |\n\nThe `src/` contains the **full assessment-module architecture** —\n64 registered modules (8 lines × 8 stages), each with 20 assessment\nitems, mode-aware execution (capacity/encounter/shadow/calibration/practice),\nadaptive item selection, and the complete developmental loop from\nCCI computation through encounter scheduling to Significator mutation.\n\n## Quick start (the existing scaffold)\n\n```bash\nnpm install\nnpm run dev          # local Vite dev server with HMR (open http://localhost:5173)\nnpm run build        # type-check + production bundle in dist/\nnpm test             # vitest unit tests for the core\n```\n\nCapacitor / Android targets:\n\n```bash\nnpm run cap:sync     # build + cap sync\nnpm run cap:android  # build, sync, open in Android Studio\n```\n\n## Reading the documentation\n\nIf you have **30 minutes** and want the picture:\n\n1. `docs/00-vision.md`\n2. `docs/01-first-principles.md`\n3. `UNIFIED-IMPLEMENTATION-PLAN.md`\n\nIf you have **2 hours** and want the architecture:\n\n1. The above\n2. `docs/INDEX.md`\n3. `docs/foundations/00-integral-theory.md`\n4. `docs/foundations/06-law-of-one-correspondence.md` (the canon)\n5. `docs/STAGE-ASSESSMENT-ARCHITECTURE.md`\n\nIf you want **all of it**, follow the reading order in `docs/INDEX.md`.\n\n## Architecture in one paragraph\n\nThe codebase is split into three layers — `core/` (pure TypeScript,\nno Phaser, no native, no network — runs in Node, in tests, in the\nbrowser, anywhere a TS engine runs); `infra/` (I/O adapters —\npersistence, native bridges, telemetry, locale); and `game/` (the\nPhaser scenes that *visualise* the core). The MVP introduces eight\n**registries** (`LineRegistry`, `StageRegistry`, `RayRegistry`,\n`TaskRegistry`, `AbilityRegistry`, `EncounterRegistry`,\n`DriveRegistry`, `NarrativeRegistry`) so that adding a new stage,\nline, ray, task, ability, encounter, drive, or narrative beat is a\ndata-and-adapter change, never a rewrite.\n\n## The eight-stage developmental arc, at a glance\n\n| # | Stage | Energy ray | Defining capacity |\n|:-:|---|---|---|\n| 1 | Infrared / Archaic | Red | Survival, sensori-motor |\n| 2 | Magenta / Magic | Orange | Symbol, magical agency |\n| 3 | Red / Power | Yellow | Ego, will, dominance |\n| 4 | Amber / Mythic | Green | Belonging, rule-and-role |\n| 5 | Orange / Rational | Blue (in) | Reason, achievement |\n| 6 | Green / Pluralistic | Blue (out) | Sensitivity, plurality |\n| 7 | Turquoise / Integral | Indigo | Vision-logic, holism |\n| 8 | White / Super-Integral | Violet | Non-dual, harvest |\n\nPer-stage world bibles are in `docs/stages/`.\n\n## The eight lines of intelligence\n\n| Line | Quadrant home | Assessment style |\n|---|---|---|\n| Cognitive | UR | Planning, working-memory, Tower-of-London |\n| Emotional | UL | Empathy reads, affect-regulation, mood recognition |\n| Moral | UL->LL | Choice-based dilemmas, value-priority assessments |\n| Intrapersonal | UL | Witness pause, self-tag, integrate |\n| Spiritual | UL | State-shifting, value-priority modules |\n| Somatic | UR | Rhythm, proprioception, breath-gated abilities |\n| Willpower | UL->UR | Goal-locking, fatigue resistance |\n| Interpersonal | LL | Co-op synergies, conflict resolution |\n\nPer-line documents are in `docs/lines/`.\n\n## Contributing\n\nThis project is **personally authored** by [@ishan-parihar](https://github.com/ishan-parihar)\nand shipped globally. External contributions of the cognitive\ncontent (cultural reviewers for affect-recognition stimuli,\nlinguistic localisation of narration, accessibility expertise) are\nwelcomed once the MVP is stable. Until then, please use Issues for\ndiscussion. PRs against the early scaffold are accepted at the\nmaintainer's discretion.\n\nA `CONTRIBUTING.md` will be added during Phase 5.\n\n## License\n\nLicense to be finalised before public deploy. The architectural\nblueprint (now archived) and the entire `docs/` tree are provided\n*as-is for study and reference*; the implementation, when complete,\nwill carry an explicit OSS license (MIT or Apache-2.0, leaning MIT).\n\n## Acknowledgements\n\n- **Ken Wilber** — Integral / AQAL theory; the eight-stage developmental\n  framework\n- **The Ra material** (L/L Research) — the seven-ray cosmology canonised\n  into CCRPG's metaphysics\n- **Adele Diamond, Akira Miyake, Naomi Friedman** — the executive-functions\n  taxonomy CCRPG's combat verbs are gamifications of\n- **Mihaly Csikszentmihalyi** — the flow-channel theory underpinning the\n  staircase difficulty system\n- **Jean Piaget, Lawrence Kohlberg, James Fowler, Jane Loevinger,\n  Susanne Cook-Greuter, Robert Kegan** — the developmental-stages\n  research synthesised into the eight-stage canon\n- **Phaser**, **TypeScript**, **Vite**, **Capacitor**, **Vitest** — the\n  technical foundation\n\nThe full bibliography will live in `docs/validation/BIBLIOGRAPHY.md`\nduring Phase 5.\n\n---\n\n*\"Reality is not constructed; it is unfolded from a pre-existing whole.\"*\n---\nDeveloped by [Ishan Parihar](https://github.com/ishan-parihar) — If you find this useful, [consider supporting](https://rzp.io/rzp/ishan-parihar)\n",
+        "metadata": {
+          "preview": "{\n  \"name\": \"ccrpg\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Cognitive-Capacity-Driven RPG — a gamified developmental assessment engine\",\n  \"type\": \"module\",\n  \"bin\": {\n    \"ccrpg\": \"./dist/cli/cli-game.js\"\n  },\n  \"files\": [\n    \"dist/cli/\",\n    \"src/core/data/\",\n    \"README.md\"\n  ],\n  \"engines\": {\n    \"node\": \">=18\"\n  },\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"npm run check:invariants && tsc --noEmit && vite build\",\n    \"build:cli\": \"tsup\",",
+          "truncated": false,
+          "loaded": [],
+          "display": {
+            "type": "file",
+            "path": "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/package.json",
+            "text": "{\n  \"name\": \"ccrpg\",\n  \"version\": \"0.1.0\",\n  \"description\": \"Cognitive-Capacity-Driven RPG — a gamified developmental assessment engine\",\n  \"type\": \"module\",\n  \"bin\": {\n    \"ccrpg\": \"./dist/cli/cli-game.js\"\n  },\n  \"files\": [\n    \"dist/cli/\",\n    \"src/core/data/\",\n    \"README.md\"\n  ],\n  \"engines\": {\n    \"node\": \">=18\"\n  },\n  \"scripts\": {\n    \"dev\": \"vite\",\n    \"build\": \"npm run check:invariants && tsc --noEmit && vite build\",\n    \"build:cli\": \"tsup\",\n    \"check:invariants\": \"npx tsx scripts/check-invariants.ts\",\n    \"preview\": \"vite preview --port 4173\",\n    \"typecheck\": \"tsc --noEmit\",\n    \"test\": \"vitest run\",\n    \"test:watch\": \"vitest\",\n    \"test:cli\": \"vitest run tests/cli.test.ts\",\n    \"cap:sync\": \"npm run build && cap sync\",\n    \"cap:android\": \"npm run build && cap sync android && cap open android\",\n    \"cli\": \"tsx scripts/cli-game.ts\",\n    \"cli:bundle\": \"node dist/cli/cli-game.js\",\n    \"prepublishOnly\": \"npm run build:cli\"\n  },\n  \"dependencies\": {\n    \"@capacitor/android\": \"^6.1.2\",\n    \"@capacitor/app\": \"^6.0.1\",\n    \"@capacitor/core\": \"^6.1.2\",\n    \"@capacitor/preferences\": \"^6.0.2\",\n    \"@clack/prompts\": \"^1.6.0\",\n    \"boxen\": \"^8.0.1\",\n    \"chalk\": \"^5.6.2\",\n    \"commander\": \"^15.0.0\",\n    \"ora\": \"^9.4.0\",\n    \"phaser\": \"^3.80.1\"\n  },\n  \"devDependencies\": {\n    \"@capacitor/cli\": \"^6.1.2\",\n    \"jsdom\": \"^29.1.1\",\n    \"tsc-alias\": \"^1.8.17\",\n    \"tsup\": \"^8.5.1\",\n    \"tsx\": \"^4.22.2\",\n    \"typescript\": \"^5.4.5\",\n    \"vite\": \"^5.4.10\",\n    \"vitest\": \"^2.1.4\"\n  }\n}",
+            "lineStart": 1,
+            "lineEnd": 55,
+            "totalLines": 55,
+            "truncated": false
+          }
+        },
+        "title": "package.json",
+        "time": {
+          "start": 1781994567186,
+          "end": 1781994567197
+        }
+      },
+      "metadata": {
+        "google": {
+          "thoughtSignature": "EiYKJGUyNDgzMGE3LTVjZDYtNDJmZS05OThiLWVlNTM5ZTcyYjljMw=="
+        }
+      },
+      "id": "prt_ee727360f001fJky99B65hBiOD",
+      "sessionID": "ses_118d90b9affeNbfndRUaBrOahd",
+      "messageID": "msg_ee7272a3b001NKr2H134Xy0p0s"
+    }
+  ]
+}

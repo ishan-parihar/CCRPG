@@ -1,0 +1,76 @@
+{
+  "version": 1,
+  "sessionID": "ses_11597717cffe6mvd8g1rQ0KQ3N",
+  "timestamp": "2026-06-21T13:39:53.366Z",
+  "tokens": {
+    "input": 82160,
+    "output": 3308,
+    "reasoning": 706,
+    "cacheRead": 2225536,
+    "cacheWrite": 0
+  },
+  "files": [
+    {
+      "path": "docs/foundations/",
+      "tokenEstimate": 5,
+      "role": "user"
+    }
+  ],
+  "tools": [
+    {
+      "name": "background_output",
+      "count": 1,
+      "successCount": 1,
+      "failCount": 0
+    },
+    {
+      "name": "todowrite",
+      "count": 2,
+      "successCount": 2,
+      "failCount": 0
+    },
+    {
+      "name": "bash",
+      "count": 4,
+      "successCount": 4,
+      "failCount": 0
+    },
+    {
+      "name": "read",
+      "count": 4,
+      "successCount": 4,
+      "failCount": 0
+    },
+    {
+      "name": "edit",
+      "count": 3,
+      "successCount": 3,
+      "failCount": 0
+    },
+    {
+      "name": "ctx_memory",
+      "count": 1,
+      "successCount": 1,
+      "failCount": 0
+    },
+    {
+      "name": "task",
+      "count": 3,
+      "successCount": 3,
+      "failCount": 0
+    }
+  ],
+  "acpm": {
+    "activePreset": null,
+    "allowCount": 1810,
+    "denyCount": 0,
+    "sanitizeCount": 0,
+    "deniedByCategory": {},
+    "folderAccessDistribution": {
+      "denied": 0,
+      "read-only": 0,
+      "read-write": 0
+    },
+    "toolCategoryStatus": []
+  }
+}

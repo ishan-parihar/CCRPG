@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "sessionID": "ses_118d977deffedLiGPx5rjg4fLR",
+  "timestamp": "2026-06-20T22:28:48.984Z",
+  "tokens": {
+    "input": 13375,
+    "output": 16,
+    "reasoning": 121,
+    "cacheRead": 0,
+    "cacheWrite": 0
+  },
+  "files": [],
+  "tools": [
+    {
+      "name": "ctx_memory",
+      "count": 1,
+      "successCount": 1,
+      "failCount": 0
+    }
+  ],
+  "acpm": {
+    "activePreset": null,
+    "allowCount": 357,
+    "denyCount": 0,
+    "sanitizeCount": 0,
+    "deniedByCategory": {},
+    "folderAccessDistribution": {
+      "denied": 0,
+      "read-only": 0,
+      "read-write": 0
+    },
+    "toolCategoryStatus": []
+  }
+}
