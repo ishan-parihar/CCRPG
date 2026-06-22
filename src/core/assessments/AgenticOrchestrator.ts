@@ -626,16 +626,25 @@ INSTRUCTIONS:
     let options: { label: string; description: string }[] = [];
 
     switch (encounterModality) {
-      case 'LanguageReflective':
-        narrativeIntro = `${holonName} sits across from you, their gaze steady. The firelight casts long shadows. They speak:`;
-        questionText = fallback.prompt ?? 'What moved you to act?';
-        options = [
-          { label: 'Reflect deeply', description: 'Consider the question from multiple angles' },
-          { label: 'Respond instinctively', description: 'Trust your first impulse' },
-          { label: 'Sit with it', description: 'Allow the question to remain open' },
-          { label: 'Challenge the premise', description: 'Question the foundation of what was asked' },
-        ];
+      case 'LanguageReflective': {
+        // ponytail: Direct Questioning encounters (holonSource='self-reflection') use write-in only
+        const isDirectQ = this.encounter.holonSource === 'self-reflection';
+        if (isDirectQ) {
+          narrativeIntro = '';
+          questionText = fallback.prompt ?? fallback.followUps?.[0] ?? 'What is present for you right now?';
+          options = []; // Empty → write-in only
+        } else {
+          narrativeIntro = `${holonName} sits across from you, their gaze steady. The firelight casts long shadows. They speak:`;
+          questionText = fallback.prompt ?? 'What moved you to act?';
+          options = [
+            { label: 'Reflect deeply', description: 'Consider the question from multiple angles' },
+            { label: 'Respond instinctively', description: 'Trust your first impulse' },
+            { label: 'Sit with it', description: 'Allow the question to remain open' },
+            { label: 'Challenge the premise', description: 'Question the foundation of what was asked' },
+          ];
+        }
         break;
+      }
       case 'ScenarioChoice':
         narrativeIntro = `${holonName} confronts you. The air is tense. A choice must be made.`;
         questionText = fallback.scenario ?? 'A crossroads appears. Each path carries weight.';
@@ -705,13 +714,16 @@ INSTRUCTIONS:
         allowWriteIn: true,
         multiSelect: false,
       }],
-    };
-
-    const result = await this.uiHandler.askUser(askParams);
+    };    const result = await this.uiHandler.askUser(askParams);
     const answer = result.answers[0];
-    const narrativeSummary = answer?.writeInValue ?? (answer?.selectedLabels[0] ?? 'The player engaged with the encounter.');
+      const narrativeSummary = answer?.writeInValue ?? (answer?.selectedLabels[0] ?? 'The player engaged with the encounter.');
 
-    const evaluated = this.evaluateFallbackResponse(narrativeSummary);
+    // ponytail: self-reflection (Direct Questioning) uses write-in-aware evaluation,
+    // not the keyword-based evaluateFallbackResponse designed for MCQ option labels.
+    const isSelfReflection = this.encounter.holonSource === 'self-reflection';
+    const evaluated = isSelfReflection
+      ? this.evaluateSelfReflection(narrativeSummary)
+      : this.evaluateFallbackResponse(narrativeSummary);
 
     const fallbackParams = {
       passed: evaluated.passed,
@@ -1570,6 +1582,85 @@ INSTRUCTIONS:
       driveScores: { agency: 0.6, communion: 0.6, eros: 0.6, agape: 0.6 },
       driveSignals: defaultSignals,
       feedback: 'Completed the challenge via fallback choices.'
+    };
+  }
+
+  /**
+   * Write-in evaluation for self-reflection (Direct Questioning) encounters.
+   * Unlike evaluateFallbackResponse (designed for short MCQ option labels),
+   * this analyzes reflective prose for depth, coherence, and shadow signals.
+   * Always passes — self-reflection is a practice, not a test.
+   */
+  private evaluateSelfReflection(responseText: string): {
+    passed: boolean;
+    polarityDirection: 'sto' | 'sts' | 'neutral';
+    driveScores: { agency: number; communion: number; eros: number; agape: number };
+    driveSignals: { agency: string; communion: string; eros: string; agape: string };
+    feedback: string;
+  } {
+    const line = this.encounter.moduleRef.split(':')[0];
+    const lower = responseText.toLowerCase();
+    const wordCount = lower.split(/\s+/).filter(w => w.length > 0).length;
+
+    // Early return for empty/very short responses — honest but non-punitive
+    if (wordCount < 5) {
+      return {
+        passed: true, // still passes — brevity is not failure
+        polarityDirection: 'neutral',
+        driveScores: { agency: 0.5, communion: 0.5, eros: 0.5, agape: 0.5 },
+        driveSignals: { agency: 'HealthyBalanced', communion: 'HealthyBalanced', eros: 'HealthyBalanced', agape: 'HealthyBalanced' },
+        feedback: `A brief reflection. The ${line} line invites deeper exploration when you're ready — there is no rush, only invitation.`,
+      };
+    }
+
+    const uniqueWords = new Set(lower.split(/\s+/).filter(w => w.length > 0)).size;
+    const conceptDensity = wordCount > 0 ? uniqueWords / wordCount : 0;
+
+    // Depth heuristics
+    const lengthBonus = wordCount > 30 ? 0.3 : wordCount > 15 ? 0.2 : 0.1;
+    const densityBonus = conceptDensity > 0.7 ? 0.15 : conceptDensity > 0.5 ? 0.1 : 0;
+    const depthScore = Math.min(1.0, 0.4 + lengthBonus + densityBonus);
+
+    // Shadow detection from write-in
+    const shadow = AgenticOrchestrator.detectShadowKeywords(responseText);
+
+    // Drive detection from semantic content
+    const driveKeywords = {
+      agency: ['decide', 'choose', 'act', 'control', 'direct', 'lead', 'assert', 'boundary', 'independent', 'own'],
+      communion: ['connect', 'together', 'share', 'listen', 'empathy', 'feel', 'relationship', 'others', 'belong', 'community'],
+      eros: ['grow', 'reach', 'aspire', 'seek', 'question', 'explore', 'transform', 'evolve', 'deeper', 'meaning'],
+      agape: ['accept', 'integrate', 'compassion', 'hold', 'include', 'balance', 'paradox', 'surrender', 'release', 'wholeness'],
+    };
+    const driveScores: Record<string, number> = { agency: 0.5, communion: 0.5, eros: 0.5, agape: 0.5 };
+    for (const [drive, keywords] of Object.entries(driveKeywords)) {
+      const matches = keywords.filter(kw => lower.includes(kw)).length;
+      if (matches > 0) driveScores[drive] = Math.min(1.0, 0.5 + matches * 0.1);
+    }
+
+    // Polarity from drive balance
+    const selfDominant = driveScores.agency + driveScores.eros;
+    const otherDominant = driveScores.communion + driveScores.agape;
+    let polarityDirection: 'sto' | 'sts' | 'neutral';
+    if (selfDominant > otherDominant + 0.3) polarityDirection = 'sts';
+    else if (otherDominant > selfDominant + 0.3) polarityDirection = 'sto';
+    else polarityDirection = 'neutral';
+
+    // Always passes — self-reflection is a practice, not a test
+    const feedback = shadow
+      ? `A ${shadow.quadrant} pattern surfaced through your reflection. Naming it here is the first step toward integration. Your response contained ${wordCount} words with ${(conceptDensity * 100).toFixed(0)}% conceptual density.`
+      : `Your reflection on the ${line} line showed ${depthScore > 0.7 ? 'notable depth' : 'genuine engagement'}. The field registers your willingness to look inward.`;
+
+    return {
+      passed: true,
+      polarityDirection,
+      driveScores: driveScores as { agency: number; communion: number; eros: number; agape: number },
+      driveSignals: {
+        agency: shadow?.quadrant === 'DarkAddiction' ? 'DarkAddicted' : 'HealthyBalanced',
+        communion: shadow?.quadrant === 'DarkAllergy' ? 'DarkAverted' : 'HealthyBalanced',
+        eros: shadow?.quadrant === 'GoldenAddiction' ? 'GoldenAddicted' : 'HealthyBalanced',
+        agape: shadow?.quadrant === 'GoldenAllergy' ? 'GoldenAverted' : 'HealthyBalanced',
+      },
+      feedback,
     };
   }
 

@@ -735,6 +735,28 @@ function renderLinesProgress(sig: Significator, history: ConsequenceRecord[]): v
   console.log('');
 }
 
+/** Render radar chart showing developmental profile across 8 lines */
+function renderRadarChart(sig: Significator): void {
+  if (JSON_MODE) return;
+  const lines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal'];
+  const allStages = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'] as const;
+
+  console.log(`\n  ${chalk.bold('Developmental Profile — Radar Chart')}\n`);
+
+  for (const line of lines) {
+    const stage = sig.altitudes[line] ?? 'Red';
+    const stageIdx = allStages.indexOf(stage as typeof allStages[number]);
+    const color = stageColor(stage);
+
+    const barLen = 16;
+    const filled = Math.round((stageIdx / (allStages.length - 1)) * barLen);
+    const bar = '█'.repeat(filled) + '░'.repeat(barLen - filled);
+
+    console.log(`  ${chalk.dim(line.padEnd(14))} ${color(bar)} ${color(stage)}`);
+  }
+  console.log('');
+}
+
 // ── Print state ───────────────────────────────────────────────────────
 function printSignificator(sig: Significator): void {
   info('id', sig.id);
@@ -1102,6 +1124,152 @@ async function runSingleEncounter(): Promise<void> {
   info('narrative', result.narrativeSummary);
 }
 
+// ── Direct Questioning session — true 8-line flow ──────────────────
+async function runDirectQuestioningSession(
+  initialSig: Significator,
+  initialWorld: WorldState,
+): Promise<void> {
+  banner('DIRECT QUESTIONING');
+  console.log(`  ${chalk.dim('A systematic exploration of your developmental landscape.')}`);
+  console.log(`  ${chalk.dim('8 questions \u2014 one per line of intelligence. Write freely.')}\n`);
+
+  const ALL_LINES: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
+  // ponytail: Fisher-Yates shuffle in-place
+  const shuffledLines = [...ALL_LINES];
+  for (let i = shuffledLines.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffledLines[i]!, shuffledLines[j]!] = [shuffledLines[j]!, shuffledLines[i]!];
+  }
+
+  let currentSig = initialSig;
+  let currentWorld = initialWorld;
+  const history: ConsequenceRecord[] = [];
+  const consecutivePasses = new Map<string, number>();
+
+  for (let i = 0; i < shuffledLines.length; i++) {
+    const line = shuffledLines[i]!;
+    const currentStage = currentSig.altitudes[line] ?? 'Red';
+
+    separator(`Line ${i + 1}/8 \u2014 ${line}`);
+
+    // ponytail: synthetic encounter forces LanguageReflective modality
+    const encounter: ScheduledEncounter = {
+      id: `dq-${line}:${currentStage}:${Date.now()}`,
+      moduleRef: `${line}:${currentStage}`,
+      modality: 'LanguageReflective',
+      targetLines: [line],
+      stage: currentStage,
+      holonSource: 'self-reflection',
+      shadowTarget: null,
+      polarityMode: 'Exploring',
+      difficulty: 0.5,
+      sessionPosition: i < 2 ? 'warmup' : i >= 6 ? 'cooldown' : 'peak',
+      priority: 1.0,
+      driveTarget: null,
+      executionMode: 'capacity',
+    };
+
+    try {
+      const result = await runAgenticEncounter(encounter, currentSig, currentWorld, history, undefined, consecutivePasses);
+
+      // Qualitative feedback — no pass/fail, no clinical labels
+      const cr = result.outcome.consequenceRecord;
+      if (!JSON_MODE) {
+        const driveEntries = Object.entries(cr.polarityTrace.driveDirectionality);
+        const dominantDrive = driveEntries.find(([, v]) => v !== 'HealthyBalanced');
+
+        const polarityArrow = cr.polarityTrace.energeticDirection === 'Radiative' ? '\u2191'
+          : cr.polarityTrace.energeticDirection === 'Absorptive' ? '\u2193' : '\u00b7';
+
+        const briefNarrative = result.narrativeSummary.length > 120
+          ? result.narrativeSummary.slice(0, 120) + '...'
+          : result.narrativeSummary;
+        console.log(`\n  ${chalk.dim('\u2726')} ${briefNarrative}`);
+
+        if (dominantDrive) {
+          const driveLabel = `${dominantDrive[0]} drive, ${cr.polarityTrace.stageOrientation}`;
+          console.log(`  ${chalk.dim('The encounter stirred:')} ${chalk.cyan(polarityArrow + ' ' + driveLabel)}`);
+        }
+
+        if (cr.shadowSurfaced) {
+          console.log(`  ${chalk.dim('Something beneath the surface stirred.')}`);
+        }
+      }
+
+      history.push(cr);
+      currentSig = result.outcome.updatedSig;
+      currentWorld = result.outcome.updatedWorld;
+
+      emitEvent('dq_line_completed', {
+        line, stage: currentStage,
+        narrative: result.narrativeSummary,
+        totalEncounters: currentSig.totalEncounters,
+      });
+    } catch (err: any) {
+      error(`Encounter failed: ${err.message || err}`);
+      emitEvent('dq_line_error', { line, error: err.message });
+    }
+  }
+
+  // Radar chart
+  renderRadarChart(currentSig);
+
+  // Session end — apply theta-decay and increment totalSessions
+  const now = Date.now();
+  const sessionState = startSession(currentSig, { encountersSoFar: 8, sessionDurationMs: 0, targetSessionLength: 8, recentLines: [] });
+  const sessionEnd = endSession(currentSig, sessionState, now);
+  currentSig = sessionEnd.sig;
+
+  // Developmental summary
+  if (!JSON_MODE) {
+    const linesAssessed = [...new Set(history.map(r => r.encounterId?.split(':')[0] ?? ''))].filter(Boolean);
+    const driveCounts: Record<string, number> = { agency: 0, communion: 0, eros: 0, agape: 0 };
+    for (const r of history) {
+      const drive = r.polarityTrace.sourceOfNourishment === 'HigherRealm' ? 'eros'
+        : r.polarityTrace.sourceOfNourishment === 'LowerRealm' ? 'agency' : 'communion';
+      driveCounts[drive]++;
+    }
+    const dominantDrive = Object.entries(driveCounts).sort((a, b) => b[1] - a[1])[0];
+
+    console.log(`  ${chalk.bold('Developmental Summary')}`);
+    console.log(`  ${chalk.dim('Lines assessed:')} ${linesAssessed.length}/8 (${linesAssessed.join(', ') || 'none'})`);
+    if (dominantDrive && dominantDrive[1] > 0) {
+      console.log(`  ${chalk.dim('Dominant drive:')} ${chalk.cyan(dominantDrive[0])} (${Math.round(dominantDrive[1] / 8 * 100)}% of responses)`);
+    }
+
+    const linesPending = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal']
+      .filter(l => !linesAssessed.includes(l));
+    if (linesPending.length > 0) {
+      console.log(`  ${chalk.dim('Lines pending:')} ${linesPending.length}/8 (${linesPending.join(', ')})`);
+    }
+
+    console.log(`\n  ${chalk.dim('The session closes. Each question was a mirror \u2014 reflecting not who you are, but who you are becoming.')}`);
+  }
+
+  // Final state display
+  console.log('');
+  const finalSnapshot = toSnapshot(currentSig);
+  const finalCCI = computeCCI(finalSnapshot);
+  renderCCIDisplay(finalCCI);
+  console.log('');
+  renderShadows(currentSig);
+  renderDrives(currentSig);
+
+  // Save
+  saveGame(currentSig);
+  saveWorldState(currentWorld);
+  if (!JSON_MODE) info('save', `${chalk.green('Progress saved')}`);
+
+  emitEvent('session_ended', {
+    mode: 'direct',
+    linesAssessed: history.length,
+    totalEncounters: currentSig.totalEncounters,
+    totalSessions: currentSig.totalSessions,
+    shadowsSurfaced: currentSig.shadows.activeCount,
+    finalStage: currentSig.currentStage,
+  });
+}
+
 // ── Full session mode ─────────────────────────────────────────────────
 async function runFullSession(): Promise<void> {
   banner('CCRPG Session Runner');
@@ -1166,6 +1334,12 @@ async function runFullSession(): Promise<void> {
     gameMode = String(modeChoice);
   }
   const isDirectMode = gameMode === 'direct';
+
+  // ponytail: Direct Questioning gets its own session flow — 8 lines, write-in, no pass/fail
+  if (isDirectMode) {
+    await runDirectQuestioningSession(currentSig, currentWorld);
+    return;
+  }
 
   banner('SESSION START');
   info('theme', `${chalk.cyan(sessionState.strategy.theme)}`);
