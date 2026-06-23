@@ -454,6 +454,7 @@ export class AgenticOrchestrator {
   }
 
   private async runLanguageReflective(line: Line, stage: Stage, now: number): Promise<OrchestratorResult> {
+    const isSelfReflection = this.encounter.holonSource === 'self-reflection';
     const continuityContext = this.buildContinuityContext();
     const contextInput = {
       encounter: this.encounter,
@@ -466,7 +467,36 @@ export class AgenticOrchestrator {
     const context = buildContext(contextInput);
     const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';
 
-    const systemPrompt = `${context.systemPrompt}${assessmentContext}${continuityContext}
+    // ponytail: self-reflection encounters get a different prompt — direct, no narrative intro
+    const systemPrompt = isSelfReflection
+      ? `${context.systemPrompt}${assessmentContext}${continuityContext}
+[DIRECT QUESTIONING — SELF-REFLECTION]
+You are a developmental mirror. The player is exploring their inner landscape across 8 lines of intelligence.
+
+INSTRUCTIONS:
+1. Generate a single, direct reflective prompt. NO narrative intro, NO NPC scene-setting. The prompt should be:
+   - Line-specific to ${line} (this encounter probes the ${line.toLowerCase()} dimension)
+   - Stage-appropriate for ${stage}
+   - Evocative but not leading — open a door, don't push them through it
+   - 2-3 sentences maximum
+
+2. Call 'ask_user_question' with EXACTLY this structure:
+   - questions[0].question: Your direct reflective prompt
+   - questions[0].header: "${line} Line — Self-Reflection"
+   - questions[0].options: [] (EMPTY array — write-in only)
+   - questions[0].allowWriteIn: true
+   - questions[0].multiSelect: false
+
+3. After the player responds, call 'complete_encounter' evaluating:
+   - Depth: How far beneath the surface? (surface=0.3, moderate=0.6, deep=0.9)
+   - Coherence: Unified expression? (fragmented=0.3, coherent=0.7, integrated=0.95)
+   - Metacognition: References own thinking? (none=0.2, implicit=0.5, explicit=0.85)
+   - Integration: Connects to prior encounters? (isolated=0.3, connected=0.6, transformative=0.9)
+
+4. Shadow detection from write-in: Dark-Addiction (clinging/forcing), Dark-Aversion (withdrawal/numbness), Golden-Addiction (bypassing), Golden-Allergy (resistance to growth).
+5. always passed: true — self-reflection is a practice, not a test.
+6. Keep your response to 2-3 sentences. Be precise.`
+      : `${context.systemPrompt}${assessmentContext}${continuityContext}
 [LANGUAGE-REFLECTIVE ASSESSMENT]
 You are conducting a deep developmental assessment through open-ended dialogue.
 
@@ -609,12 +639,12 @@ INSTRUCTIONS:
    * altitude shifts from consistent healthy patterns.
    */
   private async runFallback(line: Line, stage: Stage, now: number): Promise<OrchestratorResult> {
-    // CHECK: If we have an assessment module, use it for a real assessment
-    if (this.module) {
+    // ponytail: Direct Questioning encounters use write-in path, bypass module MCQ
+    const isSelfReflection = this.encounter.holonSource === 'self-reflection';
+    if (!isSelfReflection && this.module) {
       return this.runModuleAssessment(line, stage, now);
     }
 
-    // Original generic fallback when no module is available
     const fallback = getFallback(this.encounter.modality, line, stage);
     const holon = this.world.holons.find(h => h.id === this.encounter.holonSource);
     const holonName = holon?.name ?? 'A presence';
@@ -627,9 +657,7 @@ INSTRUCTIONS:
 
     switch (encounterModality) {
       case 'LanguageReflective': {
-        // ponytail: Direct Questioning encounters (holonSource='self-reflection') use write-in only
-        const isDirectQ = this.encounter.holonSource === 'self-reflection';
-        if (isDirectQ) {
+        if (isSelfReflection) {
           narrativeIntro = '';
           questionText = fallback.prompt ?? fallback.followUps?.[0] ?? 'What is present for you right now?';
           options = []; // Empty → write-in only
@@ -718,9 +746,6 @@ INSTRUCTIONS:
     const answer = result.answers[0];
       const narrativeSummary = answer?.writeInValue ?? (answer?.selectedLabels[0] ?? 'The player engaged with the encounter.');
 
-    // ponytail: self-reflection (Direct Questioning) uses write-in-aware evaluation,
-    // not the keyword-based evaluateFallbackResponse designed for MCQ option labels.
-    const isSelfReflection = this.encounter.holonSource === 'self-reflection';
     const evaluated = isSelfReflection
       ? this.evaluateSelfReflection(narrativeSummary)
       : this.evaluateFallbackResponse(narrativeSummary);

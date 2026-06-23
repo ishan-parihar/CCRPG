@@ -741,6 +741,34 @@
       "lastActiveAt": "2026-06-21T23:07:12.574Z",
       "agent": "historian",
       "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_10eee4ca1ffe3Yr010XTAQ2ydO",
+      "startedAt": "2026-06-22T20:42:09.763Z",
+      "lastActiveAt": "2026-06-22T20:42:09.763Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_10eec3a69ffe5fAXyOLKxHanpP",
+      "startedAt": "2026-06-22T20:44:25.378Z",
+      "lastActiveAt": "2026-06-22T20:44:25.378Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_10ee9820affezlfiXVOpE25L1A",
+      "startedAt": "2026-06-22T20:47:23.653Z",
+      "lastActiveAt": "2026-06-22T20:47:23.653Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_10ee8a6adffewv6pvmZqamni9Q",
+      "startedAt": "2026-06-22T20:48:19.809Z",
+      "lastActiveAt": "2026-06-22T20:48:19.809Z",
+      "agent": "dreamer",
+      "sessionKind": "unknown"
     }
   ]
 }
