@@ -147,7 +147,8 @@ import type { Stage } from '../src/core/domain/Stage.js';
 import type { ScheduledEncounter } from '../src/core/domain/EncounterSpecNew.js';
 import type { PlayerResponse } from '../src/core/engines/ConsequenceEngine.js';
 import type { SessionContext } from '../src/core/engines/PriorityComputation.js';
-import { startSession, tickWithStrategy, endSession, type SessionState } from '../src/core/GameLoop.js';
+import { startSession, tickWithStrategy, endSession, applyResponseOnly, type SessionState } from '../src/core/GameLoop.js';
+import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixModel.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
@@ -1210,6 +1211,27 @@ async function runDirectQuestioningSession(
       currentSig = result.outcome.updatedSig;
       currentWorld = result.outcome.updatedWorld;
 
+      // Wave 1.3: Apply the response to GameLoop state engines in Direct Questioning mode too.
+      // DQ bypasses tickWithStrategy but should still update UserMatrixModel + transformation state.
+      if (result.response) {
+        // DQ doesn't have a sessionState from startSession — create a minimal one
+        const dqSessionState: SessionState = {
+          strategy: { theme: 'balanced-development', weightBias: { thetaUrgency: 1, shadowActivation: 1, polarityAlignment: 1, transformationReadiness: 1, driveCorrection: 1, narrativeCoherence: 1, sessionFit: 1 }, encounterBudget: { totalTarget: 8, warmup: 2, peak: 4, cooldown: 2 }, adjustmentThresholds: { reEvaluationInterval: 5, midSessionAdjustmentThreshold: 0.3 } },
+          cci: { composite: 0.5, dimensions: { altitude: 0.3, driveHealth: 0.5, polarity: 0.2, shadowTopology: 0.5, transformationReadiness: 0.2 }, weights: { altitude: 0.15, driveHealth: 0.25, polarity: 0.15, shadowTopology: 0.25, transformationReadiness: 0.2 }, dominantDimension: 'driveHealth', sessionSignals: { recommendedTheme: 'balanced-development', intensityBudget: 0.5, shadowPressure: 'low', transformationProximity: 'distant', driveRebalancingTarget: null, polarityGuidance: { mode: 'exploration', recommendedDiversity: 0.7, temptationFrequency: 0.3 } } },
+          recentOutcomes: [],
+          encountersSinceRefresh: i,
+          transformationState: { phase: currentSig.transformationPhase ?? 'idle', targetStage: currentSig.transformationTargetStage ?? null, sessionsInPhase: currentSig.transformationSessionsInPhase ?? 0, knotsResolved: currentSig.transformationKnotsResolved ?? 0, totalKnots: currentSig.transformationTotalKnots ?? 0 },
+          userMatrixModel: (globalThis as any).__userMatrixModel ?? createInitialUserMatrixModel(),
+        };
+        const applied = applyResponseOnly(
+          currentSig, currentWorld, dqSessionState,
+          result.response, encounter, Date.now(),
+        );
+        currentSig = applied.sig;
+        currentWorld = applied.world;
+        (globalThis as any).__userMatrixModel = applied.sessionState.userMatrixModel;
+      }
+
       emitEvent('dq_line_completed', {
         line, stage: currentStage,
         narrative: result.narrativeSummary,
@@ -1468,6 +1490,24 @@ async function runFullSession(): Promise<void> {
       history.push(record);
       currentSig = result.outcome.updatedSig;
       currentWorld = result.outcome.updatedWorld;
+
+      // Wave 1.1: Apply the response to the GameLoop's state engines
+      // (UserMatrixModel + transformation state) WITHOUT re-applying consequences
+      // (the orchestrator already did that). This fixes the stale-state bug where
+      // UserMatrixModel was never updated and transformation state ran on stale sig.
+      if (result.response) {
+        const applied = applyResponseOnly(
+          currentSig,
+          currentWorld,
+          sessionState,
+          result.response,
+          selectedEncounter,
+          Date.now(),
+        );
+        currentSig = applied.sig;
+        currentWorld = applied.world;
+        sessionState = applied.sessionState;
+      }
 
 
 

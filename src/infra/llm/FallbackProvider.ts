@@ -1029,6 +1029,36 @@ const REFRAME_LAYERS: Partial<Record<string, Record<AltitudeBand, ReframeLayer>>
       suffix: ' — What is the felt-quality of the optimizing impulse arising and dissolving?',
     },
   },
+  Green: {
+    low: { prefix: '', suffix: '' },
+    mid: { prefix: '', suffix: '' },
+    high: {
+      prefix: 'Notice the Green-stage pattern: sensitivity as identity, inclusion as purpose. You can see it from above. ',
+      suffix: ' — Where does the sensitivity-self still bind you, even as you witness its compassion-nature?',
+    },
+    peak: {
+      prefix: 'From presence, witness the Green pattern of empathic inclusion. ',
+      suffix: ' — What is the felt-quality of the inclusion-impulse arising and dissolving?',
+    },
+  },
+  Turquoise: {
+    low: { prefix: '', suffix: '' },
+    mid: { prefix: '', suffix: '' },
+    high: { prefix: '', suffix: '' },  // co-altitudinal for high-band Turquoise players
+    peak: {
+      prefix: 'From presence, witness the Turquoise pattern of integral vision. ',
+      suffix: ' — What is the felt-quality of the integral-impulse arising and dissolving?',
+    },
+  },
+  White: {
+    low: { prefix: '', suffix: '' },
+    mid: { prefix: '', suffix: '' },
+    high: { prefix: '', suffix: '' },
+    peak: {
+      prefix: 'From presence, witness the White pattern of non-dual release. ',
+      suffix: ' — What is the felt-quality of presence itself, without object?',
+    },
+  },
 };
 
 function applyReframe(content: FallbackContent, holonStage: Stage, playerStage: Stage): FallbackContent {

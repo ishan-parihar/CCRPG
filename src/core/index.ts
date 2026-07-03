@@ -12,7 +12,6 @@ export * from './domain/Line.js';
 export * from './domain/Ray.js';
 export * from './domain/Drive.js';
 export * from './domain/State.js';
-export * from './domain/PlayerProfile.js';
 export * from './domain/Significator.js';
 export * from './domain/Encounter.js';
 

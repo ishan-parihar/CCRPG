@@ -41,6 +41,110 @@ export interface TickResult {
   readonly bleedThrough: readonly string[];
 }
 
+/**
+ * Wave 1.1: Apply a response WITHOUT scheduling the next encounter.
+ * This decouples "apply consequences + update UserMatrixModel + advance
+ * transformation state" from "schedule next encounter." The CLI's
+ * AgenticOrchestrator already calls applyConsequences internally, so
+ * passing the response to tickWithStrategy would double-count. Instead,
+ * the CLI calls applyResponseOnly first, then tickWithStrategy(null, null)
+ * for scheduling only.
+ *
+ * Returns the updated sig, world, and sessionState (with UserMatrixModel
+ * and transformation state advanced).
+ */
+export function applyResponseOnly(
+  sig: Significator,
+  world: WorldState,
+  sessionState: SessionState,
+  response: PlayerResponse,
+  previousEncounter: ScheduledEncounter,
+  now: number,
+): { sig: Significator; world: WorldState; sessionState: SessionState } {
+  let updatedSig = sig;
+  let updatedWorld = world;
+  let updatedUserMatrix = sessionState.userMatrixModel;
+  let updatedTransformationState = sessionState.transformationState;
+
+  // The orchestrator already called applyConsequences, so we DON'T re-apply.
+  // But we DO need to update UserMatrixModel and advance transformation state.
+
+  // Update UserMatrixModel
+  const inference = inferFromResponse(
+    response.narrativeSummary ?? '',
+    response.driveDirectionality,
+    response.shadowSurfaced,
+  );
+  const line = previousEncounter.targetLines[0] ?? 'Cognitive';
+  const stage = previousEncounter.stage;
+  updatedUserMatrix = updateUserMatrix(updatedUserMatrix, line, stage, inference, now);
+  updatedUserMatrix = promotePhase(updatedUserMatrix, updatedSig.polarity.master.mode);
+
+  // Advance transformation state
+  updatedTransformationState = advanceTransformation(updatedTransformationState, updatedSig);
+
+  // Record knot resolution if shadow encounter was passed
+  if (previousEncounter.executionMode === 'shadow') {
+    const shadowPassed = Object.values(response.driveDirectionality).every(d => d === 'HealthyBalanced');
+    if (shadowPassed) {
+      updatedTransformationState = recordKnotResolution(updatedTransformationState);
+    }
+  }
+
+  // Check for transformation commit
+  const commitResult = commitTransformation(updatedTransformationState);
+  if (commitResult.targetStage) {
+    updatedSig = {
+      ...updatedSig,
+      currentStage: commitResult.targetStage,
+      transformations: [
+        ...updatedSig.transformations,
+        {
+          fromStage: updatedSig.currentStage,
+          toStage: commitResult.targetStage,
+          triggeredAt: Date.now(),
+          triggeredAtSession: updatedSig.totalSessions,
+          catalystCount: updatedSig.totalEncounters,
+        },
+      ],
+    };
+    updatedTransformationState = commitResult.newState;
+    updatedUserMatrix = resetPhaseAfterTransformation(updatedUserMatrix);
+  }
+
+  // Persist transformation state to sig
+  updatedSig = {
+    ...updatedSig,
+    transformationPhase: updatedTransformationState.phase,
+    transformationTargetStage: updatedTransformationState.targetStage,
+    transformationSessionsInPhase: updatedTransformationState.sessionsInPhase,
+    transformationKnotsResolved: updatedTransformationState.knotsResolved,
+    transformationTotalKnots: updatedTransformationState.totalKnots,
+  };
+
+  // Track outcome
+  const quality = estimateResponseQuality(response);
+  const newOutcome: RecentEncounter = {
+    outcome: 'completed',
+    quality,
+    mode: previousEncounter.executionMode === 'shadow' ? 'shadow' : 'capacity',
+    shadowIntegrated: previousEncounter.executionMode === 'shadow' && quality > 0.5,
+  };
+  const recentOutcomes = [newOutcome, ...sessionState.recentOutcomes].slice(0, 20);
+
+  return {
+    sig: updatedSig,
+    world: updatedWorld,
+    sessionState: {
+      ...sessionState,
+      recentOutcomes,
+      encountersSinceRefresh: sessionState.encountersSinceRefresh + 1,
+      transformationState: updatedTransformationState,
+      userMatrixModel: updatedUserMatrix,
+    },
+  };
+}
+
 export interface SessionState {
   readonly strategy: SessionStrategy;
   readonly cci: CCIScore;
