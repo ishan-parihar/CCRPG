@@ -89,7 +89,12 @@ export interface CCIScore {
     gz: number;
     pz: number;
     total: number;
-    interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck';
+    interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck' | 'transitional';
+    liminalitySignature?: {
+      readonly pzSpike: boolean;
+      readonly subDensitySaturation: boolean;
+      readonly isTransitional: boolean;
+    };
   };
 }
 
@@ -708,7 +713,8 @@ export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
   // 6. Derive session signals
   const sessionSignals = deriveSessionSignals(dimensions, inputs);
 
-  // 7. T-1.8: Compute HoloOS G_z / P_z dual health metrics.
+  // 7. GAP-D2-2: Compute HoloOS G_z / P_z dual health metrics with
+  // Significator-Liminality detection (per HoloOS 08.8.14).
   // G_z (Lesser-Cycle, Agape/integration) from driveHealth + shadowTopology.
   // P_z (Greater-Cycle, Eros/polarization) from polarity + transformationReadiness.
   // Total Metabolic Health = G_z · P_z (geometric mean, per foundations/25 §1.1).
@@ -719,8 +725,24 @@ export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
     dimensions.polarity * 0.55 + dimensions.transformationReadiness * 0.45,
   );
   const total = gz * pz;
-  let interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck';
-  if (gz < 0.3 && pz < 0.3) {
+
+  // Liminality signature: P_z spike + sub-density saturation (≥5/8 lines
+  // with polarity crystallization > 0.7) → 'transitional' (healthy phase-transition)
+  const pzSpike = pz > 0.7;
+  const saturatedLines = new Set<string>();
+  for (const key of Object.keys(snapshot.polarity.cells)) {
+    if ((snapshot.polarity.cells[key]?.crystallization ?? 0) > 0.7) {
+      const [line] = key.split(':');
+      if (line) saturatedLines.add(line);
+    }
+  }
+  const subDensitySaturation = saturatedLines.size >= 5;
+  const isTransitional = pzSpike && subDensitySaturation;
+
+  let interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck' | 'transitional';
+  if (isTransitional) {
+    interpretation = 'transitional';
+  } else if (gz < 0.3 && pz < 0.3) {
     interpretation = 'stuck';
   } else if (gz > 0.6 && pz < 0.3) {
     interpretation = 'consolidating';
@@ -736,7 +758,7 @@ export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
     weights,
     dominantDimension,
     sessionSignals,
-    metabolicHealth: { gz, pz, total, interpretation },
+    metabolicHealth: { gz, pz, total, interpretation, liminalitySignature: { pzSpike, subDensitySaturation, isTransitional } },
   };
 }
 

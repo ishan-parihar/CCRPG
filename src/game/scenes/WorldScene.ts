@@ -21,7 +21,7 @@ import type { EventBus } from '@core/events/EventBus.js';
 import type { ModuleRegistry } from '@core/assessments/registry.js';
 import { StageRegistry } from '@core/registries/index.js';
 import { applyWeightBias } from '@core/engines/AutoModeStrategy.js';
-import { advanceTransformation } from '@core/engines/TransformationDetector.js';
+import { advanceTransformation, type TransformationState } from '@core/engines/TransformationDetector.js';
 
 const MODALITY_THEME: Record<Modality, { color: number; label: string }> = {
   Deterministic: { color: 0xffaa00, label: 'Ancient Shrine' },
@@ -162,13 +162,28 @@ export class WorldScene extends Phaser.Scene {
       const result = tickWithStrategy(sig, world, session, existingSessionState, null, null, now);
       this.sessionState = result.sessionState;
 
-      // Advance transformation state machine (once per session tick)
+      // GAP-F-3: Read FULL transformation state from Significator (not just phase).
+      // Prior code reconstructed with all counters at 0, causing the state machine
+      // to deadlock at 'threshold' or skip the crucible.
       const ts = result.tickResult.sig.transformationPhase ?? 'idle';
-      const transformationState = { phase: ts, targetStage: null, sessionsInPhase: 0, knotsResolved: 0, totalKnots: 0 };
+      const transformationState = {
+        phase: ts as TransformationState['phase'],
+        targetStage: result.tickResult.sig.transformationTargetStage ?? null,
+        sessionsInPhase: result.tickResult.sig.transformationSessionsInPhase ?? 0,
+        knotsResolved: result.tickResult.sig.transformationKnotsResolved ?? 0,
+        totalKnots: result.tickResult.sig.transformationTotalKnots ?? 0,
+      };
       const advanced = advanceTransformation(transformationState, result.tickResult.sig);
-      if (advanced.phase !== ts) {
-        // Phase changed — update significator
-        const updatedSig = { ...result.tickResult.sig, transformationPhase: advanced.phase };
+      if (advanced.phase !== ts || advanced.sessionsInPhase !== transformationState.sessionsInPhase) {
+        // Phase or counters changed — persist full state to Significator
+        const updatedSig = {
+          ...result.tickResult.sig,
+          transformationPhase: advanced.phase,
+          transformationTargetStage: advanced.targetStage,
+          transformationSessionsInPhase: advanced.sessionsInPhase,
+          transformationKnotsResolved: advanced.knotsResolved,
+          transformationTotalKnots: advanced.totalKnots,
+        };
         this.registry.set(RegistryKeys.Significator, updatedSig);
       }
 

@@ -6,6 +6,7 @@ import type { Line } from '../domain/Line.js';
 import { ALL_LINES } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
 import { ALL_STAGES, stageOrdinal } from '../domain/Stage.js';
+import { STAGE_RAY_MAP } from '../domain/Ray.js';
 import type { Significator } from '../domain/Significator.js';
 
 export interface TransformationSignal {
@@ -82,7 +83,20 @@ export function computeReadiness(sig: Significator, targetStage: Stage): Readine
   );
   const shadowClearance = criticalShadows.length === 0 ? 1 : Math.max(0, 1 - criticalShadows.length * 0.3);
 
-  const overall = convergence * 0.4 + saturation * 0.3 + shadowClearance * 0.3;
+  // GAP-F-7: Ray-center activation signal (per HoloOS 08.8.22).
+  // When the next-density ray-center is activating while the current saturates,
+  // this is a phase-transition signal. The current stage's ray should be highly
+  // activated (saturation), and the next stage's ray should be rising (catalytic
+  // interference per 08.8.14 §2.3).
+  const currentRay = STAGE_RAY_MAP[sig.currentStage] ?? 'Yellow';
+  const targetRay = STAGE_RAY_MAP[targetStage] ?? 'Green';
+  const currentRayActivation = sig.rayProfile[currentRay] ?? 0;
+  const targetRayActivation = sig.rayProfile[targetRay] ?? 0;
+  // Ray readiness: current ray saturated (>0.6) AND target ray rising (>0.3)
+  const rayReadiness = (currentRayActivation > 0.6 && targetRayActivation > 0.3) ? 1 : 0;
+
+  // Overall: convergence 40% + saturation 25% + shadowClearance 25% + rayReadiness 10%
+  const overall = convergence * 0.4 + saturation * 0.25 + shadowClearance * 0.25 + rayReadiness * 0.1;
 
   return { convergence, saturation, shadowClearance, overall };
 }

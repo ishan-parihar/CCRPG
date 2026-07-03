@@ -167,6 +167,18 @@ export function tickWithStrategy(
     updatedTransformationState = commitResult.newState;
   }
 
+  // GAP-F-4: Persist transformation state back to Significator so it survives
+  // across sessions. Prior code only stored it in SessionState (which is
+  // ephemeral). Now we write phase + counters + targetStage to sig fields.
+  updatedSig = {
+    ...updatedSig,
+    transformationPhase: updatedTransformationState.phase,
+    transformationTargetStage: updatedTransformationState.targetStage,
+    transformationSessionsInPhase: updatedTransformationState.sessionsInPhase,
+    transformationKnotsResolved: updatedTransformationState.knotsResolved,
+    transformationTotalKnots: updatedTransformationState.totalKnots,
+  };
+
   // 7. Track outcome in recentOutcomes
   const quality = response ? estimateResponseQuality(response) : 0.3;
   const newOutcome: RecentEncounter = {
