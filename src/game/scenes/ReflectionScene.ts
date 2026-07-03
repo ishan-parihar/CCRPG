@@ -37,9 +37,11 @@ export class ReflectionScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x0a0a1a);
     fadeIn(this, 400);
 
-    // Get reflective content from FallbackProvider
+    // Get reflective content from FallbackProvider (with altitude-conditional reframe)
     const line = (this.encounter.targetLines[0] ?? 'Cognitive') as Line;
-    const fallback = getFallback('LanguageReflective', line, this.encounter.stage as Stage);
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
+    const playerStage = sig?.currentStage ?? this.encounter.stage;
+    const fallback = getFallback('LanguageReflective', line, this.encounter.stage as Stage, playerStage as Stage);
 
     this.prompts = [fallback.prompt ?? 'What moved you to act?'];
     this.followUps = [...(fallback.followUps ?? ['Say more about that.'])];

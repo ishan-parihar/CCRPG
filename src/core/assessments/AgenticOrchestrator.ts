@@ -666,7 +666,9 @@ INSTRUCTIONS:
       return this.runModuleAssessment(line, stage, now);
     }
 
-    const fallback = getFallback(this.encounter.modality, line, stage);
+    // Pass playerStage for altitude-conditional reframe (high-altitude players
+    // get meta-cognitive framing when encountering lower-stage content)
+    const fallback = getFallback(this.encounter.modality, line, stage, this.significator.currentStage);
     const holon = this.world.holons.find(h => h.id === this.encounter.holonSource);
     const holonName = holon?.name ?? 'A presence';
     const holonRole = holon?.narrativeRole ?? 'guide';

@@ -962,24 +962,118 @@ function pickFromStageLinePools(
   return pickRandom(genericFallback);
 }
 
-export function getFallback(modality: Modality, line: Line, stage: Stage): FallbackContent {
+// ─── Altitude-conditional reframe layers ─────────────────────────────
+// Per the altitude-scaling audit: a Turquoise player encountering Red-stage
+// content needs a DIFFERENT framing than a Red player encountering the same
+// content. These reframe layers wrap the base prompt with altitude-conditional
+// meta-cognitive framing. The base prompt (Red-stage content) is preserved;
+// the reframe layer adds the complexity the player's altitude demands.
+
+type AltitudeBand = 'low' | 'mid' | 'high' | 'peak';
+
+function altitudeBand(playerStage: Stage): AltitudeBand {
+  const ord = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'].indexOf(playerStage);
+  if (ord <= 2) return 'low';    // Infrared, Magenta, Red
+  if (ord <= 4) return 'mid';    // Amber, Orange
+  if (ord <= 6) return 'high';   // Green, Turquoise
+  return 'peak';                  // White
+}
+
+interface ReframeLayer {
+  readonly prefix: string;
+  readonly suffix: string;
+}
+
+// Per-(holonStage × altitudeBand) reframe layers.
+// When player altitude = holon stage (same band), no reframe (base prompt used as-is).
+const REFRAME_LAYERS: Partial<Record<string, Record<AltitudeBand, ReframeLayer>>> = {
+  Red: {
+    low: { prefix: '', suffix: '' },  // co-altitudinal — no reframe
+    mid: {
+      prefix: 'You can see this Red-stage pattern from your current vantage. ',
+      suffix: ' — What does the pattern still cost you, even now that you can name it?',
+    },
+    high: {
+      prefix: 'Notice the Red-stage pattern arising. You can hold it as pattern, not identity. ',
+      suffix: ' — Where does the pattern still live unmetabolized in you? Not the version you can name — the version that still names you.',
+    },
+    peak: {
+      prefix: 'From presence, witness the Red pattern as it moves. ',
+      suffix: ' — What is the felt-quality of recognizing it as pattern, without rejecting or identifying?',
+    },
+  },
+  Amber: {
+    low: { prefix: '', suffix: '' },
+    mid: {
+      prefix: 'You can see the structure this Amber-stage pattern imposes. ',
+      suffix: ' — Where does the structure still shape you, even as you see through it?',
+    },
+    high: {
+      prefix: 'Notice the Amber-stage pattern: inherited order, unexamined loyalty. You can hold it as pattern. ',
+      suffix: ' — What in you still reaches for the structure even as you see its limits?',
+    },
+    peak: {
+      prefix: 'From presence, witness the Amber pattern of order-seeking. ',
+      suffix: ' — What is the felt-quality of the order-impulse arising and dissolving?',
+    },
+  },
+  Orange: {
+    low: { prefix: '', suffix: '' },
+    mid: { prefix: '', suffix: '' },
+    high: {
+      prefix: 'Notice the Orange-stage pattern: achievement as identity, optimization as purpose. You can see it from above. ',
+      suffix: ' — Where does the achiever-self still drive you, even as you witness its construct-nature?',
+    },
+    peak: {
+      prefix: 'From presence, witness the Orange pattern of strategic optimization. ',
+      suffix: ' — What is the felt-quality of the optimizing impulse arising and dissolving?',
+    },
+  },
+};
+
+function applyReframe(content: FallbackContent, holonStage: Stage, playerStage: Stage): FallbackContent {
+  const band = altitudeBand(playerStage);
+  const stageReframes = REFRAME_LAYERS[holonStage];
+  if (!stageReframes) return content;
+  const layer = stageReframes[band];
+  if (!layer || (layer.prefix === '' && layer.suffix === '')) return content;
+
+  // Apply reframe to the prompt field
+  const reframedPrompt = content.prompt
+    ? `${layer.prefix}${content.prompt}${layer.suffix}`
+    : content.prompt;
+
+  // Apply reframe to the scenario field (for ScenarioChoice)
+  const reframedScenario = content.scenario
+    ? `${layer.prefix}${content.scenario}${layer.suffix}`
+    : content.scenario;
+
+  return {
+    ...content,
+    prompt: reframedPrompt,
+    scenario: reframedScenario,
+  };
+}
+
+export function getFallback(modality: Modality, line: Line, stage: Stage, playerStage?: Stage): FallbackContent {
+  const playerAlt = playerStage ?? stage;  // default: co-altitudinal (no reframe)
+  let content: FallbackContent;
+
   switch (modality) {
     case 'LanguageReflective': {
-      // Try line-specific pool for the current stage, fall through to Red
       const stageMap: Record<string, Record<string, ContentPool>> = {
         Red: LR_BY_LINE_RED,
         Orange: LR_BY_LINE_ORANGE,
         Amber: LR_BY_LINE_AMBER,
       };
-      // Infrared/Magenta get their own small pools (no line-specific needed)
-      if (stage === 'Infrared') return pickRandom(LANGUAGE_REFLECTIVE_INFRARED);
-      if (stage === 'Magenta') return pickRandom(LANGUAGE_REFLECTIVE_MAGENTA);
-      // Higher stages get line-specific generic content
-      if (stage === 'Turquoise' || stage === 'White') {
+      if (stage === 'Infrared') content = pickRandom(LANGUAGE_REFLECTIVE_INFRARED);
+      else if (stage === 'Magenta') content = pickRandom(LANGUAGE_REFLECTIVE_MAGENTA);
+      else if (stage === 'Turquoise' || stage === 'White') {
         const genericPool = LR_GENERIC_STAGE[stage];
-        if (genericPool) return pickRandom(genericPool);
+        content = genericPool ? pickRandom(genericPool) : { prompt: 'What is present here?' };
       }
-      return pickFromStageLinePools(stageMap, stage, line, LR_BY_LINE_RED[line] ?? [GENERIC_LANGUAGE_REFLECTIVE]);
+      else content = pickFromStageLinePools(stageMap, stage, line, LR_BY_LINE_RED[line] ?? [GENERIC_LANGUAGE_REFLECTIVE]);
+      break;
     }
 
     case 'ScenarioChoice': {
@@ -988,36 +1082,45 @@ export function getFallback(modality: Modality, line: Line, stage: Stage): Fallb
         Orange: SC_BY_LINE_ORANGE,
         Amber: SC_BY_LINE_AMBER,
       };
-      if (stage === 'Infrared') return pickRandom([
+      if (stage === 'Infrared') content = pickRandom([
         { scenario: 'Raw sensation. Before interpretation, before story — something moves through you.', options: driveOptionsToMCQ({ agency: 'Follow it', communion: 'Share it with someone', eros: 'Let it transform you', agape: 'Hold it with acceptance' }) },
       ]);
-      if (stage === 'Magenta') return pickRandom([
+      else if (stage === 'Magenta') content = pickRandom([
         { scenario: 'The ritual has begun. Something ancient stirs.', options: driveOptionsToMCQ({ agency: 'Lead the ritual', communion: 'Surrender to it', eros: 'Channel the energy', agape: 'Hold the space for all' }) },
       ]);
-      return pickFromStageLinePools(stageMap, stage, line, SC_BY_LINE_RED[line] ?? [GENERIC_SCENARIO_CHOICE]);
+      else content = pickFromStageLinePools(stageMap, stage, line, SC_BY_LINE_RED[line] ?? [GENERIC_SCENARIO_CHOICE]);
+      break;
     }
 
     case 'Deterministic': {
       const detStageMap: Record<string, Record<string, ContentPool>> = {
         Red: DET_BY_LINE_RED,
       };
-      return pickFromStageLinePools(detStageMap, stage, line, [GENERIC_DETERMINISTIC]);
+      content = pickFromStageLinePools(detStageMap, stage, line, [GENERIC_DETERMINISTIC]);
+      break;
     }
 
     case 'Embodied': {
       const embStageMap: Record<string, Record<string, ContentPool>> = {
         Red: EMB_BY_LINE_RED,
       };
-      return pickFromStageLinePools(embStageMap, stage, line, [GENERIC_EMBODIED]);
+      content = pickFromStageLinePools(embStageMap, stage, line, [GENERIC_EMBODIED]);
+      break;
     }
 
     case 'Strategic':
-      return GENERIC_STRATEGIC;
+      content = GENERIC_STRATEGIC;
+      break;
     case 'SocialCooperative':
-      return GENERIC_SOCIAL_COOPERATIVE;
+      content = GENERIC_SOCIAL_COOPERATIVE;
+      break;
     case 'ImmersiveRPG':
-      return GENERIC_IMMERSIVE_RPG;
+      content = GENERIC_IMMERSIVE_RPG;
+      break;
     default:
-      return GENERIC_FALLBACK;
+      content = GENERIC_FALLBACK;
   }
+
+  // Apply altitude-conditional reframe
+  return applyReframe(content, stage, playerAlt);
 }

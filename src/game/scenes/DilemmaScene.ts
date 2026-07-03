@@ -38,9 +38,11 @@ export class DilemmaScene extends Phaser.Scene {
     this.cameras.main.setBackgroundColor(0x0f0a14);
     fadeIn(this, 400);
 
-    // Get scenario content from FallbackProvider
+    // Get scenario content from FallbackProvider (with altitude-conditional reframe)
     const line = (this.encounter.targetLines[0] ?? 'Moral') as Line;
-    const fallback = getFallback('ScenarioChoice', line, this.encounter.stage as Stage);
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
+    const playerStage = sig?.currentStage ?? this.encounter.stage;
+    const fallback = getFallback('ScenarioChoice', line, this.encounter.stage as Stage, playerStage as Stage);
 
     const scenario = fallback.scenario ?? 'A crossroads appears. Each path carries weight.';
     const options: DilemmaChoice[] = fallback.options

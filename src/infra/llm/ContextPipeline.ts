@@ -273,14 +273,15 @@ function assembleSystemPrompt(
 
   return `[ROLE] You are the manifestation layer of CCRPG.
 [COSMOLOGY] Third Density constraints. Veil enforced. Free will absolute.
-[FREQUENCY] tone=${frequencySpec.toneDirective}; vocabulary=${frequencySpec.vocabularyBand}; values=${frequencySpec.valueLens}; taboos=${frequencySpec.taboos.join(',')}; cross-altitude=${frequencySpec.crossAltitudeDynamic ?? 'none'}
+[FREQUENCY] tone=${frequencySpec.toneDirective}; vocabulary=${frequencySpec.vocabularyBand}; values=${frequencySpec.valueLens}; taboos=${frequencySpec.taboos.join(',')}; complexity=${frequencySpec.complexityRegister}
+${frequencySpec.crossAltitudeDirective}
 [HOLONS] ${holonDescriptions}
 [ENCOUNTER] lines=${encounterContext.lines.join(',')}; stage=${encounterContext.stage}; modality=${encounterContext.modality}; purpose=${encounterContext.catalyticPurpose}; module=${encounterContext.moduleRef}
 [MODALITY] ${modalityRubric}
 [CONTINUITY] ${consequenceContext}
 [PLAYER STATE] ${playerStateSignals}${synthesisBlock}
 [OUTPUT FORMAT] ${outputFormat}
-[RULES] No Veil violations. No clinical language. No scoring references. No frame-breaking. Stay in frequency.`;
+[RULES] No Veil violations. No clinical language. No scoring references. No frame-breaking. Stay in frequency. Scale cognitive complexity to the player's altitude, not the encounter's stage.`;
 }
 
 function formatHolonDescriptions(holonSelection: HolonSelection): string {
