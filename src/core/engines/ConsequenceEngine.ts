@@ -5,6 +5,7 @@
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
 import { stageOrdinal } from '../domain/Stage.js';
+import { ALL_RAYS, STAGE_RAY_MAP } from '../domain/Ray.js';
 import type { EnergeticDirection, ShadowQuadrant, DriveDirectionality, SourceOfNourishment, StageOrientation } from '../domain/enums.js';
 import type { PolarityTrace } from '../domain/PolarityTrace.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
@@ -92,7 +93,11 @@ export function applyConsequences(
         e.id === existing.id ? { ...e, recurrenceCount: e.recurrenceCount + 1 } : e,
       );
     } else {
-      const severity = Math.min(1, 0.3 + (newDrives.fixationRisk[encounter.driveTarget ?? 'Agency'] ?? 0) * 0.4);
+      // Fix latent NaN bug: when driveTarget is null, fixationRisk[null] is
+      // undefined, and undefined * 0.4 = NaN. Default to 0 in that case.
+      const driveTarget = encounter.driveTarget ?? 'Agency';
+      const fixation = newDrives.fixationRisk[driveTarget] ?? 0;
+      const severity = Math.min(1, 0.3 + (Number.isFinite(fixation) ? fixation : 0) * 0.4);
       const newId = `shadow-${record.timestamp}`;
 
       // G.18: Compound shadow detection — same quadrant on 2+ lines
@@ -176,6 +181,25 @@ export function applyConsequences(
     },
   ].slice(-50); // keep last 50 to bound memory
 
+  // GAP-D2-1: Update the Energy-Ray-Center Profile (rayProfile).
+  // Per HoloOS 08.8.22, the rayProfile is a 7-element vector of activation
+  // levels (0-1) for each energy-ray-center. Each encounter activates the
+  // ray-center corresponding to the encounter's stage (via STAGE_RAY_MAP).
+  // All other ray-centers decay slightly (the holon's attention shifts).
+  const encounterRay = STAGE_RAY_MAP[stage] ?? 'Yellow';
+  const oldRayProfile = { ...sig.rayProfile } as Record<string, number>;
+  const newRayProfile: Record<string, number> = {};
+  for (const ray of ALL_RAYS) {
+    const oldVal = oldRayProfile[ray] ?? 0;
+    if (ray === encounterRay) {
+      // Activate the encounter's ray-center (cap at 1.0)
+      newRayProfile[ray] = Math.min(1, oldVal + 0.15);
+    } else {
+      // Decay all other ray-centers slightly
+      newRayProfile[ray] = Math.max(0, oldVal - 0.02);
+    }
+  }
+
   const newSig: Significator = {
     ...sig,
     polarity: newPolarity,
@@ -184,6 +208,7 @@ export function applyConsequences(
     shadows: { entries: newShadowEntries, activeCount: newShadowEntries.filter(e => !e.resolvedAt).length },
     codexEntries: newCodexEntries,
     recentEncounters: newRecentEncounters,
+    rayProfile: newRayProfile as Significator['rayProfile'],
     totalEncounters: sig.totalEncounters + 1,
   };
 

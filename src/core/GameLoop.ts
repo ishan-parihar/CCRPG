@@ -4,7 +4,7 @@
  */
 import type { Significator } from './domain/Significator.js';
 import type { ScheduledEncounter } from './domain/EncounterSpecNew.js';
-import { scheduleNext, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
+import { scheduleNext, scheduleThresholdMode, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from './engines/ConsequenceEngine.js';
 import { detectThreshold, advanceTransformation, commitTransformation, createInitialTransformationState, type TransformationSignal, type TransformationState } from './engines/TransformationDetector.js';
 import { detectBleedThrough } from './engines/ThetaDecay.js';
@@ -23,6 +23,13 @@ import {
 import { DEFAULT_WEIGHTS, type PriorityWeights } from './engines/PriorityComputation.js';
 import { runModeAwareAssessment } from './assessments/engine.js';
 import type { AssessmentResult, ShadowAssessmentResult, StageAssessment, TrialResult, ModuleExecutionMode } from './assessments/types.js';
+import {
+  createInitialUserMatrixModel,
+  updateUserMatrix,
+  promotePhase,
+  inferFromResponse,
+  type UserMatrixModel,
+} from './engines/UserMatrixModel.js';
 
 export interface TickResult {
   readonly encounter: ScheduledEncounter | null;
@@ -39,6 +46,8 @@ export interface SessionState {
   readonly recentOutcomes: RecentEncounter[];
   readonly encountersSinceRefresh: number;
   readonly transformationState: TransformationState;
+  /** GAP-D2-4: UserMatrixModel — explicit model of the user's Matrix/Potentiator. */
+  readonly userMatrixModel: UserMatrixModel;
 }
 
 /**
@@ -55,6 +64,7 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
     recentOutcomes: [],
     encountersSinceRefresh: 0,
     transformationState: createInitialTransformationState(),
+    userMatrixModel: createInitialUserMatrixModel(),
   };
 }
 
@@ -79,12 +89,29 @@ export function tickWithStrategy(
   // 1. Process response from previous encounter (if available)
   let updatedSig = sig;
   let updatedWorld = world;
+  // GAP-D2-4: carry forward the userMatrixModel; update it after response processing
+  let updatedUserMatrix = sessionState.userMatrixModel;
 
   if (response && previousEncounter) {
     const record = processOutcome(previousEncounter, response, now);
     const result = applyConsequences(sig, world, record, previousEncounter);
     updatedSig = result.sig;
     updatedWorld = result.world;
+
+    // GAP-D2-4: Update the UserMatrixModel with the inferred Matrix/Potentiator
+    // state from the player's response. This is the core of the user-modelling:
+    // the game infers what the user's Matrix/Potentiator looks like based on
+    // how they responded, then uses that model to select the next catalyst.
+    const inference = inferFromResponse(
+      response.narrativeSummary ?? '',
+      response.driveDirectionality,
+      response.shadowSurfaced,
+    );
+    const line = previousEncounter.targetLines[0] ?? 'Cognitive';
+    const stage = previousEncounter.stage;
+    updatedUserMatrix = updateUserMatrix(updatedUserMatrix, line, stage, inference, now);
+    // Promote phase based on polarity crystallization
+    updatedUserMatrix = promotePhase(updatedUserMatrix, updatedSig.polarity.master.mode);
   }
 
   // 2. Increment encounter counter
@@ -99,7 +126,20 @@ export function tickWithStrategy(
   // 4. Check for bleed-through
   const bleedThrough = detectBleedThrough(updatedSig.theta.lastEncounter, now);
 
-  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 5, biasedWeights, bleedThrough);
+  // GAP-D2-3: Wire scheduleThresholdMode — when the transformation state
+  // machine is in unravelling/crucible/emergence phase, use the threshold-mode
+  // weights (which bias toward shadow-activation + transformation-readiness)
+  // instead of the normal session-strategy weights. This activates the 3-phase
+  // Crucible that was previously dead code.
+  const tsPhase = sessionState.transformationState.phase;
+  let scheduled: ScheduledEncounter[];
+  if (tsPhase === 'unravelling' || tsPhase === 'crucible' || tsPhase === 'emergence') {
+    scheduled = scheduleThresholdMode(updatedSig, updatedWorld, session, tsPhase, now);
+  } else {
+    // GAP-D2-4: pass userMatrixModel to scheduleNext so the scheduler can use
+    // the user's Matrix/Potentiator model for phase-dependent targeting.
+    scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 5, biasedWeights, bleedThrough, undefined, sessionState.userMatrixModel);
+  }
   const encounter = scheduled[0] ?? null;
 
   // 6. Check transformation threshold and advance state machine
@@ -206,6 +246,7 @@ export function tickWithStrategy(
     recentOutcomes,
     encountersSinceRefresh,
     transformationState: updatedTransformationState,
+    userMatrixModel: updatedUserMatrix,
   };
 
   return { tickResult, sessionState: newSessionState };

@@ -53,7 +53,18 @@ export interface MetabolicHealth {
   readonly total: number;            // gz * pz
   readonly gzBreakdown: GzMetric;
   readonly pzBreakdown: PzMetric;
-  readonly interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck';
+  /**
+   * GAP-D2-2 (per HoloOS 08.8.14): 'transitional' distinguishes
+   * Significator-Liminality (healthy phase-transition) from
+   * 'polarizing-unhealthy' (pathological polarization without integration).
+   */
+  readonly interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck' | 'transitional';
+  /** GAP-D2-2: Significator-Liminality signature (per 08.8.14 §8.1 + 08.8.21 R4). */
+  readonly liminalitySignature?: {
+    readonly pzSpike: boolean;           // P_z > 0.7
+    readonly subDensitySaturation: boolean; // ≥5/8 lines with crystallization > 0.7
+    readonly isTransitional: boolean;    // both pzSpike AND subDensitySaturation
+  };
 }
 
 /** Compute G_z from Significator state. */
@@ -149,8 +160,30 @@ export function computeMetabolicHealth(sig: Significator, now: number = Date.now
   const pz = pzBreakdown.value;
   const total = gz * pz;
 
+  // GAP-D2-2 (per HoloOS 08.8.14 §8.1 + 08.8.21 Gap R4): detect the
+  // Significator-Liminality signature to distinguish transitional (healthy
+  // phase-transition) from pathological (stuck-in-shadow) states.
+  // Signature: P_z spike (> 0.7) + sub-density S7 saturation (≥5/8 lines
+  // with polarity crystallization > 0.7).
+  const pzSpike = pz > 0.7;
+  const cellKeys = Object.keys(sig.polarity.cells);
+  const saturatedLines = new Set<string>();
+  for (const key of cellKeys) {
+    if ((sig.polarity.cells[key]?.crystallization ?? 0) > 0.7) {
+      const [line] = key.split(':');
+      if (line) saturatedLines.add(line);
+    }
+  }
+  const subDensitySaturation = saturatedLines.size >= 5;
+  const isTransitional = pzSpike && subDensitySaturation;
+
   let interpretation: MetabolicHealth['interpretation'];
-  if (gz < 0.3 && pz < 0.3) {
+  if (isTransitional) {
+    // Significator-Liminality: the holon is in phase-transition, NOT pathological.
+    // Per 08.8.14, this is a NECESSARY and HEALTHY state — the old Significator
+    // is dissolving and the new one has not yet crystallized.
+    interpretation = 'transitional';
+  } else if (gz < 0.3 && pz < 0.3) {
     interpretation = 'stuck';
   } else if (gz > 0.6 && pz < 0.3) {
     interpretation = 'consolidating'; // healthy but not advancing
@@ -160,7 +193,15 @@ export function computeMetabolicHealth(sig: Significator, now: number = Date.now
     interpretation = 'polarizing-healthy'; // both metrics reasonably nonzero
   }
 
-  return { gz, pz, total, gzBreakdown, pzBreakdown, interpretation };
+  return {
+    gz,
+    pz,
+    total,
+    gzBreakdown,
+    pzBreakdown,
+    interpretation,
+    liminalitySignature: { pzSpike, subDensitySaturation, isTransitional },
+  };
 }
 
 /** Synthesize Complex-level altitude (hysteresis across Lines within a Complex). */
