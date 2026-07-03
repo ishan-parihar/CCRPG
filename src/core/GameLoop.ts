@@ -153,6 +153,8 @@ export interface SessionState {
   readonly transformationState: TransformationState;
   /** GAP-D2-4: UserMatrixModel — explicit model of the user's Matrix/Potentiator. */
   readonly userMatrixModel: UserMatrixModel;
+  /** Wave 3.4: Explicit session start time for accurate shadow-counting. */
+  readonly sessionStartMs?: number;
 }
 
 /**
@@ -170,6 +172,7 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
     encountersSinceRefresh: 0,
     transformationState: createInitialTransformationState(),
     userMatrixModel: createInitialUserMatrixModel(),
+    sessionStartMs: Date.now(),
   };
 }
 
@@ -503,17 +506,9 @@ export function endSession(
   sessionState: SessionState,
   now: number,
 ): { sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number } } {
-  // Apply theta-decay: increment decay for all cells NOT visited this session
-  // recentOutcomes don't carry cell keys directly, so we rely on theta timestamps
-  // Cells with timestamps >= session start are considered visited
-
-  // Count session stats
+  // Wave 3.4: Use sessionState's start time if tracked, otherwise approximate
   const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
-  // Count shadows surfaced and resolved during this session
-  // (entries created or resolved since the first outcome in this session)
-  const sessionStartMs = sessionState.recentOutcomes.length > 0
-    ? now - sessionState.recentOutcomes.length * 5000 // approximate session start
-    : now;
+  const sessionStartMs = (sessionState as any).sessionStartMs ?? now;
   const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
   const shadowsResolved = sig.shadows.entries.filter(e => e.resolvedAt !== null && e.resolvedAt >= sessionStartMs).length;
 
