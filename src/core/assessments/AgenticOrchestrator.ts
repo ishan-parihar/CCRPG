@@ -1108,11 +1108,11 @@ INSTRUCTIONS:
     };
     const dim = lineToPestle[finalResult.line] ?? PESTLE_DIMS_ARRAY[Math.floor(Math.random() * PESTLE_DIMS_ARRAY.length)]!;
     const newTension = accumulateTension(
-      (updated.world as any).pestleTension ?? { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      updated.world.pestleTension ?? { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
       dim,
       0.05,
     );
-    const activeEvents = (updated.world as any).activeMacroEvents ?? [];
+    const activeEvents = updated.world.activeMacroEvents ?? [];
     const macroEvent = tryTriggerMacroEvent(newTension, activeEvents, finalSig.currentStage, now);
     const newActiveEvents = macroEvent ? [...activeEvents, macroEvent] : activeEvents;
     const updatedWorld = { ...updated.world, pestleTension: newTension, activeMacroEvents: newActiveEvents } as WorldState;
@@ -1890,13 +1890,13 @@ ${probes}${rubric}
     const [encLine] = this.encounter.moduleRef.split(':');
     const dim = lineToPestleLlm[encLine] ?? PESTLE_DIMS[Math.floor(Math.random() * PESTLE_DIMS.length)]!;
     const newTension = accumulateTension(
-      (updated.world as any).pestleTension ?? { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
+      updated.world.pestleTension ?? { political: 0, economic: 0, social: 0, technological: 0, legal: 0, environmental: 0 },
       dim,
       0.05,
     );
 
     // Check for macro-event trigger
-    const activeEvents = (updated.world as any).activeMacroEvents ?? [];
+    const activeEvents = updated.world.activeMacroEvents ?? [];
     const macroEvent = tryTriggerMacroEvent(newTension, activeEvents, updated.sig.currentStage, now);
     const newActiveEvents = macroEvent ? [...activeEvents, macroEvent] : activeEvents;
 

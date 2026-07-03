@@ -211,12 +211,17 @@ Each ray is **distinct** — meaning each sub-octave has been genuinely
 activated and differentiated, not bypassed.
 
 CCRPG models this via a `rayProfile: Record<Ray, number>` on the
-PlayerProfile. The violet-ray *integration quality* is computed as a
-function of how *distinct* (low-variance, well-developed,
-non-collapsed) the player's prior rays are. A player who has *bypassed*
-stages — pushed cognitively without emotional or moral development —
-will have a *muddied* violet-ray expression and the harvest endgame
-will not gate open. Genuine integration is the only path.
+Significator. Per the activation/decay model (GAP-D2-1), each encounter
+activates the ray-center corresponding to the encounter's stage (via
+STAGE_RAY_MAP) by +0.15, while all other ray-centers decay by -0.02.
+This produces a live Energy-Ray-Center Profile that reflects which
+ray-centers the player has been actively engaging. The profile is read
+by TransformationDetector.computeReadiness as a 10% weight in the
+transformation-readiness signal (rayReadiness: current ray saturated
+AND target ray rising). A player who has bypassed stages — pushed
+cognitively without emotional or moral development — will have a
+*muddied* rayProfile and the harvest endgame will not gate open.
+Genuine integration is the only path.
 
 ### 7.6 In-world cosmology (canon, surfaced in narrative)
 

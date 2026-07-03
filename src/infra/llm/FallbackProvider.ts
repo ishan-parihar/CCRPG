@@ -1038,20 +1038,25 @@ function applyReframe(content: FallbackContent, holonStage: Stage, playerStage: 
   const layer = stageReframes[band];
   if (!layer || (layer.prefix === '' && layer.suffix === '')) return content;
 
-  // Apply reframe to the prompt field
+  // Apply reframe to ALL text-bearing fields
   const reframedPrompt = content.prompt
     ? `${layer.prefix}${content.prompt}${layer.suffix}`
     : content.prompt;
 
-  // Apply reframe to the scenario field (for ScenarioChoice)
   const reframedScenario = content.scenario
     ? `${layer.prefix}${content.scenario}${layer.suffix}`
     : content.scenario;
+
+  // GAP-V3-35: Also reframe the 'framing' field (used by Deterministic modality)
+  const reframedFraming = content.framing
+    ? `${layer.prefix}${content.framing}${layer.suffix}`
+    : content.framing;
 
   return {
     ...content,
     prompt: reframedPrompt,
     scenario: reframedScenario,
+    framing: reframedFraming,
   };
 }
 

@@ -6,7 +6,7 @@ import type { Significator } from './domain/Significator.js';
 import type { ScheduledEncounter } from './domain/EncounterSpecNew.js';
 import { scheduleNext, scheduleThresholdMode, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from './engines/ConsequenceEngine.js';
-import { detectThreshold, advanceTransformation, commitTransformation, createInitialTransformationState, type TransformationSignal, type TransformationState } from './engines/TransformationDetector.js';
+import { detectThreshold, advanceTransformation, commitTransformation, recordKnotResolution, createInitialTransformationState, type TransformationSignal, type TransformationState } from './engines/TransformationDetector.js';
 import { detectBleedThrough } from './engines/ThetaDecay.js';
 import { toSnapshot } from './domain/SignificatorSnapshot.js';
 import { computeCCI, type CCIScore } from './engines/CCIEngine.js';
@@ -27,6 +27,7 @@ import {
   createInitialUserMatrixModel,
   updateUserMatrix,
   promotePhase,
+  resetPhaseAfterTransformation,
   inferFromResponse,
   type UserMatrixModel,
 } from './engines/UserMatrixModel.js';
@@ -165,6 +166,18 @@ export function tickWithStrategy(
       ],
     };
     updatedTransformationState = commitResult.newState;
+    // GAP-V3-23: Reset the UserMatrixModel phase to 'unmapped' — the new stage
+    // brings new territory to probe.
+    updatedUserMatrix = resetPhaseAfterTransformation(updatedUserMatrix);
+  }
+
+  // GAP-V3-25: If a shadow encounter was passed, record knot resolution
+  // (prior code only did this in Phaser EncounterScene, not in headless GameLoop)
+  if (response && previousEncounter && previousEncounter.executionMode === 'shadow') {
+    const shadowPassed = Object.values(response.driveDirectionality).every(d => d === 'HealthyBalanced');
+    if (shadowPassed) {
+      updatedTransformationState = recordKnotResolution(updatedTransformationState);
+    }
   }
 
   // GAP-F-4: Persist transformation state back to Significator so it survives

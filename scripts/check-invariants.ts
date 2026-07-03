@@ -251,7 +251,7 @@ check('computeMetabolicHealth returns valid structure', () => {
   if (mh.gz < 0 || mh.gz > 1) throw new Error(`gz out of range: ${mh.gz}`);
   if (mh.pz < 0 || mh.pz > 1) throw new Error(`pz out of range: ${mh.pz}`);
   if (Math.abs(mh.total - mh.gz * mh.pz) > 0.0001) throw new Error('total ≠ gz*pz');
-  if (!['consolidating', 'polarizing-healthy', 'polarizing-unhealthy', 'stuck'].includes(mh.interpretation)) {
+  if (!['consolidating', 'polarizing-healthy', 'polarizing-unhealthy', 'stuck', 'transitional'].includes(mh.interpretation)) {
     throw new Error(`Invalid interpretation: ${mh.interpretation}`);
   }
 });

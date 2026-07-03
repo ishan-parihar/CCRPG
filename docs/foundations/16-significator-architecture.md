@@ -319,7 +319,7 @@ The Significator's state is sensitive developmental data. Access is stratified i
 | `polarityVector.direction` | ✅ numerical | ⚠️ machine label only (`sto-consolidating`); no magnitude number | ❌ never — consequences communicate polarity implicitly |
 | `polarityVector.magnitude` | ✅ numerical | ❌ not injected | ❌ never |
 | `polarityVector.choiceTrail` | ✅ full history | ⚠️ last 5 entries as `recentChoicePatterns[]` (machine labels) | ❌ never |
-| `rayProfile` | ✅ | ❌ not injected (too meta) | ❌ never (until harvest) |
+| `rayProfile` | ✅ | ✅ injected via FrequencyConditioner complexityRegister | ✅ updated every encounter (activation/decay model per GAP-D2-1) |
 | `taskStaircases` | ✅ | ❌ not injected | ❌ never — player perceives difficulty as "the world adapting" |
 | `transformations[]` | ✅ full history | ✅ as `transformationProximity` signal | ❌ never — player experiences the Transformation as narrative event |
 | `pendingTransformation` | ✅ | ✅ as `transformation-approaching` | ❌ never |
