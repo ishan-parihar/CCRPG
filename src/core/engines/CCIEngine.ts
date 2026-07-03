@@ -713,16 +713,46 @@ export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
   // 6. Derive session signals
   const sessionSignals = deriveSessionSignals(dimensions, inputs);
 
-  // 7. GAP-D2-2: Compute HoloOS G_z / P_z dual health metrics with
+  // 7. Wave 1.4: Compute HoloOS G_z / P_z dual health metrics with
   // Significator-Liminality detection (per HoloOS 08.8.14).
-  // G_z (Lesser-Cycle, Agape/integration) from driveHealth + shadowTopology.
-  // P_z (Greater-Cycle, Eros/polarization) from polarity + transformationReadiness.
+  // G_z (Lesser-Cycle, Agape/integration) — 4-term: driveHealth + shadowTopology
+  // + thetaFreshness (from snapshot.theta) + complexBalance (from altitudes spread).
+  // P_z (Greater-Cycle, Eros/polarization) — 2-term: polarity + transformationReadiness.
   // Total Metabolic Health = G_z · P_z (geometric mean, per foundations/25 §1.1).
+
+  // Compute thetaFreshness from snapshot (1 - avg staleness across cells)
+  const thetaKeys = Object.keys(snapshot.theta.lastEncounter);
+  const thetaCount = thetaKeys.length || 1;
+  let totalStaleness = 0;
+  for (const key of thetaKeys) {
+    const lastTs = snapshot.theta.lastEncounter[key] ?? 0;
+    if (lastTs === 0) { totalStaleness += 1; continue; }
+    const elapsed = Date.now() - lastTs;
+    const halfLife = 7 * 24 * 60 * 60 * 1000;
+    totalStaleness += 1 - Math.pow(0.5, elapsed / halfLife);
+  }
+  const thetaFreshness = 1 - (totalStaleness / thetaCount);
+
+  // Compute complexBalance from altitude spread (1 - normalized spread across 3 complexes)
+  const allAlts = Object.values(snapshot.altitudes).map(s => stageOrdinal(s));
+  const altSpread = allAlts.length > 0
+    ? (Math.max(...allAlts) - Math.min(...allAlts)) / 7
+    : 0;
+  const complexBalance = 1 - altSpread;
+
+  // 4-term G_z (matching GreaterCycleEngine's formula)
   const gz = clamp(
-    dimensions.driveHealth * 0.55 + dimensions.shadowTopology * 0.45,
+    dimensions.driveHealth * 0.35 +
+    dimensions.shadowTopology * 0.30 +
+    thetaFreshness * 0.20 +
+    complexBalance * 0.15,
   );
+  // 4-term P_z (enriched with thetaFreshness as choiceAuthenticity proxy)
   const pz = clamp(
-    dimensions.polarity * 0.55 + dimensions.transformationReadiness * 0.45,
+    dimensions.polarity * 0.35 +
+    dimensions.transformationReadiness * 0.30 +
+    (1 - altSpread) * 0.20 +  // greatWayAlignment proxy
+    thetaFreshness * 0.15,     // choiceAuthenticity proxy
   );
   const total = gz * pz;
 
