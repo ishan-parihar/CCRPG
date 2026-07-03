@@ -39,6 +39,14 @@ export interface ContextPipelineInput {
   readonly conceptIndex: ConceptDraftIndex;
   readonly recentConsequences: readonly ConsequenceRecord[];
   readonly sessionContext: { readonly energy: 'high' | 'moderate' | 'low' };
+  /**
+   * T-2.9: Cross-encounter synthesis from SessionAgent.buildSynthesis().
+   * When provided, this string gives the LLM context about the player's
+   * accumulated patterns across the session (lines explored, dominant
+   * drives, shadow patterns, write-in themes, engagement trend, suggested
+   * focus). This enables the recursive catalyst trajectory.
+   */
+  readonly agentSynthesis?: string;
 }
 
 export interface ContextPipelineOutput {
@@ -254,10 +262,14 @@ function assembleSystemPrompt(
   modalityRubric: string,
   consequenceContext: string,
   veilFilteredSig: VeilFilteredSignificator,
+  agentSynthesis?: string,
 ): string {
   const holonDescriptions = formatHolonDescriptions(holonSelection);
   const playerStateSignals = formatPlayerState(veilFilteredSig);
   const outputFormat = getOutputFormat(encounterContext.modality);
+  const synthesisBlock = agentSynthesis
+    ? `\n[SESSION SYNTHESIS] ${agentSynthesis}`
+    : '';
 
   return `[ROLE] You are the manifestation layer of CCRPG.
 [COSMOLOGY] Third Density constraints. Veil enforced. Free will absolute.
@@ -266,7 +278,7 @@ function assembleSystemPrompt(
 [ENCOUNTER] lines=${encounterContext.lines.join(',')}; stage=${encounterContext.stage}; modality=${encounterContext.modality}; purpose=${encounterContext.catalyticPurpose}; module=${encounterContext.moduleRef}
 [MODALITY] ${modalityRubric}
 [CONTINUITY] ${consequenceContext}
-[PLAYER STATE] ${playerStateSignals}
+[PLAYER STATE] ${playerStateSignals}${synthesisBlock}
 [OUTPUT FORMAT] ${outputFormat}
 [RULES] No Veil violations. No clinical language. No scoring references. No frame-breaking. Stay in frequency.`;
 }
@@ -397,7 +409,7 @@ export function buildContext(input: ContextPipelineInput): ContextPipelineOutput
   // Step 6: Assemble consequence context
   const consequenceContext = assembleConsequenceContext(input.recentConsequences, holonSelection);
 
-  // Step 7: Assemble system prompt
+  // Step 7: Assemble system prompt (T-2.9: inject agentSynthesis if provided)
   const systemPrompt = assembleSystemPrompt(
     frequencySpec,
     holonSelection,
@@ -405,6 +417,7 @@ export function buildContext(input: ContextPipelineInput): ContextPipelineOutput
     modalityRubric,
     consequenceContext,
     veilFilteredSig,
+    input.agentSynthesis,
   );
 
   // Collect selected holons for output

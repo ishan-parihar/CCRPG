@@ -76,7 +76,8 @@ export class OnboardingScene extends Phaser.Scene {
     const runModule = (module: StageAssessment): Promise<AssessmentResult> => {
       return new Promise<AssessmentResult>((resolve) => {
         lineIndex++;
-        this.progressText.setText(`Line ${lineIndex} of ${lines.length}  ·  ${module.line}`);
+        // T-3.4 (Veil compliance): don't leak the line taxonomy name.
+        this.progressText.setText(`Calibrating… (${lineIndex}/${lines.length})`);
 
         const assessScene = this.scene.get(SceneKeys.Assessment);
         const handler = ({ result }: { result: AssessmentResult }) => {
@@ -121,21 +122,15 @@ export class OnboardingScene extends Phaser.Scene {
     this.showComplete(result.significator);
   }
 
-  private showComplete(sig: Significator): void {
+  private showComplete(_sig: Significator): void {
     this.children.removeAll(true);
     const { width, height } = this.scale;
 
+    // T-3.4 (Veil compliance): no "developmental profile" language, no line×stage matrix.
     this.add.text(width / 2, height / 2 - 60,
-      'Calibration Complete\n\nYour developmental profile has been mapped.',
-      { fontSize: '30px', color: '#ccccee', fontFamily: 'monospace', align: 'center', wordWrap: { width: width - 120 }, lineSpacing: 8 },
+      'Calibration complete.\n\nThe world settles into shape around you.\nWhat felt foreign is now familiar;\nwhat felt familiar now asks something new.',
+      { fontSize: '28px', color: '#ccccee', fontFamily: 'monospace', align: 'center', wordWrap: { width: width - 120 }, lineSpacing: 8 },
     ).setOrigin(0.5);
-
-    const summary = Object.entries(sig.altitudes)
-      .map(([line, stage]) => `  ${line}: ${stage}`)
-      .join('\n');
-    this.add.text(width / 2, height / 2 + 40, summary, {
-      fontSize: '30px', color: '#888899', fontFamily: 'monospace',
-    }).setOrigin(0.5);
 
     this.makeButton(width / 2, height - 80, '[ Enter the World ]', () => {
       fadeToScene(this, SceneKeys.World);

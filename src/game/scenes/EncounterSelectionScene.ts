@@ -75,13 +75,26 @@ export class EncounterSelectionScene extends Phaser.Scene {
       fontFamily: 'system-ui, sans-serif', fontSize: '17px', color: tierColor,
     }).setOrigin(0.5));
 
-    // Line + Stage
-    container.add(this.add.text(0, -55, `${enc.targetLines[0]} • ${enc.stage}`, {
+    // T-3.4 (Veil compliance): replace `${line} • ${stage}` with a qualitative
+    // felt-sense label derived from the modality + execution mode. The line and
+    // stage are encounter-routing metadata and should never reach the player.
+    const modalityLabels: Record<string, string> = {
+      Deterministic: 'Ancient Shrine',
+      Strategic: 'War-Table',
+      Embodied: 'War-Drums',
+      ScenarioChoice: 'A Stranger',
+      LanguageReflective: 'Campfire',
+      SocialCooperative: 'Scouts',
+      ImmersiveRPG: 'A Shimmering',
+    };
+    const encounterLabel = modalityLabels[enc.modality] ?? 'An Encounter';
+    container.add(this.add.text(0, -55, encounterLabel, {
       fontFamily: 'system-ui, sans-serif', fontSize: '21px', color: '#c8d6e5',
     }).setOrigin(0.5));
 
-    // Modality
-    container.add(this.add.text(0, -30, enc.modality, {
+    // Qualitative mode hint (no modality taxonomy name)
+    const modeHint = enc.executionMode === 'shadow' ? 'Something stirs beneath' : 'A challenge awaits';
+    container.add(this.add.text(0, -30, modeHint, {
       fontFamily: 'system-ui, sans-serif', fontSize: '18px', color: '#667788',
     }).setOrigin(0.5));
 

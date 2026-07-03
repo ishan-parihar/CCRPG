@@ -19,6 +19,7 @@ import { startSession, tickWithStrategy, endSession, type SessionState } from '@
 import type { SaveRepository } from '@infra/persistence/SaveRepository.js';
 import type { EventBus } from '@core/events/EventBus.js';
 import type { ModuleRegistry } from '@core/assessments/registry.js';
+import { StageRegistry } from '@core/registries/index.js';
 import { applyWeightBias } from '@core/engines/AutoModeStrategy.js';
 import { advanceTransformation } from '@core/engines/TransformationDetector.js';
 
@@ -171,6 +172,14 @@ export class WorldScene extends Phaser.Scene {
         this.registry.set(RegistryKeys.Significator, updatedSig);
       }
 
+      // T-2.17: Perceptual layer shift — if the significator's current stage
+      // changed during this tick, tween the background color to the new stage's
+      // palette. This is the felt-sense "the world rearranges" moment per
+      // foundations/21 §2.4.
+      if (result.tickResult.sig.currentStage !== sig.currentStage) {
+        this.applyPerceptualLayerShift(result.tickResult.sig.currentStage);
+      }
+
       // Use the biased encounter from the pipeline
       const biasedEncounter = result.tickResult.encounter;
       const biasedWeights = applyWeightBias(DEFAULT_WEIGHTS, this.sessionState.strategy.weightBias);
@@ -201,6 +210,51 @@ export class WorldScene extends Phaser.Scene {
     const moduleRegistry = this.registry.get(RegistryKeys.ModuleRegistry) as ModuleRegistry | undefined;
     if (!moduleRegistry) return undefined;
     return createModuleTaskTypesProvider((line, stage) => moduleRegistry.get(line as never, stage as never));
+  }
+
+  /**
+   * T-2.17: Perceptual layer shift at transformation.
+   * Tweens the camera background color to the new stage's palette,
+   * creating the felt-sense "the world rearranges" moment.
+   * Per foundations/21 §2.4: gradual blends, not hard cuts.
+   */
+  private applyPerceptualLayerShift(newStage: string): void {
+    const stageModule = StageRegistry.get(newStage as never);
+    if (!stageModule?.palette) return;
+
+    // Convert hex string to Phaser color number
+    const hexToInt = (hex: string): number => parseInt(hex.replace('#', ''), 16);
+    const targetColor = hexToInt(stageModule.palette.primary);
+
+    // Tween the camera background color over 2 seconds (gradual blend)
+    const cam = this.cameras.main;
+    const startColor = cam.backgroundColor ? cam.backgroundColor.red * 0x10000 + cam.backgroundColor.green * 0x100 + cam.backgroundColor.blue : 0x1a0808;
+
+    this.tweens.addCounter({
+      from: 0,
+      to: 100,
+      duration: 2000,
+      ease: 'Sine.easeInOut',
+      onUpdate: (tween: Phaser.Tweens.Tween | null) => {
+        const t = (tween?.getValue() ?? 0) / 100;
+        const r = Math.round(Phaser.Math.Linear((startColor >> 16) & 0xff, (targetColor >> 16) & 0xff, t));
+        const g = Math.round(Phaser.Math.Linear((startColor >> 8) & 0xff, (targetColor >> 8) & 0xff, t));
+        const b = Math.round(Phaser.Math.Linear(startColor & 0xff, targetColor & 0xff, t));
+        cam.setBackgroundColor((r << 16) | (g << 8) | b);
+      },
+    });
+
+    // Brief flash overlay to signal the shift
+    const flash = this.add.rectangle(this.scale.width / 2, this.scale.height / 2,
+      this.scale.width, this.scale.height, targetColor, 0.3)
+      .setDepth(200).setAlpha(0);
+    this.tweens.add({
+      targets: flash,
+      alpha: { from: 0, to: 0.4 },
+      duration: 400,
+      yoyo: true,
+      onComplete: () => flash.destroy(),
+    });
   }
 
   /** Build SessionContext enriched with EcologicalTracker signals */

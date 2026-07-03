@@ -1044,12 +1044,22 @@ INSTRUCTIONS:
     };
 
     // Apply failure consequences: accelerate theta-decay for failed modules
+    // T-5.8: replace direct mutation with immutable update.
     if (!evaluation.passed) {
       const [fl, fs] = this.encounter.moduleRef.split(':');
       const cellKey = `${fl}:${fs}`;
       const currentTs = this.significator.theta.lastEncounter[cellKey] ?? 0;
       if (currentTs > now - 3600000) {
-        (this.significator.theta.lastEncounter as Record<string, number>)[cellKey] = now - 7200000;
+        // Immutable update: create a new theta with the accelerated decay
+        this.significator = {
+          ...this.significator,
+          theta: {
+            lastEncounter: {
+              ...this.significator.theta.lastEncounter,
+              [cellKey]: now - 7200000,
+            },
+          },
+        };
       }
     }
 

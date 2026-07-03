@@ -252,15 +252,23 @@ export class UIOverlayScene extends Phaser.Scene {
       onDone();
       return;
     }
+    // T-3.4 (Veil compliance): no accuracy percentage, no hit/miss counts.
+    // Show a qualitative band instead.
+    const band = score.accuracy >= 0.8 ? '✓'
+      : score.accuracy >= 0.5 ? '~'
+        : '?';
+    const bandColor = score.accuracy >= 0.8 ? '#9bd9ff'
+      : score.accuracy >= 0.5 ? '#ffcc88'
+        : '#ff8866';
     const text = this.add
       .text(
         0,
         0,
-        `${Math.round(score.accuracy * 100)}%\n${score.hits}/${score.hits + score.misses} hits`,
+        band,
         {
           fontFamily: 'system-ui, sans-serif',
-          fontSize: '40px',
-          color: '#9bd9ff',
+          fontSize: '48px',
+          color: bandColor,
           align: 'center',
         },
       )

@@ -174,43 +174,61 @@ export class MainMenuScene extends Phaser.Scene {
     const left = -w / 2 + 36;
     let y = -h / 2 + 30;
 
-    const stageText = this.add.text(left, y, `Current Stage: ${sig.currentStage}`, {
+    // T-3.4 (Veil compliance): Replace raw stage/drive/altitude metrics with
+    // qualitative felt-sense descriptions. Per foundations/20, the player never
+    // sees stage labels, drive percentages, or the line×stage matrix.
+    const stageAesthetics: Record<string, string> = {
+      Infrared: 'cave-dark, primal',
+      Magenta: 'spirit-haunted, symbolic',
+      Red: 'fortress-sharp, weapon-walls',
+      Amber: 'cathedral-ordered, gold-stone',
+      Orange: 'mechanism-precise, steel-glass',
+      Green: 'garden-lush, earth-toned',
+      Turquoise: 'crystalline, translucent',
+      White: 'luminous silence, spacious',
+    };
+    const aesthetic = stageAesthetics[sig.currentStage] ?? 'shifting, becoming';
+
+    const stageText = this.add.text(left, y, `The world feels ${aesthetic}.`, {
       fontSize: '20px', color: '#e7eaf2', fontFamily: '"Segoe UI", system-ui, sans-serif',
+      wordWrap: { width: w - 80 },
     });
     card.add(stageText);
-    y += 32;
+    y += 40;
 
-    const lineHeader = this.add.text(left, y, 'Line Altitudes:', {
-      fontSize: '21px', color: '#4cc9f0', fontFamily: '"Segoe UI", system-ui, sans-serif',
-    });
-    card.add(lineHeader);
-    y += 33;
-
-    const lines = Object.entries(sig.altitudes) as [string, string][];
-    const col1 = lines.slice(0, 4);
-    const col2 = lines.slice(4);
-
-    col1.forEach(([line, alt], i) => {
-      const t = this.add.text(left, y + i * 30, `${line}: ${alt}`, {
-        fontSize: '20px', color: '#8899aa', fontFamily: '"Segoe UI", system-ui, sans-serif',
-      });
-      card.add(t);
-    });
-    col2.forEach(([line, alt], i) => {
-      const t = this.add.text(left + 400, y + i * 30, `${line}: ${alt}`, {
-        fontSize: '20px', color: '#8899aa', fontFamily: '"Segoe UI", system-ui, sans-serif',
-      });
-      card.add(t);
-    });
-
-    y += 135;
-    const driveStr = Object.entries(sig.drives.weights)
-      .map(([d, w]) => `${d}: ${Math.round((w as number) * 100)}%`)
-      .join('  ');
-    const driveText = this.add.text(left, y, `Drives: ${driveStr}`, {
-      fontSize: '18px', color: '#445566', fontFamily: '"Segoe UI", system-ui, sans-serif',
+    // Qualitative drive description (no names, no percentages)
+    const driveWeights = Object.values(sig.drives.weights) as number[];
+    const maxDrive = Math.max(...driveWeights);
+    const minDrive = Math.min(...driveWeights);
+    const spread = maxDrive - minDrive;
+    let driveDescriptor: string;
+    if (spread < 0.1) {
+      driveDescriptor = 'Your tendencies move in balance.';
+    } else if (spread < 0.25) {
+      driveDescriptor = 'One tendency pulls stronger than the others.';
+    } else {
+      driveDescriptor = 'A dominant pattern shapes how you meet the world.';
+    }
+    const driveText = this.add.text(left, y, driveDescriptor, {
+      fontSize: '18px', color: '#8899aa', fontFamily: '"Segoe UI", system-ui, sans-serif',
+      wordWrap: { width: w - 80 },
     });
     card.add(driveText);
+    y += 35;
+
+    // Encounter count as qualitative milestone (no raw numbers)
+    const encounterDescriptor = sig.totalEncounters === 0
+      ? 'Your path is yet to begin.'
+      : sig.totalEncounters < 10
+        ? 'You have tasted the first edges.'
+        : sig.totalEncounters < 30
+          ? 'Your path deepens with each step.'
+          : 'The shape of your journey grows clear.';
+    const encounterText = this.add.text(left, y, encounterDescriptor, {
+      fontSize: '18px', color: '#445566', fontFamily: '"Segoe UI", system-ui, sans-serif',
+      wordWrap: { width: w - 80 },
+    });
+    card.add(encounterText);
 
     // Entrance animation
     card.setAlpha(0).setY(cy + 40);

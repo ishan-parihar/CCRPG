@@ -102,17 +102,18 @@ export class JournalScene extends Phaser.Scene {
       return 'Your journey has not yet begun.';
     }
 
-    const stage = sig.currentStage;
+    // T-3.4 (Veil compliance): no stage labels, no encounter counts.
+    // Pure qualitative felt-sense descriptions.
     const encounters = sig.totalEncounters;
 
     if (encounters === 0) {
-      return `Stage: ${stage}\n\nYour will is strong but untested by mercy.\nThe volcanic wastes await your first trial.`;
+      return 'Your will is strong but untested by mercy.\nThe volcanic wastes await your first trial.';
     }
 
     if (encounters < 5) {
-      return `Stage: ${stage}\nEncounters: ${encounters}\n\nYou have begun to test your edges.\nThe fire reveals what words cannot.`;
+      return 'You have begun to test your edges.\nThe fire reveals what words cannot.';
     }
 
-    return `Stage: ${stage}\nEncounters: ${encounters}\n\nThe pattern of your choices grows clearer.\nWho you become is shaped by each decision.`;
+    return 'The pattern of your choices grows clearer.\nWho you become is shaped by each decision.';
   }
 }

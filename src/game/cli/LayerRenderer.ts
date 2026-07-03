@@ -112,35 +112,32 @@ export function renderLayers(
   for (const layer of layers) {
     const color = layerColor(layer.stage);
     const aesthetic = LAYER_AESTHETICS[layer.stage];
-    const label = layer.stage.padEnd(12);
-    const aestheticDim = chalk.dim(`(${aesthetic})`);
+    // T-3.4 (Veil compliance): show the aesthetic descriptor, not the stage name.
+    const label = aesthetic.padEnd(24);
 
     switch (layer.status) {
       case 'active':
         lines.push(
-          `  ${chalk.green('●')} ${color(label)} ${chalk.green('active')} ${aestheticDim}`,
+          `  ${chalk.green('●')} ${color(label)} ${chalk.green('active')}`,
         );
         break;
 
       case 'bleed-through': {
-        const countStr = layer.bleedCount > 0
-          ? chalk.yellow(` ${layer.bleedCount} cell${layer.bleedCount > 1 ? 's' : ''}`)
-          : '';
         lines.push(
-          `  ${chalk.yellow('⚡')} ${color(label)} ${chalk.yellow('bleed-through')}${countStr} ${aestheticDim}`,
+          `  ${chalk.yellow('⚡')} ${color(label)} ${chalk.yellow('bleed-through')}`,
         );
         break;
       }
 
       case 'horizon':
         lines.push(
-          `  ${chalk.cyan('◌')} ${color(label)} ${chalk.dim.cyan('horizon-impression')} ${aestheticDim}`,
+          `  ${chalk.cyan('◌')} ${color(label)} ${chalk.dim.cyan('horizon-impression')}`,
         );
         break;
 
       case 'dormant':
         lines.push(
-          `  ${chalk.dim('○')} ${chalk.dim(label)} ${chalk.dim('dormant')} ${chalk.dim(aesthetic)}`,
+          `  ${chalk.dim('○')} ${chalk.dim(label)} ${chalk.dim('dormant')}`,
         );
         break;
     }
@@ -162,15 +159,17 @@ export function renderLayersCompact(
 
   for (const layer of layers) {
     const color = layerColor(layer.stage);
+    const aesthetic = LAYER_AESTHETICS[layer.stage];
+    // T-3.4 (Veil compliance): use aesthetic descriptor, not stage name.
     switch (layer.status) {
       case 'active':
-        parts.push(chalk.green('●') + color(layer.stage));
+        parts.push(chalk.green('●') + color(aesthetic));
         break;
       case 'bleed-through':
-        parts.push(chalk.yellow('⚡') + color(layer.stage));
+        parts.push(chalk.yellow('⚡') + color(aesthetic));
         break;
       case 'horizon':
-        parts.push(chalk.dim.cyan('◌') + chalk.dim(layer.stage));
+        parts.push(chalk.dim.cyan('◌') + chalk.dim(aesthetic));
         break;
       default:
         break;

@@ -1,11 +1,22 @@
 /**
  * LLMClient — thin wrapper around a chat-completions endpoint.
  * Used for open-ended response evaluation in later-stage probes.
+ *
+ * T-3.6: Veil violations detected by filterOutput are logged to console.warn
+ * for telemetry aggregation. In production, these should be routed to the
+ * TelemetryService for centralized monitoring.
  */
 
 import type { Stage } from '../../core/domain/Stage.js';
 import type { AgentMessage, ToolCall } from '../../core/assessments/agentTypes.js';
 import { filterOutput } from './VeilFilter.js';
+
+/** T-3.6: Log Veil violations for telemetry. */
+function logVeilViolation(source: string, violations: readonly string[]): void {
+  if (violations.length === 0) return;
+  // In production, route to TelemetryService. For now, console.warn.
+  console.warn(`[VeilFilter] ${source}: ${violations.length} violation(s): ${violations.join(', ')}`);
+}
 
 export interface LLMEvaluation {
   readonly score: number;
@@ -116,7 +127,7 @@ export async function evaluateResponse(
 
     return {
       score,
-      feedback: filterOutput(parsed.feedback ?? '').filtered,
+      feedback: (() => { const r = filterOutput(parsed.feedback ?? ''); logVeilViolation('evaluateResponse.feedback', r.violations); return r.filtered; })(),
       inferredStage,
       confidence: parsed.confidence,
     };
@@ -176,7 +187,7 @@ export async function queryLLM(
     const rawContent = isAnthropicProvider(baseUrl)
       ? data.content?.[0]?.text ?? ''
       : data.choices?.[0]?.message?.content ?? '';
-    return filterOutput(rawContent).filtered;
+    { const r = filterOutput(rawContent); logVeilViolation('queryLLM', r.violations); return r.filtered; }
   } catch {
     return '{"error": "exception"}';
   }
@@ -268,8 +279,11 @@ export async function queryLLMWithTools(
       // Anthropic response: content is an array of blocks
       const textBlock = data.content?.find((b: any) => b.type === 'text');
       const toolBlocks = data.content?.filter((b: any) => b.type === 'tool_use') ?? [];
+      const textContent = textBlock?.text != null
+        ? (() => { const r = filterOutput(textBlock.text); logVeilViolation('queryLLMWithTools.anthropic', r.violations); return r.filtered; })()
+        : null;
       return {
-        content: textBlock?.text != null ? filterOutput(textBlock.text).filtered : null,
+        content: textContent,
         toolCalls: toolBlocks.length > 0 ? toolBlocks.map((b: any) => ({
           id: b.id,
           type: 'function' as const,
@@ -280,8 +294,11 @@ export async function queryLLMWithTools(
 
     const choice = data.choices?.[0]?.message;
     if (!choice) return { content: null };
+    const choiceContent = choice.content != null
+      ? (() => { const r = filterOutput(choice.content); logVeilViolation('queryLLMWithTools.openai', r.violations); return r.filtered; })()
+      : null;
     return {
-      content: choice.content != null ? filterOutput(choice.content).filtered : null,
+      content: choiceContent,
       toolCalls: choice.tool_calls?.map((tc: any) => ({
         id: tc.id, type: tc.type,
         function: { name: tc.function.name, arguments: tc.function.arguments },
