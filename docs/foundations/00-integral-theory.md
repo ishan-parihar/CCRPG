@@ -1,5 +1,18 @@
 # foundations/00 — Integral Theory
 
+> **Status:** canonical-hypothesis (CCRPG-specific extension of HoloOS coordinate system).
+>
+> HoloOS uses a 4-axis coordinate `⟨V=⟨O,D,S⟩, C, R⟩` (Verticality, Collectivity, Realm-placement) with `N` as a query parameter — see HoloOS `_THEORY/02_Ontology/08.8_Redesigned_Coordinate_System.md` (rev 2, canonical-hypothesis). CCRPG uses a 7-tuple `(quadrant, stage, line, state, type, ray, polarity)` inherited from Wilber's AQAL plus Law-of-One Ray and Polarity extensions.
+>
+> The two systems overlap on:
+> - Stage ≈ Verticality `V.D` (discrete density within an octave)
+> - State ≈ Realm-placement `R` (Gross/Subtle/Causal; CCRPG extends with Witness + Non-Dual)
+> - Quadrant ≈ Collectivity `C` × Realm-interior-exterior
+>
+> CCRPG's **Line** axis has no HoloOS analog. It is retained as a CCRPG-specific extension because the 64-module content grid depends on it. HoloOS's **Nesting-direction** `N` axis has no CCRPG analog and is omitted because CCRPG does not model cross-octave involution.
+>
+> See `docs/foundations/26-unified-core-architecture.md` for the full coordinate tuple. See HoloOS `_THEORY/02_Ontology/08.8_Redesigned_Coordinate_System.md` for the source-of-truth 4-axis system.
+
 ## 1. Purpose
 
 Establish Wilber's Integral / AQAL framework as the **master organising

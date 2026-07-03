@@ -1,18 +1,21 @@
 import Phaser from 'phaser';
 import { SceneKeys, RegistryKeys } from '../keys.js';
 import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
-import type { AssessmentResult } from '@core/assessments/types.js';
+import type { AssessmentResult, ShadowAssessmentResult } from '@core/assessments/types.js';
 import type { EventBus } from '@core/events/EventBus.js';
 import type { ModuleRegistry } from '@core/assessments/registry.js';
 import type { AssessmentSceneData } from '../assessments/AssessmentScene.js';
 import type { Line } from '@core/domain/Line.js';
 import type { Stage } from '@core/domain/Stage.js';
 import type { Significator } from '@core/domain/Significator.js';
+import type { Drive } from '@core/domain/Drive.js';
+import type { DriveDirectionality, ShadowQuadrant } from '@core/domain/enums.js';
 import { narrateConsequence } from '../systems/ConsequenceNarrator.js';
 import { detectThreshold, advanceTransformation, recordKnotResolution, commitTransformation, type TransformationState } from '@core/engines/TransformationDetector.js';
 import type { SessionState } from '@core/GameLoop.js';
 import type { RecentEncounter } from '@core/engines/AutoModeStrategy.js';
 import { fadeToScene } from '../ui/SceneTransitions.js';
+import { toQualitativeFeedback, formatQualitativeFeedback } from '@infra/llm/QualitativeFeedback.js';
 
 export { routeModality } from '../logic/encounterRouting.js';
 
@@ -116,7 +119,57 @@ export class EncounterScene extends Phaser.Scene {
       });
     }
 
+    // UX-01: Build Veil-compliant qualitative feedback from drive-directionality
+    // + shadow quadrant + pass/fail. Falls back to ConsequenceNarrator if no
+    // drive signals are available (capacity encounters without shadow data).
+    const qualitativeText = buildQualitativeFeedback(result, this.encounter);
     const narration = narrateConsequence(this.encounter.modality, result.passed);
-    fadeToScene(this, SceneKeys.World, { consequenceText: narrativeSummary || narration.text });
+    const consequenceText = qualitativeText
+      || narrativeSummary
+      || narration.text;
+    fadeToScene(this, SceneKeys.World, { consequenceText });
   }
+}
+
+/**
+ * Build Veil-compliant qualitative feedback from the AssessmentResult.
+ * Returns null if the result lacks drive-health data (capacity encounters
+ * without shadow signals) — caller falls back to ConsequenceNarrator.
+ */
+function buildQualitativeFeedback(
+  result: AssessmentResult,
+  encounter: ScheduledEncounter,
+): string | null {
+  // Only ShadowAssessmentResult carries driveHealth; cast to detect.
+  const shadowResult = result as ShadowAssessmentResult;
+  if (!shadowResult.driveHealth) return null;
+
+  const drives: Drive[] = ['Agency', 'Communion', 'Eros', 'Agape'];
+  const directionality: Record<Drive, DriveDirectionality> = {
+    Agency: 'HealthyBalanced',
+    Communion: 'HealthyBalanced',
+    Eros: 'HealthyBalanced',
+    Agape: 'HealthyBalanced',
+  };
+
+  // Map driveHealth {dark, golden} per drive to DriveDirectionality.
+  // Threshold: > 0.5 in either domain flags that signal.
+  let shadowSurfaced: ShadowQuadrant | null = null;
+  for (const drive of drives) {
+    const dh = shadowResult.driveHealth[drive.toLowerCase() as keyof typeof shadowResult.driveHealth];
+    if (!dh) continue;
+    if (dh.dark > 0.5) {
+      directionality[drive] = 'DarkAddicted';
+      if (!shadowSurfaced) shadowSurfaced = 'DarkAddiction';
+    } else if (dh.golden > 0.5) {
+      directionality[drive] = 'GoldenAddicted';
+      if (!shadowSurfaced) shadowSurfaced = 'GoldenAddiction';
+    }
+  }
+
+  // If encounter has an explicit shadowTarget, prefer that.
+  if (encounter.shadowTarget) shadowSurfaced = encounter.shadowTarget;
+
+  const fb = toQualitativeFeedback(directionality, shadowSurfaced, result.passed);
+  return formatQualitativeFeedback(fb);
 }

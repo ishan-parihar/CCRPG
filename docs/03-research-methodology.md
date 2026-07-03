@@ -1,5 +1,63 @@
 # 03 — Research Methodology
 
+> **Status:** canonical (the discipline itself is HoloOS canonical; CCRPG adoption is canonical for CCRPG).
+
+## 0. Epistemic discipline (adopted from HoloOS Method of Holonic Inquiry)
+
+CCRPG adopts the HoloOS Method of Holonic Inquiry (`_THEORY/01_Epistemology/0_Method_of_Holonic_Inquiry.md`, canonical) with the following three Acts, seven Obligations, and status ladder.
+
+### 0.1 Three Acts
+
+1. **Grounding** — reduce every claim to a trusted anchor. The trusted anchor for CCRPG ontology is HoloOS `02.1_Microcosmic_Metabolic_Architecture.md` (canonical). The trusted anchor for CCRPG game-mechanics is the running code in `src/core/`.
+2. **Construction** — build new claims via fractal recursion (every element is itself a holon) and structural mirroring (separate invariant from decoration).
+3. **Validation** — red-team every claim; run Type Validation (T1/T2/T3, §0.3 below); retain provenance.
+
+### 0.2 Seven Obligations
+
+1. Name the anchor.
+2. Show derivation.
+3. Separate invariant from decoration.
+4. Expose joints (where two primitives connect).
+5. Refuse borrowed rigor (don't import empirical validity from another domain).
+6. Stay cosmological (don't conflate game-mechanic with metaphysical claim).
+7. Mark the unmodelable (the Absolute is not modeled).
+
+### 0.3 Type Validation Protocol (T1 / T2 / T3)
+
+CCRPG adopts HoloOS's three-test Type Validation Protocol (`_THEORY/01_Epistemology/4_Type_Validation_Protocol.md`, canonical-hypothesis):
+
+- **T1 Behavioral match** — observed bonding patterns match the Type signature's predictions. For CCRPG: a player assigned PolarityTexture X should show drive-choice patterns consistent with X across ≥3 encounters.
+- **T2 Excitation-invariance** — the Type signature stays fixed as Stage changes. For CCRPG: a player's underlying Type (once we have one — see `foundations/23` §3.1) should persist across Stage transitions, with only surface expressions varying.
+- **T3 Fixed-point persistence** — the Type signature persists across metabolic cycles without immediately firing Transformation. For CCRPG: a player's Type should be stable across ≥10 encounters before a Transformation event.
+
+A Type claim that fails any test is demoted from `canonical-hypothesis` to `ai-draft`. A Type claim that passes all three is promoted to `canonical`.
+
+### 0.4 Status ladder
+
+Every claim in `docs/foundations/` is tagged with one of:
+
+| Status | Meaning | When to use |
+|---|---|---|
+| `ai-draft` | Proposed, not yet validated | Initial proposals; brainstorming outputs |
+| `canonical-hypothesis` | Derived from canonical anchor, not yet empirically validated | Theoretical claims grounded in canonical anchor but not yet tested |
+| `canonical` | Validated | Empirically validated (for game-mechanics) or cross-scale homological (for metaphysics) |
+| `superseded` | Replaced by a later claim; retained for provenance | Old claims that have been replaced |
+
+A claim without a status tag is treated as `ai-draft`.
+
+### 0.5 Active refactor methodology
+
+Per HoloOS `_THEORY/02_Ontology/08.8.9_Depth_Asymmetry_and_Epistemology_Audit.md` Part II, when CCRPG performs an active refactor (audit → reconcile → validate → document), the refactor must:
+
+1. **Audit** — produce or update `AUDIT-HOLOOS-ALIGNMENT.md` (or equivalent) identifying what changed and why.
+2. **Reconcile** — update all stale references in the docs tree (file-number references, cross-doc citations, glossary entries).
+3. **Validate** — run `tsc --noEmit` and `vitest run`; confirm zero regressions.
+4. **Document** — append a section to the audit doc enumerating the substantive changes, superseded claims, and any new open joints.
+
+This closes the loop: every refactor produces a traceable artifact, and successor agents can reconstruct the reasoning.
+
+---
+
 ## 1. Purpose
 
 How do we know we are doing the research right? This document specifies the

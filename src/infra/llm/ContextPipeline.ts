@@ -291,22 +291,65 @@ function formatHolonDescriptions(holonSelection: HolonSelection): string {
 }
 
 function formatPlayerState(sig: VeilFilteredSignificator): string {
-  const signals: string[] = [
-    `layer=${sig.perceivedLayer}`,
-    `transformation=${sig.transformationProximity}`,
-    `energy=${sig.sessionEnergy}`,
-  ];
+  // UX-01 / HS-11 fix: replace raw labels (layer=Red, drives=agency-elevated,
+  // shadows=DarkAddiction-cognitive-active) with qualitative descriptions
+  // that do not leak the stage/drive/shadow taxonomy to the LLM. The LLM
+  // can infer the taxonomy from raw labels and leak it back to the player;
+  // qualitative descriptions preserve the signal without the label.
+  //
+  // Per HoloOS 08.8.8 "weirdness signature": Veil-filtered outputs should
+  // preserve felt-sense, not flatten to normalcy. The qualitative
+  // descriptions below preserve the felt-quality of the player's state.
+  const signals: string[] = [];
 
+  // layer → qualitative resonance description
+  const layerResonance: Record<string, string> = {
+    Infrared: 'player resonance = survival-focused, sensori-motor',
+    Magenta: 'player resonance = symbolic, magical-agency',
+    Red: 'player resonance = power-oriented, ego-driven',
+    Amber: 'player resonance = belonging-seeking, rule-bound',
+    Orange: 'player resonance = reason-driven, achievement-oriented',
+    Green: 'player resonance = pluralistic, multi-perspective',
+    Turquoise: 'player resonance = integral, vision-logic',
+    White: 'player resonance = trans-rational, unity-seeking',
+  };
+  signals.push(layerResonance[sig.perceivedLayer] ?? `player resonance = ${sig.perceivedLayer.toLowerCase()}`);
+
+  // transformation proximity (already qualitative)
+  signals.push(`transformation proximity = ${sig.transformationProximity}`);
+
+  // energy (already qualitative)
+  signals.push(`session energy = ${sig.sessionEnergy}`);
+
+  // drive signals → qualitative descriptions (no drive taxonomy)
   if (sig.activeDriveSignals.length > 0) {
-    signals.push(`drives=${sig.activeDriveSignals.join(',')}`);
+    const driveDescriptions = sig.activeDriveSignals.map(s => {
+      // s is already a qualitative string like "agency-elevated" from filterSignificator;
+      // convert to a phrase that doesn't name the drive.
+      if (s.includes('agency')) return s.replace(/agency/gi, 'active-asserting tendency');
+      if (s.includes('communion')) return s.replace(/communion/gi, 'relating-connecting tendency');
+      if (s.includes('eros')) return s.replace(/eros/gi, 'reaching-desiring tendency');
+      if (s.includes('agape')) return s.replace(/agape/gi, 'receiving-holding tendency');
+      return s;
+    });
+    signals.push(`player tendencies = ${driveDescriptions.join(', ')}`);
   }
 
+  // shadow signals → qualitative descriptions (no quadrant taxonomy)
   if (sig.activeShadowSignals.length > 0) {
-    signals.push(`shadows=${sig.activeShadowSignals.join(',')}`);
+    const shadowDescriptions = sig.activeShadowSignals.map(s => {
+      if (s.toLowerCase().includes('darkaddict')) return 'a familiar pull that clings';
+      if (s.toLowerCase().includes('darkavert')) return 'a flinching-away from contact';
+      if (s.toLowerCase().includes('goldenaddict')) return 'a reaching past the current step';
+      if (s.toLowerCase().includes('goldenavert')) return 'a resistance to what wants to emerge';
+      return s;
+    });
+    signals.push(`undercurrents = ${shadowDescriptions.join(', ')}`);
   }
 
+  // recent choice patterns (already qualitative)
   if (sig.recentChoicePatterns.length > 0) {
-    signals.push(`patterns=${sig.recentChoicePatterns.join(',')}`);
+    signals.push(`recent patterns = ${sig.recentChoicePatterns.join(', ')}`);
   }
 
   return signals.join('; ');

@@ -1,5 +1,23 @@
 # 25 -- Cumulative Consciousness Index (CCI)
 
+> **Status:** canonical-hypothesis (CCRPG-specific operationalization; G_z/P_z framework grounded in HoloOS Primal Distortion Genesis Theorem).
+>
+> **HoloOS anchor:** `_THEORY/02_Ontology/02.1_Microcosmic_Metabolic_Architecture.md` (canonical) + `_THEORY/02_Ontology/08.8.7_Primal_Distortion_Genesis_Theorem.md` (canonical-hypothesis). HoloOS requires both `G_z` (Lesser-Cycle health, Agape, rewards balance/integration) AND `P_z` (Greater-Cycle health, Eros, rewards polarization/transcendence) for total metabolic health.
+>
+> **Ontological derivation (NEW, per Primal Distortion Genesis Theorem):** The G_z/P_z duality is not arbitrary — it corresponds to two of three established Primal Laws:
+> - **G_z (Agape/integration) ↔ Love-Law (D2, Second Distortion, established by Octave N-2).** Love is the principle of unity-attracting; G_z measures how well the holon metabolizes catalyst into integrated experience within the current Stage.
+> - **P_z (Eros/polarization) ↔ Free-Will-Law (D1, First Distortion, established by Octave N-3).** Free Will is the principle of choice-as-such; P_z measures how ready the holon is to ratchet to the next Stage via authentic choice.
+> - **Light-Law (D3, Third Distortion) is the substrate both operate on** — the holon at D3 (Light) needs both Free-Will-choice (P_z) and Love-integration (G_z) to be metabolically complete.
+>
+> **Total Metabolic Health = G_z · P_z** (geometric mean). A player with high G_z but low P_z is "consolidating" — healthy but not advancing. A player with high P_z but low G_z is "polarizing unhealthily" — advancing without integration. Both must be nonzero. This formula now has ontological grounding, not just HoloOS citation.
+>
+> **The 5 existing CCI dimensions map as follows:**
+> - Altitude Map → neither (positional, not health)
+> - Drive Health Tensor → G_z (primary)
+> - Polarity Vector → P_z (primary)
+> - Shadow Topology → G_z (primary)
+> - Transformation Readiness → P_z (primary)
+>
 > **Lateral:** The composite internal scoring model that folds five developmental dimensions -- altitude, drive health, polarity, shadow topology, and transformation readiness -- into a single index consumed by the auto-mode strategy engine. The CCI is NEVER player-facing (Veil principle, foundations/20). It operates at the session-strategy level, above the encounter scheduler's per-encounter priority formula.
 >
 > **Depends on:** 10, 12, 16, 17, 19

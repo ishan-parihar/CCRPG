@@ -23,6 +23,19 @@ export interface StageModule {
   readonly ray: Ray;
   readonly description: string;
   readonly stub: boolean;
+  /**
+   * UX-02: Perceptual-layer palette and audio cues for this stage.
+   * Per foundations/21 §2.1, each stage has its own perceptual layer
+   * (palette/audio/NPC visibility/encounter eligibility/physics).
+   * Optional — stages without palette data fall back to the ray's paletteAnchor.
+   */
+  readonly palette?: {
+    readonly primary: string;     // hex color, e.g. '#8B0000'
+    readonly secondary: string;
+    readonly accent: string;
+  };
+  readonly audioMode?: string;    // e.g., 'tribal-drums', 'ambient-bells'
+  readonly physicsGravity?: number;  // Phaser arcade gravity override
 }
 
 export interface RayModule {

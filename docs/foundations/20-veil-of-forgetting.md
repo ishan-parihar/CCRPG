@@ -1,5 +1,15 @@
 # 20 — The Veil of Forgetting
 
+> **Status:** canonical (CCRPG design decision; alignment with HoloOS now exact, not rhyming — see §1.1 below).
+>
+> **HoloOS anchor:** `_THEORY/02_Ontology/08.8.7_Primal_Distortion_Genesis_Theorem.md` §6.5 (canonical-hypothesis). Under the Primal Distortion Genesis Theorem, HoloOS's Veil is the within-octave membrane gating access to cross-octave established Laws (Free Will, Love, Light). CCRPG's Veil gates exactly this: it hides the Law-structure (stage labels, drive labels, shadow quadrant names, numerical scores, polarity data) from the player, making choices authentic rather than compliant.
+>
+> **Note on terminology (per HoloOS `_THEORY/02_Ontology/08.8.6_Ontological_Foundations_Audit.md`):** HoloOS distinguishes the **Veil of Forgetting** (within-octave, gates established-Law access) from the **Involution Membrane** (cross-octave, gates prior-octave harvest access). CCRPG enforces only the Veil; the Involution Membrane is out of scope for a single-octave game.
+>
+> **Alignment verdict upgrade:** Prior audit (`AUDIT-HOLOOS-ALIGNMENT.md` §2.5.10) said CCRPG's Veil and HoloOS's Veil "rhyme but are not the same construct." Under the Primal Distortion Genesis Theorem, they ARE the same construct. The divergence is in *enforcement* (HS-05: `VeilFilter` not wired), not in *concept*.
+>
+> **Design principle — the "weirdness signature" (per HoloOS `08.8.8_Quantum_Realm_Backtrace.md`):** VeilFilter should not make the game feel normal. Veiled aspects should feel weird/ungraspable, exactly as Quantum Mechanics feels weird to D3 consciousness. The Veil's enforcement is necessary but insufficient; the *content* of Veil-filtered outputs should preserve weirdness. Infrared-stage content should feel quantum (superpositional, entanglement-heavy), not deterministic.
+>
 > **Lateral:** The Veil of Forgetting as a foundational *design principle* governing the entire CCRPG architecture — what the game reveals to the player, what it withholds, and why. Elevates the "never diagnostic" constraint from an interaction guideline into a metaphysical commitment.
 >
 > **Depends on:** 15 (macro-scale archetypal mind — the cosmological theory of the Veil)
