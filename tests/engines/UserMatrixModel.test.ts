@@ -27,7 +27,7 @@ function allHealthy(): Record<Drive, DriveDirectionality> {
 describe('UserMatrixModel — initial state', () => {
   it('creates a model with 64 cells (8 lines × 8 stages)', () => {
     const model = createInitialUserMatrixModel();
-    expect(Object.keys(model.cells).length).toBe(64);
+    expect(Object.keys(model.cells).length).toBe(256);
   });
 
   it('starts in unmapped phase with 0 probe coverage', () => {
@@ -38,7 +38,7 @@ describe('UserMatrixModel — initial state', () => {
 
   it('all cells start with zero loads', () => {
     const model = createInitialUserMatrixModel();
-    const cell = model.cells['Cognitive:Red'];
+    const cell = model.cells['Cognitive:Red:Mental'];
     expect(cell).toBeDefined();
     expect(cell.unprocessedCatalystLoad).toBe(0);
     expect(cell.unprocessedExperienceLoad).toBe(0);
@@ -140,21 +140,21 @@ describe('UserMatrixModel — updateUserMatrix', () => {
     const model = createInitialUserMatrixModel();
     const inference = inferFromResponse('must control', allHealthy(), null);
     const updated = updateUserMatrix(model, 'Cognitive', 'Red', inference, Date.now());
-    expect(updated.cells['Cognitive:Red'].encounterCount).toBe(1);
+    expect(updated.cells['Cognitive:Red:Mental'].encounterCount).toBe(1);
   });
 
   it('increases unprocessedCatalystLoad on the target cell', () => {
     const model = createInitialUserMatrixModel();
     const inference = inferFromResponse('must control have to', allHealthy(), null);
     const updated = updateUserMatrix(model, 'Cognitive', 'Red', inference, Date.now());
-    expect(updated.cells['Cognitive:Red'].unprocessedCatalystLoad).toBeGreaterThan(0);
+    expect(updated.cells['Cognitive:Red:Mental'].unprocessedCatalystLoad).toBeGreaterThan(0);
   });
 
   it('does not modify other cells\' encounter counts', () => {
     const model = createInitialUserMatrixModel();
     const inference = inferFromResponse('ok', allHealthy(), null);
     const updated = updateUserMatrix(model, 'Cognitive', 'Red', inference, Date.now());
-    expect(updated.cells['Emotional:Red'].encounterCount).toBe(0);
+    expect(updated.cells['Emotional:Red:Mental'].encounterCount).toBe(0);
   });
 
   it('updates probeCoverage after probing', () => {

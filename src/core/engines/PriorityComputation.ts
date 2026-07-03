@@ -13,6 +13,7 @@
 import type { Drive } from '../domain/Drive.js';
 import type { Significator } from '../domain/Significator.js';
 import { stageOrdinal } from '../domain/Stage.js';
+import { STAGE_RAY_MAP } from '../domain/Ray.js';
 import type { EncounterCandidate, WorldState } from './CandidateGeneration.js';
 import { computeCellStaleness, DEFAULT_THETA_PARAMS } from './ThetaDecay.js';
 import { computeUserMatrixPriority, type UserMatrixModel } from './UserMatrixModel.js';
@@ -113,7 +114,15 @@ export function computePriority(
   const hash = (candidate.line.charCodeAt(0) * 7 + candidate.modality.charCodeAt(0) * 13 + (now % 2000)) % 200;
   const tieBreaker = hash / 10000; // max 0.02
 
-  return baseScore + noveltyBonus + weaknessBonus + diversityBonus + bleedBoost + tieBreaker;
+  // Wave 1.5: rayProfile boost — cells whose ray-center is activating get a
+  // small priority boost. This makes the scheduler prefer encounters that
+  // continue activating the player's currently-engaged energy-ray-centers,
+  // creating developmental momentum along the active ray.
+  const encounterRay = STAGE_RAY_MAP[candidate.stage] ?? 'Yellow';
+  const rayActivation = sig.rayProfile[encounterRay] ?? 0;
+  const rayBoost = rayActivation > 0.5 ? 0.05 : 0;
+
+  return baseScore + noveltyBonus + weaknessBonus + diversityBonus + bleedBoost + rayBoost + tieBreaker;
 }
 
 /**

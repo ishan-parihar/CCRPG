@@ -30,6 +30,8 @@ import { ALL_LINES } from '../domain/Line.js';
 import { ALL_STAGES } from '../domain/Stage.js';
 import type { DriveDirectionality, ShadowQuadrant } from '../domain/enums.js';
 import type { Drive } from '../domain/Drive.js';
+import type { Dimension } from '../domain/ArchetypalClass.js';
+import { ALL_DIMENSIONS } from '../domain/ArchetypalClass.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -40,6 +42,11 @@ export type ProfilePhase = 'unmapped' | 'mapping' | 'crystallizing' | 'crystalli
 export interface CellMatrixState {
   readonly line: Line;
   readonly stage: Stage;
+  /** Wave 2.1: The manifestation dimension (Mental/Biological/Social/Collective).
+   * Per HoloOS 08.8.26, each archetype manifests across 4 dimensions.
+   * A cell at (Cognitive, Red, Mental) tracks cognitive-schema unprocessed catalyst;
+   * the same (Cognitive, Red, Biological) tracks structural-configuration unprocessed catalyst. */
+  readonly dimension: Dimension;
   /** 0-1: how much unprocessed life-catalyst is in the user's Matrix at this cell.
    * High = Dark-Addiction signature (excess catalyst, repetitive pattern). */
   readonly unprocessedCatalystLoad: number;
@@ -163,19 +170,21 @@ export function inferFromResponse(
 // Cell state update
 // ---------------------------------------------------------------------------
 
-function cellKey(line: Line, stage: Stage): string {
-  return `${line}:${stage}`;
+function cellKey(line: Line, stage: Stage, dimension: Dimension = 'Mental'): string {
+  return `${line}:${stage}:${dimension}`;
 }
 
 function getOrCreateCell(
   cells: Record<string, CellMatrixState>,
   line: Line,
   stage: Stage,
+  dimension: Dimension = 'Mental',
 ): CellMatrixState {
-  const key = cellKey(line, stage);
+  const key = cellKey(line, stage, dimension);
   return cells[key] ?? {
     line,
     stage,
+    dimension,
     unprocessedCatalystLoad: 0,
     unprocessedExperienceLoad: 0,
     avoidanceSignal: 0,
@@ -209,36 +218,46 @@ export function updateUserMatrix(
 ): UserMatrixModel {
   const newCells: Record<string, CellMatrixState> = {};
 
+  // Wave 2.1: Iterate all 4 dimensions per (line, stage)
   for (const l of ALL_LINES) {
     for (const s of ALL_STAGES) {
-      const cell = getOrCreateCell(model.cells as Record<string, CellMatrixState>, l, s);
-      const isTarget = l === line && s === stage;
+      for (const dim of ALL_DIMENSIONS) {
+        const cell = getOrCreateCell(model.cells as Record<string, CellMatrixState>, l, s, dim);
+        const isTarget = l === line && s === stage && dim === 'Mental'; // default target dimension
 
-      if (isTarget) {
-        newCells[cellKey(l, s)] = {
-          line: l,
-          stage: s,
-          unprocessedCatalystLoad: clamp01(cell.unprocessedCatalystLoad + inference.unprocessedCatalystDelta),
-          unprocessedExperienceLoad: clamp01(cell.unprocessedExperienceLoad + inference.unprocessedExperienceDelta),
-          avoidanceSignal: clamp01(cell.avoidanceSignal + inference.avoidanceDelta),
-          resistanceSignal: clamp01(cell.resistanceSignal + inference.resistanceDelta),
-          encounterCount: cell.encounterCount + 1,
-          lastProbedAt: now,
-        };
-      } else {
-        // Decay all non-target cells slightly
-        newCells[cellKey(l, s)] = {
-          ...cell,
-          unprocessedCatalystLoad: decay01(cell.unprocessedCatalystLoad),
-          unprocessedExperienceLoad: decay01(cell.unprocessedExperienceLoad),
-          avoidanceSignal: decay01(cell.avoidanceSignal),
-          resistanceSignal: decay01(cell.resistanceSignal),
-        };
+        if (isTarget) {
+          newCells[cellKey(l, s, dim)] = {
+            line: l,
+            stage: s,
+            dimension: dim,
+            unprocessedCatalystLoad: clamp01(cell.unprocessedCatalystLoad + inference.unprocessedCatalystDelta),
+            unprocessedExperienceLoad: clamp01(cell.unprocessedExperienceLoad + inference.unprocessedExperienceDelta),
+            avoidanceSignal: clamp01(cell.avoidanceSignal + inference.avoidanceDelta),
+            resistanceSignal: clamp01(cell.resistanceSignal + inference.resistanceDelta),
+            encounterCount: cell.encounterCount + 1,
+            lastProbedAt: now,
+          };
+        } else {
+          // Decay all non-target cells slightly
+          newCells[cellKey(l, s, dim)] = {
+            ...cell,
+            dimension: dim,
+            unprocessedCatalystLoad: decay01(cell.unprocessedCatalystLoad),
+            unprocessedExperienceLoad: decay01(cell.unprocessedExperienceLoad),
+            avoidanceSignal: decay01(cell.avoidanceSignal),
+            resistanceSignal: decay01(cell.resistanceSignal),
+          };
+        }
       }
     }
   }
 
-  const probeCoverage = Object.values(newCells).filter(c => c.encounterCount > 0).length / (ALL_LINES.length * ALL_STAGES.length);
+  // Coverage: count unique (line, stage) pairs probed (across any dimension)
+  const probedPairs = new Set<string>();
+  for (const c of Object.values(newCells)) {
+    if (c.encounterCount > 0) probedPairs.add(`${c.line}:${c.stage}`);
+  }
+  const probeCoverage = probedPairs.size / (ALL_LINES.length * ALL_STAGES.length);
   const profilePhase = computeProfilePhase(model, newCells, probeCoverage);
 
   return {
@@ -336,36 +355,56 @@ export function computeUserMatrixPriority(
   line: Line,
   stage: Stage,
 ): number {
-  const key = cellKey(line, stage);
-  const cell = model.cells[key];
+  // Wave 2.1: Aggregate across all 4 dimensions for the (line, stage) pair.
+  // The priority is computed from the MAX load across dimensions — the most
+  // unprocessed dimension drives the priority.
+  let maxCatalystLoad = 0;
+  let maxExperienceLoad = 0;
+  let maxAvoidance = 0;
+  let maxResistance = 0;
+  let totalEncounters = 0;
+  let anyProbed = false;
+
+  for (const dim of ALL_DIMENSIONS) {
+    const key = cellKey(line, stage, dim);
+    const cell = model.cells[key];
+    if (cell) {
+      maxCatalystLoad = Math.max(maxCatalystLoad, cell.unprocessedCatalystLoad);
+      maxExperienceLoad = Math.max(maxExperienceLoad, cell.unprocessedExperienceLoad);
+      maxAvoidance = Math.max(maxAvoidance, cell.avoidanceSignal);
+      maxResistance = Math.max(maxResistance, cell.resistanceSignal);
+      totalEncounters += cell.encounterCount;
+      if (cell.encounterCount > 0) anyProbed = true;
+    }
+  }
 
   switch (model.profilePhase) {
     case 'unmapped': {
       // Boost unprobed cells to maximize coverage
-      if (!cell || cell.encounterCount === 0) return 0.3;
+      if (!anyProbed) return 0.3;
       return 0;
     }
 
     case 'mapping': {
       // Boost cells with high unprocessed load that haven't been probed much
-      if (!cell) return 0.2;
-      const loadScore = Math.max(cell.unprocessedCatalystLoad, cell.unprocessedExperienceLoad);
-      const probePenalty = Math.min(cell.encounterCount * 0.05, 0.2);
+      if (!anyProbed) return 0.2;
+      const loadScore = Math.max(maxCatalystLoad, maxExperienceLoad);
+      const probePenalty = Math.min(totalEncounters * 0.05, 0.2);
       return clamp01(loadScore * 0.5 - probePenalty);
     }
 
     case 'crystallizing': {
       // Focus on highest-load cells
-      if (!cell) return 0;
-      return clamp01(cell.unprocessedCatalystLoad * 0.7 + cell.unprocessedExperienceLoad * 0.3);
+      if (!anyProbed) return 0;
+      return clamp01(maxCatalystLoad * 0.7 + maxExperienceLoad * 0.3);
     }
 
     case 'crystallized': {
       // Targeted: boost cells with active shadow patterns
-      if (!cell) return 0;
-      const activeShadow = cell.unprocessedCatalystLoad > 0.5 ? 0.5 : 0;
-      const activeBypass = cell.unprocessedExperienceLoad > 0.5 ? 0.3 : 0;
-      const activeAvoidance = cell.avoidanceSignal > 0.5 ? 0.2 : 0;
+      if (!anyProbed) return 0;
+      const activeShadow = maxCatalystLoad > 0.5 ? 0.5 : 0;
+      const activeBypass = maxExperienceLoad > 0.5 ? 0.3 : 0;
+      const activeAvoidance = maxAvoidance > 0.5 ? 0.2 : 0;
       return clamp01(activeShadow + activeBypass + activeAvoidance);
     }
 
@@ -380,18 +419,22 @@ export function computeUserMatrixPriority(
 
 export function createInitialUserMatrixModel(): UserMatrixModel {
   const cells: Record<string, CellMatrixState> = {};
+  // Wave 2.1: Create 4D cells (8 lines × 8 stages × 4 dimensions = 256 cells)
   for (const line of ALL_LINES) {
     for (const stage of ALL_STAGES) {
-      cells[cellKey(line, stage)] = {
-        line,
-        stage,
-        unprocessedCatalystLoad: 0,
-        unprocessedExperienceLoad: 0,
-        avoidanceSignal: 0,
-        resistanceSignal: 0,
-        encounterCount: 0,
-        lastProbedAt: 0,
-      };
+      for (const dimension of ALL_DIMENSIONS) {
+        cells[cellKey(line, stage, dimension)] = {
+          line,
+          stage,
+          dimension,
+          unprocessedCatalystLoad: 0,
+          unprocessedExperienceLoad: 0,
+          avoidanceSignal: 0,
+          resistanceSignal: 0,
+          encounterCount: 0,
+          lastProbedAt: 0,
+        };
+      }
     }
   }
   return {

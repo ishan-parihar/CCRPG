@@ -37,6 +37,7 @@ const program = new Command()
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
   .option('--verbose', 'Show full narrative and feedback')
+  .option('--dev', 'Developer mode: show holistic primitives (G_z/P_z, rayProfile, phase position)')
   .option('--no-llm', 'Disable LLM, use module assessments only')
   .option('--new-game', 'Start fresh (delete saved progress)')
   .option('-e, --encounters <n>', 'Number of encounters', '20')
@@ -174,6 +175,7 @@ const subcommand = program.args[0] as string | undefined;
 const HEADLESS = opts.headless ?? false;
 const VERBOSE = opts.verbose ?? false;
 const JSON_MODE = opts.json ?? false;
+const DEV_MODE = (opts as any).dev ?? false;
 const NO_LLM = opts.noLlm ?? false;
 let LLM_ACTIVE = !NO_LLM && apiKey !== 'sk-placeholder';
 const ACTIVE_MODEL = opts.model ?? model;
@@ -1931,6 +1933,24 @@ async function runStatus(): Promise<void> {
             ? 'Your path deepens with each step.'
             : 'The shape of your journey grows clear.';
       info('journey', milestone);
+
+      // Wave 3.1: Dev-mode holistic primitives
+      if (DEV_MODE) {
+        console.log(`\n  ${chalk.bold('Holistic Primitives (dev mode)')}`);
+        const snapshot = toSnapshot(sig);
+        const cci = computeCCI(snapshot);
+        info('G_z', cci.metabolicHealth?.gz.toFixed(4) ?? 'n/a');
+        info('P_z', cci.metabolicHealth?.pz.toFixed(4) ?? 'n/a');
+        info('total', cci.metabolicHealth?.total.toFixed(4) ?? 'n/a');
+        info('interpretation', cci.metabolicHealth?.interpretation ?? 'n/a');
+        info('transformationPhase', sig.transformationPhase ?? 'idle');
+        info('rayProfile', JSON.stringify(sig.rayProfile));
+        if (sig.transformationTargetStage) info('targetStage', sig.transformationTargetStage);
+        info('sessionsInPhase', String(sig.transformationSessionsInPhase ?? 0));
+        info('knotsResolved', String(sig.transformationKnotsResolved ?? 0));
+        info('internalizedHolons', String(sig.internalizedHolons?.length ?? 0));
+        info('greatWayDirection', sig.greatWayDirection ?? 'null');
+      }
     }
   } else {
     info('save', `${chalk.yellow('no saved game')} — run ${chalk.bold('ccrpg')} to start`);

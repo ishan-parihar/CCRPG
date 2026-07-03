@@ -96,6 +96,21 @@ export interface Significator {
   readonly totalSessions: number;
   readonly avoidedEncounters: readonly string[];
   readonly recentEncounters: readonly EncounterRecord[];
+  /**
+   * Wave 2.4: Endosymbiosis — NPCs internalized as sub-holons.
+   * Per HoloOS 08.8.25, endosymbiosis is a second compartmentalization mechanism
+   * where an external holon is internalized. When an NPC's relationship strength
+   * reaches >0.9 and the player passes a threshold encounter, the NPC is
+   * internalized — its drive-state contributes to the player's developmental profile.
+   */
+  readonly internalizedHolons?: readonly string[];
+  /**
+   * Wave 2.5: Greater-Cycle role flows (S·T·G·Ch per HoloOS 08.8.26).
+   * greatWayDirection: the player's last directional commitment (Choice).
+   * greatWayPressure: the accumulated Potentiator pressure from the world state.
+   */
+  readonly greatWayDirection?: 'STO' | 'STS' | null;
+  readonly greatWayPressure?: number;
 }
 
 function zeroRecord<K extends string>(keys: readonly K[]): Record<K, number> {
@@ -148,5 +163,8 @@ export function createSignificator(
     totalSessions: 0,
     avoidedEncounters: [],
     recentEncounters: [],
+    internalizedHolons: [],
+    greatWayDirection: null,
+    greatWayPressure: 0,
   };
 }
