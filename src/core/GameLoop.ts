@@ -119,6 +119,7 @@ export function tickWithStrategy(
           fromStage: updatedSig.currentStage,
           toStage: commitResult.targetStage,
           triggeredAt: Date.now(),
+          triggeredAtSession: updatedSig.totalSessions,
           catalystCount: updatedSig.totalEncounters,
         },
       ],

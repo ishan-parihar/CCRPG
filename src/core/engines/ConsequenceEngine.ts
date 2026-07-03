@@ -9,7 +9,7 @@ import type { EnergeticDirection, ShadowQuadrant, DriveDirectionality, SourceOfN
 import type { PolarityTrace } from '../domain/PolarityTrace.js';
 import type { ScheduledEncounter } from '../domain/EncounterSpecNew.js';
 import type { ConsequenceRecord } from '../domain/ConsequenceRecord.js';
-import type { Significator } from '../domain/Significator.js';
+import type { Significator, EncounterRecord } from '../domain/Significator.js';
 import type { ShadowEntry } from '../domain/ShadowLedger.js';
 import { recordTrace } from './PolarityEngine.js';
 import type { WorldState } from './CandidateGeneration.js';
@@ -163,6 +163,19 @@ export function applyConsequences(
       }]
     : sig.codexEntries;
 
+  // 5c. Append to sig.recentEncounters (EncounterRecord shape for ShadowDetector).
+  // `passed` is proxied by allDrivesHealthy (matches the implicit-integration logic
+  // in §5b above); driveChoice is the encounter's driveTarget if any.
+  const newRecentEncounters: readonly EncounterRecord[] = [
+    ...sig.recentEncounters,
+    {
+      line,
+      passed: allDrivesHealthy,
+      driveChoice: encounter.driveTarget ?? undefined,
+      timestamp: record.timestamp,
+    },
+  ].slice(-50); // keep last 50 to bound memory
+
   const newSig: Significator = {
     ...sig,
     polarity: newPolarity,
@@ -170,6 +183,7 @@ export function applyConsequences(
     drives: newDrives,
     shadows: { entries: newShadowEntries, activeCount: newShadowEntries.filter(e => !e.resolvedAt).length },
     codexEntries: newCodexEntries,
+    recentEncounters: newRecentEncounters,
     totalEncounters: sig.totalEncounters + 1,
   };
 

@@ -5,6 +5,7 @@
 
 import type { Stage } from '../../core/domain/Stage.js';
 import type { AgentMessage, ToolCall } from '../../core/assessments/agentTypes.js';
+import { filterOutput } from './VeilFilter.js';
 
 export interface LLMEvaluation {
   readonly score: number;
@@ -115,7 +116,7 @@ export async function evaluateResponse(
 
     return {
       score,
-      feedback: parsed.feedback ?? '',
+      feedback: filterOutput(parsed.feedback ?? '').filtered,
       inferredStage,
       confidence: parsed.confidence,
     };
@@ -172,9 +173,10 @@ export async function queryLLM(
     if (!res.ok) return '{"error": "fetch error"}';
 
     const data = (await res.json()) as any;
-    return isAnthropicProvider(baseUrl)
+    const rawContent = isAnthropicProvider(baseUrl)
       ? data.content?.[0]?.text ?? ''
       : data.choices?.[0]?.message?.content ?? '';
+    return filterOutput(rawContent).filtered;
   } catch {
     return '{"error": "exception"}';
   }
@@ -267,7 +269,7 @@ export async function queryLLMWithTools(
       const textBlock = data.content?.find((b: any) => b.type === 'text');
       const toolBlocks = data.content?.filter((b: any) => b.type === 'tool_use') ?? [];
       return {
-        content: textBlock?.text ?? null,
+        content: textBlock?.text != null ? filterOutput(textBlock.text).filtered : null,
         toolCalls: toolBlocks.length > 0 ? toolBlocks.map((b: any) => ({
           id: b.id,
           type: 'function' as const,
@@ -279,7 +281,7 @@ export async function queryLLMWithTools(
     const choice = data.choices?.[0]?.message;
     if (!choice) return { content: null };
     return {
-      content: choice.content,
+      content: choice.content != null ? filterOutput(choice.content).filtered : null,
       toolCalls: choice.tool_calls?.map((tc: any) => ({
         id: tc.id, type: tc.type,
         function: { name: tc.function.name, arguments: tc.function.arguments },

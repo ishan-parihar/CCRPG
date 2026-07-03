@@ -20,6 +20,7 @@ export interface TransformationRecord {
   readonly fromStage: Stage;
   readonly toStage: Stage;
   readonly triggeredAt: number;
+  readonly triggeredAtSession?: number; // Session index when transformation fired. Optional for backward-compat with old saves.
   readonly catalystCount: number;
 }
 
