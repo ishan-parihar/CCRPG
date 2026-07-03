@@ -702,37 +702,17 @@ function renderDrives(sig: Significator): void {
   }
 }
 
-/** Render Direct Questioning progress — which lines have been probed this session */
-function renderLinesProgress(sig: Significator, history: ConsequenceRecord[]): void {
+/** Render Direct Questioning progress — Veil-compliant (no line names, no stages, no pass/fail counts) */
+function renderLinesProgress(_sig: Significator, history: ConsequenceRecord[]): void {
   if (JSON_MODE) return;
-  const allLines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal'];
-  // Count encounters per line this session
-  const lineCounts: Record<string, number> = {};
-  const linePassed: Record<string, number> = {};
-  for (const r of history) {
-    const ln = r.encounterId.split(':')[0];
-    if (ln && allLines.includes(ln as Line)) {
-      lineCounts[ln] = (lineCounts[ln] ?? 0) + 1;
-      const allHealthy = Object.values(r.polarityTrace.driveDirectionality).every(d => d === 'HealthyBalanced');
-      if (allHealthy) linePassed[ln] = (linePassed[ln] ?? 0) + 1;
-    }
-  }
-  const totalSessions = history.length;
+  // Veil compliance: show only the count of questions answered so far,
+  // not which lines, not their stages, not pass/fail counts.
+  const totalAnswered = history.length;
+  const totalQuestions = 8;
   const barWidth = 16;
-  console.log(`  ${chalk.bold('Lines Progress')}  ${chalk.dim(`${totalSessions} encounters this session`)}`);
-  for (const line of allLines) {
-    const count = lineCounts[line] ?? 0;
-    const passed = linePassed[line] ?? 0;
-    const stage = sig.altitudes[line] ?? 'Red';
-    const stageCol = stageColor(stage);
-    // Progress bar: filled based on how many times this line has been probed
-    const probeRatio = Math.min(1, count / 3); // 3 encounters = fully probed
-    const filled = Math.round(probeRatio * barWidth);
-    const bar = '█'.repeat(filled) + '░'.repeat(barWidth - filled);
-    const countLabel = count > 0 ? chalk.green(`${passed}/${count}`) : chalk.dim('0/0');
-    const abbr = stageAbbr(stage);
-    console.log(`    ${chalk.dim(line.padEnd(14))} ${stageCol(bar)} ${stageCol(abbr)} ${countLabel}`);
-  }
+  const filled = Math.round((totalAnswered / totalQuestions) * barWidth);
+  const bar = '█'.repeat(filled) + '░'.repeat(barWidth - filled);
+  console.log(`  ${chalk.bold('Progress')}  ${chalk.cyan(bar)} ${totalAnswered}/${totalQuestions}`);
   console.log('');
 }
 
@@ -776,7 +756,6 @@ function printEncounter(enc: ScheduledEncounter): void {
   const isShadow = enc.executionMode === 'shadow';
   const posColor = enc.sessionPosition === 'warmup' ? chalk.blue
     : enc.sessionPosition === 'cooldown' ? chalk.green : chalk.magenta;
-  const stageCol = stageColor(enc.stage);
   const posTag = enc.sessionPosition === 'warmup' ? 'WARMUP'
     : enc.sessionPosition === 'cooldown' ? 'COOLDOWN' : 'PEAK';
 
@@ -784,15 +763,12 @@ function printEncounter(enc: ScheduledEncounter): void {
     console.log(`  ${chalk.bgRed.white.bold(' ◆ SHADOW-WORK ')} ${chalk.dim('— accumulated shadows exceed threshold')}`);
   }
 
-  // ponytail: Veil compliance — no module identifiers, no difficulty scores, no priority values
-  // The player sees the holon name and arc position, not backend metadata
-  info('holon', `${chalk.dim(enc.holonSource)}`);
+  // Veil compliance: no holonSource ID, no shadowTarget quadrant name, no executionMode label.
+  // Show only the arc position (warmup/peak/cooldown) which is structural, not developmental.
   info('arc', `${posColor(posTag)}`);
   if (isShadow) {
-    const quadrant = enc.shadowTarget ? chalk.hex('#FF6347')(enc.shadowTarget) : chalk.yellow('unknown');
-    info('mode', `${chalk.bgRed.white(' shadow ')}  target: ${quadrant}`);
-  } else {
-    info('mode', `${chalk.dim(enc.executionMode)}`);
+    // No quadrant name — just the shadow-work indicator
+    info('mode', `${chalk.bgRed.white(' shadow ')}`);
   }
 }
 
