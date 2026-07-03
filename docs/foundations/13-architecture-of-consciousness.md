@@ -254,3 +254,22 @@ Shadow dynamics are the pathologies that block the holon from resonating with at
 | **Golden-Allergy** | The holon is averse to the NEXT attractor field; it refuses the pattern that is naturally emerging, creating stagnation and developmental arrest |
 
 In healthy development, the holon resonates fully with its current attractor field (no dark pathology), remains open to the next (no golden pathology), and moves fluidly between them as the drives carry it upward (Eros) and downward (Agape) through the landscape of consciousness.
+---
+
+## Appendix: Holonic-Dynamics Grounding (per HoloOS 08.8.25)
+
+> **Status:** canonical-hypothesis (CCRPG-specific extension referencing HoloOS 08.8.25).
+
+The four-quadrant shadow model above (Dark-Addiction, Dark-Allergy, Golden-Addiction, Golden-Allergy) is grounded in the biological hierarchy of evolutionary development per HoloOS `_THEORY/02_Ontology/08.8.25_Holonic_Dynamics_Grounded_in_Reality.md`.
+
+The biological hierarchy (atoms → molecules → organelles → cells → tissues → organs → organisms → populations → communities → ecosystems → biosphere) validates the holonic framework's core mechanism: at every level, a system encounters catalyst-classes it cannot process → catalytic interference → membrane formation → sub-holon formation → parent integration → increased complexity.
+
+**Three corrections from 08.8.25 that apply to CCRPG:**
+
+1. **Endosymbiosis** is a second compartmentalization mechanism (alongside specialization). CCRPG models this via `Significator.internalizedHolons` — when an NPC's relationship strength exceeds 0.9 and the player passes a threshold encounter, the NPC is internalized as a sub-holon.
+
+2. **Parallel co-evolution** — the Body/Mind/Spirit complexes co-evolve with feedback loops, not strictly sequential coupling. CCRPG models this via `LINE_COMPLEX` (each Line belongs to a Complex) and `computeComplexAltitudes` (per-Complex altitude synthesis).
+
+3. **Substrate-transformation dynamic** — compartmentalization TRANSFORMS the parent's substrate. CCRPG models this via `commitTransformation` which advances `sig.currentStage` (the substrate reorganizes at the new density).
+
+See also: `docs/foundations/03-lines-of-intelligence-overview.md` (Complex differentiation), `docs/foundations/17-transformation-mechanics.md` (substrate transformation at stage transitions).

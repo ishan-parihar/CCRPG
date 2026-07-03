@@ -198,3 +198,28 @@ To construct a functional, evolving reality simulator, the Logos must execute th
 The macro-scale architecture of consciousness reveals that the universe is not a cold, random expanse of matter, nor is it a purely ethereal realm of detached spirits. It is an intricately engineered, interconnected crucible. The political gridlocks, economic disparities, and cultural paradigm shifts of the material world are not distractions from spiritual evolution; they are the exact gears of the Great Way designed to grind the Significator into a state of Transformation.
 
 As the entity moves majestically through this co-created illusion, navigating the terror of its own latent potential and the unresolved shadows of its past, it is constantly shaping and being shaped by the world around it. Ultimately, the Significator inevitably arrives at the singular destination authored by the Logos: the sacred, unprovable, and eternal Choice of how it will express its polarity. Through this exhaustive macro-architecture, the Creator successfully experiences itself in infinite variation, fulfilling the profound purpose of the cosmological design.
+
+---
+
+## Appendix: Archetypal-Class Typology (per HoloOS 08.8.26)
+
+> **Status:** canonical-hypothesis (CCRPG-specific extension referencing HoloOS 08.8.26).
+
+The 8 functional roles (M·P·C·E·S·T·G·Ch) are not single things but **classes of things** — each manifests across 4 dimensions per HoloOS `_THEORY/02_Ontology/08.8.26_Archetypal_Component_Architecture.md`:
+
+| Dimension | Description | CCRPG Analog |
+|---|---|---|
+| **Mental** | Thought-forms, cognitive structures, imaginal patterns | UL quadrant (individual interior) |
+| **Biological** | Physical substrate, molecular/cellular processes | UR quadrant (individual exterior) |
+| **Social** | Inter-holonic dynamics, institutional structures | LL quadrant (collective interior) |
+| **Collective** | Trans-personal fields, cultural patterns, species-level | LR quadrant (collective exterior) |
+
+The 8×4=32 archetypal-class matrix is defined in `src/core/domain/ArchetypalClass.ts`. Examples:
+- Matrix-in-Mental = cognitive-schema (thought-patterns, belief structures)
+- Catalyst-in-Biological = physical-perturbation (somatic challenges, environmental pressures)
+- Catalyst-in-Social = relational-perturbation (conflict, intimacy, power-dynamics)
+- Significator-in-Collective = archetypal-resonance (which collective patterns the holon embodies)
+
+**CCRPG's UserMatrixModel** tracks 4D cells (8 lines × 8 stages × 4 dimensions = 256 cells), allowing the game to model WHAT KIND of unprocessed material the user carries (cognitive vs physical vs relational vs transpersonal), not just how much.
+
+**AQAL Quadrants ↔ 4 Dimensions mapping:** UL ≈ Mental, UR ≈ Biological, LL ≈ Social, LR ≈ Collective. The mapping is approximate — the 4 dimensions are holonically-universal (per HoloOS 08.8.17 Semantics Protocol), while the AQAL quadrants are D3-experiential (Wilber-specific). CCRPG retains the AQAL `Quadrant` type for backward compatibility but uses the 4 `Dimension` values for archetypal-class tracking.

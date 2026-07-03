@@ -1,0 +1,46 @@
+# 28 — HoloOS Open-Joints Mapping
+
+> **Status:** canonical (tracking document).
+>
+> **Purpose:** Maps each resolved HoloOS open joint to its CCRPG implementation status. This document is the CCRPG-side mirror of HoloOS `_THEORY/02_Ontology/OPEN_JOINTS.md`.
+
+---
+
+## Resolved Joints with CCRPG Implementation
+
+| Joint | Resolution | CCRPG Implementation | Status |
+|---|---|---|---|
+| J-INV-5 | First octave / modelable boundary (08.8.7) | CCRPG is single-octave (3rd density); first octave out of scope | ✅ N/A |
+| J-INV-7 | Substrate-layer asymmetry (08.8.7 §6.2) | `SUBSTRATE_LAYER_LAW` constant in GreaterCycleEngine.ts | ✅ Implemented |
+| J-HUS-1 | D3-experiential annotation policy (08.8.18) | CCRPG uses universal terms in player-facing output; `--dev` flag for system-terms | ✅ Implemented |
+| J-HUS-2 | CLI language policy (08.8.18) | `ccrpg status` uses felt-sense language; `--dev` flag exposes system-terms | ✅ Implemented |
+| J-HUS-7 | Provenance policy (08.8.18) | CCRPG docs retain original language with status-ladder tags | ✅ Implemented |
+| J-DU-2 | Depth-asymmetry documentation | CCRPG docs flagged via `AUDIT-HOLOOS-ALIGNMENT.md` | ✅ Implemented |
+| J-ERC-3 | Energy-Ray-Center ↔ Complex mapping (08.8.22) | `RAY_COMPLEX` in Ray.ts; `LINE_COMPLEX` in Line.ts | ✅ Implemented |
+| J-ERC-4 | rayProfile as Energy-Ray-Center Profile (08.8.22) | `rayProfile: Record<Ray, number>` on Significator; updated by ConsequenceEngine; read by TransformationDetector + PriorityComputation | ✅ Implemented |
+| J-SEC-1 | Catalyst-class = 4 dimensions (08.8.26) | `Dimension` type + 32 archetypal-class matrix in ArchetypalClass.ts; UserMatrixModel extended to 4D (256 cells) | ✅ Implemented |
+| J-SEC-2 | Compartment count variable (08.8.24) | CCRPG has fixed 3 complexes (Body/Mind/Spirit); variable compartments not modeled | ⚠️ Partial |
+| J-HDG-3 | Catalyst-class origin (08.8.26) | Same as J-SEC-1 — archetypal-class matrix provides the origin | ✅ Implemented |
+| J-CLI-2 | MCP parity | CCRPG has no MCP server (out of scope for game UX) | ❌ Future |
+| J-UNAV-4 | Universal navigation | CCRPG CLI uses universal terminology via `--dev` flag | ✅ Implemented |
+| J-PTD-* | Phase-Transition Liminality (08.8.14) | `liminalitySignature` in MetabolicHealth; `'transitional'` interpretation; `resetPhaseAfterTransformation` | ✅ Implemented |
+
+## Open Joints with CCRPG Relevance
+
+| Joint | Status | CCRPG Relevance |
+|---|---|---|
+| J-INV-1 | 🟡 Partial | Prior-octave count (3-4 hypothesis). CCRPG uses 3 (N-3, N-2, N-1) in INVOLUTION_GROUND. |
+| J-INV-3 | 🔴 Open | Substrate of prior octaves. CCRPG doesn't model this (single-octave scope). |
+| J-INV-4 | 🔴 Open | Weight of accumulated Experience. CCRPG models via `totalEncounters` but not as a weight. |
+| J-INV-6 | 🔴 Open | Our octave's novel contributions. CCRPG's White stage = D4+ contributions. |
+| J-VERT-1 through 5 | 🔴 Open | Sub-density validation, density-defaults derivation. CCRPG uses Spiral Dynamics stages, not HoloOS density-defaults. |
+| J-COLL-1 through 5 | 🔴 Open | Collectivity axis. CCRPG has `HolonKind` (8 kinds) but not log₁₀-C. |
+| J-REALM-1 through 7 | 🔴 Open | Realm-placement. CCRPG has State enum (Gross/Subtle/Causal/Witness/Non-Dual). |
+| J-NEST-1 through 6 | 🔴 Open | Nesting direction. CCRPG has no nesting axis. |
+| J-PDG-1 through 7 | 🔴 Open | Primal Distortion Genesis. CCRPG uses Law-correspondence in foundations/02. |
+| J-ERC-1 through 7 | 🔴 Open (3 resolved) | Energy-Ray-Centers. 3 resolved (J-ERC-3,4, and J-ERC-5 partially via G_z/P_z). 4 remain open. |
+| J-PTD-1 through 7 | 🔴 Open (1 resolved) | Phase-Transition Liminality. Liminality detection implemented; scaling law and Veil-density effects open. |
+
+---
+
+**Summary:** 14 resolved joints have CCRPG implementations (12 fully, 2 partially). 50+ open joints are tracked but out of scope for current CCRPG functionality.

@@ -15,7 +15,7 @@ import { DEFAULT_WEIGHTS } from '@core/engines/PriorityComputation.js';
 import { EcologicalTracker } from '../systems/EcologicalTracker.js';
 import { routeModality } from '../logic/encounterRouting.js';
 import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
-import { startSession, tickWithStrategy, endSession, type SessionState } from '@core/GameLoop.js';
+import { startSession, tickWithStrategy, endSession, applyResponseOnly, type SessionState } from '@core/GameLoop.js';
 import type { SaveRepository } from '@infra/persistence/SaveRepository.js';
 import type { EventBus } from '@core/events/EventBus.js';
 import type { ModuleRegistry } from '@core/assessments/registry.js';
@@ -158,8 +158,27 @@ export class WorldScene extends Phaser.Scene {
     const existingSessionState = this.registry.get(RegistryKeys.SessionState) as SessionState | undefined;
 
     if (existingSessionState) {
+      // GAP-WB-6 (OA-12): Apply the previous encounter's response BEFORE scheduling
+      // the next one. Prior code passed null,null to tickWithStrategy, causing
+      // UserMatrixModel to never update and transformation state to run on stale sig.
+      // The response is stored in the registry by EncounterScene after each encounter.
+      const lastResponse = this.registry.get('lastPlayerResponse') as import('@core/engines/ConsequenceEngine.js').PlayerResponse | null;
+      const lastEncounter = this.registry.get('lastEncounter') as ScheduledEncounter | null;
+      let workingSig = sig;
+      let workingSessionState = existingSessionState;
+
+      if (lastResponse && lastEncounter) {
+        const applied = applyResponseOnly(workingSig, world, workingSessionState, lastResponse, lastEncounter, now);
+        workingSig = applied.sig;
+        workingSessionState = applied.sessionState;
+        this.registry.set(RegistryKeys.Significator, workingSig);
+        // Clear the stored response so it's not re-applied
+        this.registry.remove('lastPlayerResponse');
+        this.registry.remove('lastEncounter');
+      }
+
       // Returning from encounter: use tickWithStrategy to get biased scheduling
-      const result = tickWithStrategy(sig, world, session, existingSessionState, null, null, now);
+      const result = tickWithStrategy(workingSig, world, session, workingSessionState, null, null, now);
       this.sessionState = result.sessionState;
 
       // GAP-F-3: Read FULL transformation state from Significator (not just phase).
