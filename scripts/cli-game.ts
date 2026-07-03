@@ -163,6 +163,7 @@ import { renderLayers, renderLayersCompact } from '../src/game/cli/LayerRenderer
 import { detectBleedThrough } from '../src/core/engines/ThetaDecay.js';
 import { toSnapshot } from '../src/core/domain/SignificatorSnapshot.js';
 import { computeCCI } from '../src/core/engines/CCIEngine.js';
+import { SessionAgent } from '../src/core/assessments/SessionAgent.js';
 
 // ── Full parse with subcommands (after project imports) ──────────────
 program.parse();
@@ -777,10 +778,10 @@ function printEncounter(enc: ScheduledEncounter): void {
     console.log(`  ${chalk.bgRed.white.bold(' ◆ SHADOW-WORK ')} ${chalk.dim('— accumulated shadows exceed threshold')}`);
   }
 
-  info('module', `${stageCol(enc.moduleRef)}`);
-  info('modality', `${posColor(enc.modality)}`);
-  info('arc', `${posColor(posTag)}  ${chalk.dim('difficulty:' + enc.difficulty.toFixed(2) + ' pr:' + enc.priority.toFixed(3))}`);
+  // ponytail: Veil compliance — no module identifiers, no difficulty scores, no priority values
+  // The player sees the holon name and arc position, not backend metadata
   info('holon', `${chalk.dim(enc.holonSource)}`);
+  info('arc', `${posColor(posTag)}`);
   if (isShadow) {
     const quadrant = enc.shadowTarget ? chalk.hex('#FF6347')(enc.shadowTarget) : chalk.yellow('unknown');
     info('mode', `${chalk.bgRed.white(' shadow ')}  target: ${quadrant}`);
@@ -797,6 +798,7 @@ async function runAgenticEncounter(
   history: ConsequenceRecord[],
   responsesPool?: number[],
   consecutivePasses?: Map<string, number>,
+  agentSynthesis?: string,
 ): Promise<{
   outcome: import('../src/core/assessments/AgenticOrchestrator.js').OrchestratorResult;
   response: PlayerResponse;
@@ -978,7 +980,7 @@ async function runAgenticEncounter(
     }
   }
 
-  const orchestrator = new AgenticOrchestrator({
+  const  orchestrator = new AgenticOrchestrator({
     encounter: forcedEncounter,
     significator: sig,
     world,
@@ -989,6 +991,7 @@ async function runAgenticEncounter(
     noLlm: !LLM_ACTIVE,
     forceShadow: FORCE_SHADOW,
     consecutivePasses,
+    agentSynthesis,
   });
 
   const outcome = await orchestrator.run();
@@ -1145,6 +1148,7 @@ async function runDirectQuestioningSession(
   let currentWorld = initialWorld;
   const history: ConsequenceRecord[] = [];
   const consecutivePasses = new Map<string, number>();
+  const agent = new SessionAgent();
 
   for (let i = 0; i < shuffledLines.length; i++) {
     const line = shuffledLines[i]!;
@@ -1170,7 +1174,7 @@ async function runDirectQuestioningSession(
     };
 
     try {
-      const result = await runAgenticEncounter(encounter, currentSig, currentWorld, history, undefined, consecutivePasses);
+      const result = await runAgenticEncounter(encounter, currentSig, currentWorld, history, undefined, consecutivePasses, agent.buildSynthesis());
 
       // Qualitative feedback — no pass/fail, no clinical labels
       const cr = result.outcome.consequenceRecord;
@@ -1195,6 +1199,24 @@ async function runDirectQuestioningSession(
           console.log(`  ${chalk.dim('Something beneath the surface stirred.')}`);
         }
       }
+
+      // Feed result to session agent for cross-encounter synthesis
+      const driveExpr = cr.polarityTrace.driveDirectionality;
+      agent.addEncounter({
+        line,
+        stage: currentStage,
+        narrativeSummary: result.narrativeSummary,
+        writeInResponse: result.outcome.playerWriteIn ?? result.narrativeSummary,
+        driveExpression: {
+          agency: result.outcome.driveScores?.agency ?? (driveExpr.Agency === 'HealthyBalanced' ? 0.6 : 0.3),
+          communion: result.outcome.driveScores?.communion ?? (driveExpr.Communion === 'HealthyBalanced' ? 0.6 : 0.3),
+          eros: result.outcome.driveScores?.eros ?? (driveExpr.Eros === 'HealthyBalanced' ? 0.6 : 0.3),
+          agape: result.outcome.driveScores?.agape ?? (driveExpr.Agape === 'HealthyBalanced' ? 0.6 : 0.3),
+        },
+        shadowSurfaced: cr.shadowSurfaced,
+        passed: result.outcome.finalResult.passed,
+        timestamp: Date.now(),
+      });
 
       history.push(cr);
       currentSig = result.outcome.updatedSig;
@@ -1434,7 +1456,7 @@ async function runFullSession(): Promise<void> {
         // Story mode: show location/NPC name
         const holon = world.holons.find(h => h.id === enc.holonSource);
         const location = holon?.name ?? encLineName;
-        const label = `${idx + 1}. ${chalk.cyan(location)}  ${chalk.dim(enc.modality)}  ${chalk.dim('diff:' + enc.difficulty.toFixed(2))}  ${posLabel(enc.sessionPosition)}`;
+        const label = `${idx + 1}. ${chalk.cyan(location)}  ${chalk.dim(enc.modality)}  ${posLabel(enc.sessionPosition)}`;
         return { value: idx, label };
       });
       const choice = await select({
@@ -1495,35 +1517,20 @@ async function runFullSession(): Promise<void> {
 
       verbose('narrative', result.narrativeSummary);
 
-      // ── Per-encounter state display ──
-      const encResult = result.outcome.finalResult;
+      // ── Per-encounter state display (Veil-compliant) ──
+      // ponytail: no PASSED/FAILED, no clinical labels, no layer labels.
+      // The player sees narrative consequence only.
       if (!JSON_MODE) {
-        // Task 3: Developmental feedback — show insight, not just pass/fail
         const cr = result.outcome.consequenceRecord;
-        const polarityIcon = cr.polarityTrace.energeticDirection === 'Radiative' ? '↑' 
+        const polarityArrow = cr.polarityTrace.energeticDirection === 'Radiative' ? '↑'
           : cr.polarityTrace.energeticDirection === 'Absorptive' ? '↓' : '·';
-        
-        // Determine dominant drive expression
-        const driveEntries = Object.entries(cr.polarityTrace.driveDirectionality);
-        const dominantDrive = driveEntries.find(([, v]) => v !== 'HealthyBalanced');
-        const driveLabel = dominantDrive ? `${dominantDrive[0]} drive, ${cr.polarityTrace.stageOrientation}` : 'Healthy balanced';
-        
-        // ponytail: qualitative feedback — no PASSED/FAILED, no clinical labels
-        // The Veil is enforced: the player sees narrative, not scores.
-        const polarityArrow = cr.polarityTrace.energeticDirection === 'Radiative' ? '↑' 
-          : cr.polarityTrace.energeticDirection === 'Absorptive' ? '↓' : '·';
-        
+
         // Show the narrative consequence as the primary feedback
         const briefNarrative = result.narrativeSummary.length > 100
           ? result.narrativeSummary.slice(0, 100) + '...'
           : result.narrativeSummary;
         console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
-        
-        // Show drive expression qualitatively — not as a score, but as a felt-sense
-        if (dominantDrive) {
-          console.log(`  ${chalk.dim('The encounter stirred:')} ${chalk.cyan(polarityArrow + ' ' + driveLabel)}`);
-        }
-        
+
         // Shadow surfaces as narrative, not as a clinical label
         if (cr.shadowSurfaced) {
           console.log(`  ${chalk.dim('Something beneath the surface stirred.')}`);

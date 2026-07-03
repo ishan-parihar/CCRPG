@@ -31,6 +31,10 @@ export interface OrchestratorResult {
   readonly narrativeSummary: string;
   readonly feedback: string;
   readonly messages: readonly AgentMessage[];
+  /** Player's actual write-in response text (if any), for cross-encounter synthesis */
+  readonly playerWriteIn?: string;
+  /** Per-drive scores from the encounter evaluation */
+  readonly driveScores?: { agency: number; communion: number; eros: number; agape: number };
 }
 
 export const ASK_USER_QUESTION_TOOL = {
@@ -153,6 +157,8 @@ export class AgenticOrchestrator {
   private _currentTaskStartTime: number = 0;
   private _currentPresentedTask: AssessmentTask | null = null;
   private _consecutivePasses: Map<string, number>;
+  private agentSynthesis: string | undefined;
+  private _lastPlayerWriteIn: string | undefined;
 
   // Shared shadow keyword detection helper (DRY — used in 3 places)
   // Expanded keyword lists for deeper shadow detection across developmental contexts
@@ -235,6 +241,7 @@ export class AgenticOrchestrator {
     noLlm?: boolean;
     forceShadow?: string;
     consecutivePasses?: Map<string, number>;
+    agentSynthesis?: string;
   }) {
     this.encounter = params.encounter;
     this.significator = params.significator;
@@ -247,6 +254,7 @@ export class AgenticOrchestrator {
     this.noLlm = params.noLlm ?? false;
     this.forceShadow = params.forceShadow;
     this._consecutivePasses = params.consecutivePasses ?? new Map();
+    this.agentSynthesis = params.agentSynthesis;
   }
 
   /**
@@ -264,7 +272,10 @@ export class AgenticOrchestrator {
       const moduleRef = r.encounterId.split(':')[0] ?? '';
       return `  ${i + 1}. [${moduleRef}] ${passed ? '✓ PASSED' : '✗ FAILED'}${polarity} — ${r.narrativeSummary.slice(0, 150)}${shadow}${altShift}`;
     });
-    return `\n[RECENT JOURNEY — the player's developmental arc. Build upon these encounters. Reference specific events from them. The player remembers what happened.]\n${lines.join('\n')}`;
+    const agentCtx = this.agentSynthesis
+      ? `\n[SESSION SYNTHESIS — cross-encounter pattern recognition from the persistent agent. Use this to inform your next question. Reference specific patterns.]\n${this.agentSynthesis}`
+      : '';
+    return `\n[RECENT JOURNEY — the player's developmental arc. Build upon these encounters. Reference specific events from them. The player remembers what happened.]\n${lines.join('\n')}${agentCtx}`;
   }
 
   /**
@@ -424,6 +435,8 @@ export class AgenticOrchestrator {
               ...outcome,
               finalResult,
               messages: this.messages,
+              playerWriteIn: this._lastPlayerWriteIn,
+              driveScores: safeDriveScores,
             };
           }
         }
@@ -467,7 +480,6 @@ export class AgenticOrchestrator {
     const context = buildContext(contextInput);
     const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';
 
-    // ponytail: self-reflection encounters get a different prompt — direct, no narrative intro
     const systemPrompt = isSelfReflection
       ? `${context.systemPrompt}${assessmentContext}${continuityContext}
 [DIRECT QUESTIONING — SELF-REFLECTION]
@@ -478,6 +490,7 @@ INSTRUCTIONS:
    - Line-specific to ${line} (this encounter probes the ${line.toLowerCase()} dimension)
    - Stage-appropriate for ${stage}
    - Evocative but not leading — open a door, don't push them through it
+   - If SESSION SYNTHESIS is provided, reference specific patterns from previous reflections
    - 2-3 sentences maximum
 
 2. Call 'ask_user_question' with EXACTLY this structure:
@@ -565,6 +578,12 @@ INSTRUCTIONS:
             const params = JSON.parse(tc.function.arguments) as AskUserQuestionParams;
             const result = await this.uiHandler.askUser(params);
 
+            // ponytail: track player's actual write-in for cross-encounter synthesis
+            const lastAnswer = result.answers[0];
+            if (lastAnswer?.writeInValue) {
+              this._lastPlayerWriteIn = lastAnswer.writeInValue;
+            }
+
             this.messages.push({
               role: 'tool',
               content: JSON.stringify(result),
@@ -604,6 +623,8 @@ INSTRUCTIONS:
               ...outcome,
               finalResult,
               messages: this.messages,
+              playerWriteIn: this._lastPlayerWriteIn,
+              driveScores: safeDriveScores,
             };
           }
         }
@@ -766,6 +787,8 @@ INSTRUCTIONS:
       ...outcome,
       finalResult,
       messages: this.messages,
+      playerWriteIn: isSelfReflection ? narrativeSummary : undefined,
+      driveScores: evaluated.driveScores,
     };
   }
 
@@ -1084,6 +1107,8 @@ INSTRUCTIONS:
       consequenceRecord: updatedRecord,
       narrativeSummary,
       feedback: evaluation.feedback,
+      playerWriteIn: writeIn,
+      driveScores: evaluation.driveScores,
       messages: this.messages,
     };
   }

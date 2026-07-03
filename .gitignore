@@ -22,3 +22,13 @@ npm-debug.log*
 
 # Tests
 coverage/
+
+# Session state
+.contexty/
+.memsearch/
+
+# Tool session state
+.hive/
+
+# Tool state
+.cortexkit/
