@@ -33,7 +33,7 @@ const VERSION = '0.1.0';
 const program = new Command()
   .name('ccrpg')
   .version(VERSION)
-  .description('Cognitive-Capacity-Driven RPG — Developmental Assessment Engine')
+  .description('CCRPG')
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
   .option('--verbose', 'Show full narrative and feedback')
@@ -52,7 +52,7 @@ program
   .description('Configure LLM and preferences');
 program
   .command('status')
-  .description('Show current developmental state');
+  .description('Show current save state');
 program
   .command('new-game')
   .description('Reset progress and start fresh');
@@ -760,10 +760,16 @@ function renderRadarChart(sig: Significator): void {
 
 // ── Print state ───────────────────────────────────────────────────────
 function printSignificator(sig: Significator): void {
+  // T-3.4 (Veil compliance): printSignificator is only called from
+  // diagnostic/verbose paths. Show only id + qualitative state.
   info('id', sig.id);
-  info('stage', sig.currentStage);
-  info('encounters', String(sig.totalEncounters));
-  info('sessions', String(sig.totalSessions));
+  const stageAesthetics: Record<string, string> = {
+    Infrared: 'cave-dark, primal', Magenta: 'spirit-saturated, symbolic',
+    Red: 'fortress-sharp, weapon-walls', Amber: 'cathedral-ordered, gold-stone',
+    Orange: 'mechanism-precise, steel-glass', Green: 'garden-lush, earth-toned',
+    Turquoise: 'crystalline, translucent', White: 'luminous silence, spacious',
+  };
+  info('resonance', stageAesthetics[sig.currentStage] ?? 'shifting, becoming');
 }
 
 function printEncounter(enc: ScheduledEncounter): void {
@@ -1133,8 +1139,7 @@ async function runDirectQuestioningSession(
   initialWorld: WorldState,
 ): Promise<void> {
   banner('DIRECT QUESTIONING');
-  console.log(`  ${chalk.dim('A systematic exploration of your developmental landscape.')}`);
-  console.log(`  ${chalk.dim('8 questions \u2014 one per line of intelligence. Write freely.')}\n`);
+  console.log(`  ${chalk.dim('A series of open questions. Answer each in your own words.')}\n`);
 
   const ALL_LINES: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
   // ponytail: Fisher-Yates shuffle in-place
@@ -1154,7 +1159,8 @@ async function runDirectQuestioningSession(
     const line = shuffledLines[i]!;
     const currentStage = currentSig.altitudes[line] ?? 'Red';
 
-    separator(`Line ${i + 1}/8 \u2014 ${line}`);
+    // T-3.4 (Veil compliance): don't leak the line taxonomy name.
+    separator(`Question ${i + 1}/8`);
 
     // ponytail: synthetic encounter forces LanguageReflective modality
     const encounter: ScheduledEncounter = {
@@ -1179,20 +1185,26 @@ async function runDirectQuestioningSession(
       // Qualitative feedback — no pass/fail, no clinical labels
       const cr = result.outcome.consequenceRecord;
       if (!JSON_MODE) {
-        const driveEntries = Object.entries(cr.polarityTrace.driveDirectionality);
-        const dominantDrive = driveEntries.find(([, v]) => v !== 'HealthyBalanced');
-
-        const polarityArrow = cr.polarityTrace.energeticDirection === 'Radiative' ? '\u2191'
-          : cr.polarityTrace.energeticDirection === 'Absorptive' ? '\u2193' : '\u00b7';
-
         const briefNarrative = result.narrativeSummary.length > 120
           ? result.narrativeSummary.slice(0, 120) + '...'
           : result.narrativeSummary;
         console.log(`\n  ${chalk.dim('\u2726')} ${briefNarrative}`);
 
+        // T-3.4 (Veil compliance): replace "The encounter stirred: ↑ Communion drive, Homeostatic"
+        // with a qualitative felt-sense description that doesn't leak drive names.
+        const driveEntries = Object.entries(cr.polarityTrace.driveDirectionality);
+        const dominantDrive = driveEntries.find(([, v]) => v !== 'HealthyBalanced');
         if (dominantDrive) {
-          const driveLabel = `${dominantDrive[0]} drive, ${cr.polarityTrace.stageOrientation}`;
-          console.log(`  ${chalk.dim('The encounter stirred:')} ${chalk.cyan(polarityArrow + ' ' + driveLabel)}`);
+          // Map drive directionality to qualitative felt-sense language
+          const feltSense: Record<string, string> = {
+            DarkAddicted: 'A familiar pull tugs underneath the surface.',
+            DarkAverted: 'Something here is being avoided; the body flinches before the mind catches up.',
+            GoldenAddicted: 'A reaching toward the light that skips over the ground beneath your feet.',
+            GoldenAverted: 'A resistance to what is trying to emerge.',
+            HealthyBalanced: 'Something settles into place without effort.',
+          };
+          const sense = feltSense[dominantDrive[1] as string] ?? 'Something stirred.';
+          console.log(`  ${chalk.dim(sense)}`);
         }
 
         if (cr.shadowSurfaced) {
@@ -1233,8 +1245,7 @@ async function runDirectQuestioningSession(
     }
   }
 
-  // Radar chart
-  renderRadarChart(currentSig);
+  // T-3.4: Radar chart removed — Veil violation (shows line×stage matrix).
 
   // Session end — apply theta-decay and increment totalSessions
   const now = Date.now();
@@ -1242,40 +1253,25 @@ async function runDirectQuestioningSession(
   const sessionEnd = endSession(currentSig, sessionState, now);
   currentSig = sessionEnd.sig;
 
-  // Developmental summary
+  // T-3.4 (Veil compliance): replace radar chart + developmental summary +
+  // CCI bar + shadow/drive displays with a single qualitative closing.
+  // The player should feel the session's shape, not see its metrics.
   if (!JSON_MODE) {
-    const linesAssessed = [...new Set(history.map(r => r.encounterId?.split(':')[0] ?? ''))].filter(Boolean);
-    const driveCounts: Record<string, number> = { agency: 0, communion: 0, eros: 0, agape: 0 };
-    for (const r of history) {
-      const drive = r.polarityTrace.sourceOfNourishment === 'HigherRealm' ? 'eros'
-        : r.polarityTrace.sourceOfNourishment === 'LowerRealm' ? 'agency' : 'communion';
-      driveCounts[drive]++;
-    }
-    const dominantDrive = Object.entries(driveCounts).sort((a, b) => b[1] - a[1])[0];
-
-    console.log(`  ${chalk.bold('Developmental Summary')}`);
-    console.log(`  ${chalk.dim('Lines assessed:')} ${linesAssessed.length}/8 (${linesAssessed.join(', ') || 'none'})`);
-    if (dominantDrive && dominantDrive[1] > 0) {
-      console.log(`  ${chalk.dim('Dominant drive:')} ${chalk.cyan(dominantDrive[0])} (${Math.round(dominantDrive[1] / 8 * 100)}% of responses)`);
-    }
-
-    const linesPending = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal']
-      .filter(l => !linesAssessed.includes(l));
-    if (linesPending.length > 0) {
-      console.log(`  ${chalk.dim('Lines pending:')} ${linesPending.length}/8 (${linesPending.join(', ')})`);
-    }
-
     console.log(`\n  ${chalk.dim('The session closes. Each question was a mirror \u2014 reflecting not who you are, but who you are becoming.')}`);
-  }
 
-  // Final state display
-  console.log('');
-  const finalSnapshot = toSnapshot(currentSig);
-  const finalCCI = computeCCI(finalSnapshot);
-  renderCCIDisplay(finalCCI);
-  console.log('');
-  renderShadows(currentSig);
-  renderDrives(currentSig);
+    // Qualitative atmospheric closing based on session outcomes
+    const encounterCount = history.length;
+    const shadowsSurfaced = history.some(r => r.shadowSurfaced);
+    if (encounterCount === 0) {
+      console.log(`  ${chalk.dim('The world waits.')}`);
+    } else if (shadowsSurfaced) {
+      console.log(`  ${chalk.dim('Something that was hidden has been touched. It will ask to be met again.')}`);
+    } else if (encounterCount >= 6) {
+      console.log(`  ${chalk.dim('The shape of your patterns grows clearer with each step.')}`);
+    } else {
+      console.log(`  ${chalk.dim('You have begun to test your edges.')}`);
+    }
+  }
 
   // Save
   saveGame(currentSig);
@@ -1560,13 +1556,13 @@ async function runFullSession(): Promise<void> {
 
       // Check transformation
     if (tickResult.transformation) {
-      if (!JSON_MODE) console.log(`\n  ${chalk.magenta('⚡ TRANSFORMATION: ' + tickResult.transformation.targetStage)}`);
+      // T-3.4 (Veil compliance): don't leak the target stage name.
+      if (!JSON_MODE) console.log(`\n  ${chalk.magenta('⚡ Something rearranges at the foundation.')}`);
       emitEvent('transformation', { targetStage: tickResult.transformation.targetStage, readiness: tickResult.transformation.readiness });
     }
 
-    if (!JSON_MODE && tickResult.bleedThrough.length > 0) {
-      console.log(`  ${chalk.dim('layers:')} ${renderLayersCompact(currentSig, tickResult.bleedThrough)}`);
-    }
+    // T-3.4: removed the `layers:` prefix + renderLayersCompact leak.
+    // Bleed-through is now conveyed narratively through ConsequenceNarrator.
 
   }
 
@@ -1622,68 +1618,25 @@ async function runFullSession(): Promise<void> {
     if (altLine) console.log(altLine);
     console.log(shadowLine);
     if (relLine) console.log(relLine);
-    
-    // Task 6: Developmental summary — show what was learned
-    console.log(`\n  ${chalk.bold('Developmental Summary')}`);
-    
-    // Lines assessed this session
-    const linesAssessed = [...new Set(history.map(r => r.encounterId?.split(':')[0] ?? ''))].filter(Boolean);
-    const allLines = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
-    const linesPending = allLines.filter(l => !linesAssessed.includes(l));
-    console.log(`  ${chalk.dim('Lines assessed:')} ${linesAssessed.length}/8 (${linesAssessed.join(', ') || 'none'})`);
-    if (linesPending.length > 0) {
-      console.log(`  ${chalk.dim('Lines pending:')} ${linesPending.length}/8 (${linesPending.join(', ')})`);
-    }
-    
-    // Dominant drive patterns
-    const driveCounts = { agency: 0, communion: 0, eros: 0, agape: 0 };
-    for (const r of history) {
-      const drive = r.polarityTrace.sourceOfNourishment === 'HigherRealm' ? 'eros' 
-        : r.polarityTrace.sourceOfNourishment === 'LowerRealm' ? 'agency' 
-        : 'communion';
-      driveCounts[drive as keyof typeof driveCounts]++;
-    }
-    const dominantDrive = Object.entries(driveCounts).sort((a, b) => b[1] - a[1])[0];
-    if (dominantDrive && dominantDrive[1] > 0) {
-      console.log(`  ${chalk.dim('Dominant drive:')} ${chalk.cyan(dominantDrive[0])} (${Math.round(dominantDrive[1] / completedCount * 100)}% of responses)`);
-    }
-    
-    // Developmental recommendation
-    if (linesPending.length > 0) {
-      console.log(`  ${chalk.dim('Recommendation:')} Focus on ${linesPending[0]} line to complete assessment.`);
-    } else {
-      console.log(`  ${chalk.dim('Recommendation:')} All lines assessed. Try Story-Driven mode for deeper engagement.`);
-    }
-    
+
+    // T-3.4 (Veil compliance): replaced Developmental Summary (lines assessed,
+    // dominant drive, percentages, recommendations) with qualitative closing.
+    // The player should feel the session's shape, not see its metrics.
     console.log(`\n  ${chalk.dim('The session closes. Each encounter was a mirror — reflecting not who you are, but who you are becoming.')}`);
+
+    // Qualitative atmospheric closing based on session outcomes
+    if (sessionEnd.summary.shadowsSurfaced > 0) {
+      console.log(`  ${chalk.dim('Something that was hidden has been touched. It will ask to be met again.')}`);
+    } else if (completedCount >= 6) {
+      console.log(`  ${chalk.dim('The shape of your patterns grows clearer with each step.')}`);
+    } else {
+      console.log(`  ${chalk.dim('You have begun to test your edges.')}`);
+    }
   }
 
-  info('encounters completed', String(completedCount));
-  info('total encounters', String(currentSig.totalEncounters));
-  info('total sessions', String(sessionEnd.sig.totalSessions));
-
-  // Show developmental trajectory (compute fresh CCI from final Significator state)
-  console.log('');
-  const finalSnapshot = toSnapshot(sessionEnd.sig);
-  const finalCCI = computeCCI(finalSnapshot);
-  renderCCIDisplay(finalCCI);
-  console.log('');
-  renderAltitudesChart(currentSig);
-  console.log('');
-  renderShadows(currentSig);
-  renderDrives(currentSig);
-
-  if (!JSON_MODE) {
-    const bleedThrough = detectBleedThrough(currentSig.theta.lastEncounter, Date.now());
-    console.log('');
-    console.log(renderLayers(currentSig, bleedThrough));
-  }
-
-  // Shadow summary
-  if (sessionEnd.summary.shadowsSurfaced > 0) {
-    info('shadows surfaced', String(sessionEnd.summary.shadowsSurfaced));
-    info('shadows resolved', String(sessionEnd.summary.shadowsResolved));
-  }
+  // T-3.4: removed CCI bar, altitudes chart, shadow/drive displays, and
+  // perceptual-layers rendering from session closure — all Veil violations.
+  // The session's felt-sense is carried by the qualitative narrative above.
 
   if (VERBOSE) {
     console.log('\nFinal Significator:');
@@ -2003,18 +1956,33 @@ async function runStatus(): Promise<void> {
   if (hasSave()) {
     const sig = loadSave();
     if (sig) {
+      // T-3.4 (Veil compliance): show only player id + qualitative state.
+      // No stage name, no encounter count, no altitudes chart, no shadow/drive displays.
       info('player', sig.id);
-      info('stage', `${stageColor(sig.currentStage)(sig.currentStage)}`);
-      info('encounters', String(sig.totalEncounters));
-      info('sessions', String(sig.totalSessions));
-      console.log(`\n  ${chalk.bold('Altitudes')}`);
-      renderAltitudesChart(sig);
-      console.log('');
-      renderShadows(sig);
-      renderDrives(sig);
-      console.log('');
-      const bleedThrough = detectBleedThrough(sig.theta.lastEncounter, Date.now());
-      console.log(renderLayers(sig, bleedThrough));
+
+      // Qualitative felt-sense description of current stage
+      const stageAesthetics: Record<string, string> = {
+        Infrared: 'cave-dark, primal',
+        Magenta: 'spirit-saturated, symbolic',
+        Red: 'fortress-sharp, weapon-walls',
+        Amber: 'cathedral-ordered, gold-stone',
+        Orange: 'mechanism-precise, steel-glass',
+        Green: 'garden-lush, earth-toned',
+        Turquoise: 'crystalline, translucent',
+        White: 'luminous silence, spacious',
+      };
+      const aesthetic = stageAesthetics[sig.currentStage] ?? 'shifting, becoming';
+      info('resonance', `The world feels ${aesthetic}.`);
+
+      // Qualitative encounter milestone
+      const milestone = sig.totalEncounters === 0
+        ? 'Your path is yet to begin.'
+        : sig.totalEncounters < 10
+          ? 'You have tasted the first edges.'
+          : sig.totalEncounters < 30
+            ? 'Your path deepens with each step.'
+            : 'The shape of your journey grows clear.';
+      info('journey', milestone);
     }
   } else {
     info('save', `${chalk.yellow('no saved game')} — run ${chalk.bold('ccrpg')} to start`);
@@ -2029,7 +1997,7 @@ async function runStatus(): Promise<void> {
 
 // ── Usage help ──────────────────────────────────────────────────────
 function printHelp(): void {
-  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION} — Cognitive-Capacity-Driven RPG\n  Developmental Assessment Engine\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current developmental state\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show full narrative and feedback\n  --no-llm                     Disable LLM, use module assessments only\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n  --force-shadow=Q             Force a shadow quadrant\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var\n  Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var\n  Saves:     ~/.ccrpg/saves/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --no-llm                   # quick automated test\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg diagnostic                            # system diagnostics\n\n${chalk.bold}DEVELOPMENTAL SYSTEM${chalk.reset}\n  8 lines × 8 stages = 64 developmental modules\n  7 modalities × 4 drives × 4 shadow quadrants\n  Gamified assessment that simultaneously diagnoses AND heals\n`);
+  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show full narrative and feedback\n  --no-llm                     Disable LLM, use module assessments only\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n  --force-shadow=Q             Force a shadow quadrant\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var\n  Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var\n  Saves:     ~/.ccrpg/saves/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --no-llm                   # quick automated test\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg diagnostic                            # system diagnostics\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────
@@ -2041,7 +2009,6 @@ async function main(): Promise<void> {
 
   if (!JSON_MODE) {
     console.log(`\n${chalk.bold.cyan('CCRPG')} v${VERSION}`);
-    console.log(`${chalk.dim('Cognitive-Capacity-Driven RPG — Developmental Assessment Engine')}`);
   }
 
   try {

@@ -747,10 +747,15 @@ INSTRUCTIONS:
       { label: 'Seek alliance', description: 'Find strength in others' },
       { label: 'Deceive and maneuver', description: 'Use misdirection to your advantage' },
     ];
-    while (options.length < 4) {
-      const extra = defaultOpts[options.length];
-      if (extra) options.push(extra);
-      else break;
+    // T-2.8 fix: only pad with generic defaults for non-self-reflection encounters.
+    // For self-reflection (Direct Questioning write-in), leave options empty so
+    // the player is prompted to write freely rather than pick a generic MCQ.
+    if (!isSelfReflection) {
+      while (options.length < 4) {
+        const extra = defaultOpts[options.length];
+        if (extra) options.push(extra);
+        else break;
+      }
     }
 
     const fullPrompt = `${narrativeIntro}\n\n${questionText}`;
