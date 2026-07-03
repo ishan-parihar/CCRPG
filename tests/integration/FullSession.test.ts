@@ -226,7 +226,7 @@ describe('FullSession Integration', () => {
         const sum = biased.thetaUrgency + biased.shadowActivation
           + biased.polarityAlignment + biased.transformationReadiness
           + biased.driveCorrection + biased.narrativeCoherence
-          + biased.sessionFit;
+          + biased.sessionFit + (biased.userMatrixTargeting ?? 0);
         expect(sum).toBeCloseTo(1.0, 5);
       }
     });

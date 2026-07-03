@@ -15,6 +15,7 @@ import type { Significator } from '../domain/Significator.js';
 import { stageOrdinal } from '../domain/Stage.js';
 import type { EncounterCandidate, WorldState } from './CandidateGeneration.js';
 import { computeCellStaleness, DEFAULT_THETA_PARAMS } from './ThetaDecay.js';
+import { computeUserMatrixPriority, type UserMatrixModel } from './UserMatrixModel.js';
 
 export interface SessionContext {
   readonly encountersSoFar: number;
@@ -42,16 +43,20 @@ export interface PriorityWeights {
   readonly driveCorrection: number;
   readonly narrativeCoherence: number;
   readonly sessionFit: number;
+  /** T-userMatrix: weight for user-Matrix/Potentiator targeting (random probing
+   * in unmapped phase, targeted intervention in crystallized phase). */
+  readonly userMatrixTargeting?: number;
 }
 
 export const DEFAULT_WEIGHTS: PriorityWeights = {
-  thetaUrgency: 0.25,
-  shadowActivation: 0.20,
-  polarityAlignment: 0.15,
-  transformationReadiness: 0.15,
-  driveCorrection: 0.10,
-  narrativeCoherence: 0.10,
-  sessionFit: 0.05,
+  thetaUrgency: 0.22,
+  shadowActivation: 0.18,
+  polarityAlignment: 0.13,
+  transformationReadiness: 0.13,
+  driveCorrection: 0.09,
+  narrativeCoherence: 0.09,
+  sessionFit: 0.04,
+  userMatrixTargeting: 0.12,
 };
 
 export function computePriority(
@@ -62,6 +67,7 @@ export function computePriority(
   now: number,
   weights: PriorityWeights = DEFAULT_WEIGHTS,
   bleedThrough?: readonly string[],
+  userMatrixModel?: UserMatrixModel,
 ): number {
   const t = computeThetaUrgency(candidate, sig, now);
   const s = computeShadowActivation(candidate, sig);
@@ -70,6 +76,10 @@ export function computePriority(
   const d = computeDriveCorrection(candidate, sig, world);
   const n = computeNarrativeCoherence(candidate, world);
   const sf = computeSessionFit(candidate, session);
+  // T-userMatrix: user-Matrix/Potentiator targeting
+  const um = userMatrixModel
+    ? computeUserMatrixPriority(userMatrixModel, candidate.line, candidate.stage)
+    : 0;
 
   const baseScore = weights.thetaUrgency * t
     + weights.shadowActivation * s
@@ -77,7 +87,8 @@ export function computePriority(
     + weights.transformationReadiness * tr
     + weights.driveCorrection * d
     + weights.narrativeCoherence * n
-    + weights.sessionFit * sf;
+    + weights.sessionFit * sf
+    + (weights.userMatrixTargeting ?? 0) * um;
 
   // G.21: Bleed-through boost — stale cells get priority boost
   const cellKey = `${candidate.line}:${candidate.stage}`;

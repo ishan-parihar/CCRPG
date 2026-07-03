@@ -9,6 +9,7 @@ import type { ShadowEntry } from '../domain/ShadowLedger.js';
 import { generateCandidates, type WorldState } from './CandidateGeneration.js';
 import { computePriority, DEFAULT_WEIGHTS, type SessionContext, type PriorityWeights } from './PriorityComputation.js';
 import type { TransformationPhase } from './TransformationDetector.js';
+import type { UserMatrixModel } from './UserMatrixModel.js';
 
 /** Threshold: if a line has more than this many unresolved shadows, shadow-work mode activates. */
 const SHADOW_WORK_THRESHOLD = 3;
@@ -53,13 +54,14 @@ export function scheduleNext(
   weights?: PriorityWeights,
   bleedThrough?: readonly string[],
   moduleTaskTypesProvider?: (moduleRef: string) => Set<string> | undefined,
+  userMatrixModel?: UserMatrixModel,
 ): ScheduledEncounter[] {
   const candidates = generateCandidates(sig, world, now, session, moduleTaskTypesProvider);
   if (candidates.length === 0) return [];
 
   const scored = candidates.map(c => ({
     candidate: c,
-    priority: computePriority(c, sig, world, session, now, weights, bleedThrough),
+    priority: computePriority(c, sig, world, session, now, weights, bleedThrough, userMatrixModel),
   }));
 
   // Sort descending by priority

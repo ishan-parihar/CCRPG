@@ -272,12 +272,14 @@ export function applyWeightBias(
     driveCorrection: defaults.driveCorrection * bias.driveCorrection,
     narrativeCoherence: defaults.narrativeCoherence * bias.narrativeCoherence,
     sessionFit: defaults.sessionFit * bias.sessionFit,
+    // T-userMatrix: include userMatrixTargeting in bias/normalization
+    userMatrixTargeting: defaults.userMatrixTargeting ?? 0,
   };
 
   // Normalise so weights sum to 1.0
   const total = biased.thetaUrgency + biased.shadowActivation + biased.polarityAlignment
     + biased.transformationReadiness + biased.driveCorrection + biased.narrativeCoherence
-    + biased.sessionFit;
+    + biased.sessionFit + biased.userMatrixTargeting;
 
   if (total <= 0) return { ...DEFAULT_WEIGHTS };
 
@@ -289,6 +291,7 @@ export function applyWeightBias(
     driveCorrection: biased.driveCorrection / total,
     narrativeCoherence: biased.narrativeCoherence / total,
     sessionFit: biased.sessionFit / total,
+    userMatrixTargeting: biased.userMatrixTargeting / total,
   };
 }
 

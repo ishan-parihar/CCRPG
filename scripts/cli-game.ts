@@ -1253,25 +1253,9 @@ async function runDirectQuestioningSession(
   const sessionEnd = endSession(currentSig, sessionState, now);
   currentSig = sessionEnd.sig;
 
-  // T-3.4 (Veil compliance): replace radar chart + developmental summary +
-  // CCI bar + shadow/drive displays with a single qualitative closing.
-  // The player should feel the session's shape, not see its metrics.
-  if (!JSON_MODE) {
-    console.log(`\n  ${chalk.dim('The session closes. Each question was a mirror \u2014 reflecting not who you are, but who you are becoming.')}`);
-
-    // Qualitative atmospheric closing based on session outcomes
-    const encounterCount = history.length;
-    const shadowsSurfaced = history.some(r => r.shadowSurfaced);
-    if (encounterCount === 0) {
-      console.log(`  ${chalk.dim('The world waits.')}`);
-    } else if (shadowsSurfaced) {
-      console.log(`  ${chalk.dim('Something that was hidden has been touched. It will ask to be met again.')}`);
-    } else if (encounterCount >= 6) {
-      console.log(`  ${chalk.dim('The shape of your patterns grows clearer with each step.')}`);
-    } else {
-      console.log(`  ${chalk.dim('You have begun to test your edges.')}`);
-    }
-  }
+  // No decorative closing — the session's per-encounter feedback is sufficient.
+  // Atmospheric closing lines impose a specific vibe that may not resonate
+  // universally and break the flow.
 
   // Save
   saveGame(currentSig);
@@ -1576,63 +1560,11 @@ async function runFullSession(): Promise<void> {
 
   banner('SESSION END');
 
-  // Session closure narrative
-  if (!JSON_MODE) {
-    // passedCount tracked directly from encResult.passed during the loop
-    const failedCount = completedCount - passedCount;
-    const shadowsSurfaced = sessionEnd.summary.shadowsSurfaced;
-    const altShifts = history.filter(r => r.altitudeShift !== null).length;
-
-    // Rich thematic closure that references what happened
-    const linesAdvanced = history.filter(r => r.altitudeShift !== null).map(r => r.altitudeShift!.line);
-    const uniqueLinesAdvanced = [...new Set(linesAdvanced)];
-    const shadowsByQuadrant: Record<string, number> = {};
-    for (const r of history) {
-      if (r.shadowSurfaced) {
-        shadowsByQuadrant[r.shadowSurfaced] = (shadowsByQuadrant[r.shadowSurfaced] ?? 0) + 1;
-      }
-    }
-    const shadowDetail = Object.entries(shadowsByQuadrant).map(([q, n]) => `${n}×${q}`).join(', ');
-
-    const openingLine = passedCount > failedCount
-      ? `${chalk.green('This session favored integration.')} ${passedCount}/${completedCount} encounters met their developmental threshold.`
-      : `${chalk.yellow('This session was heavy with unfinished catalyst.')} ${failedCount}/${completedCount} encounters remain un-integrated.`;
-
-    const altLine = uniqueLinesAdvanced.length > 0
-      ? `  ${chalk.magenta('⚡ Lines advanced: ' + uniqueLinesAdvanced.join(', '))}`
-      : '';
-
-    const shadowLine = shadowDetail
-      ? `  ${chalk.red('⚠ Shadows surfaced: ' + shadowDetail)}`
-      : `  ${chalk.green('✓ No shadows surfaced this session')}`;
-
-    // NPC relationship summary
-    const holonDeltas = history.flatMap(r => r.holonDeltas ?? []);
-    const relChanges = holonDeltas.filter(d => d.field === 'relationshipStrength');
-    const relLine = relChanges.length > 0
-      ? `  ${chalk.dim('NPC relationships shifted: ' + relChanges.length + ' encounter' + (relChanges.length > 1 ? 's' : '') + ' with bond changes')}`
-      : '';
-
-    console.log(`\n  ${chalk.bold('Session Closure')}`);
-    console.log(`  ${openingLine}`);
-    if (altLine) console.log(altLine);
-    console.log(shadowLine);
-    if (relLine) console.log(relLine);
-
-    // T-3.4 (Veil compliance): replaced Developmental Summary (lines assessed,
-    // dominant drive, percentages, recommendations) with qualitative closing.
-    // The player should feel the session's shape, not see its metrics.
-    console.log(`\n  ${chalk.dim('The session closes. Each encounter was a mirror — reflecting not who you are, but who you are becoming.')}`);
-
-    // Qualitative atmospheric closing based on session outcomes
-    if (sessionEnd.summary.shadowsSurfaced > 0) {
-      console.log(`  ${chalk.dim('Something that was hidden has been touched. It will ask to be met again.')}`);
-    } else if (completedCount >= 6) {
-      console.log(`  ${chalk.dim('The shape of your patterns grows clearer with each step.')}`);
-    } else {
-      console.log(`  ${chalk.dim('You have begun to test your edges.')}`);
-    }
-  }
+  // No decorative session closure — per-encounter feedback is sufficient.
+  // The prior closure block leaked line names, shadow quadrant names, pass/fail
+  // counts, and imposed atmospheric vibes that may not resonate universally.
+  // The session's felt-sense is carried by the per-encounter qualitative
+  // feedback, not by a summary block.
 
   // T-3.4: removed CCI bar, altitudes chart, shadow/drive displays, and
   // perceptual-layers rendering from session closure — all Veil violations.
