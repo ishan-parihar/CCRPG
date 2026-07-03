@@ -220,3 +220,37 @@ export function computeComplexAltitudes(sig: Significator): Record<Complex, numb
 function clamp01(x: number): number {
   return Math.max(0, Math.min(1, x));
 }
+
+// ---------------------------------------------------------------------------
+// Wave 5: Static/derived fields per HoloOS 08.8.19/20/16
+// ---------------------------------------------------------------------------
+
+/** Substrate-Law mapping per HoloOS 08.8.7 Primal Distortion Genesis Theorem. */
+export const SUBSTRATE_LAYER_LAW: readonly { readonly density: number; readonly law: string; readonly stage: string }[] = [
+  { density: 1, law: 'Free Will', stage: 'Infrared/Magenta' },
+  { density: 2, law: 'Love', stage: 'Red/Amber' },
+  { density: 3, law: 'Light', stage: 'Orange/Green/Turquoise' },
+  { density: 4, law: 'Our octave contributions', stage: 'White' },
+];
+
+/** Involution-ground block: 3 prior octaves, each contributing a substrate-layer. */
+export const INVOLUTION_GROUND = {
+  priorOctaves: [
+    { octave: 'N-3', law: 'Free Will', substrateContribution: 'D1 layer' },
+    { octave: 'N-2', law: 'Love', substrateContribution: 'D2 layer' },
+    { octave: 'N-1', law: 'Light', substrateContribution: 'D3 layer' },
+  ],
+  currentOctave: 'N (our octave, 3rd density)',
+} as const;
+
+/**
+ * Wave 5: Compute Indigo-Ray accessibility — closeness to direct unity-access.
+ * Per HoloOS 08.8.16 §7.5, this is the average activation of Green/Blue/Indigo
+ * ray-centers in the player's rayProfile.
+ */
+export function computeIndigoRayAccessibility(sig: Significator): number {
+  const green = sig.rayProfile.Green ?? 0;
+  const blue = sig.rayProfile.Blue ?? 0;
+  const indigo = sig.rayProfile.Indigo ?? 0;
+  return clamp01((green + blue + indigo) / 3);
+}

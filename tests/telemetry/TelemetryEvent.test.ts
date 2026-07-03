@@ -13,12 +13,13 @@ describe('TelemetryEvent', () => {
       'transformation_triggered',
       'session_started',
       'session_ended',
+      'user_matrix_summary',
     ];
     expect(ALL_TELEMETRY_EVENT_TYPES).toEqual(expected);
   });
 
-  it('has exactly 8 event types', () => {
-    expect(ALL_TELEMETRY_EVENT_TYPES).toHaveLength(8);
+  it('has exactly 9 event types', () => {
+    expect(ALL_TELEMETRY_EVENT_TYPES).toHaveLength(9);
   });
 
   it('TelemetryEvent interface shape is satisfied by a valid object', () => {

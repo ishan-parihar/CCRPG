@@ -185,6 +185,19 @@ export class WorldScene extends Phaser.Scene {
           transformationTotalKnots: advanced.totalKnots,
         };
         this.registry.set(RegistryKeys.Significator, updatedSig);
+
+        // Wave 3.3: Emit transformation_triggered event on phase change
+        const eventBus = this.registry.get(RegistryKeys.EventBus) as EventBus | undefined;
+        if (eventBus && advanced.phase !== ts) {
+          eventBus.emit('transformation_triggered', {
+            signal: {
+              targetStage: advanced.targetStage ?? result.tickResult.sig.currentStage,
+              readiness: 0.8,
+              convergentLines: [],
+              blockers: [],
+            },
+          });
+        }
       }
 
       // T-2.17: Perceptual layer shift — if the significator's current stage

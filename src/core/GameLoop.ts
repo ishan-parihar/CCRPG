@@ -29,6 +29,7 @@ import {
   promotePhase,
   resetPhaseAfterTransformation,
   inferFromResponse,
+  summarizeUserMatrix,
   type UserMatrixModel,
 } from './engines/UserMatrixModel.js';
 
@@ -505,12 +506,15 @@ export function endSession(
   sig: Significator,
   sessionState: SessionState,
   now: number,
-): { sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number } } {
+): { sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix> } } {
   // Wave 3.4: Use sessionState's start time if tracked, otherwise approximate
   const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
-  const sessionStartMs = (sessionState as any).sessionStartMs ?? now;
+  const sessionStartMs = sessionState.sessionStartMs ?? now;
   const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
   const shadowsResolved = sig.shadows.entries.filter(e => e.resolvedAt !== null && e.resolvedAt >= sessionStartMs).length;
+
+  // Wave 3.5: Summarize UserMatrixModel for telemetry
+  const userMatrixSummary = summarizeUserMatrix(sessionState.userMatrixModel);
 
   // Increment totalSessions
   const updatedSig: Significator = {
@@ -520,6 +524,6 @@ export function endSession(
 
   return {
     sig: updatedSig,
-    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved },
+    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary },
   };
 }

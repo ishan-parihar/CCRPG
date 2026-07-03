@@ -6,7 +6,8 @@ export type TelemetryEventType =
   | 'shadow_resolved'
   | 'transformation_triggered'
   | 'session_started'
-  | 'session_ended';
+  | 'session_ended'
+  | 'user_matrix_summary';
 
 export interface TelemetryEvent {
   readonly id: string;
@@ -24,4 +25,5 @@ export const ALL_TELEMETRY_EVENT_TYPES: readonly TelemetryEventType[] = [
   'transformation_triggered',
   'session_started',
   'session_ended',
+  'user_matrix_summary',
 ];
