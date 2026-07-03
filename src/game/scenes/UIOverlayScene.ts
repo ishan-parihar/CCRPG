@@ -1,5 +1,5 @@
 import Phaser from 'phaser';
-import { GameEvents, SceneKeys, TextureKeys } from '../keys.js';
+import { GameEvents, SceneKeys } from '../keys.js';
 import {
   generateNBackSequence,
   nBackDamageMultiplier,
@@ -465,6 +465,3 @@ export class UIOverlayScene extends Phaser.Scene {
 function hex(rgb: number): string {
   return `#${rgb.toString(16).padStart(6, '0')}`;
 }
-
-// Touch the unused texture key so future asset swaps stay typed-clean.
-void TextureKeys.RuneAtlas;

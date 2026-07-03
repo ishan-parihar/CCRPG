@@ -2,7 +2,7 @@ import type { ShadowQuadrant } from '../domain/enums.js';
 import type { Drive } from '../domain/Drive.js';
 import type { Line } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
-import { driveForLine } from '../usecases/ProfileUpdater.js';
+import { driveForLine } from '../domain/Drive.js';
 
 /**
  * Shadow encounter content: narrative prompt, evaluation rubric, and drive focus.

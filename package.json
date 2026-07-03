@@ -45,7 +45,6 @@
   "devDependencies": {
     "@capacitor/cli": "^6.1.2",
     "jsdom": "^29.1.1",
-    "tsc-alias": "^1.8.17",
     "tsup": "^8.5.1",
     "tsx": "^4.22.2",
     "typescript": "^5.4.5",

@@ -22,7 +22,6 @@ export const TextureKeys = {
   HeroIdle: 'hero-idle',
   EnemyIdle: 'enemy-idle',
   Projectile: 'projectile',
-  RuneAtlas: 'rune-atlas',
   Pixel: 'pixel',
 } as const;
 
@@ -55,8 +54,4 @@ export const GameEvents = {
   RequestCognitiveTask: 'task:cognitive:request',
   /** UI → Battle: generic cognitive task resolved. */
   ResolvedCognitiveTask: 'task:cognitive:resolved',
-  /** Any → all: pause the battle. */
-  Pause: 'app:pause',
-  /** Any → all: resume the battle. */
-  Resume: 'app:resume',
 } as const;

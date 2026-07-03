@@ -27,7 +27,6 @@ export * from './usecases/ShadowDetector.js';
 export * from './usecases/OnboardingCalibrator.js';
 export * from './usecases/LineCeilings.js';
 export * from './usecases/RayProfileComputer.js';
-export * from './usecases/ProfileUpdater.js';
 export * from './usecases/ThresholdMaps.js';
 export * from './usecases/FastStaircase.js';
 export * from './usecases/SimonTask.js';
