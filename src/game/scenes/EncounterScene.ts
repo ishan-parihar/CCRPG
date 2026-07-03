@@ -79,8 +79,16 @@ export class EncounterScene extends Phaser.Scene {
     }
 
     // Advance transformation state machine
+    // T-0.5 (HS-06 fix): read persisted counters from Significator instead
+    // of constructing fresh state with all counters at 0 every encounter.
     const ts = sig.transformationPhase ?? 'idle';
-    let transformationState: TransformationState = { phase: ts as TransformationState['phase'], targetStage: null, sessionsInPhase: 0, knotsResolved: 0, totalKnots: 0 };
+    let transformationState: TransformationState = {
+      phase: ts as TransformationState['phase'],
+      targetStage: sig.transformationTargetStage ?? null,
+      sessionsInPhase: sig.transformationSessionsInPhase ?? 0,
+      knotsResolved: sig.transformationKnotsResolved ?? 0,
+      totalKnots: sig.transformationTotalKnots ?? 0,
+    };
     transformationState = advanceTransformation(transformationState, sig);
 
     // If shadow encounter was passed, record as knot resolution
@@ -92,15 +100,31 @@ export class EncounterScene extends Phaser.Scene {
     if (transformationState.phase === 'complete') {
       const commit = commitTransformation(transformationState);
       if (commit.targetStage) {
-        const updatedSig = { ...sig, currentStage: commit.targetStage, transformationPhase: 'idle' as const };
+        const updatedSig = {
+          ...sig,
+          currentStage: commit.targetStage,
+          transformationPhase: 'idle' as const,
+          transformationSessionsInPhase: 0,
+          transformationKnotsResolved: 0,
+          transformationTotalKnots: 0,
+          transformationTargetStage: null,
+        };
         this.registry.set(RegistryKeys.Significator, updatedSig);
         if (eventBus) {
           eventBus.emit('transformation_triggered', { signal: { targetStage: commit.targetStage, readiness: 1, convergentLines: [], blockers: [] } });
         }
       }
-    } else if (transformationState.phase !== ts) {
-      // Phase changed — persist it
-      this.registry.set(RegistryKeys.Significator, { ...sig, transformationPhase: transformationState.phase });
+    } else {
+      // Persist the full transformation state (phase + counters + target)
+      const updatedSig = {
+        ...sig,
+        transformationPhase: transformationState.phase,
+        transformationSessionsInPhase: transformationState.sessionsInPhase,
+        transformationKnotsResolved: transformationState.knotsResolved,
+        transformationTotalKnots: transformationState.totalKnots,
+        transformationTargetStage: transformationState.targetStage,
+      };
+      this.registry.set(RegistryKeys.Significator, updatedSig);
     }
 
     // Update session state for next WorldScene visit

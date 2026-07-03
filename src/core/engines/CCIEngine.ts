@@ -79,6 +79,18 @@ export interface CCIScore {
   weights: CCIWeights;
   dominantDimension: keyof CCIWeights;
   sessionSignals: CCISessionSignals;
+  /**
+   * T-1.8: HoloOS G_z / P_z dual health metrics (per foundations/25 §1.1).
+   * G_z = Lesser-Cycle health (Agape/integration); P_z = Greater-Cycle health
+   * (Eros/polarization). Total Metabolic Health = G_z · P_z.
+   * `interpretation` classifies the player's metabolic state.
+   */
+  metabolicHealth?: {
+    gz: number;
+    pz: number;
+    total: number;
+    interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck';
+  };
 }
 
 // ---------------------------------------------------------------------------
@@ -696,7 +708,36 @@ export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
   // 6. Derive session signals
   const sessionSignals = deriveSessionSignals(dimensions, inputs);
 
-  return { composite, dimensions, weights, dominantDimension, sessionSignals };
+  // 7. T-1.8: Compute HoloOS G_z / P_z dual health metrics.
+  // G_z (Lesser-Cycle, Agape/integration) from driveHealth + shadowTopology.
+  // P_z (Greater-Cycle, Eros/polarization) from polarity + transformationReadiness.
+  // Total Metabolic Health = G_z · P_z (geometric mean, per foundations/25 §1.1).
+  const gz = clamp(
+    dimensions.driveHealth * 0.55 + dimensions.shadowTopology * 0.45,
+  );
+  const pz = clamp(
+    dimensions.polarity * 0.55 + dimensions.transformationReadiness * 0.45,
+  );
+  const total = gz * pz;
+  let interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck';
+  if (gz < 0.3 && pz < 0.3) {
+    interpretation = 'stuck';
+  } else if (gz > 0.6 && pz < 0.3) {
+    interpretation = 'consolidating';
+  } else if (pz > 0.6 && gz < 0.3) {
+    interpretation = 'polarizing-unhealthy';
+  } else {
+    interpretation = 'polarizing-healthy';
+  }
+
+  return {
+    composite,
+    dimensions,
+    weights,
+    dominantDimension,
+    sessionSignals,
+    metabolicHealth: { gz, pz, total, interpretation },
+  };
 }
 
 // ---------------------------------------------------------------------------

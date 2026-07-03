@@ -1,12 +1,17 @@
 /**
  * DilemmaScene — Scenario-Choice encounters.
  * Shows a scenario narrative with choice buttons; maps choices to PlayerResponse.
+ *
+ * T-0.6 (HS-08 fix): now calls applyConsequences to update the Significator
+ * (was only calling processOutcome, leaving Significator unchanged).
  */
 import Phaser from 'phaser';
-import { SceneKeys } from '../keys.js';
+import { SceneKeys, RegistryKeys } from '../keys.js';
 import type { ConsequenceRecord } from '@core/domain/ConsequenceRecord.js';
-import { processOutcome } from '@core/engines/ConsequenceEngine.js';
+import { processOutcome, applyConsequences } from '@core/engines/ConsequenceEngine.js';
 import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
+import type { Significator } from '@core/domain/Significator.js';
+import type { WorldState } from '@core/engines/CandidateGeneration.js';
 import { getFallback } from '@infra/llm/FallbackProvider.js';
 import { mapChoiceToResponse } from '../logic/dilemmaMapping.js';
 import type { Line } from '@core/domain/Line.js';
@@ -95,6 +100,16 @@ export class DilemmaScene extends Phaser.Scene {
     // Map choice to PlayerResponse and produce ConsequenceRecord
     const response = mapChoiceToResponse(choice.id, this.encounter.id);
     const record: ConsequenceRecord = processOutcome(this.encounter, response, Date.now());
+
+    // T-0.6 (HS-08 fix): apply consequences to update the Significator.
+    // Without this, Dilemma encounters don't update altitudes/drives/shadows/polarity.
+    const sig = this.registry.get(RegistryKeys.Significator) as Significator | undefined;
+    const world = this.registry.get(RegistryKeys.WorldState) as WorldState | undefined;
+    if (sig && world) {
+      const { sig: newSig, world: newWorld } = applyConsequences(sig, world, record, this.encounter);
+      this.registry.set(RegistryKeys.Significator, newSig);
+      this.registry.set(RegistryKeys.WorldState, newWorld);
+    }
 
     this.time.delayedCall(2000, () => {
       this.events.emit('encounter_done', { record });

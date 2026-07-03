@@ -53,6 +53,16 @@ export * from './domain/SignificatorSnapshot.js';
 // --- Game Loop ---
 export * from './GameLoop.js';
 
-// --- Engines (CCI + Auto-Mode) ---
+// --- Engines (CCI + Auto-Mode + scheduling + consequences + polarity + transformation + theta + macro + shadow + greater-cycle) ---
 export * from './engines/CCIEngine.js';
 export * from './engines/AutoModeStrategy.js';
+export * from './engines/CandidateGeneration.js';
+export * from './engines/ConsequenceEngine.js';
+export * from './engines/EncounterScheduler.js';
+export * from './engines/GreaterCycleEngine.js';
+export * from './engines/MacroCatalystEngine.js';
+export * from './engines/PolarityEngine.js';
+export * from './engines/PriorityComputation.js';
+export * from './engines/ShadowContentGenerator.js';
+export * from './engines/ThetaDecay.js';
+export * from './engines/TransformationDetector.js';

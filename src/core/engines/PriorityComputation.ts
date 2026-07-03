@@ -108,12 +108,17 @@ export function computePriority(
 /**
  * §3.2.1 — Math.pow(decayLevel, 1.5). Only scores > 0 if candidate's
  * line AND stage match the decaying cell.
+ *
+ * T-0.12 (HS-03 fix): use per-line theta half-life when configured, instead
+ * of the global default. HoloOS alignment per §2.5.8: different Complexes
+ * (Mind/Body/Spirit) decay at different rates (Body fastest, Spirit slowest).
  */
 function computeThetaUrgency(c: EncounterCandidate, sig: Significator, now: number): number {
   const key = `${c.line}:${c.stage}`;
   const lastTs = sig.theta.lastEncounter[key] ?? 0;
   if (lastTs === 0) return 1; // never visited = max urgency
-  const decayLevel = computeCellStaleness(lastTs, now, DEFAULT_THETA_PARAMS.halfLife);
+  const halfLife = DEFAULT_THETA_PARAMS.lineHalfLives?.[c.line] ?? DEFAULT_THETA_PARAMS.halfLife;
+  const decayLevel = computeCellStaleness(lastTs, now, halfLife);
   return Math.pow(decayLevel, 1.5);
 }
 

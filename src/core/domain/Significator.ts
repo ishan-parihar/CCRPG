@@ -82,6 +82,16 @@ export interface Significator {
   readonly transformations: readonly TransformationRecord[];
   readonly codexEntries: readonly CodexEntry[];
   readonly transformationPhase: TransformationPhase;
+  /**
+   * T-0.5 (HS-06 fix): full transformation state machine counters, persisted
+   * across encounters. Without this, the state machine deadlocks at 'threshold'
+   * (sessionsInPhase never increments) or skips the crucible (knotsResolved
+   * >= totalKnots evaluates to 0 >= 0 = true on first encounter).
+   */
+  readonly transformationSessionsInPhase?: number;
+  readonly transformationKnotsResolved?: number;
+  readonly transformationTotalKnots?: number;
+  readonly transformationTargetStage?: Stage | null;
   readonly totalEncounters: number;
   readonly totalSessions: number;
   readonly avoidedEncounters: readonly string[];
@@ -130,6 +140,10 @@ export function createSignificator(
     transformations: [],
     codexEntries: [],
     transformationPhase: 'idle',
+    transformationSessionsInPhase: 0,
+    transformationKnotsResolved: 0,
+    transformationTotalKnots: 0,
+    transformationTargetStage: null,
     totalEncounters: 0,
     totalSessions: 0,
     avoidedEncounters: [],

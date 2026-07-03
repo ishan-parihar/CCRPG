@@ -9,6 +9,7 @@ import type { Significator } from '@core/domain/Significator.js';
 import type { ScheduledEncounter } from '@core/domain/EncounterSpecNew.js';
 import type { Modality } from '@core/domain/enums.js';
 import { scheduleNext, type WorldState } from '@core/engines/EncounterScheduler.js';
+import { createModuleTaskTypesProvider } from '@core/engines/CandidateGeneration.js';
 import type { SessionContext } from '@core/engines/PriorityComputation.js';
 import { DEFAULT_WEIGHTS } from '@core/engines/PriorityComputation.js';
 import { EcologicalTracker } from '../systems/EcologicalTracker.js';
@@ -17,6 +18,7 @@ import { fadeIn, fadeToScene } from '../ui/SceneTransitions.js';
 import { startSession, tickWithStrategy, endSession, type SessionState } from '@core/GameLoop.js';
 import type { SaveRepository } from '@infra/persistence/SaveRepository.js';
 import type { EventBus } from '@core/events/EventBus.js';
+import type { ModuleRegistry } from '@core/assessments/registry.js';
 import { applyWeightBias } from '@core/engines/AutoModeStrategy.js';
 import { advanceTransformation } from '@core/engines/TransformationDetector.js';
 
@@ -172,9 +174,10 @@ export class WorldScene extends Phaser.Scene {
       // Use the biased encounter from the pipeline
       const biasedEncounter = result.tickResult.encounter;
       const biasedWeights = applyWeightBias(DEFAULT_WEIGHTS, this.sessionState.strategy.weightBias);
+      const provider = this.getModuleTaskTypesProvider();
       const encounters = biasedEncounter
-        ? [biasedEncounter, ...scheduleNext(result.tickResult.sig, world, session, now, 4, biasedWeights)]
-        : scheduleNext(result.tickResult.sig, world, session, now, 5, biasedWeights);
+        ? [biasedEncounter, ...scheduleNext(result.tickResult.sig, world, session, now, 4, biasedWeights, undefined, provider)]
+        : scheduleNext(result.tickResult.sig, world, session, now, 5, biasedWeights, undefined, provider);
 
       this.placeNodes(encounters);
       this.registry.set(RegistryKeys.SessionState, this.sessionState);
@@ -182,14 +185,26 @@ export class WorldScene extends Phaser.Scene {
       // Fresh session: initialize CCI → AutoMode pipeline
       this.sessionState = startSession(sig, session);
       const biasedWeights = applyWeightBias(DEFAULT_WEIGHTS, this.sessionState.strategy.weightBias);
-      const encounters = scheduleNext(sig, world, session, now, 5, biasedWeights);
+      const provider = this.getModuleTaskTypesProvider();
+      const encounters = scheduleNext(sig, world, session, now, 5, biasedWeights, undefined, provider);
       this.placeNodes(encounters);
       this.registry.set(RegistryKeys.SessionState, this.sessionState);
     }
   }
 
+  /**
+   * T-0.4 (HS-13 fix): Build a moduleTaskTypesProvider from the Phaser
+   * registry's ModuleRegistry. Returns undefined if no registry is set
+   * (legacy behavior — all modalities eligible).
+   */
+  private getModuleTaskTypesProvider(): ((moduleRef: string) => Set<string> | undefined) | undefined {
+    const moduleRegistry = this.registry.get(RegistryKeys.ModuleRegistry) as ModuleRegistry | undefined;
+    if (!moduleRegistry) return undefined;
+    return createModuleTaskTypesProvider((line, stage) => moduleRegistry.get(line as never, stage as never));
+  }
+
   /** Build SessionContext enriched with EcologicalTracker signals */
-  private buildSessionContext(sig: Significator): SessionContext {
+  private buildSessionContext(_sig: Significator): SessionContext {
     const signals = this.ecological.getSignals();
 
     // Map movement entropy + dwell time → inferred energy
@@ -203,8 +218,14 @@ export class WorldScene extends Phaser.Scene {
     // Map avoidance patterns → patience signals
     const avoidanceRate = 1 - signals.approachRate;
 
+    // T-0.10 (HS-17 fix): use per-session encounter count (encountersSinceRefresh)
+    // instead of lifetime totalEncounters. The lifetime counter was breaking the
+    // warmup/peak/cooldown arc computation (progress > 1.0 after first session,
+    // permanently locking session position to 'cooldown').
+    const encountersSoFar = this.sessionState?.encountersSinceRefresh ?? 0;
+
     return {
-      encountersSoFar: sig.totalEncounters,
+      encountersSoFar,
       sessionDurationMs: 0,
       targetSessionLength: 10,
       recentLines: [],

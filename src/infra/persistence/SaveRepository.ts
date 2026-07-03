@@ -4,6 +4,9 @@
  * Two persistence mechanisms:
  * 1. SaveRepository class — async KeyValueStore-based (for Phaser game scenes)
  * 2. CLI file-based functions — synchronous JSON file (for CLI runner)
+ *
+ * T-0.8 (HS-16 fix): both load paths now call `validateSignificator()` to
+ * ensure schema completeness with backward-compat shims for old saves.
  */
 import {
   DEFAULT_COGNITIVE_PROFILE,
@@ -12,6 +15,7 @@ import {
 import type { Significator } from '@core/domain/Significator.js';
 import type { WorldState } from '@core/engines/CandidateGeneration.js';
 import type { KeyValueStore } from './KeyValueStore.js';
+import { validateSignificator } from './validateSignificator.js';
 
 import * as fs from 'fs';
 import * as path from 'path';
@@ -85,7 +89,9 @@ export class SaveRepository {
     const raw = await this.store.get(PROFILE_KEY);
     if (!raw) return null;
     try {
-      return JSON.parse(raw) as Significator;
+      const parsed = JSON.parse(raw);
+      // T-0.8 (HS-16 fix): validate with backward-compat shims
+      return validateSignificator(parsed);
     } catch {
       return null;
     }
@@ -147,14 +153,10 @@ export function loadSave(): Significator | null {
     if (fs.existsSync(CLI_SAVE_FILE)) {
       const raw = fs.readFileSync(CLI_SAVE_FILE, 'utf8');
       const parsed = JSON.parse(raw);
-      if (parsed && typeof parsed.id === 'string' && typeof parsed.currentStage === 'string' && parsed.altitudes) {
-        return {
-          ...parsed,
-          avoidedEncounters: parsed.avoidedEncounters ?? [],
-          recentEncounters: parsed.recentEncounters ?? [],
-          codexEntries: parsed.codexEntries ?? [],
-          transformations: parsed.transformations ?? [],
-        } as Significator;
+      // T-0.8 (HS-16 fix): validate with backward-compat shims instead of
+      // only checking 3 fields then trusting the rest.
+      if (parsed && typeof parsed.id === 'string') {
+        return validateSignificator(parsed);
       }
     }
   } catch { /* ignore corrupt saves */ }

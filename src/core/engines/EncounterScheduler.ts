@@ -40,6 +40,9 @@ export function findMostActiveShadowQuadrant(sig: Significator, line: string): S
 
 /**
  * Schedule the next N encounters, ranked by priority.
+ *
+ * T-0.4 (HS-13 fix): the optional `moduleTaskTypesProvider` callback is
+ * forwarded to `generateCandidates` to filter modalities by module support.
  */
 export function scheduleNext(
   sig: Significator,
@@ -49,8 +52,9 @@ export function scheduleNext(
   count: number = 3,
   weights?: PriorityWeights,
   bleedThrough?: readonly string[],
+  moduleTaskTypesProvider?: (moduleRef: string) => Set<string> | undefined,
 ): ScheduledEncounter[] {
-  const candidates = generateCandidates(sig, world, now, session);
+  const candidates = generateCandidates(sig, world, now, session, moduleTaskTypesProvider);
   if (candidates.length === 0) return [];
 
   const scored = candidates.map(c => ({

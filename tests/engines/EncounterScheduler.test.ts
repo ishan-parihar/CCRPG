@@ -324,6 +324,11 @@ describe('EncounterScheduler', () => {
     const p1 = result[0].priority;
     const p2 = result[1].priority;
     expect(p1).not.toBe(p2);
-    expect(Math.abs(p1 - p2)).toBeLessThan(0.01);
+    // T-0.12: per-line theta half-lives now cause Cognitive (7-day) and
+    // Emotional (5-day) to decay at different rates, so their priorities
+    // can differ by more than the old 0.01 threshold. The tie-breaker still
+    // ensures they're not identical; the 0.05 threshold verifies they're
+    // in the same ballpark.
+    expect(Math.abs(p1 - p2)).toBeLessThan(0.05);
   });
 });

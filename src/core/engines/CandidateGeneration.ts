@@ -116,12 +116,19 @@ const TIME_GATED: Modality[] = ['Strategic'];
 /**
  * Generate all eligible encounter candidates given current significator and world state.
  * Applies 5 filters: layer-perception, altitude, cooldown, narrative gate, modality availability.
+ *
+ * T-0.4 (HS-13 fix): the optional `moduleTaskTypesProvider` callback lets the
+ * scheduler filter modalities by what the target module actually supports.
+ * When provided, modalities whose preferred task-type chain has no match in
+ * the module's tasks are excluded. When not provided, all non-blocked
+ * modalities are eligible (legacy behavior — root cause of modality collapse).
  */
 export function generateCandidates(
   sig: Significator,
   world: WorldState,
   now: number,
   session?: SessionContext,
+  moduleTaskTypesProvider?: (moduleRef: string) => Set<string> | undefined,
 ): EncounterCandidate[] {
   const maxStageOrd = stageOrdinal(sig.currentStage) + 1;
   const candidates: EncounterCandidate[] = [];
@@ -161,10 +168,14 @@ export function generateCandidates(
 
     const moduleRef = `${holon.line}:${holon.stage}`;
 
+    // T-0.4 (HS-13 fix): look up the module's task types and pass them to
+    // getEligibleModalities so modalities are filtered by module support.
+    const moduleTaskTypes = moduleTaskTypesProvider?.(moduleRef);
+
     // Generate candidates across eligible modalities (2-3 per holon)
     const eligible = session?.forceModality
       ? [session.forceModality as Modality]
-      : getEligibleModalities(holon, blockedModalities);
+      : getEligibleModalities(holon, blockedModalities, moduleTaskTypes);
 
     const anyForcing = !!(session?.forceLine || session?.forceStage || session?.forceModality);
 
@@ -274,6 +285,31 @@ function computeMacroModifications(world: WorldState): {
   }
 
   return { blockedTags, boostedTags };
+}
+
+/**
+ * T-0.4 (HS-13 fix): Build a moduleTaskTypesProvider callback from a
+ * StageAssessment lookup function. The provider returns the set of TaskType
+ * strings a module supports, so getEligibleModalities can filter modalities
+ * by module support (fixing the modality collapse where 6/8 Red-stage
+ * modules produced identical generic n_back).
+ *
+ * Usage:
+ *   const provider = createModuleTaskTypesProvider(
+ *     (line, stage) => moduleRegistry.get(line, stage)
+ *   );
+ *   const encounters = scheduleNext(sig, world, session, now, 5, weights, undefined, provider);
+ */
+export function createModuleTaskTypesProvider(
+  getModule: (line: string, stage: string) => { readonly tasks: readonly { readonly type: string }[] } | undefined,
+): (moduleRef: string) => Set<string> | undefined {
+  return (moduleRef: string): Set<string> | undefined => {
+    const [line, stage] = moduleRef.split(':');
+    if (!line || !stage) return undefined;
+    const module = getModule(line, stage);
+    if (!module) return undefined;
+    return new Set(module.tasks.map(t => t.type));
+  };
 }
 
 

@@ -10,37 +10,42 @@ import { ALL_LINES } from '../domain/Line.js';
 import { ALL_STAGES, stageOrdinal } from '../domain/Stage.js';
 
 /**
- * Compute the synthesised stage with hysteresis (+1 pull rule).
- * Stage = max S such that all lines ≥ S AND at least one line ≥ S+1.
+ * Compute the synthesised stage.
+ *
+ * T-0.9 (HS-04 fix): the prior implementation set `result = candidate` in
+ * BOTH branches of the if/else, making the hysteresis rule dead code.
+ *
+ * Corrected semantics (per foundations/02 §3.2 + existing test expectations):
+ * The synthesized stage is the FLOOR — the highest stage S such that all
+ * lines have altitude ≥ S. This is effectively `min(altitudes)`.
+ *
+ * The "+1 pull" hysteresis rule is a separate concern: it gates ADVANCEMENT
+ * (see `checkAdvancementGate` below), not synthesis. A player whose lines
+ * are all at Red IS at Red; they just can't ADVANCE to Amber until a line
+ * pulls to Orange. Conflating synthesis with advancement-gating was the
+ * root cause of the dead-code bug.
+ *
+ * Examples:
+ *   {all Red}                       → Red    (floor = Red)
+ *   {all Amber}                     → Amber  (floor = Amber)
+ *   {Cognitive: Orange, rest Amber} → Amber  (floor = Amber; Cognitive pulls but rest hold)
+ *   {all White}                     → White  (floor = White)
+ *   {Somatic: Infrared, rest White} → Infrared (floor = Infrared)
  */
 export function synthesiseStage(altitudes: Record<Line, Stage>): Stage {
-  let result: Stage = 'Infrared';
-
+  // The synthesized stage is the highest S such that all lines ≥ S.
+  // This is the floor — equivalent to min(altitudes) but expressed per spec.
+  let floor: Stage = 'Infrared';
   for (let i = 0; i < ALL_STAGES.length; i++) {
     const candidate = ALL_STAGES[i]!;
-    // Check: all lines at or above candidate
-    let allAtOrAbove = true;
-    let countAbove = 0;
-
-    for (const line of ALL_LINES) {
-      const ord = stageOrdinal(altitudes[line]);
-      if (ord < i) { allAtOrAbove = false; break; }
-      if (ord > i) countAbove++;
-    }
-
-    if (!allAtOrAbove) break;
-
-    // Hysteresis: at least one line must be pulling forward (at S+1)
-    // Exception: if we're at the highest possible (White), no pull needed
-    if (i === ALL_STAGES.length - 1 || countAbove >= 1) {
-      result = candidate;
+    const allAtOrAbove = ALL_LINES.every(line => stageOrdinal(altitudes[line]) >= i);
+    if (allAtOrAbove) {
+      floor = candidate;
     } else {
-      // All lines are exactly at this stage but none above — stay here
-      result = candidate;
+      break;
     }
   }
-
-  return result;
+  return floor;
 }
 
 /**
