@@ -10,6 +10,8 @@ import { generateCandidates, type WorldState } from './CandidateGeneration.js';
 import { computePriority, DEFAULT_WEIGHTS, type SessionContext, type PriorityWeights } from './PriorityComputation.js';
 import type { TransformationPhase } from './TransformationDetector.js';
 import type { UserMatrixModel } from './UserMatrixModel.js';
+// WIRE-1: Import shouldSurfaceReturn to wire Holonic Return into the scheduler
+import { shouldSurfaceReturn } from '../usecases/ShadowDetector.js';
 
 /** Threshold: if a line has more than this many unresolved shadows, shadow-work mode activates. */
 const SHADOW_WORK_THRESHOLD = 3;
@@ -228,6 +230,61 @@ export function scheduleNext(
       driveTarget: activeShadow?.drive ?? null,
       executionMode,
     });
+  }
+
+  return result;
+}
+
+/**
+ * WIRE-1: Schedule with Holonic Return injection.
+ *
+ * Wraps scheduleNext with the Holonic Return cadence: every 3 encounters at
+ * the current stage, if unresolved earlier-stage shadows with severity > 0.3
+ * exist, inject a shadow-mode return encounter at the earlier (line, stage)
+ * at the HEAD of the candidate list.
+ *
+ * This is the production wiring of shouldSurfaceReturn — previously the
+ * function existed but had zero callers (dead code per Round 3 audit).
+ */
+export function scheduleNextWithHolonicReturn(
+  sig: Significator,
+  world: WorldState,
+  session: SessionContext,
+  now: number,
+  count: number = 3,
+  weights?: PriorityWeights,
+  bleedThrough?: readonly string[],
+  moduleTaskTypesProvider?: (moduleRef: string) => Set<string> | undefined,
+  userMatrixModel?: UserMatrixModel,
+  encountersAtCurrentStage?: number,
+): ScheduledEncounter[] {
+  // Get the normal ranked candidates
+  let result = scheduleNext(sig, world, session, now, count, weights, bleedThrough, moduleTaskTypesProvider, userMatrixModel);
+
+  // WIRE-1: Check if a Holonic Return should be surfaced
+  // encountersAtCurrentStage defaults to session.encountersSoFar if not provided
+  const stageEncounters = encountersAtCurrentStage ?? session.encountersSoFar;
+  const returnTarget = shouldSurfaceReturn(sig, stageEncounters);
+
+  if (returnTarget) {
+    // Inject a shadow-mode return encounter at the HEAD of the list
+    const returnEncounter: ScheduledEncounter = {
+      id: `holonic-return:${returnTarget.line}:${returnTarget.stage}:${now}`,
+      moduleRef: `${returnTarget.line}:${returnTarget.stage}`,
+      modality: 'LanguageReflective',
+      targetLines: [returnTarget.line as any],
+      stage: returnTarget.stage as any,
+      holonSource: `${returnTarget.line}:${returnTarget.stage}`,
+      shadowTarget: sig.shadows.entries.find(e => e.id === returnTarget.shadowId)?.quadrant ?? null,
+      polarityMode: sig.polarity.master.mode,
+      difficulty: 0.7, // Higher difficulty for shadow work
+      sessionPosition: 'peak',
+      priority: 0.95, // High priority — Holonic Return overrides normal ranking
+      driveTarget: sig.shadows.entries.find(e => e.id === returnTarget.shadowId)?.drive ?? null,
+      executionMode: 'shadow',
+    };
+    // Prepend the return encounter (it takes priority over normal encounters)
+    result = [returnEncounter, ...result].slice(0, count);
   }
 
   return result;

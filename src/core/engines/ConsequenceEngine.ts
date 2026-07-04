@@ -16,6 +16,8 @@ import { recordTrace } from './PolarityEngine.js';
 import type { WorldState } from './CandidateGeneration.js';
 import { EncounterRegistry } from '../registries/index.js';
 import { maybeFireHook } from '../../infra/tdg/TDGBridge.js';
+// WIRE-3: Import computeContactBoundaryPermeability to update sig field
+import { computeContactBoundaryPermeability } from './GreaterCycleEngine.js';
 
 export interface PlayerResponse {
   readonly encounterId: string;
@@ -233,6 +235,20 @@ export function applyConsequences(
     recentEncounters: newRecentEncounters,
     rayProfile: newRayProfile as Significator['rayProfile'],
     totalEncounters: sig.totalEncounters + 1,
+    // WIRE-3: Update contactBoundaryPermeability on every encounter.
+    // Previously this field was a static 0.5 forever (dead field per Round 3 audit).
+    // Now it's recomputed after each encounter based on the updated drive balance
+    // + transformation phase. The permeability modulates how much Catalyst flows
+    // in/out — high permeability = more flow (good for crucible), low = less
+    // (good for integration).
+    contactBoundaryPermeability: computeContactBoundaryPermeability({
+      ...sig,
+      drives: newDrives,
+      polarity: newPolarity,
+      shadows: { entries: newShadowEntries, activeCount: newShadowEntries.filter(e => !e.resolvedAt).length },
+      rayProfile: newRayProfile as Significator['rayProfile'],
+      totalEncounters: sig.totalEncounters + 1,
+    }),
   };
 
   // 6. Update NPC Relationships and recentEncounterIds

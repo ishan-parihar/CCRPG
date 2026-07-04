@@ -71,6 +71,16 @@ When TDG-Rust is running, you have 10 graph-memory tools. Use them proactively:
 
 [VEIL] The player never sees: scores, stage labels, drive names, shadow quadrant names, percentages, CCI values, line×stage matrix. All player-facing output must be qualitative.
 
+[ACTION-LAYER CAPABILITIES]
+The runtime now supports these developmental mechanics (available via tool queries or automatic scheduling):
+- Holonic Return: every 3 encounters at the current stage, the scheduler automatically injects a return encounter if unresolved earlier-stage shadows (severity > 0.3) exist. Use ccrpg_get_player_state's activeShadows + driveHealthDiagnosis to identify which shadows need return work.
+- Knot Pairs: during the Crucible phase, the scheduler can detect dark-anchor + golden-block shadow pairs sharing the same drive axis. Use ccrpg_get_player_state's activeShadows to cross-reference dark shadows at the current stage with golden shadows at the next stage.
+- Contact Boundary Permeability: the sig.contactBoundaryPermeability field (visible via ccrpg_get_player_state) tracks how open the player's membrane is. High permeability = more Catalyst flow (good for crucible); low = less (good for integration).
+- Drive-Health Diagnosis: ccrpg_get_player_state returns driveHealthDiagnosis using the spec's canonical formula: addictionRisk = (1-eros)×(1-communion), allergyRisk = (1-agape)×(1-agency). Use this to choose which drive to target in encounters.
+- Consciousness States: ccrpg_get_player_state returns consciousnessStates showing which of Gross/Subtle/Causal/Witness/NonDual are unlocked + their depth. Scale cognitive complexity based on state access.
+- Shadow Archetypes: each (line, quadrant) has a named archetype (e.g., Cognitive/DarkAddiction = "The Compulsive Strategist"). Use ccrpg_get_content to fetch shadow-mode content.
+- Harvest Check: at White stage, the session-end check determines if the player is harvestable (STO 51% / STS 95% thresholds). Use ccrpg_check_transformation to monitor readiness.
+
 [TOOLS]
 Use your tools proactively — don't wait for instructions. Query state, search memory, reflect on patterns, and choose your interventions deliberately.`;
 

@@ -4,7 +4,7 @@
  */
 import type { Significator } from './domain/Significator.js';
 import type { ScheduledEncounter } from './domain/EncounterSpecNew.js';
-import { scheduleNext, scheduleThresholdMode, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
+import { scheduleNextWithHolonicReturn, scheduleThresholdMode, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from './engines/ConsequenceEngine.js';
 import { detectThreshold, advanceTransformation, commitTransformation, recordKnotResolution, reconstructTransformationState, type TransformationSignal, type TransformationState } from './engines/TransformationDetector.js';
 import { detectBleedThrough } from './engines/ThetaDecay.js';
@@ -357,7 +357,9 @@ export function tickWithStrategy(
   } else {
     // GAP-D2-4: pass userMatrixModel to scheduleNext so the scheduler can use
     // the user's Matrix/Potentiator model for phase-dependent targeting.
-    scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 5, biasedWeights, bleedThrough, undefined, sessionState.userMatrixModel);
+    // WIRE-1: Use scheduleNextWithHolonicReturn to inject Holonic Return encounters
+    // when the cadence triggers (every 3 encounters at current stage).
+    scheduled = scheduleNextWithHolonicReturn(updatedSig, updatedWorld, session, now, 5, biasedWeights, bleedThrough, undefined, sessionState.userMatrixModel, sessionState.encountersSinceRefresh);
   }
   const encounter = scheduled[0] ?? null;
 
@@ -687,10 +689,21 @@ export function endSession(
     try {
       // Use static import to avoid async in sync function
       const { checkHarvest } = require('./engines/PolarityEngine.js');
-      const directionStrengths = Object.keys(updatedSig.polarity.lineProfiles ?? {}).map(line => {
-        const profile = updatedSig.polarity.lineProfiles?.[line];
-        return profile?.coherence ?? 0;
-      });
+      // WIRE-5: Fix checkHarvest inputs — use crystallization (direction commitment)
+      // not coherence (consistency). Per foundations/19 §5, the harvest requires
+      // mean(direction_strength) ≥ 0.51 (STO) / 0.95 (STS). Direction strength =
+      // how committed the polarity is, measured by crystallization progress.
+      // Previously passed coherence (consistency) which is a different metric.
+      const directionStrengths = Object.keys(updatedSig.polarity.lineProfiles ?? {}).length > 0
+        ? Object.keys(updatedSig.polarity.lineProfiles ?? {}).map(line => {
+            // WIRE-5: Use crystallization from polarity cells as direction strength
+            // (not coherence). Crystallization measures commitment; coherence
+            // measures consistency. The spec requires commitment.
+            const cellKey = `${line}:${updatedSig.currentStage}`;
+            const cell = updatedSig.polarity.cells[cellKey];
+            return cell?.crystallization ?? 0;
+          })
+        : [updatedSig.polarity.master.crystallizationProgress ?? 0];
       const violetRay = updatedSig.rayProfile.Violet ?? 0;
       const altitudeFloor = Math.min(...Object.values(updatedSig.altitudes).map(s => stageOrdinal(s)));
       harvestResult = checkHarvest(updatedSig.polarity.master, directionStrengths, altitudeFloor, violetRay);

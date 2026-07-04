@@ -480,7 +480,14 @@ export async function executeCCRPGTool(
           stage: h.stage,
           narrativeRole: h.narrativeRole,
         })),
-        pestleValues: ctx.world.pestleTension,
+        // WIRE-8: Re-veil PESTLE values as qualitative descriptors (was raw numerics).
+        // Consistent with the re-veiling pattern applied to player-state in P2-High.
+        pestleValues: Object.fromEntries(
+          Object.entries(ctx.world.pestleTension).map(([dim, val]) => [
+            dim,
+            val < 0.2 ? 'stable' : val < 0.5 ? 'elevated' : val < 0.75 ? 'high' : 'critical',
+          ]),
+        ),
         npcRelationshipDetail: npcRelationships.slice(0, 5).map(r => ({
           holonId: r.holonId,
           strength: r.strength < 0.4 ? 'emerging' : r.strength < 0.7 ? 'established' : 'deep',
