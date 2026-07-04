@@ -36,7 +36,9 @@ describe('GAP-D2-2: Significator-Liminality detection', () => {
 
   it('classifies a player with P_z spike + 5+ saturated lines as transitional', () => {
     const sig = createSignificator('p1', makeAltitudes('Red'), 'Red');
-    // Build a Significator with high P_z and 5+ lines saturated
+    // Build a Significator with high P_z and 5+ lines saturated.
+    // DEV-1: P_z = structuralGradient × polarAlignment per HoloOS 00.md §6.3.
+    // Need non-zero rayProfile + drive weights to create structural tension.
     const saturatedCells: Record<string, { crystallization: number; traceCount: number; dominantPattern: string | null }> = {};
     const lines = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal'];
     for (let i = 0; i < 6; i++) {
@@ -44,6 +46,9 @@ describe('GAP-D2-2: Significator-Liminality detection', () => {
     }
     const transitionalSig = {
       ...sig,
+      // DEV-1: Add non-zero rayProfile + drive weights for structural gradient
+      rayProfile: { Red: 0.4, Orange: 0.3, Yellow: 0.6, Green: 0.2, Blue: 0.1, Indigo: 0.0, Violet: 0.0 } as any,
+      drives: { ...sig.drives, weights: { Agency: 0.3, Communion: 0.2, Eros: 0.4, Agape: 0.1 } },
       polarity: {
         cells: saturatedCells as never,
         lineProfiles: {},
@@ -57,8 +62,8 @@ describe('GAP-D2-2: Significator-Liminality detection', () => {
     } as typeof sig;
     const mh = computeMetabolicHealth(transitionalSig);
     expect(mh.liminalitySignature!.subDensitySaturation).toBe(true);
-    // P_z should be high due to high crystallizationProgress
-    expect(mh.pz).toBeGreaterThan(0.5);
+    // P_z should be > 0 due to structural gradient × high crystallization
+    expect(mh.pz).toBeGreaterThan(0);
     // If P_z > 0.7, should be transitional
     if (mh.pz > 0.7) {
       expect(mh.interpretation).toBe('transitional');

@@ -9,7 +9,7 @@
 
 import type { Stage } from '../../core/domain/Stage.js';
 import type { AgentMessage, ToolCall } from '../../core/assessments/agentTypes.js';
-import { filterOutput } from './VeilFilter.js';
+import { filterInput, filterOutput } from './VeilFilter.js';
 
 /** T-3.6: Log Veil violations for telemetry. */
 function logVeilViolation(source: string, violations: readonly string[]): void {
@@ -148,6 +148,14 @@ export async function queryLLM(
     return '{"error": "LLM unavailable"}';
   }
 
+  // DEV-5: Apply VeilFilter.filterInput to the system prompt + user message
+  // before sending to the LLM. The Veil is bidirectional per foundations/20 —
+  // filtering only output is half a Veil. Input filtering prevents the LLM
+  // from seeing system-terms (stage labels, drive names, etc.) that would
+  // bias its generation toward technical language.
+  const veiledSystemPrompt = filterInput(systemPrompt);
+  const veiledUserMessage = filterInput(userMessage);
+
   try {
     let res: Response;
     if (isAnthropicProvider(baseUrl)) {
@@ -160,8 +168,8 @@ export async function queryLLM(
         },
         body: JSON.stringify({
           model,
-          system: systemPrompt,
-          messages: [{ role: 'user', content: userMessage }],
+          system: veiledSystemPrompt,
+          messages: [{ role: 'user', content: veiledUserMessage }],
           temperature: 0.7,
           max_tokens: 4096,
         }),
@@ -173,8 +181,8 @@ export async function queryLLM(
         body: JSON.stringify({
           model,
           messages: [
-            { role: 'system', content: systemPrompt },
-            { role: 'user', content: userMessage },
+            { role: 'system', content: veiledSystemPrompt },
+            { role: 'user', content: veiledUserMessage },
           ],
           temperature: 0.7,
         }),
@@ -211,6 +219,9 @@ export async function queryLLMWithTools(
     return { content: '{"error": "LLM unavailable"}' };
   }
 
+  // DEV-5: Apply VeilFilter.filterInput to the system prompt before sending.
+  const veiledSystemPrompt = filterInput(systemPrompt);
+
   const anthropic = isAnthropicProvider(baseUrl);
 
   const mappedMessages = messages.map(msg => {
@@ -234,7 +245,7 @@ export async function queryLLMWithTools(
       const nonSystemMsgs = mappedMessages.filter(m => m.role !== 'system');
       const body: any = {
         model,
-        system: systemMsg?.content ?? systemPrompt,
+        system: systemMsg?.content ?? veiledSystemPrompt,
         messages: nonSystemMsgs,
         temperature: 0.7,
         max_tokens: 4096,
@@ -258,7 +269,7 @@ export async function queryLLMWithTools(
     } else {
       const body: any = {
         model,
-        messages: [{ role: 'system', content: systemPrompt }, ...mappedMessages],
+        messages: [{ role: 'system', content: veiledSystemPrompt }, ...mappedMessages],
         temperature: 0.7,
       };
       if (tools && tools.length > 0) body.tools = tools;

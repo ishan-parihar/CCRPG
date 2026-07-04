@@ -68,23 +68,36 @@ describe('GreaterCycleEngine — P_z (Greater-Cycle health)', () => {
   });
 
   it('produces higher P_z when polarity is crystallized', () => {
+    // DEV-1: P_z = structuralGradient × polarAlignment per HoloOS 00.md §6.3.
+    // Both factors must be non-zero for P_z > 0. The test sigs need non-zero
+    // rayProfile (Potentiator state) that differs from drive weights (Matrix state)
+    // so the structural gradient is non-zero.
     const sig = createSignificator('p1', makeAltitudes('Red'), 'Red');
-    const lowPolarSig = {
+    // Add non-zero rayProfile + drive weights to create structural tension
+    const baseSig = {
       ...sig,
+      rayProfile: { Red: 0.3, Orange: 0.2, Yellow: 0.5, Green: 0.1, Blue: 0.0, Indigo: 0.0, Violet: 0.0 } as any,
+      drives: { ...sig.drives, weights: { Agency: 0.4, Communion: 0.3, Eros: 0.2, Agape: 0.1 } },
+    };
+    const lowPolarSig = {
+      ...baseSig,
       polarity: {
-        ...sig.polarity,
-        master: { ...sig.polarity.master, crystallizationProgress: 0.1 },
+        ...baseSig.polarity,
+        master: { ...baseSig.polarity.master, crystallizationProgress: 0.1 },
       },
     };
     const highPolarSig = {
-      ...sig,
+      ...baseSig,
       polarity: {
-        ...sig.polarity,
-        master: { ...sig.polarity.master, crystallizationProgress: 0.9 },
+        ...baseSig.polarity,
+        master: { ...baseSig.polarity.master, crystallizationProgress: 0.9 },
       },
     };
     const lowPz = computePz(lowPolarSig);
     const highPz = computePz(highPolarSig);
+    // With the HoloOS formula, P_z = gradient × alignment.
+    // Same gradient (same drives + rays), different alignment (crystallization).
+    // highPz should be > lowPz because 0.9 > 0.1 in the alignment factor.
     expect(highPz.value).toBeGreaterThan(lowPz.value);
   });
 });
