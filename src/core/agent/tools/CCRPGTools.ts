@@ -16,7 +16,7 @@ import type { Modality, ShadowQuadrant } from '../../domain/enums.js';
 import type { Drive } from '../../domain/Drive.js';
 // P1-16: Wire ShadowDetector into the agent's player-state query so the agent
 // can access behavioral shadow detection (repression, fixation, regression).
-import { detectShadows } from '../../usecases/ShadowDetector.js';
+import { detectShadows, diagnoseShadows } from '../../usecases/ShadowDetector.js';
 import type { Line } from '../../domain/Line.js';
 import type { Stage } from '../../domain/Stage.js';
 import { stageOrdinal } from '../../domain/Stage.js';
@@ -431,6 +431,27 @@ export async function executeCCRPGTool(
           line: s.line,
           description: s.description,
         })),
+        // ACTION-2: Drive-health shadow diagnosis (the spec's canonical formula)
+        driveHealthDiagnosis: diagnoseShadows(sig).slice(0, 5).map(d => ({
+          line: d.line,
+          stage: d.stage,
+          dominantPathology: d.dominantPathology,
+          severity: d.severity < 0.4 ? 'mild' : d.severity < 0.7 ? 'moderate' : 'severe',
+        })),
+        // ACTION-4: States of consciousness (foundations/04)
+        // Previously sig.states was inert (never read by any engine). Now the
+        // agent can see which states are unlocked + their depth, enabling it to
+        // reason about the contemplative half of development.
+        consciousnessStates: Object.fromEntries(
+          Object.entries(sig.states).map(([state, progress]) => [
+            state,
+            {
+              unlocked: progress.unlocked,
+              depth: progress.depth < 0.3 ? 'shallow' : progress.depth < 0.7 ? 'developing' : 'deep',
+              practiced: progress.minutesPracticed > 0,
+            },
+          ]),
+        ),
       });
     }
 

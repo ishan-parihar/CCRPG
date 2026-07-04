@@ -39,6 +39,108 @@ export function findMostActiveShadowQuadrant(sig: Significator, line: string): S
   return unresolved[0]?.quadrant ?? null;
 }
 
+// ─── ACTION-3: Knot-Pair Generation (foundations/17 §5) ──────────────
+
+export interface KnotPair {
+  readonly anchorShadow: ShadowEntry;     // dark shadow at current stage
+  readonly blockShadow: ShadowEntry;      // golden shadow at next stage
+  readonly line: string;                  // shared line
+  readonly drive: string;                 // shared drive axis
+  readonly anchorEncounter: ScheduledEncounter; // Encounter A: surfaces dark anchor
+  readonly blockEncounter: ScheduledEncounter;  // Encounter B: invites golden capacity
+}
+
+/**
+ * ACTION-3: Detect knot-pairs — dark-anchor + golden-block shadow pairs
+ * that share the same drive axis across current and next stage.
+ *
+ * Per foundations/17 §5: "A 'knot' is a compound shadow — a dark-shadow at
+ * current stage structurally linked to a golden-allergy at next stage. Encounter
+ * A surfaces the dark anchor; Encounter B (immediately follows) demands the
+ * golden capacity."
+ *
+ * Knots are the CORE MECHANIC of the Lovers Crucible. Without them, the
+ * Crucible is just "5 sessions of shadow mode" with no structural relationship
+ * between dark and golden shadows. The evolve/heal vector (golden integration
+ * dissolves dark knots) cannot fire without knot detection.
+ *
+ * @param sig The player's Significator
+ * @param currentStage The player's current stage
+ * @param nextStage The target stage (currentStage + 1)
+ * @returns Array of KnotPairs (may be empty if no knots detected)
+ */
+export function detectKnotPairs(
+  sig: Significator,
+  currentStage: string,
+  nextStage: string,
+): readonly KnotPair[] {
+  const knots: KnotPair[] = [];
+
+  // Find dark shadows at current stage (the "anchor")
+  const darkAnchors = sig.shadows.entries.filter(
+    e => e.resolvedAt === null
+      && e.stage === currentStage
+      && (e.quadrant === 'DarkAddiction' || e.quadrant === 'DarkAllergy'),
+  );
+
+  // Find golden shadows at next stage (the "block")
+  const goldenBlocks = sig.shadows.entries.filter(
+    e => e.resolvedAt === null
+      && e.stage === nextStage
+      && (e.quadrant === 'GoldenAddiction' || e.quadrant === 'GoldenAllergy'),
+  );
+
+  // Match by shared drive axis (same drive on both sides = knot)
+  for (const anchor of darkAnchors) {
+    for (const block of goldenBlocks) {
+      if (anchor.line === block.line && anchor.drive === block.drive) {
+        // Generate the A→B encounter pair
+        const anchorEncounter: ScheduledEncounter = {
+          id: `knot-anchor:${anchor.line}:${currentStage}:${Date.now()}`,
+          moduleRef: `${anchor.line}:${currentStage}`,
+          modality: 'LanguageReflective',
+          targetLines: [anchor.line as any],
+          stage: currentStage as any,
+          holonSource: `${anchor.line}:${currentStage}`,
+          shadowTarget: anchor.quadrant,
+          polarityMode: 'Exploring',
+          difficulty: 0.7,
+          sessionPosition: 'peak',
+          priority: 0.9,
+          driveTarget: anchor.drive,
+          executionMode: 'shadow',
+        };
+        const blockEncounter: ScheduledEncounter = {
+          id: `knot-block:${block.line}:${nextStage}:${Date.now()}`,
+          moduleRef: `${block.line}:${nextStage}`,
+          modality: 'ScenarioChoice',
+          targetLines: [block.line as any],
+          stage: nextStage as any,
+          holonSource: `${block.line}:${nextStage}`,
+          shadowTarget: block.quadrant,
+          polarityMode: 'Exploring',
+          difficulty: 0.8,
+          sessionPosition: 'peak',
+          priority: 0.9,
+          driveTarget: block.drive,
+          executionMode: 'shadow',
+        };
+
+        knots.push({
+          anchorShadow: anchor,
+          blockShadow: block,
+          line: anchor.line,
+          drive: anchor.drive,
+          anchorEncounter,
+          blockEncounter,
+        });
+      }
+    }
+  }
+
+  return knots;
+}
+
 /**
  * Schedule the next N encounters, ranked by priority.
  *

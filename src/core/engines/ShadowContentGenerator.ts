@@ -33,6 +33,70 @@ export interface ShadowEvaluationCriteria {
   readonly bypassing: string;
 }
 
+// ─── ACTION-5: Per-(line, quadrant) archetype names (toward 256-shadow matrix) ──
+// Per foundations/10 §6, each (line, stage, drive, domain) combination should
+// have a named archetype. This is a step toward the full 256-shadow matrix —
+// it adds per-line archetype names for each quadrant, making shadow encounters
+// feel archetypally distinct rather than template-substituted.
+const LINE_SHADOW_ARCHETYPES: Partial<Record<Line, Record<ShadowQuadrant, string>>> = {
+  Cognitive: {
+    DarkAddiction: 'The Compulsive Strategist',
+    DarkAllergy: 'The Scattered Mind',
+    GoldenAddiction: 'The Over-Analyzer',
+    GoldenAllergy: 'The Anti-Intellectual',
+  },
+  Emotional: {
+    DarkAddiction: 'The Emotional Flood',
+    DarkAllergy: 'The Numb Heart',
+    GoldenAddiction: 'The Drama Seeker',
+    GoldenAllergy: 'The Detached Observer',
+  },
+  Moral: {
+    DarkAddiction: 'The Rigid Judge',
+    DarkAllergy: 'The Moral Void',
+    GoldenAddiction: 'The Self-Righteous Crusader',
+    GoldenAllergy: 'The Cynic',
+  },
+  Intrapersonal: {
+    DarkAddiction: 'The Narcissistic Self',
+    DarkAllergy: 'The Dissolved Self',
+    GoldenAddiction: 'The Self-Optimizer',
+    GoldenAllergy: 'The Self-Denier',
+  },
+  Spiritual: {
+    DarkAddiction: 'The Spiritual Addict',
+    DarkAllergy: 'The Materialist Fundamentalist',
+    GoldenAddiction: 'The Spiritual Bypasser',
+    GoldenAllergy: 'The Spirit Refuser',
+  },
+  Somatic: {
+    DarkAddiction: 'The Sensation Chaser',
+    DarkAllergy: 'The Disembodied Thinker',
+    GoldenAddiction: 'The Body Obsessive',
+    GoldenAllergy: 'The Body Neglector',
+  },
+  Willpower: {
+    DarkAddiction: 'The Relentless Driver',
+    DarkAllergy: 'The Collapsed Will',
+    GoldenAddiction: 'The Control Freak',
+    GoldenAllergy: 'The Passive Drifter',
+  },
+  Interpersonal: {
+    DarkAddiction: 'The Fusion Seeker',
+    DarkAllergy: 'The Isolate',
+    GoldenAddiction: 'The People-Pleaser',
+    GoldenAllergy: 'The Loner',
+  },
+};
+
+/**
+ * Get the archetype name for a (line, quadrant) shadow.
+ * Returns a generic fallback if no specific archetype is defined.
+ */
+export function getShadowArchetypeName(line: Line, quadrant: ShadowQuadrant): string {
+  return LINE_SHADOW_ARCHETYPES[line]?.[quadrant] ?? `The ${quadrant} Shadow`;
+}
+
 // ─── Quadrant-specific content templates ───────────────────────────────────────
 
 const QUADRANT_CONTENT: Record<ShadowQuadrant, {
@@ -134,13 +198,15 @@ export function generateShadowContent(
   const quadrant = shadowQuadrant ?? 'DarkAddiction';
   const templates = QUADRANT_CONTENT[quadrant];
   const drive = driveForLine(line);
+  // ACTION-5: Include the per-line archetype name for archetypal distinction
+  const archetypeName = getShadowArchetypeName(line, quadrant);
 
   // Pick narrative frame based on line (deterministic selection)
   const frameIndex = line.charCodeAt(0) % templates.narrativeFrames.length;
   const narrativeFrame = templates.narrativeFrames[frameIndex];
 
-  // Fill in template variables
-  const narrativeIntro = narrativeFrame
+  // Fill in template variables + prepend archetype name (ACTION-5)
+  const narrativeIntro = `[${archetypeName}] ${narrativeFrame}`
     .replace('{line}', line)
     .replace('{stage}', stage)
     .replace('{drive}', drive);
