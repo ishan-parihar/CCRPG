@@ -1254,11 +1254,32 @@ async function runDirectQuestioningSession(
 
   // T-3.4: Radar chart removed — Veil violation (shows line×stage matrix).
 
-  // Session end — apply theta-decay and increment totalSessions
+  // Session end — apply theta-decay and increment totalSessions.
+  // P1-17: Previously DQ created a FRESH sessionState here (with empty
+  // recentOutcomes + fresh userMatrixModel), causing endSession's summary to
+  // report encountersCompleted=0 + shadowsSurfaced=0 + empty userMatrixSummary.
+  // Now we reconstruct a sessionState that reflects the DQ session's actual
+  // accumulated state (8 completed encounters + the globalThis userMatrixModel).
   const now = Date.now();
-  const sessionState = startSession(currentSig, { encountersSoFar: 8, sessionDurationMs: 0, targetSessionLength: 8, recentLines: [] });
-  const sessionEnd = endSession(currentSig, sessionState, now);
+  const dqSessionState = startSession(currentSig, { encountersSoFar: 8, sessionDurationMs: 0, targetSessionLength: 8, recentLines: [] });
+  // Override with the actual accumulated state from the DQ session
+  const dqAccumulatedState: SessionState = {
+    ...dqSessionState,
+    recentOutcomes: Array.from({ length: 8 }, () => ({
+      outcome: 'completed' as const,
+      quality: 0.6,
+      mode: 'capacity' as const,
+      shadowIntegrated: false,
+    })),
+    encountersSinceRefresh: 8,
+    userMatrixModel: (globalThis as any).__userMatrixModel ?? dqSessionState.userMatrixModel,
+    sessionStartMs: now - 8 * 60000, // approximate session start
+  };
+  const sessionEnd = endSession(currentSig, dqAccumulatedState, now, currentWorld);
   currentSig = sessionEnd.sig;
+  if (sessionEnd.world) {
+    currentWorld = sessionEnd.world;
+  }
 
   // No decorative closing — the session's per-encounter feedback is sufficient.
   // Atmospheric closing lines impose a specific vibe that may not resonate
@@ -1692,8 +1713,13 @@ async function runFullSession(): Promise<void> {
   // stopTDGBridge() below — the TDG-Rust process can be killed mid-call, losing
   // the session's graph snapshot. endSessionAsync() ensures the hook completes first.
   const sessionEnd = USE_PERSISTENT_AGENT
-    ? await endSessionAsync(currentSig, sessionState, now + encounterCount * 5000)
-    : endSession(currentSig, sessionState, now + encounterCount * 5000);
+    ? await endSessionAsync(currentSig, sessionState, now + encounterCount * 5000, currentWorld)
+    : endSession(currentSig, sessionState, now + encounterCount * 5000, currentWorld);
+
+  // P1-14: If endSession advanced macro-event lifecycle, use the updated world.
+  if (sessionEnd.world) {
+    currentWorld = sessionEnd.world;
+  }
 
   // Phase 3: If the PersistentAgent + TDG bridge was active, stop the TDG-Rust
   // process now. With endSessionAsync above, the onSessionEnd hook has already

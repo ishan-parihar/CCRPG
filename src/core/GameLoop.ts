@@ -173,7 +173,8 @@ export interface SessionState {
  */
 export function startSession(sig: Significator, session: SessionContext): SessionState {
   const snapshot = toSnapshot(sig);
-  const cci = computeCCI(snapshot);
+  // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
+  const cci = computeCCI(snapshot, sig);
   const strategy = generateSessionStrategy(cci, session, null);
   return {
     strategy,
@@ -205,7 +206,8 @@ export async function startSessionWithTDG(
 ): Promise<SessionState> {
   // Always compute the baseline sync CCI first — this is the source of truth.
   const snapshot = toSnapshot(sig);
-  const baselineCCI = computeCCI(snapshot);
+  // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
+  const baselineCCI = computeCCI(snapshot, sig);
 
   // Best-effort TDG augmentation — no-op when TDG is not running.
   let cci = baselineCCI;
@@ -452,7 +454,8 @@ export function tickWithStrategy(
   if (encountersSinceRefresh % interval === 0) {
     // Recompute CCI from current Significator state
     const freshSnapshot = toSnapshot(updatedSig);
-    updatedCCI = computeCCI(freshSnapshot);
+    // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
+    updatedCCI = computeCCI(freshSnapshot, updatedSig);
 
     // Evaluate whether mid-session adjustment is needed
     const adjustment = evaluateMidSessionAdjustment(
@@ -597,12 +600,21 @@ export function executeModule(
 /**
  * End a session: apply theta-decay to all unvisited modules,
  * persist final state, and return session summary.
+ *
+ * P1-14: Now advances macro-event lifecycle (onset → active → resolution)
+ * via advanceMacroEvent(). Prior to P1-14, the lifecycle functions were
+ * exported but never called — macroEventsAdvanced was hardcoded to 0.
+ *
+ * @param world Optional WorldState — when provided, macro-event states are
+ *              advanced and the updated world is returned. When omitted,
+ *              macro-event advancement is skipped (backward compat).
  */
 export function endSession(
   sig: Significator,
   sessionState: SessionState,
   now: number,
-): { sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number } } {
+  world?: WorldState,
+): { sig: Significator; world?: WorldState; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number } } {
   const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
   const sessionStartMs = sessionState.sessionStartMs ?? now;
   const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
@@ -611,12 +623,52 @@ export function endSession(
   // Wave 3.5: Summarize UserMatrixModel for telemetry
   const userMatrixSummary = summarizeUserMatrix(sessionState.userMatrixModel);
 
-  // Ponytail gap: Advance macro-event lifecycle at session end.
-  // Prior: advanceMacroEvent was exported but never called from runtime.
-  // Now: any active macro-events in the world state progress through their lifecycle.
-  // (The world state's activeMacroEvents are advanced by the caller after endSession
-  // returns — this function just signals that the session ended. The actual advancement
-  // happens in the CLI/Phaser when processing the returned summary.)
+  // P1-14: Advance macro-event lifecycle at session end.
+  // Prior to P1-14, advanceMacroEvent/recordMacroChoice/resolveMacroEvent were
+  // exported but NEVER called from runtime — macroEventsAdvanced was hardcoded 0.
+  // Now we advance each active macro event's state by one session. Events that
+  // reach 'resolution' phase are resolved (PESTLE tension reset for their dimension).
+  let macroEventsAdvanced = 0;
+  let updatedWorld = world;
+  if (world && world.activeMacroEvents.length > 0) {
+    const { advanceMacroEvent, resolveMacroEvent } = require('./engines/MacroCatalystEngine.js');
+    const existingStates = world.macroEventStates ?? [];
+    const newStates: { eventId: string; state: any }[] = [];
+    const resolvedEvents: string[] = [];
+
+    for (const event of world.activeMacroEvents) {
+      const existing = existingStates.find(s => s.eventId === event.id);
+      const currentState = existing?.state ?? { phase: 'onset', sessionsInPhase: 0, playerChoices: [], encountersSinceStart: 0 };
+      const advanced = advanceMacroEvent(currentState);
+      newStates.push({ eventId: event.id, state: advanced });
+      macroEventsAdvanced++;
+
+      if (advanced.phase === 'resolution') {
+        resolvedEvents.push(event.id);
+      }
+    }
+
+    // Resolve events that reached resolution phase — reset their PESTLE dimension
+    let newPestle = { ...world.pestleTension };
+    const remainingEvents = world.activeMacroEvents.filter(e => !resolvedEvents.includes(e.id));
+    for (const eventId of resolvedEvents) {
+      const event = world.activeMacroEvents.find(e => e.id === eventId);
+      if (event) {
+        const result = resolveMacroEvent(
+          newStates.find(s => s.eventId === eventId)!.state,
+          newPestle,
+        );
+        newPestle = result.tension;
+      }
+    }
+
+    updatedWorld = {
+      ...world,
+      pestleTension: newPestle,
+      activeMacroEvents: remainingEvents,
+      macroEventStates: newStates.filter(s => !resolvedEvents.includes(s.eventId)),
+    };
+  }
 
   // Increment totalSessions
   const updatedSig: Significator = {
@@ -631,7 +683,8 @@ export function endSession(
 
   return {
     sig: updatedSig,
-    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced: 0 },
+    ...(updatedWorld !== world ? { world: updatedWorld } : {}),
+    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced },
   };
 }
 
@@ -653,13 +706,53 @@ export async function endSessionAsync(
   sig: Significator,
   sessionState: SessionState,
   now: number,
-): Promise<{ sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number } }> {
+  world?: WorldState,
+): Promise<{ sig: Significator; world?: WorldState; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number } }> {
   const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
   const sessionStartMs = sessionState.sessionStartMs ?? now;
   const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
   const shadowsResolved = sig.shadows.entries.filter(e => e.resolvedAt !== null && e.resolvedAt >= sessionStartMs).length;
 
   const userMatrixSummary = summarizeUserMatrix(sessionState.userMatrixModel);
+
+  // P1-14: Advance macro-event lifecycle (same logic as sync endSession above).
+  let macroEventsAdvanced = 0;
+  let updatedWorld = world;
+  if (world && world.activeMacroEvents.length > 0) {
+    const { advanceMacroEvent, resolveMacroEvent } = await import('./engines/MacroCatalystEngine.js');
+    const existingStates = world.macroEventStates ?? [];
+    const newStates: { eventId: string; state: import('./engines/MacroCatalystEngine.js').MacroEventState }[] = [];
+    const resolvedEvents: string[] = [];
+
+    for (const event of world.activeMacroEvents) {
+      const existing = existingStates.find(s => s.eventId === event.id);
+      const currentState = existing?.state ?? { event, phase: 'onset' as const, sessionsInPhase: 0, playerChoices: [], encountersSinceStart: 0 };
+      const advanced = advanceMacroEvent(currentState);
+      newStates.push({ eventId: event.id, state: advanced });
+      macroEventsAdvanced++;
+
+      if (advanced.phase === 'resolution') {
+        resolvedEvents.push(event.id);
+      }
+    }
+
+    let newPestle = { ...world.pestleTension };
+    const remainingEvents = world.activeMacroEvents.filter(e => !resolvedEvents.includes(e.id));
+    for (const eventId of resolvedEvents) {
+      const stateEntry = newStates.find(s => s.eventId === eventId);
+      if (stateEntry) {
+        const result = resolveMacroEvent(stateEntry.state, newPestle);
+        newPestle = result.tension;
+      }
+    }
+
+    updatedWorld = {
+      ...world,
+      pestleTension: newPestle,
+      activeMacroEvents: remainingEvents,
+      macroEventStates: newStates.filter(s => !resolvedEvents.includes(s.eventId)),
+    };
+  }
 
   const updatedSig: Significator = {
     ...sig,
@@ -681,6 +774,7 @@ export async function endSessionAsync(
 
   return {
     sig: updatedSig,
-    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced: 0 },
+    ...(updatedWorld !== world ? { world: updatedWorld } : {}),
+    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced },
   };
 }

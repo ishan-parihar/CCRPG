@@ -12,7 +12,11 @@
 import type { Significator } from '../../domain/Significator.js';
 import type { WorldState } from '../../engines/CandidateGeneration.js';
 import type { ScheduledEncounter } from '../../domain/EncounterSpecNew.js';
-import type { Modality } from '../../domain/enums.js';
+import type { Modality, ShadowQuadrant } from '../../domain/enums.js';
+import type { Drive } from '../../domain/Drive.js';
+// P1-16: Wire ShadowDetector into the agent's player-state query so the agent
+// can access behavioral shadow detection (repression, fixation, regression).
+import { detectShadows } from '../../usecases/ShadowDetector.js';
 import type { Line } from '../../domain/Line.js';
 import type { Stage } from '../../domain/Stage.js';
 import { scheduleNext } from '../../engines/EncounterScheduler.js';
@@ -103,13 +107,17 @@ export const CCRPG_SELECT_ENCOUNTER_TOOL: ToolDefinition = {
   type: 'function',
   function: {
     name: 'ccrpg_select_encounter',
-    description: 'Commit to an encounter from the pool. Preserves all scheduler-provided fields (shadowTarget, driveTarget, difficulty, sessionPosition, priority, executionMode). To select a shadow-mode encounter, pass executionMode:"shadow".',
+    description: 'Commit to an encounter from the pool. Preserves all scheduler-provided fields by default. The agent can override specific fields to customize the encounter — e.g. executionMode:"shadow" to select shadow-work, shadowTarget to target a specific shadow quadrant, difficulty to scaffold or challenge.',
     parameters: {
       type: 'object',
       properties: {
         moduleRef: { type: 'string', description: 'The moduleRef from the encounter pool (e.g., "Cognitive:Red"). Should match a moduleRef returned by ccrpg_get_encounter_pool.' },
         modality: { type: 'string', description: 'Optional modality override. Defaults to the encounter\'s scheduler-assigned modality.' },
         executionMode: { type: 'string', enum: ['capacity', 'shadow'], description: 'Optional execution mode override. Use "shadow" to select a shadow-work encounter (targets unresolved shadow patterns). Defaults to the encounter\'s scheduler-assigned mode (usually "capacity").' },
+        shadowTarget: { type: 'string', enum: ['DarkAddiction', 'DarkAllergy', 'GoldenAddiction', 'GoldenAllergy'], description: 'Optional shadow quadrant to target. Use when executionMode is "shadow" to focus on a specific shadow pattern.' },
+        driveTarget: { type: 'string', enum: ['Agency', 'Communion', 'Eros', 'Agape'], description: 'Optional drive to target. The encounter will exercise this drive specifically.' },
+        difficulty: { type: 'number', minimum: 0, maximum: 1, description: 'Optional difficulty override (0.0 = gentle, 1.0 = edge). Defaults to the scheduler-assigned difficulty (~0.5).' },
+        sessionPosition: { type: 'string', enum: ['warmup', 'peak', 'cooldown'], description: 'Optional session-position override. Defaults to the scheduler-assigned position.' },
       },
       required: ['moduleRef'],
     },
@@ -155,7 +163,26 @@ export const CCRPG_COMPLETE_ENCOUNTER_TOOL: ToolDefinition = {
           },
         },
         polarityDirection: { type: 'string', enum: ['sto', 'sts', 'neutral'], description: 'The polarity direction indicated by the player\'s choices.' },
-        narrativeSummary: { type: 'string', description: 'Immersive, third-person narrative summary (Veil-compliant — no technical terms).' },
+        narrativeSummary: { type: 'string', description: 'Immersive, third-person narrative summary (Veil-compliant — no technical terms). This is the player-facing story of what happened.' },
+        // P1-19: Restored psychometric depth + separate feedback field.
+        feedback: { type: 'string', description: 'Optional developmental feedback explaining what the player\'s responses indicate about their drive-health. INTERNAL (not player-facing) — used for telemetry + cross-encounter synthesis. Separate from narrativeSummary.' },
+        scores: {
+          type: 'object',
+          description: 'Optional 10-dimension psychometric scores (0.0-1.0 each). Restores the depth the old orchestrator had. Provide when assessable.',
+          properties: {
+            accuracy: { type: 'number' },
+            responseTime: { type: 'number' },
+            consistency: { type: 'number' },
+            depth: { type: 'number' },
+            selfCorrection: { type: 'number' },
+            complexityHandled: { type: 'number' },
+            transfer: { type: 'number' },
+            metacognition: { type: 'number' },
+            coherence: { type: 'number' },
+            integration: { type: 'number' },
+          },
+        },
+        shadowResolvedId: { type: 'string', description: 'Optional ID of a shadow resolved during this encounter. Obtain from ccrpg_get_player_state activeShadows.' },
       },
       required: ['passed', 'driveScores', 'driveSignals', 'narrativeSummary'],
     },
@@ -235,6 +262,12 @@ export interface ToolContext {
     shadowSignal?: { quadrant: string; intensity: number };
     polarityDirection: string;
     narrativeSummary: string;
+    /** P1-19: Optional developmental feedback (internal, not player-facing). */
+    feedback?: string;
+    /** P1-19: Optional 10-dim psychometric scores. */
+    scores?: Record<string, number>;
+    /** P1-19: Optional ID of a shadow resolved during this encounter. */
+    shadowResolvedId?: string;
   }) => void;
   /**
    * P0-8: Cached encounter pool from the last ccrpg_get_encounter_pool call.
@@ -324,6 +357,52 @@ export async function executeCCRPGTool(
         userMatrixPhase: ctx.sessionState.userMatrixModel?.profilePhase ?? 'unmapped',
         totalEncounters: sig.totalEncounters,
         totalSessions: sig.totalSessions,
+        // P1-18: Deep per-line + per-drive + per-shadow detail. Previously the
+        // agent only got a flat 8-field snapshot — it couldn't query per-line
+        // altitudes, per-drive directionality (which it's asked to OUTPUT in
+        // ccrpg_complete_encounter), per-shadow detail, or polarity trajectory.
+        // These new fields give the agent the depth it needs to reason about
+        // the player's developmental state and choose targeted interventions.
+        perLineAltitudes: sig.altitudes,
+        driveWeights: sig.drives.weights,
+        driveFixationRisk: sig.drives.fixationRisk,
+        activeShadows: sig.shadows.entries
+          .filter(e => e.resolvedAt === null)
+          .map(e => ({
+            id: e.id,
+            quadrant: e.quadrant,
+            line: e.line,
+            stage: e.stage,
+            drive: e.drive,
+            severity: e.severity,
+            recurrenceCount: e.recurrenceCount,
+            compoundPartner: e.compoundPartner,
+          })),
+        polarityDetail: {
+          masterMode: sig.polarity.master.mode,
+          masterDirection: sig.polarity.master.dominantDirection,
+          crystallizationProgress: sig.polarity.master.crystallizationProgress,
+          coherentLineCount: sig.polarity.master.coherentLineCount,
+        },
+        rayProfileValues: sig.rayProfile,
+        transformationDetail: {
+          phase: sig.transformationPhase ?? 'idle',
+          targetStage: sig.transformationTargetStage ?? null,
+          sessionsInPhase: sig.transformationSessionsInPhase ?? 0,
+          knotsResolved: sig.transformationKnotsResolved ?? 0,
+          totalKnots: sig.transformationTotalKnots ?? 0,
+        },
+        // P1-16: Behavioral shadow detection from ShadowDetector. Previously
+        // ShadowDetector.detectShadows was dead code (zero runtime callers).
+        // Now the agent can see behavioral patterns (repression, fixation,
+        // regression, golden-allergy) that the ConsequenceEngine's polarity-
+        // trace-based shadow surfacing doesn't detect. This gives the agent
+        // a second shadow-detection channel for cross-referencing.
+        behavioralShadows: detectShadows(sig).map(s => ({
+          type: s.type,
+          line: s.line,
+          description: s.description,
+        })),
       });
     }
 
@@ -389,13 +468,16 @@ export async function executeCCRPGTool(
     case 'ccrpg_select_encounter': {
       const moduleRef = args.moduleRef as string;
       const requestedModality = args.modality as Modality | undefined;
-      // P0-8: Allow the agent to override executionMode. Previously this was
-      // hardcoded to 'capacity', which meant the agent could NOT select
-      // shadow-mode encounters — the entire shadow-work pathway was unreachable
-      // through encounter selection. Now the agent can pass executionMode:'shadow'
-      // to select a shadow-mode encounter (the scheduler's pool may include
-      // shadow-targeted encounters when the player has unresolved shadows).
       const requestedExecutionMode = (args.executionMode as 'capacity' | 'shadow' | undefined);
+      // P1-9: Allow the agent to override the full ScheduledEncounter shape.
+      // Previously only modality + executionMode were overridable. Now the agent
+      // can target a specific shadow quadrant, drive, difficulty, and session
+      // position — giving it full control over encounter customization while
+      // still defaulting to the scheduler's ranked values.
+      const requestedShadowTarget = args.shadowTarget as ShadowQuadrant | undefined;
+      const requestedDriveTarget = args.driveTarget as Drive | undefined;
+      const requestedDifficulty = typeof args.difficulty === 'number' ? args.difficulty : undefined;
+      const requestedSessionPosition = args.sessionPosition as 'warmup' | 'peak' | 'cooldown' | undefined;
 
       // P0-8: Look up the encounter from the cached pool first. This preserves
       // all scheduler-provided fields (shadowTarget, driveTarget, difficulty,
@@ -406,12 +488,16 @@ export async function executeCCRPGTool(
 
       let encounter: ScheduledEncounter;
       if (pooledEncounter) {
-        // Use the pooled encounter, applying any agent overrides
+        // Use the pooled encounter, applying any agent overrides (P0-8 + P1-9).
+        // Agent overrides take precedence; everything else comes from the pool.
         encounter = {
           ...pooledEncounter,
-          // Agent can override modality + executionMode; everything else from the pool
           ...(requestedModality ? { modality: requestedModality } : {}),
           ...(requestedExecutionMode ? { executionMode: requestedExecutionMode } : {}),
+          ...(requestedShadowTarget ? { shadowTarget: requestedShadowTarget } : {}),
+          ...(requestedDriveTarget ? { driveTarget: requestedDriveTarget } : {}),
+          ...(requestedDifficulty !== undefined ? { difficulty: requestedDifficulty } : {}),
+          ...(requestedSessionPosition ? { sessionPosition: requestedSessionPosition } : {}),
         };
       } else {
         // Fallback: synthesize a minimal encounter if not in the pool.
@@ -427,14 +513,14 @@ export async function executeCCRPGTool(
           targetLines: [line],
           stage,
           holonSource: holon?.id ?? moduleRef,
-          shadowTarget: null,
+          shadowTarget: requestedShadowTarget ?? null,
           polarityMode: ctx.sig.polarity.master.mode === 'Crystallized' ? 'Crystallized' as const
             : ctx.sig.polarity.master.mode === 'Crystallizing' ? 'Crystallizing' as const
             : 'Exploring' as const,
-          difficulty: 0.5,
-          sessionPosition: 'peak',
+          difficulty: requestedDifficulty ?? 0.5,
+          sessionPosition: requestedSessionPosition ?? 'peak',
           priority: 0.5,
-          driveTarget: null,
+          driveTarget: requestedDriveTarget ?? null,
           executionMode: requestedExecutionMode ?? 'capacity',
         };
       }
@@ -445,6 +531,8 @@ export async function executeCCRPGTool(
         modality: encounter.modality,
         executionMode: encounter.executionMode,
         shadowTarget: encounter.shadowTarget,
+        driveTarget: encounter.driveTarget,
+        difficulty: encounter.difficulty,
         holonSource: encounter.holonSource,
         sessionPosition: encounter.sessionPosition,
         priority: encounter.priority,
@@ -460,9 +548,59 @@ export async function executeCCRPGTool(
         shadowSignal: args.shadowSignal as { quadrant: string; intensity: number } | undefined,
         polarityDirection: (args.polarityDirection as string) ?? 'neutral',
         narrativeSummary: args.narrativeSummary as string,
+        // P1-19: Pass through the restored psychometric depth fields.
+        feedback: args.feedback as string | undefined,
+        scores: args.scores as Record<string, number> | undefined,
+        shadowResolvedId: args.shadowResolvedId as string | undefined,
       };
       ctx.onEncounterComplete(result);
-      return JSON.stringify({ status: 'completed' });
+      // P1-10: Return a rich feedback summary so the agent has a feedback loop
+      // on what its evaluation will cause. Previously the tool returned only
+      // {status:'completed'} — the agent had no idea what consequences its
+      // evaluation triggered (shadow surfacing, drive updates, polarity shifts,
+      // transformation threshold). Now we return the evaluation summary + the
+      // downstream signals the agent can use to plan the next encounter.
+      //
+      // Note: the actual ConsequenceRecord (processOutcome + applyConsequences)
+      // is applied by the PersistentAgentBridge AFTER the agent loop exits,
+      // because consequence application requires the selected encounter + the
+      // current sig/world, which are managed by the bridge. The feedback here
+      // tells the agent WHAT will happen so it can reason about the next step.
+      const allDrivesHealthy = Object.values(result.driveSignals).every(
+        s => s === 'HealthyBalanced',
+      );
+      const willSurfaceShadow = result.shadowSignal !== undefined;
+      const willAffectPolarity = result.polarityDirection !== 'neutral';
+      return JSON.stringify({
+        status: 'completed',
+        evaluation: {
+          passed: result.passed,
+          driveScores: result.driveScores,
+          driveSignals: result.driveSignals,
+          shadowSignal: result.shadowSignal ?? null,
+          polarityDirection: result.polarityDirection,
+        },
+        downstreamEffects: {
+          // What the bridge's applyConsequences will do with this evaluation:
+          willUpdateDrives: true,             // drive weights + fixationRisk updated
+          willRecordPolarityTrace: true,       // polarity trace added to cell vector
+          willUpdateTheta: true,               // theta timestamps refreshed
+          willSurfaceShadow: willSurfaceShadow, // new shadow entry created if shadowSignal present
+          willResolveShadow: allDrivesHealthy && (ctx.selectedEncounter?.executionMode === 'shadow'),
+            // implicit resolution: all drives healthy in a shadow encounter resolves shadows at/below stage
+          willAffectPolarity: willAffectPolarity, // polarity direction recorded in trace
+          willUpdateRayProfile: true,          // rayProfile activated for encounter's stage
+          willFireTDGHooks: true,              // onEncounterComplete + onShadowSurfaced (if shadow)
+        },
+        selectedEncounter: ctx.selectedEncounter ? {
+          moduleRef: ctx.selectedEncounter.moduleRef,
+          modality: ctx.selectedEncounter.modality,
+          executionMode: ctx.selectedEncounter.executionMode,
+          shadowTarget: ctx.selectedEncounter.shadowTarget,
+          stage: ctx.selectedEncounter.stage,
+          line: ctx.selectedEncounter.targetLines[0],
+        } : null,
+      });
     }
 
     case 'ccrpg_check_transformation': {

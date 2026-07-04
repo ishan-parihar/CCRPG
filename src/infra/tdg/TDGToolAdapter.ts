@@ -24,8 +24,16 @@ import type { ToolDefinition } from '../../core/agent/tools/CCRPGTools.js';
 import type { ToolContext } from '../../core/agent/tools/CCRPGTools.js';
 import { TDGClient } from './TDGClient.js';
 
-// The 7 TDG-Mind tools that are most relevant for CCRPG's agent.
+// The TDG-Mind tools exposed to CCRPG's agent.
+// P1-13: Expanded from 7 to 10 tools — added tdg_greater_cycle (query/advance
+// the greater cycle), tdg_consolidate (sleep replay), and tdg_save_mind_state
+// (persist graph). These were previously used only in hooks (onTransformation,
+// onSessionEnd) but not agent-callable. Now the agent can:
+//   - Query the greater cycle (readiness, phase, transformation pressure)
+//   - Trigger consolidation mid-session (sleep replay for integration)
+//   - Save mind state on demand (e.g. before a risky encounter)
 const TDG_AGENT_TOOLS = new Set([
+  // Graph memory (original 7)
   'tdg_search',
   'tdg_create',
   'tdg_connect',
@@ -33,6 +41,10 @@ const TDG_AGENT_TOOLS = new Set([
   'tdg_fetch_context',
   'tdg_tick',
   'tdg_health',
+  // P1-13: Greater cycle + consolidation + persistence (new 3)
+  'tdg_greater_cycle',
+  'tdg_consolidate',
+  'tdg_save_mind_state',
 ]);
 
 export interface AdaptedTDGTool {

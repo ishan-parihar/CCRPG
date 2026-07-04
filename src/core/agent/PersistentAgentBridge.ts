@@ -106,7 +106,10 @@ export async function runPersistentAgentEncounter(
     stageOrientation: 'Homeostatic' as StageOrientation,
     sourceOfNourishment: 'Ambivalent' as SourceOfNourishment,
     shadowSurfaced: (result.shadowSignal?.quadrant ?? null) as ShadowQuadrant | null,
-    shadowResolvedId: null,
+    // P1-19: Pass through the agent's shadowResolvedId (was hardcoded null).
+    // The agent can now resolve specific shadows by ID, completing the
+    // surface → work → resolve arc that was previously one-sided.
+    shadowResolvedId: result.shadowResolvedId ?? null,
     narrativeSummary: result.narrativeSummary,
   };
 

@@ -11,12 +11,16 @@
  * valence -- higher is not "better"; it is different.
  */
 import type { SignificatorSnapshot } from '../domain/SignificatorSnapshot.js';
+import type { Significator } from '../domain/Significator.js';
 import type { Line } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
 import type { Drive } from '../domain/Drive.js';
 import { ALL_LINES } from '../domain/Line.js';
 import { ALL_DRIVES } from '../domain/Drive.js';
 import { stageOrdinal } from '../domain/Stage.js';
+// P1-15: Import GreaterCycleEngine.computeMetabolicHealth so CCI can delegate
+// G_z/P_z computation to the canonical source instead of duplicating the formula.
+import { computeMetabolicHealth } from './GreaterCycleEngine.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -673,8 +677,15 @@ function deriveSessionSignals(
  *
  * Pure function: same input always produces same output. No side effects.
  * All dimensions are normalised to [0.0, 1.0]. Weights always sum to 1.0.
+ *
+ * P1-15: When the optional `sig` parameter is provided, G_z/P_z metabolic
+ * health is delegated to GreaterCycleEngine.computeMetabolicHealth(sig)
+ * instead of being computed inline. This eliminates the formula duplication
+ * flagged in Wave 1.4 — CCI and GCE now use the SAME G_z/P_z computation.
+ * When `sig` is omitted, the inline computation is used (backward compat for
+ * callers that only have a snapshot).
  */
-export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
+export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): CCIScore {
   // 1. Extract inputs from Significator snapshot
   const inputs = extractDimensionInputs(snapshot);
 
@@ -713,73 +724,85 @@ export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
   // 6. Derive session signals
   const sessionSignals = deriveSessionSignals(dimensions, inputs);
 
-  // 7. Wave 1.4: Compute HoloOS G_z / P_z dual health metrics with
-  // Significator-Liminality detection (per HoloOS 08.8.14).
-  // G_z (Lesser-Cycle, Agape/integration) — 4-term: driveHealth + shadowTopology
-  // + thetaFreshness (from snapshot.theta) + complexBalance (from altitudes spread).
-  // P_z (Greater-Cycle, Eros/polarization) — 2-term: polarity + transformationReadiness.
-  // Total Metabolic Health = G_z · P_z (geometric mean, per foundations/25 §1.1).
-
-  // Compute thetaFreshness from snapshot (1 - avg staleness across cells)
-  const thetaKeys = Object.keys(snapshot.theta.lastEncounter);
-  const thetaCount = thetaKeys.length || 1;
-  let totalStaleness = 0;
-  for (const key of thetaKeys) {
-    const lastTs = snapshot.theta.lastEncounter[key] ?? 0;
-    if (lastTs === 0) { totalStaleness += 1; continue; }
-    const elapsed = Date.now() - lastTs;
-    const halfLife = 7 * 24 * 60 * 60 * 1000;
-    totalStaleness += 1 - Math.pow(0.5, elapsed / halfLife);
-  }
-  const thetaFreshness = 1 - (totalStaleness / thetaCount);
-
-  // Compute complexBalance from altitude spread (1 - normalized spread across 3 complexes)
-  const allAlts = Object.values(snapshot.altitudes).map(s => stageOrdinal(s));
-  const altSpread = allAlts.length > 0
-    ? (Math.max(...allAlts) - Math.min(...allAlts)) / 7
-    : 0;
-  const complexBalance = 1 - altSpread;
-
-  // 4-term G_z (matching GreaterCycleEngine's formula)
-  const gz = clamp(
-    dimensions.driveHealth * 0.35 +
-    dimensions.shadowTopology * 0.30 +
-    thetaFreshness * 0.20 +
-    complexBalance * 0.15,
-  );
-  // 4-term P_z (enriched with thetaFreshness as choiceAuthenticity proxy)
-  const pz = clamp(
-    dimensions.polarity * 0.35 +
-    dimensions.transformationReadiness * 0.30 +
-    (1 - altSpread) * 0.20 +  // greatWayAlignment proxy
-    thetaFreshness * 0.15,     // choiceAuthenticity proxy
-  );
-  const total = gz * pz;
-
-  // Liminality signature: P_z spike + sub-density saturation (≥5/8 lines
-  // with polarity crystallization > 0.7) → 'transitional' (healthy phase-transition)
-  const pzSpike = pz > 0.7;
-  const saturatedLines = new Set<string>();
-  for (const key of Object.keys(snapshot.polarity.cells)) {
-    if ((snapshot.polarity.cells[key]?.crystallization ?? 0) > 0.7) {
-      const [line] = key.split(':');
-      if (line) saturatedLines.add(line);
-    }
-  }
-  const subDensitySaturation = saturatedLines.size >= 5;
-  const isTransitional = pzSpike && subDensitySaturation;
-
+  // 7. Wave 1.4 + P1-15: Compute HoloOS G_z / P_z dual health metrics.
+  // P1-15: When `sig` is provided, delegate to GreaterCycleEngine.computeMetabolicHealth
+  // to eliminate the formula duplication. When `sig` is omitted (backward compat),
+  // use the inline computation below.
+  let gz: number, pz: number, total: number;
   let interpretation: 'consolidating' | 'polarizing-healthy' | 'polarizing-unhealthy' | 'stuck' | 'transitional';
-  if (isTransitional) {
-    interpretation = 'transitional';
-  } else if (gz < 0.3 && pz < 0.3) {
-    interpretation = 'stuck';
-  } else if (gz > 0.6 && pz < 0.3) {
-    interpretation = 'consolidating';
-  } else if (pz > 0.6 && gz < 0.3) {
-    interpretation = 'polarizing-unhealthy';
+  let liminalitySignature: { pzSpike: boolean; subDensitySaturation: boolean; isTransitional: boolean };
+
+  if (sig) {
+    // P1-15: Delegate to GreaterCycleEngine — the canonical source of G_z/P_z.
+    // This eliminates the inline formula duplication flagged in Wave 1.4.
+    // GCE uses sig.drives.weights (raw) + sig.polarity.cells + sig.shadows.entries
+    // + sig.theta.lastEncounter + sig.transformations — the full Significator,
+    // not the flattened snapshot. This is more accurate than the inline version.
+    const gceHealth = computeMetabolicHealth(sig);
+    gz = gceHealth.gz;
+    pz = gceHealth.pz;
+    total = gceHealth.total;
+    interpretation = gceHealth.interpretation;
+    liminalitySignature = gceHealth.liminalitySignature ?? { pzSpike: false, subDensitySaturation: false, isTransitional: false };
   } else {
-    interpretation = 'polarizing-healthy';
+    // Inline computation (backward compat — callers that only have a snapshot).
+    // Compute thetaFreshness from snapshot (1 - avg staleness across cells)
+    const thetaKeys = Object.keys(snapshot.theta.lastEncounter);
+    const thetaCount = thetaKeys.length || 1;
+    let totalStaleness = 0;
+    for (const key of thetaKeys) {
+      const lastTs = snapshot.theta.lastEncounter[key] ?? 0;
+      if (lastTs === 0) { totalStaleness += 1; continue; }
+      const elapsed = Date.now() - lastTs;
+      const halfLife = 7 * 24 * 60 * 60 * 1000;
+      totalStaleness += 1 - Math.pow(0.5, elapsed / halfLife);
+    }
+    const thetaFreshness = 1 - (totalStaleness / thetaCount);
+
+    // Compute complexBalance from altitude spread (1 - normalized spread across 3 complexes)
+    const allAlts = Object.values(snapshot.altitudes).map(s => stageOrdinal(s));
+    const altSpread = allAlts.length > 0
+      ? (Math.max(...allAlts) - Math.min(...allAlts)) / 7
+      : 0;
+    const complexBalance = 1 - altSpread;
+
+    gz = clamp(
+      dimensions.driveHealth * 0.35 +
+      dimensions.shadowTopology * 0.30 +
+      thetaFreshness * 0.20 +
+      complexBalance * 0.15,
+    );
+    pz = clamp(
+      dimensions.polarity * 0.35 +
+      dimensions.transformationReadiness * 0.30 +
+      (1 - altSpread) * 0.20 +
+      thetaFreshness * 0.15,
+    );
+    total = gz * pz;
+
+    const pzSpike = pz > 0.7;
+    const saturatedLines = new Set<string>();
+    for (const key of Object.keys(snapshot.polarity.cells)) {
+      if ((snapshot.polarity.cells[key]?.crystallization ?? 0) > 0.7) {
+        const [line] = key.split(':');
+        if (line) saturatedLines.add(line);
+      }
+    }
+    const subDensitySaturation = saturatedLines.size >= 5;
+    const isTransitional = pzSpike && subDensitySaturation;
+    liminalitySignature = { pzSpike, subDensitySaturation, isTransitional };
+
+    if (isTransitional) {
+      interpretation = 'transitional';
+    } else if (gz < 0.3 && pz < 0.3) {
+      interpretation = 'stuck';
+    } else if (gz > 0.6 && pz < 0.3) {
+      interpretation = 'consolidating';
+    } else if (pz > 0.6 && gz < 0.3) {
+      interpretation = 'polarizing-unhealthy';
+    } else {
+      interpretation = 'polarizing-healthy';
+    }
   }
 
   return {
@@ -788,7 +811,7 @@ export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
     weights,
     dominantDimension,
     sessionSignals,
-    metabolicHealth: { gz, pz, total, interpretation, liminalitySignature: { pzSpike, subDensitySaturation, isTransitional } },
+    metabolicHealth: { gz, pz, total, interpretation, liminalitySignature },
   };
 }
 

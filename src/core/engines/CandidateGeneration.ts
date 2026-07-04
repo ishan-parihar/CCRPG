@@ -64,6 +64,13 @@ export interface WorldState {
   readonly pestleTension: PESTLETension;
   // Active macro events
   readonly activeMacroEvents: readonly MacroEvent[];
+  // P1-14: State for each active macro event (phase, sessionsInPhase, playerChoices).
+  // The lifecycle (onset → active → resolution) is advanced by endSession via
+  // advanceMacroEvent(). Prior to P1-14, this field didn't exist and the
+  // lifecycle functions were never called — macro events were stuck in 'onset'
+  // forever (or rather, MacroEventState was a dead type). Now the state is
+  // tracked per active event, keyed by event id.
+  readonly macroEventStates?: readonly { readonly eventId: string; readonly state: import('./MacroCatalystEngine.js').MacroEventState }[];
 }
 
 export function createInitialWorldState(holons: readonly Holon[]): WorldState {

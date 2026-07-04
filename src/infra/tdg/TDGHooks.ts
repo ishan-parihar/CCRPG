@@ -60,6 +60,14 @@ export class TDGHooks {
    * Hook 1: onEncounterComplete — store the encounter as a holon node.
    * Called after applyConsequences() finishes.
    *
+   * P1-12: This hook is the AUTHORITATIVE writer for encounter holons. The
+   * agent's tdg_create tool should NOT be used to create encounter nodes —
+   * the system prompt instructs the agent to use tdg_create only for
+   * SUPPLEMENTAL nodes (insights, observations, custom relationships). The
+   * node name `encounter:${moduleRef}:${timestamp}` is unique per encounter
+   * (timestamp is unique), so even if the agent accidentally creates a
+   * duplicate, it would have a different name and be distinguishable.
+   *
    * tdg_create requires: node_type, text, name (string). Optional: meta (JSON),
    * stage (int), quadrant, parent_ids. We pack all encounter metadata into `meta`
    * since the schema doesn't have a free-form `properties` field.

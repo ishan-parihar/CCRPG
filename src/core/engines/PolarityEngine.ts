@@ -10,6 +10,7 @@
 import type { Line } from '../domain/Line.js';
 import { ALL_LINES } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
+import { stageOrdinal } from '../domain/Stage.js';
 import type { EnergeticDirection, PolarityMode } from '../domain/enums.js';
 import type { PolarityTrace } from '../domain/PolarityTrace.js';
 import type {
@@ -123,7 +124,7 @@ function computeAllLineProfiles(cells: Readonly<Record<string, PolarityCellVecto
 }
 
 /** Compute master polarity from all line profiles. */
-export function computeMasterPolarity(profiles: LineProfile[]): MasterPolarity {
+export function computeMasterPolarity(profiles: LineProfile[], altitudes?: Readonly<Record<string, Stage>>): MasterPolarity {
   const coherentLines = profiles.filter(p => p.coherence >= COHERENT_LINE_THRESHOLD);
   const coherentCount = coherentLines.length;
 
@@ -142,13 +143,93 @@ export function computeMasterPolarity(profiles: LineProfile[]): MasterPolarity {
     : 0;
 
   let mode: PolarityMode = 'Exploring';
-  if (coherentCount >= MIN_LINES_FOR_MASTER && avgCrystallization >= CRYSTALLIZATION_THRESHOLD) {
+  // P1-20: Add altitude_floor ≥ Orange check per foundations/19 §5.
+  // Previously a Red-stage player with 6 coherent lines could be promoted to
+  // 'Crystallizing' — the spec explicitly forbids this. Now we require the
+  // player's current stage ≥ Orange for crystallization. When altitudes is not
+  // provided (backward compat), the check is skipped.
+  const ORANGE_ORDINAL = stageOrdinal('Orange');
+  const playerStageOrdinal = altitudes
+    ? Math.min(...Object.values(altitudes).map(s => stageOrdinal(s)))
+    : ORANGE_ORDINAL; // default to passing if no altitudes provided
+  const meetsAltitudeFloor = playerStageOrdinal >= ORANGE_ORDINAL;
+
+  if (coherentCount >= MIN_LINES_FOR_MASTER && avgCrystallization >= CRYSTALLIZATION_THRESHOLD && meetsAltitudeFloor) {
     mode = 'Crystallized';
-  } else if (coherentCount >= MIN_LINES_FOR_MASTER && avgCrystallization >= CRYSTALLIZING_THRESHOLD) {
+  } else if (coherentCount >= MIN_LINES_FOR_MASTER && avgCrystallization >= CRYSTALLIZING_THRESHOLD && meetsAltitudeFloor) {
     mode = 'Crystallizing';
   }
 
   return { mode, dominantDirection, coherentLineCount: coherentCount, crystallizationProgress: avgCrystallization };
+}
+
+/**
+ * P1-20: Check if the player is harvestable (ready for the endgame Choice).
+ *
+ * Per foundations/19 §5, the harvest requires:
+ * - STO: mode='Crystallized', direction='STO', ≥6 coherent lines, altitude_floor ≥ Orange,
+ *   mean(direction_strength) ≥ 0.51, all prior stages healthy, violet_ray_integration ≥ 0.8
+ * - STS: mode='Crystallized', direction='STS', ≥7 coherent lines, altitude_floor ≥ Orange,
+ *   mean(direction_strength) ≥ 0.95 (stricter — STS requires near-total absorption efficiency)
+ *
+ * The 51% / 95% asymmetry follows from source-flow coupling: STO source=above
+ * (inexhaustible) → slight opening suffices; STS source=below (finite) → near-total
+ * efficiency required.
+ *
+ * @param master The master polarity state
+ * @param directionStrengths Per-line direction strength (0-1). If omitted, harvestable=false.
+ * @param altitudeFloor The lowest stage across coherent lines (ordinal 0-7)
+ * @param violetRayIntegration The violet-ray integration score (0-1). If < 0.8, not harvestable.
+ * @returns { harvestable: boolean, direction: 'STO'|'STS'|null, reason: string }
+ */
+export function checkHarvest(
+  master: MasterPolarity,
+  directionStrengths: readonly number[] | null,
+  altitudeFloor: number,
+  violetRayIntegration: number,
+): { harvestable: boolean; direction: 'STO' | 'STS' | null; reason: string } {
+  if (master.mode !== 'Crystallized') {
+    return { harvestable: false, direction: null, reason: `Master mode is ${master.mode}, not Crystallized` };
+  }
+  if (!master.dominantDirection) {
+    return { harvestable: false, direction: null, reason: 'No dominant direction crystallized' };
+  }
+
+  const ORANGE_ORDINAL = stageOrdinal('Orange');
+  if (altitudeFloor < ORANGE_ORDINAL) {
+    return { harvestable: false, direction: null, reason: `Altitude floor ${altitudeFloor} < Orange (${ORANGE_ORDINAL})` };
+  }
+
+  if (violetRayIntegration < 0.8) {
+    return { harvestable: false, direction: null, reason: `Violet-ray integration ${violetRayIntegration.toFixed(2)} < 0.80` };
+  }
+
+  if (!directionStrengths || directionStrengths.length === 0) {
+    return { harvestable: false, direction: null, reason: 'No direction strengths available' };
+  }
+
+  const meanStrength = directionStrengths.reduce((a, b) => a + b, 0) / directionStrengths.length;
+  const direction = master.dominantDirection === 'Radiative' ? 'STO' : 'STS';
+
+  if (direction === 'STO') {
+    // STO: ≥6 coherent lines, mean strength ≥ 0.51
+    if (master.coherentLineCount < 6) {
+      return { harvestable: false, direction: null, reason: `STO requires ≥6 coherent lines, found ${master.coherentLineCount}` };
+    }
+    if (meanStrength < 0.51) {
+      return { harvestable: false, direction: null, reason: `STO requires mean strength ≥ 0.51, found ${meanStrength.toFixed(3)}` };
+    }
+    return { harvestable: true, direction: 'STO', reason: `STO harvest: ${master.coherentLineCount} coherent lines, mean strength ${meanStrength.toFixed(3)}` };
+  } else {
+    // STS: ≥7 coherent lines, mean strength ≥ 0.95 (stricter)
+    if (master.coherentLineCount < 7) {
+      return { harvestable: false, direction: null, reason: `STS requires ≥7 coherent lines, found ${master.coherentLineCount}` };
+    }
+    if (meanStrength < 0.95) {
+      return { harvestable: false, direction: null, reason: `STS requires mean strength ≥ 0.95, found ${meanStrength.toFixed(3)}` };
+    }
+    return { harvestable: true, direction: 'STS', reason: `STS harvest: ${master.coherentLineCount} coherent lines, mean strength ${meanStrength.toFixed(3)}` };
+  }
 }
 
 /** Detect current polarity mode from master state. */
