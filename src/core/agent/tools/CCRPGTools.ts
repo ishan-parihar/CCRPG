@@ -103,12 +103,13 @@ export const CCRPG_SELECT_ENCOUNTER_TOOL: ToolDefinition = {
   type: 'function',
   function: {
     name: 'ccrpg_select_encounter',
-    description: 'Commit to an encounter from the pool. Initializes the encounter: fetches content, sets up modality, binds holon.',
+    description: 'Commit to an encounter from the pool. Preserves all scheduler-provided fields (shadowTarget, driveTarget, difficulty, sessionPosition, priority, executionMode). To select a shadow-mode encounter, pass executionMode:"shadow".',
     parameters: {
       type: 'object',
       properties: {
-        moduleRef: { type: 'string', description: 'The moduleRef from the encounter pool (e.g., "Cognitive:Red").' },
-        modality: { type: 'string', description: 'The modality to use (optional — defaults to the encounter\'s modality).' },
+        moduleRef: { type: 'string', description: 'The moduleRef from the encounter pool (e.g., "Cognitive:Red"). Should match a moduleRef returned by ccrpg_get_encounter_pool.' },
+        modality: { type: 'string', description: 'Optional modality override. Defaults to the encounter\'s scheduler-assigned modality.' },
+        executionMode: { type: 'string', enum: ['capacity', 'shadow'], description: 'Optional execution mode override. Use "shadow" to select a shadow-work encounter (targets unresolved shadow patterns). Defaults to the encounter\'s scheduler-assigned mode (usually "capacity").' },
       },
       required: ['moduleRef'],
     },
@@ -235,6 +236,24 @@ export interface ToolContext {
     polarityDirection: string;
     narrativeSummary: string;
   }) => void;
+  /**
+   * P0-8: Cached encounter pool from the last ccrpg_get_encounter_pool call.
+   * ccrpg_select_encounter looks up encounters here by moduleRef to preserve
+   * all scheduler-provided fields (shadowTarget, driveTarget, difficulty,
+   * sessionPosition, priority, executionMode). Without this cache, select
+   * synthesized a new encounter with hardcoded defaults — losing the scheduler's
+   * shadow-targeting + difficulty + session-position, and forcing executionMode
+   * to 'capacity' (the agent could NOT select shadow-mode encounters).
+   *
+   * The PersistentAgent populates this field when it calls ccrpg_get_encounter_pool.
+   */
+  readonly encounterPool?: readonly ScheduledEncounter[];
+  /**
+   * P0-8: Callback invoked when ccrpg_get_encounter_pool computes a new pool.
+   * The PersistentAgent uses this to cache the pool so ccrpg_select_encounter
+   * can look up encounters by moduleRef with all scheduler-provided fields intact.
+   */
+  readonly onEncounterPoolComputed?: (pool: readonly ScheduledEncounter[]) => void;
 }
 
 // Stage aesthetic mapping for Veil-compliant state descriptions
@@ -352,6 +371,9 @@ export async function executeCCRPGTool(
         ctx.moduleTaskTypesProvider,
         ctx.sessionState.userMatrixModel,
       );
+      // P0-8: Cache the pool so ccrpg_select_encounter can look up encounters
+      // by moduleRef with all scheduler-provided fields intact.
+      ctx.onEncounterPoolComputed?.(scheduled);
       return JSON.stringify(scheduled.map(e => ({
         moduleRef: e.moduleRef,
         line: e.targetLines[0],
@@ -366,28 +388,68 @@ export async function executeCCRPGTool(
 
     case 'ccrpg_select_encounter': {
       const moduleRef = args.moduleRef as string;
-      const [line, stage] = moduleRef.split(':') as [Line, Stage];
-      const modality = (args.modality as Modality) ?? 'Deterministic';
-      const holon = ctx.world.holons.find(h => h.line === line && h.stage === stage);
-      const encounter: ScheduledEncounter = {
-        id: `${moduleRef}:${Date.now()}`,
-        moduleRef,
-        modality,
-        targetLines: [line],
-        stage,
-        holonSource: holon?.id ?? moduleRef,
-        shadowTarget: null,
-        polarityMode: ctx.sig.polarity.master.mode === 'Crystallized' ? 'Crystallized' as const
-          : ctx.sig.polarity.master.mode === 'Crystallizing' ? 'Crystallizing' as const
-          : 'Exploring' as const,
-        difficulty: 0.5,
-        sessionPosition: 'peak',
-        priority: 0.5,
-        driveTarget: null,
-        executionMode: 'capacity',
-      };
+      const requestedModality = args.modality as Modality | undefined;
+      // P0-8: Allow the agent to override executionMode. Previously this was
+      // hardcoded to 'capacity', which meant the agent could NOT select
+      // shadow-mode encounters — the entire shadow-work pathway was unreachable
+      // through encounter selection. Now the agent can pass executionMode:'shadow'
+      // to select a shadow-mode encounter (the scheduler's pool may include
+      // shadow-targeted encounters when the player has unresolved shadows).
+      const requestedExecutionMode = (args.executionMode as 'capacity' | 'shadow' | undefined);
+
+      // P0-8: Look up the encounter from the cached pool first. This preserves
+      // all scheduler-provided fields (shadowTarget, driveTarget, difficulty,
+      // sessionPosition, priority, executionMode, holonSource). Previously we
+      // synthesized a new encounter with hardcoded defaults, losing the scheduler's
+      // ranking metadata and forcing executionMode to 'capacity'.
+      const pooledEncounter = ctx.encounterPool?.find(e => e.moduleRef === moduleRef);
+
+      let encounter: ScheduledEncounter;
+      if (pooledEncounter) {
+        // Use the pooled encounter, applying any agent overrides
+        encounter = {
+          ...pooledEncounter,
+          // Agent can override modality + executionMode; everything else from the pool
+          ...(requestedModality ? { modality: requestedModality } : {}),
+          ...(requestedExecutionMode ? { executionMode: requestedExecutionMode } : {}),
+        };
+      } else {
+        // Fallback: synthesize a minimal encounter if not in the pool.
+        // This preserves backward compat for agents that call select without
+        // first calling get_encounter_pool, but loses scheduler metadata.
+        const [line, stage] = moduleRef.split(':') as [Line, Stage];
+        const modality = requestedModality ?? 'Deterministic';
+        const holon = ctx.world.holons.find(h => h.line === line && h.stage === stage);
+        encounter = {
+          id: `${moduleRef}:${Date.now()}`,
+          moduleRef,
+          modality,
+          targetLines: [line],
+          stage,
+          holonSource: holon?.id ?? moduleRef,
+          shadowTarget: null,
+          polarityMode: ctx.sig.polarity.master.mode === 'Crystallized' ? 'Crystallized' as const
+            : ctx.sig.polarity.master.mode === 'Crystallizing' ? 'Crystallizing' as const
+            : 'Exploring' as const,
+          difficulty: 0.5,
+          sessionPosition: 'peak',
+          priority: 0.5,
+          driveTarget: null,
+          executionMode: requestedExecutionMode ?? 'capacity',
+        };
+      }
       ctx.onEncounterSelected(encounter);
-      return JSON.stringify({ status: 'selected', moduleRef, modality });
+      return JSON.stringify({
+        status: 'selected',
+        moduleRef: encounter.moduleRef,
+        modality: encounter.modality,
+        executionMode: encounter.executionMode,
+        shadowTarget: encounter.shadowTarget,
+        holonSource: encounter.holonSource,
+        sessionPosition: encounter.sessionPosition,
+        priority: encounter.priority,
+        source: pooledEncounter ? 'pool' : 'synthesized',
+      });
     }
 
     case 'ccrpg_complete_encounter': {

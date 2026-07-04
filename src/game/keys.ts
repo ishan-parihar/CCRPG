@@ -39,6 +39,12 @@ export const RegistryKeys = {
   ScreenReader: 'svc:screen-reader',
   ModuleRegistry: 'svc:module-registry',
   Ecological: 'svc:ecological',
+  // P0-4: Encounter scenes set these on completion so WorldScene can call
+  // applyResponseOnly() when the player returns. Without these keys, the
+  // WorldScene applyResponseOnly branch is dead code and UserMatrixModel +
+  // transformation state are never updated in the Phaser flow.
+  LastPlayerResponse: 'state:last-player-response',
+  LastEncounter: 'state:last-encounter',
 } as const;
 
 export const GameEvents = {

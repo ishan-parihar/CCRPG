@@ -10,6 +10,8 @@ import type { Stage } from '@core/domain/Stage.js';
 import type { Significator } from '@core/domain/Significator.js';
 import type { Drive } from '@core/domain/Drive.js';
 import type { DriveDirectionality, ShadowQuadrant } from '@core/domain/enums.js';
+import type { ConsequenceRecord } from '@core/domain/ConsequenceRecord.js';
+import type { PlayerResponse } from '@core/engines/ConsequenceEngine.js';
 import { narrateConsequence } from '../systems/ConsequenceNarrator.js';
 import { detectThreshold, advanceTransformation, recordKnotResolution, commitTransformation, type TransformationState } from '@core/engines/TransformationDetector.js';
 import type { SessionState } from '@core/GameLoop.js';
@@ -151,6 +153,30 @@ export class EncounterScene extends Phaser.Scene {
     const consequenceText = qualitativeText
       || narrativeSummary
       || narration.text;
+
+    // P0-4: Store the PlayerResponse + encounter in the registry so WorldScene
+    // can call applyResponseOnly() when the player returns. Without this,
+    // UserMatrixModel + transformation state are never updated in the Phaser
+    // flow (the WorldScene applyResponseOnly branch was dead code). We
+    // reconstruct the PlayerResponse from the ConsequenceRecord's polarityTrace
+    // (the AssessmentScene stores the consequenceRecord in RecentConsequences).
+    const recentConsequences = this.registry.get(RegistryKeys.RecentConsequences) as ConsequenceRecord[] | undefined;
+    const lastRecord = recentConsequences?.[recentConsequences.length - 1];
+    if (lastRecord) {
+      const playerResponse: PlayerResponse = {
+        encounterId: lastRecord.polarityTrace.encounterId,
+        energeticDirection: lastRecord.polarityTrace.energeticDirection,
+        driveDirectionality: lastRecord.polarityTrace.driveDirectionality,
+        stageOrientation: lastRecord.polarityTrace.stageOrientation,
+        sourceOfNourishment: lastRecord.polarityTrace.sourceOfNourishment,
+        shadowSurfaced: lastRecord.shadowSurfaced,
+        shadowResolvedId: lastRecord.shadowResolved,
+        narrativeSummary: lastRecord.narrativeSummary,
+      };
+      this.registry.set(RegistryKeys.LastPlayerResponse, playerResponse);
+      this.registry.set(RegistryKeys.LastEncounter, this.encounter);
+    }
+
     fadeToScene(this, SceneKeys.World, { consequenceText });
   }
 }

@@ -60,6 +60,13 @@ export class PersistentAgent {
   private messages: AgentMessage[] = [];
   private selectedEncounter: ScheduledEncounter | null = null;
   private lastEncounterResult: EncounterResult | null = null;
+  // P0-8: Cache of the last encounter pool returned by ccrpg_get_encounter_pool.
+  // ccrpg_select_encounter looks up encounters here by moduleRef to preserve
+  // all scheduler-provided fields (shadowTarget, driveTarget, difficulty,
+  // sessionPosition, priority, executionMode). Without this, select synthesized
+  // a new encounter with hardcoded defaults — losing shadow-targeting + forcing
+  // executionMode to 'capacity' (agent couldn't select shadow-mode encounters).
+  private lastEncounterPool: readonly ScheduledEncounter[] = [];
   private sig: Significator;
   private world: WorldState;
   // L4: sessionState is now mutable so the CLI can refresh encountersSoFar +
@@ -176,6 +183,11 @@ export class PersistentAgent {
           selectedEncounter: this.selectedEncounter,
         };
       },
+      // P0-8: Pass the cached pool + the callback that updates it, so
+      // ccrpg_select_encounter can look up encounters by moduleRef with all
+      // scheduler-provided fields intact (shadowTarget, difficulty, etc.).
+      encounterPool: this.lastEncounterPool,
+      onEncounterPoolComputed: (pool) => { this.lastEncounterPool = pool; },
     };
 
     // Prompt the agent to start

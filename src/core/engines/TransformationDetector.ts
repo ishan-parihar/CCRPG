@@ -118,6 +118,41 @@ export function createInitialTransformationState(): TransformationState {
 }
 
 /**
+ * P0-7: Reconstruct a TransformationState from the Significator's persisted fields.
+ *
+ * The Significator stores transformationPhase + sessionsInPhase + knotsResolved +
+ * totalKnots + targetStage so that transformation state survives across sessions.
+ * But startSession() was returning createInitialTransformationState() (always
+ * fresh 'idle' with all counters at 0), discarding the persisted state. This
+ * meant sessionsInPhase reset to 0 every session, breaking cross-session
+ * transformation continuity (the crucible should span multiple sessions per
+ * foundations/17, but the counter reset made each session start fresh).
+ *
+ * This helper reads the persisted fields and reconstructs the TransformationState.
+ * Falls back to createInitialTransformationState() if fields are missing.
+ */
+export function reconstructTransformationState(sig: {
+  transformationPhase?: string | null;
+  transformationTargetStage?: string | null;
+  transformationSessionsInPhase?: number | null;
+  transformationKnotsResolved?: number | null;
+  transformationTotalKnots?: number | null;
+}): TransformationState {
+  const phase = (sig.transformationPhase ?? 'idle') as TransformationState['phase'];
+  // Validate the phase is a known value; fall back to 'idle' if corrupted
+  const validPhases: TransformationState['phase'][] = ['idle', 'threshold', 'unravelling', 'crucible', 'emergence', 'complete'];
+  const safePhase = validPhases.includes(phase) ? phase : 'idle';
+
+  return {
+    phase: safePhase,
+    targetStage: (sig.transformationTargetStage ?? null) as TransformationState['targetStage'],
+    sessionsInPhase: sig.transformationSessionsInPhase ?? 0,
+    knotsResolved: sig.transformationKnotsResolved ?? 0,
+    totalKnots: sig.transformationTotalKnots ?? 0,
+  };
+}
+
+/**
  * Advance the transformation state machine based on current conditions.
  * Called after each encounter during an active transformation.
  */

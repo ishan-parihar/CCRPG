@@ -158,12 +158,14 @@ export class WorldScene extends Phaser.Scene {
     const existingSessionState = this.registry.get(RegistryKeys.SessionState) as SessionState | undefined;
 
     if (existingSessionState) {
-      // GAP-WB-6 (OA-12): Apply the previous encounter's response BEFORE scheduling
-      // the next one. Prior code passed null,null to tickWithStrategy, causing
-      // UserMatrixModel to never update and transformation state to run on stale sig.
-      // The response is stored in the registry by EncounterScene after each encounter.
-      const lastResponse = this.registry.get('lastPlayerResponse') as import('@core/engines/ConsequenceEngine.js').PlayerResponse | null;
-      const lastEncounter = this.registry.get('lastEncounter') as ScheduledEncounter | null;
+      // GAP-WB-6 (OA-12) + P0-4: Apply the previous encounter's response BEFORE
+      // scheduling the next one. Prior code passed null,null to tickWithStrategy,
+      // causing UserMatrixModel to never update and transformation state to run on
+      // stale sig. The response is stored in the registry by EncounterScene /
+      // DilemmaScene / ReflectionScene after each encounter (P0-4 fix — previously
+      // no scene wrote these keys, making this branch dead code).
+      const lastResponse = this.registry.get(RegistryKeys.LastPlayerResponse) as import('@core/engines/ConsequenceEngine.js').PlayerResponse | null;
+      const lastEncounter = this.registry.get(RegistryKeys.LastEncounter) as ScheduledEncounter | null;
       let workingSig = sig;
       let workingSessionState = existingSessionState;
 
@@ -173,8 +175,8 @@ export class WorldScene extends Phaser.Scene {
         workingSessionState = applied.sessionState;
         this.registry.set(RegistryKeys.Significator, workingSig);
         // Clear the stored response so it's not re-applied
-        this.registry.remove('lastPlayerResponse');
-        this.registry.remove('lastEncounter');
+        this.registry.remove(RegistryKeys.LastPlayerResponse);
+        this.registry.remove(RegistryKeys.LastEncounter);
       }
 
       // Returning from encounter: use tickWithStrategy to get biased scheduling

@@ -6,7 +6,7 @@ import type { Significator } from './domain/Significator.js';
 import type { ScheduledEncounter } from './domain/EncounterSpecNew.js';
 import { scheduleNext, scheduleThresholdMode, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from './engines/ConsequenceEngine.js';
-import { detectThreshold, advanceTransformation, commitTransformation, recordKnotResolution, createInitialTransformationState, type TransformationSignal, type TransformationState } from './engines/TransformationDetector.js';
+import { detectThreshold, advanceTransformation, commitTransformation, recordKnotResolution, reconstructTransformationState, type TransformationSignal, type TransformationState } from './engines/TransformationDetector.js';
 import { detectBleedThrough } from './engines/ThetaDecay.js';
 import { toSnapshot } from './domain/SignificatorSnapshot.js';
 import { computeCCI, type CCIScore } from './engines/CCIEngine.js';
@@ -165,6 +165,11 @@ export interface SessionState {
 /**
  * Initialize a new session: compute CCI, generate strategy.
  * Called once at session start before the first encounter.
+ *
+ * P0-7: Reconstructs transformationState from the Significator's persisted
+ * fields instead of always returning a fresh 'idle' state. This preserves
+ * cross-session transformation continuity — if the player was mid-crucible
+ * when they last exited, they resume mid-crucible instead of resetting to idle.
  */
 export function startSession(sig: Significator, session: SessionContext): SessionState {
   const snapshot = toSnapshot(sig);
@@ -175,7 +180,8 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
     cci,
     recentOutcomes: [],
     encountersSinceRefresh: 0,
-    transformationState: createInitialTransformationState(),
+    // P0-7: reconstruct from sig instead of always createInitialTransformationState()
+    transformationState: reconstructTransformationState(sig),
     userMatrixModel: createInitialUserMatrixModel(),
     sessionStartMs: Date.now(),
   };
@@ -248,7 +254,8 @@ export async function startSessionWithTDG(
     cci,
     recentOutcomes: [],
     encountersSinceRefresh: 0,
-    transformationState: createInitialTransformationState(),
+    // P0-7: reconstruct from sig instead of always createInitialTransformationState()
+    transformationState: reconstructTransformationState(sig),
     userMatrixModel: createInitialUserMatrixModel(),
     sessionStartMs: Date.now(),
   };
@@ -351,43 +358,56 @@ export function tickWithStrategy(
   }
   const encounter = scheduled[0] ?? null;
 
-  // 6. Check transformation threshold and advance state machine
+  // 6. Check transformation threshold and advance state machine.
+  //
+  // P0-1 BUGFIX: When tickWithStrategy is called with response=null (scheduling-only
+  // mode — the CLI's standard pattern), we must NOT advance the transformation state
+  // machine here. The caller will invoke applyResponseOnly() which advances it.
+  // Advancing here too caused the state machine to advance 2× per encounter,
+  // making the 3-phase Crucible complete in half the intended sessions.
+  // The transformation SIGNAL (detectThreshold) is still computed so the caller
+  // can observe readiness, but the STATE is not mutated when response=null.
   const transformation = detectThreshold(updatedSig);
-  let updatedTransformationState = advanceTransformation(sessionState.transformationState, updatedSig);
-  
-  // If transformation completes, commit it and update Significator
-  const commitResult = commitTransformation(updatedTransformationState);
-  if (commitResult.targetStage) {
-    // Hook 3: onTransformation — fire before mutating sig, using pre-commit stage as `from`.
-    const fromStage = updatedSig.currentStage;
-    maybeFireHook('onTransformation', (h) => h.onTransformation(fromStage, commitResult.targetStage!, updatedSig));
-    // Advance the Significator to the new stage
-    updatedSig = {
-      ...updatedSig,
-      currentStage: commitResult.targetStage,
-      transformations: [
-        ...updatedSig.transformations,
-        {
-          fromStage: updatedSig.currentStage,
-          toStage: commitResult.targetStage,
-          triggeredAt: Date.now(),
-          triggeredAtSession: updatedSig.totalSessions,
-          catalystCount: updatedSig.totalEncounters,
-        },
-      ],
-    };
-    updatedTransformationState = commitResult.newState;
-    // GAP-V3-23: Reset the UserMatrixModel phase to 'unmapped' — the new stage
-    // brings new territory to probe.
-    updatedUserMatrix = resetPhaseAfterTransformation(updatedUserMatrix);
-  }
+  let updatedTransformationState = sessionState.transformationState;
 
-  // GAP-V3-25: If a shadow encounter was passed, record knot resolution
-  // (prior code only did this in Phaser EncounterScene, not in headless GameLoop)
-  if (response && previousEncounter && previousEncounter.executionMode === 'shadow') {
-    const shadowPassed = Object.values(response.driveDirectionality).every(d => d === 'HealthyBalanced');
-    if (shadowPassed) {
-      updatedTransformationState = recordKnotResolution(updatedTransformationState);
+  if (response && previousEncounter) {
+    // Only advance the state machine when we have an actual encounter response.
+    updatedTransformationState = advanceTransformation(sessionState.transformationState, updatedSig);
+
+    // If transformation completes, commit it and update Significator
+    const commitResult = commitTransformation(updatedTransformationState);
+    if (commitResult.targetStage) {
+      // Hook 3: onTransformation — fire before mutating sig, using pre-commit stage as `from`.
+      const fromStage = updatedSig.currentStage;
+      maybeFireHook('onTransformation', (h) => h.onTransformation(fromStage, commitResult.targetStage!, updatedSig));
+      // Advance the Significator to the new stage
+      updatedSig = {
+        ...updatedSig,
+        currentStage: commitResult.targetStage,
+        transformations: [
+          ...updatedSig.transformations,
+          {
+            fromStage: updatedSig.currentStage,
+            toStage: commitResult.targetStage,
+            triggeredAt: Date.now(),
+            triggeredAtSession: updatedSig.totalSessions,
+            catalystCount: updatedSig.totalEncounters,
+          },
+        ],
+      };
+      updatedTransformationState = commitResult.newState;
+      // GAP-V3-23: Reset the UserMatrixModel phase to 'unmapped' — the new stage
+      // brings new territory to probe.
+      updatedUserMatrix = resetPhaseAfterTransformation(updatedUserMatrix);
+    }
+
+    // GAP-V3-25: If a shadow encounter was passed, record knot resolution
+    // (prior code only did this in Phaser EncounterScene, not in headless GameLoop)
+    if (previousEncounter.executionMode === 'shadow') {
+      const shadowPassed = Object.values(response.driveDirectionality).every(d => d === 'HealthyBalanced');
+      if (shadowPassed) {
+        updatedTransformationState = recordKnotResolution(updatedTransformationState);
+      }
     }
   }
 
@@ -403,15 +423,26 @@ export function tickWithStrategy(
     transformationTotalKnots: updatedTransformationState.totalKnots,
   };
 
-  // 7. Track outcome in recentOutcomes
-  const quality = response ? estimateResponseQuality(response) : 0.3;
-  const newOutcome: RecentEncounter = {
-    outcome: response ? 'completed' : 'avoided',
-    quality,
-    mode: 'capacity',
-    shadowIntegrated: false,
-  };
-  const recentOutcomes = [newOutcome, ...sessionState.recentOutcomes].slice(0, 20);
+  // 7. Track outcome in recentOutcomes.
+  //
+  // P0-2 BUGFIX: When response=null (scheduling-only mode), do NOT push a phantom
+  // 'avoided' outcome. The scheduling tick is not a player behavior event — it's
+  // just the scheduler computing what to offer next. Pushing 'avoided' here
+  // polluted recentOutcomes with [completed, avoided, completed, avoided, ...],
+  // causing evaluateMidSessionAdjustment to see ~50% avoidance when the player
+  // never avoided anything, incorrectly triggering theme switches to 'consolidation'.
+  // Now: only push an outcome when there's an actual response.
+  let recentOutcomes = sessionState.recentOutcomes;
+  if (response) {
+    const quality = estimateResponseQuality(response);
+    const newOutcome: RecentEncounter = {
+      outcome: 'completed',
+      quality,
+      mode: previousEncounter?.executionMode === 'shadow' ? 'shadow' : 'capacity',
+      shadowIntegrated: previousEncounter?.executionMode === 'shadow' && quality > 0.5,
+    };
+    recentOutcomes = [newOutcome, ...sessionState.recentOutcomes].slice(0, 20);
+  }
 
   // 8. Mid-session refresh: every reEvaluationInterval encounters
   const interval = sessionState.strategy.adjustmentThresholds.reEvaluationInterval;
@@ -593,8 +624,60 @@ export function endSession(
     totalSessions: sig.totalSessions + 1,
   };
 
-  // Hook 4: onSessionEnd — run TDG sleep replay + consolidation (best-effort, no-op without TDG).
+  // Hook 4: onSessionEnd — fire fire-and-forget for the sync path.
+  // Callers that need to await the hook (e.g. CLI --agent before stopTDGBridge)
+  // should use endSessionAsync() instead, which awaits the hook before returning.
   maybeFireHook('onSessionEnd', (h) => h.onSessionEnd(updatedSig));
+
+  return {
+    sig: updatedSig,
+    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced: 0 },
+  };
+}
+
+/**
+ * P0-3 BUGFIX: Async session end that AWAITS the TDG onSessionEnd hook before
+ * returning. The sync endSession() fires the hook fire-and-forget, which is
+ * fine when TDG is not running. But when TDG IS running and the caller is
+ * about to call stopTDGBridge() (which kills the TDG-Rust process synchronously),
+ * the fire-and-forget hook can be interrupted mid-call — losing the
+ * tdg_consolidate + tdg_save_mind_state operations.
+ *
+ * Callers that use TDG (--agent flag) should call endSessionAsync() and await
+ * it BEFORE calling stopTDGBridge(). Callers that don't use TDG can use the
+ * sync endSession() — the hook no-ops immediately when TDG is inactive.
+ *
+ * Returns the same shape as endSession().
+ */
+export async function endSessionAsync(
+  sig: Significator,
+  sessionState: SessionState,
+  now: number,
+): Promise<{ sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number } }> {
+  const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
+  const sessionStartMs = sessionState.sessionStartMs ?? now;
+  const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
+  const shadowsResolved = sig.shadows.entries.filter(e => e.resolvedAt !== null && e.resolvedAt >= sessionStartMs).length;
+
+  const userMatrixSummary = summarizeUserMatrix(sessionState.userMatrixModel);
+
+  const updatedSig: Significator = {
+    ...sig,
+    totalSessions: sig.totalSessions + 1,
+  };
+
+  // Hook 4: onSessionEnd — AWAIT the hook so tdg_consolidate + tdg_save_mind_state
+  // complete before the caller calls stopTDGBridge(). This prevents the race
+  // condition where the TDG-Rust process is killed mid-call.
+  try {
+    const { getTDGHooks } = await import('../infra/tdg/TDGBridge.js');
+    const hooks = getTDGHooks();
+    if (hooks && hooks.isActive()) {
+      await hooks.onSessionEnd(updatedSig);
+    }
+  } catch {
+    // TDG unavailable or hook failed — best-effort, never break the session end.
+  }
 
   return {
     sig: updatedSig,

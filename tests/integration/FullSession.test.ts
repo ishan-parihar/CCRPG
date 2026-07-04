@@ -315,9 +315,15 @@ describe('FullSession Integration', () => {
         expect(Array.isArray(tickResult.bleedThrough)).toBe(true);
       }
 
-      // After 20 ticks, session state should have accumulated outcomes
+      // After 20 ticks, session state should have accumulated outcomes.
+      // P0-2 fix: recentOutcomes only records ACTUAL responses, not phantom
+      // 'avoided' entries from scheduling-only ticks. In this test,
+      // previousEncounter is always null, so applyConsequences is never called,
+      // so totalEncounters stays at 0, so response is always null, so
+      // recentOutcomes stays empty. This is the CORRECT behavior — the old
+      // test validated the buggy 20-phantom-outcome expectation.
       expect(sessionState.encountersSinceRefresh).toBe(20);
-      expect(sessionState.recentOutcomes.length).toBe(20);
+      expect(sessionState.recentOutcomes.length).toBe(0);
     });
 
     it('runs without crash with empty world', () => {

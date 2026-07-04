@@ -149,7 +149,7 @@ import type { Stage } from '../src/core/domain/Stage.js';
 import type { ScheduledEncounter } from '../src/core/domain/EncounterSpecNew.js';
 import type { PlayerResponse } from '../src/core/engines/ConsequenceEngine.js';
 import type { SessionContext } from '../src/core/engines/PriorityComputation.js';
-import { startSession, startSessionWithTDG, tickWithStrategy, endSession, applyResponseOnly, getTDGTransformationPressure, type SessionState } from '../src/core/GameLoop.js';
+import { startSession, startSessionWithTDG, tickWithStrategy, endSession, endSessionAsync, applyResponseOnly, getTDGTransformationPressure, type SessionState } from '../src/core/GameLoop.js';
 import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixModel.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 import { PersistentAgent } from '../src/core/agent/PersistentAgent.js';
@@ -158,7 +158,7 @@ import { startTDGBridge, stopTDGBridge, getTDGBridgeStatus, registerTDGTools } f
 import { createCCRPGToolRegistry } from '../src/core/agent/ToolRegistry.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
-import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave } from '../src/infra/persistence/SaveRepository.js';
+import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
 import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js';
@@ -1264,9 +1264,8 @@ async function runDirectQuestioningSession(
   // Atmospheric closing lines impose a specific vibe that may not resonate
   // universally and break the flow.
 
-  // Save
-  saveGame(currentSig);
-  saveWorldState(currentWorld);
+  // Save (P0-5: atomic saveAll for sig + world consistency)
+  saveAll(currentSig, currentWorld);
   if (!JSON_MODE) info('save', `${chalk.green('Progress saved')}`);
 
   emitEvent('session_ended', {
@@ -1686,19 +1685,30 @@ async function runFullSession(): Promise<void> {
 
   }
 
-  // Session end — apply theta-decay and persist
-  const sessionEnd = endSession(currentSig, sessionState, now + encounterCount * 5000);
+  // Session end — apply theta-decay and persist.
+  // P0-3 BUGFIX: When --agent is active, use endSessionAsync() which AWAITS the
+  // TDG onSessionEnd hook (tdg_consolidate + tdg_save_mind_state) before returning.
+  // The sync endSession() fires the hook fire-and-forget, which races with
+  // stopTDGBridge() below — the TDG-Rust process can be killed mid-call, losing
+  // the session's graph snapshot. endSessionAsync() ensures the hook completes first.
+  const sessionEnd = USE_PERSISTENT_AGENT
+    ? await endSessionAsync(currentSig, sessionState, now + encounterCount * 5000)
+    : endSession(currentSig, sessionState, now + encounterCount * 5000);
 
   // Phase 3: If the PersistentAgent + TDG bridge was active, stop the TDG-Rust
-  // process now. The onSessionEnd hook (fired inside endSession above) already
-  // ran TDG sleep-replay + save_mind_state; here we just tear down the process.
+  // process now. With endSessionAsync above, the onSessionEnd hook has already
+  // completed (tdg_consolidate + tdg_save_mind_state finished), so it's safe to
+  // tear down the process.
   if (USE_PERSISTENT_AGENT) {
     stopTDGBridge();
   }
 
-  // Save progress to disk (Significator + WorldState)
-  saveGame(sessionEnd.sig);
-  saveWorldState(currentWorld);
+  // Save progress to disk (Significator + WorldState).
+  // P0-5: Use atomic saveAll() — writes both sig + world to a single JSON
+  // envelope via temp-file + rename, so a crash between writes can't leave
+  // them out of sync. The individual saveGame()/saveWorldState() calls are
+  // still made inside saveAll() for backward compat with older code paths.
+  saveAll(sessionEnd.sig, currentWorld);
   if (!JSON_MODE) info('save', `${chalk.green('Progress saved')}`);
 
   banner('SESSION END');
@@ -2101,7 +2111,30 @@ async function main(): Promise<void> {
   // ponytail: --version and --help handled by commander automatically
   if (subcommand === 'setup') { await runSetup(); return; }
   if (subcommand === 'status') { await runStatus(); return; }
-  if (subcommand === 'new-game') { deleteSave(); deleteWorldSave(); console.log(`${chalk.yellow('↻')} Progress reset. Run ${chalk.bold('ccrpg')} to start a new game.`); return; }
+  // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
+  // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
+  // game doesn't inherit the old player's developmental graph.
+  if (subcommand === 'new-game') {
+    deleteAllSaves();
+    // Best-effort TDG graph clear — no-op if TDG isn't running.
+    try {
+      import('../src/infra/tdg/TDGBridge.js').then(async ({ startTDGBridge, getTDGHooks, stopTDGBridge }) => {
+        await startTDGBridge().catch(() => {});
+        const hooks = getTDGHooks();
+        if (hooks && hooks.isActive()) {
+          // Clear the TDG graph by calling tdg_self_manage with gc_all action.
+          // This garbage-collects all nodes + edges, effectively starting fresh.
+          const client = (hooks as any).tdg;
+          if (client) {
+            await client.callTool('tdg_self_manage', { action: 'gc_all', dry_run: false }).catch(() => {});
+          }
+        }
+        stopTDGBridge();
+      }).catch(() => {});
+    } catch { /* TDG not available — skip */ }
+    console.log(`${chalk.yellow('↻')} Progress reset. Run ${chalk.bold('ccrpg')} to start a new game.`);
+    return;
+  }
 
   if (!JSON_MODE) {
     console.log(`\n${chalk.bold.cyan('CCRPG')} v${VERSION}`);

@@ -203,6 +203,12 @@ export class ReflectionScene extends Phaser.Scene {
       this.registry.set(RegistryKeys.WorldState, newWorld);
     }
 
+    // P0-4: Store the PlayerResponse + encounter so WorldScene can call
+    // applyResponseOnly() when the player returns. Without this, UserMatrixModel
+    // + transformation state are never updated in the Phaser Reflection flow.
+    this.registry.set(RegistryKeys.LastPlayerResponse, response);
+    this.registry.set(RegistryKeys.LastEncounter, this.encounter);
+
     this.time.delayedCall(2000, () => {
       this.events.emit('encounter_done', { record });
       fadeToScene(this, SceneKeys.World);

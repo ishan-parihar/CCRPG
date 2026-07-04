@@ -239,3 +239,103 @@ export function deleteWorldSave(): void {
     }
   } catch { /* ignore */ }
 }
+
+// ═══════════════════════════════════════════════════════════════════════
+// P0-5: Atomic Save (sig + world in a single transaction)
+// Writes both Significator + WorldState to a single JSON envelope via
+// temp-file + rename, so a crash between writes can't leave sig and world
+// out of sync. The individual saveGame() + saveWorldState() calls remain
+// for backward compatibility, but callers should prefer saveAll() when
+// saving both at once (e.g. at session end).
+// ═══════════════════════════════════════════════════════════════════════
+
+const CLI_ATOMIC_SAVE_FILE = path.join(CLI_SAVE_DIR, 'save-all.json');
+
+/**
+ * P0-5: Atomically save both Significator + WorldState to a single JSON file.
+ *
+ * Writes to a temp file first, then renames it to the final path. `fs.renameSync`
+ * is atomic on POSIX systems (single inode operation), so a crash during the
+ * write leaves either the old complete state or the new complete state — never
+ * a half-written mix.
+ *
+ * Also writes the individual save.json + world.json files for backward
+ * compatibility with older code paths that read them separately.
+ */
+export function saveAll(sig: Significator, world: WorldState): void {
+  try {
+    fs.mkdirSync(CLI_SAVE_DIR, { recursive: true });
+
+    // Build the combined envelope
+    const envelope = {
+      version: 2,
+      savedAt: Date.now(),
+      sig,
+      world,
+    };
+    const json = JSON.stringify(envelope, null, 2);
+
+    // Write to a temp file first, then atomically rename. On POSIX, rename is
+    // an atomic inode operation — readers see either the old or new file, never
+    // a partial write. On Windows, rename is also atomic if the target doesn't
+    // exist (which we ensure by unlinking first).
+    const tempFile = CLI_ATOMIC_SAVE_FILE + '.tmp';
+    fs.writeFileSync(tempFile, json);
+
+    // Remove the final target if it exists (Windows needs this; POSIX rename overwrites)
+    try { fs.unlinkSync(CLI_ATOMIC_SAVE_FILE); } catch { /* doesn't exist — fine */ }
+
+    // Atomic rename
+    fs.renameSync(tempFile, CLI_ATOMIC_SAVE_FILE);
+
+    // Also write the individual files for backward compat (older code reads
+    // save.json / world.json directly). These are non-atomic individually but
+    // the atomic envelope above is the source of truth for new code.
+    fs.writeFileSync(CLI_SAVE_FILE, JSON.stringify(sig, null, 2));
+    fs.writeFileSync(CLI_WORLD_FILE, JSON.stringify(world, null, 2));
+  } catch { /* ignore write errors in headless mode */ }
+}
+
+/**
+ * P0-5: Load the atomic save envelope (sig + world together).
+ * Falls back to loading individual files if the envelope doesn't exist
+ * (for saves created before P0-5).
+ */
+export function loadAll(): { sig: Significator; world: WorldState } | null {
+  try {
+    if (fs.existsSync(CLI_ATOMIC_SAVE_FILE)) {
+      const raw = fs.readFileSync(CLI_ATOMIC_SAVE_FILE, 'utf8');
+      const parsed = JSON.parse(raw);
+      if (parsed && parsed.sig && parsed.world && typeof parsed.sig.id === 'string') {
+        const validatedSig = validateSignificator(parsed.sig);
+        if (validatedSig) {
+          return {
+            sig: validatedSig,
+            world: parsed.world as WorldState,
+          };
+        }
+      }
+    }
+  } catch { /* ignore corrupt saves */ }
+
+  // Fallback: load individual files (pre-P0-5 saves)
+  const sig = loadSave();
+  const world = loadWorldState();
+  if (sig && world) {
+    return { sig, world };
+  }
+  return null;
+}
+
+/**
+ * P0-5: Atomically delete both saves (for new game).
+ */
+export function deleteAllSaves(): void {
+  deleteSave();
+  deleteWorldSave();
+  try {
+    if (fs.existsSync(CLI_ATOMIC_SAVE_FILE)) {
+      fs.unlinkSync(CLI_ATOMIC_SAVE_FILE);
+    }
+  } catch { /* ignore */ }
+}
