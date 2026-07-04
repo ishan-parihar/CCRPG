@@ -1346,6 +1346,13 @@ async function runFullSession(): Promise<void> {
 
   // ponytail: Direct Questioning gets its own session flow — 8 lines, write-in, no pass/fail
   if (isDirectMode) {
+    // Phase 3 gap: --agent is not yet wired into the Direct Questioning flow
+    // (Direct Questioning uses its own simpler encounter loop). Warn the user
+    // rather than silently ignoring the flag.
+    if (USE_PERSISTENT_AGENT && !JSON_MODE) {
+      warn('--agent is not yet supported in Direct Questioning mode — using default flow.');
+      info('    To use the Persistent Developmental Agent, choose Story-Driven mode.');
+    }
     await runDirectQuestioningSession(currentSig, currentWorld);
     return;
   }
@@ -1559,13 +1566,23 @@ async function runFullSession(): Promise<void> {
       // (UserMatrixModel + transformation state) WITHOUT re-applying consequences
       // (the orchestrator already did that). This fixes the stale-state bug where
       // UserMatrixModel was never updated and transformation state ran on stale sig.
+      //
+      // Phase 3 bugfix: when the PersistentAgent path is active, use the agent's
+      // effectiveEncounter (which may differ from the scheduler's pick if the
+      // agent called ccrpg_select_encounter with a different moduleRef). Using
+      // the wrong encounter here would update the wrong (line, stage) cell in
+      // UserMatrixModel and fire shadow knot resolution on the wrong executionMode.
+      const encounterForApply = (USE_PERSISTENT_AGENT && persistentAgent && 'effectiveEncounter' in result)
+        ? (result as { effectiveEncounter: ScheduledEncounter }).effectiveEncounter
+        : selectedEncounter;
+
       if (result.response) {
         const applied = applyResponseOnly(
           currentSig,
           currentWorld,
           sessionState,
           result.response,
-          selectedEncounter,
+          encounterForApply,
           Date.now(),
         );
         currentSig = applied.sig;

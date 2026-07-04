@@ -40,6 +40,14 @@ export interface BridgedAgentResult {
   };
   readonly response: PlayerResponse;
   readonly narrativeSummary: string;
+  /**
+   * The encounter actually used for this run — either the agent's selection
+   * (if it called ccrpg_select_encounter) or the scheduler's pick passed in.
+   * Callers should use THIS encounter for any downstream processing
+   * (e.g. applyResponseOnly) rather than the original scheduler pick, so that
+   * UserMatrixModel updates + shadow knot resolution fire on the right cell.
+   */
+  readonly effectiveEncounter: ScheduledEncounter;
 }
 
 /**
@@ -121,5 +129,6 @@ export async function runPersistentAgentEncounter(
     },
     response: playerResponse,
     narrativeSummary: result.narrativeSummary,
+    effectiveEncounter,
   };
 }

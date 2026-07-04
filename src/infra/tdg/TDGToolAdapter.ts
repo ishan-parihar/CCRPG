@@ -9,6 +9,15 @@
  * The agent then sees a unified tool surface (8 CCRPG + 7 TDG = 15 tools)
  * and can call any tool seamlessly.
  *
+ * ── MCP response envelope ──
+ * tdg-rust v0.6.0 returns tool results in the standard MCP shape:
+ *   { content: [{ type: "text", text: "<json-string>" }], isError: false }
+ * The handler must extract the inner text from the content array and return
+ * it as a string (the agent's message history expects string tool results).
+ * Earlier versions of this adapter returned `result.content` directly, which
+ * is the ARRAY — that corrupted the agent's message history because the
+ * array got pushed into AgentMessage.content (typed as `string | null`).
+ *
  * Status: canonical-hypothesis (CCRPG-specific integration per AGENTIC-ARCHITECTURE-PLAN.md).
  */
 import type { ToolDefinition } from '../../core/agent/tools/CCRPGTools.js';
@@ -30,6 +39,49 @@ export interface AdaptedTDGTool {
   readonly definition: ToolDefinition;
   readonly handler: (args: Record<string, unknown>, ctx: ToolContext) => Promise<string>;
   readonly source: 'tdg';
+}
+
+/**
+ * Extract the text payload from an MCP tool-result envelope.
+ *
+ * MCP shape: { content: [{ type: "text", text: "..." }, ...], isError: false }
+ * Returns the concatenated text from all text blocks. If `isError` is true,
+ * returns `{ error: ... }` JSON so the agent can see the tool failed.
+ */
+function extractMCPContent(result: unknown): string {
+  if (!result || typeof result !== 'object') {
+    return JSON.stringify(result);
+  }
+  const r = result as { content?: unknown; isError?: boolean };
+
+  // If the tool returned an error, surface it as JSON
+  if (r.isError === true) {
+    return JSON.stringify({ error: 'TDG tool returned isError=true', raw: r });
+  }
+
+  // Standard MCP envelope: extract text from content blocks
+  if (Array.isArray(r.content)) {
+    const texts: string[] = [];
+    for (const block of r.content) {
+      if (block && typeof block === 'object') {
+        const b = block as { type?: string; text?: string };
+        if (b.type === 'text' && typeof b.text === 'string') {
+          texts.push(b.text);
+        }
+      }
+    }
+    if (texts.length > 0) {
+      return texts.join('\n');
+    }
+  }
+
+  // Fallback: result.content is a string (older shape)
+  if (typeof r.content === 'string') {
+    return r.content;
+  }
+
+  // Fallback: result itself is the payload
+  return JSON.stringify(result);
 }
 
 /**
@@ -55,11 +107,9 @@ export function adaptTDGTools(client: TDGClient): AdaptedTDGTool[] {
       handler: async (args) => {
         try {
           const result = await client.callTool(tool.name, args);
-          // TDG returns results as { content: string } — extract the content
-          if (typeof result === 'object' && result !== null && 'content' in result) {
-            return (result as { content: string }).content;
-          }
-          return JSON.stringify(result);
+          // Extract the text payload from the MCP envelope — return as a STRING
+          // (the agent's message history expects string tool results, not arrays).
+          return extractMCPContent(result);
         } catch (err) {
           const msg = err instanceof Error ? err.message : String(err);
           return JSON.stringify({ error: `TDG tool ${tool.name} failed: ${msg}` });

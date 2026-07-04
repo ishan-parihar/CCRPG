@@ -21,6 +21,27 @@ import type { ScheduledEncounter } from '../../src/core/domain/EncounterSpecNew.
 import type { Line } from '../../src/core/domain/Line.js';
 import type { Stage } from '../../src/core/domain/Stage.js';
 
+// Mock TDGClient for unit tests that need to verify adapter logic without
+// spawning the real binary. The mock implements only the methods the adapter
+// and hooks touch: getTools(), callTool(), isRunning(), isAvailable().
+class MockTDGClient {
+  private tools: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }>;
+  private callToolResult: unknown;
+  constructor(opts: {
+    tools?: Array<{ name: string; description: string; inputSchema: Record<string, unknown> }>;
+    callToolResult?: unknown;
+  } = {}) {
+    this.tools = opts.tools ?? [];
+    this.callToolResult = opts.callToolResult ?? { content: [{ type: 'text', text: '{"ok":true}' }] };
+  }
+  isAvailable() { return true; }
+  isRunning() { return true; }
+  getTools() { return this.tools; }
+  async callTool(_name: string, _args: Record<string, unknown>): Promise<unknown> {
+    return this.callToolResult;
+  }
+}
+
 function makeAltitudes(stage: Stage): Record<Line, Stage> {
   return {
     Cognitive: stage, Emotional: stage, Moral: stage, Intrapersonal: stage,
@@ -455,5 +476,89 @@ describe('Tool surface completeness (Phase 3)', () => {
     // Should complete without hanging (the LLM-unavailable path returns early,
     // proving the agent isn't waiting for a 4-exchange counter to expire)
     return expect(agent.runEncounter()).resolves.toBeDefined();
+  });
+});
+
+// ─── Phase 4: TDGToolAdapter + MCP envelope handling (regression) ──────────
+
+describe('TDGToolAdapter MCP envelope handling (regression for bug #3)', () => {
+  it('handler returns a STRING (not the raw content array) for MCP envelope', async () => {
+    // The bug: handler returned result.content (an array) instead of extracting
+    // the text. This corrupted the agent's message history because arrays got
+    // pushed into AgentMessage.content (typed as string | null).
+    const { adaptTDGTools } = await import('../../src/infra/tdg/TDGToolAdapter.js');
+    const mockClient = new MockTDGClient({
+      tools: [{
+        name: 'tdg_search',
+        description: 'search',
+        inputSchema: { type: 'object', properties: { query: { type: 'string' } } },
+      }],
+      callToolResult: {
+        content: [{ type: 'text', text: '{"nodes":[{"id":"n1","name":"test"}]}' }],
+        isError: false,
+      },
+    });
+    const adapted = adaptTDGTools(mockClient as unknown as TDGClient);
+    expect(adapted).toHaveLength(1);
+    const result = await adapted[0]!.handler({ query: 'test' }, {} as any);
+    expect(typeof result).toBe('string');
+    expect(Array.isArray(result)).toBe(false);
+    expect(result).toContain('"nodes"');
+    expect(result).toContain('"test"');
+  });
+
+  it('handler returns error JSON when MCP isError=true', async () => {
+    const { adaptTDGTools } = await import('../../src/infra/tdg/TDGToolAdapter.js');
+    const mockClient = new MockTDGClient({
+      tools: [{
+        name: 'tdg_search',
+        description: 'search',
+        inputSchema: { type: 'object' },
+      }],
+      callToolResult: {
+        content: [{ type: 'text', text: 'something failed' }],
+        isError: true,
+      },
+    });
+    const adapted = adaptTDGTools(mockClient as unknown as TDGClient);
+    const result = await adapted[0]!.handler({}, {} as any);
+    expect(typeof result).toBe('string');
+    const parsed = JSON.parse(result);
+    expect(parsed).toHaveProperty('error');
+  });
+
+  it('handler returns error JSON when callTool throws', async () => {
+    const { adaptTDGTools } = await import('../../src/infra/tdg/TDGToolAdapter.js');
+    const mockClient = {
+      isAvailable: () => true,
+      isRunning: () => true,
+      getTools: () => [{ name: 'tdg_search', description: 'search', inputSchema: { type: 'object' } }],
+      callTool: async () => { throw new Error('connection refused'); },
+    };
+    const adapted = adaptTDGTools(mockClient as unknown as TDGClient);
+    const result = await adapted[0]!.handler({}, {} as any);
+    expect(typeof result).toBe('string');
+    const parsed = JSON.parse(result);
+    expect(parsed).toHaveProperty('error');
+    expect(parsed.error).toContain('connection refused');
+  });
+
+  it('only exposes the 7 agent-facing TDG tools (not all 50)', async () => {
+    const { adaptTDGTools } = await import('../../src/infra/tdg/TDGToolAdapter.js');
+    const allTDGTools = [
+      'tdg_search', 'tdg_create', 'tdg_connect', 'tdg_reflect',
+      'tdg_fetch_context', 'tdg_tick', 'tdg_health',
+      // Tools that should NOT be exposed to the agent:
+      'tdg_bulk_create', 'tdg_archetypes', 'tdg_attractor', 'tdg_audit',
+      'tdg_bank', 'tdg_elevate', 'tdg_enrich', 'tdg_entity',
+    ].map(name => ({ name, description: name, inputSchema: { type: 'object' } }));
+    const mockClient = new MockTDGClient({ tools: allTDGTools });
+    const adapted = adaptTDGTools(mockClient as unknown as TDGClient);
+    expect(adapted).toHaveLength(7);
+    const names = adapted.map(t => t.definition.function.name);
+    expect(names).toEqual(expect.arrayContaining([
+      'tdg_search', 'tdg_create', 'tdg_connect', 'tdg_reflect',
+      'tdg_fetch_context', 'tdg_tick', 'tdg_health',
+    ]));
   });
 });

@@ -42,6 +42,7 @@ export class TDGClient {
   private pendingRequests = new Map<number, {
     resolve: (value: unknown) => void;
     reject: (error: Error) => void;
+    timeoutHandle: ReturnType<typeof setTimeout>;
   }>();
   private buffer = '';
   private available = false;
@@ -66,13 +67,30 @@ export class TDGClient {
       throw new Error(`TDG-Rust binary not found at ${this.binaryPath}. Install with: curl -fsSL https://raw.githubusercontent.com/ishan-parihar/tdg-rust/main/install.sh | bash`);
     }
 
-    this.process = spawn(this.binaryPath, ['serve', '--stdio'], {
+    // BUG FIX: tdg-rust v0.6.0+ does NOT accept `--stdio`. The `serve` subcommand
+    // defaults to port 3000 which IS stdio mode (per `tdg-rust serve --help`).
+    // Passing `--stdio` causes the binary to exit immediately with
+    // "error: unexpected argument '--stdio' found", and the MCP handshake hangs
+    // for 30s until our request timeout fires.
+    //
+    // BUG FIX: tdg-rust dynamically links against libonnxruntime.so.1, which the
+    // install script places in <hermes_home>/tdg-rust/lib/. The install script's
+    // own init_database step fails to set LD_LIBRARY_PATH (a bug in install.sh),
+    // and our spawn inherits process.env — so we must explicitly inject the lib
+    // dir here or the binary fails with "error while loading shared libraries:
+    // libonnxruntime.so.1: cannot open shared object file".
+    const libDir = path.join(path.dirname(this.binaryPath), 'lib');
+    this.process = spawn(this.binaryPath, ['serve'], {
       stdio: ['pipe', 'pipe', 'pipe'],
       env: {
         ...process.env,
         TDG_HOME: path.dirname(path.dirname(this.dbPath)),
         TDG_DB_PATH: this.dbPath,
         NO_COLOR: '1',
+        // Prepend our lib dir to any existing LD_LIBRARY_PATH so the dynamic
+        // linker finds libonnxruntime. This mirrors the LD_LIBRARY_PATH the
+        // install.sh script uses in its own (broken) init_database step.
+        LD_LIBRARY_PATH: [libDir, process.env.LD_LIBRARY_PATH].filter(Boolean).join(':'),
       },
     });
 
@@ -82,17 +100,26 @@ export class TDGClient {
     });
 
     this.process.stderr?.on('data', (data: Buffer) => {
-      // TDG-Rust logs to stderr — ignore unless debugging
+      // TDG-Rust logs INFO messages + crash diagnostics to stderr. We don't
+      // surface these to the caller (hooks are best-effort), but we do NOT
+      // silently discard them either — they're available here for future
+      // telemetry routing. Keeping `void data` to avoid the unused-var lint
+      // while preserving the data for debugging.
       void data;
     });
 
-    this.process.on('error', () => {
+    this.process.on('error', (err: Error) => {
+      // Spawn error (binary missing, permission denied, etc.)
       this.available = false;
+      this.rejectAllPending(`TDG process error: ${err.message}`);
     });
 
-    this.process.on('exit', () => {
+    this.process.on('exit', (code: number | null) => {
+      // Process exited — reject all in-flight requests so callers don't hang
+      // for the full 30s timeout. This is critical for graceful shutdown.
       this.available = false;
       this.process = null;
+      this.rejectAllPending(`TDG process exited (code=${code})`);
     });
 
     // Wait for the server to be ready (initialize handshake)
@@ -107,6 +134,8 @@ export class TDGClient {
       this.process = null;
     }
     this.available = false;
+    // Reject any in-flight requests so callers don't hang
+    this.rejectAllPending('TDG client stopped');
   }
 
   /** Check if the TDG server is running and ready. */
@@ -159,19 +188,33 @@ export class TDGClient {
         params,
       };
 
-      this.pendingRequests.set(id, { resolve, reject });
-
-      const json = JSON.stringify(request) + '\n';
-      this.process?.stdin?.write(json);
-
-      // Timeout after 30 seconds
-      setTimeout(() => {
+      // Store the timeout handle so we can clearTimeout it when the response
+      // arrives (otherwise every request leaks a 30s timer + closure refs).
+      const timeoutHandle = setTimeout(() => {
         if (this.pendingRequests.has(id)) {
           this.pendingRequests.delete(id);
           reject(new Error(`TDG request ${method} timed out after 30s`));
         }
       }, 30000);
+
+      this.pendingRequests.set(id, { resolve, reject, timeoutHandle });
+
+      const json = JSON.stringify(request) + '\n';
+      this.process?.stdin?.write(json);
     });
+  }
+
+  /**
+   * Reject all in-flight requests with the given reason.
+   * Called when the TDG process exits or errors, so callers don't hang
+   * for the full 30s timeout on each pending request.
+   */
+  private rejectAllPending(reason: string): void {
+    for (const [id, pending] of this.pendingRequests) {
+      clearTimeout(pending.timeoutHandle);
+      this.pendingRequests.delete(id);
+      pending.reject(new Error(reason));
+    }
   }
 
   private sendNotification(method: string, params: Record<string, unknown>): void {
@@ -194,6 +237,8 @@ export class TDGClient {
         const response = JSON.parse(line) as TDGMCPResponse;
         const pending = this.pendingRequests.get(response.id);
         if (pending) {
+          // Clear the timeout to prevent the timer leak (bug #12)
+          clearTimeout(pending.timeoutHandle);
           this.pendingRequests.delete(response.id);
           if (response.error) {
             pending.reject(new Error(response.error.message));
