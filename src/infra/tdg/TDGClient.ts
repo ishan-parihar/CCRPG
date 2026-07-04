@@ -100,12 +100,14 @@ export class TDGClient {
     });
 
     this.process.stderr?.on('data', (data: Buffer) => {
-      // TDG-Rust logs INFO messages + crash diagnostics to stderr. We don't
-      // surface these to the caller (hooks are best-effort), but we do NOT
-      // silently discard them either — they're available here for future
-      // telemetry routing. Keeping `void data` to avoid the unused-var lint
-      // while preserving the data for debugging.
-      void data;
+      // L3: TDG-Rust logs INFO messages + crash diagnostics to stderr. Route
+      // these to console.debug when CCRPG_VERBOSE_TDG is set so developers can
+      // debug hook failures + binary load errors. Otherwise discard (hooks are
+      // best-effort; we must not spam the player's console with TDG internals).
+      if (process.env.CCRPG_VERBOSE_TDG === '1' || process.env.CCRPG_VERBOSE === '1') {
+        const text = data.toString().trim();
+        if (text) console.debug(`[tdg-rust] ${text}`);
+      }
     });
 
     this.process.on('error', (err: Error) => {

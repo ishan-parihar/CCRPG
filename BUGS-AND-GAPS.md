@@ -1,6 +1,6 @@
 # CCRPG ↔ TDG-Rust Integration — Bugs & Gaps Audit
 
-> **Date:** 2026-07-04
+> **Date:** 2026-07-04 (updated)
 > **Status:** Living document. Update as bugs are fixed and new gaps are found.
 
 This document tracks bugs and implementation gaps discovered during end-to-end
@@ -15,11 +15,11 @@ status (fixed / open / wontfix), file:line references, and a fix description.
 |---|---|---|---|
 | Critical | 3 | 3 | 0 |
 | High | 4 | 4 | 0 |
-| Medium | 5 | 3 | 2 |
-| Low | 5 | 2 | 3 |
+| Medium | 5 | 5 | 0 |
+| Low | 5 | 4 | 1 |
 
-**Test counts:** 647 pass + 7 pre-existing environmental failures + 11 E2E
-integration tests (run with `CCRPG_E2E_TDG=1`).
+**Test counts:** 662 pass + 7 pre-existing environmental failures + 11 E2E
+integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
 
 ---
 
@@ -149,21 +149,27 @@ integration tests (run with `CCRPG_E2E_TDG=1`).
   are defined but never called from the live game loop. `computeCCIWithTDG`
   exists but `GameLoop.startSession` still uses sync `computeCCI`. The entire
   TDG→CCRPG feedback direction is dead code in the current runtime.
-- **Fix:** Open. The hooks are ready and tested; they need to be wired into
-  GameLoop (e.g. call `computeCCIWithTDG` instead of `computeCCI` when TDG
-  is active, call `runReflection` at session start, etc.). Deferred to a
-  future task to avoid changing CCI behaviour mid-release.
-- **Status:** ⏳ Open (wiring deferred)
+- **Fix:** Added `startSessionWithTDG()` (async) that augments baseline CCI
+  with TDG G_z/P_z + runs graph-level reflection to annotate the session
+  strategy. Added `getTDGTransformationPressure()` helper. Wired both into
+  cli-game.ts via the `--agent` flag: `startSessionWithTDG` runs at session
+  start, `getTDGTransformationPressure` fires after each encounter (emits
+  `tdg_pressure` telemetry event). Both no-op when TDG is absent — zero
+  regression.
+- **Regression tests:** `tests/agent/GameLoopTDGFeedback.test.ts` (8 tests)
+- **Status:** ✅ Fixed
 
 ### M5. PersistentAgent re-registers all 15 tools as source='tdg'
-- **File:** `src/core/agent/PersistentAgent.ts:72-83`
+- **File:** `src/core/agent/PersistentAgent.ts:72-92`
 - **Symptom:** `config.tdgToolRegistry` is the unified registry (8 CCRPG + 7
   TDG). The loop re-registers all 15 with `source: 'tdg'`, overwriting the 8
   CCRPG tools' source label. `getDefinitionsBySource('ccrpg')` returns 0.
-- **Fix:** Cosmetic — doesn't break functionality (handlers still dispatch
-  correctly). Fix by passing only the TDG tools via `tdgToolRegistry`, or by
-  preserving the original source when re-registering.
-- **Status:** ⏳ Open (cosmetic)
+- **Fix:** Constructor now skips any tool name the CCRPG registry already has
+  (`if (this.registry.has(name)) continue;`). Only genuinely-new TDG tools
+  get registered with `source: 'tdg'`, preserving correct source attribution.
+- **Regression tests:** `tests/agent/AgenticArchitecture.test.ts` →
+  "PersistentAgent source attribution (regression for M5)" (1 test)
+- **Status:** ✅ Fixed
 
 ---
 
@@ -186,31 +192,42 @@ integration tests (run with `CCRPG_E2E_TDG=1`).
 - **Status:** ✅ Fixed
 
 ### L3. All stderr silently discarded
-- **File:** `src/infra/tdg/TDGClient.ts:101-104`
+- **File:** `src/infra/tdg/TDGClient.ts:101-111`
 - **Symptom:** `void data;` — TDG-Rust crash diagnostics, libonnxruntime
   load errors, and MCP protocol warnings are invisible. Makes debugging
   impossible when hooks silently fail.
-- **Fix:** Open (low priority). Route to a debug log when VERBOSE is set.
-- **Status:** ⏳ Open
+- **Fix:** stderr now routes to `console.debug` when `CCRPG_VERBOSE_TDG=1`
+  or `CCRPG_VERBOSE=1` is set. Otherwise discarded (to avoid spamming the
+  player's console with TDG internals). Use `CCRPG_VERBOSE_TDG=1 ccrpg ...`
+  to debug hook failures.
+- **Status:** ✅ Fixed
 
 ### L4. PersistentAgent ctx.sessionState frozen at creation
-- **File:** `src/core/agent/PersistentAgent.ts:143-157` + `scripts/cli-game.ts:1405-1410`
+- **File:** `src/core/agent/PersistentAgent.ts:68,130-132` + `scripts/cli-game.ts:1602-1616`
 - **Symptom:** `sessionState.encountersSoFar` is set to 0 at agent creation
   and never updated between encounters. `ccrpg_get_encounter_pool` always
   sees `encountersSoFar: 0` and `recentLines: []`, which can skew scheduler
   ranking.
-- **Fix:** Open. Call `agent.updateSessionState()` between encounters (needs
-  a new method on PersistentAgent) to refresh encountersSoFar + recentLines.
-- **Status:** ⏳ Open
+- **Fix:** `sessionState` is now mutable (not `readonly`). Added
+  `updateSessionState()` method. CLI calls it after each encounter with
+  updated `encountersSoFar` + `recentLines` (last 5 lines) + `weightBias`.
+- **Regression tests:** `tests/agent/AgenticArchitecture.test.ts` →
+  "PersistentAgent.updateSessionState (regression for L4)" (1 test)
+- **Status:** ✅ Fixed
 
 ### L5. ccrpg_get_encounter_pool ignores session-strategy weights
-- **File:** `src/core/agent/tools/CCRPGTools.ts:337`
+- **File:** `src/core/agent/tools/CCRPGTools.ts:22-23,213-218,328-354`
 - **Symptom:** Uses `DEFAULT_WEIGHTS` instead of the session strategy's
   biased weights. The agent sees a different ranking than the scheduler
   used to pick the original encounter.
-- **Fix:** Open. Pass `sessionState.strategy.weightBias` into the tool
-  context and apply it via `applyWeightBias(DEFAULT_WEIGHTS, weightBias)`.
-- **Status:** ⏳ Open
+- **Fix:** `ToolContext.sessionState` now has an optional `weightBias` field.
+  When provided, `ccrpg_get_encounter_pool` applies it via
+  `applyWeightBias(DEFAULT_WEIGHTS, weightBias)`. CLI passes the session
+  strategy's `weightBias` through `updateSessionState()`. Falls back to
+  `DEFAULT_WEIGHTS` when absent (legacy behaviour).
+- **Regression tests:** `tests/agent/AgenticArchitecture.test.ts` →
+  "ccrpg_get_encounter_pool weightBias (regression for L5)" (1 test)
+- **Status:** ✅ Fixed
 
 ---
 

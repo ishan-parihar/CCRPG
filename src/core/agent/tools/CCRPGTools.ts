@@ -20,6 +20,7 @@ import { scheduleNext } from '../../engines/EncounterScheduler.js';
 import { detectThreshold, type TransformationSignal } from '../../engines/TransformationDetector.js';
 import { getFallback } from '../../../infra/llm/FallbackProvider.js';
 import { DEFAULT_WEIGHTS } from '../../engines/PriorityComputation.js';
+import { applyWeightBias, type PriorityWeightBias } from '../../engines/AutoModeStrategy.js';
 import { detectBleedThrough } from '../../engines/ThetaDecay.js';
 import type { UserMatrixModel } from '../../engines/UserMatrixModel.js';
 
@@ -209,6 +210,12 @@ export interface ToolContext {
     readonly targetSessionLength: number;
     readonly recentLines: readonly string[];
     readonly userMatrixModel?: UserMatrixModel;
+    /**
+     * L5: Optional session-strategy weight bias. When provided, ccrpg_get_encounter_pool
+     * applies this to DEFAULT_WEIGHTS via applyWeightBias() so the agent sees the same
+     * biased ranking the scheduler uses. When absent, DEFAULT_WEIGHTS is used (legacy behaviour).
+     */
+    readonly weightBias?: PriorityWeightBias;
   };
   readonly onAskPlayer: (params: {
     narrative: string;
@@ -328,13 +335,19 @@ export async function executeCCRPGTool(
         targetSessionLength: ctx.sessionState.targetSessionLength,
         recentLines: ctx.sessionState.recentLines as readonly Line[],
       };
+      // L5: Apply the session-strategy weight bias when available, so the agent
+      // sees the same biased ranking the scheduler uses (e.g. thetaUrgency boost
+      // during consolidation theme). Falls back to DEFAULT_WEIGHTS otherwise.
+      const weights = ctx.sessionState.weightBias
+        ? applyWeightBias(DEFAULT_WEIGHTS, ctx.sessionState.weightBias)
+        : DEFAULT_WEIGHTS;
       const scheduled = scheduleNext(
         ctx.sig,
         ctx.world,
         session,
         now,
         count,
-        DEFAULT_WEIGHTS,
+        weights,
         bleedThrough,
         ctx.moduleTaskTypesProvider,
         ctx.sessionState.userMatrixModel,

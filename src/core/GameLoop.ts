@@ -182,6 +182,102 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
 }
 
 /**
+ * M4 (TDG→CCRPG feedback): Async session start that augments the baseline CCI
+ * with TDG-Rust graph-level health (G_z/P_z) when TDG is running.
+ *
+ * When TDG-Rust is NOT running, this returns the exact same SessionState as
+ * the sync startSession() — zero regression. When TDG IS running, it blends
+ * TDG's metabolic health into the CCI's metabolicHealth dimension and runs
+ * a graph-level reflection to seed the session strategy with developmental
+ * insights from the player's cross-session history.
+ *
+ * Callers that don't need TDG augmentation should use the sync startSession().
+ */
+export async function startSessionWithTDG(
+  sig: Significator,
+  session: SessionContext,
+): Promise<SessionState> {
+  // Always compute the baseline sync CCI first — this is the source of truth.
+  const snapshot = toSnapshot(sig);
+  const baselineCCI = computeCCI(snapshot);
+
+  // Best-effort TDG augmentation — no-op when TDG is not running.
+  let cci = baselineCCI;
+  let tdgReflection: { pathology: string | null; catalystSuggestion: string | null; developmentalFocus: string | null } | null = null;
+  try {
+    const { getTDGHooks } = await import('../infra/tdg/TDGBridge.js');
+    const hooks = getTDGHooks();
+    if (hooks && hooks.isActive()) {
+      // Augment CCI with TDG G_z/P_z (conservative 20% blend, see CCIEngine.computeCCIWithTDG)
+      const { computeCCIWithTDG } = await import('./engines/CCIEngine.js');
+      cci = await computeCCIWithTDG(snapshot, sig.id);
+
+      // Run graph-level reflection to seed strategy with cross-session insights.
+      // This is the TDG→CCRPG feedback hook 7 (onReflectComplete). When the
+      // TDG-Rust environment has an LLM backend configured, this returns a
+      // developmental diagnosis that supplements CCRPG's own detectThreshold.
+      tdgReflection = await hooks.runReflection(sig);
+    }
+  } catch {
+    // TDG unavailable or failed — fall back to pure baseline. Zero regression.
+  }
+
+  const strategy = generateSessionStrategy(cci, session, null);
+
+  // If TDG reflection surfaced a developmental focus, annotate the strategy's
+  // themeRationale so the session strategy carries the insight forward. We
+  // don't override the computed theme (TDG supplements, never replaces), but
+  // we record the suggestion for telemetry + the agent's system prompt.
+  let annotatedStrategy = strategy;
+  if (tdgReflection && (tdgReflection.catalystSuggestion || tdgReflection.developmentalFocus)) {
+    const tdgNote = [
+      tdgReflection.catalystSuggestion ? `TDG catalyst: ${tdgReflection.catalystSuggestion}` : null,
+      tdgReflection.developmentalFocus ? `TDG focus: ${tdgReflection.developmentalFocus}` : null,
+      tdgReflection.pathology ? `TDG pathology: ${tdgReflection.pathology}` : null,
+    ].filter(Boolean).join(' | ');
+    annotatedStrategy = {
+      ...strategy,
+      themeRationale: strategy.themeRationale
+        ? `${strategy.themeRationale} | ${tdgNote}`
+        : tdgNote,
+    };
+  }
+
+  return {
+    strategy: annotatedStrategy,
+    cci,
+    recentOutcomes: [],
+    encountersSinceRefresh: 0,
+    transformationState: createInitialTransformationState(),
+    userMatrixModel: createInitialUserMatrixModel(),
+    sessionStartMs: Date.now(),
+  };
+}
+
+/**
+ * M4 (TDG→CCRPG feedback): Query TDG's transformation pressure to supplement
+ * CCRPG's own detectThreshold signal.
+ *
+ * Returns a number in [0, 1] representing TDG's graph-level readiness for
+ * stage transition, or null when TDG is not running. Callers (e.g. the CLI
+ * session loop) can use this to inform when to push toward transformation
+ * vs. consolidate. This is supplementary — CCRPG's detectThreshold remains
+ * the authoritative signal.
+ *
+ * Safe to call from any async context — no-ops immediately when TDG absent.
+ */
+export async function getTDGTransformationPressure(sig: Significator): Promise<number | null> {
+  try {
+    const { getTDGHooks } = await import('../infra/tdg/TDGBridge.js');
+    const hooks = getTDGHooks();
+    if (!hooks || !hooks.isActive()) return null;
+    return await hooks.getTransformationPressure(sig);
+  } catch {
+    return null;
+  }
+}
+
+/**
  * Enhanced tick that uses session strategy for weight biasing.
  * Call this instead of tick() when auto-mode is active.
  *

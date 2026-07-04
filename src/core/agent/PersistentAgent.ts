@@ -62,18 +62,26 @@ export class PersistentAgent {
   private lastEncounterResult: EncounterResult | null = null;
   private sig: Significator;
   private world: WorldState;
-  private readonly sessionState: ToolContext['sessionState'];
+  // L4: sessionState is now mutable so the CLI can refresh encountersSoFar +
+  // recentLines between encounters. Without this, ccrpg_get_encounter_pool
+  // always saw encountersSoFar:0 + recentLines:[], skewing scheduler ranking.
+  private sessionState: ToolContext['sessionState'];
   private readonly onAskPlayer: ToolContext['onAskPlayer'];
   private readonly moduleTaskTypesProvider?: ToolContext['moduleTaskTypesProvider'];
 
   constructor(config: PersistentAgentConfig) {
     this.registry = createCCRPGToolRegistry();
-    // If TDG tools are available, register them too
+    // M5: If TDG tools are available, register ONLY the tools that aren't already
+    // registered as CCRPG-native. The CLI passes a unified registry (8 CCRPG + 7 TDG)
+    // as tdgToolRegistry; re-registering all 15 would overwrite the 8 CCRPG tools'
+    // source label to 'tdg', breaking getDefinitionsBySource('ccrpg'). We skip any
+    // tool name the CCRPG registry already has, preserving correct source attribution.
     if (config.tdgToolRegistry) {
       for (const name of config.tdgToolRegistry.getToolNames()) {
+        // Skip tools already registered as CCRPG-native (avoid source overwrite)
+        if (this.registry.has(name)) continue;
         const def = config.tdgToolRegistry.getDefinitions().find(d => d.function.name === name);
         if (def) {
-          // TDG tools are registered with their own handler — we'll delegate
           this.registry.register({
             definition: def,
             handler: (args, ctx) => config.tdgToolRegistry!.execute(name, args, ctx),
@@ -112,6 +120,20 @@ export class PersistentAgent {
   updateSnapshot(sig: Significator, world: WorldState): void {
     this.sig = sig;
     this.world = world;
+  }
+
+  /**
+   * L4: Update the agent's sessionState between encounters.
+   *
+   * The agent's ccrpg_get_encounter_pool tool reads encountersSoFar +
+   * recentLines from sessionState to bias the scheduler ranking. Without this
+   * refresh, the agent always saw encountersSoFar:0 + recentLines:[] even
+   * mid-session, which skewed the ranking toward warmup encounters forever.
+   *
+   * The CLI should call this after each encounter with the updated counters.
+   */
+  updateSessionState(sessionState: ToolContext['sessionState']): void {
+    this.sessionState = sessionState;
   }
 
   /** Get the selected encounter (set by ccrpg_select_encounter tool). */

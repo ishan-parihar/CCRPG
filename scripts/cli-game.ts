@@ -149,7 +149,7 @@ import type { Stage } from '../src/core/domain/Stage.js';
 import type { ScheduledEncounter } from '../src/core/domain/EncounterSpecNew.js';
 import type { PlayerResponse } from '../src/core/engines/ConsequenceEngine.js';
 import type { SessionContext } from '../src/core/engines/PriorityComputation.js';
-import { startSession, tickWithStrategy, endSession, applyResponseOnly, type SessionState } from '../src/core/GameLoop.js';
+import { startSession, startSessionWithTDG, tickWithStrategy, endSession, applyResponseOnly, getTDGTransformationPressure, type SessionState } from '../src/core/GameLoop.js';
 import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixModel.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 import { PersistentAgent } from '../src/core/agent/PersistentAgent.js';
@@ -1324,7 +1324,13 @@ async function runFullSession(): Promise<void> {
     ...(FORCE_STAGE ? { forceStage: FORCE_STAGE } : {}),
     ...(FORCE_MODALITY ? { forceModality: FORCE_MODALITY } : {}),
   } as any;
-  let sessionState = startSession(sig, session);
+  // M4: When --agent is set, use the TDG-augmented session start. This blends
+  // TDG G_z/P_z into the CCI's metabolicHealth dimension and runs a graph-level
+  // reflection to seed the session strategy. No-op (returns baseline) when TDG
+  // is not running — zero regression.
+  let sessionState = USE_PERSISTENT_AGENT
+    ? await startSessionWithTDG(sig, session)
+    : startSession(sig, session);
 
   // Declare mutable state BEFORE the banner so it can reference them
   let currentSig = sig;
@@ -1342,17 +1348,20 @@ async function runFullSession(): Promise<void> {
     });
     gameMode = String(modeChoice);
   }
+  // M1: When --agent is set, auto-switch to Story mode (the PersistentAgent is
+  // wired into the Story-Driven encounter loop, not the Direct Questioning flow).
+  // This ensures the --agent flag actually exercises the 15-tool agent + TDG
+  // integration rather than being silently ignored. Warn the user so they know.
+  if (USE_PERSISTENT_AGENT && gameMode === 'direct') {
+    if (!JSON_MODE) {
+      info('agent', `${chalk.cyan('--agent')} requires Story-Driven mode — auto-switching.`);
+    }
+    gameMode = 'story';
+  }
   const isDirectMode = gameMode === 'direct';
 
   // ponytail: Direct Questioning gets its own session flow — 8 lines, write-in, no pass/fail
   if (isDirectMode) {
-    // Phase 3 gap: --agent is not yet wired into the Direct Questioning flow
-    // (Direct Questioning uses its own simpler encounter loop). Warn the user
-    // rather than silently ignoring the flag.
-    if (USE_PERSISTENT_AGENT && !JSON_MODE) {
-      warn('--agent is not yet supported in Direct Questioning mode — using default flow.');
-      info('    To use the Persistent Developmental Agent, choose Story-Driven mode.');
-    }
     await runDirectQuestioningSession(currentSig, currentWorld);
     return;
   }
@@ -1590,11 +1599,20 @@ async function runFullSession(): Promise<void> {
         sessionState = applied.sessionState;
       }
 
-      // Phase 3: Keep the PersistentAgent's sig/world snapshot fresh across encounters
-      // so its tool queries reflect the latest state. (The agent holds its own copy
-      // of sig/world for tool execution; we update it here between encounters.)
+      // Phase 3 + L4 + L5: Keep the PersistentAgent's sig/world/sessionState fresh
+      // across encounters so its tool queries reflect the latest state. Without
+      // the sessionState refresh, ccrpg_get_encounter_pool always saw
+      // encountersSoFar:0 + recentLines:[], skewing scheduler ranking. Without
+      // the weightBias, the agent saw a different ranking than the scheduler.
       if (persistentAgent) {
         persistentAgent.updateSnapshot(currentSig, currentWorld);
+        persistentAgent.updateSessionState({
+          encountersSoFar: i + 1,
+          targetSessionLength: encounterCount,
+          recentLines: history.slice(-5).map(r => r.polarityTrace.line),
+          userMatrixModel: sessionState.userMatrixModel,
+          weightBias: sessionState.strategy.weightBias,
+        });
       }
 
 
@@ -1647,6 +1665,20 @@ async function runFullSession(): Promise<void> {
       // T-3.4 (Veil compliance): don't leak the target stage name.
       if (!JSON_MODE) console.log(`\n  ${chalk.magenta('⚡ Something rearranges at the foundation.')}`);
       emitEvent('transformation', { targetStage: tickResult.transformation.targetStage, readiness: tickResult.transformation.readiness });
+    }
+
+    // M4: When --agent is active, query TDG's graph-level transformation pressure
+    // to supplement CCRPG's detectThreshold signal. This is best-effort + async —
+    // no-op when TDG is not running. We emit a tdg_pressure telemetry event so
+    // the session can track graph-level readiness alongside the CCRPG signal.
+    if (USE_PERSISTENT_AGENT) {
+      const tdgPressure = await getTDGTransformationPressure(currentSig);
+      if (tdgPressure !== null) {
+        emitEvent('tdg_pressure', { pressure: tdgPressure, ccrpgReadiness: tickResult.transformation?.readiness ?? 0 });
+        if (VERBOSE && !JSON_MODE) {
+          verbose('tdg_pressure', tdgPressure.toFixed(3));
+        }
+      }
     }
 
     // T-3.4: removed the `layers:` prefix + renderLayersCompact leak.
