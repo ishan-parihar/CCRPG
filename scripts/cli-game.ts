@@ -880,8 +880,11 @@ async function runAgenticEncounter(
         }
 
         emitEvent('ask_user', {
-          header: q.header,
+          // UX-R2-3: Use the line name as the header in DQ mode
+          header: line,
+          // UX-R2-7: Prepend the question with NPC scene-setting
           question: q.question,
+          narrative: DQ_SCENE_SETTINGS[i % DQ_SCENE_SETTINGS.length],
           options: q.options?.map((o, i) => ({ index: i + 1, label: o.label, description: o.description })),
           allowWriteIn: q.allowWriteIn,
         });
@@ -1123,6 +1126,22 @@ async function runSingleEncounter(): Promise<void> {
 }
 
 // ── Direct Questioning session — true 8-line flow ──────────────────
+
+// UX-R2-7: NPC scene-setting templates for DQ mode.
+// Previously DQ was a bare questionnaire — no story, no NPC, no setting.
+// Now each question is preceded by a one-line scene-setting that creates
+// RPG atmosphere even without an LLM.
+const DQ_SCENE_SETTINGS = [
+  'A figure watches you across the firelight. The question forms between you:',
+  'The air shifts. Someone is waiting for your answer:',
+  'You find yourself at a crossroads. A voice asks:',
+  'In the silence after the storm, a presence turns to you:',
+  'The old keeper at the gate leans forward. They ask:',
+  'A stranger sits beside you on the road. They say:',
+  'The mirror before you shows a different face. It asks:',
+  'Deep in the chamber, the question finds you:',
+];
+
 async function runDirectQuestioningSession(
   initialSig: Significator,
   initialWorld: WorldState,
@@ -2124,18 +2143,24 @@ async function runStatus(): Promise<void> {
       // Previously status showed only flavor text — no visible progression.
       // Now the user can see which lines they've explored and a sense of depth.
       const ALL_LINES_DISPLAY: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
-      const stageLabels: Record<string, string> = {
+      // UX-R2-2: Veil-compliant stage labels — qualitative, not clinical
+      const stageAestheticsShort: Record<string, string> = {
+        Infrared: 'primal', Magenta: 'symbolic', Red: 'power', Amber: 'order',
+        Orange: 'reason', Green: 'harmony', Turquoise: 'integral', White: 'unity',
+      };
+      const stageSymbols: Record<string, string> = {
         Infrared: '◇', Magenta: '◈', Red: '◆', Amber: '✦',
         Orange: '★', Green: '❋', Turquoise: '✺', White: '☉',
       };
       console.log(`\n  ${chalk.bold('Developmental Lines')}`);
       for (const line of ALL_LINES_DISPLAY) {
         const stage = sig.altitudes[line] ?? 'Red';
-        const symbol = stageLabels[stage] ?? '◆';
+        const symbol = stageSymbols[stage] ?? '◆';
+        const aesthetic = stageAestheticsShort[stage] ?? 'power';
         const cellKey = `${line}:${stage}`;
         const traces = sig.polarity.cells[cellKey]?.traceCount ?? 0;
         const bar = '▓'.repeat(Math.min(8, traces)) + '░'.repeat(Math.max(0, 8 - Math.min(8, traces)));
-        console.log(`    ${chalk.cyan(line.padEnd(16))} ${symbol} ${chalk.dim(bar)} ${chalk.dim(`${traces} encounter${traces === 1 ? '' : 's'}`)}`);
+        console.log(`    ${chalk.cyan(line.padEnd(16))} ${symbol} ${chalk.dim(`[${aesthetic}]`)} ${chalk.dim(bar)} ${chalk.dim(`${traces} encounter${traces === 1 ? '' : 's'}`)}`);
       }
 
       // Wave 3.1: Dev-mode holistic primitives
@@ -2160,7 +2185,14 @@ async function runStatus(): Promise<void> {
       }
     }
   } else {
-    info('save', `${chalk.yellow('no saved game')} — run ${chalk.bold('ccrpg')} to start`);
+    info('save', `${chalk.yellow('no saved game')} — run ${chalk.bold('ccrpg session')} to start`);
+    // UX-R2-6: Show the 8-line table even when no save exists, so the user
+    // can see the shape of the journey before they begin.
+    const EMPTY_LINES: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
+    console.log(`\n  ${chalk.bold('Developmental Lines')}`);
+    for (const line of EMPTY_LINES) {
+      console.log(`    ${chalk.cyan(line.padEnd(16))} ◆ ${chalk.dim('[power]')} ${chalk.dim('░░░░░░░░')} ${chalk.dim('0 encounters')}`);
+    }
   }
 
   console.log(`\n  ${chalk.bold('System')}`);
@@ -2184,6 +2216,21 @@ async function main(): Promise<void> {
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
   // game doesn't inherit the old player's developmental graph.
   if (subcommand === 'new-game') {
+    // UX-R2-5: Confirmation prompt before destructive reset
+    if (hasSave() && !HEADLESS && !JSON_MODE) {
+      const confirm = await select({
+        message: 'This will permanently delete all progress. Continue?',
+        options: [
+          { value: 'no', label: 'No — keep my progress' },
+          { value: 'yes', label: 'Yes — start fresh' },
+        ],
+        initialValue: 'no',
+      });
+      if (confirm !== 'yes') {
+        console.log(`${chalk.green('✓')} Progress kept. Run ${chalk.bold('ccrpg session')} to continue.`);
+        return;
+      }
+    }
     deleteAllSaves();
     // Best-effort TDG graph clear — no-op if TDG isn't running.
     try {

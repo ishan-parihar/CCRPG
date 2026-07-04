@@ -765,7 +765,11 @@ INSTRUCTIONS:
     const askParams: AskUserQuestionParams = {
       questions: [{
         question: fullPrompt,
-        header: encounterModality,
+        // UX-R2-3: Use the line name as the header (user-facing), not the
+        // modality name. Previously every question showed "LanguageReflective"
+        // or "Deterministic" — meaningless to a user. Now shows "Cognitive",
+        // "Emotional", etc. — the actual developmental line being assessed.
+        header: this.encounter.targetLines[0] ?? encounterModality,
         options,
         allowWriteIn: true,
         multiSelect: false,

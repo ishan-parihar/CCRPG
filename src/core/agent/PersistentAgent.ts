@@ -96,6 +96,8 @@ export class PersistentAgent {
   // a new encounter with hardcoded defaults — losing shadow-targeting + forcing
   // executionMode to 'capacity' (agent couldn't select shadow-mode encounters).
   private lastEncounterPool: readonly ScheduledEncounter[] = [];
+  // UX-R2-1: Session-level counter for non-repeating fallback narrative selection
+  private static fallbackNarrativeCounter = 0;
   private sig: Significator;
   private world: WorldState;
   // L4: sessionState is now mutable so the CLI can refresh encountersSoFar +
@@ -236,22 +238,21 @@ export class PersistentAgent {
       // Detect LLM unavailability
       if (loopCount === 1 && res.content && res.content.trim().startsWith('{"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
         // LLM unavailable — return a default result with atmospheric fallback narrative.
-        // UX-P0-4: Previously the narrative was literally "The encounter was completed
-        // without LLM interaction." — hollow and breaking immersion. Now we generate
-        // an atmospheric fallback that uses the encounter's context (NPC name, line,
-        // modality) to create a sense of "something happened" even without an LLM.
-        const enc = this.selectedEncounter;
-        const holonName = enc?.holonSource ?? 'an unseen presence';
-        const line = enc?.targetLines[0] ?? 'an unknown path';
-        const modality = enc?.modality ?? 'an encounter';
+        // UX-R2-1: Fixed grammar bug ("The an unknown path") and repetition.
+        // The templates now use proper article handling and non-repeating selection.
+        // Use a static counter for non-repeating selection across encounters
+        const idx = PersistentAgent.fallbackNarrativeCounter++ % 8;
         const fallbackNarratives = [
-          `The ${modality} with ${holonName} settles into silence. Something shifted along ${line}, though the shape of it remains unclear.`,
-          `${holonName} watches as the moment passes. A pattern along ${line} stirred — not resolved, but acknowledged.`,
-          `The encounter fades. ${holonName} nods slowly. What was touched on ${line} will return when it's ready.`,
-          `Silence falls. The work on ${line} continues beneath the surface, even as ${holonName} turns away.`,
-          `Something moved — subtle, quiet. ${holonName} saw it too. The ${line} edge sharpened, then softened.`,
+          `The moment settles. Something stirred — not fully formed, but present. The work continues beneath the surface.`,
+          `Silence falls. What was touched will return when it's ready. The edge sharpened, then softened.`,
+          `A pattern surfaced and was acknowledged. Not resolved — but seen. The ground shifted, barely.`,
+          `The encounter fades like a half-remembered dream. Something moved. You'll know it again.`,
+          `Stillness. The kind that comes after a question lands. The shape of the answer is still forming.`,
+          `A thread was pulled. The fabric holds, but the pattern changed. Time will show how much.`,
+          `The air thins. Something that was hidden is now half-visible. You can't unsee it, even if you can't name it yet.`,
+          `The work deepens. What began as a question is becoming a knowing — not yet clear, but no longer avoidable.`,
         ];
-        const narrativeSummary = fallbackNarratives[Math.floor(Math.random() * fallbackNarratives.length)];
+        const narrativeSummary = fallbackNarratives[idx];
         return {
           passed: true,
           driveScores: { agency: 0.5, communion: 0.5, eros: 0.5, agape: 0.5 },
