@@ -8,7 +8,7 @@ import type { Quadrant, TaskSlug } from './SharedTypes.js';
 import type { Ray } from './Ray.js';
 import type { Stage } from './Stage.js';
 
-export type EncounterRole = 'side' | 'mini' | 'main' | 'shadow';
+export type EncounterRole = 'side' | 'mini' | 'main' | 'shadow' | 'threshold';
 
 export interface TaskBind {
   readonly taskSlug: TaskSlug;
@@ -38,4 +38,10 @@ export interface EncounterSpec {
   readonly taskBinds: readonly TaskBind[];
   readonly narrative: EncounterNarrative;
   readonly enemy: EncounterEnemy;
+  /** GAP-WB-10: holonId for narrative coherence — links encounter to a specific NPC holon. */
+  readonly holonId?: string;
+  /** GAP-WB-3: For multi-phase boss encounters, the phase index (0-based). */
+  readonly phaseIndex?: number;
+  /** GAP-WB-3: Total phases for multi-phase boss encounters. */
+  readonly totalPhases?: number;
 }

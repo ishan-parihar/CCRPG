@@ -14,8 +14,8 @@ const VALID_TASK_SLUGS: readonly TaskSlug[] = [
 ];
 
 describe('Red Encounter Data', () => {
-  it('contains exactly 30 encounter templates', () => {
-    expect(redEncounterData).toHaveLength(30);
+  it('contains exactly 34 encounter templates (30 side + 4 threshold)', () => {
+    expect(redEncounterData).toHaveLength(34);
   });
 
   it('all encounters are valid EncounterSpec objects', () => {
@@ -24,7 +24,7 @@ describe('Red Encounter Data', () => {
       expect(enc.lines.length).toBeGreaterThanOrEqual(1);
       expect(enc.stage).toBe('Red');
       expect(enc.quadrants.length).toBeGreaterThanOrEqual(1);
-      expect(enc.role).toBe('side');
+      expect(['side', 'mini', 'main', 'shadow', 'threshold']).toContain(enc.role);
       expect(enc.ray).toBe('Yellow');
       expect(enc.taskBinds.length).toBeGreaterThanOrEqual(1);
       expect(enc.narrative.theme).toBeTruthy();
@@ -104,14 +104,14 @@ describe('Red Encounter Data', () => {
     }
   });
 
-  it('each line has 3-4 encounters as primary line', () => {
+  it('each line has 3-8 encounters as primary line (includes threshold encounters)', () => {
     for (const line of ALL_LINES) {
       const count = redEncounterData.filter(e => e.lines[0] === line).length;
       expect(
         count,
-        `Line ${line} has ${count} encounters (expected 3-4)`,
+        `Line ${line} has ${count} encounters (expected 3-8)`,
       ).toBeGreaterThanOrEqual(3);
-      expect(count).toBeLessThanOrEqual(4);
+      expect(count).toBeLessThanOrEqual(8);
     }
   });
 });

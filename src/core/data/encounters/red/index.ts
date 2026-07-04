@@ -7,6 +7,7 @@ import { spiritualEncounters } from './spiritual.js';
 import { somaticEncounters } from './somatic.js';
 import { willpowerEncounters } from './willpower.js';
 import { interpersonalEncounters } from './interpersonal.js';
+import { conquerorEncounters } from './conqueror.js';
 
 export const redEncounterData: readonly EncounterSpec[] = [
   ...cognitiveEncounters,
@@ -17,4 +18,6 @@ export const redEncounterData: readonly EncounterSpec[] = [
   ...somaticEncounters,
   ...willpowerEncounters,
   ...interpersonalEncounters,
+  // GAP-WB-3: Register the 4-phase Conqueror boss encounters
+  ...conquerorEncounters,
 ];
