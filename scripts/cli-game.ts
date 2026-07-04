@@ -33,7 +33,7 @@ const VERSION = '0.1.0';
 const program = new Command()
   .name('ccrpg')
   .version(VERSION)
-  .description('CCRPG')
+  .description('CCRPG — A developmental RPG where every encounter is a validated assessment that simultaneously diagnoses and evolves your cognitive, emotional, moral, and spiritual capacities across 8 lines of intelligence and 8 stages of consciousness.')
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
   .option('--verbose', 'Show full narrative and feedback')
@@ -1019,7 +1019,10 @@ async function runDiagnostic(): Promise<void> {
   const npcCount = world.holons.filter(h => h.kind === 'NPC').length;
   const factionCount = world.holons.filter(h => h.kind === 'Faction').length;
   const locationCount = world.holons.filter(h => h.kind === 'Location').length;
-  success(`${world.holons.length} total: ${npcCount} NPCs, ${factionCount} factions, ${locationCount} locations`);
+  const otherCount = world.holons.length - npcCount - factionCount - locationCount;
+  // UX-P0-5: Fix holon count mismatch — show all kinds so math adds up
+  const breakdown = `${npcCount} NPCs, ${factionCount} factions, ${locationCount} locations${otherCount > 0 ? `, ${otherCount} others` : ''}`;
+  success(`${world.holons.length} total: ${breakdown}`);
 
   console.log('\nSignificator:');
   const sig = await createDefaultSignificator();
@@ -1125,14 +1128,26 @@ async function runDirectQuestioningSession(
   initialWorld: WorldState,
 ): Promise<void> {
   banner('DIRECT QUESTIONING');
-  console.log(`  ${chalk.dim('A series of open questions. Answer each in your own words.')}\n`);
+  if (!JSON_MODE) console.log(`  ${chalk.dim('A series of open questions. Answer each in your own words.')}\n`);
 
   const ALL_LINES: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
-  // ponytail: Fisher-Yates shuffle in-place
-  const shuffledLines = [...ALL_LINES];
-  for (let i = shuffledLines.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffledLines[i]!, shuffledLines[j]!] = [shuffledLines[j]!, shuffledLines[i]!];
+  // UX-P0-1: Respect --encounters, --line, --stage flags in DQ mode.
+  // Previously these were silently ignored — user asks for 3 encounters, gets 8.
+  // Now: if --line is set, run only that line. If --encounters is set and < 8,
+  // run only that many lines. If --stage is set, force that stage.
+  let linesToRun: Line[];
+  if (FORCE_LINE) {
+    linesToRun = [FORCE_LINE];
+  } else {
+    // Fisher-Yates shuffle
+    const shuffledLines = [...ALL_LINES];
+    for (let i = shuffledLines.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffledLines[i]!, shuffledLines[j]!] = [shuffledLines[j]!, shuffledLines[i]!];
+    }
+    // Respect --encounters count (cap at 8 lines)
+    const count = Math.min(encounterCount, shuffledLines.length);
+    linesToRun = shuffledLines.slice(0, count);
   }
 
   let currentSig = initialSig;
@@ -1141,12 +1156,13 @@ async function runDirectQuestioningSession(
   const consecutivePasses = new Map<string, number>();
   const agent = new SessionAgent();
 
-  for (let i = 0; i < shuffledLines.length; i++) {
-    const line = shuffledLines[i]!;
-    const currentStage = currentSig.altitudes[line] ?? 'Red';
+  for (let i = 0; i < linesToRun.length; i++) {
+    const line = linesToRun[i]!;
+    // UX-P0-1: Respect --stage forcing
+    const currentStage = FORCE_STAGE ?? currentSig.altitudes[line] ?? 'Red';
 
     // T-3.4 (Veil compliance): don't leak the line taxonomy name.
-    separator(`Question ${i + 1}/8`);
+    separator(`Question ${i + 1}/${linesToRun.length}`);
 
     // ponytail: synthetic encounter forces LanguageReflective modality
     const encounter: ScheduledEncounter = {
@@ -1317,11 +1333,19 @@ async function runFullSession(): Promise<void> {
     if (!llmUp) {
       LLM_ACTIVE = false;
       s2?.warn('LLM unreachable — falling back to module assessments (use --no-llm to skip this check)');
+      // UX-P0-3: Emit LLM-unavailable warning in JSON mode too
+      if (JSON_MODE) {
+        emitEvent('warning', { code: 'llm_unavailable', message: 'LLM unreachable — using module-only mode. Set --no-llm to suppress this check.' });
+      }
     } else {
       s2?.succeed(`LLM active: ${ACTIVE_MODEL}`);
     }
   } else {
     s2?.info('LLM disabled (--no-llm or no API key)');
+    // UX-P0-3: Emit warning in JSON mode when LLM was requested but no key
+    if (JSON_MODE && !NO_LLM) {
+      emitEvent('warning', { code: 'llm_no_key', message: 'No LLM API key configured — using module-only mode. Run `ccrpg setup` to configure.' });
+    }
   }
 
   // Holons
@@ -2094,6 +2118,25 @@ async function runStatus(): Promise<void> {
             ? 'Your path deepens with each step.'
             : 'The shape of your journey grows clear.';
       info('journey', milestone);
+      info('encounters', `${sig.totalEncounters} completed across ${sig.totalSessions} session(s)`);
+
+      // UX-P2-1: Show per-line progress as a Veil-compliant qualitative display.
+      // Previously status showed only flavor text — no visible progression.
+      // Now the user can see which lines they've explored and a sense of depth.
+      const ALL_LINES_DISPLAY: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
+      const stageLabels: Record<string, string> = {
+        Infrared: '◇', Magenta: '◈', Red: '◆', Amber: '✦',
+        Orange: '★', Green: '❋', Turquoise: '✺', White: '☉',
+      };
+      console.log(`\n  ${chalk.bold('Developmental Lines')}`);
+      for (const line of ALL_LINES_DISPLAY) {
+        const stage = sig.altitudes[line] ?? 'Red';
+        const symbol = stageLabels[stage] ?? '◆';
+        const cellKey = `${line}:${stage}`;
+        const traces = sig.polarity.cells[cellKey]?.traceCount ?? 0;
+        const bar = '▓'.repeat(Math.min(8, traces)) + '░'.repeat(Math.max(0, 8 - Math.min(8, traces)));
+        console.log(`    ${chalk.cyan(line.padEnd(16))} ${symbol} ${chalk.dim(bar)} ${chalk.dim(`${traces} encounter${traces === 1 ? '' : 's'}`)}`);
+      }
 
       // Wave 3.1: Dev-mode holistic primitives
       if (DEV_MODE) {
@@ -2158,12 +2201,22 @@ async function main(): Promise<void> {
         stopTDGBridge();
       }).catch(() => {});
     } catch { /* TDG not available — skip */ }
-    console.log(`${chalk.yellow('↻')} Progress reset. Run ${chalk.bold('ccrpg')} to start a new game.`);
+    console.log(`${chalk.yellow('↻')} Progress reset. Run ${chalk.bold('ccrpg session')} to start a new game.`);
     return;
   }
 
   if (!JSON_MODE) {
     console.log(`\n${chalk.bold.cyan('CCRPG')} v${VERSION}`);
+    // UX-P1-1: First-run onboarding — show intro text if no save exists
+    if (!hasSave()) {
+      console.log(`\n${chalk.dim('Welcome to CCRPG — a developmental RPG.')}`);
+      console.log(`${chalk.dim('You\'ll be asked questions across 8 lines of intelligence.')}`);
+      console.log(`${chalk.dim('Your answers shape your developmental profile.')}`);
+      console.log(`${chalk.dim('There are no wrong answers. Take your time.')}`);
+      console.log(`${chalk.dim('Run `ccrpg diagnostic` to check system status.')}`);
+      console.log(`${chalk.dim('Run `ccrpg status` to see your progress.')}`);
+      console.log(`${chalk.dim('Run `ccrpg new-game` to start over.')}\n`);
+    }
   }
 
   try {

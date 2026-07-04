@@ -235,13 +235,29 @@ export class PersistentAgent {
 
       // Detect LLM unavailability
       if (loopCount === 1 && res.content && res.content.trim().startsWith('{"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
-        // LLM unavailable — return a default result
+        // LLM unavailable — return a default result with atmospheric fallback narrative.
+        // UX-P0-4: Previously the narrative was literally "The encounter was completed
+        // without LLM interaction." — hollow and breaking immersion. Now we generate
+        // an atmospheric fallback that uses the encounter's context (NPC name, line,
+        // modality) to create a sense of "something happened" even without an LLM.
+        const enc = this.selectedEncounter;
+        const holonName = enc?.holonSource ?? 'an unseen presence';
+        const line = enc?.targetLines[0] ?? 'an unknown path';
+        const modality = enc?.modality ?? 'an encounter';
+        const fallbackNarratives = [
+          `The ${modality} with ${holonName} settles into silence. Something shifted along ${line}, though the shape of it remains unclear.`,
+          `${holonName} watches as the moment passes. A pattern along ${line} stirred — not resolved, but acknowledged.`,
+          `The encounter fades. ${holonName} nods slowly. What was touched on ${line} will return when it's ready.`,
+          `Silence falls. The work on ${line} continues beneath the surface, even as ${holonName} turns away.`,
+          `Something moved — subtle, quiet. ${holonName} saw it too. The ${line} edge sharpened, then softened.`,
+        ];
+        const narrativeSummary = fallbackNarratives[Math.floor(Math.random() * fallbackNarratives.length)];
         return {
           passed: true,
           driveScores: { agency: 0.5, communion: 0.5, eros: 0.5, agape: 0.5 },
           driveSignals: { agency: 'HealthyBalanced', communion: 'HealthyBalanced', eros: 'HealthyBalanced', agape: 'HealthyBalanced' },
           polarityDirection: 'neutral',
-          narrativeSummary: 'The encounter was completed without LLM interaction.',
+          narrativeSummary,
           selectedEncounter: this.selectedEncounter,
         };
       }
