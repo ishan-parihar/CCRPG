@@ -32,6 +32,7 @@ import {
   summarizeUserMatrix,
   type UserMatrixModel,
 } from './engines/UserMatrixModel.js';
+import { maybeFireHook } from '../infra/tdg/TDGBridge.js';
 
 export interface TickResult {
   readonly encounter: ScheduledEncounter | null;
@@ -95,6 +96,9 @@ export function applyResponseOnly(
   // Check for transformation commit
   const commitResult = commitTransformation(updatedTransformationState);
   if (commitResult.targetStage) {
+    // Hook 3: onTransformation — fire before we mutate sig, using the pre-commit stage as `from`.
+    const fromStage = updatedSig.currentStage;
+    maybeFireHook('onTransformation', (h) => h.onTransformation(fromStage, commitResult.targetStage!, updatedSig));
     updatedSig = {
       ...updatedSig,
       currentStage: commitResult.targetStage,
@@ -258,6 +262,9 @@ export function tickWithStrategy(
   // If transformation completes, commit it and update Significator
   const commitResult = commitTransformation(updatedTransformationState);
   if (commitResult.targetStage) {
+    // Hook 3: onTransformation — fire before mutating sig, using pre-commit stage as `from`.
+    const fromStage = updatedSig.currentStage;
+    maybeFireHook('onTransformation', (h) => h.onTransformation(fromStage, commitResult.targetStage!, updatedSig));
     // Advance the Significator to the new stage
     updatedSig = {
       ...updatedSig,
@@ -489,6 +496,9 @@ export function endSession(
     ...sig,
     totalSessions: sig.totalSessions + 1,
   };
+
+  // Hook 4: onSessionEnd — run TDG sleep replay + consolidation (best-effort, no-op without TDG).
+  maybeFireHook('onSessionEnd', (h) => h.onSessionEnd(updatedSig));
 
   return {
     sig: updatedSig,

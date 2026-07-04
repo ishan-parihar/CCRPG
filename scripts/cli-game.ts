@@ -39,6 +39,7 @@ const program = new Command()
   .option('--verbose', 'Show full narrative and feedback')
   .option('--dev', 'Developer mode: show holistic primitives (G_z/P_z, rayProfile, phase position)')
   .option('--no-llm', 'Disable LLM, use module assessments only')
+  .option('--agent', 'Use the Persistent Developmental Agent (15-tool, session-persistent) instead of AgenticOrchestrator')
   .option('--new-game', 'Start fresh (delete saved progress)')
   .option('-e, --encounters <n>', 'Number of encounters', '20')
   .option('-m, --model <name>', 'Override LLM model name')
@@ -151,6 +152,10 @@ import type { SessionContext } from '../src/core/engines/PriorityComputation.js'
 import { startSession, tickWithStrategy, endSession, applyResponseOnly, type SessionState } from '../src/core/GameLoop.js';
 import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixModel.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
+import { PersistentAgent } from '../src/core/agent/PersistentAgent.js';
+import { runPersistentAgentEncounter } from '../src/core/agent/PersistentAgentBridge.js';
+import { startTDGBridge, stopTDGBridge, getTDGBridgeStatus, registerTDGTools } from '../src/infra/tdg/TDGBridge.js';
+import { createCCRPGToolRegistry } from '../src/core/agent/ToolRegistry.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave } from '../src/infra/persistence/SaveRepository.js';
@@ -179,6 +184,8 @@ const DEV_MODE = (opts as any).dev ?? false;
 const NO_LLM = opts.noLlm ?? false;
 let LLM_ACTIVE = !NO_LLM && apiKey !== 'sk-placeholder';
 const ACTIVE_MODEL = opts.model ?? model;
+/** Phase 3: --agent routes encounters through the Persistent Developmental Agent (15-tool, session-persistent). Default: AgenticOrchestrator (2-tool, 4-exchange budget). */
+const USE_PERSISTENT_AGENT = (opts as any).agent ?? false;
 const encounterCount = parseInt(opts.encounters ?? String(fileConfig.session?.defaultEncounters ?? 20), 10);
 
 const FORCE_LINE = opts.line as Line | undefined;
@@ -1370,6 +1377,59 @@ async function runFullSession(): Promise<void> {
   const consecutivePasses = new Map<string, number>();
   const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
 
+  // Phase 3: If --agent is set, create a session-persistent PersistentAgent.
+  // This instance is reused across all encounters in the session — its message
+  // history accumulates, giving the agent cross-encounter memory. The TDG-Rust
+  // bridge is started best-effort (no-op if the binary isn't installed); when
+  // TDG is running, the 7 TDG-Mind tools are registered alongside the 8 CCRPG
+  // tools, giving the agent the full 15-tool surface.
+  let persistentAgent: PersistentAgent | null = null;
+  if (USE_PERSISTENT_AGENT) {
+    if (!JSON_MODE) info('agent', `${chalk.cyan('Persistent Developmental Agent')} (15-tool, session-persistent)`);
+    // Best-effort TDG-Rust start — no-op if binary not installed
+    await startTDGBridge().catch(() => { /* TDG unavailable — continue with CCRPG tools only */ });
+    const tdgStatus = getTDGBridgeStatus();
+    if (tdgStatus.running && !JSON_MODE) {
+      info('tdg', `${chalk.green('TDG-Rust active')} — graph memory online`);
+    } else if (!JSON_MODE) {
+      info('tdg', `${chalk.dim('TDG-Rust not running — using CCRPG-native 8 tools only')}`);
+    }
+    // Build the tool registry with CCRPG + TDG tools (TDG tools added only if running)
+    const toolRegistry = createCCRPGToolRegistry();
+    if (tdgStatus.running) {
+      await registerTDGTools(toolRegistry);
+    }
+    persistentAgent = new PersistentAgent({
+      sig: currentSig,
+      world: currentWorld,
+      sessionState: {
+        encountersSoFar: 0,
+        targetSessionLength: encounterCount,
+        recentLines: [],
+        userMatrixModel: sessionState.userMatrixModel,
+      },
+      onAskPlayer: async (params) => {
+        // Bridge the agent's ask_player to the CLI's interactive prompt
+        if (HEADLESS || JSON_MODE) {
+          // Non-interactive: return a neutral default
+          return { selectedLabel: params.options?.[0]?.label, writeInValue: undefined };
+        }
+        if (params.narrative) console.log(`\n  ${chalk.dim(params.narrative)}`);
+        const opts = params.options?.map((o: any, idx: number) => ({ value: idx, label: `${idx + 1}. ${o.label}` })) ?? [];
+        if (opts.length > 0) {
+          const choice = await select({ message: params.question, options: opts, initialValue: 0 });
+          const chosen = typeof choice === 'number' ? params.options?.[choice] : undefined;
+          return { selectedLabel: chosen?.label, writeInValue: undefined };
+        }
+        // Write-in only
+        const answer = await clackText({ message: params.question, defaultValue: '' });
+        return { selectedLabel: undefined, writeInValue: answer };
+      },
+      tdgToolRegistry: tdgStatus.running ? toolRegistry : undefined,
+    });
+    if (!JSON_MODE) info('tools', `${toolRegistry.count} tools registered (${toolRegistry.getDefinitionsBySource('ccrpg').length} CCRPG + ${toolRegistry.getDefinitionsBySource('tdg').length} TDG)`);
+  }
+
   for (let i = 0; i < encounterCount; i++) {
     separator(`Encounter ${i + 1}/${encounterCount}`);
 
@@ -1481,11 +1541,13 @@ async function runFullSession(): Promise<void> {
       s.succeed('Encounter ready');
     }
 
-    // Run encounter through AgenticOrchestrator (all modalities)
+    // Run encounter — route through PersistentAgent (--agent) or AgenticOrchestrator (default)
     try {
-      const result = await runAgenticEncounter(
-        selectedEncounter, currentSig, currentWorld, history, responsesPool, consecutivePasses,
-      );
+      const result = USE_PERSISTENT_AGENT && persistentAgent
+        ? await runPersistentAgentEncounter(persistentAgent, selectedEncounter, currentSig, currentWorld)
+        : await runAgenticEncounter(
+            selectedEncounter, currentSig, currentWorld, history, responsesPool, consecutivePasses,
+          );
 
       // Apply consequences from the orchestrator result
       const record = result.outcome.consequenceRecord;
@@ -1509,6 +1571,13 @@ async function runFullSession(): Promise<void> {
         currentSig = applied.sig;
         currentWorld = applied.world;
         sessionState = applied.sessionState;
+      }
+
+      // Phase 3: Keep the PersistentAgent's sig/world snapshot fresh across encounters
+      // so its tool queries reflect the latest state. (The agent holds its own copy
+      // of sig/world for tool execution; we update it here between encounters.)
+      if (persistentAgent) {
+        persistentAgent.updateSnapshot(currentSig, currentWorld);
       }
 
 
@@ -1570,6 +1639,13 @@ async function runFullSession(): Promise<void> {
 
   // Session end — apply theta-decay and persist
   const sessionEnd = endSession(currentSig, sessionState, now + encounterCount * 5000);
+
+  // Phase 3: If the PersistentAgent + TDG bridge was active, stop the TDG-Rust
+  // process now. The onSessionEnd hook (fired inside endSession above) already
+  // ran TDG sleep-replay + save_mind_state; here we just tear down the process.
+  if (USE_PERSISTENT_AGENT) {
+    stopTDGBridge();
+  }
 
   // Save progress to disk (Significator + WorldState)
   saveGame(sessionEnd.sig);

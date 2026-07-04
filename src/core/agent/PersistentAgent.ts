@@ -60,8 +60,8 @@ export class PersistentAgent {
   private messages: AgentMessage[] = [];
   private selectedEncounter: ScheduledEncounter | null = null;
   private lastEncounterResult: EncounterResult | null = null;
-  private readonly sig: Significator;
-  private readonly world: WorldState;
+  private sig: Significator;
+  private world: WorldState;
   private readonly sessionState: ToolContext['sessionState'];
   private readonly onAskPlayer: ToolContext['onAskPlayer'];
   private readonly moduleTaskTypesProvider?: ToolContext['moduleTaskTypesProvider'];
@@ -100,6 +100,18 @@ export class PersistentAgent {
   /** Get the current message history (for cross-encounter continuity). */
   getMessages(): readonly AgentMessage[] {
     return this.messages;
+  }
+
+  /**
+   * Update the agent's sig/world snapshot between encounters.
+   * The agent holds its own copy of sig/world for tool execution; this method
+   * lets the CLI keep that snapshot fresh after consequences are applied, so the
+   * agent's tool queries (ccrpg_get_player_state, ccrpg_get_world_state, etc.)
+   * reflect the latest state.
+   */
+  updateSnapshot(sig: Significator, world: WorldState): void {
+    this.sig = sig;
+    this.world = world;
   }
 
   /** Get the selected encounter (set by ccrpg_select_encounter tool). */

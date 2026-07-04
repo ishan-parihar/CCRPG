@@ -3,7 +3,7 @@
  * Per foundations/25 §1.1 and AUDIT-HOLOOS-ALIGNMENT.md §2.5.6.
  */
 import { describe, it, expect } from 'vitest';
-import { computeCCI } from '../../src/core/engines/CCIEngine.js';
+import { computeCCI, computeCCIWithTDG } from '../../src/core/engines/CCIEngine.js';
 import type { SignificatorSnapshot } from '../../src/core/domain/SignificatorSnapshot.js';
 import type { Line } from '../../src/core/domain/Line.js';
 import type { Stage } from '../../src/core/domain/Stage.js';
@@ -121,5 +121,24 @@ describe('T-1.8 — CCI metabolicHealth (G_z / P_z)', () => {
     const lowScore = computeCCI(lowPolar);
     const highScore = computeCCI(highPolar);
     expect(highScore.metabolicHealth!.pz).toBeGreaterThan(lowScore.metabolicHealth!.pz);
+  });
+});
+
+describe('Phase 4b — computeCCIWithTDG (non-breaking TDG health hook)', () => {
+  it('returns the exact baseline when TDG-Rust is not running (zero regression)', async () => {
+    const snapshot = makeMinimalSnapshot();
+    const baseline = computeCCI(snapshot);
+    // TDG-Rust is not installed in the test env — computeCCIWithTDG must
+    // return the identical baseline (no augmentation, no throw, no change).
+    const augmented = await computeCCIWithTDG(snapshot, 'test-sig');
+    expect(augmented.composite).toBe(baseline.composite);
+    expect(augmented.metabolicHealth!.total).toBe(baseline.metabolicHealth!.total);
+    expect(augmented.dimensions).toEqual(baseline.dimensions);
+  });
+
+  it('never throws even if TDG internals fail', async () => {
+    const snapshot = makeMinimalSnapshot();
+    // Should resolve, not reject — TDG unavailability is a normal path, not an error
+    await expect(computeCCIWithTDG(snapshot, 'nonexistent-player')).resolves.toBeDefined();
   });
 });

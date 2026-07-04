@@ -15,6 +15,7 @@ import type { ShadowEntry } from '../domain/ShadowLedger.js';
 import { recordTrace } from './PolarityEngine.js';
 import type { WorldState } from './CandidateGeneration.js';
 import { EncounterRegistry } from '../registries/index.js';
+import { maybeFireHook } from '../../infra/tdg/TDGBridge.js';
 
 export interface PlayerResponse {
   readonly encounterId: string;
@@ -319,6 +320,42 @@ export function applyConsequences(
     recentEncounters,
     npcRelationships,
   };
+
+  // TDG-Rust hooks (Phase 4 deep integration). Best-effort fire-and-forget:
+  // no-op when TDG-Rust is not running, never blocks the game loop, never throws.
+  // Hook 1: onEncounterComplete — store the encounter as a holon node in the TDG graph.
+  maybeFireHook('onEncounterComplete', (h) => h.onEncounterComplete(encounter, record, newSig));
+  // Hook 2: onShadowSurfaced — store a newly-surfaced shadow as a holon node.
+  if (record.shadowSurfaced) {
+    maybeFireHook('onShadowSurfaced', (h) => h.onShadowSurfaced(
+      `shadow:${record.timestamp}`,
+      record.shadowSurfaced as string,
+      line,
+      stage,
+      0.5,
+      newSig,
+    ));
+  }
+  // Hook 5: onNPCRelationshipChange — mirror NPC relationship deltas into the graph.
+  if (encounter.holonSource) {
+    const rel = npcRelationships.find(r => r.holonId === encounter.holonSource);
+    if (rel) {
+      maybeFireHook('onNPCRelationshipChange', (h) => h.onNPCRelationshipChange(
+        rel.holonId, rel.strength, rel.encounters, newSig,
+      ));
+    }
+  }
+  // Hook 6: onPolarityCrystallized — fire when polarity master mode advances.
+  const oldMode = sig.polarity.master.mode;
+  const newMode = newPolarity.master.mode;
+  if (oldMode !== newMode) {
+    maybeFireHook('onPolarityCrystallized', (h) => h.onPolarityCrystallized(
+      newMode,
+      newPolarity.master.dominantDirection,
+      newPolarity.master.crystallizationProgress,
+      newSig,
+    ));
+  }
 
   return { sig: newSig, world: newWorld };
 }

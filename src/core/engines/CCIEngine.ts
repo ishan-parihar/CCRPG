@@ -799,3 +799,67 @@ export function computeCCI(snapshot: SignificatorSnapshot): CCIScore {
 function clamp(value: number, min = 0.0, max = 1.0): number {
   return Math.max(min, Math.min(max, value));
 }
+
+// ---------------------------------------------------------------------------
+// Phase 4b: Supplementary TDG-Rust health hook (non-breaking, opt-in)
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute the CCI, optionally augmented with TDG-Rust graph-level health (G_z/P_z).
+ *
+ * When TDG-Rust is running, this fetches G_z/P_z for the player holon and blends
+ * it into the metabolicHealth dimension. When TDG-Rust is not running (the common
+ * case), this returns the exact same result as computeCCI() — zero regression.
+ *
+ * This is the Phase 4 progressive-integration path: the Significator remains the
+ * source of truth, but TDG provides an additional graph-level metabolic signal
+ * when available. The blending is conservative (TDG contributes at most 20% of
+ * the metabolic dimension) to preserve CCRPG's existing behavioural baseline.
+ *
+ * Async because TDG calls are async (MCP over stdio). Callers that don't need
+ * TDG augmentation should use the sync computeCCI() instead.
+ */
+export async function computeCCIWithTDG(
+  snapshot: SignificatorSnapshot,
+  playerId: string,
+): Promise<CCIScore> {
+  const baseline = computeCCI(snapshot);
+
+  // Best-effort TDG health fetch — no-op when TDG is not running.
+  // We use a dynamic import to avoid a static dependency cycle: CCIEngine is
+  // imported broadly, and TDGBridge imports ConsequenceEngine which imports
+  // engines that import CCIEngine. Dynamic import breaks the cycle.
+  let tdgHealth: { gz: number; pz: number; total: number } | null = null;
+  try {
+    const { getTDGHooks } = await import('../../infra/tdg/TDGBridge.js');
+    const hooks = getTDGHooks();
+    if (hooks && hooks.isActive()) {
+      tdgHealth = await hooks.getHealth(`player:${playerId}`);
+    }
+  } catch {
+    tdgHealth = null;
+  }
+
+  if (!tdgHealth) {
+    return baseline; // TDG unavailable — return pure baseline, zero regression
+  }
+
+  // Blend TDG's G_z/P_z into the metabolic dimension (conservative 20% weight).
+  // This augments — never replaces — the baseline CCI computation.
+  // If the baseline has no metabolicHealth (older snapshot shape), return as-is.
+  if (!baseline.metabolicHealth) {
+    return baseline;
+  }
+  const tdgTotal = clamp(tdgHealth.total);
+  const blendedTotal = clamp(baseline.metabolicHealth.total * 0.8 + tdgTotal * 0.2);
+
+  return {
+    ...baseline,
+    metabolicHealth: {
+      ...baseline.metabolicHealth,
+      total: blendedTotal,
+      // interpretation is a closed union type — leave the baseline value intact.
+      // Callers can detect TDG augmentation via getTDGBridgeStatus() if needed.
+    },
+  };
+}
