@@ -273,3 +273,136 @@ export function diagnoseShadows(sig: Significator): readonly ShadowDiagnosis[] {
 function clamp01(x: number): number {
   return Math.max(0, Math.min(1, x));
 }
+
+// ─── CRITICAL-2: Atman Project + Jonah Complex (foundations/13) ──────
+
+export interface AtmanDefenseSignal {
+  readonly defense: 'rationalization' | 'isolation' | 'desacralizing' | 'substitution';
+  readonly intensity: number;     // 0-1
+  readonly description: string;
+}
+
+export interface JonahComplexSignal {
+  readonly detected: boolean;
+  readonly intensity: number;     // 0-1
+  readonly description: string;
+}
+
+export interface AtmanProjectAssessment {
+  readonly defenses: readonly AtmanDefenseSignal[];
+  readonly jonahComplex: JonahComplexSignal;
+  readonly overallAtmanPressure: number;  // 0-1, how much the Atman Project is blocking evolution
+}
+
+/**
+ * CRITICAL-2: Assess Atman Project defenses + Jonah Complex.
+ *
+ * Per foundations/13 §"The Atman Project and the Defenses Against Transcendence":
+ * - Rationalization: dismisses transcendence as impossible (blocks Eros)
+ *   CCRPG signal: player only engages Deterministic/Strategic modalities, never
+ *   LanguageReflective or ImmersiveRPG (refuses open-ended reflection)
+ * - Isolation: maintains rigid self-boundary (blocks Communion)
+ *   CCRPG signal: player avoids Interpersonal/SocialCooperative encounters
+ * - Desacralizing: strips meaning from experience (blocks Agape)
+ *   CCRPG signal: player rushes through encounters (low narrativeSummary length)
+ * - Substitution: chases finite gratification instead of growth (Eros dark-addiction of Agency)
+ *   CCRPG signal: high Agency fixation + low Spiritual/Intrapersonal altitude
+ *
+ * Jonah Complex (foundations/13 §"The Emergent Domain"):
+ * - Fear of one's own greatness — refusing the call to the next stage
+ *   CCRPG signal: high golden-allergy rate + low aspirational drive expression
+ *   + avoidance of next-stage encounters
+ *
+ * @param sig The player's Significator
+ * @param recentEncounters The player's recent encounter history
+ */
+export function assessAtmanProject(
+  sig: Significator,
+  recentEncounters: readonly EncounterRecord[],
+): AtmanProjectAssessment {
+  const defenses: AtmanDefenseSignal[] = [];
+  const now = Date.now();
+  const recentWindow = 30 * 60 * 1000; // 30 minutes
+  const recent = recentEncounters.filter(e => now - e.timestamp < recentWindow);
+
+  // 1. Rationalization: player only engages deterministic modalities
+  // Signal: ≥3 recent encounters with no reflection/open-ended engagement
+  if (recent.length >= 3) {
+    const reflectiveCount = recent.filter(e =>
+      e.passed && e.timestamp > 0, // proxy: any passed encounter could be reflective
+    ).length;
+    const rationalizationRate = 1 - (reflectiveCount / recent.length);
+    if (rationalizationRate > 0.5) {
+      defenses.push({
+        defense: 'rationalization',
+        intensity: clamp01(rationalizationRate),
+        description: 'Player predominantly engages with deterministic tasks, avoiding open-ended reflection.',
+      });
+    }
+  }
+
+  // 2. Isolation: player avoids Interpersonal encounters
+  // Signal: Interpersonal line altitude is significantly below overall stage
+  const interpOrd = stageOrdinal(sig.altitudes.Interpersonal);
+  const currentOrd = stageOrdinal(sig.currentStage);
+  if (currentOrd - interpOrd >= 1) {
+    defenses.push({
+      defense: 'isolation',
+      intensity: clamp01((currentOrd - interpOrd) * 0.3),
+      description: `Interpersonal line is ${currentOrd - interpOrd} stage(s) below overall — possible rigid self-boundary.`,
+    });
+  }
+
+  // 3. Desacralizing: player rushes through encounters (low engagement)
+  // Signal: high avoidance rate or very short encounter durations
+  if (recent.length >= 3) {
+    const avoidanceRate = recent.filter(e => !e.passed).length / recent.length;
+    if (avoidanceRate > 0.4) {
+      defenses.push({
+        defense: 'desacralizing',
+        intensity: clamp01(avoidanceRate),
+        description: `High avoidance rate (${(avoidanceRate * 100).toFixed(0)}%) — possible meaning-stripping or engagement avoidance.`,
+      });
+    }
+  }
+
+  // 4. Substitution: high Agency fixation + low Spiritual/Intrapersonal altitude
+  // Signal: chasing achievement (Agency) instead of growth (Spiritual)
+  const agencyFixation = sig.drives.fixationRisk.Agency ?? 0;
+  const spiritualOrd = stageOrdinal(sig.altitudes.Spiritual);
+  if (agencyFixation > 0.5 && currentOrd - spiritualOrd >= 1) {
+    defenses.push({
+      defense: 'substitution',
+      intensity: clamp01(agencyFixation * 0.5 + (currentOrd - spiritualOrd) * 0.25),
+      description: 'High Agency fixation with low Spiritual altitude — possible finite-gratification substitution for growth.',
+    });
+  }
+
+  // Jonah Complex: fear of greatness
+  // Signal: high golden-allergy rate + low aspirational expression + avoidance of next-stage
+  const goldenAllergies = sig.shadows.entries.filter(
+    e => e.resolvedAt === null && e.quadrant === 'GoldenAllergy',
+  );
+  const goldenAllergyIntensity = goldenAllergies.length > 0
+    ? goldenAllergies.reduce((sum, e) => sum + e.severity, 0) / goldenAllergies.length
+    : 0;
+  const nextStageEncounters = recent.filter(e =>
+    stageOrdinal(sig.altitudes[e.line]) >= currentOrd,
+  ).length;
+  const nextStageAvoidance = recent.length > 0 ? 1 - (nextStageEncounters / recent.length) : 0;
+
+  const jonahIntensity = clamp01(goldenAllergyIntensity * 0.4 + nextStageAvoidance * 0.3 + (agencyFixation > 0.3 ? 0.3 : 0));
+  const jonahComplex: JonahComplexSignal = {
+    detected: jonahIntensity > 0.4,
+    intensity: jonahIntensity,
+    description: jonahIntensity > 0.4
+      ? 'Golden-allergy patterns + next-stage avoidance detected — possible fear of own greatness (Jonah Complex).'
+      : 'No significant Jonah Complex pattern detected.',
+  };
+
+  const overallAtmanPressure = clamp01(
+    defenses.reduce((sum, d) => sum + d.intensity, 0) / 4 + jonahComplex.intensity * 0.3,
+  );
+
+  return { defenses, jonahComplex, overallAtmanPressure };
+}

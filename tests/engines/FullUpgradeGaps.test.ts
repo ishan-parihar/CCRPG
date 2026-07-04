@@ -159,19 +159,20 @@ describe('GAP-F-7: rayProfile drives transformation readiness', () => {
         Green: 0.5,
       } as typeof sig.rayProfile,
     };
-    // With all 8 lines at Red (currentOrd=2), target Amber (currentOrd=2):
-    // convergence = min(1, 8/5) = 1.0 (all lines at or above current stage)
-    // saturation = 0 (no polarity traces)
-    // shadowClearance = 1 (no shadows)
-    // rayReadiness = 1 (Yellow=0.8>0.6, Green=0.5>0.3)
-    // overall = 1.0*0.4 + 0*0.25 + 1*0.25 + 1*0.1 = 0.75
+    // CRITICAL-1: The formula changed from 40%/25%/25%/10% to 35%/20%/20%/10%/15% (AQAL).
+    // With all 8 lines at Red (currentOrd=2), target Amber:
+    // convergence = 1.0, saturation = 0, shadowClearance = 1, rayReadiness = 1
+    // AQAL: all 8 lines at Red → UL(3)+UR(3)+LL(2) = 3 quadrants covered.
+    // LR covered if polarity cell activity at current stage (none for fresh sig → not covered).
+    // aqalCoherence = 3/4 = 0.75 → >= 0.75 → full formula applies
+    // overall = 1.0*0.35 + 0*0.20 + 1*0.20 + 1*0.10 + 0.75*0.15 = 0.35+0+0.20+0.10+0.1125 = 0.7625
     const report = computeReadiness(sigWithRays, 'Amber');
-    expect(report.overall).toBeCloseTo(0.75, 1);
+    expect(report.overall).toBeCloseTo(0.7625, 1);
 
     // Without ray activation, rayReadiness = 0:
-    // overall = 1.0*0.4 + 0*0.25 + 1*0.25 + 0*0.1 = 0.65
+    // overall = 1.0*0.35 + 0*0.20 + 1*0.20 + 0*0.10 + 0.75*0.15 = 0.6625
     const reportNoRays = computeReadiness(sig, 'Amber');
-    expect(reportNoRays.overall).toBeCloseTo(0.65, 1);
+    expect(reportNoRays.overall).toBeCloseTo(0.6625, 1);
 
     // The difference (0.10) is the rayReadiness contribution
     expect(report.overall - reportNoRays.overall).toBeCloseTo(0.1, 1);

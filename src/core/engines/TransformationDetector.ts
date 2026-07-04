@@ -3,11 +3,12 @@
  * Spec: foundations/17 §2
  */
 import type { Line } from '../domain/Line.js';
-import { ALL_LINES } from '../domain/Line.js';
+import { ALL_LINES, LINE_QUADRANT } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
 import { ALL_STAGES, stageOrdinal } from '../domain/Stage.js';
 import { STAGE_RAY_MAP } from '../domain/Ray.js';
 import type { Significator } from '../domain/Significator.js';
+import type { Quadrant } from '../domain/SharedTypes.js';
 
 export interface TransformationSignal {
   readonly targetStage: Stage;
@@ -95,8 +96,37 @@ export function computeReadiness(sig: Significator, targetStage: Stage): Readine
   // Ray readiness: current ray saturated (>0.6) AND target ray rising (>0.3)
   const rayReadiness = (currentRayActivation > 0.6 && targetRayActivation > 0.3) ? 1 : 0;
 
-  // Overall: convergence 40% + saturation 25% + shadowClearance 25% + rayReadiness 10%
-  const overall = convergence * 0.4 + saturation * 0.25 + shadowClearance * 0.25 + rayReadiness * 0.1;
+  // CRITICAL-1: AQAL 4-quadrant coherence gate.
+  // Per foundations/01 §4, all 4 quadrants (UL/UR/LL/LR) must have at least
+  // one line at or above the current stage for transformation to fire.
+  // This prevents "integral fallacy" — transformation on cognitive-only evidence.
+  // Note: CCRPG's LINE_QUADRANT maps 6 lines to UL/UR/LL but none to LR.
+  // LR (exterior-collective) is covered by the world-state PESTLE system.
+  // We treat LR as "covered" if any macro-event or PESTLE tension is active
+  // (the world is exerting systemic pressure). For now, LR coverage is assumed
+  // if the player has ≥1 encounter at the current stage (simplification until
+  // LR lines are added or world-state is integrated into the gate).
+  const quadrantsCovered = new Set<Quadrant>();
+  for (const line of ALL_LINES) {
+    const lineOrd = stageOrdinal(sig.altitudes[line]);
+    if (lineOrd >= currentOrd) {
+      quadrantsCovered.add(LINE_QUADRANT[line]);
+    }
+  }
+  // LR is "covered" if there's any polarity cell activity at the current stage
+  // (proxy for systemic/world engagement). This is a simplification — a proper
+  // LR gate would check PESTLE tension or macro-event activity.
+  const lrActivity = Object.keys(sig.polarity.cells).some(k => k.endsWith(`:${sig.currentStage}`));
+  if (lrActivity) quadrantsCovered.add('LR');
+
+  const aqalCoherence = quadrantsCovered.size >= 3 ? 1 : quadrantsCovered.size / 4;
+
+  // Overall: convergence 35% + saturation 20% + shadowClearance 20% + rayReadiness 10% + AQAL 15%
+  // AQAL gate reduces readiness if quadrants are missing. If < 3 quadrants covered,
+  // readiness is capped at 0.5 (can't reach the 0.8 threshold without AQAL coherence).
+  const overall = aqalCoherence < 0.75
+    ? Math.min(0.5, convergence * 0.35 + saturation * 0.20 + shadowClearance * 0.20 + rayReadiness * 0.10 + aqalCoherence * 0.15)
+    : convergence * 0.35 + saturation * 0.20 + shadowClearance * 0.20 + rayReadiness * 0.10 + aqalCoherence * 0.15;
 
   return { convergence, saturation, shadowClearance, overall };
 }

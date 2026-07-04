@@ -16,7 +16,7 @@ import type { Modality, ShadowQuadrant } from '../../domain/enums.js';
 import type { Drive } from '../../domain/Drive.js';
 // P1-16: Wire ShadowDetector into the agent's player-state query so the agent
 // can access behavioral shadow detection (repression, fixation, regression).
-import { detectShadows, diagnoseShadows } from '../../usecases/ShadowDetector.js';
+import { detectShadows, diagnoseShadows, assessAtmanProject } from '../../usecases/ShadowDetector.js';
 import type { Line } from '../../domain/Line.js';
 import type { Stage } from '../../domain/Stage.js';
 import { stageOrdinal } from '../../domain/Stage.js';
@@ -452,6 +452,26 @@ export async function executeCCRPGTool(
             },
           ]),
         ),
+        // CRITICAL-2: Atman Project + Jonah Complex assessment
+        // Per foundations/13, the Atman Project is THE mechanism that stalls
+        // evolution. Without detecting it, CCRPG cannot distinguish genuine
+        // developmental arrest from genuine integration.
+        atmanProject: (() => {
+          const assessment = assessAtmanProject(sig, sig.recentEncounters ?? []);
+          return {
+            overallPressure: assessment.overallAtmanPressure < 0.3 ? 'low' : assessment.overallAtmanPressure < 0.6 ? 'moderate' : 'high',
+            defenses: assessment.defenses.map(d => ({
+              defense: d.defense,
+              intensity: d.intensity < 0.4 ? 'mild' : d.intensity < 0.7 ? 'moderate' : 'strong',
+              description: d.description,
+            })),
+            jonahComplex: {
+              detected: assessment.jonahComplex.detected,
+              intensity: assessment.jonahComplex.intensity < 0.4 ? 'mild' : assessment.jonahComplex.intensity < 0.7 ? 'moderate' : 'strong',
+              description: assessment.jonahComplex.description,
+            },
+          };
+        })(),
       });
     }
 
@@ -630,6 +650,36 @@ export async function executeCCRPGTool(
         scores: args.scores as Record<string, number> | undefined,
         shadowResolvedId: args.shadowResolvedId as string | undefined,
       };
+
+      // WIRE-6: Validate shadowResolvedId using isShadowResolved before accepting.
+      // Previously the agent could self-certify shadow resolution with no guardrail.
+      // Now we check that the shadow actually meets the spec's resolution criterion
+      // (severity < 0.2 AND ≥2 healthy encounters on that line since surfacing).
+      let shadowResolutionValid = true;
+      let shadowResolutionReason = '';
+      if (result.shadowResolvedId) {
+        try {
+          const { isShadowResolved } = await import('../../usecases/ShadowDetector.js');
+          const shadow = ctx.sig.shadows.entries.find(e => e.id === result.shadowResolvedId);
+          if (shadow) {
+            const recentEncounters = ctx.sig.recentEncounters ?? [];
+            shadowResolutionValid = isShadowResolved(shadow, recentEncounters, shadow.severity);
+            if (!shadowResolutionValid) {
+              shadowResolutionReason = 'Shadow does not meet resolution criteria (severity ≥ 0.2 or < 2 healthy encounters since surfacing). Resolution claim ignored.';
+              // Don't pass through an invalid resolution — the bridge would apply it
+              // to ConsequenceEngine which would mark the shadow resolved when it isn't.
+              result.shadowResolvedId = undefined;
+            }
+          } else {
+            shadowResolutionValid = false;
+            shadowResolutionReason = `Shadow ID ${result.shadowResolvedId} not found in active shadows.`;
+            result.shadowResolvedId = undefined;
+          }
+        } catch {
+          // isShadowResolved unavailable — allow the resolution (best-effort)
+        }
+      }
+
       ctx.onEncounterComplete(result);
       // P1-10: Return a rich feedback summary so the agent has a feedback loop
       // on what its evaluation will cause. Previously the tool returned only
@@ -682,6 +732,9 @@ export async function executeCCRPGTool(
           stage: ctx.selectedEncounter.stage,
           line: ctx.selectedEncounter.targetLines[0],
         } : null,
+        // WIRE-6: Shadow resolution validation result
+        shadowResolution: shadowResolutionValid ? 'accepted' : 'rejected',
+        shadowResolutionReason: shadowResolutionReason || undefined,
       });
     }
 
@@ -702,12 +755,38 @@ export async function executeCCRPGTool(
       const line = args.line as Line;
       const stage = args.stage as Stage;
       const content = getFallback(modality, line, stage, ctx.sig.currentStage);
+
+      // WIRE-4: Wire generateShadowContent into the PersistentAgent path.
+      // Previously generateShadowContent (with 32 archetype names) was only called
+      // from the legacy AgenticOrchestrator — the PersistentAgent path never
+      // reached it. Now, when the selected encounter is in shadow mode, we
+      // also return shadow-specific content (archetype name, prompts, evaluation
+      // criteria, integration/avoidance feedback).
+      let shadowContent: { archetypeName: string; narrativeIntro: string; prompts: string[]; integrationFeedback: string; avoidanceFeedback: string } | null = null;
+      if (ctx.selectedEncounter?.executionMode === 'shadow' && ctx.selectedEncounter.shadowTarget) {
+        try {
+          const { generateShadowContent, getShadowArchetypeName } = await import('../../engines/ShadowContentGenerator.js');
+          const sc = generateShadowContent(line, stage, ctx.selectedEncounter.shadowTarget);
+          shadowContent = {
+            archetypeName: getShadowArchetypeName(line, ctx.selectedEncounter.shadowTarget),
+            narrativeIntro: sc.narrativeIntro,
+            prompts: [...sc.prompts],
+            integrationFeedback: sc.integrationFeedback,
+            avoidanceFeedback: sc.avoidanceFeedback,
+          };
+        } catch {
+          // ShadowContentGenerator unavailable — skip
+        }
+      }
+
       return JSON.stringify({
         prompt: content.prompt ?? null,
         scenario: content.scenario ?? null,
         framing: content.framing ?? null,
         options: content.options ?? null,
         followUps: content.followUps ?? null,
+        // WIRE-4: Shadow content for shadow-mode encounters (PersistentAgent path)
+        shadowContent,
       });
     }
 

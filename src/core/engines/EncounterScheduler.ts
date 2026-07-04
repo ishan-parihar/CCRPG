@@ -322,8 +322,15 @@ export function scheduleThresholdMode(
         narrativeCoherence: 0.05,
         sessionFit: 0.05,
       });
-    case 'crucible':
-      return scheduleNext(sig, world, session, now, 2, {
+    case 'crucible': {
+      // WIRE-2: Wire detectKnotPairs into the crucible phase.
+      // Per foundations/17 §5, the crucible should present dark-anchor + golden-block
+      // pairs. detectKnotPairs was previously dead code (zero callers per Round 3 audit).
+      // Now during the crucible, we check for knot pairs and inject them at the HEAD
+      // of the encounter list, ahead of the normal shadow-activation encounters.
+      const currentStage = sig.currentStage;
+      const nextStage = sig.transformationTargetStage ?? null;
+      let result = scheduleNext(sig, world, session, now, 2, {
         ...DEFAULT_WEIGHTS,
         thetaUrgency: 0.05,
         shadowActivation: 0.40,
@@ -333,6 +340,20 @@ export function scheduleThresholdMode(
         narrativeCoherence: 0.05,
         sessionFit: 0.05,
       });
+
+      // If we have a target stage, check for knot pairs
+      if (nextStage) {
+        const knots = detectKnotPairs(sig, currentStage, nextStage);
+        if (knots.length > 0) {
+          // Inject the first knot pair (A→B) at the HEAD of the list.
+          // The A encounter surfaces the dark anchor; the B encounter invites
+          // the golden capacity. This is the core mechanic of the Lovers Crucible.
+          const knot = knots[0]!;
+          result = [knot.anchorEncounter, knot.blockEncounter, ...result].slice(0, 3);
+        }
+      }
+      return result;
+    }
     case 'emergence':
       return scheduleNext(sig, world, session, now, 3, {
         ...DEFAULT_WEIGHTS,
