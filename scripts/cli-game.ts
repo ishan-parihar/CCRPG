@@ -1950,6 +1950,9 @@ async function runStatus(): Promise<void> {
         info('knotsResolved', String(sig.transformationKnotsResolved ?? 0));
         info('internalizedHolons', String(sig.internalizedHolons?.length ?? 0));
         info('greatWayDirection', sig.greatWayDirection ?? 'null');
+        // Ponytail gap: expose indigoRayAccessibility in dev mode
+        const indigoAccess = (sig.rayProfile.Green + sig.rayProfile.Blue + sig.rayProfile.Indigo) / 3;
+        info('indigoRayAccess', indigoAccess.toFixed(4));
       }
     }
   } else {

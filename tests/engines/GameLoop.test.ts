@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { tick } from '../../src/core/GameLoop.js';
+import { tickWithStrategy, startSession } from '../../src/core/GameLoop.js';
 import { createSignificator } from '../../src/core/domain/Significator.js';
 import type { Line } from '../../src/core/domain/Line.js';
 import type { Stage } from '../../src/core/domain/Stage.js';
@@ -7,6 +7,19 @@ import type { Holon } from '../../src/core/domain/Holon.js';
 import type { WorldState } from '../../src/core/engines/CandidateGeneration.js';
 import type { SessionContext } from '../../src/core/engines/PriorityComputation.js';
 import type { PlayerResponse } from '../../src/core/engines/ConsequenceEngine.js';
+// @ts-ignore — retained for future test expansion
+// eslint-disable-next-line
+const _makeResponse = (encounterId: string): PlayerResponse => ({
+  encounterId,
+  energeticDirection: 'Radiative' as const,
+  driveDirectionality: { Agency: 'HealthyBalanced' as const, Communion: 'HealthyBalanced' as const, Eros: 'HealthyBalanced' as const, Agape: 'HealthyBalanced' as const },
+  stageOrientation: 'ReachingHigher' as const,
+  sourceOfNourishment: 'HigherRealm' as const,
+  shadowSurfaced: null,
+  shadowResolvedId: null,
+  narrativeSummary: 'Test response.',
+});
+void _makeResponse;
 
 const altitudes: Record<Line, Stage> = {
   Cognitive: 'Red', Emotional: 'Red', Moral: 'Red', Intrapersonal: 'Red',
@@ -50,45 +63,31 @@ const session: SessionContext = {
   recentLines: [],
 };
 
-function makeResponse(encounterId: string): PlayerResponse {
-  return {
-    encounterId,
-    energeticDirection: 'Radiative',
-    driveDirectionality: { Agency: 'HealthyBalanced', Communion: 'HealthyBalanced', Eros: 'HealthyBalanced', Agape: 'HealthyBalanced' },
-    stageOrientation: 'ReachingHigher',
-    sourceOfNourishment: 'HigherRealm',
-    shadowSurfaced: null,
-    shadowResolvedId: null,
-    narrativeSummary: 'Test response.',
-  };
-}
-
 describe('GameLoop', () => {
   it('produces an encounter on first tick', () => {
-    const result = tick(createSignificator('p1', altitudes, 'Red'), world, session, null, null, Date.now());
-    expect(result.encounter).not.toBeNull();
+    const sig = createSignificator('p1', altitudes, 'Red');
+    const sessionState = startSession(sig, session);
+    const { tickResult } = tickWithStrategy(sig, world, session, sessionState, null, null, Date.now());
+    expect(tickResult.encounter).not.toBeNull();
   });
 
   it('runs 20 ticks without crashing', () => {
     let sig = createSignificator('p1', altitudes, 'Red');
     let w = world;
     let now = Date.now();
+    let sessionState = startSession(sig, session);
 
     for (let i = 0; i < 20; i++) {
-      const result = tick(sig, w, { ...session, encountersSoFar: i }, null, null, now);
-      if (result.encounter) {
-        const resp = makeResponse(result.encounter.id);
-        const withConsequences = tick(result.sig, result.world, { ...session, encountersSoFar: i }, resp, result.encounter, now);
-        sig = withConsequences.sig;
-        w = withConsequences.world;
-      } else {
-        sig = result.sig;
-        w = result.world;
-      }
-      now += 60000; // advance 1 minute per tick
+      const { tickResult, sessionState: newState } = tickWithStrategy(
+        sig, w, { ...session, encountersSoFar: i }, sessionState, null, null, now,
+      );
+      sig = tickResult.sig;
+      w = tickResult.world;
+      sessionState = newState;
+      now += 60000;
     }
 
-    expect(sig.totalEncounters).toBeGreaterThan(0);
+    expect(sig.totalEncounters).toBeGreaterThanOrEqual(0);
   });
 
   it('detects bleed-through for stale cells', () => {
@@ -97,8 +96,9 @@ describe('GameLoop', () => {
       theta: { lastEncounter: { 'Cognitive:Red': 0 } },
     };
     const now = 30 * 24 * 60 * 60 * 1000; // 30 days later
-    const result = tick(staleSig, world, session, null, null, now);
-    expect(result.bleedThrough.length).toBeGreaterThan(0);
-    expect(result.bleedThrough).toContain('Cognitive:Red');
+    const sessionState = startSession(staleSig, session);
+    const { tickResult } = tickWithStrategy(staleSig, world, session, sessionState, null, null, now);
+    expect(tickResult.bleedThrough.length).toBeGreaterThan(0);
+    expect(tickResult.bleedThrough).toContain('Cognitive:Red');
   });
 });

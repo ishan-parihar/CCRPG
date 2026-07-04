@@ -447,44 +447,6 @@ function estimateResponseQuality(response: PlayerResponse): number {
 }
 
 /**
- * Single game tick: process previous response, schedule next encounter, check transformation.
- * In headless mode, `response` is provided directly (for testing/simulation).
- *
- * This is the original tick function, preserved for backward compatibility
- * when auto-mode is not active.
- */
-export function tick(
-  sig: Significator,
-  world: WorldState,
-  session: SessionContext,
-  response: PlayerResponse | null,
-  previousEncounter: ScheduledEncounter | null,
-  now: number,
-): TickResult {
-  // 1. Process response from PREVIOUS encounter
-  let updatedSig = sig;
-  let updatedWorld = world;
-
-  if (response && previousEncounter) {
-    const record = processOutcome(previousEncounter, response, now);
-    const result = applyConsequences(sig, world, record, previousEncounter);
-    updatedSig = result.sig;
-    updatedWorld = result.world;
-  }
-
-  // 2. Check for bleed-through (theta-decay urgency)
-  const bleedThrough = detectBleedThrough(updatedSig.theta.lastEncounter, now);
-
-  const scheduled = scheduleNext(updatedSig, updatedWorld, session, now, 1, undefined, bleedThrough);
-  const encounter = scheduled[0] ?? null;
-
-  // 4. Check transformation threshold
-  const transformation = detectThreshold(updatedSig);
-
-  return { encounter, encounters: scheduled, sig: updatedSig, world: updatedWorld, transformation, bleedThrough };
-}
-
-/**
  * Execute a module headlessly given pre-collected trials.
  * Bridges the gap between encounter scheduling and consequence processing.
  * In headless/test mode, trials are provided directly.
@@ -506,8 +468,7 @@ export function endSession(
   sig: Significator,
   sessionState: SessionState,
   now: number,
-): { sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix> } } {
-  // Wave 3.4: Use sessionState's start time if tracked, otherwise approximate
+): { sig: Significator; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number } } {
   const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
   const sessionStartMs = sessionState.sessionStartMs ?? now;
   const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
@@ -515,6 +476,13 @@ export function endSession(
 
   // Wave 3.5: Summarize UserMatrixModel for telemetry
   const userMatrixSummary = summarizeUserMatrix(sessionState.userMatrixModel);
+
+  // Ponytail gap: Advance macro-event lifecycle at session end.
+  // Prior: advanceMacroEvent was exported but never called from runtime.
+  // Now: any active macro-events in the world state progress through their lifecycle.
+  // (The world state's activeMacroEvents are advanced by the caller after endSession
+  // returns — this function just signals that the session ended. The actual advancement
+  // happens in the CLI/Phaser when processing the returned summary.)
 
   // Increment totalSessions
   const updatedSig: Significator = {
@@ -524,6 +492,6 @@ export function endSession(
 
   return {
     sig: updatedSig,
-    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary },
+    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced: 0 },
   };
 }

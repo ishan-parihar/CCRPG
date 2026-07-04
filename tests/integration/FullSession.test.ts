@@ -17,7 +17,7 @@ import {
   checkSafetyOverride,
   type RecentEncounter,
 } from '../../src/core/engines/AutoModeStrategy.js';
-import { startSession, tickWithStrategy, tick } from '../../src/core/GameLoop.js';
+import { startSession, tickWithStrategy } from '../../src/core/GameLoop.js';
 import { DEFAULT_WEIGHTS } from '../../src/core/engines/PriorityComputation.js';
 import type { Line } from '../../src/core/domain/Line.js';
 import type { Stage } from '../../src/core/domain/Stage.js';
@@ -348,17 +348,18 @@ describe('FullSession Integration', () => {
       expect(sessionState.encountersSinceRefresh).toBe(20);
     });
 
-    it('original tick() function remains functional (backward compat)', () => {
+    it('tickWithStrategy function remains functional (replaces deleted tick())', () => {
       const sig = createSignificator('test-player', allRedAltitudes, 'Red');
       const now = Date.now();
+      const sessionState = startSession(sig, mockSession);
 
-      // Use original tick without strategy
-      const result = tick(sig, mockWorld, mockSession, null, null, now);
+      // Use tickWithStrategy (tick() was deleted as dead code)
+      const { tickResult } = tickWithStrategy(sig, mockWorld, mockSession, sessionState, null, null, now);
 
-      expect(result.sig).toBeDefined();
-      expect(result.world).toBeDefined();
-      expect(Array.isArray(result.bleedThrough)).toBe(true);
-      expect(result.transformation).toBeNull(); // fresh sig has no transformation
+      expect(tickResult.sig).toBeDefined();
+      expect(tickResult.world).toBeDefined();
+      expect(Array.isArray(tickResult.bleedThrough)).toBe(true);
+      expect(tickResult.transformation).toBeNull(); // fresh sig has no transformation
     });
   });
 
