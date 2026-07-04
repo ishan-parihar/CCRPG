@@ -27,6 +27,8 @@
 import type { Significator } from '../domain/Significator.js';
 import { stageOrdinal } from '../domain/Stage.js';
 import { ALL_LINES, LINE_COMPLEX, type Complex } from '../domain/Line.js';
+// P2-High: Import per-line theta half-lives for accurate staleness computation
+import { DEFAULT_THETA_PARAMS } from './ThetaDecay.js';
 
 /** Lesser-Cycle health (Agape, rewards balance/integration). [0,1] */
 export interface GzMetric {
@@ -114,7 +116,11 @@ export function computeGz(sig: Significator, now: number): GzMetric {
     const lastTs = sig.theta.lastEncounter[key] ?? 0;
     if (lastTs === 0) { totalStaleness += 1; continue; }
     const elapsed = now - lastTs;
-    const halfLife = 7 * 24 * 60 * 60 * 1000;
+    // P2-High: Use per-line theta half-lives instead of hardcoded 7-day global.
+    // Each line has a different decay rate (Somatic=3d, Willpower=4d, etc.).
+    // The key format is "Line:Stage" — extract the line to look up its half-life.
+    const line = key.split(':')[0] ?? '';
+    const halfLife = (DEFAULT_THETA_PARAMS.lineHalfLives as Record<string, number>)?.[line] ?? DEFAULT_THETA_PARAMS.halfLife;
     totalStaleness += 1 - Math.pow(0.5, elapsed / halfLife);
   }
   const thetaFreshness = clamp01(1 - (totalStaleness / cellCount));
@@ -211,7 +217,11 @@ export function computePz(sig: Significator): PzMetric {
   const catalystSaturation = cellKeys.length > 0 ? crystallizedCells / cellKeys.length : 0;
   const transformationReadiness = clamp01((lineRatio + catalystSaturation) / 2);
 
-  // Legacy greatWayAlignment (retained for backward compat — replaced by DEV-3)
+  // Legacy greatWayAlignment (retained for backward compat).
+  // DEV-3: When world state is available via computeMetabolicHealth, the real
+  // greatWayAlignment is computed from PESTLE tension + NPC relationships +
+  // macro-event pressure (see computeGreatWayAlignment below). This legacy
+  // fallback is used when only the sig is available (no world state).
   const greatWayAlignment = polarityCrystallization > 0.5 ? polarityCrystallization : polarityCrystallization * 0.5;
 
   const recent = sig.recentEncounters ?? [];
@@ -251,13 +261,97 @@ export function computePz(sig: Significator): PzMetric {
   };
 }
 
-/** Compute total Metabolic Health = G_z · P_z. */
-export function computeMetabolicHealth(sig: Significator, now: number = Date.now()): MetabolicHealth {
+/**
+ * DEV-3: Compute Great Way alignment from WorldState.
+ *
+ * Per HoloOS 08.8.4, the Great Way is the operating environment — the field of
+ * pressure the Significator navigates. PESTLE tension IS Great Way pressure;
+ * macro events ARE Great Way transformations; NPC relationships ARE Great Way
+ * co-creation. This function measures how aligned the player is with the
+ * Great Way's pressure field.
+ *
+ * Returns { alignment, direction, pressure }:
+ * - alignment: 0-1, how much the player's polarity direction matches the
+ *   dominant PESTLE pressure direction
+ * - direction: 'Radiative' | 'Absorptive' | null — the Great Way's pressure
+ *   direction (high social/environmental = Radiative/STO; high
+ *   political/economic = Absorptive/STS)
+ * - pressure: 0-1, average PESTLE tension + macro-event intensity
+ */
+export function computeGreatWayAlignment(
+  sig: Significator,
+  world?: { readonly pestleTension: Readonly<Record<string, number>>; readonly activeMacroEvents?: readonly unknown[]; readonly npcRelationships?: readonly { readonly strength: number }[] },
+): { alignment: number; direction: 'Radiative' | 'Absorptive' | null; pressure: number } {
+  if (!world) {
+    // Fallback when no world state available — use the legacy proxy
+    const crystallization = clamp01(sig.polarity.master.crystallizationProgress ?? 0);
+    return {
+      alignment: crystallization > 0.5 ? crystallization : crystallization * 0.5,
+      direction: null,
+      pressure: 0,
+    };
+  }
+
+  // PESTLE tension = Great Way pressure
+  const pestleValues = Object.values(world.pestleTension);
+  const avgTension = pestleValues.length > 0
+    ? pestleValues.reduce((a, b) => a + b, 0) / pestleValues.length
+    : 0;
+  const macroPressure = (world.activeMacroEvents?.length ?? 0) * 0.15;
+  const npcPressure = (world.npcRelationships?.filter(r => r.strength > 0.3).length ?? 0) * 0.05;
+  const pressure = clamp01(avgTension + macroPressure + npcPressure);
+
+  // Great Way direction: high social+environmental = Radiative (STO); high
+  // political+economic = Absorptive (STS). This maps the PESTLE dimensions to
+  // the polarity axes per foundations/18 (the Great Way IS the PESTLE field).
+  const social = world.pestleTension.social ?? 0;
+  const environmental = world.pestleTension.environmental ?? 0;
+  const political = world.pestleTension.political ?? 0;
+  const economic = world.pestleTension.economic ?? 0;
+  const radiativePressure = social + environmental;
+  const absorptivePressure = political + economic;
+  const direction: 'Radiative' | 'Absorptive' | null =
+    radiativePressure > absorptivePressure + 0.1 ? 'Radiative'
+    : absorptivePressure > radiativePressure + 0.1 ? 'Absorptive'
+    : null;
+
+  // Alignment = how much the player's polarity direction matches the Great Way's
+  const playerDirection = sig.polarity.master.dominantDirection;
+  let alignment = 0;
+  if (direction !== null && playerDirection !== null) {
+    alignment = playerDirection === direction ? 1.0 : 0.3;
+  } else if (direction === null && playerDirection === null) {
+    alignment = 0.5; // both neutral
+  } else {
+    alignment = 0.4; // one is neutral
+  }
+  // Scale by pressure — low pressure means the Great Way isn't exerting much
+  // directional force, so alignment matters less
+  alignment = clamp01(alignment * (0.5 + pressure * 0.5));
+
+  return { alignment, direction, pressure };
+}
+
+/**
+ * Compute total Metabolic Health = G_z · P_z.
+ * DEV-3: Accepts optional world state for Great Way alignment computation.
+ */
+export function computeMetabolicHealth(sig: Significator, now: number = Date.now(), world?: { readonly pestleTension: Readonly<Record<string, number>>; readonly activeMacroEvents?: readonly unknown[]; readonly npcRelationships?: readonly { readonly strength: number }[] }): MetabolicHealth {
   const gzBreakdown = computeGz(sig, now);
   const pzBreakdown = computePz(sig);
   const gz = gzBreakdown.value;
   const pz = pzBreakdown.value;
   const total = gz * pz;
+
+  // DEV-3: Compute Great Way alignment from world state when available.
+  // This replaces the self-referential proxy that was greatWayAlignment.
+  // The result is stored in pzBreakdown.greatWayAlignment via the legacy field
+  // (overwritten here with the real value when world is provided).
+  if (world) {
+    const gwAlignment = computeGreatWayAlignment(sig, world);
+    // Override the legacy proxy with the real PESTLE-based alignment
+    (pzBreakdown as { greatWayAlignment: number }).greatWayAlignment = gwAlignment.alignment;
+  }
 
   // GAP-D2-2 (per HoloOS 08.8.14 §8.1 + 08.8.21 Gap R4): detect the
   // Significator-Liminality signature to distinguish transitional (healthy
@@ -352,4 +446,65 @@ export function computeIndigoRayAccessibility(sig: Significator): number {
   const blue = sig.rayProfile.Blue ?? 0;
   const indigo = sig.rayProfile.Indigo ?? 0;
   return clamp01((green + blue + indigo) / 3);
+}
+
+/**
+ * DEV-4: Compute contact-boundary permeability (0.0–1.0).
+ *
+ * Per HoloOS 00.md, Transformation is the contact-boundary membrane —
+ * continuously regulating Catalyst/Experience flow. The permeability is
+ * computed from drive balance:
+ * - High balance (all drives equal) → optimal permeability (0.5, Goldilocks)
+ * - High imbalance → extreme permeability (rigid if one drive dominates, or
+ *   confluent if drives are very low)
+ *
+ * During transformation phases, permeability shifts:
+ * - 'crucible' phase → high permeability (0.8) — much Catalyst flows for restructuring
+ * - 'emergence' phase → low permeability (0.2) — integration, consolidation
+ * - 'unravelling' phase → moderate-high (0.7) — old frame dissolving
+ * - 'idle'/'threshold' → computed from drive balance (Goldilocks target)
+ */
+export function computeContactBoundaryPermeability(sig: Significator): number {
+  const phase = sig.transformationPhase ?? 'idle';
+
+  // During transformation phases, override with phase-specific values
+  switch (phase) {
+    case 'crucible':
+      return 0.8; // High permeability — the membrane opens for restructuring
+    case 'unravelling':
+      return 0.7; // Moderate-high — old frame dissolving, Catalyst pouring in
+    case 'emergence':
+      return 0.2; // Low permeability — integration, consolidation, the membrane closes
+    case 'complete':
+      return 0.3; // Low-moderate — post-transformation stabilization
+    default:
+      break; // 'idle' or 'threshold' — compute from drive balance
+  }
+
+  // For idle/threshold: compute from drive balance (the Goldilocks target)
+  const weights = Object.values(sig.drives.weights);
+  const maxWeight = Math.max(...weights);
+  const minWeight = Math.min(...weights);
+  const spread = maxWeight - minWeight;
+
+  // Low spread (balanced) → optimal permeability (0.5)
+  // High spread (imbalanced) → extreme permeability
+  // The direction of the extreme depends on which drives are dominant:
+  // - Agency dominant → rigid (low permeability) — armored boundary
+  // - Communion dominant → confluent (high permeability) — dissolved boundary
+  const agencyWeight = sig.drives.weights.Agency ?? 0;
+  const communionWeight = sig.drives.weights.Communion ?? 0;
+
+  if (spread < 0.1) {
+    return 0.5; // Goldilocks zone
+  }
+
+  // Imbalanced: shift toward extreme based on dominant drive
+  const basePermeability = 0.5;
+  const shift = Math.min(0.3, spread * 0.5); // max shift of 0.3
+  if (agencyWeight > communionWeight) {
+    return clamp01(basePermeability - shift); // rigid (Agency dominant = boundary resistance)
+  } else {
+    return clamp01(basePermeability + shift); // confluent (Communion dominant = boundary dissolution)
+  }
 }

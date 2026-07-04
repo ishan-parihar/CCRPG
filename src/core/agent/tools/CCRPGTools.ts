@@ -19,6 +19,7 @@ import type { Drive } from '../../domain/Drive.js';
 import { detectShadows } from '../../usecases/ShadowDetector.js';
 import type { Line } from '../../domain/Line.js';
 import type { Stage } from '../../domain/Stage.js';
+import { stageOrdinal } from '../../domain/Stage.js';
 import { scheduleNext } from '../../engines/EncounterScheduler.js';
 
 import { detectThreshold, type TransformationSignal } from '../../engines/TransformationDetector.js';
@@ -357,15 +358,37 @@ export async function executeCCRPGTool(
         userMatrixPhase: ctx.sessionState.userMatrixModel?.profilePhase ?? 'unmapped',
         totalEncounters: sig.totalEncounters,
         totalSessions: sig.totalSessions,
-        // P1-18: Deep per-line + per-drive + per-shadow detail. Previously the
-        // agent only got a flat 8-field snapshot — it couldn't query per-line
-        // altitudes, per-drive directionality (which it's asked to OUTPUT in
-        // ccrpg_complete_encounter), per-shadow detail, or polarity trajectory.
-        // These new fields give the agent the depth it needs to reason about
-        // the player's developmental state and choose targeted interventions.
-        perLineAltitudes: sig.altitudes,
-        driveWeights: sig.drives.weights,
-        driveFixationRisk: sig.drives.fixationRisk,
+        // P1-18 + P2-High: Deep per-line + per-drive + per-shadow detail.
+        // P2-High fix: raw numeric fields (driveWeights, driveFixationRisk,
+        // rayProfileValues, perLineAltitudes) are re-veiled as qualitative
+        // descriptors to prevent Veil leaks. The agent gets the STRUCTURAL
+        // information (which line is highest/lowest, which drive dominates)
+        // without the raw numbers that could leak into player-facing narratives.
+        perLineAltitudes: Object.fromEntries(
+          Object.entries(sig.altitudes).map(([line, stage]) => [
+            line,
+            stageOrdinal(stage) <= stageOrdinal(sig.currentStage) ? 'at-or-below' : 'above',
+          ]),
+        ),
+        driveWeights: Object.fromEntries(
+          Object.entries(sig.drives.weights).map(([drive, weight]) => {
+            const allWeights = Object.values(sig.drives.weights);
+            const max = Math.max(...allWeights);
+            const min = Math.min(...allWeights);
+            const range = max - min;
+            if (range < 0.05) return [drive, 'balanced'];
+            if (weight === max) return [drive, 'dominant'];
+            if (weight === min) return [drive, 'recessive'];
+            return [drive, 'moderate'];
+          }),
+        ),
+        driveFixationRisk: Object.fromEntries(
+          Object.entries(sig.drives.fixationRisk).map(([drive, risk]) => {
+            if (risk < 0.2) return [drive, 'low'];
+            if (risk < 0.5) return [drive, 'moderate'];
+            return [drive, 'high'];
+          }),
+        ),
         activeShadows: sig.shadows.entries
           .filter(e => e.resolvedAt === null)
           .map(e => ({
@@ -384,7 +407,12 @@ export async function executeCCRPGTool(
           crystallizationProgress: sig.polarity.master.crystallizationProgress,
           coherentLineCount: sig.polarity.master.coherentLineCount,
         },
-        rayProfileValues: sig.rayProfile,
+        rayProfileValues: Object.fromEntries(
+          Object.entries(sig.rayProfile).map(([ray, val]) => [
+            ray,
+            val < 0.2 ? 'dormant' : val < 0.5 ? 'lightly-engaged' : val < 0.7 ? 'active' : 'strongly-activated',
+          ]),
+        ),
         transformationDetail: {
           phase: sig.transformationPhase ?? 'idle',
           targetStage: sig.transformationTargetStage ?? null,
@@ -407,7 +435,7 @@ export async function executeCCRPGTool(
     }
 
     case 'ccrpg_get_world_state': {
-      const npcCount = ctx.world.holons.filter(h => h.kind === 'NPC').length;
+      const npcs = ctx.world.holons.filter(h => h.kind === 'NPC');
       const activeMacroEvents = ctx.world.activeMacroEvents.length;
       const npcRelationships = ctx.world.npcRelationships.filter(r => r.strength > 0.3);
       const pestleTensions = Object.entries(ctx.world.pestleTension)
@@ -415,11 +443,32 @@ export async function executeCCRPGTool(
         .map(([k, v]) => `${k}: ${v > 0.7 ? 'critical' : v > 0.5 ? 'high' : 'elevated'}`);
       return JSON.stringify({
         holonCount: ctx.world.holons.length,
-        npcCount,
+        npcCount: npcs.length,
         activeRelationships: npcRelationships.length,
         activeMacroEvents,
         pestleTensions: pestleTensions.length > 0 ? pestleTensions : 'all stable',
         narrativeBeats: ctx.world.narrativeBeats.filter(b => !b.completed).length,
+        // P2-Medium: Deepened world state — NPC identities + PESTLE values + beat IDs.
+        // Previously only returned counts; now the agent can see WHO the NPCs are,
+        // WHAT the PESTLE values are, and WHICH beats are active.
+        npcs: npcs.slice(0, 10).map(h => ({
+          id: h.id,
+          name: h.name,
+          kind: h.kind,
+          line: h.line,
+          stage: h.stage,
+          narrativeRole: h.narrativeRole,
+        })),
+        pestleValues: ctx.world.pestleTension,
+        npcRelationshipDetail: npcRelationships.slice(0, 5).map(r => ({
+          holonId: r.holonId,
+          strength: r.strength < 0.4 ? 'emerging' : r.strength < 0.7 ? 'established' : 'deep',
+          encounters: r.encounters,
+        })),
+        narrativeBeatIds: ctx.world.narrativeBeats.filter(b => !b.completed).map(b => ({
+          id: b.id,
+          stage: b.stage,
+        })),
       });
     }
 
@@ -586,7 +635,12 @@ export async function executeCCRPGTool(
           willRecordPolarityTrace: true,       // polarity trace added to cell vector
           willUpdateTheta: true,               // theta timestamps refreshed
           willSurfaceShadow: willSurfaceShadow, // new shadow entry created if shadowSignal present
-          willResolveShadow: allDrivesHealthy && (ctx.selectedEncounter?.executionMode === 'shadow'),
+          // P2-High: Fixed willResolveShadow heuristic. Previously required
+          // executionMode === 'shadow', but ConsequenceEngine resolves shadows
+          // implicitly whenever allDrivesHealthy on the encounter's line,
+          // REGARDLESS of executionMode, for all shadows at-or-below the
+          // encounter's stage (ConsequenceEngine.ts:166-181).
+          willResolveShadow: allDrivesHealthy,
             // implicit resolution: all drives healthy in a shadow encounter resolves shadows at/below stage
           willAffectPolarity: willAffectPolarity, // polarity direction recorded in trace
           willUpdateRayProfile: true,          // rayProfile activated for encounter's stage

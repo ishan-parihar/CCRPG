@@ -203,7 +203,17 @@ function computeTransformationReadiness(c: EncounterCandidate, sig: Significator
   const hasShadowAtTarget = sig.shadows.entries.some(
     e => e.resolvedAt === null && e.line === c.line && stageOrdinal(e.stage) === targetStageOrd,
   );
-  if (hasShadowAtCoG || hasShadowAtTarget) score += 0.5;
+  // P2-High: Dual-shadow window requires BOTH shadows active (AND, not OR).
+  // Per foundations/17 §3, the dual-shadow window presents BOTH submergent
+  // (dark at current stage) AND emergent (golden at next stage) shadows
+  // simultaneously. The OR logic let a player enter the Crucible with only
+  // one shadow vector, enabling spiritual bypassing (golden without dark).
+  // Full dual-shadow = 0.5 boost; either shadow alone = 0.25 (reduced).
+  if (hasShadowAtCoG && hasShadowAtTarget) {
+    score += 0.5; // Full dual-shadow window — both vectors active
+  } else if (hasShadowAtCoG || hasShadowAtTarget) {
+    score += 0.25; // Single shadow — partial readiness (not full dual-window)
+  }
 
   return score;
 }

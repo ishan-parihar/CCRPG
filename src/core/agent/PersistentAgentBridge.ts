@@ -116,7 +116,13 @@ export async function runPersistentAgentEncounter(
   // Process the outcome + apply consequences — same pipeline as AgenticOrchestrator.
   const now = Date.now();
   const record = processOutcome(effectiveEncounter, playerResponse, now);
-  const applied = applyConsequences(sig, world, record, effectiveEncounter);
+  // P2-High: Wire feedback + scores into the ConsequenceRecord (was dead telemetry).
+  // The agent's evaluation now persists into the consequence history, enabling
+  // cross-encounter synthesis via SessionAgent or tdg_reflect.
+  const enrichedRecord = result.feedback || result.scores
+    ? { ...record, feedback: result.feedback, scores: result.scores }
+    : record;
+  const applied = applyConsequences(sig, world, enrichedRecord, effectiveEncounter);
 
   // The CLI only reads .passed from finalResult — keep it minimal.
   const finalResult = { passed: result.passed };
@@ -125,7 +131,7 @@ export async function runPersistentAgentEncounter(
     outcome: {
       updatedSig: applied.sig,
       updatedWorld: applied.world,
-      consequenceRecord: record,
+      consequenceRecord: enrichedRecord,
       finalResult,
       feedback: result.narrativeSummary,
       narrativeSummary: result.narrativeSummary,

@@ -111,6 +111,22 @@ export interface Significator {
    */
   readonly greatWayDirection?: 'STO' | 'STS' | null;
   readonly greatWayPressure?: number;
+  /**
+   * DEV-4: Contact-boundary permeability (0.0–1.0).
+   * Per HoloOS 00.md, Transformation is the contact-boundary membrane —
+   * continuously regulating Catalyst/Experience flow between Matrix↔Potentiator
+   * (lesser cycle) and Significator↔Great Way (greater cycle).
+   * - High permeability (0.7-1.0): much Catalyst flows in, much Experience flows
+   *   out. Good for active learning / crucible. Bad for integration / consolidation.
+   * - Low permeability (0.0-0.3): limited flow. Good for integration / rest.
+   *   Bad for growth — the player is "armored" against new Catalyst.
+   * - Optimal (0.4-0.6): Goldilocks zone — enough flow for growth, enough
+   *   boundary for integration.
+   * Computed from drive balance (high balance = optimal permeability).
+   * During transformation phases, permeability shifts (crucible = high,
+   * emergence = low for integration).
+   */
+  readonly contactBoundaryPermeability?: number;
 }
 
 function zeroRecord<K extends string>(keys: readonly K[]): Record<K, number> {
@@ -166,5 +182,6 @@ export function createSignificator(
     internalizedHolons: [],
     greatWayDirection: null,
     greatWayPressure: 0,
+    contactBoundaryPermeability: 0.5, // DEV-4: default Goldilocks zone
   };
 }

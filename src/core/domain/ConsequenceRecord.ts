@@ -21,4 +21,8 @@ export interface ConsequenceRecord {
   readonly altitudeShift: { readonly line: Line; readonly from: Stage; readonly to: Stage } | null;
   readonly driveShift: { readonly drive: Drive; readonly delta: number } | null;
   readonly narrativeSummary: string;
+  /** P2-High: Optional developmental feedback (internal, not player-facing). */
+  readonly feedback?: string;
+  /** P2-High: Optional 10-dim psychometric scores from the agent's evaluation. */
+  readonly scores?: Record<string, number>;
 }

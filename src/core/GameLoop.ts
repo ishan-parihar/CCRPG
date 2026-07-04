@@ -33,6 +33,7 @@ import {
   type UserMatrixModel,
 } from './engines/UserMatrixModel.js';
 import { maybeFireHook } from '../infra/tdg/TDGBridge.js';
+import { stageOrdinal } from './domain/Stage.js';
 
 export interface TickResult {
   readonly encounter: ScheduledEncounter | null;
@@ -614,7 +615,7 @@ export function endSession(
   sessionState: SessionState,
   now: number,
   world?: WorldState,
-): { sig: Significator; world?: WorldState; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number } } {
+): { sig: Significator; world?: WorldState; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number }; harvestCheck?: { harvestable: boolean; direction: 'STO' | 'STS' | null; reason: string } | null } {
   const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
   const sessionStartMs = sessionState.sessionStartMs ?? now;
   const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
@@ -676,6 +677,28 @@ export function endSession(
     totalSessions: sig.totalSessions + 1,
   };
 
+  // P2-Critical: Wire checkHarvest into runtime. Per foundations/19 §9, at
+  // White stage, check if the player is harvestable. If not, enter Samsara
+  // mode (the player continues in a post-White loop receiving increasingly
+  // intense catalysts to force crystallization). The harvest check uses the
+  // STO 51% / STS 95% thresholds per foundations/19 §5.
+  let harvestResult: { harvestable: boolean; direction: 'STO' | 'STS' | null; reason: string } | null = null;
+  if (updatedSig.currentStage === 'White') {
+    try {
+      // Use static import to avoid async in sync function
+      const { checkHarvest } = require('./engines/PolarityEngine.js');
+      const directionStrengths = Object.keys(updatedSig.polarity.lineProfiles ?? {}).map(line => {
+        const profile = updatedSig.polarity.lineProfiles?.[line];
+        return profile?.coherence ?? 0;
+      });
+      const violetRay = updatedSig.rayProfile.Violet ?? 0;
+      const altitudeFloor = Math.min(...Object.values(updatedSig.altitudes).map(s => stageOrdinal(s)));
+      harvestResult = checkHarvest(updatedSig.polarity.master, directionStrengths, altitudeFloor, violetRay);
+    } catch {
+      // checkHarvest unavailable — skip
+    }
+  }
+
   // Hook 4: onSessionEnd — fire fire-and-forget for the sync path.
   // Callers that need to await the hook (e.g. CLI --agent before stopTDGBridge)
   // should use endSessionAsync() instead, which awaits the hook before returning.
@@ -685,6 +708,8 @@ export function endSession(
     sig: updatedSig,
     ...(updatedWorld !== world ? { world: updatedWorld } : {}),
     summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced },
+    // P2-Critical: harvest check result (null unless player is at White stage)
+    harvestCheck: harvestResult,
   };
 }
 
