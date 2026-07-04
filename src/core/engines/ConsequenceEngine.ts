@@ -61,6 +61,12 @@ export function applyConsequences(
   const line = encounter.targetLines[0] ?? 'Cognitive' as Line;
   const stage = encounter.stage;
 
+  // OA-13: Track avoided encounters — when the player avoids, the shadow grows.
+  // The avoidedEncounters list records the encounter ID; the scheduler's
+  // shadowActivation criterion will boost priority for that (line, stage)
+  // on the next encounter, creating developmental pressure.
+  const isAvoided = record.narrativeSummary === '' || record.narrativeSummary.includes('avoided');
+
   // 1. Record polarity trace
   const newPolarity = recordTrace(sig.polarity, record.polarityTrace, line, stage);
 
@@ -69,7 +75,23 @@ export function applyConsequences(
   const newTheta = { lastEncounter: { ...sig.theta.lastEncounter, [cellKey]: record.timestamp } };
 
   // 3. Update drive balance and fixation risk
-  const newDrives = updateDriveBalance(sig.drives, record.polarityTrace.driveDirectionality);
+  let newDrives = updateDriveBalance(sig.drives, record.polarityTrace.driveDirectionality);
+
+  // OA-13: Encounter-avoidance consequence — when the player avoids an encounter,
+  // the avoidance signal grows. Fixation risk increases slightly on the encounter's
+  // target drive, creating developmental pressure that the scheduler will surface
+  // as a shadow-activation priority boost on the next encounter at this cell.
+  if (isAvoided) {
+    const avoidanceDrive = encounter.driveTarget ?? 'Agency';
+    const currentFixation = newDrives.fixationRisk[avoidanceDrive] ?? 0;
+    newDrives = {
+      weights: newDrives.weights,
+      fixationRisk: {
+        ...newDrives.fixationRisk,
+        [avoidanceDrive]: Math.min(1, currentFixation + 0.03),
+      },
+    };
+  }
 
   // 4. Handle shadow surfacing
   let newShadowEntries = [...sig.shadows.entries];

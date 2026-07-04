@@ -1,6 +1,11 @@
 /**
  * PolarityEngine — 4-level polarity aggregation.
  * Spec: foundations/19 §4, §6
+ *
+ * GAP-WB-1: Now wired to PolarityOntology — texture names are used for
+ * narrative conditioning. The ContextPipeline and ConsequenceNarrator
+ * can query getTextureName() to get stage-appropriate polarity texture
+ * language for LLM prompt conditioning and narrative feedback.
  */
 import type { Line } from '../domain/Line.js';
 import { ALL_LINES } from '../domain/Line.js';
@@ -13,6 +18,7 @@ import type {
   PolarityCellVector,
   PolarityState,
 } from '../domain/PolarityCellVector.js';
+import { getTexture, DEFAULT_POLARITY_ONTOLOGY, type PolarityTexture } from '../data/PolarityOntology.js';
 
 const CRYSTALLIZATION_THRESHOLD = 0.8;
 const CRYSTALLIZING_THRESHOLD = 0.5;
@@ -148,4 +154,56 @@ export function computeMasterPolarity(profiles: LineProfile[]): MasterPolarity {
 /** Detect current polarity mode from master state. */
 export function detectCrystallizationMode(master: MasterPolarity): PolarityMode {
   return master.mode;
+}
+
+// ─── GAP-WB-1: PolarityOntology integration ──────────────────────────
+
+/**
+ * Get the polarity texture name for a (line, stage, direction) combination.
+ * Used by ContextPipeline for LLM prompt conditioning and by
+ * ConsequenceNarrator for narrative feedback.
+ *
+ * Example: getPolarityTextureName('Cognitive', 'Red', 'sto')
+ * → 'strategic-service'
+ */
+export function getPolarityTextureName(
+  line: Line,
+  stage: Stage,
+  direction: 'sto' | 'sts' | 'exploratory',
+): string | null {
+  const texture = getTexture(DEFAULT_POLARITY_ONTOLOGY, line, stage);
+  if (!texture) return null;
+  return texture[direction] ?? null;
+}
+
+/**
+ * Get the full PolarityTexture for a (line, stage) combination.
+ * Returns all three direction textures (sto, sts, exploratory).
+ */
+export function getPolarityTexture(line: Line, stage: Stage): PolarityTexture | undefined {
+  return getTexture(DEFAULT_POLARITY_ONTOLOGY, line, stage);
+}
+
+/**
+ * Get the player's current polarity texture based on their master direction.
+ * If crystallized STO → returns the sto texture; if STS → returns sts;
+ * if Exploring → returns exploratory.
+ */
+export function getPlayerPolarityTexture(
+  state: PolarityState,
+  line: Line,
+  stage: Stage,
+): string | null {
+  const masterMode = state.master.mode;
+  const dominantDir = state.master.dominantDirection;
+  if (masterMode === 'Exploring') {
+    return getPolarityTextureName(line, stage, 'exploratory');
+  }
+  if (dominantDir === 'Radiative') {
+    return getPolarityTextureName(line, stage, 'sto');
+  }
+  if (dominantDir === 'Absorptive') {
+    return getPolarityTextureName(line, stage, 'sts');
+  }
+  return getPolarityTextureName(line, stage, 'exploratory');
 }

@@ -1,8 +1,13 @@
 /**
  * MacroCatalystEngine — PESTLE tension accumulation, macro-event lifecycle.
  * Spec: foundations/24 §8
+ *
+ * GAP-WB-2: Now bridges RedPESTLE descriptive content into macro-event
+ * generation. Each macro-event carries a thematic description drawn from
+ * the RedPESTLE data, giving narrative substance to the PESTLE tension.
  */
 import type { Stage } from '../domain/Stage.js';
+import { RedPESTLE, PESTLE_DIMENSIONS } from '../data/RedPESTLE.js';
 
 export interface PESTLETension {
   readonly political: number;
@@ -19,6 +24,8 @@ export interface MacroEvent {
   readonly altitude: Stage;
   readonly active: boolean;
   readonly sessionsActive: number;
+  /** GAP-WB-2: Thematic description from RedPESTLE for narrative conditioning. */
+  readonly description?: string;
 }
 
 export type MacroEventPhase = 'onset' | 'active' | 'resolution';
@@ -98,6 +105,7 @@ export function tryTriggerMacroEvent(
     altitude: playerStage,
     active: true,
     sessionsActive: 0,
+    description: RedPESTLE[trigger] ?? `${trigger} tension has reached a breaking point`,
   };
 }
 
@@ -215,4 +223,38 @@ export function getPESTLEContentModifiers(tension: PESTLETension): {
   const difficultyModifier = Math.min(0.3, maxDimension[1] * 0.4);
 
   return { narrativeThemes: themes, encounterFlavor: flavor, difficultyModifier };
+}
+
+// ─── GAP-WB-2: RedPESTLE bridge helpers ──────────────────────────────
+
+/**
+ * Get the RedPESTLE description for a PESTLE dimension.
+ * Used by ContextPipeline to inject world-state flavor into LLM prompts.
+ */
+export function getPESTLEDescription(dimension: keyof PESTLETension): string {
+  return RedPESTLE[dimension] ?? `${dimension} tension`;
+}
+
+/**
+ * Get all PESTLE descriptions as a formatted string for LLM context injection.
+ */
+export function getPESTLEContextString(): string {
+  return PESTLE_DIMENSIONS.map(dim => `${dim}: ${RedPESTLE[dim]}`).join('; ');
+}
+
+/**
+ * Get the PESTLE dimension with highest tension and its description.
+ * Used by ContextPipeline to condition encounters on active world-pressure.
+ */
+export function getDominantPESTLE(tension: PESTLETension): { dimension: keyof PESTLETension; tension: number; description: string } | null {
+  let maxDim: keyof PESTLETension | null = null;
+  let maxVal = 0;
+  for (const dim of PESTLE_DIMENSIONS) {
+    if (tension[dim] > maxVal) {
+      maxVal = tension[dim];
+      maxDim = dim;
+    }
+  }
+  if (!maxDim || maxVal < 0.2) return null;
+  return { dimension: maxDim, tension: maxVal, description: RedPESTLE[maxDim] };
 }
