@@ -7,7 +7,7 @@ import {
   executeCCRPGTool,
   type ToolContext,
 } from '../../src/core/agent/tools/CCRPGTools.js';
-import { createCCRPGToolRegistry } from '../../src/core/agent/ToolRegistry.js';
+import { createCCRPGToolRegistry, ToolRegistry } from '../../src/core/agent/ToolRegistry.js';
 import { PersistentAgent } from '../../src/core/agent/PersistentAgent.js';
 import { runPersistentAgentEncounter } from '../../src/core/agent/PersistentAgentBridge.js';
 import { TDGClient } from '../../src/infra/tdg/TDGClient.js';
@@ -574,7 +574,9 @@ describe('PersistentAgent source attribution (regression for M5)', () => {
     const world = createInitialWorldState([]);
 
     // Build a unified registry with 8 CCRPG + 2 fake TDG tools
-    const { ToolRegistry } = require('../../src/core/agent/ToolRegistry.js');
+    // YAGNI-0 (UX-R4): Replaced require() (broken in ESM) with the top-level
+    // ESM import. The require() was failing with 'Cannot find module' because
+    // vitest runs in ESM context where require() doesn't resolve .js→.ts.
     const unified = new ToolRegistry();
     // CCRPG tools are already registered via createCCRPGToolRegistry
     const ccrpReg = createCCRPGToolRegistry();
