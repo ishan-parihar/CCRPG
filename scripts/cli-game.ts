@@ -7,7 +7,7 @@
  * Usage:
  *   npx tsx scripts/cli-game.ts                          # interactive, fallback mode
  *   npx tsx scripts/cli-game.ts --headless               # automated, 20 encounters
- *   npx tsx scripts/cli-game.ts --model=gemma-4-31b-it  # override model
+ *   npx tsx scripts/cli-game.ts --model=gemini-1.5-flash  # override model
  *   npx tsx scripts/cli-game.ts --headless --json        # AI-agent feedback loop
  *   npx tsx scripts/cli-game.ts --mode=encounter         # single encounter
  *   npx tsx scripts/cli-game.ts --mode=diagnostic        # print system state
@@ -46,7 +46,15 @@ const program = new Command()
   .option('-l, --line <line>', 'Force a specific line')
   .option('-s, --stage <stage>', 'Force a specific stage')
   .option('--modality <mod>', 'Force a specific modality')
-  .option('--force-shadow <quadrant>', 'Force a shadow quadrant')
+  // P1-6 (UX-R3): Clarify what --force-shadow actually does. The audit found
+  // users confused about the difference between --modality shadow (which
+  // triggers the shadow encounter format) and --force-shadow (which injects
+  // shadow-keyword text into the response pool for testing shadow detection).
+  // They behave nothing alike but have overlapping names. Keeping the original
+  // name for backwards compat, but adding --inject-shadow-keyword as a clearer
+  // alias and updating the help description.
+  .option('--force-shadow <quadrant>', 'Inject shadow-keyword text into the response pool for testing shadow detection (alias: --inject-shadow-keyword). Does NOT trigger shadow encounter format — use --modality shadow for that.')
+  .option('--inject-shadow-keyword <quadrant>', 'Alias for --force-shadow (testing only)')
   .option('--skip-calibration', 'Skip calibration, default all lines to Red');
 
 program
@@ -118,7 +126,10 @@ try {
 // Config priority: CLI flag > env var > ~/.ccrpg/config.json > built-in defaults
 const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_LLM_API_KEY || fileConfig.llm?.apiKey || 'sk-placeholder';
 const baseUrl = process.env.VITE_LLM_BASE_URL || fileConfig.llm?.baseUrl || 'https://generativelanguage.googleapis.com/v1beta/openai';
-const model = earlyModelOverride || process.env.VITE_LLM_MODEL || fileConfig.llm?.model || 'gemma-4-31b-it';
+// YAGNI-3 (UX-R3): Replaced the fake 'gemma-4-31b-it' default with the real
+// 'gemini-1.5-flash' model name. The previous default was a non-existent
+// model name that made the project look unfinished.
+const model = earlyModelOverride || process.env.VITE_LLM_MODEL || fileConfig.llm?.model || 'gemini-1.5-flash';
 const provider = process.env.VITE_LLM_PROVIDER || fileConfig.llm?.provider || 'gemini';
 
 // Set process.env so LLMClient's getEnvVal() fallback works in Node.js
@@ -198,7 +209,7 @@ const encounterCount = parseInt(opts.encounters ?? String(fileConfig.session?.de
 const FORCE_LINE = opts.line as Line | undefined;
 const FORCE_STAGE = opts.stage as Stage | undefined;
 const FORCE_MODALITY = opts.modality as Modality | undefined;
-const FORCE_SHADOW = opts.forceShadow as string | undefined;
+const FORCE_SHADOW = (opts.forceShadow ?? (opts as any).injectShadowKeyword) as string | undefined;
 const FORCE_RESPONSES = undefined; // ponytail: --responses removed, wasn't in commander spec
 const NEW_GAME = opts.newGame ?? false;
 const SKIP_CALIBRATION = opts.skipCalibration ?? false;
@@ -1275,6 +1286,12 @@ async function runDirectQuestioningSession(
     }
     // Respect --encounters count (cap at 8 lines)
     const count = Math.min(encounterCount, shuffledLines.length);
+    // P2-4 (UX-R3): Warn when --encounters exceeds the DQ cap (8 lines).
+    // Previously this was a silent cap — the user asked for 999, got 8,
+    // with no explanation. Now they see a clear notice.
+    if (encounterCount > shuffledLines.length && !JSON_MODE) {
+      warn(`--encounters=${encounterCount} exceeds the ${shuffledLines.length} available lines in Direct Questioning mode; running ${count}. (Use --agent for Story-Driven mode with more encounters.)`);
+    }
     linesToRun = shuffledLines.slice(0, count);
   }
 
@@ -2007,7 +2024,11 @@ const PROVIDERS: Record<string, ProviderInfo> = {
       { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash', hint: 'Latest, fast' },
       { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro', hint: 'Balanced' },
       { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash', hint: 'Fast, affordable' },
-      { value: 'gemma-4-31b-it', label: 'Gemma 4 31B', hint: 'Open model' },
+      // YAGNI-3 (UX-R3): Removed 'gemma-4-31b-it' — not a real model name.
+      // Gemma exists (Google's open models) but there's no 'Gemma-4-31B'.
+      // This was a typo/placeholder that shipped to users and made the
+      // project look unfinished. If users want Gemma, they can configure it
+      // via the 'custom' provider with the real model name (e.g. gemma-2-27b-it).
     ],
     apiFormat: 'openai',
   },
@@ -2241,6 +2262,15 @@ async function runStatus(): Promise<void> {
   const moduleRegistry = bootModuleRegistry();
   (globalThis as any).__moduleRegistry = moduleRegistry;
 
+  // P1-3 (UX-R3): Mirror the session-entry threshold tuning so status
+  // displays the correct threshold the user will actually play against.
+  // Without this, status shows '0/20' when the user will actually play
+  // against a threshold of 6 (no-LLM mode).
+  const statusHasApiKey = !!(config.llm?.apiKey && config.llm.apiKey !== 'sk-placeholder');
+  if (!statusHasApiKey) {
+    setSaturationThreshold(6);
+  }
+
   if (JSON_MODE) {
     const ALL_LINES_FOR_JSON: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
     const sig = hasSave() ? loadSave() : null;
@@ -2385,14 +2415,24 @@ async function runStatus(): Promise<void> {
         Orange: '★', Green: '❋', Turquoise: '✺', White: '☉',
       };
       console.log(`\n  ${chalk.bold('Developmental Lines')}`);
+      // P2-3 (UX-R3): Replace the static [power] label with actionable info.
+      // Previously every line showed '[power]' (the Red stage aesthetic) with
+      // no explanation of what it meant or whether it was good. Now we show
+      // the stage aesthetic + progress toward the saturation threshold, so
+      // the user can see they're moving toward a stage transition.
+      const progressAll = getLineProgress(sig);
       for (const line of ALL_LINES_DISPLAY) {
         const stage = sig.altitudes[line] ?? 'Red';
         const symbol = stageSymbols[stage] ?? '◆';
         const aesthetic = stageAestheticsShort[stage] ?? 'power';
         const cellKey = `${line}:${stage}`;
         const traces = sig.polarity.cells[cellKey]?.traceCount ?? 0;
-        const bar = '▓'.repeat(Math.min(8, traces)) + '░'.repeat(Math.max(0, 8 - Math.min(8, traces)));
-        console.log(`    ${chalk.cyan(line.padEnd(16))} ${symbol} ${chalk.dim(`[${aesthetic}]`)} ${chalk.dim(bar)} ${chalk.dim(`${traces} encounter${traces === 1 ? '' : 's'}`)}`);
+        const prog = progressAll.find(p => p.line === line);
+        const threshold = prog?.threshold ?? 6;
+        const ratio = prog?.ratio ?? 0;
+        const filled = Math.min(8, Math.round(ratio * 8));
+        const bar = '▓'.repeat(filled) + '░'.repeat(8 - filled);
+        console.log(`    ${chalk.cyan(line.padEnd(16))} ${symbol} ${chalk.dim(`[${aesthetic}]`)} ${chalk.dim(bar)} ${chalk.dim(`${traces}/${threshold}`)}`);
       }
 
       // Wave 3.1: Dev-mode holistic primitives

@@ -163,6 +163,17 @@ describe('P0-3: endSessionAsync awaits TDG hook', () => {
     const sig = makeSig('p0-3-async');
     const sessionState = startSession(sig, makeSession());
 
+    // P2-1 (UX-R3): endSession now only increments totalSessions when at
+    // least one encounter completed. Add a completed outcome so the count
+    // advances — this matches the corrected semantics (a session with no
+    // activity shouldn't count).
+    sessionState.recentOutcomes.push({
+      outcome: 'completed' as const,
+      quality: 0.7,
+      mode: 'capacity' as const,
+      shadowIntegrated: false,
+    });
+
     // Should resolve (not reject) — TDG is not running in test env
     const result = await endSessionAsync(sig, sessionState, Date.now());
     expect(result.sig.totalSessions).toBe(sig.totalSessions + 1);
@@ -173,8 +184,25 @@ describe('P0-3: endSessionAsync awaits TDG hook', () => {
     const sig = makeSig('p0-3-sync');
     const sessionState = startSession(sig, makeSession());
 
+    // P2-1 (UX-R3): same as above — add a completed outcome.
+    sessionState.recentOutcomes.push({
+      outcome: 'completed' as const,
+      quality: 0.7,
+      mode: 'capacity' as const,
+      shadowIntegrated: false,
+    });
+
     const result = endSession(sig, sessionState, Date.now());
     expect(result.sig.totalSessions).toBe(sig.totalSessions + 1);
+  });
+
+  it('P2-1: endSession does NOT increment totalSessions when no encounters completed', () => {
+    const sig = makeSig('p0-3-empty');
+    const sessionState = startSession(sig, makeSession());
+    // No recentOutcomes — session was a no-op (e.g. all encounters crashed).
+
+    const result = endSession(sig, sessionState, Date.now());
+    expect(result.sig.totalSessions).toBe(sig.totalSessions); // unchanged
   });
 });
 

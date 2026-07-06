@@ -673,10 +673,14 @@ export function endSession(
     };
   }
 
-  // Increment totalSessions
+  // P2-1 (UX-R3): Only count a session if at least one encounter completed.
+  // Previously every endSession() call incremented totalSessions, including
+  // failed runs where every encounter crashed — so a user who ran 6 commands
+  // that all failed would see 'totalSessions: 6' in their save file, which
+  // was misleading. Now only sessions with real activity count.
   const updatedSig: Significator = {
     ...sig,
-    totalSessions: sig.totalSessions + 1,
+    totalSessions: encountersCompleted > 0 ? sig.totalSessions + 1 : sig.totalSessions,
   };
 
   // P2-Critical: Wire checkHarvest into runtime. Per foundations/19 §9, at
@@ -792,9 +796,11 @@ export async function endSessionAsync(
     };
   }
 
+  // P2-1 (UX-R3): Only count a session if at least one encounter completed
+  // (matches endSession's behavior). See comment in endSession().
   const updatedSig: Significator = {
     ...sig,
-    totalSessions: sig.totalSessions + 1,
+    totalSessions: encountersCompleted > 0 ? sig.totalSessions + 1 : sig.totalSessions,
   };
 
   // Hook 4: onSessionEnd — AWAIT the hook so tdg_consolidate + tdg_save_mind_state
