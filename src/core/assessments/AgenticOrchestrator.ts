@@ -699,12 +699,12 @@ INSTRUCTIONS:
       case 'ScenarioChoice':
         narrativeIntro = `${holonName} confronts you. The air is tense. A choice must be made.`;
         questionText = fallback.scenario ?? 'A crossroads appears. Each path carries weight.';
-        options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
+        options = (fallback.options ?? []).map(o => ({ label: o.text, description: "" }));
         break;
       case 'Strategic':
         narrativeIntro = `The war-table is spread before you. ${holonName} surveys the terrain. Three routes. Limited forces.`;
         questionText = fallback.scenario ?? fallback.prompt ?? 'Resources are limited. The map shows three routes to the objective.';
-        options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
+        options = (fallback.options ?? []).map(o => ({ label: o.text, description: "" }));
         break;
       case 'Embodied':
         narrativeIntro = `The war-drums begin. ${holonName} guides you. Your body knows this rhythm.`;
@@ -719,7 +719,7 @@ INSTRUCTIONS:
       case 'SocialCooperative':
         narrativeIntro = `${holonName} looks to you. Others wait for direction. The group needs your word.`;
         questionText = fallback.scenario ?? 'The scouts look to you. The path splits — one leads through danger, the other through uncertainty.';
-        options = (fallback.options ?? []).map(o => ({ label: o.text, description: o.text }));
+        options = (fallback.options ?? []).map(o => ({ label: o.text, description: "" }));
         break;
       case 'ImmersiveRPG':
         narrativeIntro = `The world stretches before you. ${holonName} appears — ${holonRole} of this domain. What calls?`;

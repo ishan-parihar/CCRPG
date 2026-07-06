@@ -220,6 +220,8 @@ import { ALL_MODALITIES } from '../src/core/domain/enums.js';
 import { thresholdToStage } from '../src/core/usecases/ThresholdMaps.js';
 // P1-3 (UX-R3): configurable saturation threshold + per-line progress.
 import { setSaturationThreshold, getLineProgress, computeReadiness } from '../src/core/engines/TransformationDetector.js';
+// R5-BUG-5 (UX-R5): fallback narrative pool for empty LLM responses.
+import { pickFallbackNarrative } from '../src/core/agent/FallbackNarratives.js';
 import { computeConfidence } from '../src/core/assessments/engine.js';
 import type { TrialResult } from '../src/core/assessments/types.js';
 import { renderLayers, renderLayersCompact } from '../src/game/cli/LayerRenderer.js';
@@ -1114,7 +1116,13 @@ async function runAgenticEncounter(
           if (q.options?.length) {
             for (let i = 0; i < q.options.length; i++) {
               const opt = q.options[i];
-              console.log(`    ${chalk.cyan('[' + (i + 1) + ']')} ${opt.label} — ${opt.description}`);
+              // R5-BUG-2 (UX-R5): Don't print ' — ' + description when description
+              // is empty (was duplicating the label for ScenarioChoice/Strategic/
+              // SocialCooperative where label and description were both o.text).
+              const optLine = opt.description
+                ? `${chalk.cyan('[' + (i + 1) + ']')} ${opt.label} — ${opt.description}`
+                : `${chalk.cyan('[' + (i + 1) + ']')} ${opt.label}`;
+              console.log(`    ${optLine}`);
             }
           }
         }
@@ -1487,7 +1495,12 @@ async function runDirectQuestioningSession(
       const cr = result.outcome.consequenceRecord;
       if (!JSON_MODE) {
         // P1-1 (UX-R3): word-boundary-aware truncation; was slice(0,120)+'...'
-        const briefNarrative = truncateNarrative(result.narrativeSummary, 140);
+        // R5-BUG-5 (UX-R5): If the LLM returned an empty narrative, fall back
+        // to the FallbackNarratives pool instead of showing an empty ✦ line.
+        const rawNarrative = result.narrativeSummary?.trim() || pickFallbackNarrative(
+          encounter.id, encounter.modality, Date.now() % 1000,
+        );
+        const briefNarrative = truncateNarrative(rawNarrative, 140);
         console.log(`\n  ${chalk.dim('\u2726')} ${briefNarrative}`);
 
         // T-3.4 (Veil compliance): replace "The encounter stirred: ↑ Communion drive, Homeostatic"
@@ -2004,7 +2017,11 @@ async function runFullSession(): Promise<void> {
           : cr.polarityTrace.energeticDirection === 'Absorptive' ? '↓' : '·';
 
         // P1-1 (UX-R3): word-boundary-aware truncation; was slice(0,100)+'...'
-        const briefNarrative = truncateNarrative(result.narrativeSummary, 140);
+        // R5-BUG-5 (UX-R5): Fall back to FallbackNarratives if LLM returned empty.
+        const rawNarrative = result.narrativeSummary?.trim() || pickFallbackNarrative(
+          selectedEncounter.id, selectedEncounter.modality, Date.now() % 1000,
+        );
+        const briefNarrative = truncateNarrative(rawNarrative, 140);
         console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
 
         // Shadow surfaces as narrative, not as a clinical label
@@ -2683,7 +2700,7 @@ function runGlossary(): void {
     { term: 'Veil', def: 'A design principle: the game never shows you clinical labels about yourself. You see qualitative felt-sense language, not diagnoses.' },
     { term: 'Resonance', def: 'A poetic 2-3 word description of your current stage\'s aesthetic (e.g. "fortress-sharp, weapon-walls" for Red).' },
     // R4-P1-1 (UX-R4): Explain the [power] bracket label that appears in status.
-    { term: 'Aesthetic Label', def: 'The bracketed word next to each developmental line in status output (e.g. [power]). It is the short form of your current stage: [primal]=Infrared, [symbolic]=Magenta, [power]=Red, [order]=Amber, [reason]=Orange, [harmony]=Green, [integral]=Turquoise, [unity]=White.' },
+    { term: 'Aesthetic Label', def: 'The bracketed word next to each developmental line in status output (e.g. [power]). It is the short form of your current stage: [primal]=Infrared, [symbolic]=Magenta, [power]=Red, [order]=Amber, [reason]=Orange, [h[harmony]=Green, [integral]=Turquoise, [unity]=White.' },
     { term: 'Theme', def: 'The session strategy that biases encounter selection (e.g. "balanced-development"). Shown in diagnostic. Different themes emphasize different lines or shadow work.' },
     { term: 'Encounter', def: 'A single developmental exchange. May be a question, a choice, a trial, or a narrative scene — depending on modality.' },
     { term: 'Calibration', def: 'The initial 8-question session that establishes your baseline across all 8 lines. Runs automatically on first play.' },
