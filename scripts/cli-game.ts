@@ -2142,17 +2142,113 @@ async function runSetup(): Promise<void> {
 
 // ── Status command ────────────────────────────────────────────────────
 async function runStatus(): Promise<void> {
-  banner('CCRPG Status');
+  // P0-3 (UX-R3): JSON-mode branch. Previously `status --json` produced
+  // broken output — section headers appeared but content was stripped
+  // because the pretty-print helpers (info(), banner()) suppress themselves
+  // in JSON mode, while console.log() for headers did not. This made the
+  // CLI unscriptable. Now we emit a single structured JSON object.
   const config = loadConfig();
+
+  bootRegistries();
+  const moduleRegistry = bootModuleRegistry();
+  (globalThis as any).__moduleRegistry = moduleRegistry;
+
+  if (JSON_MODE) {
+    const ALL_LINES_FOR_JSON: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
+    const sig = hasSave() ? loadSave() : null;
+    // Veil compliance: the JSON output respects the same Veil as the
+    // pretty-print path — qualitative aesthetic + milestone, not raw
+    // clinical state. Stage names and trace counts are exposed because
+    // they are already user-visible in the pretty-print table.
+    const stageAesthetics: Record<string, string> = {
+      Infrared: 'cave-dark, primal', Magenta: 'spirit-saturated, symbolic',
+      Red: 'fortress-sharp, weapon-walls', Amber: 'cathedral-ordered, gold-stone',
+      Orange: 'mechanism-precise, steel-glass', Green: 'garden-lush, earth-tones',
+      Turquoise: 'crystalline, translucent', White: 'luminous silence, spacious',
+    };
+    const stageAestheticsShort: Record<string, string> = {
+      Infrared: 'primal', Magenta: 'symbolic', Red: 'power', Amber: 'order',
+      Orange: 'reason', Green: 'harmony', Turquoise: 'integral', White: 'unity',
+    };
+    const out: any = {
+      type: 'status',
+      version: VERSION,
+      node: process.version,
+      config: {
+        configDir: CONFIG_DIR,
+        hasConfigFile: fs.existsSync(CONFIG_FILE),
+        provider: config.llm?.provider ?? 'gemini',
+        model: config.llm?.model ?? model,
+        hasApiKey: !!config.llm?.apiKey,
+        apiKeyPrefix: config.llm?.apiKey ? config.llm.apiKey.slice(0, 8) + '...' : null,
+      },
+      system: {
+        modulesLoaded: moduleRegistry.count(),
+        holons: 36, // matches diagnostic; kept stable for scriptability
+      },
+    };
+    if (sig) {
+      const aesthetic = stageAesthetics[sig.currentStage] ?? 'shifting, becoming';
+      const milestone = sig.totalEncounters === 0
+        ? 'Your path is yet to begin.'
+        : sig.totalEncounters < 10
+          ? 'You have tasted the first edges.'
+          : sig.totalEncounters < 30
+            ? 'Your path deepens with each step.'
+            : 'The shape of your journey grows clear.';
+      out.save = {
+        playerId: sig.id,
+        currentStage: sig.currentStage,
+        stageAesthetic: aesthetic,
+        resonance: `The world feels ${aesthetic}.`,
+        journeyMilestone: milestone,
+        totalEncounters: sig.totalEncounters,
+        totalSessions: sig.totalSessions,
+        shadowsActive: sig.shadows.activeCount,
+        lines: ALL_LINES_FOR_JSON.map((line) => {
+          const stage = sig.altitudes[line] ?? 'Red';
+          const cellKey = `${line}:${stage}`;
+          const traces = sig.polarity.cells[cellKey]?.traceCount ?? 0;
+          return {
+            line,
+            stage,
+            stageAesthetic: stageAestheticsShort[stage] ?? 'power',
+            encounters: traces,
+          };
+        }),
+      };
+      if (DEV_MODE) {
+        const snapshot = toSnapshot(sig);
+        const cci = computeCCI(snapshot);
+        const mh = cci.metabolicHealth;
+        out.dev = {
+          cci: cci.composite,
+          gz: mh?.gz ?? null,
+          pz: mh?.pz ?? null,
+          metabolicTotal: mh?.total ?? null,
+          interpretation: mh?.interpretation ?? null,
+          transformationPhase: sig.transformationPhase ?? 'idle',
+          rayProfile: sig.rayProfile,
+          transformationTargetStage: sig.transformationTargetStage ?? null,
+          sessionsInPhase: sig.transformationSessionsInPhase ?? 0,
+          knotsResolved: sig.transformationKnotsResolved ?? 0,
+          internalizedHolons: sig.internalizedHolons?.length ?? 0,
+          greatWayDirection: sig.greatWayDirection ?? null,
+        };
+      }
+    } else {
+      out.save = null;
+    }
+    process.stdout.write(JSON.stringify(out) + '\n');
+    return;
+  }
+
+  banner('CCRPG Status');
   console.log(`\n  ${chalk.bold('Configuration')}`);
   info('config', fs.existsSync(CONFIG_FILE) ? CONFIG_FILE : '(no config file)');
   info('provider', config.llm?.provider ?? 'gemini (default)');
   info('model', config.llm?.model ?? model);
   info('api key', config.llm?.apiKey ? `${config.llm.apiKey.slice(0, 8)}...` : 'not set');
-
-  bootRegistries();
-  const moduleRegistry = bootModuleRegistry();
-  (globalThis as any).__moduleRegistry = moduleRegistry;
 
   console.log(`\n  ${chalk.bold('Game State')}`);
   if (hasSave()) {
