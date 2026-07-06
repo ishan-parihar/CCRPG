@@ -190,7 +190,7 @@ import type { Significator } from '../src/core/domain/Significator.js';
 import type { Line } from '../src/core/domain/Line.js';
 import { ALL_LINES } from '../src/core/domain/Line.js';
 import type { Stage } from '../src/core/domain/Stage.js';
-import { ALL_STAGES } from '../src/core/domain/Stage.js';
+import { ALL_STAGES, stageOrdinal } from '../src/core/domain/Stage.js';
 import type { ScheduledEncounter } from '../src/core/domain/EncounterSpecNew.js';
 import type { PlayerResponse } from '../src/core/engines/ConsequenceEngine.js';
 import type { SessionContext } from '../src/core/engines/PriorityComputation.js';
@@ -211,7 +211,7 @@ import type { Modality } from '../src/core/domain/enums.js';
 import { ALL_MODALITIES } from '../src/core/domain/enums.js';
 import { thresholdToStage } from '../src/core/usecases/ThresholdMaps.js';
 // P1-3 (UX-R3): configurable saturation threshold + per-line progress.
-import { setSaturationThreshold, getLineProgress } from '../src/core/engines/TransformationDetector.js';
+import { setSaturationThreshold, getLineProgress, computeReadiness } from '../src/core/engines/TransformationDetector.js';
 import { computeConfidence } from '../src/core/assessments/engine.js';
 import type { TrialResult } from '../src/core/assessments/types.js';
 import { renderLayers, renderLayersCompact } from '../src/game/cli/LayerRenderer.js';
@@ -2457,6 +2457,48 @@ async function runStatus(): Promise<void> {
         const filled = Math.min(8, Math.round(ratio * 8));
         const bar = '▓'.repeat(filled) + '░'.repeat(8 - filled);
         console.log(`    ${chalk.cyan(line.padEnd(16))} ${symbol} ${chalk.dim(`[${aesthetic}]`)} ${chalk.dim(bar)} ${chalk.dim(`${traces}/${threshold}`)}`);
+      }
+
+      // R4-P2-1 (UX-R4): Transformation Readiness indicator. Shows the user
+      // their trajectory toward the next stage transition — closing Loop 3's
+      // visibility gap. Previously, a fresh user could play 8 encounters and
+      // see only "1/20" per line with no sense of what 1/20 meant or where it
+      // was going. Now they see the composite readiness + what's blocking.
+      // Veil-compliant: structural progress, not clinical state.
+      try {
+        const currentOrd = stageOrdinal(sig.currentStage);
+        if (currentOrd < ALL_STAGES.length - 1) {
+          const targetStage = ALL_STAGES[currentOrd + 1]!;
+          const report = computeReadiness(sig, targetStage);
+          console.log(`\n  ${chalk.bold('Transformation Readiness')}`);
+          info('current stage', `${sig.currentStage} → next: ${targetStage}`);
+          info('readiness', `${(report.overall * 100).toFixed(0)}% (needs 80% to transition)`);
+          // Sub-metrics as a compact bar
+          const pct = (v: number) => `${(v * 100).toFixed(0)}%`;
+          const bar = (v: number) => {
+            const filled = Math.min(10, Math.round(v * 10));
+            return '▓'.repeat(filled) + '░'.repeat(10 - filled);
+          };
+          console.log(`    convergence      ${chalk.dim(bar(report.convergence))} ${chalk.dim(pct(report.convergence))} (lines at current stage)`);
+          console.log(`    saturation       ${chalk.dim(bar(report.saturation))} ${chalk.dim(pct(report.saturation))} (encounters processed)`);
+          console.log(`    shadow clearance ${chalk.dim(bar(report.shadowClearance))} ${chalk.dim(pct(report.shadowClearance))} (critical shadows resolved)`);
+          // Actionable hint based on the weakest dimension
+          const dims = [
+            { name: 'convergence', val: report.convergence, hint: 'Play encounters across more lines' },
+            { name: 'saturation', val: report.saturation, hint: 'Play more encounters at your current stage' },
+            { name: 'shadow clearance', val: report.shadowClearance, hint: 'Engage with shadow-work encounters' },
+          ].sort((a, b) => a.val - b.val);
+          if (report.overall < 0.8) {
+            console.log(`    ${chalk.dim(`Focus: ${dims[0]!.hint} (lowest dimension: ${dims[0]!.name})`)}`);
+          } else {
+            console.log(`    ${chalk.green('✓ Threshold reached — transformation may fire this session')}`);
+          }
+        } else {
+          console.log(`\n  ${chalk.bold('Transformation Readiness')}`);
+          info('stage', `${sig.currentStage} (maximum — no further transitions)`);
+        }
+      } catch {
+        // Best-effort — don't let readiness computation break status.
       }
 
       // Wave 3.1: Dev-mode holistic primitives
