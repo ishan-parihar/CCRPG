@@ -131,20 +131,44 @@ try {
   }
 } catch { /* ignore */ }
 
-// Config priority: CLI flag > env var > ~/.ccrpg/config.json > built-in defaults
-const apiKey = process.env.OPENAI_API_KEY || process.env.VITE_LLM_API_KEY || fileConfig.llm?.apiKey || 'sk-placeholder';
-const baseUrl = process.env.VITE_LLM_BASE_URL || fileConfig.llm?.baseUrl || 'https://generativelanguage.googleapis.com/v1beta/openai';
-// YAGNI-3 (UX-R3): Replaced the fake 'gemma-4-31b-it' default with the real
-// 'gemini-1.5-flash' model name. The previous default was a non-existent
-// model name that made the project look unfinished.
-const model = earlyModelOverride || process.env.VITE_LLM_MODEL || fileConfig.llm?.model || 'gemini-1.5-flash';
-const provider = process.env.VITE_LLM_PROVIDER || fileConfig.llm?.provider || 'gemini';
+// Dynamic provider config (UX-R3 follow-up):
+// The previous implementation hardcoded a default model ('gemini-1.5-flash')
+// and provider ('gemini'). The new implementation resolves everything
+// dynamically through ProviderRegistry.resolveConfig(), which checks:
+//   1. CLI flags (--model, --provider, --base-url, --api-key)
+//   2. Provider-specific env vars (OPENCODE_API_KEY, ANTHROPIC_API_KEY, etc.)
+//   3. Generic LLM_* env vars (LLM_PROVIDER, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL)
+//   4. The MODEL env var (per the user's spec)
+//   5. Legacy VITE_LLM_* env vars (backwards compat)
+//   6. Saved config file (~/.ccrpg/config.json)
+// No hardcoded model names anywhere. The default provider is 'opencode'
+// (opencode.ai/zen) — the project's primary gateway — but only fires if
+// OPENCODE_API_KEY / OPENCODE_API is set; otherwise the user must configure.
+import { resolveConfig as resolveLLMConfig, isComplete as isLLMConfigComplete, type LLMConfig } from '../src/infra/llm/ProviderRegistry.js';
+import { getActiveConfig, invalidateConfigCache, setLLMDisabled } from '../src/infra/llm/LLMClient.js';
 
-// Set process.env so LLMClient's getEnvVal() fallback works in Node.js
+const resolvedLLM: LLMConfig = resolveLLMConfig(
+  { model: earlyModelOverride },
+  fileConfig,
+);
+const llmComplete = isLLMConfigComplete(resolvedLLM);
+const apiKey = resolvedLLM.apiKey || 'sk-placeholder';
+const baseUrl = resolvedLLM.baseUrl;
+const model = resolvedLLM.model;
+const provider = resolvedLLM.providerId;
+
+// Seed process.env.VITE_LLM_* for backwards compat with any code that still
+// reads those directly. The LLMClient now reads via getActiveConfig() which
+// resolves through ProviderRegistry, but a few call sites (and tests) still
+// use the legacy env vars.
 process.env.VITE_LLM_BASE_URL = baseUrl;
 process.env.VITE_LLM_API_KEY = apiKey;
 process.env.VITE_LLM_MODEL = model;
 process.env.VITE_LLM_PROVIDER = provider;
+
+// Seed the LLMClient config cache so the first call doesn't re-resolve.
+// Pass fileConfig so the cache matches what we just resolved.
+getActiveConfig(fileConfig);
 
 (globalThis as any).import = {
   meta: {
@@ -207,8 +231,19 @@ let HEADLESS = opts.headless ?? false;
 const VERBOSE = opts.verbose ?? false;
 const JSON_MODE = opts.json ?? false;
 const DEV_MODE = (opts as any).dev ?? false;
-const NO_LLM = opts.noLlm ?? false;
-let LLM_ACTIVE = !NO_LLM && apiKey !== 'sk-placeholder';
+// Commander treats `--no-llm` as a negation of `--llm`: it creates
+// opts.llm (default true) and sets it to false when --no-llm is passed.
+// So we read opts.llm (not opts.noLlm, which is always undefined).
+// Pre-existing bug masked by the old hardcoded 'sk-placeholder' default.
+const NO_LLM = opts.llm === false;
+// Propagate --no-llm to the LLMClient so ALL call sites (including the
+// PersistentAgent path) respect it. Without this, --no-llm only affected
+// the CLI's LLM_ACTIVE flag, but the agent path would still call the LLM
+// because the config file had a valid key.
+setLLMDisabled(NO_LLM);
+// LLM_ACTIVE now uses the resolved config's completeness check, which
+// accounts for the provider-specific env vars (OPENCODE_API_KEY, etc.).
+let LLM_ACTIVE = !NO_LLM && llmComplete;
 const ACTIVE_MODEL = opts.model ?? model;
 /** Phase 3: --agent routes encounters through the Persistent Developmental Agent (15-tool, session-persistent). Default: AgenticOrchestrator (2-tool, 4-exchange budget). */
 const USE_PERSISTENT_AGENT = (opts as any).agent ?? false;
@@ -1364,18 +1399,8 @@ async function runDirectQuestioningSession(
         if (cr.shadowSurfaced) {
           console.log(`  ${chalk.dim('Something beneath the surface stirred.')}`);
         }
-
-        // P1-3 (UX-R3): Surface per-line progress to next threshold so the
-        // user can see they're moving. Previously, 42 encounters produced
-        // zero visible progression — the user felt they'd consumed content,
-        // not grown. Now after each encounter we show the line's trace count
-        // vs. the saturation threshold (Veil-compliant: structural, not clinical).
-        const progress = getLineProgress(currentSig).find(p => p.line === line);
-        if (progress) {
-          const filled = Math.min(8, Math.round(progress.ratio * 8));
-          const bar = '▓'.repeat(filled) + '░'.repeat(8 - filled);
-          console.log(`  ${chalk.dim(`${line.padEnd(13)} ${bar} ${progress.traces}/${progress.threshold}`)}`);
-        }
+        // P1-3 (UX-R3): Progress bar is deferred until after currentSig is
+        // updated (see below) so it reflects the encounter that just completed.
       }
 
       // Feed result to session agent for cross-encounter synthesis
@@ -1399,6 +1424,17 @@ async function runDirectQuestioningSession(
       history.push(cr);
       currentSig = result.outcome.updatedSig;
       currentWorld = result.outcome.updatedWorld;
+
+      // P1-3 (UX-R3): Surface per-line progress to next threshold AFTER the
+      // sig is updated, so the bar reflects the encounter that just completed.
+      if (!JSON_MODE) {
+        const progress = getLineProgress(currentSig).find(p => p.line === line);
+        if (progress) {
+          const filled = Math.min(8, Math.round(progress.ratio * 8));
+          const bar = '▓'.repeat(filled) + '░'.repeat(8 - filled);
+          console.log(`  ${chalk.dim(`${line.padEnd(13)} ${bar} ${progress.traces}/${progress.threshold}`)}`);
+        }
+      }
 
       // Wave 1.3: Apply the response to GameLoop state engines in Direct Questioning mode too.
       // DQ bypasses tickWithStrategy but should still update UserMatrixModel + transformation state.
@@ -1968,88 +2004,72 @@ async function runFullSession(): Promise<void> {
   });
 }
 
-// ── Provider registry ─────────────────────────────────────────────
-interface ProviderInfo {
-  id: string;
-  name: string;
-  baseUrl: string;
-  requiresApiKey: boolean;
-  defaultModel: string;
-  models: { value: string; label: string; hint: string }[];
-  apiFormat: 'openai' | 'anthropic';
-}
+// ── Provider registry (dynamic) ────────────────────────────────────
+// The static PROVIDERS catalog with hardcoded model lists has been removed.
+// Provider profiles now live in src/infra/llm/ProviderRegistry.ts and carry
+// only the immutable bits (baseUrl, authStyle, env var name). The model list
+// is fetched dynamically from each provider's /models endpoint, with
+// models.dev as a fallback catalog. This mirrors opencode's architecture.
+import {
+  listProfiles as listProviderProfiles,
+  getProfile as getProviderProfile,
+  getModels as getProviderModels,
+  clearModelCache,
+  type LLMConfig as DynamicLLMConfig,
+  type DiscoveredModel,
+  type ProviderProfile,
+} from '../src/infra/llm/ProviderRegistry.js';
 
-const PROVIDERS: Record<string, ProviderInfo> = {
-  ollama: {
-    id: 'ollama',
-    name: 'Ollama (Local)',
-    baseUrl: 'http://localhost:11434/v1',
-    requiresApiKey: false,
-    defaultModel: 'llama3.2',
-    models: [
-      { value: 'llama3.2', label: 'Llama 3.2', hint: 'Meta, 8B' },
-      { value: 'codellama', label: 'CodeLlama', hint: 'Meta, code-focused' },
-      { value: 'mistral', label: 'Mistral', hint: '7B' },
-      { value: 'phi3', label: 'Phi-3', hint: 'Microsoft, 3.8B' },
-    ],
-    apiFormat: 'openai',
-  },
-  openai: {
-    id: 'openai',
-    name: 'OpenAI',
-    baseUrl: 'https://api.openai.com/v1',
-    requiresApiKey: true,
-    defaultModel: 'gpt-4o-mini',
-    models: [
-      { value: 'gpt-4o', label: 'GPT-4o', hint: 'Latest, most capable' },
-      { value: 'gpt-4o-mini', label: 'GPT-4o Mini', hint: 'Fast, affordable' },
-      { value: 'gpt-4-turbo', label: 'GPT-4 Turbo', hint: '128K context' },
-      { value: 'o1-mini', label: 'o1-mini', hint: 'Reasoning model' },
-    ],
-    apiFormat: 'openai',
-  },
-  anthropic: {
-    id: 'anthropic',
-    name: 'Anthropic',
-    baseUrl: 'https://api.anthropic.com/v1',
-    requiresApiKey: true,
-    defaultModel: 'claude-3-haiku-20240307',
-    models: [
-      { value: 'claude-sonnet-4-20250514', label: 'Claude Sonnet 4', hint: 'Latest, balanced' },
-      { value: 'claude-3-5-sonnet-20241022', label: 'Claude 3.5 Sonnet', hint: 'Strong reasoning' },
-      { value: 'claude-3-haiku-20240307', label: 'Claude 3 Haiku', hint: 'Fast, affordable' },
-      { value: 'claude-3-opus-20240229', label: 'Claude 3 Opus', hint: 'Most capable' },
-    ],
-    apiFormat: 'anthropic',
-  },
-  gemini: {
-    id: 'gemini',
-    name: 'Google Gemini',
-    baseUrl: 'https://generativelanguage.googleapis.com/v1beta/openai',
-    requiresApiKey: true,
-    defaultModel: 'gemini-1.5-flash',
-    models: [
-      { value: 'gemini-2.0-flash', label: 'Gemini 2.0 Flash', hint: 'Latest, fast' },
-      { value: 'gemini-1.5-pro', label: 'Gemini 1.5 Pro', hint: 'Balanced' },
-      { value: 'gemini-1.5-flash', label: 'Gemini 1.5 Flash', hint: 'Fast, affordable' },
-      // YAGNI-3 (UX-R3): Removed 'gemma-4-31b-it' — not a real model name.
-      // Gemma exists (Google's open models) but there's no 'Gemma-4-31B'.
-      // This was a typo/placeholder that shipped to users and made the
-      // project look unfinished. If users want Gemma, they can configure it
-      // via the 'custom' provider with the real model name (e.g. gemma-2-27b-it).
-    ],
-    apiFormat: 'openai',
-  },
-  custom: {
-    id: 'custom',
-    name: 'Custom Provider',
-    baseUrl: '',
-    requiresApiKey: true,
-    defaultModel: '',
-    models: [],
-    apiFormat: 'openai',
-  },
-};
+/**
+ * Verify a provider connection by fetching /models (OpenAI-compat) or
+ * sending a minimal /messages request (Anthropic). Returns ok + message.
+ * Replaces the previous verifyProviderConnection that hard-coded per-provider logic.
+ */
+async function verifyProviderConnection(config: DynamicLLMConfig): Promise<{ ok: boolean; message: string }> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10_000);
+    const headers: Record<string, string> = { 'Content-Type': 'application/json' };
+    if (config.apiKey && config.apiKey !== 'sk-placeholder') {
+      if (config.authStyle === 'x-api-key') {
+        headers['x-api-key'] = config.apiKey;
+        if (config.protocol === 'anthropic') headers['anthropic-version'] = '2023-06-01';
+      } else {
+        headers.Authorization = `Bearer ${config.apiKey}`;
+      }
+    }
+
+    if (config.protocol === 'anthropic') {
+      // Anthropic: POST /v1/messages with minimal payload
+      const res = await fetch(`${config.baseUrl}/messages`, {
+        method: 'POST',
+        headers,
+        body: JSON.stringify({
+          model: config.model,
+          messages: [{ role: 'user', content: 'ping' }],
+          max_tokens: 1,
+        }),
+        signal: controller.signal,
+      });
+      clearTimeout(timeout);
+      if (res.ok) return { ok: true, message: 'Anthropic connected' };
+      if (res.status === 401 || res.status === 403) return { ok: false, message: 'Invalid API key' };
+      return { ok: false, message: `Anthropic responded with ${res.status}` };
+    }
+
+    // OpenAI-compatible (incl. Ollama, OpenCode Zen, OpenRouter, etc.): GET /models
+    const res = await fetch(`${config.baseUrl.replace(/\/$/, '')}/models`, {
+      headers,
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+    if (res.ok) return { ok: true, message: 'Connected' };
+    if (res.status === 401 || res.status === 403) return { ok: false, message: 'Invalid API key' };
+    return { ok: false, message: `Endpoint responded with ${res.status}` };
+  } catch (err: any) {
+    return { ok: false, message: err.name === 'AbortError' ? 'Connection timed out' : 'Connection failed' };
+  }
+}
 
 // ── Ollama auto-detect ──────────────────────────────────────────
 async function detectOllama(): Promise<{ running: boolean; models: string[] }> {
@@ -2067,61 +2087,16 @@ async function detectOllama(): Promise<{ running: boolean; models: string[] }> {
   }
 }
 
-// ── API key verification ────────────────────────────────────────
-async function verifyProviderConnection(provider: ProviderInfo, apiKeyVal: string, modelVal: string, baseUrlVal: string): Promise<{ ok: boolean; message: string }> {
-  try {
-    const controller = new AbortController();
-    const timeout = setTimeout(() => controller.abort(), 10_000);
-
-    if (provider.id === 'ollama') {
-      // Ollama: GET /api/tags
-      const res = await fetch('http://localhost:11434/api/tags', { signal: controller.signal });
-      clearTimeout(timeout);
-      if (res.ok) return { ok: true, message: 'Ollama connected' };
-      return { ok: false, message: `Ollama responded with ${res.status}` };
-    }
-
-    if (provider.id === 'anthropic') {
-      // Anthropic: POST /v1/messages with minimal payload
-      const res = await fetch(`${baseUrlVal}/messages`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-api-key': apiKeyVal,
-          'anthropic-version': '2023-06-01',
-        },
-        body: JSON.stringify({
-          model: modelVal,
-          messages: [{ role: 'user', content: 'ping' }],
-          max_tokens: 1,
-        }),
-        signal: controller.signal,
-      });
-      clearTimeout(timeout);
-      if (res.ok) return { ok: true, message: 'Anthropic connected' };
-      if (res.status === 401 || res.status === 403) return { ok: false, message: 'Invalid API key' };
-      return { ok: false, message: `Anthropic responded with ${res.status}` };
-    }
-
-    // OpenAI / Gemini / Custom: GET /models
-    const res = await fetch(`${baseUrlVal}/models`, {
-      headers: { 'Authorization': `Bearer ${apiKeyVal}` },
-      signal: controller.signal,
-    });
-    clearTimeout(timeout);
-    if (res.ok) return { ok: true, message: 'Connected' };
-    if (res.status === 401 || res.status === 403) return { ok: false, message: 'Invalid API key' };
-    return { ok: false, message: `Endpoint responded with ${res.status}` };
-  } catch (err: any) {
-    return { ok: false, message: err.name === 'AbortError' ? 'Connection timed out' : 'Connection failed' };
-  }
-}
-
-// ── Setup wizard ──────────────────────────────────────────────────
+// ── Setup wizard (dynamic) ────────────────────────────────────────
+// Refactored to use ProviderRegistry instead of the hardcoded PROVIDERS catalog.
+// The model list is now fetched at runtime from each provider's /models
+// endpoint (with models.dev as a fallback catalog), so we never ship stale
+// model names. Mirrors opencode's dynamic provider+model discovery design.
 async function runSetup(): Promise<void> {
   if (HEADLESS || JSON_MODE) { error('setup requires interactive mode (remove --headless and --json)'); return; }
   banner('CCRPG Setup Wizard');
   console.log(`\n  ${chalk.dim('Configure your LLM provider for the developmental engine.')}\n`);
+  console.log(`  ${chalk.dim('Models are fetched live from each provider — no stale lists.')}\n`);
 
   fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.mkdirSync(path.join(CONFIG_DIR, 'saves'), { recursive: true });
@@ -2129,103 +2104,140 @@ async function runSetup(): Promise<void> {
 
   const existing = loadConfig();
   if (existing.llm?.provider) {
-    info('current provider', existing.llm.provider);
+    info('current provider', `${existing.llm.provider} (${existing.llm.model || 'no model'})`);
   }
 
-  // Step 1: Provider selection
+  // Check for env-var pre-configuration (e.g. OPENCODE_API_KEY already set).
+  // If a provider's env var is set, offer to use it directly.
+  const envConfiguredProvider = listProviderProfiles().find(profile =>
+    profile.envVars.some(v => process.env[v] && process.env[v] !== 'sk-placeholder')
+  );
+  if (envConfiguredProvider) {
+    const keyVar = envConfiguredProvider.envVars.find(v => process.env[v] && process.env[v] !== 'sk-placeholder');
+    info('env detected', `${envConfiguredProvider.name} (via ${keyVar})`);
+  }
+
+  // Step 1: Provider selection — from the dynamic registry
   console.log(`\n  ${chalk.bold('Step 1: Select Provider')}`);
+  const profiles = listProviderProfiles();
   const providerChoice = await select({
     message: 'Choose your LLM provider:',
-    options: Object.values(PROVIDERS).map(p => ({
+    options: profiles.map(p => ({
       value: p.id,
       label: p.name,
-      hint: p.requiresApiKey ? 'Requires API key' : 'No API key needed',
+      hint: p.envVars.length > 0 ? `env: ${p.envVars[0]}` : 'no key needed',
     })),
   });
 
   if (typeof providerChoice !== 'string') { error('Setup cancelled'); return; }
-  const selectedProvider = PROVIDERS[providerChoice]!;
+  const selectedProfile = getProviderProfile(providerChoice)!;
 
-  // Step 2: Ollama auto-detect or API key
-  let selectedApiKey = existing.llm?.apiKey ?? '';
-  let ollamaModels: string[] = [];
-
-  if (selectedProvider.id === 'ollama') {
+  // Step 2: API key (skip for Ollama; pre-fill from env if available)
+  let selectedApiKey = '';
+  if (selectedProfile.id === 'ollama') {
     console.log(`\n  ${chalk.bold('Step 2: Detecting Ollama...')}`);
     const spinner = ora('Checking Ollama at localhost:11434...').start();
     const ollamaStatus = await detectOllama();
     if (ollamaStatus.running) {
       spinner.succeed('Ollama detected');
-      ollamaModels = ollamaStatus.models;
-      if (ollamaModels.length > 0) {
-        info('available models', ollamaModels.join(', '));
-      }
     } else {
       spinner.warn('Ollama not detected at localhost:11434');
       console.log(`  ${chalk.dim('You can still configure it — start Ollama later before playing.')}`);
     }
-  } else if (selectedProvider.requiresApiKey) {
+  } else {
     console.log(`\n  ${chalk.bold('Step 2: API Key')}`);
-    const currentKey = existing.llm?.apiKey ? `${existing.llm.apiKey.slice(0, 8)}...` : '(not set)';
-    console.log(`  Current: ${chalk.dim(currentKey)}`);
+    // Pre-fill from env vars if available
+    const envKey = selectedProfile.envVars
+      .map(v => process.env[v])
+      .find(v => v && v !== 'sk-placeholder');
+    const existingKey = envKey ?? existing.llm?.apiKey ?? '';
+    const currentDisplay = existingKey ? `${existingKey.slice(0, 8)}...` : '(not set)';
+    console.log(`  Current: ${chalk.dim(currentDisplay)}`);
+    console.log(`  ${chalk.dim(`Env vars checked: ${selectedProfile.envVars.join(', ') || '(none)'}`)}`);
     const newKey = await clackText({
-      message: `Enter ${selectedProvider.name} API key:`,
+      message: `Enter ${selectedProfile.name} API key${envKey ? ' (blank = use env)' : ''}:`,
       defaultValue: '',
     });
     if (typeof newKey !== 'string') { error('Setup cancelled'); return; }
-    selectedApiKey = newKey.trim() || (existing.llm?.apiKey ?? '');
+    selectedApiKey = newKey.trim() || existingKey;
   }
 
-  // Step 3: Model selection
-  console.log(`\n  ${chalk.bold('Step 3: Select Model')}`);
-  let selectedModel = selectedProvider.defaultModel;
-  let selectedBaseUrl = selectedProvider.baseUrl;
-
-  if (selectedProvider.id === 'ollama' && ollamaModels.length > 0) {
-    // Show auto-detected models plus defaults
-    const modelOptions = [
-      ...ollamaModels.map(m => ({ value: m, label: m, hint: 'detected' })),
-      ...selectedProvider.models.filter(pm => !ollamaModels.includes(pm.value)).map(pm => ({
-        value: pm.value, label: pm.label, hint: pm.hint,
-      })),
-    ];
-    const modelChoice = await select({ message: 'Select model:', options: modelOptions });
-    if (typeof modelChoice === 'string') selectedModel = modelChoice;
-  } else if (selectedProvider.models.length > 0) {
-    const modelChoice = await select({
-      message: 'Select model:',
-      options: selectedProvider.models.map(m => ({
-        value: m.value, label: m.label, hint: m.hint,
-      })),
+  // Step 3: Base URL (only prompt for custom; otherwise use the profile's URL)
+  let selectedBaseUrl = selectedProfile.baseUrl;
+  if (selectedProfile.id === 'custom') {
+    console.log(`\n  ${chalk.bold('Step 3: Custom Endpoint')}`);
+    const urlInput = await clackText({
+      message: 'Enter base URL (e.g. https://api.example.com/v1):',
+      defaultValue: existing.llm?.baseUrl ?? '',
     });
-    if (typeof modelChoice === 'string') selectedModel = modelChoice;
-  } else {
-    // Custom provider: ask for model ID
-    const modelInput = await clackText({ message: 'Enter model ID:', defaultValue: selectedModel });
-    if (typeof modelInput === 'string' && modelInput.trim()) selectedModel = modelInput.trim();
-  }
-
-  // Step 4: Custom provider base URL
-  if (selectedProvider.id === 'custom') {
-    console.log(`\n  ${chalk.bold('Step 4: Custom Endpoint')}`);
-    const urlInput = await clackText({ message: 'Enter base URL (e.g. http://localhost:8080/v1):', defaultValue: '' });
     if (typeof urlInput === 'string' && urlInput.trim()) selectedBaseUrl = urlInput.trim();
   }
 
+  // Step 4: Model selection — DYNAMIC. Fetch /models from the provider.
+  console.log(`\n  ${chalk.bold('Step 4: Select Model')}`);
+  console.log(`  ${chalk.dim('Fetching live model list from provider...')}`);
+  const probeConfig: DynamicLLMConfig = {
+    providerId: selectedProfile.id,
+    providerName: selectedProfile.name,
+    baseUrl: selectedBaseUrl,
+    apiKey: selectedApiKey,
+    model: '', // empty — we're discovering
+    authStyle: selectedProfile.authStyle,
+    protocol: selectedProfile.protocol,
+  };
+  clearModelCache();
+  const spinner = ora('Fetching models...').start();
+  const discoveredModels: readonly DiscoveredModel[] = await getProviderModels(probeConfig);
+  if (discoveredModels.length > 0) {
+    spinner.succeed(`Found ${discoveredModels.length} models`);
+    // Show first 30 + a "type your own" fallback
+    const shown = discoveredModels.slice(0, 30);
+    const modelOptions = [
+      ...shown.map(m => ({ value: m.id, label: m.label, hint: m.hint })),
+    ];
+    const modelChoice = await select({
+      message: `Select model (showing ${shown.length} of ${discoveredModels.length}):`,
+      options: modelOptions,
+    });
+    let selectedModel = '';
+    if (typeof modelChoice === 'string') {
+      selectedModel = modelChoice;
+    } else {
+      // User cancelled — allow manual entry
+      const manual = await clackText({ message: 'Enter model ID manually:', defaultValue: '' });
+      if (typeof manual === 'string') selectedModel = manual.trim();
+    }
+    await saveAndVerify(probeConfig, selectedProfile, selectedApiKey, selectedBaseUrl, selectedModel, existing);
+  } else {
+    // /models failed — fall back to manual entry + models.dev catalog hint
+    spinner.warn('Could not fetch model list from provider');
+    console.log(`  ${chalk.dim('You can enter a model ID manually. Check the provider docs:')}`);
+    if (selectedProfile.docUrl) console.log(`  ${chalk.dim(selectedProfile.docUrl)}`);
+    const manual = await clackText({
+      message: 'Enter model ID:',
+      defaultValue: existing.llm?.model ?? '',
+    });
+    let selectedModel = '';
+    if (typeof manual === 'string') selectedModel = manual.trim();
+    if (!selectedModel) { error('No model specified — setup cancelled'); return; }
+    await saveAndVerify(probeConfig, selectedProfile, selectedApiKey, selectedBaseUrl, selectedModel, existing);
+  }
+}
+
+/** Shared save + verify step used by both branches of model selection. */
+async function saveAndVerify(
+  probeConfig: DynamicLLMConfig,
+  profile: ProviderProfile,
+  apiKeyVal: string,
+  baseUrlVal: string,
+  modelVal: string,
+  existing: CCRPGConfig,
+): Promise<void> {
   // Step 5: Verify connection
   console.log(`\n  ${chalk.bold('Step 5: Verify Connection')}`);
-  const verifyProvider = selectedProvider.id === 'custom'
-    ? { ...selectedProvider, baseUrl: selectedBaseUrl, apiFormat: 'openai' as const }
-    : selectedProvider;
-  const verifyBaseUrl = selectedProvider.id === 'custom' ? selectedBaseUrl : selectedProvider.baseUrl;
-
+  const verifyConfig: DynamicLLMConfig = { ...probeConfig, model: modelVal };
   const spinner = ora('Verifying connection...').start();
-  const verification = await verifyProviderConnection(
-    { ...verifyProvider, baseUrl: verifyBaseUrl },
-    selectedApiKey,
-    selectedModel,
-    verifyBaseUrl,
-  );
+  const verification = await verifyProviderConnection(verifyConfig);
   if (verification.ok) {
     spinner.succeed(verification.message);
   } else {
@@ -2236,24 +2248,26 @@ async function runSetup(): Promise<void> {
   // Step 6: Save config
   const config: CCRPGConfig = {
     llm: {
-      provider: selectedProvider.id as 'ollama' | 'openai' | 'anthropic' | 'gemini' | 'custom',
-      apiKey: selectedApiKey || existing.llm?.apiKey,
-      model: selectedModel,
-      baseUrl: verifyBaseUrl,
+      provider: profile.id as any,
+      apiKey: apiKeyVal || existing.llm?.apiKey,
+      model: modelVal,
+      baseUrl: baseUrlVal,
     },
     session: { defaultEncounters: existing.session?.defaultEncounters ?? 20, defaultMode: existing.session?.defaultMode ?? 'full' },
   };
-
   saveConfig(config);
+
+  // Invalidate the LLMClient config cache so the next session picks up the new config.
+  invalidateConfigCache();
 
   // Summary
   console.log('');
   success(`Configuration saved to ${CONFIG_FILE}`);
   console.log(`\n  ${chalk.bold('Summary')}`);
-  console.log(`  ${chalk.green('✓')} provider:    ${selectedProvider.name}`);
-  console.log(`  ${chalk.green('✓')} model:       ${selectedModel}`);
-  console.log(`  ${chalk.green('✓')} endpoint:    ${verifyBaseUrl}`);
-  console.log(`  ${chalk.green('✓')} api key:     ${selectedApiKey ? `${selectedApiKey.slice(0, 8)}...` : '(none)'}`);
+  console.log(`  ${chalk.green('✓')} provider:    ${profile.name}`);
+  console.log(`  ${chalk.green('✓')} model:       ${modelVal}`);
+  console.log(`  ${chalk.green('✓')} endpoint:    ${baseUrlVal}`);
+  console.log(`  ${chalk.green('✓')} api key:     ${apiKeyVal ? `${apiKeyVal.slice(0, 8)}...` : '(none)'}`);
   console.log(`\n  Run ${chalk.bold('ccrpg')} to start your developmental journey.\n`);
 }
 
