@@ -72,6 +72,14 @@ program
 program
   .command('session')
   .description('Start an interactive session');
+// P2-2 (UX-R3): Glossary subcommand. The audit found a severe vocabulary
+// wall — terms like Holon, Significator, CCI, rayProfile, G_z/P_z appeared
+// in CLI output with no explanation. Users felt like outsiders. The glossary
+// command prints 1-line definitions for every term, breaching the wall without
+// requiring users to read the docs.
+program
+  .command('glossary')
+  .description('Show definitions for CCRPG terminology');
 
 // ponytail: .action() prevents commander from showing help when no subcommand given
 program.action(() => {});
@@ -2474,9 +2482,51 @@ async function runStatus(): Promise<void> {
   info('version', VERSION);
 }
 
+// ── Glossary command (P2-2 / UX-R3) ───────────────────────────────────
+// The fresh-user audit found a severe vocabulary wall. Terms like Holon,
+// Significator, CCI, rayProfile, G_z/P_z appeared in CLI output with no
+// explanation. Users felt like outsiders. The glossary command prints
+// 1-line definitions for every term, breaching the wall without requiring
+// users to read the docs. The Veil is preserved — these are system-facing
+// terms, not player-facing diagnoses.
+function runGlossary(): void {
+  banner('CCRPG Glossary');
+  const terms: ReadonlyArray<{ term: string; def: string }> = [
+    { term: 'Holon', def: 'An autonomous whole that is itself part of a larger whole. NPCs, factions, and locations are all holons.' },
+    { term: 'Significator', def: 'The persistent soul-pattern of the player — your saved state across sessions. Carries altitudes, drives, shadows, and ray profile.' },
+    { term: 'Line', def: 'One of 8 lines of intelligence: Cognitive, Emotional, Moral, Intrapersonal, Spiritual, Interpersonal, Somatic, Willpower.' },
+    { term: 'Stage', def: 'One of 8 developmental altitudes: Infrared, Magenta, Red, Amber, Orange, Green, Turquoise, White. You progress through them.' },
+    { term: 'Module', def: 'A specific Line × Stage combination. 8 lines × 8 stages = 64 modules total, each with its own assessment content.' },
+    { term: 'Modality', def: 'How an encounter is delivered. 7 types: Deterministic (timed trials), LanguageReflective (open questions), ScenarioChoice, Embodied, Strategic, SocialCooperative, ImmersiveRPG.' },
+    { term: 'CCI', def: 'Cumulative Consciousness Index — a 0-1 composite of altitude, drive health, polarity, shadow topology, and transformation readiness.' },
+    { term: 'rayProfile', def: 'Activation level (0-1) of each of the 7 energy rays: Red, Orange, Yellow, Green, Blue, Indigo, Violet. Maps to stages.' },
+    { term: 'G_z / P_z', def: 'Metabolic-health primitives. G_z = generative z-potential (capacity to grow); P_z = pathogenic z-potential (distortion load). Higher G_z, lower P_z is healthier.' },
+    { term: 'Arc', def: 'Session position: WARMUP (first 1-2 encounters), PEAK (middle), COOLDOWN (last 1-2). Maps to how contemplative practice actually works.' },
+    { term: 'Saturation', def: 'How many encounters you have completed at your current stage per line. Reaching the threshold (6 in no-LLM mode, 20 with LLM) is required for stage transition.' },
+    { term: 'Shadow', def: 'An unresolved developmental pattern. Surfacing shadows is part of the work; integrating them is the goal. The CLI never labels them clinically.' },
+    { term: 'Drive', def: 'One of 4 fundamental drives: Agency, Communion, Eros, Agape. Each can be healthy-balanced or distorted (DarkAddicted, DarkAverted, GoldenAddicted, GoldenAverted).' },
+    { term: 'Polarity', def: 'The energetic direction of an encounter: Absorptive (taking in), Radiative (giving out), or Homeostatic (balanced).' },
+    { term: 'Transformation', def: 'A stage transition. Fires when readiness ≥ 0.8, with sufficient line convergence, shadow clearance, and AQAL quadrant coverage.' },
+    { term: 'Veil', def: 'A design principle: the game never shows you clinical labels about yourself. You see qualitative felt-sense language, not diagnoses.' },
+    { term: 'Resonance', def: 'A poetic 2-3 word description of your current stage\'s aesthetic (e.g. "fortress-sharp, weapon-walls" for Red).' },
+    { term: 'Encounter', def: 'A single developmental exchange. May be a question, a choice, a trial, or a narrative scene — depending on modality.' },
+    { term: 'Calibration', def: 'The initial 8-question session that establishes your baseline across all 8 lines. Runs automatically on first play.' },
+    { term: 'TDG', def: 'Temporal Developmental Graph — an optional graph-memory system for cross-session continuity. Not running in default mode.' },
+  ];
+  if (JSON_MODE) {
+    process.stdout.write(JSON.stringify({ type: 'glossary', terms }) + '\n');
+    return;
+  }
+  console.log('');
+  for (const { term, def } of terms) {
+    console.log(`  ${chalk.bold.cyan(term.padEnd(16))} ${chalk.dim(def)}`);
+  }
+  console.log(`\n  ${chalk.dim('For the full theoretical foundation, see docs/foundations/ and docs/02-glossary.md.')}\n`);
+}
+
 // ── Usage help ──────────────────────────────────────────────────────
 function printHelp(): void {
-  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show full narrative and feedback\n  --no-llm                     Disable LLM, use module assessments only\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n  --force-shadow=Q             Force a shadow quadrant\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var\n  Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var\n  Saves:     ~/.ccrpg/saves/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --no-llm                   # quick automated test\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg diagnostic                            # system diagnostics\n`);
+  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show definitions for CCRPG terminology\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show full narrative and feedback\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Show holistic primitives (G_z/P_z, rayProfile)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n  --force-shadow=Q             Inject shadow-keyword text (testing only)\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var\n  Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var\n  Saves:     ~/.ccrpg/saves/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --no-llm                   # quick automated test\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg diagnostic                            # system diagnostics\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────
@@ -2503,6 +2553,7 @@ async function main(): Promise<void> {
 
   if (subcommand === 'setup') { await runSetup(); return; }
   if (subcommand === 'status') { await runStatus(); return; }
+  if (subcommand === 'glossary') { runGlossary(); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
   // game doesn't inherit the old player's developmental graph.
