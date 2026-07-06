@@ -177,7 +177,9 @@ program.parse();
 const opts = program.opts();
 const subcommand = program.args[0] as string | undefined;
 
-const HEADLESS = opts.headless ?? false;
+// P0-4 (UX-R3): HEADLESS is mutable so the non-TTY guard in main() can
+// auto-enable it when stdin isn't a TTY. All other flag constants remain const.
+let HEADLESS = opts.headless ?? false;
 const VERBOSE = opts.verbose ?? false;
 const JSON_MODE = opts.json ?? false;
 const DEV_MODE = (opts as any).dev ?? false;
@@ -2216,6 +2218,25 @@ function printHelp(): void {
 // ── Main ──────────────────────────────────────────────────────────────
 async function main(): Promise<void> {
   // ponytail: --version and --help handled by commander automatically
+
+  // P0-4 (UX-R3): Non-TTY guard. The interactive prompts (@clack/prompts)
+  // block forever when stdin isn't a TTY (CI, pipes, subagent shells,
+  // containers). Detect this early and auto-degrade to --headless with a
+  // clear warning — instead of the silent hang every fresh user in a
+  // non-interactive context currently hits.
+  const INTERACTIVE_SUBCOMMANDS = new Set(['setup', 'session', undefined]);
+  const needsInteractive = INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE && subcommand !== 'status' && subcommand !== 'diagnostic' && subcommand !== 'new-game';
+  if (needsInteractive && !process.stdin.isTTY) {
+    HEADLESS = true;
+    if (!JSON_MODE) {
+      console.error(`${chalk.yellow('⚠')} Non-interactive terminal detected (stdin is not a TTY).`);
+      console.error(`  Auto-enabling --headless mode. To run interactively, use a real terminal.`);
+      console.error(`  For machine-readable output, add --json.`);
+    } else {
+      process.stdout.write(JSON.stringify({ type: 'warning', code: 'auto_headless', message: 'Non-interactive terminal — auto-enabled --headless.' }) + '\n');
+    }
+  }
+
   if (subcommand === 'setup') { await runSetup(); return; }
   if (subcommand === 'status') { await runStatus(); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
