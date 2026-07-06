@@ -55,7 +55,15 @@ const program = new Command()
   // alias and updating the help description.
   .option('--force-shadow <quadrant>', 'Inject shadow-keyword text into the response pool for testing shadow detection (alias: --inject-shadow-keyword). Does NOT trigger shadow encounter format — use --modality shadow for that.')
   .option('--inject-shadow-keyword <quadrant>', 'Alias for --force-shadow (testing only)')
-  .option('--skip-calibration', 'Skip calibration, default all lines to Red');
+  .option('--skip-calibration', 'Skip calibration, default all lines to Red')
+  // R5-CRITICAL (UX-R5): Headless input mechanism. Without this, the LLM
+  // hallucinates user answers in --headless mode (the game's core promise
+  // "your answers shape your developmental profile" is unfulfillable).
+  // --answers reads a file with one answer per line, consumed per question.
+  // --answer is a repeatable flag for inline answers. Both feed the
+  // writeInValue that the LLM actually sees.
+  .option('--answers <file>', 'Read answers from a file (one per line, consumed per question) — enables real user participation in --headless mode')
+  .option('--answer <text>', 'Inline answer (repeatable — one per question)');
 
 program
   .command('setup')
@@ -256,6 +264,39 @@ const FORCE_SHADOW = (opts.forceShadow ?? (opts as any).injectShadowKeyword) as 
 const FORCE_RESPONSES = undefined; // ponytail: --responses removed, wasn't in commander spec
 const NEW_GAME = opts.newGame ?? false;
 const SKIP_CALIBRATION = opts.skipCalibration ?? false;
+
+// R5-CRITICAL (UX-R5): Headless input mechanism. Load user-provided answers
+// from --answers <file> (one per line) and/or --answer <text> (repeatable).
+// These feed the writeInValue that the LLM actually sees, instead of the
+// LLM hallucinating user answers in --headless mode.
+// Priority: --answer flags first (in order), then --answers file (remaining lines).
+const USER_ANSWERS: string[] = [];
+{
+  const inlineAnswers = Array.isArray((opts as any).answer) ? (opts as any).answer as string[]
+    : typeof (opts as any).answer === 'string' ? [(opts as any).answer as string]
+    : [];
+  USER_ANSWERS.push(...inlineAnswers);
+  const answersFile = (opts as any).answers as string | undefined;
+  if (answersFile) {
+    try {
+      const content = fs.readFileSync(answersFile, 'utf8');
+      // One answer per line; blank lines preserved as empty answers (user skipped)
+      USER_ANSWERS.push(...content.split('\n'));
+    } catch (err: any) {
+      console.error(`${chalk.red('✗')} Could not read --answers file: ${answersFile} (${err.message})`);
+      process.exit(1);
+    }
+  }
+}
+function consumeUserAnswer(): string | undefined {
+  // Consume the next user answer. Returns undefined if none remain — caller
+  // should fall back to default behavior. Trimming: preserve internal whitespace.
+  if (USER_ANSWERS.length === 0) return undefined;
+  const next = USER_ANSWERS.shift();
+  // Skip purely-empty lines that were trailing in the file
+  if (next === undefined) return undefined;
+  return next.trim() === '' ? undefined : next.trim();
+}
 
 // P1-5 (UX-R3): Validate --line / --stage / --modality / --force-shadow.
 // Previously these were `as` type assertions with no runtime check, so any
@@ -1091,34 +1132,54 @@ async function runAgenticEncounter(
         });
 
         if (HEADLESS) {
-          // Use forced responses pool if provided (one index per question, consumed sequentially)
-          let selectedIdx: number;
-          if (responsesPool && responsesPool.length > 0) {
+          // R5-CRITICAL (UX-R5): If the user provided an answer via --answer
+          // or --answers, use it as the writeInValue. This is the difference
+          // between the LLM hallucinating the user's stance and the LLM
+          // responding to the user's actual reflection.
+          const userAnswer = consumeUserAnswer();
+          if (userAnswer !== undefined) {
+            // User provided a real answer — inject it as the writeIn.
+            // For MCQ questions, also try to match the answer to an option
+            // label so the drive-scoring picks up the right signal. If no
+            // match, fall back to the first option + the writeIn.
+            let selectedIdx = 0;
+            if (q.options && q.options.length > 0) {
+              const matchIdx = q.options.findIndex(o =>
+                o.label.toLowerCase().includes(userAnswer.toLowerCase()) ||
+                userAnswer.toLowerCase().includes(o.label.toLowerCase()));
+              selectedIdx = matchIdx >= 0 ? matchIdx : 0;
+            }
+            const selectedLabel = q.options?.[selectedIdx]?.label ?? '';
+            answers.push({ selectedLabels: selectedLabel ? [selectedLabel] : [], writeInValue: userAnswer });
+          } else if (responsesPool && responsesPool.length > 0) {
+            // Use forced responses pool if provided (one index per question, consumed sequentially)
             const forcedIdx = responsesPool.shift()!;
+            let selectedIdx: number;
             if (q.options && forcedIdx >= 1 && forcedIdx <= q.options.length) {
               selectedIdx = forcedIdx - 1;
             } else {
               selectedIdx = 0;
             }
+            const selectedOpt = q.options?.[selectedIdx];
+            const selectedLabel = selectedOpt?.label ?? '';
+
+            // Shadow keyword injection for testing — randomly inject (10% chance)
+            const shadowInjections = ['', 'i feel the need to withdraw from this confrontation', 'i must transcend these petty concerns and reach enlightenment', 'i prefer to stay here where it is safe and comfortable'];
+            const injectShadow = FORCE_SHADOW !== 'none' && selectedIdx > 0 && Math.random() < 0.1;
+            const writeInShadow = injectShadow ? (shadowInjections[selectedIdx] ?? '') : '';
+
+            if (writeInShadow) {
+              answers.push({ selectedLabels: [selectedLabel], writeInValue: writeInShadow });
+            } else {
+              answers.push({ selectedLabels: [selectedLabel] });
+            }
           } else {
-            // Vary selection to probe different shadow patterns:
-            // Cycle through options to ensure shadow detection has varied input
+            // No user answer, no forced responses — vary selection to probe
+            // different shadow patterns. (Previous default behavior.)
             const hash = (Date.now() + (q.options?.length ?? 4)) % 4;
-            selectedIdx = hash < (q.options?.length ?? 4) ? hash : 0;
-          }
-          const selectedOpt = q.options?.[selectedIdx];
-          const selectedLabel = selectedOpt?.label ?? '';
-
-          // Shadow keyword injection for testing — randomly inject (10% chance)
-          // to allow MOST encounters to pass and demonstrate altitude shifts.
-          // When FORCE_SHADOW=none, skip injection entirely for clean progression.
-          const shadowInjections = ['', 'i feel the need to withdraw from this confrontation', 'i must transcend these petty concerns and reach enlightenment', 'i prefer to stay here where it is safe and comfortable'];
-          const injectShadow = FORCE_SHADOW !== 'none' && selectedIdx > 0 && Math.random() < 0.1;
-          const writeInShadow = injectShadow ? (shadowInjections[selectedIdx] ?? '') : '';
-
-          if (writeInShadow) {
-            answers.push({ selectedLabels: [selectedLabel], writeInValue: writeInShadow });
-          } else {
+            const selectedIdx = hash < (q.options?.length ?? 4) ? hash : 0;
+            const selectedOpt = q.options?.[selectedIdx];
+            const selectedLabel = selectedOpt?.label ?? '';
             answers.push({ selectedLabels: [selectedLabel] });
           }
         } else {
