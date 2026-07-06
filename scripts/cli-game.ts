@@ -236,6 +236,10 @@ const subcommand = program.args[0] as string | undefined;
 // P0-4 (UX-R3): HEADLESS is mutable so the non-TTY guard in main() can
 // auto-enable it when stdin isn't a TTY. All other flag constants remain const.
 let HEADLESS = opts.headless ?? false;
+// R5-BUG-1 (UX-R5): Propagate headless state to the PersistentAgent so it
+// can lower its maxLoops budget. Without this, --agent + LLM hangs because
+// the agent makes up to 30 sequential LLM calls (30×20s = 600s).
+if (HEADLESS) process.env.CCRPG_HEADLESS = '1';
 const VERBOSE = opts.verbose ?? false;
 const JSON_MODE = opts.json ?? false;
 const DEV_MODE = (opts as any).dev ?? false;
@@ -2722,6 +2726,7 @@ async function main(): Promise<void> {
   const needsInteractive = !NON_INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE;
   if (needsInteractive && !process.stdin.isTTY) {
     HEADLESS = true;
+    process.env.CCRPG_HEADLESS = '1'; // R5-BUG-1: propagate to PersistentAgent
     if (!JSON_MODE) {
       console.error(`${chalk.yellow('⚠')} Non-interactive terminal detected (stdin is not a TTY).`);
       console.error(`  Auto-enabling --headless mode. To run interactively, use a real terminal.`);

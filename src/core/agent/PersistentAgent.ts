@@ -198,7 +198,16 @@ export class PersistentAgent {
    */
   async runEncounter(): Promise<EncounterResult> {
     const toolDefs = this.registry.getDefinitions();
-    const maxLoops = 30; // Safety guard (no hardcoded exchange budget, but prevent infinite loops)
+    // R5-BUG-1 (UX-R5): The 30-loop budget was calibrated for interactive use
+    // where the user answers between loops. In headless mode, each loop is an
+    // LLM call (10-30s with reasoning models), so 30 loops × 20s = 600s — a
+    // hang. Lower to 8 for headless/non-interactive mode (enough for the
+    // 3-tool sequence: select_encounter → ask_player → complete_encounter,
+    // plus 2-3 retries). Also add a 90s wall-clock timeout as a safety net.
+    const isHeadless = typeof process !== 'undefined' && process.env?.CCRPG_HEADLESS === '1';
+    const maxLoops = isHeadless ? 8 : 30;
+    const wallClockTimeoutMs = isHeadless ? 90_000 : 0; // 0 = no timeout (interactive)
+    const startTime = Date.now();
     let loopCount = 0;
 
     // Build the tool context
@@ -232,6 +241,12 @@ export class PersistentAgent {
     }
 
     while (loopCount < maxLoops) {
+      // R5-BUG-1: Wall-clock timeout for headless mode. If the agent hasn't
+      // completed in 90s, bail out with the fallback narrative instead of
+      // hanging indefinitely.
+      if (wallClockTimeoutMs > 0 && (Date.now() - startTime) > wallClockTimeoutMs) {
+        break;
+      }
       loopCount++;
 
       // Request next turn from LLM
