@@ -2547,13 +2547,21 @@ function printHelp(): void {
 async function main(): Promise<void> {
   // ponytail: --version and --help handled by commander automatically
 
-  // P0-4 (UX-R3): Non-TTY guard. The interactive prompts (@clack/prompts)
-  // block forever when stdin isn't a TTY (CI, pipes, subagent shells,
-  // containers). Detect this early and auto-degrade to --headless with a
-  // clear warning — instead of the silent hang every fresh user in a
-  // non-interactive context currently hits.
-  const INTERACTIVE_SUBCOMMANDS = new Set(['setup', 'session', undefined]);
-  const needsInteractive = INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE && subcommand !== 'status' && subcommand !== 'diagnostic' && subcommand !== 'new-game';
+  // P0-4 (UX-R3) + R4-BUG-1 (UX-R4): Non-TTY guard. The interactive prompts
+  // (@clack/prompts) block forever when stdin isn't a TTY (CI, pipes,
+  // subagent shells, containers). Detect this early and auto-degrade to
+  // --headless with a clear warning — instead of the silent hang every
+  // fresh user in a non-interactive context currently hits.
+  //
+  // R4-BUG-1: The original P0-4 fix only covered the bare command + `session`
+  // + `setup`. But `diagnostic` also hangs because it calls
+  // createDefaultSignificator() which launches interactive Quick Calibration
+  // when there's no save. And `new-game` has a confirmation prompt. The fix:
+  // treat ALL subcommands as potentially interactive EXCEPT the truly
+  // non-interactive ones (`status`, `glossary`). This is safer than
+  // enumerating interactive ones — new subcommands default to safe.
+  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary']);
+  const needsInteractive = !NON_INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE;
   if (needsInteractive && !process.stdin.isTTY) {
     HEADLESS = true;
     if (!JSON_MODE) {
