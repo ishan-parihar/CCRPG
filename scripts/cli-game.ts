@@ -234,6 +234,40 @@ function verbose(label: string, value: string): void {
   if (VERBOSE && !JSON_MODE) console.log(`  ${chalk.magenta(label + ':')} ${value}`);
 }
 
+// P0-2 (UX-R3): Emit holistic dev primitives when --dev is set, so the
+// --help promise ("show holistic primitives (G_z/P_z, rayProfile, phase
+// position)") is honored during sessions, not just in `status`.
+// Called from both encounter loops (DQ + Story-Driven) after each encounter.
+function emitDevPrimitives(sig: Significator, label: string): void {
+  if (!DEV_MODE) return;
+  try {
+    const snapshot = toSnapshot(sig);
+    const cci = computeCCI(snapshot);
+    const mh = cci.metabolicHealth;
+    if (JSON_MODE) {
+      emitEvent('dev_primitives', {
+        label,
+        gz: mh?.gz ?? null,
+        pz: mh?.pz ?? null,
+        metabolicTotal: mh?.total ?? null,
+        interpretation: mh?.interpretation ?? null,
+        cci: cci.composite,
+        transformationPhase: sig.transformationPhase ?? 'idle',
+        rayProfile: sig.rayProfile,
+        transformationTargetStage: sig.transformationTargetStage ?? null,
+        sessionsInPhase: sig.transformationSessionsInPhase ?? 0,
+        knotsResolved: sig.transformationKnotsResolved ?? 0,
+        internalizedHolons: sig.internalizedHolons?.length ?? 0,
+        greatWayDirection: sig.greatWayDirection ?? null,
+      });
+    } else {
+      info('dev', `${label} → G_z=${mh?.gz?.toFixed(4) ?? 'n/a'} P_z=${mh?.pz?.toFixed(4) ?? 'n/a'} CCI=${cci.composite.toFixed(4)} phase=${sig.transformationPhase ?? 'idle'}`);
+    }
+  } catch {
+    // Best-effort — dev mode should never break a session.
+  }
+}
+
 // Interactive prompt helper — uses @clack/prompts for beautiful UI
 async function ask(q: string): Promise<string> {
   if (HEADLESS || JSON_MODE) return '';
@@ -1289,6 +1323,9 @@ async function runDirectQuestioningSession(
         narrative: result.narrativeSummary,
         totalEncounters: currentSig.totalEncounters,
       });
+
+      // P0-2 (UX-R3): Honor --dev during DQ sessions.
+      emitDevPrimitives(currentSig, `dq:${line}:${currentStage}`);
     } catch (err: any) {
       error(`Encounter failed: ${err.message || err}`);
       emitEvent('dq_line_error', { line, error: err.message });
@@ -1723,6 +1760,9 @@ async function runFullSession(): Promise<void> {
         narrative: result.narrativeSummary,
         totalEncounters: currentSig.totalEncounters,
       });
+
+      // P0-2 (UX-R3): Honor --dev during Story-Driven sessions.
+      emitDevPrimitives(currentSig, `enc:${selectedEncounter.moduleRef}`);
 
       completedCount++;
       if (result.outcome.finalResult.passed) passedCount++;
