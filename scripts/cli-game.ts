@@ -939,6 +939,44 @@ function printEncounter(enc: ScheduledEncounter, world?: WorldState): void {
   }
 }
 
+// ── Unified encounter execution dispatch (YAGNI-1 / UX-R3+R4) ────────
+// Both DQ mode and Story-Driven mode call THIS function instead of
+// branching on USE_PERSISTENT_AGENT themselves. This eliminates the
+// routing divergence that let P0-1 (R3: lexical scope bug) and the
+// --no-llm bug (R4: LLM_ACTIVE not respected) hide for multiple audit
+// rounds. Future execution-mode checks (new agent types, new LLM
+// routing) happen here — one place, one bug surface.
+interface EncounterExecutionOptions {
+  readonly responsesPool?: number[];
+  readonly consecutivePasses?: Map<string, number>;
+  readonly agentSynthesis?: string;
+  readonly persistentAgent?: PersistentAgent | null;
+}
+async function executeEncounter(
+  encounter: ScheduledEncounter,
+  sig: Significator,
+  world: WorldState,
+  history: ConsequenceRecord[],
+  options: EncounterExecutionOptions = {},
+): Promise<{
+  outcome: import('../src/core/assessments/AgenticOrchestrator.js').OrchestratorResult;
+  response: PlayerResponse;
+  narrativeSummary: string;
+  effectiveEncounter: ScheduledEncounter;
+}> {
+  // Route to PersistentAgent (--agent / Story-Driven) or AgenticOrchestrator (default).
+  // The LLM disable flag (setLLMDisabled) is respected inside both paths via
+  // LLMClient.getEnabledConfig() — no need to check it here.
+  if (options.persistentAgent) {
+    const result = await runPersistentAgentEncounter(options.persistentAgent, encounter, sig, world);
+    return { ...result, effectiveEncounter: result.effectiveEncounter ?? encounter };
+  }
+  const result = await runAgenticEncounter(
+    encounter, sig, world, history, options.responsesPool, options.consecutivePasses, options.agentSynthesis,
+  );
+  return { ...result, effectiveEncounter: encounter };
+}
+
 // ── AgenticOrchestrator encounter handler (all modalities) ────────────
 async function runAgenticEncounter(
   encounter: ScheduledEncounter,
@@ -1372,7 +1410,13 @@ async function runDirectQuestioningSession(
     };
 
     try {
-      const result = await runAgenticEncounter(encounter, currentSig, currentWorld, history, undefined, consecutivePasses, agent.buildSynthesis());
+      // YAGNI-1 (UX-R3+R4): Route through the unified dispatch. DQ never
+      // has a persistentAgent, so this always uses AgenticOrchestrator —
+      // but the routing logic lives in ONE place now.
+      const result = await executeEncounter(encounter, currentSig, currentWorld, history, {
+        consecutivePasses,
+        agentSynthesis: agent.buildSynthesis(),
+      });
 
       // Qualitative feedback — no pass/fail, no clinical labels
       const cr = result.outcome.consequenceRecord;
@@ -1822,13 +1866,15 @@ async function runFullSession(): Promise<void> {
       s.succeed('Encounter ready');
     }
 
-    // Run encounter — route through PersistentAgent (--agent) or AgenticOrchestrator (default)
+    // Run encounter — YAGNI-1 (UX-R3+R4): both DQ and Story now route
+    // through the unified executeEncounter dispatch. The routing logic
+    // (PersistentAgent vs AgenticOrchestrator) lives in ONE place.
     try {
-      const result = USE_PERSISTENT_AGENT && persistentAgent
-        ? await runPersistentAgentEncounter(persistentAgent, selectedEncounter, currentSig, currentWorld)
-        : await runAgenticEncounter(
-            selectedEncounter, currentSig, currentWorld, history, responsesPool, consecutivePasses,
-          );
+      const result = await executeEncounter(selectedEncounter, currentSig, currentWorld, history, {
+        responsesPool,
+        consecutivePasses,
+        persistentAgent,
+      });
 
       // Apply consequences from the orchestrator result
       const record = result.outcome.consequenceRecord;
