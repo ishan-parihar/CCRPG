@@ -879,13 +879,19 @@ async function runAgenticEncounter(
           }
         }
 
+        // P0-1 (UX-R3): `header` previously referenced `line` and `i` which only
+        // exist in runDirectQuestioningSession's for-loop scope — causing
+        // `ReferenceError: line is not defined` on every DQ encounter. Use the
+        // destructured `encLine` (always in scope here) and a stable hash for
+        // the scene-setting index (no loop counter available in this closure).
+        const dqSceneIdx = (encLine.length + (forcedEncounter.modality?.length ?? 0)) % DQ_SCENE_SETTINGS.length;
         emitEvent('ask_user', {
           // UX-R2-3: Use the line name as the header in DQ mode
-          header: line,
+          header: encLine,
           // UX-R2-7: Prepend the question with NPC scene-setting
           question: q.question,
-          narrative: DQ_SCENE_SETTINGS[i % DQ_SCENE_SETTINGS.length],
-          options: q.options?.map((o, i) => ({ index: i + 1, label: o.label, description: o.description })),
+          narrative: DQ_SCENE_SETTINGS[dqSceneIdx],
+          options: q.options?.map((o, oi) => ({ index: oi + 1, label: o.label, description: o.description })),
           allowWriteIn: q.allowWriteIn,
         });
 
