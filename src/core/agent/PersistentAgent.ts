@@ -17,6 +17,8 @@ import type { AgentMessage } from '../assessments/agentTypes.js';
 import type { ToolContext } from './tools/CCRPGTools.js';
 import { ToolRegistry, createCCRPGToolRegistry } from './ToolRegistry.js';
 import { queryLLMWithTools } from '../../infra/llm/LLMClient.js';
+// P1-4 (UX-R3): expanded fallback narrative pool, tagged by modality.
+import { pickFallbackNarrative } from './FallbackNarratives.js';
 
 export interface PersistentAgentConfig {
   readonly sig: Significator;
@@ -238,21 +240,17 @@ export class PersistentAgent {
       // Detect LLM unavailability
       if (loopCount === 1 && res.content && res.content.trim().startsWith('{"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
         // LLM unavailable — return a default result with atmospheric fallback narrative.
-        // UX-R2-1: Fixed grammar bug ("The an unknown path") and repetition.
-        // The templates now use proper article handling and non-repeating selection.
-        // Use a static counter for non-repeating selection across encounters
-        const idx = PersistentAgent.fallbackNarrativeCounter++ % 8;
-        const fallbackNarratives = [
-          `The moment settles. Something stirred — not fully formed, but present. The work continues beneath the surface.`,
-          `Silence falls. What was touched will return when it's ready. The edge sharpened, then softened.`,
-          `A pattern surfaced and was acknowledged. Not resolved — but seen. The ground shifted, barely.`,
-          `The encounter fades like a half-remembered dream. Something moved. You'll know it again.`,
-          `Stillness. The kind that comes after a question lands. The shape of the answer is still forming.`,
-          `A thread was pulled. The fabric holds, but the pattern changed. Time will show how much.`,
-          `The air thins. Something that was hidden is now half-visible. You can't unsee it, even if you can't name it yet.`,
-          `The work deepens. What began as a question is becoming a knowing — not yet clear, but no longer avoidable.`,
-        ];
-        const narrativeSummary = fallbackNarratives[idx];
+        // P1-4 (UX-R3): Replaced the inline 8-template pool with a 32-template
+        // pool tagged by modality (see FallbackNarratives.ts). Selection is
+        // stable-hashed on (encounterId + counter) so the same encounter
+        // never gets the same narrative twice in a row, but the choice is
+        // deterministic for reproducibility.
+        const counter = PersistentAgent.fallbackNarrativeCounter++;
+        const narrativeSummary = pickFallbackNarrative(
+          this.selectedEncounter?.id,
+          this.selectedEncounter?.modality,
+          counter,
+        );
         return {
           passed: true,
           driveScores: { agency: 0.5, communion: 0.5, eros: 0.5, agape: 0.5 },
