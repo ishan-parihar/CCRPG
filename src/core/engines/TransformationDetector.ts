@@ -35,7 +35,51 @@ const CONVERGENCE_REQUIREMENTS: Record<number, number> = {
   6: 7, // Turquoise→White
 };
 
-const SATURATION_THRESHOLD = 20; // encounters per line at current stage
+// P1-3 (UX-R3): SATURATION_THRESHOLD is now exported and mutable so the
+// CLI can lower it for the no-LLM fallback path (where encounters are
+// ~30-second reflections, not LLM-rich developmental exchanges). The
+// default of 20 is appropriate for LLM-driven sessions; for no-LLM
+// mode the CLI sets it to 6 (so a full 8-line calibration + ~2 follow-up
+// sessions can produce a stage transition).
+// Original audit finding: a fresh user ran 42 encounters across 14
+// sessions and saw zero stage progression — the threshold was unreachable.
+export let SATURATION_THRESHOLD = 20; // encounters per line at current stage
+
+/** Override the saturation threshold (used by the CLI for --no-llm mode). */
+export function setSaturationThreshold(n: number): void {
+  if (Number.isFinite(n) && n > 0) {
+    SATURATION_THRESHOLD = Math.max(1, Math.floor(n));
+  }
+}
+
+/**
+ * P1-3 (UX-R3): Per-line progress toward the saturation threshold.
+ * Returns the trace count and the threshold for the player's current
+ * stage, so the CLI can render a "4/6 to next threshold" indicator.
+ * Veil-compliant: this is structural progress, not clinical state.
+ */
+export interface LineProgress {
+  readonly line: Line;
+  readonly stage: Stage;
+  readonly traces: number;
+  readonly threshold: number;
+  readonly ratio: number; // 0..1
+}
+
+export function getLineProgress(sig: Significator): readonly LineProgress[] {
+  return ALL_LINES.map((line) => {
+    const stage = sig.altitudes[line] ?? sig.currentStage;
+    const key = `${line}:${stage}`;
+    const traces = sig.polarity.cells[key]?.traceCount ?? 0;
+    return {
+      line,
+      stage,
+      traces,
+      threshold: SATURATION_THRESHOLD,
+      ratio: Math.min(1, traces / SATURATION_THRESHOLD),
+    };
+  });
+}
 
 /** Detect whether transformation threshold is crossed. */
 export function detectThreshold(sig: Significator): TransformationSignal | null {

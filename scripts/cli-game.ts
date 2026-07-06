@@ -167,6 +167,8 @@ import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js'
 import type { Modality } from '../src/core/domain/enums.js';
 import { ALL_MODALITIES } from '../src/core/domain/enums.js';
 import { thresholdToStage } from '../src/core/usecases/ThresholdMaps.js';
+// P1-3 (UX-R3): configurable saturation threshold + per-line progress.
+import { setSaturationThreshold, getLineProgress } from '../src/core/engines/TransformationDetector.js';
 import { computeConfidence } from '../src/core/assessments/engine.js';
 import type { TrialResult } from '../src/core/assessments/types.js';
 import { renderLayers, renderLayersCompact } from '../src/game/cli/LayerRenderer.js';
@@ -1337,6 +1339,18 @@ async function runDirectQuestioningSession(
         if (cr.shadowSurfaced) {
           console.log(`  ${chalk.dim('Something beneath the surface stirred.')}`);
         }
+
+        // P1-3 (UX-R3): Surface per-line progress to next threshold so the
+        // user can see they're moving. Previously, 42 encounters produced
+        // zero visible progression — the user felt they'd consumed content,
+        // not grown. Now after each encounter we show the line's trace count
+        // vs. the saturation threshold (Veil-compliant: structural, not clinical).
+        const progress = getLineProgress(currentSig).find(p => p.line === line);
+        if (progress) {
+          const filled = Math.min(8, Math.round(progress.ratio * 8));
+          const bar = '▓'.repeat(filled) + '░'.repeat(8 - filled);
+          console.log(`  ${chalk.dim(`${line.padEnd(13)} ${bar} ${progress.traces}/${progress.threshold}`)}`);
+        }
       }
 
       // Feed result to session agent for cross-encounter synthesis
@@ -1474,6 +1488,18 @@ async function runFullSession(): Promise<void> {
     if (JSON_MODE && !NO_LLM) {
       emitEvent('warning', { code: 'llm_no_key', message: 'No LLM API key configured — using module-only mode. Run `ccrpg setup` to configure.' });
     }
+  }
+
+  // P1-3 (UX-R3): Lower the saturation threshold when LLM is unavailable.
+  // The default of 20 encounters-per-line is calibrated for LLM-rich sessions
+  // where each encounter is a meaty developmental exchange. For no-LLM mode
+  // (the default out-of-the-box state), encounters are ~30-second reflections
+  // — 20 per line × 8 lines = 160 encounters for a single stage transition is
+  // unreachable. Lowering to 6 means a full 8-line calibration + ~2 follow-up
+  // sessions can produce a transition, making progression visible.
+  if (!LLM_ACTIVE) {
+    setSaturationThreshold(6);
+    if (!JSON_MODE) info('tuning', `${chalk.dim('no-LLM mode → saturation threshold lowered to 6/line (was 20)')}`);
   }
 
   // Holons
