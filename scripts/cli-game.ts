@@ -145,7 +145,9 @@ import { createSignificator } from '../src/core/domain/Significator.js';
 import { createInitialWorldState, type WorldState } from '../src/core/engines/CandidateGeneration.js';
 import type { Significator } from '../src/core/domain/Significator.js';
 import type { Line } from '../src/core/domain/Line.js';
+import { ALL_LINES } from '../src/core/domain/Line.js';
 import type { Stage } from '../src/core/domain/Stage.js';
+import { ALL_STAGES } from '../src/core/domain/Stage.js';
 import type { ScheduledEncounter } from '../src/core/domain/EncounterSpecNew.js';
 import type { PlayerResponse } from '../src/core/engines/ConsequenceEngine.js';
 import type { SessionContext } from '../src/core/engines/PriorityComputation.js';
@@ -163,6 +165,7 @@ import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState
 import holonsJson from '../src/core/data/red-layer-holons.json';
 import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js';
 import type { Modality } from '../src/core/domain/enums.js';
+import { ALL_MODALITIES } from '../src/core/domain/enums.js';
 import { thresholdToStage } from '../src/core/usecases/ThresholdMaps.js';
 import { computeConfidence } from '../src/core/assessments/engine.js';
 import type { TrialResult } from '../src/core/assessments/types.js';
@@ -197,6 +200,27 @@ const FORCE_SHADOW = opts.forceShadow as string | undefined;
 const FORCE_RESPONSES = undefined; // ponytail: --responses removed, wasn't in commander spec
 const NEW_GAME = opts.newGame ?? false;
 const SKIP_CALIBRATION = opts.skipCalibration ?? false;
+
+// P1-5 (UX-R3): Validate --line / --stage / --modality / --force-shadow.
+// Previously these were `as` type assertions with no runtime check, so any
+// string was silently accepted — the user had no way to discover valid
+// values except by trial-and-error or by peeking at save files. Now we
+// fail fast with a helpful list of valid options.
+const VALID_SHADOW_QUADRANTS = new Set(['none', 'DarkAddiction', 'DarkAllergy', 'GoldenAddiction', 'GoldenAllergy']);
+function validateFlag<T extends string>(label: string, value: string | undefined, valid: readonly T[] | Set<T>, validSetName: string): void {
+  if (value === undefined) return;
+  const isValid = valid instanceof Set ? valid.has(value as T) : (valid as readonly string[]).includes(value);
+  if (!isValid) {
+    const list = valid instanceof Set ? Array.from(valid).join(', ') : (valid as readonly string[]).join(', ');
+    console.error(`${chalk.red('✗')} Invalid ${label}: ${chalk.bold(value)}`);
+    console.error(`  Valid ${validSetName}: ${list}`);
+    process.exit(1);
+  }
+}
+validateFlag('--line', FORCE_LINE, ALL_LINES, 'lines');
+validateFlag('--stage', FORCE_STAGE, ALL_STAGES, 'stages');
+validateFlag('--modality', FORCE_MODALITY, ALL_MODALITIES, 'modalities');
+validateFlag('--force-shadow', FORCE_SHADOW, VALID_SHADOW_QUADRANTS, 'shadow quadrants');
 
 // ── Helpers ───────────────────────────────────────────────────────────
 // ponytail: chalk auto-resets between calls, no explicit reset needed
