@@ -1203,8 +1203,10 @@ async function runDiagnostic(): Promise<void> {
   };
   const sessionState = startSession(sig, session);
   info('CCI', sessionState.cci.composite.toFixed(4));
-  info('theme', sessionState.strategy.theme);
-  info('totalTarget', String(sessionState.strategy.encounterBudget.totalTarget));
+  // R4-P2-3 (UX-R4): Explain what 'theme' means — it biases encounter selection.
+  info('theme', `${sessionState.strategy.theme} (session strategy — biases encounter selection)`);
+  // R4-P2-2 (UX-R4): Explain what 'totalTarget' means — it's the encounter budget.
+  info('totalTarget', `${sessionState.strategy.encounterBudget.totalTarget} encounters per session (warmup + peak + cooldown)`);
 
   console.log('\nEncounter scheduling:');
   const now = Date.now();
@@ -2523,6 +2525,9 @@ function runGlossary(): void {
     { term: 'Transformation', def: 'A stage transition. Fires when readiness ≥ 0.8, with sufficient line convergence, shadow clearance, and AQAL quadrant coverage.' },
     { term: 'Veil', def: 'A design principle: the game never shows you clinical labels about yourself. You see qualitative felt-sense language, not diagnoses.' },
     { term: 'Resonance', def: 'A poetic 2-3 word description of your current stage\'s aesthetic (e.g. "fortress-sharp, weapon-walls" for Red).' },
+    // R4-P1-1 (UX-R4): Explain the [power] bracket label that appears in status.
+    { term: 'Aesthetic Label', def: 'The bracketed word next to each developmental line in status output (e.g. [power]). It is the short form of your current stage: [primal]=Infrared, [symbolic]=Magenta, [power]=Red, [order]=Amber, [reason]=Orange, [harmony]=Green, [integral]=Turquoise, [unity]=White.' },
+    { term: 'Theme', def: 'The session strategy that biases encounter selection (e.g. "balanced-development"). Shown in diagnostic. Different themes emphasize different lines or shadow work.' },
     { term: 'Encounter', def: 'A single developmental exchange. May be a question, a choice, a trial, or a narrative scene — depending on modality.' },
     { term: 'Calibration', def: 'The initial 8-question session that establishes your baseline across all 8 lines. Runs automatically on first play.' },
     { term: 'TDG', def: 'Temporal Developmental Graph — an optional graph-memory system for cross-session continuity. Not running in default mode.' },
@@ -2624,6 +2629,10 @@ async function main(): Promise<void> {
       console.log(`${chalk.dim('You\'ll be asked questions across 8 lines of intelligence.')}`);
       console.log(`${chalk.dim('Your answers shape your developmental profile.')}`);
       console.log(`${chalk.dim('There are no wrong answers. Take your time.')}`);
+      // R4-P1-2 (UX-R4): Point fresh users to the glossary. The vocabulary
+      // wall is the #1 bounce risk — without this hint, users hit terms like
+      // 'Significator', 'Holon', 'G_z/P_z' with no explanation.
+      console.log(`${chalk.dim('Run `ccrpg glossary` to learn the terminology (Holon, Significator, CCI, etc.).')}`);
       console.log(`${chalk.dim('Run `ccrpg diagnostic` to check system status.')}`);
       console.log(`${chalk.dim('Run `ccrpg status` to see your progress.')}`);
       console.log(`${chalk.dim('Run `ccrpg new-game` to start over.')}\n`);
