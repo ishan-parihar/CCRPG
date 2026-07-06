@@ -1662,14 +1662,18 @@ async function runFullSession(): Promise<void> {
   // tools, giving the agent the full 15-tool surface.
   let persistentAgent: PersistentAgent | null = null;
   if (USE_PERSISTENT_AGENT) {
-    if (!JSON_MODE) info('agent', `${chalk.cyan('Persistent Developmental Agent')} (15-tool, session-persistent)`);
-    // Best-effort TDG-Rust start — no-op if binary not installed
+    if (!JSON_MODE) info('agent', `${chalk.cyan('Persistent Developmental Agent')} (session-persistent)`);
+    // Best-effort TDG-Rust start — no-op if binary not installed.
+    // YAGNI-2 (UX-R3/R4): Removed the user-facing 'TDG-Rust not running'
+    // message — it confused fresh users who had no idea what TDG-Rust was
+    // and made the project look unfinished. The 'TDG-Rust active' message
+    // stays (only fires when the binary is actually installed, which is
+    // useful signal). The underlying infrastructure stays for when someone
+    // installs TDG-Rust.
     await startTDGBridge().catch(() => { /* TDG unavailable — continue with CCRPG tools only */ });
     const tdgStatus = getTDGBridgeStatus();
     if (tdgStatus.running && !JSON_MODE) {
       info('tdg', `${chalk.green('TDG-Rust active')} — graph memory online`);
-    } else if (!JSON_MODE) {
-      info('tdg', `${chalk.dim('TDG-Rust not running — using CCRPG-native 8 tools only')}`);
     }
     // Build the tool registry with CCRPG + TDG tools (TDG tools added only if running)
     const toolRegistry = createCCRPGToolRegistry();
