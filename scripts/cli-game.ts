@@ -1505,19 +1505,37 @@ async function runDirectQuestioningSession(
 
         // T-3.4 (Veil compliance): replace "The encounter stirred: ↑ Communion drive, Homeostatic"
         // with a qualitative felt-sense description that doesn't leak drive names.
+        // R5-P2-1 (UX-R5): The felt-sense text was repeating every encounter because
+        // the same drive directionality recurs. Now we vary the phrasing per encounter
+        // using a stable hash so the same encounter doesn't repeat the same line.
         const driveEntries = Object.entries(cr.polarityTrace.driveDirectionality);
         const dominantDrive = driveEntries.find(([, v]) => v !== 'HealthyBalanced');
         if (dominantDrive) {
-          // Map drive directionality to qualitative felt-sense language
-          const feltSense: Record<string, string> = {
-            DarkAddicted: 'A familiar pull tugs underneath the surface.',
-            DarkAverted: 'Something here is being avoided; the body flinches before the mind catches up.',
-            GoldenAddicted: 'A reaching toward the light that skips over the ground beneath your feet.',
-            GoldenAverted: 'A resistance to what is trying to emerge.',
-            HealthyBalanced: 'Something settles into place without effort.',
+          const feltSenseVariants: Record<string, string[]> = {
+            DarkAddicted: [
+              'A familiar pull tugs underneath the surface.',
+              'The old pattern reached for you again — and almost had you.',
+              'Something in you wanted to slip back into the known shape.',
+            ],
+            DarkAverted: [
+              'Something here is being avoided; the body flinches before the mind catches up.',
+              'A part of you turned away before the question fully landed.',
+              'There was a flinch — small, quick — toward the exit.',
+            ],
+            GoldenAddicted: [
+              'A reaching toward the light that skips over the ground beneath your feet.',
+              'The pull upward felt spiritual — and slightly disembodied.',
+              'You reached for the higher thing before the lower thing was done.',
+            ],
+            GoldenAverted: [
+              'A resistance to what is trying to emerge.',
+              'Something in you braced against the next step.',
+              'The call forward met a quiet, stubborn no.',
+            ],
           };
-          const sense = feltSense[dominantDrive[1] as string] ?? 'Something stirred.';
-          console.log(`  ${chalk.dim(sense)}`);
+          const variants = feltSenseVariants[dominantDrive[1] as string] ?? ['Something stirred.'];
+          const idx = (encounter.id.length + Date.now()) % variants.length;
+          console.log(`  ${chalk.dim(variants[idx] ?? variants[0]!)}`);
         }
 
         if (cr.shadowSurfaced) {
@@ -2509,6 +2527,27 @@ async function runStatus(): Promise<void> {
           internalizedHolons: sig.internalizedHolons?.length ?? 0,
           greatWayDirection: sig.greatWayDirection ?? null,
         };
+      }
+      // R5-P2-2 (UX-R5): Add Transformation Readiness to status --json so
+      // JSON consumers (scripts, CI, dashboards) can see the trajectory.
+      // Previously this was only in the human-readable path.
+      try {
+        const currentOrd = stageOrdinal(sig.currentStage);
+        if (currentOrd < ALL_STAGES.length - 1) {
+          const targetStage = ALL_STAGES[currentOrd + 1]!;
+          const report = computeReadiness(sig, targetStage);
+          out.transformationReadiness = {
+            currentStage: sig.currentStage,
+            targetStage,
+            readiness: report.overall,
+            threshold: 0.8,
+            convergence: report.convergence,
+            saturation: report.saturation,
+            shadowClearance: report.shadowClearance,
+          };
+        }
+      } catch {
+        // Best-effort — don't let readiness computation break JSON.
       }
     } else {
       out.save = null;
