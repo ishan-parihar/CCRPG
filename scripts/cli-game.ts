@@ -234,6 +234,28 @@ function verbose(label: string, value: string): void {
   if (VERBOSE && !JSON_MODE) console.log(`  ${chalk.magenta(label + ':')} ${value}`);
 }
 
+// P1-1 (UX-R3): Word-boundary-aware truncation. The previous slice(0, N)
+// cut mid-word ("...beneath th..." instead of "...beneath the surface."),
+// making narratives feel broken even though the full text existed in JSON.
+// This helper preserves sentence boundaries when possible and always ends
+// on a word boundary.
+function truncateNarrative(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  // Try to break on a sentence-ending punctuation first.
+  const sentenceEnd = Math.max(cut.lastIndexOf('. '), cut.lastIndexOf('! '), cut.lastIndexOf('? '));
+  if (sentenceEnd > max * 0.5) {
+    return cut.slice(0, sentenceEnd + 1) + '…';
+  }
+  // Otherwise break on the last space within the cut window.
+  const lastSpace = cut.lastIndexOf(' ');
+  if (lastSpace > max * 0.5) {
+    return cut.slice(0, lastSpace) + '…';
+  }
+  // Fallback: hard cut.
+  return cut + '…';
+}
+
 // P0-2 (UX-R3): Emit holistic dev primitives when --dev is set, so the
 // --help promise ("show holistic primitives (G_z/P_z, rayProfile, phase
 // position)") is honored during sessions, not just in `status`.
@@ -1248,9 +1270,8 @@ async function runDirectQuestioningSession(
       // Qualitative feedback — no pass/fail, no clinical labels
       const cr = result.outcome.consequenceRecord;
       if (!JSON_MODE) {
-        const briefNarrative = result.narrativeSummary.length > 120
-          ? result.narrativeSummary.slice(0, 120) + '...'
-          : result.narrativeSummary;
+        // P1-1 (UX-R3): word-boundary-aware truncation; was slice(0,120)+'...'
+        const briefNarrative = truncateNarrative(result.narrativeSummary, 140);
         console.log(`\n  ${chalk.dim('\u2726')} ${briefNarrative}`);
 
         // T-3.4 (Veil compliance): replace "The encounter stirred: ↑ Communion drive, Homeostatic"
@@ -1735,10 +1756,8 @@ async function runFullSession(): Promise<void> {
         const polarityArrow = cr.polarityTrace.energeticDirection === 'Radiative' ? '↑'
           : cr.polarityTrace.energeticDirection === 'Absorptive' ? '↓' : '·';
 
-        // Show the narrative consequence as the primary feedback
-        const briefNarrative = result.narrativeSummary.length > 100
-          ? result.narrativeSummary.slice(0, 100) + '...'
-          : result.narrativeSummary;
+        // P1-1 (UX-R3): word-boundary-aware truncation; was slice(0,100)+'...'
+        const briefNarrative = truncateNarrative(result.narrativeSummary, 140);
         console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
 
         // Shadow surfaces as narrative, not as a clinical label
