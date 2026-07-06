@@ -844,7 +844,7 @@ function printSignificator(sig: Significator): void {
   info('resonance', stageAesthetics[sig.currentStage] ?? 'shifting, becoming');
 }
 
-function printEncounter(enc: ScheduledEncounter): void {
+function printEncounter(enc: ScheduledEncounter, world?: WorldState): void {
   const isShadow = enc.executionMode === 'shadow';
   const posColor = enc.sessionPosition === 'warmup' ? chalk.blue
     : enc.sessionPosition === 'cooldown' ? chalk.green : chalk.magenta;
@@ -858,6 +858,25 @@ function printEncounter(enc: ScheduledEncounter): void {
   // Veil compliance: no holonSource ID, no shadowTarget quadrant name, no executionMode label.
   // Show only the arc position (warmup/peak/cooldown) which is structural, not developmental.
   info('arc', `${posColor(posTag)}`);
+
+  // P1-2 (UX-R3): Surface the NPC name + narrative role so the user knows
+  // WHO they're engaging with. Previously the encounter header showed only
+  // 'arc: PEAK' and the user never met the 16 named NPCs (The Conqueror,
+  // Bloodfury, Elder Ashmark, etc.) that the encounter was actually with.
+  // Veil is preserved: we show name + narrativeRole (atmospheric), not
+  // shadowQuadrant or drives (clinical).
+  if (world && !JSON_MODE) {
+    const holon = world.holons.find(h => h.id === enc.holonSource);
+    if (holon && holon.kind === 'NPC') {
+      const roleLabel = holon.narrativeRole
+        ? holon.narrativeRole.split('-').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')
+        : 'presence';
+      info('encounter', `${chalk.cyan(holon.name)} ${chalk.dim(`· ${roleLabel}`)}`);
+    } else if (holon && holon.kind === 'Location') {
+      info('place', `${chalk.cyan(holon.name)}`);
+    }
+  }
+
   if (isShadow) {
     // No quadrant name — just the shadow-work indicator
     info('mode', `${chalk.bgRed.white(' shadow ')}`);
@@ -1136,7 +1155,7 @@ async function runDiagnostic(): Promise<void> {
   const { tickResult } = tickWithStrategy(sig, world, session, sessionState, null, null, now);
   if (tickResult.encounter) {
     success('Scheduler produced encounter:');
-    printEncounter(tickResult.encounter);
+    printEncounter(tickResult.encounter, world);
   } else {
     warn('Scheduler returned null — no encounters available');
   }
@@ -1205,7 +1224,7 @@ async function runSingleEncounter(): Promise<void> {
   }
 
   separator('Encounter');
-  printEncounter(tickResult.encounter);
+  printEncounter(tickResult.encounter, world);
 
   const result = await runAgenticEncounter(tickResult.encounter, sig, world, [], responsesPool, new Map());
 
@@ -1691,7 +1710,7 @@ async function runFullSession(): Promise<void> {
     const encProgress = (selectedEncounter.sessionPosition === 'warmup' ? 0.1
       : selectedEncounter.sessionPosition === 'cooldown' ? 0.9 : 0.5);
     renderSessionPosition(`${i + 1}/${encounterCount}`, selectedEncounter.sessionPosition, encProgress);
-    printEncounter(selectedEncounter);
+    printEncounter(selectedEncounter, currentWorld);
 
     // Transition indicator with processing spinner
     if (i > 0 && !JSON_MODE) {
