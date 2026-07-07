@@ -63,7 +63,11 @@ const program = new Command()
   // --answer is a repeatable flag for inline answers. Both feed the
   // writeInValue that the LLM actually sees.
   .option('--answers <file>', 'Read answers from a file (one per line, consumed per question) — enables real user participation in --headless mode')
-  .option('--answer <text>', 'Inline answer (repeatable — one per question)');
+  // R6-BUG-1 (UX-R6): The variadic '<text...>' syntax is REQUIRED for
+  // repeatable flags. Without it, commander overwrites on each repeat,
+  // keeping only the LAST value (--answer A --answer B → "B", not ["A","B"]).
+  // This silently dropped all but the last inline answer.
+  .option('--answer <text...>', 'Inline answer (repeatable — one per question)');
 
 program
   .command('setup')
