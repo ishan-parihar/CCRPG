@@ -1688,6 +1688,16 @@ async function runFullSession(): Promise<void> {
       }
     } else {
       s2?.succeed(`LLM active: ${ACTIVE_MODEL}`);
+      // R6-P1-1 (UX-R6): Warn when --headless is used without --answer/--answers
+      // and the LLM is active. Without user-provided answers, the LLM will
+      // hallucinate user responses (R5-CRITICAL was opt-in, not default).
+      // This warning tells the user how to get a real reflective session.
+      if (HEADLESS && USER_ANSWERS.length === 0 && !JSON_MODE) {
+        warn('Headless mode without --answer: the LLM will generate narratives without your input. For a real reflective session, provide answers via --answer "your reflection" (repeatable) or --answers <file>.');
+      }
+      if (HEADLESS && USER_ANSWERS.length === 0 && JSON_MODE) {
+        emitEvent('warning', { code: 'no_user_answers', message: 'Headless mode without --answer: the LLM will generate narratives without user input. Provide --answer or --answers for authentic participation.' });
+      }
     }
   } else {
     s2?.info('LLM disabled (--no-llm or no API key)');
