@@ -2941,7 +2941,11 @@ async function main(): Promise<void> {
     if (!JSON_MODE) console.error(err.stack);
     emitEvent('fatal', { error: err.message, stack: err.stack });
   } finally {
-    // cleanup if needed
+    // R9-BUG-2 (UX-R9): Force-exit after session completion. The TDG bridge
+    // and other async handles (LLM keep-alive, ora spinners) can keep the
+    // Node process alive after SESSION END, causing scripted/CI invocations
+    // to hang indefinitely. process.exit(0) ensures clean termination.
+    process.exit(0);
   }
 }
 
