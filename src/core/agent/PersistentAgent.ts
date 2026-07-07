@@ -197,6 +197,41 @@ export class PersistentAgent {
    * Returns the encounter result.
    */
   async runEncounter(): Promise<EncounterResult> {
+    // R8-BUG-1 (UX-R8): Wrap the entire encounter in a hard wall-clock timeout.
+    // The previous per-loop check only fired BETWEEN LLM calls — if a single
+    // LLM call hung (e.g. large context on encounter 2), the timeout never
+    // fired and the session hung indefinitely. Now we race the encounter
+    // against a timeout promise. If the timeout wins, return the fallback.
+    const isHeadless = typeof process !== 'undefined' && process.env?.CCRPG_HEADLESS === '1';
+    const wallClockTimeoutMs = isHeadless ? 90_000 : 0; // 0 = no timeout (interactive)
+
+    if (wallClockTimeoutMs > 0) {
+      const timeoutPromise = new Promise<EncounterResult>((resolve) => {
+        setTimeout(() => {
+          const counter = PersistentAgent.fallbackNarrativeCounter++;
+          resolve({
+            passed: true,
+            driveScores: { agency: 0.5, communion: 0.5, eros: 0.5, agape: 0.5 },
+            driveSignals: { agency: 'HealthyBalanced', communion: 'HealthyBalanced', eros: 'HealthyBalanced', agape: 'HealthyBalanced' },
+            polarityDirection: 'neutral',
+            narrativeSummary: pickFallbackNarrative(
+              this.selectedEncounter?.id,
+              this.selectedEncounter?.modality,
+              counter,
+            ),
+            selectedEncounter: this.selectedEncounter,
+          });
+        }, wallClockTimeoutMs);
+      });
+      return Promise.race([
+        this.runEncounterInner(),
+        timeoutPromise,
+      ]);
+    }
+    return this.runEncounterInner();
+  }
+
+  private async runEncounterInner(): Promise<EncounterResult> {
     const toolDefs = this.registry.getDefinitions();
     // R5-BUG-1 (UX-R5): The 30-loop budget was calibrated for interactive use
     // where the user answers between loops. In headless mode, each loop is an
@@ -310,13 +345,22 @@ export class PersistentAgent {
       }
     }
 
-    // Safety fallback — max loops reached
+    // Safety fallback — max loops or wall-clock timeout reached.
+    // R8-BUG-1b (UX-R8): Replace the literal 'The encounter was completed via
+    // timeout.' placeholder with a proper FallbackNarrative. The placeholder
+    // was being saved as if it were a real narrative, misleading the user.
+    const timeoutCounter = PersistentAgent.fallbackNarrativeCounter++;
+    const timeoutNarrative = pickFallbackNarrative(
+      this.selectedEncounter?.id,
+      this.selectedEncounter?.modality,
+      timeoutCounter,
+    );
     return {
       passed: true,
       driveScores: { agency: 0.5, communion: 0.5, eros: 0.5, agape: 0.5 },
       driveSignals: { agency: 'HealthyBalanced', communion: 'HealthyBalanced', eros: 'HealthyBalanced', agape: 'HealthyBalanced' },
       polarityDirection: 'neutral',
-      narrativeSummary: 'The encounter was completed via timeout.',
+      narrativeSummary: timeoutNarrative,
       selectedEncounter: this.selectedEncounter,
     };
   }
