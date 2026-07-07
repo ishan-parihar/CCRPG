@@ -877,6 +877,114 @@ const LR_BY_LINE_AMBER: Record<string, ContentPool> = {
   Willpower: LR_WILLPOWER_AMBER,
 };
 
+// ============================================================================
+// LINE-SPECIFIC LANGUAGE REFLECTIVE CONTENT — Green stage
+// Efficacy Audit GAP-1: Author Green-stage content (8 lines × 2 prompts).
+// Green is the pluralistic/sensitive stage (25y+): multiple valid perspectives,
+// emphasis on caring and connection, shadow of boundary dissolution + naive
+// idealism. Probes the tension between inclusivity and discrimination.
+// ============================================================================
+
+const LR_COGNITIVE_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'You can see multiple perspectives on an issue — but when every view is valid, how do you decide which one to act from? What guides your choice when logic alone cannot break the tie?',
+    followUps: ['Is there a perspective you privilege without admitting it?', 'What would it cost to commit to one view?'],
+  },
+  {
+    prompt: 'You understand systems of oppression. But understanding them can become a kind of paralysis — seeing every problem as structural. Where does your agency live when the system is the problem?',
+    followUps: ['Can individual action matter within unjust structures?', 'What do you do when awareness becomes a cage?'],
+  },
+];
+
+const LR_EMOTIONAL_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'You feel others\' pain deeply — sometimes so deeply it becomes your own. Where does their suffering end and yours begin? What happens to you when you can\'t find that line?',
+    followUps: ['Is absorbing others\' pain care or enmeshment?', 'What would healthy distance look like?'],
+  },
+  {
+    prompt: 'You value emotional honesty. But sometimes honesty becomes a weapon — "I\'m just being real." When does your emotional truth serve connection, and when does it serve your own comfort?',
+    followUps: ['Is there a difference between authenticity and unfiltered?', 'What do you owe the other person\'s feelings?'],
+  },
+];
+
+const LR_MORAL_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'You believe all perspectives deserve respect. But some perspectives cause harm. How do you hold both — the commitment to inclusivity and the responsibility to name harm — without collapsing into either?',
+    followUps: ['Can tolerance include intolerance?', 'Where does your inclusivity reach its limit?'],
+  },
+  {
+    prompt: 'You see how privilege operates. But seeing it can become a kind of guilt-spiral — constantly checking yourself, never acting. What would it look like to move from awareness to accountable action?',
+    followUps: ['Is guilt a form of care or a form of self-protection?', 'What would repair look like — not just recognition?'],
+  },
+];
+
+const LR_INTRAPERSONAL_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'Your identity is layered — you contain multiple selves that shift by context. But which of those selves is choosing? And can a self that is always shifting ever truly rest?',
+    followUps: ['Is fluidity freedom or fragmentation?', 'What would it feel like to be fully one thing?'],
+  },
+  {
+    prompt: 'You\'ve done the inner work. You know your patterns, your shadows, your triggers. But knowing yourself can become a new kind of armor — self-awareness as performance. Where does genuine vulnerability live beyond your self-knowledge?',
+    followUps: ['Can self-awareness become a defense?', 'What would it mean to not know yourself for a moment?'],
+  },
+];
+
+const LR_SPIRITUAL_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'You sense the interconnectedness of all things. But that sensing can become a bypass — "we\'re all one" used to avoid the real friction of relationship. Where does your oneness-claim meet the messiness of actual connection?',
+    followUps: ['Is spiritual bypass a pattern you recognize?', 'What does interconnectedness cost you?'],
+  },
+  {
+    prompt: 'You hold space for others\' spiritual paths. But what is YOUR path — not the pluralistic acceptance of all paths, but the specific, particular, committed practice that is yours alone?',
+    followUps: ['Can you commit to one path without rejecting others?', 'What would devotion look like for you?'],
+  },
+];
+
+const LR_INTERPERSONAL_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'You care deeply about others\' experience. But caring can become a form of control — anticipating needs, managing feelings, preventing discomfort. When does your care serve them, and when does it serve your need to be needed?',
+    followUps: ['Can you let someone struggle without intervening?', 'What would it mean to trust their process?'],
+  },
+  {
+    prompt: 'You value egalitarian relationships. But hierarchy still exists — some people have more power, more access, more privilege. How do you navigate real power differences without pretending they don\'t exist or letting them define everything?',
+    followUps: ['Can equality coexist with difference?', 'What does power-with look like in practice?'],
+  },
+];
+
+const LR_SOMATIC_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'You\'re attuned to subtle body signals — tension, energy, gut feelings. But that sensitivity can become hypervigilance — always scanning, never resting. What would it feel like to let your body be ordinary, not a signal to interpret?',
+    followUps: ['Is your body a temple or a home?', 'Can you inhabit your body without monitoring it?'],
+  },
+  {
+    prompt: 'You feel the collective in your body — the grief, the anxiety, the hope of your community. But carrying collective pain personally is not the same as transforming it. Where does your body end and the collective begin?',
+    followUps: ['Is somatic empathy a gift or a burden?', 'What would it mean to metabolize rather than carry?'],
+  },
+];
+
+const LR_WILLPOWER_GREEN: readonly FallbackContent[] = [
+  {
+    prompt: 'You can hold multiple priorities simultaneously. But holding everything can mean committing to nothing. What would it look like to choose — really choose — one thing, and let the others fall away?',
+    followUps: ['Is non-commitment a form of care or fear?', 'What would you sacrifice by choosing?'],
+  },
+  {
+    prompt: 'Your will is in service of collective good. But collective will can become diffuse — everyone\'s priority is no one\'s priority. Where does YOUR will live within the collective? What is yours to do, specifically, that no one else can do?',
+    followUps: ['Can you lead without dominating?', 'What would it mean to claim your unique contribution?'],
+  },
+];
+
+/** Line-specific LanguageReflective pools — Green stage */
+const LR_BY_LINE_GREEN: Record<string, ContentPool> = {
+  Cognitive: LR_COGNITIVE_GREEN,
+  Emotional: LR_EMOTIONAL_GREEN,
+  Moral: LR_MORAL_GREEN,
+  Intrapersonal: LR_INTRAPERSONAL_GREEN,
+  Spiritual: LR_SPIRITUAL_GREEN,
+  Interpersonal: LR_INTERPERSONAL_GREEN,
+  Somatic: LR_SOMATIC_GREEN,
+  Willpower: LR_WILLPOWER_GREEN,
+};
+
 /** Line-specific ScenarioChoice pools — Red stage */
 const SC_BY_LINE_RED: Record<string, ContentPool> = {
   Cognitive: SC_COGNITIVE_RED,
@@ -1100,6 +1208,7 @@ export function getFallback(modality: Modality, line: Line, stage: Stage, player
         Red: LR_BY_LINE_RED,
         Orange: LR_BY_LINE_ORANGE,
         Amber: LR_BY_LINE_AMBER,
+        Green: LR_BY_LINE_GREEN, // Efficacy Audit GAP-1: Green-stage content
       };
       if (stage === 'Infrared') content = pickRandom(LANGUAGE_REFLECTIVE_INFRARED);
       else if (stage === 'Magenta') content = pickRandom(LANGUAGE_REFLECTIVE_MAGENTA);
