@@ -208,10 +208,57 @@ export const CCRPG_GET_CONTENT_TOOL: ToolDefinition = {
       type: 'object',
       properties: {
         modality: { type: 'string', description: 'The modality (Deterministic, LanguageReflective, ScenarioChoice, etc.)' },
-        line: { type: 'string', description: 'The developmental line (Cognitive, Emotional, etc.)' },
-        stage: { type: 'string', description: 'The stage (Red, Amber, Orange, etc.)' },
       },
-      required: ['modality', 'line', 'stage'],
+    },
+  },
+};
+
+// ── Profile r/w tools (Profiling Infrastructure R&D) ─────────────────
+// Inspired by Hermes-Agent's memory_tool.py: the agent can read and write
+// profile files during a session. Files are written immediately (durable)
+// but the system prompt snapshot is frozen (refreshes next session).
+
+export const CCRPG_READ_PROFILE_TOOL: ToolDefinition = {
+  type: 'function',
+  function: {
+    name: 'ccrpg_read_profile_file',
+    description: 'Read a file from the active user\'s profile directory. Use this to access the user\'s narrative memory (past insights, patterns, active work), goals, shadow ledger, session history, or encounter log. The profile contains long-term context about this user that persists across sessions.',
+    parameters: {
+      type: 'object',
+      properties: {
+        filename: {
+          type: 'string',
+          description: 'The filename to read. Valid: narrative-memory.md, goals.yaml, shadow-ledger.yaml, session-history.yaml, encounter-log.md, identity.yaml, preferences.yaml, developmental-state.yaml',
+        },
+      },
+      required: ['filename'],
+    },
+  },
+};
+
+export const CCRPG_WRITE_PROFILE_TOOL: ToolDefinition = {
+  type: 'function',
+  function: {
+    name: 'ccrpg_write_profile_file',
+    description: 'Write or append to a file in the active user\'s profile directory. Use this to record insights that landed during this session (append to narrative-memory.md), update inferred goals (overwrite goals.yaml), or add notes to the encounter log. Changes are durable immediately but do not change the current system prompt (frozen snapshot pattern).',
+    parameters: {
+      type: 'object',
+      properties: {
+        filename: {
+          type: 'string',
+          description: 'The filename to write. Valid: narrative-memory.md, goals.yaml, encounter-log.md',
+        },
+        content: {
+          type: 'string',
+          description: 'The content to write.',
+        },
+        mode: {
+          type: 'string',
+          enum: ['append', 'overwrite'],
+          description: 'Write mode: append (add to end) or overwrite (replace entire file). Default: append.',
+        },
+      },
+      required: ['filename', 'content'],
     },
   },
 };
@@ -225,6 +272,8 @@ export const ALL_CCRPG_TOOLS: readonly ToolDefinition[] = [
   CCRPG_COMPLETE_ENCOUNTER_TOOL,
   CCRPG_CHECK_TRANSFORMATION_TOOL,
   CCRPG_GET_CONTENT_TOOL,
+  CCRPG_READ_PROFILE_TOOL,
+  CCRPG_WRITE_PROFILE_TOOL,
 ];
 
 // ---------------------------------------------------------------------------
@@ -788,6 +837,36 @@ export async function executeCCRPGTool(
         // WIRE-4: Shadow content for shadow-mode encounters (PersistentAgent path)
         shadowContent,
       });
+    }
+
+    case 'ccrpg_read_profile_file': {
+      const filename = args.filename as string;
+      try {
+        const { agentReadProfileFile } = await import('../../../infra/profiles/ProfileManager.js');
+        const content = agentReadProfileFile(filename);
+        if (content === null) {
+          return JSON.stringify({ error: `Cannot read "${filename}". File not found or not in whitelist. Valid: narrative-memory.md, goals.yaml, shadow-ledger.yaml, session-history.yaml, encounter-log.md, identity.yaml, preferences.yaml, developmental-state.yaml` });
+        }
+        return JSON.stringify({ filename, content, length: content.length });
+      } catch (e: any) {
+        return JSON.stringify({ error: `Failed to read profile file: ${e.message}` });
+      }
+    }
+
+    case 'ccrpg_write_profile_file': {
+      const filename = args.filename as string;
+      const content = args.content as string;
+      const mode = (args.mode as 'append' | 'overwrite') || 'append';
+      try {
+        const { agentWriteProfileFile } = await import('../../../infra/profiles/ProfileManager.js');
+        const success = agentWriteProfileFile(filename, content, mode);
+        if (!success) {
+          return JSON.stringify({ error: `Cannot write "${filename}". File not in writable whitelist. Valid: narrative-memory.md, goals.yaml, encounter-log.md` });
+        }
+        return JSON.stringify({ success: true, filename, mode, bytesWritten: content.length });
+      } catch (e: any) {
+        return JSON.stringify({ error: `Failed to write profile file: ${e.message}` });
+      }
     }
 
     default:

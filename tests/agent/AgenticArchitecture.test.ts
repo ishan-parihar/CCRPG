@@ -70,8 +70,8 @@ function makeToolContext(overrides: Partial<ToolContext> = {}): ToolContext {
 }
 
 describe('CCRPG Tools', () => {
-  it('defines exactly 8 CCRPG-native tools', () => {
-    expect(ALL_CCRPG_TOOLS).toHaveLength(8);
+  it('defines exactly 10 CCRPG-native tools (8 core + 2 profile r/w)', () => {
+    expect(ALL_CCRPG_TOOLS).toHaveLength(10);
   });
 
   it('all tools have unique names', () => {
@@ -87,9 +87,9 @@ describe('CCRPG Tools', () => {
 });
 
 describe('ToolRegistry', () => {
-  it('createCCRPGToolRegistry registers 8 tools', () => {
+  it('createCCRPGToolRegistry registers 10 tools', () => {
     const registry = createCCRPGToolRegistry();
-    expect(registry.count).toBe(8);
+    expect(registry.count).toBe(10);
   });
 
   it('has() returns true for registered tools', () => {
@@ -445,7 +445,7 @@ describe('TDG hook no-op safety (Phase 3 — non-regression)', () => {
 });
 
 describe('Tool surface completeness (Phase 3)', () => {
-  it('the 8 CCRPG tool names match the architecture plan', () => {
+  it('the 10 CCRPG tool names match the architecture plan', () => {
     const names = ALL_CCRPG_TOOLS.map(t => t.function.name);
     expect(names).toEqual([
       'ccrpg_ask_player',
@@ -456,6 +456,8 @@ describe('Tool surface completeness (Phase 3)', () => {
       'ccrpg_complete_encounter',
       'ccrpg_check_transformation',
       'ccrpg_get_content',
+      'ccrpg_read_profile_file',
+      'ccrpg_write_profile_file',
     ]);
   });
 
@@ -568,12 +570,12 @@ describe('TDGToolAdapter MCP envelope handling (regression for bug #3)', () => {
 describe('PersistentAgent source attribution (regression for M5)', () => {
   it('does not overwrite CCRPG tools as source=tdg when given a unified registry', () => {
     // The bug: the CLI passes a unified registry (8 CCRPG + 7 TDG) as tdgToolRegistry.
-    // The constructor re-registered all 15 with source='tdg', overwriting the 8 CCRPG
+    // The constructor re-registered all 15 with source='tdg', overwriting the 10 CCRPG
     // tools' source label. getDefinitionsBySource('ccrpg') returned 0.
     const sig = createSignificator('m5-player', makeAltitudes('Red'), 'Red');
     const world = createInitialWorldState([]);
 
-    // Build a unified registry with 8 CCRPG + 2 fake TDG tools
+    // Build a unified registry with 10 CCRPG + 2 fake TDG tools
     // YAGNI-0 (UX-R4): Replaced require() (broken in ESM) with the top-level
     // ESM import. The require() was failing with 'Cannot find module' because
     // vitest runs in ESM context where require() doesn't resolve .js→.ts.
@@ -603,7 +605,7 @@ describe('PersistentAgent source attribution (regression for M5)', () => {
       tdgToolRegistry: unified,
     });
 
-    // The agent's internal registry should have 8 CCRPG + 2 TDG = 10 tools,
+    // The agent's internal registry should have 10 CCRPG + 2 TDG = 12 tools,
     // NOT 10 TDG tools. getDefinitionsBySource('ccrpg') should return 8.
     // We can't access the private registry directly, but we can verify the tool
     // count via the message history — the agent's system prompt includes the tool
