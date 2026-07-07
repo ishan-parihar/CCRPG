@@ -1750,21 +1750,45 @@ async function runFullSession(): Promise<void> {
       }
     }
   } else {
-    s2?.info('LLM disabled (--no-llm or no API key)');
-    // UX-P0-3: Emit warning in JSON mode when LLM was requested but no key
-    if (JSON_MODE && !NO_LLM) {
-      emitEvent('warning', { code: 'llm_no_key', message: 'No LLM API key configured — using module-only mode. Run `ccrpg setup` to configure.' });
+    // EFFICACY-PILOT (P0): The game MUST run with LLM or not at all.
+    // Fallback narratives cannot compensate for the infinite range of human
+    // reflection. The pilot study proved that echo-only mode (no LLM) is
+    // worse than silence — it returns the user's own words with no therapeutic
+    // response, destroying trust after vulnerable disclosures.
+    //
+    // --no-llm is still allowed for: status, diagnostic, glossary, new-game
+    // (non-reflective commands). But actual session play REQUIRES the LLM.
+    if (subcommand === 'session' || subcommand === undefined || subcommand === 'full') {
+      if (NO_LLM) {
+        if (!JSON_MODE) {
+          error('CCRPG requires an active LLM to run reflective sessions.');
+          console.log(`\n  ${chalk.dim('The LLM is the game\'s therapeutic engine. Without it, encounters become')}`);
+          console.log(`  ${chalk.dim('echo-only — your words returned with no reflection. This is worse than silence.')}`);
+          console.log(`\n  ${chalk.bold('To configure the LLM:')}`);
+          console.log(`  ${chalk.dim('  1. Run `ccrpg setup` in a real terminal, OR')}`);
+          console.log(`  ${chalk.dim('  2. Set env vars: OPENCODE_API_KEY=<key> MODEL=<model>, OR')}`);
+          console.log(`  ${chalk.dim('  3. Edit ~/.ccrpg/config.json directly')}`);
+          console.log(`\n  ${chalk.dim('Non-reflective commands (status, diagnostic, glossary, new-game) still work without LLM.')}\n`);
+        } else {
+          emitEvent('fatal', { code: 'llm_required', message: 'CCRPG requires an active LLM for reflective sessions. Configure via `ccrpg setup` or set OPENCODE_API_KEY + MODEL env vars.' });
+        }
+        process.exit(1);
+      }
+      if (!llmComplete) {
+        if (!JSON_MODE) {
+          error('LLM not configured. CCRPG requires an active LLM to run sessions.');
+          console.log(`\n  ${chalk.dim('No API key found. The game cannot run without the LLM.')}`);
+          console.log(`\n  ${chalk.bold('To configure:')}`);
+          console.log(`  ${chalk.dim('  1. Run `ccrpg setup` in a real terminal, OR')}`);
+          console.log(`  ${chalk.dim('  2. Set OPENCODE_API_KEY=<key> and MODEL=<model> env vars, OR')}`);
+          console.log(`  ${chalk.dim('  3. Edit ~/.ccrpg/config.json: {"llm":{"provider":"opencode","apiKey":"<key>","model":"mimo-v2.5-free","baseUrl":"https://opencode.ai/zen/v1"}}')}\n`);
+        } else {
+          emitEvent('fatal', { code: 'llm_not_configured', message: 'No LLM API key configured. Run `ccrpg setup` or set env vars.' });
+        }
+        process.exit(1);
+      }
     }
-    // R9-BUG-4 (UX-R9): Fire the bare-headless warning in no-LLM mode too.
-    // Previously this only fired when LLM was active. In no-LLM mode, the
-    // user gets generic fallback narratives substituted as their "answers"
-    // with no indication that --answer is required for participation.
-    if (HEADLESS && USER_ANSWERS.length === 0 && !JSON_MODE) {
-      warn('Headless mode without --answer: encounters will use default responses. For a reflective session, provide answers via --answer "your reflection" (repeatable) or --answers <file>.');
-    }
-    if (HEADLESS && USER_ANSWERS.length === 0 && JSON_MODE) {
-      emitEvent('warning', { code: 'no_user_answers', message: 'Headless mode without --answer: encounters will use default responses. Provide --answer or --answers for participation.' });
-    }
+    s2?.info('LLM disabled (--no-llm) — only non-reflective commands available');
   }
 
   // P1-3 (UX-R3): Lower the saturation threshold when LLM is unavailable.

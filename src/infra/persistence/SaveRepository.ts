@@ -331,6 +331,18 @@ export function loadAll(): { sig: Significator; world: WorldState } | null {
  * P0-5: Atomically delete both saves (for new game).
  */
 export function deleteAllSaves(): void {
+  // EFFICACY-PILOT (P0): Back up config.json before any deletion, then
+  // restore it after. This is a HARD guarantee — config.json must survive
+  // ALL save-deletion operations, no exceptions. The LLM config is system
+  // preferences, not game state.
+  const configFile = path.join(CLI_SAVE_DIR, 'config.json');
+  let configBackup: string | null = null;
+  try {
+    if (fs.existsSync(configFile)) {
+      configBackup = fs.readFileSync(configFile, 'utf8');
+    }
+  } catch { /* ignore read errors */ }
+
   deleteSave();
   deleteWorldSave();
   try {
@@ -338,16 +350,14 @@ export function deleteAllSaves(): void {
       fs.unlinkSync(CLI_ATOMIC_SAVE_FILE);
     }
   } catch { /* ignore */ }
-  // R9-BUG-3 (UX-R9): Explicitly verify config.json was NOT deleted.
-  // This is a safety guard — deleteAllSaves should NEVER remove the user's
-  // LLM configuration. If a future change accidentally adds config deletion,
-  // this log will surface it immediately.
-  const configFile = path.join(CLI_SAVE_DIR, 'config.json');
-  if (fs.existsSync(configFile)) {
-    // Config survived — correct behavior. No action needed.
-  } else {
-    // Config is missing — could be a fresh install or an accidental deletion.
-    // Don't create it here (the user may not want a config), but log a warning.
-    console.warn('[SaveRepository] Note: ~/.ccrpg/config.json not found. Run `ccrpg setup` to configure the LLM.');
+
+  // Restore config.json if it was deleted by any of the above operations
+  // (shouldn't happen, but this is the HARD guarantee).
+  if (configBackup !== null) {
+    try {
+      if (!fs.existsSync(configFile)) {
+        fs.writeFileSync(configFile, configBackup);
+      }
+    } catch { /* ignore write errors */ }
   }
 }
