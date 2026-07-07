@@ -97,6 +97,13 @@ program
 program
   .command('glossary')
   .description('Show definitions for CCRPG terminology');
+// Profiling system: multi-user support
+program
+  .command('profile [action] [name]')
+  .description('Manage user profiles (list, switch, create, delete)');
+program
+  .command('setup-profile')
+  .description('Create a new user profile with onboarding questions');
 
 // ponytail: .action() prevents commander from showing help when no subcommand given
 program.action(() => {});
@@ -244,6 +251,12 @@ import { thresholdToStage } from '../src/core/usecases/ThresholdMaps.js';
 import { setSaturationThreshold, getLineProgress, computeReadiness } from '../src/core/engines/TransformationDetector.js';
 // R5-BUG-5 (UX-R5): fallback narrative pool for empty LLM responses.
 import { pickFallbackNarrative } from '../src/core/agent/FallbackNarratives.js';
+import {
+  listProfiles, createProfile, setActiveProfile, deleteProfile,
+  loadProfile, buildContextInjection, updateProfileAfterSession,
+  getSaveFilePath, getActiveProfileName, migrateLegacySave,
+  getProfilesDir,
+} from '../src/infra/profiles/ProfileManager.js';
 import { computeConfidence } from '../src/core/assessments/engine.js';
 import type { TrialResult } from '../src/core/assessments/types.js';
 import { renderLayers, renderLayersCompact } from '../src/game/cli/LayerRenderer.js';
@@ -1775,6 +1788,21 @@ async function runDirectQuestioningSession(
   saveAll(currentSig, currentWorld);
   if (!JSON_MODE) info('save', `${chalk.green('Progress saved')}`);
 
+  // Profiling system: update the active profile after session end.
+  const _profileName = getActiveProfileName();
+  if (_profileName) {
+    try {
+      updateProfileAfterSession(_profileName, {
+        totalEncounters: currentSig.totalEncounters,
+        totalSessions: currentSig.totalSessions,
+        currentStage: currentSig.currentStage,
+        altitudes: { ...currentSig.altitudes },
+        drives: currentSig.drives.weights,
+        cci: 0.5, // TODO: compute from snapshot
+      });
+    } catch { /* best-effort — don't break session end */ }
+  }
+
   emitEvent('session_ended', {
     mode: 'direct',
     linesAssessed: history.length,
@@ -1788,6 +1816,24 @@ async function runDirectQuestioningSession(
 // ── Full session mode ─────────────────────────────────────────────────
 async function runFullSession(): Promise<void> {
   banner('CCRPG Session Runner');
+
+  // Profiling system: load active profile and inject context into LLM.
+  // This gives the LLM long-term memory of the user across sessions.
+  const activeProfileName = getActiveProfileName();
+  if (activeProfileName) {
+    const profile = loadProfile(activeProfileName);
+    if (profile) {
+      const contextInjection = buildContextInjection(profile);
+      // Set as env var so AgenticOrchestrator can prepend it to the system prompt
+      process.env.CCRPG_PROFILE_CONTEXT = contextInjection;
+      if (!JSON_MODE) info('profile', `${chalk.cyan(profile.identity?.name || activeProfileName)} loaded — ${profile.identity?.total_sessions || 0} sessions, ${profile.identity?.total_encounters || 0} encounters`);
+    }
+  } else {
+    // Auto-migrate legacy save if no profile exists
+    const migrated = migrateLegacySave();
+    if (migrated && !JSON_MODE) info('profile', `${chalk.green('✓')} Migrated existing save to profile "${migrated}"`);
+    else if (!JSON_MODE) warn('No active profile. Run `ccrpg setup-profile` to create one, or `ccrpg profile list` to see options.');
+  }
 
   // Boot with ora spinners for clean loading UX
   const s1 = JSON_MODE ? null : ora('Booting registries...').start();
@@ -2434,10 +2480,151 @@ async function detectOllama(): Promise<{ running: boolean; models: string[] }> {
 }
 
 // ── Setup wizard (dynamic) ────────────────────────────────────────
+// ── Profile Management ──────────────────────────────────────────────
+
+async function runProfile(action?: string, profileName?: string): Promise<void> {
+
+  if (!action || action === 'list') {
+    const profiles = listProfiles();
+    const active = getActiveProfileName();
+    if (profiles.length === 0) {
+      console.log(`\n  ${chalk.dim('No profiles found. Run `ccrpg setup-profile` to create one.')}`);
+      // Try migration
+      const migrated = migrateLegacySave();
+      if (migrated) {
+        console.log(`  ${chalk.green('✓')} Migrated existing save to profile "${migrated}".`);
+      }
+    } else {
+      console.log(`\n  ${chalk.bold('Profiles:')}`);
+      for (const p of profiles) {
+        const marker = p === active ? chalk.green(' ← active') : '';
+        console.log(`    ${chalk.cyan(p)}${marker}`);
+      }
+    }
+    console.log('');
+    return;
+  }
+
+  if (action === 'switch') {
+    if (!profileName) { error('Usage: ccrpg profile switch <name>'); return; }
+    try {
+      setActiveProfile(profileName);
+      console.log(`\n  ${chalk.green('✓')} Switched to profile "${profileName}".\n`);
+    } catch (err: any) {
+      error(err.message);
+    }
+    return;
+  }
+
+  if (action === 'create') {
+    if (!profileName) { error('Usage: ccrpg profile create <name>'); return; }
+    try {
+      createProfile(profileName);
+      console.log(`\n  ${chalk.green('✓')} Created profile "${profileName}" and set as active.\n`);
+    } catch (err: any) {
+      error(err.message);
+    }
+    return;
+  }
+
+  if (action === 'delete') {
+    if (!profileName) { error('Usage: ccrpg profile delete <name>'); return; }
+    try {
+      deleteProfile(profileName);
+      console.log(`\n  ${chalk.yellow('↻')} Deleted profile "${profileName}".\n`);
+    } catch (err: any) {
+      error(err.message);
+    }
+    return;
+  }
+
+  error(`Unknown profile action: ${action}. Valid: list, switch, create, delete`);
+}
+
+async function runSetupProfile(): Promise<void> {
+  if (HEADLESS || JSON_MODE) {
+    error('setup-profile requires interactive mode. Run in a real terminal.');
+    return;
+  }
+
+  banner('CCRPG Profile Setup');
+
+  // Step 1: Name
+  const nameInput = await clackText({ message: 'What should I call you?', defaultValue: '' });
+  if (typeof nameInput !== 'string' || !nameInput.trim()) { error('Name is required.'); return; }
+  const name = nameInput.trim();
+
+  // Step 2: Pronouns
+  const pronounChoice = await select({
+    message: 'What pronouns should I use?',
+    options: [
+      { value: 'she/her', label: 'she/her' },
+      { value: 'he/him', label: 'he/him' },
+      { value: 'they/them', label: 'they/them' },
+      { value: 'other', label: 'Other (type below)' },
+    ],
+  });
+  let pronouns = typeof pronounChoice === 'string' ? pronounChoice : 'they/them';
+  if (pronouns === 'other') {
+    const custom = await clackText({ message: 'Enter your pronouns:', defaultValue: '' });
+    if (typeof custom === 'string' && custom.trim()) pronouns = custom.trim();
+  }
+
+  // Step 3: Communication style
+  const metaphorChoice = await select({
+    message: 'What metaphor style resonates with you?',
+    options: [
+      { value: 'contemporary', label: 'Contemporary — modern language, no fantasy' },
+      { value: 'mythic', label: 'Mythic — warrior, blade, arena archetypes' },
+      { value: 'clinical', label: 'Clinical — precise, psychological' },
+      { value: 'poetic', label: 'Poetic — metaphor-heavy, literary' },
+    ],
+  });
+  const metaphor = typeof metaphorChoice === 'string' ? metaphorChoice : 'contemporary';
+
+  const intensityChoice = await select({
+    message: 'How direct should I be?',
+    options: [
+      { value: 'gentle', label: 'Gentle — supportive, soft' },
+      { value: 'moderate', label: 'Moderate — honest but kind' },
+      { value: 'direct', label: 'Direct — confrontational, no cushioning' },
+    ],
+  });
+  const intensity = typeof intensityChoice === 'string' ? intensityChoice : 'moderate';
+
+  // Step 4: What brings you here?
+  console.log(`\n  ${chalk.bold('A few questions to get started:')}`);
+  const bringInput = await clackText({ message: 'What brings you here?', defaultValue: '' });
+  const bring = typeof bringInput === 'string' ? bringInput.trim() : '';
+
+  const workInput = await clackText({ message: 'What are you working on (in yourself)?', defaultValue: '' });
+  const work = typeof workInput === 'string' ? workInput.trim() : '';
+
+  // Create profile
+  try {
+    createProfile(name, { pronouns, metaphor_preference: metaphor, intensity });
+
+    // Write goals from onboarding answers
+    const profileDir = path.join(getProfilesDir(), name);
+    const goalsPath = path.join(profileDir, 'goals.yaml');
+    const fs2 = await import('fs');
+    const goalsContent = `self_declared:\n${bring ? `  - "${bring}"\n` : ''}${work ? `  - "${work}"\n` : ''}\ninferred: []\nactive_focus: "${work || bring || ''}"\n`;
+    fs2.writeFileSync(goalsPath, goalsContent, 'utf8');
+
+    // Write initial narrative memory
+    const memPath = path.join(profileDir, 'narrative-memory.md');
+    const memContent = `# Narrative Memory — ${name}\n\n## Key Insights\n(Insights from LLM responses that landed — added after each session)\n\n## Patterns\n(Recurring themes across sessions)\n\n## Active Work\n${work || bring || '(Not yet specified)'}\n\n## Resolved\n(Integrated patterns)\n\n## Unresolved\n(Surfaced but not yet worked through)\n`;
+    fs2.writeFileSync(memPath, memContent, 'utf8');
+
+    console.log(`\n  ${chalk.green('✓')} Profile "${name}" created and set as active.`);
+    console.log(`  ${chalk.dim('Profile directory: ' + profileDir)}`);
+    console.log(`\n  ${chalk.dim('Run `ccrpg` to start your first session.')}\n`);
+  } catch (err: any) {
+    error(err.message);
+  }
+}
+
 // Refactored to use ProviderRegistry instead of the hardcoded PROVIDERS catalog.
-// The model list is now fetched at runtime from each provider's /models
-// endpoint (with models.dev as a fallback catalog), so we never ship stale
-// model names. Mirrors opencode's dynamic provider+model discovery design.
 async function runSetup(): Promise<void> {
   // R9-BUG-6 (UX-R9): The old message 'remove --headless and --json' was
   // contradictory when the system auto-enabled --headless (non-TTY guard).
@@ -2978,7 +3165,7 @@ async function main(): Promise<void> {
   // treat ALL subcommands as potentially interactive EXCEPT the truly
   // non-interactive ones (`status`, `glossary`). This is safer than
   // enumerating interactive ones — new subcommands default to safe.
-  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary']);
+  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary', 'profile']);
   const needsInteractive = !NON_INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE;
   if (needsInteractive && !process.stdin.isTTY) {
     HEADLESS = true;
@@ -2995,6 +3182,8 @@ async function main(): Promise<void> {
   if (subcommand === 'setup') { await runSetup(); return; }
   if (subcommand === 'status') { await runStatus(); return; }
   if (subcommand === 'glossary') { runGlossary(); return; }
+  if (subcommand === 'profile') { await runProfile(program.args[1], program.args[2]); return; }
+  if (subcommand === 'setup-profile') { await runSetupProfile(); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
   // game doesn't inherit the old player's developmental graph.
