@@ -723,7 +723,12 @@ INSTRUCTIONS:
         break;
       case 'ImmersiveRPG':
         narrativeIntro = `The world stretches before you. ${holonName} appears — ${holonRole} of this domain. What calls?`;
-        questionText = fallback.prompt ?? 'The world stretches before you. A path winds through unfamiliar terrain. Something waits ahead.';
+        // R6-P1-2 (UX-R6): Don't duplicate 'The world stretches before you' in
+        // the question text — the narrativeIntro already sets the scene. Use
+        // the fallback prompt only if it doesn't start with the same phrase.
+        questionText = (fallback.prompt && !fallback.prompt.startsWith('The world stretches before you'))
+          ? fallback.prompt
+          : 'A path winds through unfamiliar terrain. Something waits ahead — you can feel it. How do you meet what comes?';
         options = [
           { label: 'Press forward', description: 'Step into the unknown' },
           { label: 'Survey the area', description: 'Gather information first' },

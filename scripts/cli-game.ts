@@ -1504,7 +1504,7 @@ async function runDirectQuestioningSession(
         const rawNarrative = result.narrativeSummary?.trim() || pickFallbackNarrative(
           encounter.id, encounter.modality, Date.now() % 1000,
         );
-        const briefNarrative = truncateNarrative(rawNarrative, 140);
+        const briefNarrative = truncateNarrative(rawNarrative, 280);
         console.log(`\n  ${chalk.dim('\u2726')} ${briefNarrative}`);
 
         // T-3.4 (Veil compliance): replace "The encounter stirred: ↑ Communion drive, Homeostatic"
@@ -2053,7 +2053,7 @@ async function runFullSession(): Promise<void> {
         const rawNarrative = result.narrativeSummary?.trim() || pickFallbackNarrative(
           selectedEncounter.id, selectedEncounter.modality, Date.now() % 1000,
         );
-        const briefNarrative = truncateNarrative(rawNarrative, 140);
+        const briefNarrative = truncateNarrative(rawNarrative, 280);
         console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
 
         // Shadow surfaces as narrative, not as a clinical label
@@ -2063,7 +2063,13 @@ async function runFullSession(): Promise<void> {
       }
 
       if (VERBOSE) {
-        verbose('feedback', result.outcome.feedback.slice(0, 200));
+        // R6-P2-2 (UX-R6): Only print 'feedback' if it differs from 'narrative'.
+        // In no-LLM mode they're identical (both use fallback); in LLM mode
+        // they should differ. Printing both when identical is wasteful.
+        const feedback = result.outcome.feedback?.slice(0, 200) ?? '';
+        if (feedback && feedback !== result.narrativeSummary.slice(0, 200)) {
+          verbose('feedback', feedback);
+        }
         verbose('updatedEncounters', String(currentSig.totalEncounters));
       }
 
