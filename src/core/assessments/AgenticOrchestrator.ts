@@ -421,15 +421,33 @@ export class AgenticOrchestrator {
             // G.24: Clamp LLM-provided drive scores to [0, 1]
             const clamp = (v: number) => Math.max(0, Math.min(1, v));
             const ds = params.driveScores;
-            const safeDriveScores = {
+            const llmDriveScores = {
               agency: ds ? clamp(ds.agency) : 0.5,
               communion: ds ? clamp(ds.communion) : 0.5,
               eros: ds ? clamp(ds.eros) : 0.5,
               agape: ds ? clamp(ds.agape) : 0.5,
             };
 
+            // GAP-3 (Efficacy Audit): Fix circular scoring. The LLM generates
+            // the narrative AND scores the drives — that's circular. Instead,
+            // use the rubric-based evaluator (evaluateSelfReflection) to score
+            // the player's ACTUAL response independently. The LLM's drive
+            // scores are ignored for scoring purposes — the LLM is only used
+            // for narrative generation (the therapeutic response the user sees).
+            // The rubric evaluator uses keyword analysis, shadow detection,
+            // and concept density — all independent of the LLM's judgment.
+            const playerResponse = this._lastPlayerWriteIn ?? params.narrativeSummary ?? '';
+            const rubricEvaluation = this.evaluateSelfReflection(playerResponse);
+            const safeDriveScores = rubricEvaluation.driveScores;
+
+            // Use rubric polarity + shadow detection (not LLM's)
+            const scoringParams = {
+              ...params,
+              polarityDirection: rubricEvaluation.polarityDirection as 'sto' | 'sts' | 'neutral',
+            };
+
             const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, safeDriveScores);
-            const outcome = this.finalizeEncounter(params, now);
+            const outcome = this.finalizeEncounter(scoringParams, now);
 
             return {
               ...outcome,
@@ -607,17 +625,27 @@ INSTRUCTIONS:
               narrativeSummary: string;
             };
 
+            // GAP-3: Same rubric-based scoring fix as the first path (line 431).
             const clamp = (v: number) => Math.max(0, Math.min(1, v));
             const ds = params.driveScores;
-            const safeDriveScores = {
+            const _llmDriveScores = { // kept for reference, not used for scoring
               agency: ds ? clamp(ds.agency) : 0.5,
               communion: ds ? clamp(ds.communion) : 0.5,
               eros: ds ? clamp(ds.eros) : 0.5,
               agape: ds ? clamp(ds.agape) : 0.5,
             };
 
+            // Use rubric-based scoring (independent of LLM's self-evaluation)
+            const _playerResponse = this._lastPlayerWriteIn ?? params.narrativeSummary ?? '';
+            const _rubricEval = this.evaluateSelfReflection(_playerResponse);
+            const safeDriveScores = _rubricEval.driveScores;
+            const scoringParams = {
+              ...params,
+              polarityDirection: _rubricEval.polarityDirection as 'sto' | 'sts' | 'neutral',
+            };
+
             const finalResult = this.createAssessmentResult(params.passed, params.scores || {}, safeDriveScores);
-            const outcome = this.finalizeEncounter(params, now);
+            const outcome = this.finalizeEncounter(scoringParams, now);
 
             return {
               ...outcome,
