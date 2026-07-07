@@ -123,7 +123,22 @@ function serializeSimpleYaml(data: Record<string, any>, indent = 0): string {
     if (value === null || value === undefined) { lines.push(`${pad}${key}: null`); }
     else if (Array.isArray(value)) {
       if (value.length === 0) { lines.push(`${pad}${key}: []`); }
-      else { lines.push(`${pad}${key}:`); for (const item of value) lines.push(`${pad}  - ${String(item)}`); }
+      else {
+        lines.push(`${pad}${key}:`);
+        for (const item of value) {
+          if (typeof item === 'object' && item !== null) {
+            // Serialize object as multi-line YAML under the dash
+            const subYaml = serializeSimpleYaml(item, indent + 2);
+            const subLines = subYaml.split('\n');
+            lines.push(`${pad}  - ${subLines[0]}`);
+            for (let si = 1; si < subLines.length; si++) {
+              lines.push(`${pad}   ${subLines[si]}`);
+            }
+          } else {
+            lines.push(`${pad}  - ${formatScalar(item)}`);
+          }
+        }
+      }
     } else if (typeof value === 'object') {
       lines.push(`${pad}${key}:`); lines.push(serializeSimpleYaml(value, indent + 1));
     } else { lines.push(`${pad}${key}: ${formatScalar(value)}`); }
@@ -280,11 +295,13 @@ export function updateProfileAfterSession(profileName: string, updates: {
   altitudes: Record<string, string>; drives: Record<string, number>; cci: number;
   sessionEntry?: Record<string, any>; narrativeInsight?: string;
   newShadow?: Record<string, any>; activeFocus?: string;
+  shadows?: readonly any[]; // full shadow ledger from sig
 }): void {
   const dir = path.join(PROFILES_DIR, profileName);
   if (!fs.existsSync(dir)) return;
   const now = new Date().toISOString();
 
+  // Update identity
   const identity = yamlRead(path.join(dir, 'identity.yaml'));
   identity.last_active = now;
   identity.total_sessions = updates.totalSessions;
@@ -293,12 +310,29 @@ export function updateProfileAfterSession(profileName: string, updates: {
   if (identity.lifecycle === 'Onboarding') identity.lifecycle = 'Exploring';
   yamlWrite(path.join(dir, 'identity.yaml'), identity);
 
+  // Sync developmental state (mirror from sig)
   const devState = yamlRead(path.join(dir, 'developmental-state.yaml'));
   devState.altitudes = updates.altitudes;
   devState.drives = updates.drives;
   devState.cci = updates.cci;
   yamlWrite(path.join(dir, 'developmental-state.yaml'), devState);
 
+  // Sync shadow ledger (mirror from sig — qualitative, Veil-compliant)
+  if (updates.shadows && updates.shadows.length > 0) {
+    const qualitativeShadows = updates.shadows.map((s: any) => ({
+      first_surfaced: s.surfacedAt ? new Date(s.surfacedAt).toISOString() : now,
+      line: s.line || 'Unknown',
+      stage: s.stage || 'Red',
+      pattern: s.description || s.pattern || 'Unresolved pattern',
+      quadrant: s.quadrant || 'DarkAllergy',
+      status: s.resolvedAt ? 'integrated' : 'surfacing',
+      last_touched: now,
+      sessions_active: s.sessionsActive ?? 1,
+    }));
+    yamlWrite(path.join(dir, 'shadow-ledger.yaml'), { shadows: qualitativeShadows });
+  }
+
+  // Append session entry to session-log
   const history = yamlRead(path.join(dir, 'session-history.yaml'));
   if (!history.sessions) history.sessions = [];
   if (updates.sessionEntry) {
@@ -307,6 +341,7 @@ export function updateProfileAfterSession(profileName: string, updates: {
   }
   yamlWrite(path.join(dir, 'session-history.yaml'), history);
 
+  // Append narrative insight to memory
   if (updates.narrativeInsight) {
     const memPath = path.join(dir, 'narrative-memory.md');
     let memory = mdRead(memPath);
@@ -320,13 +355,6 @@ export function updateProfileAfterSession(profileName: string, updates: {
     mdWrite(memPath, memory);
   }
 
-  if (updates.newShadow) {
-    const ledger = yamlRead(path.join(dir, 'shadow-ledger.yaml'));
-    if (!ledger.shadows) ledger.shadows = [];
-    ledger.shadows.push(updates.newShadow);
-    yamlWrite(path.join(dir, 'shadow-ledger.yaml'), ledger);
-  }
-
   if (updates.activeFocus) {
     const goals = yamlRead(path.join(dir, 'goals.yaml'));
     goals.active_focus = updates.activeFocus;
@@ -334,9 +362,111 @@ export function updateProfileAfterSession(profileName: string, updates: {
   }
 }
 
+/**
+ * Append an encounter to the encounter-log.md after every encounter.
+ * This preserves the therapeutic conversation (user words + LLM responses)
+ * across sessions — the thing the pilot personas needed most.
+ */
+export function appendEncounterLog(profileName: string, entry: {
+  encounterNum: number;
+  line: string;
+  stage: string;
+  npc?: string;
+  question?: string;
+  userAnswer?: string;
+  llmNarrative?: string;
+  driveSignal?: string;
+  shadowSurfaced?: boolean;
+  timestamp: string;
+}): void {
+  const dir = path.join(PROFILES_DIR, profileName);
+  if (!fs.existsSync(dir)) return;
+
+  const logPath = path.join(dir, 'encounter-log.md');
+  let log = mdRead(logPath);
+  if (!log || log.trim() === '') {
+    log = `# Encounter Log — ${profileName}\n\nA running record of every encounter: the question asked, the user's answer, the LLM's response.\n\n`;
+  }
+
+  const entry_text = [
+    `## Encounter ${entry.encounterNum} — ${entry.timestamp}`,
+    `**Line:** ${entry.line} | **Stage:** ${entry.stage}${entry.npc ? ` | **NPC:** ${entry.npc}` : ''}`,
+    entry.question ? `**Question:** ${entry.question}` : '',
+    entry.userAnswer ? `**User's answer:** ${entry.userAnswer}` : '',
+    entry.llmNarrative ? `**LLM narrative:** ${entry.llmNarrative}` : '',
+    entry.driveSignal ? `**Drive signal:** ${entry.driveSignal}` : '',
+    entry.shadowSurfaced ? `**Shadow surfaced:** Yes` : '',
+    '',
+  ].filter(l => l !== '').join('\n');
+
+  log += entry_text + '\n';
+  mdWrite(logPath, log);
+}
+
+/**
+ * Get the path for the live-state.json (Significator) inside the profile directory.
+ * Replaces the old ~/.ccrpg/save-all.json with a per-profile save.
+ */
+export function getLiveStatePath(profileName: string): string {
+  const dir = path.join(PROFILES_DIR, profileName);
+  fs.mkdirSync(dir, { recursive: true });
+  return path.join(dir, 'live-state.json');
+}
+
+/**
+ * Get the path for the world-state.json inside the profile directory.
+ */
+export function getWorldStatePath(profileName: string): string {
+  const dir = path.join(PROFILES_DIR, profileName);
+  fs.mkdirSync(dir, { recursive: true });
+  return path.join(dir, 'world-state.json');
+}
+
+/**
+ * Agent sandbox: read a file from the active profile directory.
+ * Only whitelisted filenames are allowed.
+ */
+const READABLE_FILES = new Set([
+  'identity.yaml', 'preferences.yaml', 'goals.yaml',
+  'narrative-memory.md', 'shadow-ledger.yaml', 'session-history.yaml',
+  'developmental-state.yaml', 'encounter-log.md',
+]);
+
+const WRITABLE_FILES = new Set([
+  'narrative-memory.md', 'goals.yaml', 'encounter-log.md',
+]);
+
+export function agentReadProfileFile(filename: string): string | null {
+  if (!READABLE_FILES.has(filename)) return null;
+  const dir = getActiveProfileDir();
+  if (!dir) return null;
+  try {
+    return fs.readFileSync(path.join(dir, filename), 'utf8');
+  } catch { return null; }
+}
+
+export function agentWriteProfileFile(filename: string, content: string, mode: 'overwrite' | 'append' = 'append'): boolean {
+  if (!WRITABLE_FILES.has(filename)) return false;
+  const dir = getActiveProfileDir();
+  if (!dir) return false;
+  try {
+    const filePath = path.join(dir, filename);
+    if (mode === 'append' && fs.existsSync(filePath)) {
+      const existing = fs.readFileSync(filePath, 'utf8');
+      fs.writeFileSync(filePath, existing + '\n' + content, 'utf8');
+    } else {
+      fs.writeFileSync(filePath, content, 'utf8');
+    }
+    return true;
+  } catch { return false; }
+}
+
+/**
+ * Get the save file path for backwards compatibility.
+ * Now points to the profile directory's live-state.json.
+ */
 export function getSaveFilePath(profileName: string): string {
-  fs.mkdirSync(SAVES_DIR, { recursive: true });
-  return path.join(SAVES_DIR, `${profileName}-save-all.json`);
+  return getLiveStatePath(profileName);
 }
 
 export function migrateLegacySave(): string | null {

@@ -254,6 +254,7 @@ import { pickFallbackNarrative } from '../src/core/agent/FallbackNarratives.js';
 import {
   listProfiles, createProfile, setActiveProfile, deleteProfile,
   loadProfile, buildContextInjection, updateProfileAfterSession,
+  appendEncounterLog, agentReadProfileFile, agentWriteProfileFile,
   getSaveFilePath, getActiveProfileName, migrateLegacySave,
   getProfilesDir,
 } from '../src/infra/profiles/ProfileManager.js';
@@ -1705,6 +1706,29 @@ async function runDirectQuestioningSession(
       currentSig = result.outcome.updatedSig;
       currentWorld = result.outcome.updatedWorld;
 
+      // Profiling: append encounter to the encounter-log.md (preserves user
+      // words + LLM responses across sessions — the therapeutic conversation).
+      const _activeName = getActiveProfileName();
+      if (_activeName) {
+        try {
+          const userAnswer = result.response?.writeInValue ?? '';
+          const npcName = currentWorld.holons.find(h => h.id === encounter.holonSource)?.name;
+          appendEncounterLog(_activeName, {
+            encounterNum: currentSig.totalEncounters,
+            line, stage: currentStage,
+            npc: npcName,
+            question: result.narrativeSummary?.slice(0, 200),
+            userAnswer: userAnswer?.slice(0, 500),
+            llmNarrative: result.narrativeSummary?.slice(0, 500),
+            driveSignal: Object.entries(cr.polarityTrace.driveDirectionality)
+              .filter(([, v]) => v !== 'HealthyBalanced')
+              .map(([k, v]) => `${k}:${v}`).join(', ') || 'HealthyBalanced',
+            shadowSurfaced: cr.shadowSurfaced,
+            timestamp: new Date().toISOString(),
+          });
+        } catch (e: any) { if (!JSON_MODE) console.error(`  ${chalk.dim('profile log error: ' + (e?.message || e))}`); }
+      }
+
       // P1-3 (UX-R3): Surface per-line progress to next threshold AFTER the
       // sig is updated, so the bar reflects the encounter that just completed.
       if (!JSON_MODE) {
@@ -1792,6 +1816,21 @@ async function runDirectQuestioningSession(
   const _profileName = getActiveProfileName();
   if (_profileName) {
     try {
+      // Build session entry for session-log.yaml
+      const linesTouched = [...new Set(history.map(r => r.polarityTrace.line))];
+      const keyShift = history.length > 0
+        ? history.map(r => r.narrativeSummary).filter(n => n && n.length > 20).slice(-1)[0]?.slice(0, 200) || ''
+        : '';
+      const sessionEntry = {
+        date: new Date().toISOString(),
+        encounters: history.length,
+        lines_touched: linesTouched,
+        themes: linesTouched, // simplified — LLM could extract themes later
+        key_shift: keyShift,
+        shadow_surfaced: history.some(r => r.shadowSurfaced) ? 'Yes' : 'No',
+        llm_narrative_summary: keyShift,
+      };
+
       updateProfileAfterSession(_profileName, {
         totalEncounters: currentSig.totalEncounters,
         totalSessions: currentSig.totalSessions,
@@ -1799,6 +1838,8 @@ async function runDirectQuestioningSession(
         altitudes: { ...currentSig.altitudes },
         drives: currentSig.drives.weights,
         cci: 0.5, // TODO: compute from snapshot
+        sessionEntry,
+        shadows: currentSig.shadows.entries,
       });
     } catch { /* best-effort — don't break session end */ }
   }
