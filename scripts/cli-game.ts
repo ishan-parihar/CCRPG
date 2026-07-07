@@ -178,7 +178,7 @@ try {
 // (opencode.ai/zen) — the project's primary gateway — but only fires if
 // OPENCODE_API_KEY / OPENCODE_API is set; otherwise the user must configure.
 import { resolveConfig as resolveLLMConfig, isComplete as isLLMConfigComplete, type LLMConfig } from '../src/infra/llm/ProviderRegistry.js';
-import { getActiveConfig, invalidateConfigCache, setLLMDisabled, validateModelIfFresh } from '../src/infra/llm/LLMClient.js';
+import { getActiveConfig, invalidateConfigCache, setLLMDisabled, validateModelIfFresh, queryLLM } from '../src/infra/llm/LLMClient.js';
 
 const resolvedLLM: LLMConfig = resolveLLMConfig(
   { model: earlyModelOverride },
@@ -1537,6 +1537,96 @@ const DQ_SCENE_SETTINGS = [
   'Deep in the chamber, the question finds you:',
 ];
 
+/**
+ * Post-session LLM synthesis: reads the encounter log from this session,
+ * asks the LLM to extract key insights, and appends them to narrative-memory.md.
+ * This is the "profile evolution" step — the profile grows smarter after every session.
+ *
+ * Inspired by Hermes-Agent's background_review pattern: the agent reads what
+ * happened and synthesizes it into long-term memory.
+ */
+async function synthesizeSessionInsights(profileName: string, encounterCount: number): Promise<void> {
+  if (!LLM_ACTIVE || JSON_MODE) return; // only synthesize with LLM, skip in JSON mode
+  try {
+    const { agentReadProfileFile, agentWriteProfileFile } = await import('../src/infra/profiles/ProfileManager.js');
+    const encounterLog = agentReadProfileFile('encounter-log.md');
+    if (!encounterLog || encounterLog.length < 100) return; // nothing to synthesize
+
+    // Take the last N encounters from this session
+    const encounters = encounterLog.split('## Encounter ');
+    const recentEncounters = encounters.slice(-encounterCount - 1).join('## Encounter ');
+
+    const synthesisPrompt = `You are a developmental synthesis engine. Read the following encounter log from a CCRPG session and extract:
+
+1. KEY INSIGHT: One sentence capturing the most important therapeutic insight from this session (what the user discovered or what the LLM named that landed).
+2. PATTERN: If a recurring pattern is visible (something that appeared in multiple encounters), name it in one sentence.
+3. ACTIVE WORK: What the user is currently processing, in one sentence.
+
+Format your response as exactly 3 lines:
+INSIGHT: <one sentence>
+PATTERN: <one sentence or "none">
+ACTIVE: <one sentence>
+
+Encounter log:
+${recentEncounters.slice(0, 3000)}`;
+
+    const result = await queryLLM('You are a developmental synthesis engine. Be concise and precise.', synthesisPrompt);
+    if (result && !result.startsWith('{"error"')) {
+      // Parse the response — be flexible about format
+      const lines = result.split('\n').filter(l => l.trim());
+      let insight = '';
+      let pattern = '';
+      let active = '';
+
+      for (const line of lines) {
+        const lower = line.toLowerCase();
+        if (lower.startsWith('insight:') || lower.startsWith('1.')) {
+          insight = line.replace(/^(insight:|1\.)\s*/i, '').trim();
+        } else if (lower.startsWith('pattern:') || lower.startsWith('2.')) {
+          pattern = line.replace(/^(pattern:|2\.)\s*/i, '').trim();
+        } else if (lower.startsWith('active:') || lower.startsWith('3.')) {
+          active = line.replace(/^(active:|3\.)\s*/i, '').trim();
+        }
+      }
+
+      // Fallback: if no structured format, use the first non-empty line as insight
+      if (!insight && lines.length > 0 && result.length > 20) {
+        insight = lines[0]!.slice(0, 200);
+      }
+
+      let wroteSomething = false;
+      if (insight && insight.toLowerCase() !== 'none') {
+        agentWriteProfileFile('narrative-memory.md', `- **Session (synthesized):** ${insight}`, 'append');
+        wroteSomething = true;
+      }
+      if (pattern && pattern.toLowerCase() !== 'none') {
+        agentWriteProfileFile('narrative-memory.md', `- **Pattern:** ${pattern}`, 'append');
+        wroteSomething = true;
+      }
+      if (active && active.toLowerCase() !== 'none') {
+        try {
+          const goals = agentReadProfileFile('goals.yaml');
+          if (goals) {
+            const updatedGoals = goals.replace(/active_focus:.*$/m, `active_focus: "${active.replace(/"/g, "'")}"`);
+            agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
+          }
+        } catch { /* best-effort */ }
+        wroteSomething = true;
+      }
+
+      if (wroteSomething && !JSON_MODE) {
+        info('synthesis', `${chalk.green('✓')} Profile updated: insight + pattern + active focus`);
+      } else if (!JSON_MODE) {
+        info('synthesis', `${chalk.dim('No extractable insights from this session')}`);
+      }
+    } else {
+      if (!JSON_MODE) info('synthesis', `${chalk.dim('LLM synthesis skipped (LLM unavailable)')}`);
+    }
+  } catch (e: any) {
+    if (!JSON_MODE) info('synthesis', `${chalk.dim('Synthesis error: ' + (e?.message || e))}`);
+  }
+}
+
 async function runDirectQuestioningSession(
   initialSig: Significator,
   initialWorld: WorldState,
@@ -1842,6 +1932,11 @@ async function runDirectQuestioningSession(
         shadows: currentSig.shadows.entries,
       });
     } catch { /* best-effort — don't break session end */ }
+
+    // Post-session LLM synthesis: read encounter log, extract insights,
+    // append to narrative-memory.md, update goals.yaml active focus.
+    if (!JSON_MODE) info('synthesis', `${chalk.dim('Synthesizing session insights...')}`);
+    await synthesizeSessionInsights(_profileName, history.length);
   }
 
   emitEvent('session_ended', {
