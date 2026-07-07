@@ -23,10 +23,15 @@ import { filterInput, filterOutput } from './VeilFilter.js';
 import { resolveConfig, isComplete, getModels, type LLMConfig } from './ProviderRegistry.js';
 
 /** T-3.6: Log Veil violations for telemetry. */
+/** R8-BUG-3 (UX-R8): Gate VeilFilter logs behind CCRPG_DEV env var so they
+ * don't leak into normal user output. Previously these appeared in --agent
+ * mode, violating the Veil design principle. */
 function logVeilViolation(source: string, violations: readonly string[]): void {
   if (violations.length === 0) return;
-  // In production, route to TelemetryService. For now, console.warn.
-  console.warn(`[VeilFilter] ${source}: ${violations.length} violation(s): ${violations.join(', ')}`);
+  // Only log when CCRPG_DEV=1 (set by the CLI when --dev is active).
+  if (typeof process !== 'undefined' && process.env?.CCRPG_DEV === '1') {
+    console.warn(`[VeilFilter] ${source}: ${violations.length} violation(s): ${violations.join(', ')}`);
+  }
 }
 
 export interface LLMEvaluation {

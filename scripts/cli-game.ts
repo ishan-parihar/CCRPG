@@ -39,7 +39,7 @@ const program = new Command()
   .option('--verbose', 'Show full narrative and feedback')
   .option('--dev', 'Developer mode: show holistic primitives (G_z/P_z, rayProfile, phase position)')
   .option('--no-llm', 'Disable LLM, use module assessments only')
-  .option('--agent', 'Use the Persistent Developmental Agent (15-tool, session-persistent) instead of AgenticOrchestrator')
+  .option('--agent', 'Use the Persistent Developmental Agent (session-persistent) instead of AgenticOrchestrator')
   .option('--new-game', 'Start fresh (delete saved progress)')
   .option('-e, --encounters <n>', 'Number of encounters', '20')
   .option('-m, --model <name>', 'Override LLM model name')
@@ -97,8 +97,17 @@ program
 program.action(() => {});
 
 // Early parse for --model flag (before env bootstrap)
-program.parseOptions(process.argv.slice(2));
-const earlyModelOverride = program.opts().model;
+// R8-BUG-5 (UX-R8): Use a SEPARATE Command instance for the early parse
+// to avoid the double-parse bug where variadic flags (like --answer)
+// accumulate duplicates: parseOptions + parse would double-collect them.
+let earlyModelOverride: string | undefined;
+{
+  const earlyParser = new Command();
+  earlyParser.option('-m, --model <name>', 'Override LLM model name');
+  earlyParser.parseOptions(process.argv.slice(2));
+  const earlyOpts = earlyParser.opts();
+  earlyModelOverride = earlyOpts.model as string | undefined;
+}
 
 const CONFIG_DIR = path.join(os.homedir(), '.ccrpg');
 const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
@@ -249,6 +258,9 @@ if (HEADLESS) process.env.CCRPG_HEADLESS = '1';
 const VERBOSE = opts.verbose ?? false;
 const JSON_MODE = opts.json ?? false;
 const DEV_MODE = (opts as any).dev ?? false;
+// R8-BUG-3 (UX-R8): Propagate DEV_MODE to LLMClient so VeilFilter logs
+// are gated behind --dev and don't leak into normal output.
+if (DEV_MODE) process.env.CCRPG_DEV = '1';
 // Commander treats `--no-llm` as a negation of `--llm`: it creates
 // opts.llm (default true) and sets it to false when --no-llm is passed.
 // So we read opts.llm (not opts.noLlm, which is always undefined).
@@ -1461,6 +1473,17 @@ async function runDirectQuestioningSession(
   const consecutivePasses = new Map<string, number>();
   const agent = new SessionAgent();
 
+  // R8-BUG-5 (UX-R8): Warn when --answer count doesn't match --encounters count.
+  // Previously: too few answers → silent reuse/default; too many → silent drop.
+  // Now: warn so the user knows their input isn't being used as expected.
+  if (USER_ANSWERS.length > 0 && USER_ANSWERS.length !== linesToRun.length && !JSON_MODE) {
+    if (USER_ANSWERS.length < linesToRun.length) {
+      warn(`--answer count (${USER_ANSWERS.length}) is less than --encounters (${linesToRun.length}); remaining encounters will use default responses.`);
+    } else {
+      warn(`--answer count (${USER_ANSWERS.length}) exceeds --encounters (${linesToRun.length}); extra answers will be ignored.`);
+    }
+  }
+
   for (let i = 0; i < linesToRun.length; i++) {
     const line = linesToRun[i]!;
     // UX-P0-1: Respect --stage forcing
@@ -1542,8 +1565,17 @@ async function runDirectQuestioningSession(
           console.log(`  ${chalk.dim(variants[idx] ?? variants[0]!)}`);
         }
 
+        // R7-P1-2 (UX-R7): Vary the shadow-surfaced footer so it doesn't
+        // repeat the same line every encounter.
         if (cr.shadowSurfaced) {
-          console.log(`  ${chalk.dim('Something beneath the surface stirred.')}`);
+          const stirredVariants = [
+            'Something beneath the surface stirred.',
+            'A shadow edge caught the light.',
+            'Something unnamed moved in the periphery.',
+            'A pattern you haven\'t fully named flickered past.',
+          ];
+          const idx = (encounter.id.length + Date.now()) % stirredVariants.length;
+          console.log(`  ${chalk.dim(stirredVariants[idx] ?? stirredVariants[0]!)}`);
         }
         // P1-3 (UX-R3): Progress bar is deferred until after currentSig is
         // updated (see below) so it reflects the encounter that just completed.
@@ -1779,6 +1811,16 @@ async function runFullSession(): Promise<void> {
       info('agent', `${chalk.cyan('--agent')} requires Story-Driven mode — auto-switching.`);
     }
     gameMode = 'story';
+  }
+  // R8-BUG-4 (UX-R8): Warn when --agent is used with --answer. The agent path
+  // (Story-Driven mode) doesn't consume --answer flags — only DQ mode does.
+  // Previously --answer was silently ignored, confusing users who provided
+  // reflective input expecting it to shape the narrative.
+  if (USE_PERSISTENT_AGENT && USER_ANSWERS.length > 0 && !JSON_MODE) {
+    warn(`--agent uses Story-Driven mode; --answer flags will be ignored. Use Direct Questioning mode (default, without --agent) for --answer participation.`);
+  }
+  if (USE_PERSISTENT_AGENT && USER_ANSWERS.length > 0 && JSON_MODE) {
+    emitEvent('warning', { code: 'agent_ignores_answer', message: '--agent uses Story-Driven mode; --answer flags will be ignored. Use DQ mode (default) for --answer participation.' });
   }
   const isDirectMode = gameMode === 'direct';
 
@@ -2063,9 +2105,16 @@ async function runFullSession(): Promise<void> {
         const briefNarrative = truncateNarrative(rawNarrative, 280);
         console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
 
-        // Shadow surfaces as narrative, not as a clinical label
+        // R7-P1-2 (UX-R7): Vary the shadow-surfaced footer (Story-Driven path).
         if (cr.shadowSurfaced) {
-          console.log(`  ${chalk.dim('Something beneath the surface stirred.')}`);
+          const stirredVariants = [
+            'Something beneath the surface stirred.',
+            'A shadow edge caught the light.',
+            'Something unnamed moved in the periphery.',
+            'A pattern you haven\'t fully named flickered past.',
+          ];
+          const idx = (selectedEncounter.id.length + Date.now()) % stirredVariants.length;
+          console.log(`  ${chalk.dim(stirredVariants[idx] ?? stirredVariants[0]!)}`);
         }
       }
 
