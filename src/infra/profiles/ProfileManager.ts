@@ -203,10 +203,11 @@ export function createProfile(name: string, prefs?: Partial<Record<string, any>>
     transformation: { phase: 'idle', target_stage: null, sessions_in_phase: 0, knots_resolved: 0 },
     cci: 0.5,
   });
-  yamlWrite(path.join(profileDir, 'session-history.yaml'), { sessions: [] });
+  // QA-FIX-2: JSON format for array-of-objects files (YAML serializer corrupts these)
+  fs.writeFileSync(path.join(profileDir, 'session-history.json'), JSON.stringify({ sessions: [] }, null, 2), 'utf8');
   mdWrite(path.join(profileDir, 'narrative-memory.md'),
     `# Narrative Memory — ${name}\n\n## Key Insights\n(Insights from LLM responses that landed)\n\n## Patterns\n(Recurring themes)\n\n## Active Work\n(What the user is processing)\n\n## Resolved\n(Integrated patterns)\n\n## Unresolved\n(Surfaced but not worked through)\n`);
-  yamlWrite(path.join(profileDir, 'shadow-ledger.yaml'), { shadows: [] });
+  fs.writeFileSync(path.join(profileDir, 'shadow-ledger.json'), JSON.stringify({ shadows: [] }, null, 2), 'utf8');
   yamlWrite(path.join(profileDir, 'goals.yaml'), { self_declared: [], inferred: [], active_focus: '' });
 
   setActiveProfile(name);
@@ -233,13 +234,19 @@ export function deleteProfile(name: string): void {
 export function loadProfile(name?: string): UserProfile | null {
   const dir = name ? path.join(PROFILES_DIR, name) : getActiveProfileDir();
   if (!dir || !fs.existsSync(dir)) return null;
+  // QA-FIX-2: session-history and shadow-ledger use JSON (not YAML) to avoid
+  // array-of-objects serialization corruption. Other files stay YAML (flat structure).
+  let sessionHistory: Record<string, any> = { sessions: [] };
+  try { sessionHistory = JSON.parse(fs.readFileSync(path.join(dir, 'session-history.json'), 'utf8')); } catch {}
+  let shadowLedger: Record<string, any> = { shadows: [] };
+  try { shadowLedger = JSON.parse(fs.readFileSync(path.join(dir, 'shadow-ledger.json'), 'utf8')); } catch {}
   return {
     identity: yamlRead(path.join(dir, 'identity.yaml')),
     preferences: yamlRead(path.join(dir, 'preferences.yaml')),
     developmentalState: yamlRead(path.join(dir, 'developmental-state.yaml')),
-    sessionHistory: yamlRead(path.join(dir, 'session-history.yaml')),
+    sessionHistory,
     narrativeMemory: mdRead(path.join(dir, 'narrative-memory.md')),
-    shadowLedger: yamlRead(path.join(dir, 'shadow-ledger.yaml')),
+    shadowLedger,
     goals: yamlRead(path.join(dir, 'goals.yaml')),
   };
 }
@@ -317,7 +324,7 @@ export function updateProfileAfterSession(profileName: string, updates: {
   devState.cci = updates.cci;
   yamlWrite(path.join(dir, 'developmental-state.yaml'), devState);
 
-  // Sync shadow ledger (mirror from sig — qualitative, Veil-compliant)
+  // Sync shadow ledger (JSON format — QA-FIX-2: same array-of-objects corruption issue)
   if (updates.shadows && updates.shadows.length > 0) {
     const qualitativeShadows = updates.shadows.map((s: any) => ({
       first_surfaced: s.surfacedAt ? new Date(s.surfacedAt).toISOString() : now,
@@ -329,17 +336,23 @@ export function updateProfileAfterSession(profileName: string, updates: {
       last_touched: now,
       sessions_active: s.recurrenceCount ?? 1,
     }));
-    yamlWrite(path.join(dir, 'shadow-ledger.yaml'), { shadows: qualitativeShadows });
+    fs.writeFileSync(path.join(dir, 'shadow-ledger.json'), JSON.stringify({ shadows: qualitativeShadows }, null, 2), 'utf8');
   }
 
-  // Append session entry to session-log
-  const history = yamlRead(path.join(dir, 'session-history.yaml'));
-  if (!history.sessions) history.sessions = [];
+  // Append session entry to session-log (JSON format — QA-FIX-2: YAML serializer
+  // corrupts arrays-of-objects on repeated appends. JSON handles them perfectly.)
+  const historyPath = path.join(dir, 'session-history.json');
+  let history: { sessions: any[] } = { sessions: [] };
+  try {
+    const raw = fs.readFileSync(historyPath, 'utf8');
+    history = JSON.parse(raw);
+    if (!Array.isArray(history.sessions)) history.sessions = [];
+  } catch { /* file doesn't exist or is corrupt — start fresh */ }
   if (updates.sessionEntry) {
     history.sessions.push(updates.sessionEntry);
     if (history.sessions.length > 20) history.sessions = history.sessions.slice(-20);
   }
-  yamlWrite(path.join(dir, 'session-history.yaml'), history);
+  fs.writeFileSync(historyPath, JSON.stringify(history, null, 2), 'utf8');
 
   // Append narrative insight to memory
   if (updates.narrativeInsight) {
@@ -428,7 +441,7 @@ export function getWorldStatePath(profileName: string): string {
  */
 const READABLE_FILES = new Set([
   'identity.yaml', 'preferences.yaml', 'goals.yaml',
-  'narrative-memory.md', 'shadow-ledger.yaml', 'session-history.yaml',
+  'narrative-memory.md', 'shadow-ledger.json', 'session-history.json',
   'developmental-state.yaml', 'encounter-log.md',
 ]);
 
