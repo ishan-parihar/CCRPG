@@ -2936,10 +2936,12 @@ async function main(): Promise<void> {
       console.log(`${chalk.dim('You\'ll be asked questions across 8 lines of intelligence.')}`);
       console.log(`${chalk.dim('Your answers shape your developmental profile.')}`);
       console.log(`${chalk.dim('There are no wrong answers. Take your time.')}`);
-      // R4-P1-2 (UX-R4): Point fresh users to the glossary. The vocabulary
-      // wall is the #1 bounce risk — without this hint, users hit terms like
-      // 'Significator', 'Holon', 'G_z/P_z' with no explanation.
-      console.log(`${chalk.dim('Run `ccrpg glossary` to learn the terminology (Holon, Significator, CCI, etc.).')}`);
+      // GAP-5 (Efficacy Audit): Auto-print key glossary terms on first run.
+      // The vocabulary wall is the #1 bounce risk. Instead of just telling
+      // users to run 'ccrpg glossary', show them the 5 most important terms
+      // inline so they're oriented immediately.
+      console.log(`\n${chalk.dim('Key terms: Significator = your developmental profile. Holon = an NPC or place. Line = a developmental dimension (Cognitive, Emotional, etc.). Stage = your current altitude (Red→White). Veil = the game never shows you clinical labels.')}`);
+      console.log(`${chalk.dim('Run `ccrpg glossary` for the full list of 22 terms.')}`);
       console.log(`${chalk.dim('Run `ccrpg diagnostic` to check system status.')}`);
       console.log(`${chalk.dim('Run `ccrpg status` to see your progress.')}`);
       console.log(`${chalk.dim('Run `ccrpg new-game` to start over.')}\n`);
