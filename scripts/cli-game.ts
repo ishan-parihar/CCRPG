@@ -2766,7 +2766,7 @@ function runGlossary(): void {
     { term: 'Veil', def: 'A design principle: the game never shows you clinical labels about yourself. You see qualitative felt-sense language, not diagnoses.' },
     { term: 'Resonance', def: 'A poetic 2-3 word description of your current stage\'s aesthetic (e.g. "fortress-sharp, weapon-walls" for Red).' },
     // R4-P1-1 (UX-R4): Explain the [power] bracket label that appears in status.
-    { term: 'Aesthetic Label', def: 'The bracketed word next to each developmental line in status output (e.g. [power]). It is the short form of your current stage: [primal]=Infrared, [symbolic]=Magenta, [power]=Red, [order]=Amber, [reason]=Orange, [h[harmony]=Green, [integral]=Turquoise, [unity]=White.' },
+    { term: 'Aesthetic Label', def: 'The bracketed word next to each developmental line in status output (e.g. [power]). It is the short form of your current stage: [primal]=Infrared, [symbolic]=Magenta, [power]=Red, [order]=Amber, [reason]=Orange, [harmony]=Green, [integral]=Turquoise, [unity]=White.' },
     { term: 'Theme', def: 'The session strategy that biases encounter selection (e.g. "balanced-development"). Shown in diagnostic. Different themes emphasize different lines or shadow work.' },
     { term: 'Encounter', def: 'A single developmental exchange. May be a question, a choice, a trial, or a narrative scene — depending on modality.' },
     { term: 'Calibration', def: 'The initial 8-question session that establishes your baseline across all 8 lines. Runs automatically on first play.' },
