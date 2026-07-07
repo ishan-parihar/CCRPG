@@ -1049,7 +1049,26 @@ const DET_BY_LINE_RED: Record<string, ContentPool> = {
 // Public API
 // ============================================================================
 
+// PILOT-5.4 (Efficacy Pilot): Track asked questions to avoid repetition.
+// Maya saw the same question in S2 and S3. This tracks prompts within
+// the process lifetime. Cross-session de-dup would require persisting
+// to the save file (future enhancement).
+const _askedPrompts = new Set<string>();
+
 function pickRandom<T>(arr: readonly T[]): T {
+  // If the array items have a 'prompt' field, try to avoid repeating
+  if (arr.length > 0 && typeof arr[0] === 'object' && arr[0] !== null && 'prompt' in arr[0]) {
+    const unasked = arr.filter(item => {
+      const prompt = (item as any).prompt as string | undefined;
+      return !prompt || !_askedPrompts.has(prompt);
+    });
+    // If all have been asked, clear the set and start fresh (but still pick randomly)
+    const pool = unasked.length > 0 ? unasked : arr;
+    const index = Math.floor(Math.random() * pool.length);
+    const picked = pool[index] as any;
+    if (picked?.prompt) _askedPrompts.add(picked.prompt);
+    return picked as T;
+  }
   const index = Math.floor(Math.random() * arr.length);
   return arr[index];
 }

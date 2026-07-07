@@ -1791,17 +1791,12 @@ async function runFullSession(): Promise<void> {
     s2?.info('LLM disabled (--no-llm) — only non-reflective commands available');
   }
 
-  // P1-3 (UX-R3): Lower the saturation threshold when LLM is unavailable.
-  // The default of 20 encounters-per-line is calibrated for LLM-rich sessions
-  // where each encounter is a meaty developmental exchange. For no-LLM mode
-  // (the default out-of-the-box state), encounters are ~30-second reflections
-  // — 20 per line × 8 lines = 160 encounters for a single stage transition is
-  // unreachable. Lowering to 6 means a full 8-line calibration + ~2 follow-up
-  // sessions can produce a transition, making progression visible.
-  if (!LLM_ACTIVE) {
-    setSaturationThreshold(6);
-    if (!JSON_MODE) info('tuning', `${chalk.dim('no-LLM mode → saturation threshold lowered to 6/line (was 20)')}`);
-  }
+  // PILOT-5.5 (Efficacy Pilot): With LLM-required mode, the saturation
+  // threshold stays at 20 (the LLM-calibrated value). The --no-llm threshold
+  // lowering to 6 is now dead code — the game refuses to run without LLM.
+  // The threshold of 20 means ~20 encounters per line × 8 lines = ~160
+  // encounters for a stage transition. This is intentional — stage
+  // transitions are rare, dramatic, and require sustained practice.
 
   // Holons
   const s3 = JSON_MODE ? null : ora('Loading world...').start();
@@ -2569,13 +2564,8 @@ async function runStatus(): Promise<void> {
   (globalThis as any).__moduleRegistry = moduleRegistry;
 
   // P1-3 (UX-R3): Mirror the session-entry threshold tuning so status
-  // displays the correct threshold the user will actually play against.
-  // Without this, status shows '0/20' when the user will actually play
-  // against a threshold of 6 (no-LLM mode).
-  const statusHasApiKey = !!(config.llm?.apiKey && config.llm.apiKey !== 'sk-placeholder');
-  if (!statusHasApiKey) {
-    setSaturationThreshold(6);
-  }
+  // PILOT-5.5: No-LLM threshold lowering removed — game requires LLM.
+  // Threshold is always 20 (the LLM-calibrated value).
 
   if (JSON_MODE) {
     const ALL_LINES_FOR_JSON: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
