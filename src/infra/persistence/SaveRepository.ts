@@ -138,11 +138,44 @@ function migrate(input: Partial<SaveData>): SaveData {
 
 // ═══════════════════════════════════════════════════════════════════════
 // CLI File-Based Persistence (synchronous, for cli-game.ts)
-// Saves to ~/.ccrpg/save.json so player progress persists across CLI runs.
+// Saves to ~/.ccrpg/profiles/<active>/save.json so player progress persists
+// per-profile. Falls back to ~/.ccrpg/ for legacy saves.
 // ═══════════════════════════════════════════════════════════════════════
 
-const CLI_SAVE_DIR = path.join(os.homedir(), '.ccrpg');
-const CLI_SAVE_FILE = path.join(CLI_SAVE_DIR, 'save.json');
+const CLI_LEGACY_DIR = path.join(os.homedir(), '.ccrpg');
+// CLI_LEGACY_SAVE_FILE — only used as fallback in getSaveFile()
+
+/**
+ * QA-FIX-1: Resolve save directory based on active profile.
+ * If a profile is active, saves go to ~/.ccrpg/profiles/<name>/
+ * If no profile, falls back to ~/.ccrpg/ (legacy).
+ */
+function getSaveDir(): string {
+  try {
+    const activeSymlink = path.join(CLI_LEGACY_DIR, 'profiles', '_active');
+    if (fs.existsSync(activeSymlink)) {
+      const resolved = fs.realpathSync(activeSymlink);
+      if (fs.existsSync(resolved)) return resolved;
+    }
+  } catch { /* fall through to legacy */ }
+  return CLI_LEGACY_DIR;
+}
+
+function getSaveFile(): string {
+  return path.join(getSaveDir(), 'save.json');
+}
+
+function getWorldFile(): string {
+  return path.join(getSaveDir(), 'world.json');
+}
+
+function getAtomicSaveFile(): string {
+  return path.join(getSaveDir(), 'save-all.json');
+}
+
+// Keep old constants for backward compat (tests etc.)
+// const CLI_SAVE_DIR — replaced by getSaveDir()
+// const CLI_SAVE_FILE — replaced by getSaveFile()
 
 /**
  * Load a previously saved Significator from disk.
@@ -150,8 +183,9 @@ const CLI_SAVE_FILE = path.join(CLI_SAVE_DIR, 'save.json');
  */
 export function loadSave(): Significator | null {
   try {
-    if (fs.existsSync(CLI_SAVE_FILE)) {
-      const raw = fs.readFileSync(CLI_SAVE_FILE, 'utf8');
+    const saveFile = getSaveFile();
+    if (fs.existsSync(saveFile)) {
+      const raw = fs.readFileSync(saveFile, 'utf8');
       const parsed = JSON.parse(raw);
       // T-0.8 (HS-16 fix): validate with backward-compat shims instead of
       // only checking 3 fields then trusting the rest.
@@ -168,8 +202,9 @@ export function loadSave(): Significator | null {
  */
 export function saveGame(sig: Significator): void {
   try {
-    fs.mkdirSync(CLI_SAVE_DIR, { recursive: true });
-    fs.writeFileSync(CLI_SAVE_FILE, JSON.stringify(sig, null, 2));
+    const saveFile = getSaveFile();
+    fs.mkdirSync(path.dirname(saveFile), { recursive: true });
+    fs.writeFileSync(saveFile, JSON.stringify(sig, null, 2));
   } catch { /* ignore write errors in headless mode */ }
 }
 
@@ -178,7 +213,7 @@ export function saveGame(sig: Significator): void {
  */
 export function hasSave(): boolean {
   try {
-    return fs.existsSync(CLI_SAVE_FILE);
+    return fs.existsSync(getSaveFile());
   } catch {
     return false;
   }
@@ -189,8 +224,9 @@ export function hasSave(): boolean {
  */
 export function deleteSave(): void {
   try {
-    if (fs.existsSync(CLI_SAVE_FILE)) {
-      fs.unlinkSync(CLI_SAVE_FILE);
+    const saveFile = getSaveFile();
+    if (fs.existsSync(saveFile)) {
+      fs.unlinkSync(saveFile);
     }
   } catch { /* ignore */ }
 }
@@ -200,7 +236,7 @@ export function deleteSave(): void {
 // Saves to ~/.ccrpg/world.json so world state persists across CLI runs.
 // ═══════════════════════════════════════════════════════════════════════
 
-const CLI_WORLD_FILE = path.join(CLI_SAVE_DIR, 'world.json');
+// const CLI_WORLD_FILE — replaced by getWorldFile()
 
 /**
  * Load a previously saved WorldState from disk.
@@ -208,8 +244,9 @@ const CLI_WORLD_FILE = path.join(CLI_SAVE_DIR, 'world.json');
  */
 export function loadWorldState(): WorldState | null {
   try {
-    if (fs.existsSync(CLI_WORLD_FILE)) {
-      const raw = fs.readFileSync(CLI_WORLD_FILE, 'utf8');
+    const worldFile = getWorldFile();
+    if (fs.existsSync(worldFile)) {
+      const raw = fs.readFileSync(worldFile, 'utf8');
       const parsed = JSON.parse(raw);
       if (parsed && parsed.holons) {
         return parsed as WorldState;
@@ -224,8 +261,9 @@ export function loadWorldState(): WorldState | null {
  */
 export function saveWorldState(world: WorldState): void {
   try {
-    fs.mkdirSync(CLI_SAVE_DIR, { recursive: true });
-    fs.writeFileSync(CLI_WORLD_FILE, JSON.stringify(world, null, 2));
+    const worldFile = getWorldFile();
+    fs.mkdirSync(path.dirname(worldFile), { recursive: true });
+    fs.writeFileSync(worldFile, JSON.stringify(world, null, 2));
   } catch { /* ignore write errors in headless mode */ }
 }
 
@@ -234,8 +272,9 @@ export function saveWorldState(world: WorldState): void {
  */
 export function deleteWorldSave(): void {
   try {
-    if (fs.existsSync(CLI_WORLD_FILE)) {
-      fs.unlinkSync(CLI_WORLD_FILE);
+    const worldFile = getWorldFile();
+    if (fs.existsSync(worldFile)) {
+      fs.unlinkSync(worldFile);
     }
   } catch { /* ignore */ }
 }
@@ -249,7 +288,7 @@ export function deleteWorldSave(): void {
 // saving both at once (e.g. at session end).
 // ═══════════════════════════════════════════════════════════════════════
 
-const CLI_ATOMIC_SAVE_FILE = path.join(CLI_SAVE_DIR, 'save-all.json');
+// const CLI_ATOMIC_SAVE_FILE — replaced by getAtomicSaveFile()
 
 /**
  * P0-5: Atomically save both Significator + WorldState to a single JSON file.
@@ -264,7 +303,10 @@ const CLI_ATOMIC_SAVE_FILE = path.join(CLI_SAVE_DIR, 'save-all.json');
  */
 export function saveAll(sig: Significator, world: WorldState): void {
   try {
-    fs.mkdirSync(CLI_SAVE_DIR, { recursive: true });
+    const atomicFile = getAtomicSaveFile();
+    const saveFile = getSaveFile();
+    const worldFile = getWorldFile();
+    fs.mkdirSync(path.dirname(atomicFile), { recursive: true });
 
     // Build the combined envelope
     const envelope = {
@@ -279,20 +321,20 @@ export function saveAll(sig: Significator, world: WorldState): void {
     // an atomic inode operation — readers see either the old or new file, never
     // a partial write. On Windows, rename is also atomic if the target doesn't
     // exist (which we ensure by unlinking first).
-    const tempFile = CLI_ATOMIC_SAVE_FILE + '.tmp';
+    const tempFile = atomicFile + '.tmp';
     fs.writeFileSync(tempFile, json);
 
     // Remove the final target if it exists (Windows needs this; POSIX rename overwrites)
-    try { fs.unlinkSync(CLI_ATOMIC_SAVE_FILE); } catch { /* doesn't exist — fine */ }
+    try { fs.unlinkSync(atomicFile); } catch { /* doesn't exist — fine */ }
 
     // Atomic rename
-    fs.renameSync(tempFile, CLI_ATOMIC_SAVE_FILE);
+    fs.renameSync(tempFile, atomicFile);
 
     // Also write the individual files for backward compat (older code reads
     // save.json / world.json directly). These are non-atomic individually but
     // the atomic envelope above is the source of truth for new code.
-    fs.writeFileSync(CLI_SAVE_FILE, JSON.stringify(sig, null, 2));
-    fs.writeFileSync(CLI_WORLD_FILE, JSON.stringify(world, null, 2));
+    fs.writeFileSync(saveFile, JSON.stringify(sig, null, 2));
+    fs.writeFileSync(worldFile, JSON.stringify(world, null, 2));
   } catch { /* ignore write errors in headless mode */ }
 }
 
@@ -303,8 +345,8 @@ export function saveAll(sig: Significator, world: WorldState): void {
  */
 export function loadAll(): { sig: Significator; world: WorldState } | null {
   try {
-    if (fs.existsSync(CLI_ATOMIC_SAVE_FILE)) {
-      const raw = fs.readFileSync(CLI_ATOMIC_SAVE_FILE, 'utf8');
+    if (fs.existsSync(getAtomicSaveFile())) {
+      const raw = fs.readFileSync(getAtomicSaveFile(), 'utf8');
       const parsed = JSON.parse(raw);
       if (parsed && parsed.sig && parsed.world && typeof parsed.sig.id === 'string') {
         const validatedSig = validateSignificator(parsed.sig);
@@ -335,7 +377,7 @@ export function deleteAllSaves(): void {
   // restore it after. This is a HARD guarantee — config.json must survive
   // ALL save-deletion operations, no exceptions. The LLM config is system
   // preferences, not game state.
-  const configFile = path.join(CLI_SAVE_DIR, 'config.json');
+  const configFile = path.join(getSaveDir(), 'config.json');
   let configBackup: string | null = null;
   try {
     if (fs.existsSync(configFile)) {
@@ -346,8 +388,8 @@ export function deleteAllSaves(): void {
   deleteSave();
   deleteWorldSave();
   try {
-    if (fs.existsSync(CLI_ATOMIC_SAVE_FILE)) {
-      fs.unlinkSync(CLI_ATOMIC_SAVE_FILE);
+    if (fs.existsSync(getAtomicSaveFile())) {
+      fs.unlinkSync(getAtomicSaveFile());
     }
   } catch { /* ignore */ }
 

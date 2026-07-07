@@ -209,10 +209,15 @@ describe('P0-3: endSessionAsync awaits TDG hook', () => {
 // ─── P0-5: Atomic save ───────────────────────────────────────────────
 
 describe('P0-5: Atomic save (saveAll / loadAll / deleteAllSaves)', () => {
-  // NOTE: SaveRepository computes CLI_SAVE_DIR at module-load time from
-  // os.homedir(), so we can't mock HOME per-test. Instead we use the real
-  // save dir, clean up before/after each test, and use unique sig IDs.
-  const realSaveDir = path.join(os.homedir(), '.ccrpg');
+  // QA-FIX-1: SaveRepository now resolves save dir dynamically via getSaveDir().
+  // When a profile is active, saves go to ~/.ccrpg/profiles/<name>/.
+  // When no profile, saves go to ~/.ccrpg/ (legacy).
+  // The tests need to resolve the same path the SaveRepository uses.
+  const legacyDir = path.join(os.homedir(), '.ccrpg');
+  const profileActive = fs.existsSync(path.join(legacyDir, 'profiles', '_active'));
+  const actualSaveDir = profileActive
+    ? fs.realpathSync(path.join(legacyDir, 'profiles', '_active'))
+    : legacyDir;
 
   beforeEach(() => {
     // Clean any existing saves before each test
@@ -231,12 +236,12 @@ describe('P0-5: Atomic save (saveAll / loadAll / deleteAllSaves)', () => {
     saveAll(sig, world);
 
     // Atomic envelope should exist
-    const envelopePath = path.join(realSaveDir, 'save-all.json');
+    const envelopePath = path.join(actualSaveDir, 'save-all.json');
     expect(fs.existsSync(envelopePath)).toBe(true);
 
     // Backward-compat files should also exist
-    const savePath = path.join(realSaveDir, 'save.json');
-    const worldPath = path.join(realSaveDir, 'world.json');
+    const savePath = path.join(actualSaveDir, 'save.json');
+    const worldPath = path.join(actualSaveDir, 'world.json');
     expect(fs.existsSync(savePath)).toBe(true);
     expect(fs.existsSync(worldPath)).toBe(true);
   });
@@ -262,7 +267,7 @@ describe('P0-5: Atomic save (saveAll / loadAll / deleteAllSaves)', () => {
     saveWorldState(world);
 
     // Verify the envelope does NOT exist (only individual files)
-    const envelopePath = path.join(realSaveDir, 'save-all.json');
+    const envelopePath = path.join(actualSaveDir, 'save-all.json');
     expect(fs.existsSync(envelopePath)).toBe(false);
 
     const loaded = loadAll();
@@ -277,9 +282,9 @@ describe('P0-5: Atomic save (saveAll / loadAll / deleteAllSaves)', () => {
     saveAll(sig, world);
     deleteAllSaves();
 
-    const envelopePath = path.join(realSaveDir, 'save-all.json');
-    const savePath = path.join(realSaveDir, 'save.json');
-    const worldPath = path.join(realSaveDir, 'world.json');
+    const envelopePath = path.join(actualSaveDir, 'save-all.json');
+    const savePath = path.join(actualSaveDir, 'save.json');
+    const worldPath = path.join(actualSaveDir, 'world.json');
 
     expect(fs.existsSync(envelopePath)).toBe(false);
     expect(fs.existsSync(savePath)).toBe(false);
