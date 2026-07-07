@@ -39,7 +39,12 @@ const program = new Command()
   .option('--verbose', 'Show full narrative and feedback')
   .option('--dev', 'Developer mode: show holistic primitives (G_z/P_z, rayProfile, phase position)')
   .option('--no-llm', 'Disable LLM, use module assessments only')
-  .option('--agent', 'Use the Persistent Developmental Agent (session-persistent) instead of AgenticOrchestrator')
+  // YAGNI-EFF-3 (Efficacy Audit): --agent / PersistentAgent path removed.
+  // It was the source of every major regression (R8-BUG-1 hang, R9-BUG-2
+  // process-exit, R8-BUG-1b placeholder string, R8-BUG-4 --answer ignore).
+  // The DQ path is the game's crown jewel — it's faster, consumes --answer,
+  // and has never regressed. Story-Driven mode can be rebuilt on top of DQ's
+  // proven architecture when needed.
   .option('--new-game', 'Start fresh (delete saved progress)')
   .option('-e, --encounters <n>', 'Number of encounters', '20')
   .option('-m, --model <name>', 'Override LLM model name')
@@ -220,7 +225,11 @@ import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixMode
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 import { PersistentAgent } from '../src/core/agent/PersistentAgent.js';
 import { runPersistentAgentEncounter } from '../src/core/agent/PersistentAgentBridge.js';
-import { startTDGBridge, stopTDGBridge, getTDGBridgeStatus, registerTDGTools } from '../src/infra/tdg/TDGBridge.js';
+// YAGNI-EFF-2 (Efficacy Audit): TDG bridge import removed from CLI.
+// The TDG infra files stay in src/infra/tdg/ for reference, but the CLI
+// no longer starts, stops, or references TDG. This eliminates the bug
+// surface that caused R8-BUG-1 (hang), R9-BUG-2 (process-exit), and
+// R8-BUG-3 (VeilFilter leak). TDG was always a no-op in default mode.
 import { createCCRPGToolRegistry } from '../src/core/agent/ToolRegistry.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
@@ -275,8 +284,10 @@ setLLMDisabled(NO_LLM);
 // accounts for the provider-specific env vars (OPENCODE_API_KEY, etc.).
 let LLM_ACTIVE = !NO_LLM && llmComplete;
 const ACTIVE_MODEL = opts.model ?? model;
-/** Phase 3: --agent routes encounters through the Persistent Developmental Agent (15-tool, session-persistent). Default: AgenticOrchestrator (2-tool, 4-exchange budget). */
-const USE_PERSISTENT_AGENT = (opts as any).agent ?? false;
+/** YAGNI-EFF-3 (Efficacy Audit): --agent path removed. USE_PERSISTENT_AGENT
+ * is always false. The PersistentAgent / Story-Driven mode code stays in
+ * src/core/agent/ for reference, but the CLI never activates it. */
+const USE_PERSISTENT_AGENT = false;
 const encounterCount = parseInt(opts.encounters ?? String(fileConfig.session?.defaultEncounters ?? 20), 10);
 
 const FORCE_LINE = opts.line as Line | undefined;
@@ -2912,22 +2923,7 @@ async function main(): Promise<void> {
       }
     }
     deleteAllSaves();
-    // Best-effort TDG graph clear — no-op if TDG isn't running.
-    try {
-      import('../src/infra/tdg/TDGBridge.js').then(async ({ startTDGBridge, getTDGHooks, stopTDGBridge }) => {
-        await startTDGBridge().catch(() => {});
-        const hooks = getTDGHooks();
-        if (hooks && hooks.isActive()) {
-          // Clear the TDG graph by calling tdg_self_manage with gc_all action.
-          // This garbage-collects all nodes + edges, effectively starting fresh.
-          const client = (hooks as any).tdg;
-          if (client) {
-            await client.callTool('tdg_self_manage', { action: 'gc_all', dry_run: false }).catch(() => {});
-          }
-        }
-        stopTDGBridge();
-      }).catch(() => {});
-    } catch { /* TDG not available — skip */ }
+    // YAGNI-EFF-2: TDG graph clear removed — TDG is no longer used by the CLI.
     console.log(`${chalk.yellow('↻')} Progress reset. Run ${chalk.bold('ccrpg session')} to start a new game.`);
     return;
   }
