@@ -338,4 +338,16 @@ export function deleteAllSaves(): void {
       fs.unlinkSync(CLI_ATOMIC_SAVE_FILE);
     }
   } catch { /* ignore */ }
+  // R9-BUG-3 (UX-R9): Explicitly verify config.json was NOT deleted.
+  // This is a safety guard — deleteAllSaves should NEVER remove the user's
+  // LLM configuration. If a future change accidentally adds config deletion,
+  // this log will surface it immediately.
+  const configFile = path.join(CLI_SAVE_DIR, 'config.json');
+  if (fs.existsSync(configFile)) {
+    // Config survived — correct behavior. No action needed.
+  } else {
+    // Config is missing — could be a fresh install or an accidental deletion.
+    // Don't create it here (the user may not want a config), but log a warning.
+    console.warn('[SaveRepository] Note: ~/.ccrpg/config.json not found. Run `ccrpg setup` to configure the LLM.');
+  }
 }

@@ -1527,7 +1527,7 @@ async function runDirectQuestioningSession(
         const rawNarrative = result.narrativeSummary?.trim() || pickFallbackNarrative(
           encounter.id, encounter.modality, Date.now() % 1000,
         );
-        const briefNarrative = truncateNarrative(rawNarrative, 280);
+        const briefNarrative = truncateNarrative(rawNarrative, 1000);
         console.log(`\n  ${chalk.dim('\u2726')} ${briefNarrative}`);
 
         // T-3.4 (Veil compliance): replace "The encounter stirred: ↑ Communion drive, Homeostatic"
@@ -1743,6 +1743,16 @@ async function runFullSession(): Promise<void> {
     // UX-P0-3: Emit warning in JSON mode when LLM was requested but no key
     if (JSON_MODE && !NO_LLM) {
       emitEvent('warning', { code: 'llm_no_key', message: 'No LLM API key configured — using module-only mode. Run `ccrpg setup` to configure.' });
+    }
+    // R9-BUG-4 (UX-R9): Fire the bare-headless warning in no-LLM mode too.
+    // Previously this only fired when LLM was active. In no-LLM mode, the
+    // user gets generic fallback narratives substituted as their "answers"
+    // with no indication that --answer is required for participation.
+    if (HEADLESS && USER_ANSWERS.length === 0 && !JSON_MODE) {
+      warn('Headless mode without --answer: encounters will use default responses. For a reflective session, provide answers via --answer "your reflection" (repeatable) or --answers <file>.');
+    }
+    if (HEADLESS && USER_ANSWERS.length === 0 && JSON_MODE) {
+      emitEvent('warning', { code: 'no_user_answers', message: 'Headless mode without --answer: encounters will use default responses. Provide --answer or --answers for participation.' });
     }
   }
 
@@ -2102,7 +2112,7 @@ async function runFullSession(): Promise<void> {
         const rawNarrative = result.narrativeSummary?.trim() || pickFallbackNarrative(
           selectedEncounter.id, selectedEncounter.modality, Date.now() % 1000,
         );
-        const briefNarrative = truncateNarrative(rawNarrative, 280);
+        const briefNarrative = truncateNarrative(rawNarrative, 1000);
         console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
 
         // R7-P1-2 (UX-R7): Vary the shadow-surfaced footer (Story-Driven path).
@@ -2321,7 +2331,18 @@ async function detectOllama(): Promise<{ running: boolean; models: string[] }> {
 // endpoint (with models.dev as a fallback catalog), so we never ship stale
 // model names. Mirrors opencode's dynamic provider+model discovery design.
 async function runSetup(): Promise<void> {
-  if (HEADLESS || JSON_MODE) { error('setup requires interactive mode (remove --headless and --json)'); return; }
+  // R9-BUG-6 (UX-R9): The old message 'remove --headless and --json' was
+  // contradictory when the system auto-enabled --headless (non-TTY guard).
+  // The user didn't add --headless — the system did, then scolded them.
+  // New message is honest about what happened and what to do.
+  if (HEADLESS || JSON_MODE) {
+    if (!process.stdin.isTTY) {
+      error('setup requires a real terminal (TTY). Please run `ccrpg setup` in an interactive terminal. For non-interactive configuration, edit ~/.ccrpg/config.json directly or set env vars (OPENCODE_API_KEY, LLM_MODEL, etc.).');
+    } else {
+      error('setup requires interactive mode (remove --headless and --json flags)');
+    }
+    return;
+  }
   banner('CCRPG Setup Wizard');
   console.log(`\n  ${chalk.dim('Configure your LLM provider for the developmental engine.')}\n`);
   console.log(`  ${chalk.dim('Models are fetched live from each provider — no stale lists.')}\n`);
