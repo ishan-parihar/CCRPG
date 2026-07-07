@@ -754,16 +754,8 @@ const DET_WILLPOWER_RED: readonly FallbackContent[] = [
 // (Red and Orange have the richest content; higher stages get line-specific generics)
 // ============================================================================
 
-const LR_GENERIC_STAGE: Record<string, readonly FallbackContent[]> = {
-  Turquoise: [{
-    prompt: 'You perceive the pattern beneath this moment. What does the pattern ask of you?',
-    followUps: ['How does it connect to everything else?', 'What is the pattern\'s invitation?'],
-  }],
-  White: [{
-    prompt: 'All frameworks dissolve here. What is present when even the question disappears?',
-    followUps: ['Can you stay with what has no name?', 'What is awareness without an object?'],
-  }],
-};
+// GAP-1b: LR_GENERIC_STAGE removed — Turquoise and White now have
+// line-specific authored content (LR_BY_LINE_TURQUOISE, LR_BY_LINE_WHITE).
 
 // ============================================================================
 // Fallback pools by stage for other modalities (keeping existing stage-based pools)
@@ -984,6 +976,192 @@ const LR_BY_LINE_GREEN: Record<string, ContentPool> = {
   Somatic: LR_SOMATIC_GREEN,
   Willpower: LR_WILLPOWER_GREEN,
 };
+
+// ============================================================================
+// LINE-SPECIFIC LANGUAGE REFLECTIVE CONTENT — Turquoise stage
+// GAP-1b (Efficacy Audit): Turquoise = integral/vision-logic. Can hold
+// multiple paradigms simultaneously, sees patterns across patterns, operates
+// from worldcentric + ecological + kosmocentric awareness. Shadow: meta-bypass
+// (seeing the pattern of patterns as an excuse to not act), arrogance of
+// comprehensiveness, paralysis of integration.
+// ============================================================================
+
+const LR_COGNITIVE_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'You can hold competing paradigms in mind without collapse. But integration can become its own avoidance — the meta-view so comprehensive it paralyzes action. Where does your capacity to see all sides prevent you from choosing one?',
+    followUps: ['Can wisdom be a form of hiding?', 'What would it cost to be partial — to commit to one frame?'],
+  },
+  {
+    prompt: 'You see the pattern beneath the pattern. But who is the one seeing? The meta-cognitive observer — is it a self, a function, or an escape hatch from the mess of being a specific person?',
+    followUps: ['Can the observer be observed?', 'What does the one who sees all patterns need that seeing cannot provide?'],
+  },
+];
+
+const LR_EMOTIONAL_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'You feel the emotional weather of systems — the grief of institutions, the anxiety of ecosystems. But feeling everything can mean feeling nothing fully. What single grief, if you let it be only yours and not the world\'s, would break you open?',
+    followUps: ['Is cosmic empathy a defense against personal grief?', 'What would it mean to mourn one thing completely?'],
+  },
+  {
+    prompt: 'You\'ve transcended reactivity — most of the time. But transcendence can be anesthesia. What emotion have you integrated so thoroughly that you no longer feel it — and is that integration or numbing?',
+    followUps: ['Can integration be a form of death?', 'What would re-enchantment look like — not the emotion you transcended, but the one on the other side?'],
+  },
+];
+
+const LR_MORAL_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'You see how every moral position is partially true and partially blind. But the view from nowhere is still a position — one that avoids the risk of being wrong. What would you stake your life on, knowing it\'s incomplete?',
+    followUps: ['Can you act with conviction while holding doubt?', 'What does integrity look like when you can see all sides?'],
+  },
+  {
+    prompt: 'You understand the development of morality itself — how each stage transcends and includes the prior. But understanding development can become a way to judge those at "lower" stages. Where does your developmental awareness become its own form of hierarchy?',
+    followUps: ['Can integral consciousness be arrogant?', 'What does humility look like at the altitude where you can see the whole spiral?'],
+  },
+];
+
+const LR_INTRAPERSONAL_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'You can observe the observer — witness the witness. But the witness can become a dissociated self, floating above the mess. When did the witness become a refuge from being a body, a person, a specific someone with wants?',
+    followUps: ['Can witnessing be a bypass?', 'What does the witness avoid by watching?'],
+  },
+  {
+    prompt: 'Your self-sense is fluid — you can occupy multiple perspectives at will. But fluidity without ground is dissociation. What is the ground — not the witness, not the observer, but the irreducible "you" that persists across every frame?',
+    followUps: ['Is there a self beneath the fluidity, or just the flow?', 'What would it mean to be pinned to one identity — and is that a loss or a relief?'],
+  },
+];
+
+const LR_SPIRITUAL_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'You\'ve tasted non-dual awareness — the state where subject and object dissolve. But the taste can become a reference point, a spiritual credential. What in you still needs the experience to mean something? What would it mean to let the taste go?',
+    followUps: ['Can awakening become attachment?', 'What remains when the peak experience fades and only the ordinary remains?'],
+  },
+  {
+    prompt: 'You see the kosmos as a single evolutionary process — matter to life to mind to spirit. But seeing the kosmos can replace living in it. Where does your kosmic vision meet the unwashed dishes, the difficult neighbor, the ordinary Tuesday?',
+    followUps: ['Can kosmic consciousness avoid kitchen-sink reality?', 'What does enlightenment look like when it takes out the trash?'],
+  },
+];
+
+const LR_INTERPERSONAL_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'You can hold the developmental perspective of every person you meet — seeing where they are and why. But that capacity can become a subtle superiority, a way of being above rather than with. When does your capacity to understand someone replace your willingness to be surprised by them?',
+    followUps: ['Can developmental awareness kill genuine meeting?', 'What would it mean to not know where someone is — to meet them without a map?'],
+  },
+  {
+    prompt: 'You work across worldviews — bridging, translating, integrating. But the bridge-builder can become the bridge — never arriving, always mediating. Where do YOU live, when you\'re not connecting others?',
+    followUps: ['Is the integral perspective a home or a transit?', 'What would it mean to stop mediating and just be in one place?'],
+  },
+];
+
+const LR_SOMATIC_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'Your body is a microcosm of the kosmos — you feel tides, cycles, planetary rhythms. But kosmic embodiment can disconnect from the ordinary body — the one that gets tired, gets sick, gets old. What does your kosmic body need that your ordinary body has been asking for?',
+    followUps: ['Can kosmic embodiment be disembodiment?', 'What would it mean to just be tired — not transducing cosmic fatigue, just tired?'],
+  },
+  {
+    prompt: 'You can regulate your nervous system at will — down-regulate, up-regulate, co-regulate. But mastery can become control. What happens in your body when you stop regulating and let it be wild, unmanaged, alive?',
+    followUps: ['Is your body a system to be optimized or an animal to be lived?', 'What would unregulated embodiment feel like?'],
+  },
+];
+
+const LR_WILLPOWER_TURQUOISE: readonly FallbackContent[] = [
+  {
+    prompt: 'Your will is aligned with the evolutionary impulse itself — you act for the kosmos, not just for yourself. But kosmic will can mask personal avoidance. What do YOU want — not the kosmos, not the spiral, not the process — you, the specific person?',
+    followUps: ['Can kosmic purpose erase personal desire?', 'What would it mean to want something small and specific and entirely yours?'],
+  },
+  {
+    prompt: 'You can hold multiple priorities in creative tension. But holding can become a substitute for doing. What is the one act — not the meta-act, not the integral act, but the single concrete act — that the current moment demands of you?',
+    followUps: ['Can the integral view delay necessary action?', 'What does the next right thing look like when you stop seeing all the things?'],
+  },
+];
+
+const LR_BY_LINE_TURQUOISE: Record<string, ContentPool> = {
+  Cognitive: LR_COGNITIVE_TURQUOISE,
+  Emotional: LR_EMOTIONAL_TURQUOISE,
+  Moral: LR_MORAL_TURQUOISE,
+  Intrapersonal: LR_INTRAPERSONAL_TURQUOISE,
+  Spiritual: LR_SPIRITUAL_TURQUOISE,
+  Interpersonal: LR_INTERPERSONAL_TURQUOISE,
+  Somatic: LR_SOMATIC_TURQUOISE,
+  Willpower: LR_WILLPOWER_TURQUOISE,
+};
+
+// ============================================================================
+// LINE-SPECIFIC LANGUAGE REFLECTIVE CONTENT — White stage
+// GAP-1b: White = super-integral / non-dual. The witness dissolves into
+// the witnessed. The doer dissolves into the doing. Shadow: the "nobody
+// here" bypass — using non-dual framing to avoid the messy work of being
+// a person. These probes challenge the White-stage practitioner to bring
+// the non-dual realization INTO form, relationship, and action — not as
+// transcendence but as incarnation.
+// ============================================================================
+
+const LR_COGNITIVE_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'The one who knows has dissolved into the knowing. But knowing without a knower can become its own neutrality — a luminous void that doesn\'t engage. What calls you back into the particular, the partial, the committed — not as regression, but as incarnation?',
+    followUps: ['Can non-knowing be an avoidance of position?', 'What does the formless know that requires form to express?'],
+  },
+];
+
+const LR_EMOTIONAL_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'Emotions arise and dissolve in the space of awareness — witnessed, not held. But the space can become a distance. What emotion, if you let it be fully yours — not witnessed, but inhabited — would surprise the witness itself?',
+    followUps: ['Can the witness be a wound?', 'What would it mean to not be the space, but the weather?'],
+  },
+];
+
+const LR_MORAL_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'Right action arises spontaneously from emptiness — no deliberation, no rule. But spontaneity without reflection can be chaos wearing a halo. When does the "natural" action need to be questioned — and who questions it when there\'s no one home?',
+    followUps: ['Can natural action be wrong action?', 'What does responsibility look like when there\'s no self to be responsible?'],
+  },
+];
+
+const LR_INTRAPERSONAL_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'There is no one here — just this, happening. But "no one here" can be the most sophisticated hiding of all. What if the one who says "no one is here" IS someone — and that someone has needs the emptiness can\'t meet?',
+    followUps: ['Can non-self be a self-defense?', 'What does the emptiness thirst for?'],
+  },
+];
+
+const LR_SPIRITUAL_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'The seeker and the sought have merged — there is only this. But the merger can become a ceiling, a final achievement that stops the movement. What is beyond awakening — not more awakening, but what awakening looks like when it forgets it\'s awakened and just does the dishes?',
+    followUps: ['Can the end of the path be a new beginning?', 'What does post-awakening practice look like when there\'s no one practicing?'],
+  },
+];
+
+const LR_INTERPERSONAL_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'In the non-dual, there is no other — just this, appearing as two. But "no other" can erase the actual person in front of you — their specificity, their difference, their irreducible not-you-ness. What does it mean to truly meet an other — not as appearance, but as someone who is genuinely, stubbornly, beautifully not-you?',
+    followUps: ['Can non-duality avoid intimacy?', 'What would it mean to honor separateness as sacred?'],
+  },
+];
+
+const LR_SOMATIC_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'The body is the dharma — every sensation is emptiness dancing. But the body also bleeds, ages, and dies. What does emptiness do with mortality — not as concept, but as the actual, cellular, irreversible process of this body ending?',
+    followUps: ['Can emptiness face its own death?', 'What does the body know that emptiness can\'t hold?'],
+  },
+];
+
+const LR_WILLPOWER_WHITE: readonly FallbackContent[] = [
+  {
+    prompt: 'Action arises with no actor — the doing is the doer. But formless action can avoid the particular work this moment demands. What is the one specific, concrete, unglamorous thing that needs doing — and can emptiness roll up its sleeves?',
+    followUps: ['Can non-doing be an excuse for not doing?', 'What does engaged emptiness look like?'],
+  },
+];
+
+const LR_BY_LINE_WHITE: Record<string, ContentPool> = {
+  Cognitive: LR_COGNITIVE_WHITE,
+  Emotional: LR_EMOTIONAL_WHITE,
+  Moral: LR_MORAL_WHITE,
+  Intrapersonal: LR_INTRAPERSONAL_WHITE,
+  Spiritual: LR_SPIRITUAL_WHITE,
+  Interpersonal: LR_INTERPERSONAL_WHITE,
+  Somatic: LR_SOMATIC_WHITE,
+  Willpower: LR_WILLPOWER_WHITE,
+};
+
 
 /** Line-specific ScenarioChoice pools — Red stage */
 const SC_BY_LINE_RED: Record<string, ContentPool> = {
@@ -1227,14 +1405,12 @@ export function getFallback(modality: Modality, line: Line, stage: Stage, player
         Red: LR_BY_LINE_RED,
         Orange: LR_BY_LINE_ORANGE,
         Amber: LR_BY_LINE_AMBER,
-        Green: LR_BY_LINE_GREEN, // Efficacy Audit GAP-1: Green-stage content
+        Green: LR_BY_LINE_GREEN,
+        Turquoise: LR_BY_LINE_TURQUOISE,
+        White: LR_BY_LINE_WHITE,
       };
       if (stage === 'Infrared') content = pickRandom(LANGUAGE_REFLECTIVE_INFRARED);
       else if (stage === 'Magenta') content = pickRandom(LANGUAGE_REFLECTIVE_MAGENTA);
-      else if (stage === 'Turquoise' || stage === 'White') {
-        const genericPool = LR_GENERIC_STAGE[stage];
-        content = genericPool ? pickRandom(genericPool) : { prompt: 'What is present here?' };
-      }
       else content = pickFromStageLinePools(stageMap, stage, line, LR_BY_LINE_RED[line] ?? [GENERIC_LANGUAGE_REFLECTIVE]);
       break;
     }
