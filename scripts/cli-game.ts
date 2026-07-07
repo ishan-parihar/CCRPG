@@ -157,7 +157,7 @@ try {
 // (opencode.ai/zen) — the project's primary gateway — but only fires if
 // OPENCODE_API_KEY / OPENCODE_API is set; otherwise the user must configure.
 import { resolveConfig as resolveLLMConfig, isComplete as isLLMConfigComplete, type LLMConfig } from '../src/infra/llm/ProviderRegistry.js';
-import { getActiveConfig, invalidateConfigCache, setLLMDisabled } from '../src/infra/llm/LLMClient.js';
+import { getActiveConfig, invalidateConfigCache, setLLMDisabled, validateModelIfFresh } from '../src/infra/llm/LLMClient.js';
 
 const resolvedLLM: LLMConfig = resolveLLMConfig(
   { model: earlyModelOverride },
@@ -1697,6 +1697,13 @@ async function runFullSession(): Promise<void> {
       }
       if (HEADLESS && USER_ANSWERS.length === 0 && JSON_MODE) {
         emitEvent('warning', { code: 'no_user_answers', message: 'Headless mode without --answer: the LLM will generate narratives without user input. Provide --answer or --answers for authentic participation.' });
+      }
+      // R5-P2-3 (UX-R5/R6): Lazy model validation. Warn (not error) if the
+      // configured model isn't in the provider's /models list. Non-blocking.
+      const modelCheck = await validateModelIfFresh();
+      if (modelCheck && !modelCheck.valid && modelCheck.message) {
+        if (!JSON_MODE) warn(modelCheck.message);
+        else emitEvent('warning', { code: 'model_not_listed', message: modelCheck.message });
       }
     }
   } else {

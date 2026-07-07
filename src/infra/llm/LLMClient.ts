@@ -20,7 +20,7 @@
 import type { Stage } from '../../core/domain/Stage.js';
 import type { AgentMessage, ToolCall } from '../../core/assessments/agentTypes.js';
 import { filterInput, filterOutput } from './VeilFilter.js';
-import { resolveConfig, isComplete, type LLMConfig } from './ProviderRegistry.js';
+import { resolveConfig, isComplete, getModels, type LLMConfig } from './ProviderRegistry.js';
 
 /** T-3.6: Log Veil violations for telemetry. */
 function logVeilViolation(source: string, violations: readonly string[]): void {
@@ -84,6 +84,35 @@ export function getEnabledConfig(savedConfig?: Parameters<typeof resolveConfig>[
 /** Invalidate the cached config (used when setup saves a new config). */
 export function invalidateConfigCache(): void {
   cachedConfig = null;
+  modelValidated = false;
+}
+
+/**
+ * R5-P2-3 (UX-R5/R6): Lazy model validation. Fetches the provider's /models
+ * list once and warns (not errors) if the configured model isn't found.
+ * Non-blocking: failures (network, auth) are silently ignored. This closes
+ * the last R3 input-validation gap (--model was silently accepted).
+ */
+let modelValidated = false;
+export async function validateModelIfFresh(): Promise<{ valid: boolean; message?: string } | null> {
+  if (modelValidated) return null;
+  modelValidated = true;
+  const config = getEnabledConfig();
+  if (!config) return null;
+  try {
+    const models = await getModels(config);
+    if (models.length === 0) return null; // couldn't fetch — don't block
+    const found = models.some(m => m.id === config.model || m.id.includes(config.model) || config.model.includes(m.id));
+    if (!found) {
+      return {
+        valid: false,
+        message: `Model '${config.model}' not found in ${config.providerName}'s /models list (${models.length} models available). The call may fail, or the model may be valid but not listed.`,
+      };
+    }
+    return { valid: true };
+  } catch {
+    return null; // best-effort — never block on validation
+  }
 }
 
 /**
