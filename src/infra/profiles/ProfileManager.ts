@@ -323,11 +323,11 @@ export function updateProfileAfterSession(profileName: string, updates: {
       first_surfaced: s.surfacedAt ? new Date(s.surfacedAt).toISOString() : now,
       line: s.line || 'Unknown',
       stage: s.stage || 'Red',
-      pattern: s.description || s.pattern || 'Unresolved pattern',
+      pattern: `${s.quadrant || 'Unknown'} shadow in ${s.line || 'Unknown'} — drive: ${s.drive || 'unknown'}`,
       quadrant: s.quadrant || 'DarkAllergy',
       status: s.resolvedAt ? 'integrated' : 'surfacing',
       last_touched: now,
-      sessions_active: s.sessionsActive ?? 1,
+      sessions_active: s.recurrenceCount ?? 1,
     }));
     yamlWrite(path.join(dir, 'shadow-ledger.yaml'), { shadows: qualitativeShadows });
   }

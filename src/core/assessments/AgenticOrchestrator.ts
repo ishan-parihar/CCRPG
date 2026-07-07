@@ -159,6 +159,7 @@ export class AgenticOrchestrator {
   private _consecutivePasses: Map<string, number>;
   private agentSynthesis: string | undefined;
   private _lastPlayerWriteIn: string | undefined;
+  private _lastQuestionText: string | undefined;
 
   // Shared shadow keyword detection helper (DRY — used in 3 places)
   // Expanded keyword lists for deeper shadow detection across developmental contexts
@@ -776,6 +777,9 @@ INSTRUCTIONS:
 
     const fullPrompt = `${narrativeIntro}\n\n${questionText}`;
 
+    // BUG-7 fix: capture the question text for encounter-log.md
+    this._lastQuestionText = fullPrompt;
+
     const askParams: AskUserQuestionParams = {
       questions: [{
         question: fullPrompt,
@@ -1058,6 +1062,8 @@ INSTRUCTIONS:
       shadowSurfaced: effectiveShadow?.quadrant ?? null,
       shadowResolvedId: null,
       narrativeSummary,
+      writeInValue: this._lastPlayerWriteIn ?? undefined,
+      questionText: this._lastQuestionText ?? undefined,
     };
 
     const record = processOutcome(this.encounter, response, now);

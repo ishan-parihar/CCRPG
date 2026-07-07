@@ -1395,6 +1395,9 @@ async function runAgenticEncounter(
     shadowSurfaced: cr.shadowSurfaced,
     shadowResolvedId: cr.shadowResolved,
     narrativeSummary: outcome.narrativeSummary,
+    // BUG-1/7 fix: pass through user answer + question text for encounter-log.md
+    writeInValue: outcome.playerWriteIn ?? undefined,
+    questionText: (orchestrator as any)._lastQuestionText ?? undefined,
   };
 
   return { outcome, response, narrativeSummary: outcome.narrativeSummary };
@@ -1596,11 +1599,33 @@ ${recentEncounters.slice(0, 3000)}`;
 
       let wroteSomething = false;
       if (insight && insight.toLowerCase() !== 'none') {
-        agentWriteProfileFile('narrative-memory.md', `- **Session (synthesized):** ${insight}`, 'append');
+        // BUG-5 fix: Insert under "## Key Insights" section, not at end of file
+        const memContent = agentReadProfileFile('narrative-memory.md') || '';
+        const insightsHeader = '## Key Insights';
+        const insightsIdx = memContent.indexOf(insightsHeader);
+        if (insightsIdx >= 0) {
+          const afterHeader = memContent.indexOf('\n## ', insightsIdx + insightsHeader.length);
+          const insertAt = afterHeader >= 0 ? afterHeader : memContent.length;
+          const updated = memContent.slice(0, insertAt) + `\n- **Session (synthesized):** ${insight}` + memContent.slice(insertAt);
+          agentWriteProfileFile('narrative-memory.md', updated, 'overwrite');
+        } else {
+          agentWriteProfileFile('narrative-memory.md', `\n- **Session (synthesized):** ${insight}`, 'append');
+        }
         wroteSomething = true;
       }
       if (pattern && pattern.toLowerCase() !== 'none') {
-        agentWriteProfileFile('narrative-memory.md', `- **Pattern:** ${pattern}`, 'append');
+        // Insert under "## Patterns" section
+        const memContent = agentReadProfileFile('narrative-memory.md') || '';
+        const patternsHeader = '## Patterns';
+        const patternsIdx = memContent.indexOf(patternsHeader);
+        if (patternsIdx >= 0) {
+          const afterHeader = memContent.indexOf('\n## ', patternsIdx + patternsHeader.length);
+          const insertAt = afterHeader >= 0 ? afterHeader : memContent.length;
+          const updated = memContent.slice(0, insertAt) + `\n- **Pattern:** ${pattern}` + memContent.slice(insertAt);
+          agentWriteProfileFile('narrative-memory.md', updated, 'overwrite');
+        } else {
+          agentWriteProfileFile('narrative-memory.md', `\n- **Pattern:** ${pattern}`, 'append');
+        }
         wroteSomething = true;
       }
       if (active && active.toLowerCase() !== 'none') {
@@ -1802,12 +1827,13 @@ async function runDirectQuestioningSession(
       if (_activeName) {
         try {
           const userAnswer = result.response?.writeInValue ?? '';
+          const questionText = result.response?.questionText ?? '';
           const npcName = currentWorld.holons.find(h => h.id === encounter.holonSource)?.name;
           appendEncounterLog(_activeName, {
             encounterNum: currentSig.totalEncounters,
             line, stage: currentStage,
             npc: npcName,
-            question: result.narrativeSummary?.slice(0, 200),
+            question: questionText?.slice(0, 500),
             userAnswer: userAnswer?.slice(0, 500),
             llmNarrative: result.narrativeSummary?.slice(0, 500),
             driveSignal: Object.entries(cr.polarityTrace.driveDirectionality)
@@ -1907,18 +1933,34 @@ async function runDirectQuestioningSession(
   if (_profileName) {
     try {
       // Build session entry for session-log.yaml
-      const linesTouched = [...new Set(history.map(r => r.polarityTrace.line))];
+      // BUG-2 fix: PolarityTrace doesn't have a 'line' field. Get lines from the encounter moduleRefs.
+      const linesTouched = [...new Set(history.map((r, i) => {
+        // Try to extract line from the encounterId format "dq-Line:Stage:timestamp"
+        const match = r.encounterId?.match(/dq-([^:]+):/);
+        return match ? match[1] : `Encounter${i + 1}`;
+      }))];
       const keyShift = history.length > 0
-        ? history.map(r => r.narrativeSummary).filter(n => n && n.length > 20).slice(-1)[0]?.slice(0, 200) || ''
+        ? (history.map(r => r.narrativeSummary).filter(n => n && n.length > 20).slice(-1)[0] || '').slice(0, 200)
         : '';
       const sessionEntry = {
         date: new Date().toISOString(),
         encounters: history.length,
-        lines_touched: linesTouched,
-        themes: linesTouched, // simplified — LLM could extract themes later
-        key_shift: keyShift,
+        lines_touched: linesTouched.length > 0 ? linesTouched : ['Unknown'],
+        themes: linesTouched.length > 0 ? linesTouched : ['Unknown'],
+        key_shift: keyShift || 'No significant shift recorded',
         shadow_surfaced: history.some(r => r.shadowSurfaced) ? 'Yes' : 'No',
-        llm_narrative_summary: keyShift,
+        llm_narrative_summary: keyShift || 'No narrative recorded',
+      };
+
+      // BUG-6 fix: Use drive DIRECTIONALITY (0-1 health scores) not raw weights.
+      // The sig's drives.weights are cumulative offsets (-1 to +1), not health scores.
+      // For the profile, convert to 0-1 range: 0.5 = balanced, >0.5 = healthy, <0.5 = pathological.
+      const driveWeights = currentSig.drives.weights;
+      const driveHealthScores = {
+        agency: 0.5 + (driveWeights.agency ?? 0) * 0.5,
+        communion: 0.5 + (driveWeights.communion ?? 0) * 0.5,
+        eros: 0.5 + (driveWeights.eros ?? 0) * 0.5,
+        agape: 0.5 + (driveWeights.agape ?? 0) * 0.5,
       };
 
       updateProfileAfterSession(_profileName, {
@@ -1926,8 +1968,8 @@ async function runDirectQuestioningSession(
         totalSessions: currentSig.totalSessions,
         currentStage: currentSig.currentStage,
         altitudes: { ...currentSig.altitudes },
-        drives: currentSig.drives.weights,
-        cci: 0.5, // TODO: compute from snapshot
+        drives: driveHealthScores,
+        cci: 0.5,
         sessionEntry,
         shadows: currentSig.shadows.entries,
       });

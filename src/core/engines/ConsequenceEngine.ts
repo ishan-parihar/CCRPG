@@ -28,6 +28,12 @@ export interface PlayerResponse {
   readonly shadowSurfaced: ShadowQuadrant | null;
   readonly shadowResolvedId: string | null;
   readonly narrativeSummary: string;
+  /** BUG-1 fix: The user's actual write-in answer text. Not in the original
+   * PlayerResponse, but needed for encounter-log.md to preserve the user's
+   * words across sessions. */
+  readonly writeInValue?: string;
+  /** BUG-7 fix: The question text that was asked, for encounter-log.md. */
+  readonly questionText?: string;
 }
 
 /** Process an encounter outcome into a ConsequenceRecord. */
