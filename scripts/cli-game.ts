@@ -580,6 +580,77 @@ const HOLD_TARGETS: Record<string, number> = {
 
 const CAL_STAGES = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'] as const;
 
+// GAP-6 (Efficacy Audit): Infer developmental altitude from user answers.
+// Instead of defaulting all lines to Red, analyze the user's --answer
+// content for stage-specific vocabulary and conceptual complexity.
+// This is a lightweight binary-search — not a full developmental assessment,
+// but enough to prevent experts from starting at Red.
+function inferAltitudesFromAnswers(): Record<Line, Stage> {
+  const allRed: Record<Line, Stage> = {
+    Cognitive: 'Red', Emotional: 'Red', Moral: 'Red', Intrapersonal: 'Red',
+    Spiritual: 'Red', Somatic: 'Red', Willpower: 'Red', Interpersonal: 'Red',
+  };
+  if (USER_ANSWERS.length === 0) return allRed;
+
+  const combinedText = USER_ANSWERS.join(' ').toLowerCase();
+  const wordCount = combinedText.split(/\s+/).filter(w => w.length > 0).length;
+
+  // Stage markers — vocabulary/concepts that indicate developmental altitude
+  const stageMarkers: Record<Stage, readonly string[]> = {
+    Infrared: [],
+    Magenta: [],
+    Red: ['survival', 'power', 'force', 'fight', 'dominate', 'win', 'fear', 'anger', 'protect'],
+    Amber: ['duty', 'rules', 'belong', 'tradition', 'loyalty', 'obligation', 'should', 'order', 'role'],
+    Orange: ['achieve', 'system', 'strategy', 'rational', 'analysis', 'compete', 'goal', 'optimize', 'objective', 'merit'],
+    Green: ['perspective', 'systemic', 'privilege', 'inclusive', 'interconnected', 'pluralism', 'empathy', 'oppression', 'relativ', 'valid'],
+    Turquoise: ['integral', 'paradigm', 'kosm', 'evolutionary', 'meta', 'emergent', 'holistic', 'dialectic', 'non-dual', 'aqal'],
+    White: ['emptiness', 'non-dual', 'witness', 'dissolution', 'formless', 'awakened', 'no-self', 'suchness', 'rigpa'],
+  };
+
+  // Score each stage by marker density
+  const stageScores: Record<string, number> = {};
+  for (const [stage, markers] of Object.entries(stageMarkers)) {
+    if (markers.length === 0) continue;
+    const matches = markers.filter(m => combinedText.includes(m)).length;
+    stageScores[stage] = matches;
+  }
+
+  // Also consider conceptual density (unique words / total words)
+  const uniqueWords = new Set(combinedText.split(/\s+/).filter(w => w.length > 2)).size;
+  const conceptDensity = wordCount > 0 ? uniqueWords / wordCount : 0;
+
+  // Find the highest stage with significant marker presence
+  const stageOrder: Stage[] = ['Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'];
+  let detectedStage: Stage = 'Red';
+  for (const stage of stageOrder) {
+    if ((stageScores[stage] ?? 0) >= 2) {
+      detectedStage = stage; // keep going up — highest match wins
+    }
+  }
+
+  // Boost: if the user writes long, dense answers, they're likely above Red
+  if (detectedStage === 'Red' && wordCount > 50 && conceptDensity > 0.6) {
+    detectedStage = 'Orange'; // literate, reflective → at least formal operations
+  }
+  if (detectedStage === 'Red' && wordCount > 100 && conceptDensity > 0.7) {
+    detectedStage = 'Green'; // sophisticated vocabulary → likely pluralistic
+  }
+
+  // Seed all lines at the detected stage (conservative — doesn't differentiate
+  // per-line. The first few encounters will refine via actual assessment.)
+  const altitudes: Record<Line, Stage> = {} as Record<Line, Stage>;
+  const allLines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
+  for (const line of allLines) {
+    altitudes[line] = detectedStage;
+  }
+
+  if (!JSON_MODE && detectedStage !== 'Red') {
+    info('onboarding', `Answers suggest ${detectedStage} stage — starting there (not Red). Encounters will refine this.`);
+  }
+
+  return altitudes;
+}
+
 async function runQuickCalibration(): Promise<Record<Line, Stage>> {
   const altitudes: Partial<Record<Line, Stage>> = {};
   const lines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Somatic', 'Willpower', 'Interpersonal'];
@@ -707,7 +778,14 @@ async function createDefaultSignificator(): Promise<Significator> {
   // Run quick calibration unless in automated/skip mode
   let altitudes: Record<Line, Stage>;
   if (HEADLESS || NO_LLM || SKIP_CALIBRATION || JSON_MODE) {
-    altitudes = allRed;
+    // GAP-6 (Efficacy Audit): Binary-search onboarding for headless mode.
+    // Instead of defaulting all lines to Red, probe the user's developmental
+    // altitude via their --answer content. If answers show Green+ vocabulary
+    // (integration, pluralism, systems-thinking), seed at Green. If they show
+    // Amber (rules, duty, belonging), seed at Amber. Otherwise Red.
+    // This prevents experts (NASA scientists, therapists, monks) from
+    // starting at Red and bouncing.
+    altitudes = inferAltitudesFromAnswers();
   } else {
     altitudes = await runQuickCalibration();
   }

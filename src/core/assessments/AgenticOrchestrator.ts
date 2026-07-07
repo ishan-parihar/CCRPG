@@ -418,16 +418,6 @@ export class AgenticOrchestrator {
               narrativeSummary: string;
             };
 
-            // G.24: Clamp LLM-provided drive scores to [0, 1]
-            const clamp = (v: number) => Math.max(0, Math.min(1, v));
-            const ds = params.driveScores;
-            const llmDriveScores = {
-              agency: ds ? clamp(ds.agency) : 0.5,
-              communion: ds ? clamp(ds.communion) : 0.5,
-              eros: ds ? clamp(ds.eros) : 0.5,
-              agape: ds ? clamp(ds.agape) : 0.5,
-            };
-
             // GAP-3 (Efficacy Audit): Fix circular scoring. The LLM generates
             // the narrative AND scores the drives — that's circular. Instead,
             // use the rubric-based evaluator (evaluateSelfReflection) to score
@@ -625,16 +615,7 @@ INSTRUCTIONS:
               narrativeSummary: string;
             };
 
-            // GAP-3: Same rubric-based scoring fix as the first path (line 431).
-            const clamp = (v: number) => Math.max(0, Math.min(1, v));
-            const ds = params.driveScores;
-            const _llmDriveScores = { // kept for reference, not used for scoring
-              agency: ds ? clamp(ds.agency) : 0.5,
-              communion: ds ? clamp(ds.communion) : 0.5,
-              eros: ds ? clamp(ds.eros) : 0.5,
-              agape: ds ? clamp(ds.agape) : 0.5,
-            };
-
+            // GAP-3: Same rubric-based scoring fix as the first path.
             // Use rubric-based scoring (independent of LLM's self-evaluation)
             const _playerResponse = this._lastPlayerWriteIn ?? params.narrativeSummary ?? '';
             const _rubricEval = this.evaluateSelfReflection(_playerResponse);
