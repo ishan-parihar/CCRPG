@@ -1,0 +1,183 @@
+/**
+ * CCRPG Design Tokens — 8-stage aesthetic system.
+ *
+ * Each stage has its own palette, typography, and motion language.
+ * Switch stages by setting data-stage="..." on <html>.
+ *
+ * Derived from the canon (MainMenuScene stageAesthetics):
+ *   Infrared: "cave-dark, primal"
+ *   Magenta:  "spirit-haunted, symbolic"
+ *   Red:      "fortress-sharp, weapon-walls" (default)
+ *   Amber:    "cathedral-ordered, gold-stone"
+ *   Orange:   "mechanism-precise, steel-glass"
+ *   Green:    "garden-lush, earth-toned"
+ *   Turquoise:"crystalline, translucent"
+ *   White:    "luminous silence, spacious"
+ *
+ * Phaser reads these same tokens via getComputedStyle(document.documentElement)
+ * — single source of truth, two renderers.
+ */
+
+:root {
+  /* Stage-agnostic baseline */
+  --ccrpg-radius-sm: 4px;
+  --ccrpg-radius: 6px;
+  --ccrpg-radius-lg: 12px;
+
+  --ccrpg-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --ccrpg-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ccrpg-duration-fast: 180ms;
+  --ccrpg-duration-base: 320ms;
+  --ccrpg-duration-slow: 540ms;
+
+  /* Default to Red stage (the first playable vertical slice) */
+  --ccrpg-bg: #0d0a0a;
+  --ccrpg-surface: #1a0f0f;
+  --ccrpg-surface-elevated: #261818;
+  --ccrpg-fg: #e8d4cc;
+  --ccrpg-fg-muted: #a89080;
+  --ccrpg-muted: #8a5040;
+  --ccrpg-accent: #b8252a;
+  --ccrpg-accent-soft: #5a1318;
+  --ccrpg-accent-fg: #ffffff;
+  --ccrpg-border: rgba(184, 37, 42, 0.3);
+  --ccrpg-font-display: "Big Shoulders", "Arial Narrow", sans-serif;
+  --ccrpg-font-body: "IBM Plex Mono", "Courier New", monospace;
+  --ccrpg-motion: snap;
+}
+
+/* ─── Stage 1: Infrared — "cave-dark, primal" ─── */
+[data-stage="infrared"] {
+  --ccrpg-bg: #0a0707;
+  --ccrpg-surface: #140d0d;
+  --ccrpg-surface-elevated: #1f1414;
+  --ccrpg-fg: #d8c8b4;
+  --ccrpg-fg-muted: #a08868;
+  --ccrpg-muted: #6a5040;
+  --ccrpg-accent: #c44525;
+  --ccrpg-accent-soft: #6b2415;
+  --ccrpg-accent-fg: #ffffff;
+  --ccrpg-border: rgba(196, 69, 37, 0.3);
+  --ccrpg-font-display: "Boldonse", system-ui, sans-serif;
+  --ccrpg-font-body: "DM Mono", "Courier New", monospace;
+  --ccrpg-motion: pulse;
+}
+
+/* ─── Stage 2: Magenta — "spirit-haunted, symbolic" ─── */
+[data-stage="magenta"] {
+  --ccrpg-bg: #0d0814;
+  --ccrpg-surface: #1a1028;
+  --ccrpg-surface-elevated: #261838;
+  --ccrpg-fg: #e0d4f0;
+  --ccrpg-fg-muted: #a890c0;
+  --ccrpg-muted: #6a5080;
+  --ccrpg-accent: #9440c8;
+  --ccrpg-accent-soft: #4a2068;
+  --ccrpg-accent-fg: #ffffff;
+  --ccrpg-border: rgba(148, 64, 200, 0.3);
+  --ccrpg-font-display: "Italiana", "Times New Roman", serif;
+  --ccrpg-font-body: "Lora", Georgia, serif;
+  --ccrpg-motion: drift;
+}
+
+/* ─── Stage 3: Red — "fortress-sharp, weapon-walls" (DEFAULT) ─── */
+[data-stage="red"] {
+  --ccrpg-bg: #0d0a0a;
+  --ccrpg-surface: #1a0f0f;
+  --ccrpg-surface-elevated: #261818;
+  --ccrpg-fg: #e8d4cc;
+  --ccrpg-fg-muted: #a89080;
+  --ccrpg-muted: #8a5040;
+  --ccrpg-accent: #b8252a;
+  --ccrpg-accent-soft: #5a1318;
+  --ccrpg-accent-fg: #ffffff;
+  --ccrpg-border: rgba(184, 37, 42, 0.3);
+  --ccrpg-font-display: "Big Shoulders", "Arial Narrow", sans-serif;
+  --ccrpg-font-body: "IBM Plex Mono", "Courier New", monospace;
+  --ccrpg-motion: snap;
+}
+
+/* ─── Stage 4: Amber — "cathedral-ordered, gold-stone" ─── */
+[data-stage="amber"] {
+  --ccrpg-bg: #0f0a05;
+  --ccrpg-surface: #1a1408;
+  --ccrpg-surface-elevated: #26200c;
+  --ccrpg-fg: #f0e4c8;
+  --ccrpg-fg-muted: #c0a878;
+  --ccrpg-muted: #806840;
+  --ccrpg-accent: #d4a425;
+  --ccrpg-accent-soft: #6a5215;
+  --ccrpg-accent-fg: #1a1408;
+  --ccrpg-border: rgba(212, 164, 37, 0.3);
+  --ccrpg-font-display: "Young Serif", Georgia, serif;
+  --ccrpg-font-body: "Libre Baskerville", Georgia, serif;
+  --ccrpg-motion: chime;
+}
+
+/* ─── Stage 5: Orange — "mechanism-precise, steel-glass" ─── */
+[data-stage="orange"] {
+  --ccrpg-bg: #0a0d10;
+  --ccrpg-surface: #141a20;
+  --ccrpg-surface-elevated: #1f262e;
+  --ccrpg-fg: #d4e0e8;
+  --ccrpg-fg-muted: #90a8b8;
+  --ccrpg-muted: #506878;
+  --ccrpg-accent: #2590c4;
+  --ccrpg-accent-soft: #155068;
+  --ccrpg-accent-fg: #ffffff;
+  --ccrpg-border: rgba(37, 144, 196, 0.3);
+  --ccrpg-font-display: "Tektur", "Arial", sans-serif;
+  --ccrpg-font-body: "Instrument Sans", system-ui, sans-serif;
+  --ccrpg-motion: tick;
+}
+
+/* ─── Stage 6: Green — "garden-lush, earth-toned" ─── */
+[data-stage="green"] {
+  --ccrpg-bg: #080d08;
+  --ccrpg-surface: #101810;
+  --ccrpg-surface-elevated: #182218;
+  --ccrpg-fg: #d4e8c8;
+  --ccrpg-fg-muted: #90b878;
+  --ccrpg-muted: #506840;
+  --ccrpg-accent: #5aa425;
+  --ccrpg-accent-soft: #2a5215;
+  --ccrpg-accent-fg: #ffffff;
+  --ccrpg-border: rgba(90, 164, 37, 0.3);
+  --ccrpg-font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --ccrpg-font-body: "Work Sans", system-ui, sans-serif;
+  --ccrpg-motion: grow;
+}
+
+/* ─── Stage 7: Turquoise — "crystalline, translucent" ─── */
+[data-stage="turquoise"] {
+  --ccrpg-bg: #08101a;
+  --ccrpg-surface: #0c1828;
+  --ccrpg-surface-elevated: #102038;
+  --ccrpg-fg: #c8e8f0;
+  --ccrpg-fg-muted: #78a8c0;
+  --ccrpg-muted: #406878;
+  --ccrpg-accent: #25c4b0;
+  --ccrpg-accent-soft: #156858;
+  --ccrpg-accent-fg: #08101a;
+  --ccrpg-border: rgba(37, 196, 176, 0.3);
+  --ccrpg-font-display: "Poiret One", "Optima", sans-serif;
+  --ccrpg-font-body: "Jura", "Optima", sans-serif;
+  --ccrpg-motion: refract;
+}
+
+/* ─── Stage 8: White — "luminous silence, spacious" ─── */
+[data-stage="white"] {
+  --ccrpg-bg: #f8f6f0;
+  --ccrpg-surface: #ffffff;
+  --ccrpg-surface-elevated: #f0ede4;
+  --ccrpg-fg: #2a2620;
+  --ccrpg-fg-muted: #6a6258;
+  --ccrpg-muted: #9a9080;
+  --ccrpg-accent: #b89025;
+  --ccrpg-accent-soft: #d4c068;
+  --ccrpg-accent-fg: #ffffff;
+  --ccrpg-border: rgba(184, 144, 37, 0.3);
+  --ccrpg-font-display: "Crimson Pro", Georgia, serif;
+  --ccrpg-font-body: "Erica One", system-ui, sans-serif;
+  --ccrpg-motion: dissolve;
+}
