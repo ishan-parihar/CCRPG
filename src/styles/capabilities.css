@@ -1,0 +1,93 @@
+/**
+ * CCRPG Capability-Adaptive Styles.
+ *
+ * Reads data-* attributes set by CapabilityProbe and adjusts the UI:
+ * - data-input="tv" → 64px+ touch targets, larger typography
+ * - data-input="touch" → 44px+ touch targets
+ * - data-input="gamepad" → visible focus rings, 4-dir nav
+ * - data-motion="reduced" → disable all transitions/animations
+ * - data-contrast="more" → higher contrast borders/text
+ * - data-capability="low" → disable shaders, reduce particle density
+ * - data-connection="2g|slow-2g" → minimal assets, no streaming
+ *
+ * These are global adjustments that apply on top of the stage tokens.
+ */
+
+/* ─── Input method: touch (default minimum) ─── */
+[data-input="touch"] button,
+[data-input="touch"] [role="button"],
+[data-input="touch"] [role="switch"] {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+/* ─── Input method: TV / gamepad (10-foot UI) ─── */
+[data-input="tv"],
+[data-input="gamepad"] {
+  /* Larger touch targets for 10-foot UI */
+  --ccrpg-radius: 8px;
+  --ccrpg-radius-lg: 16px;
+}
+
+[data-input="tv"] button,
+[data-input="tv"] [role="button"],
+[data-input="tv"] [role="switch"],
+[data-input="gamepad"] button,
+[data-input="gamepad"] [role="button"],
+[data-input="gamepad"] [role="switch"] {
+  min-height: 64px;
+  min-width: 64px;
+  font-size: 1.125rem;
+}
+
+/* Visible focus rings for gamepad/keyboard nav */
+[data-input="gamepad"] *:focus-visible,
+[data-input="tv"] *:focus-visible {
+  outline: 3px solid var(--ccrpg-accent, #b8252a);
+  outline-offset: 3px;
+  border-radius: var(--ccrpg-radius, 6px);
+}
+
+/* Larger typography on TV */
+[data-input="tv"] {
+  font-size: 1.125rem;
+}
+
+/* ─── Motion: reduced ─── */
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
+}
+
+/* ─── Contrast: more ─── */
+[data-contrast="more"] {
+  --ccrpg-border: currentColor;
+}
+
+[data-contrast="more"] button,
+[data-contrast="more"] [role="button"],
+[data-contrast="more"] [role="switch"] {
+  border-width: 2px;
+}
+
+/* ─── Capability: low (disable non-essential visuals) ─── */
+[data-capability="low"] {
+  /* Disable backdrop filters (expensive on weak GPUs) */
+  --ccrpg-backdrop-filter: none;
+}
+
+[data-capability="low"] * {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ─── Connection: slow (minimal assets) ─── */
+[data-connection="2g"],
+[data-connection="slow-2g"] {
+  /* Hide non-essential decorative elements on slow connections */
+  /* (Phase 3 will add lazy-loading for fonts and images based on this) */
+}
