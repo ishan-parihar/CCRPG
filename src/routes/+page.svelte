@@ -14,6 +14,7 @@
    */
 
   import PhaserGameClient from '$lib/components/PhaserGameClient.svelte';
+  import Seo from '$lib/components/Seo.svelte';
   import { fade } from 'svelte/transition';
   import { gameStore } from '$lib/stores/gameStore.js';
 
@@ -21,13 +22,11 @@
   const isLoaded = $derived($gameStore.isLoaded);
 </script>
 
-<svelte:head>
-  <title>CCRPG — Cognitive Combat</title>
-  <meta
-    name="description"
-    content="A Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment."
-  />
-</svelte:head>
+<Seo
+  title="Cognitive Combat"
+  description="A Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness."
+  indexable={true}
+/>
 
 <div class="root-route">
   <PhaserGameClient />

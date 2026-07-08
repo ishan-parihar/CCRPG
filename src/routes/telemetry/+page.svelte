@@ -12,6 +12,7 @@
 
   import { goto } from '$app/navigation';
   import BackButton from '$lib/components/BackButton.svelte';
+  import Seo from '$lib/components/Seo.svelte';
   import { stageFade } from '$lib/transitions/stageMotion.js';
   import { accessibilityStore } from '$lib/stores/accessibilityStore.js';
 
@@ -93,9 +94,10 @@
   }
 </script>
 
-<svelte:head>
-  <title>CCRPG — Telemetry</title>
-</svelte:head>
+<Seo
+  title="Telemetry"
+  description="Transparency: view every telemetry event CCRPG collects, with sample payloads. Opt in or out at any time."
+/>
 
 <div class="telemetry-route" in:stageFade>
   <header class="telemetry-header">

@@ -2,7 +2,12 @@
  * Server hooks — runs on every request.
  *
  * Phase 0: lightweight rate limiting for /api/llm/* endpoints.
- * Per-device-ID quota: 100 LLM calls/day (free tier default).
+ * Per-IP quota: 100 LLM calls/day (free tier default).
+ *
+ * F5 fix: Previously looked for 'deviceId' in the request body, but LLM
+ * endpoints don't include deviceId. The rate limiter was a no-op. Now
+ * uses the client IP (CF-Connecting-IP on Cloudflare, X-Forwarded-For
+ * fallback) as the rate-limit key.
  *
  * The rate limiter is in-memory for dev. In production (Cloudflare),
  * it should use Workers KV or Durable Objects for cross-request state.
@@ -34,52 +39,52 @@ function maybeCleanup(): void {
   }
 }
 
+/** Extract client IP from Cloudflare or standard proxy headers. */
+function getClientIP(event: Parameters<Handle>[0]['event']): string {
+  // Cloudflare: CF-Connecting-IP is the canonical client IP.
+  const cfIP = event.request.headers.get('cf-connecting-ip');
+  if (cfIP) return cfIP;
+
+  // Standard proxy header (X-Forwarded-For: client, proxy1, proxy2)
+  const xff = event.request.headers.get('x-forwarded-for');
+  if (xff) {
+    const first = xff.split(',')[0]?.trim();
+    if (first) return first;
+  }
+
+  // Fallback: unknown (rate limit by shared key — less effective but safe)
+  return 'unknown';
+}
+
 export const handle: Handle = async ({ event, resolve }) => {
   maybeCleanup();
 
   // Rate limit only /api/llm/* endpoints.
   if (event.url.pathname.startsWith('/api/llm/')) {
-    // Try to extract deviceId from request body (POST).
-    let deviceId = event.url.searchParams.get('deviceId');
-
-    if (!deviceId && event.request.method === 'POST') {
-      try {
-        // Clone the request so the body is still readable downstream.
-        const cloned = event.request.clone();
-        const body = await cloned.json();
-        if (body && typeof body.deviceId === 'string') {
-          deviceId = body.deviceId;
-        }
-      } catch {
-        // Body isn't JSON or doesn't have deviceId — fall through.
-      }
+    const clientIP = getClientIP(event);
+    const key = `llm:${clientIP}`;
+    const now = Date.now();
+    let entry = rateLimitStore.get(key);
+    if (!entry || now - entry.windowStart > DAY_MS) {
+      entry = { count: 0, windowStart: now };
+      rateLimitStore.set(key, entry);
     }
-
-    // If we have a deviceId, enforce rate limit.
-    if (deviceId) {
-      const key = `llm:${deviceId}`;
-      const now = Date.now();
-      let entry = rateLimitStore.get(key);
-      if (!entry || now - entry.windowStart > DAY_MS) {
-        entry = { count: 0, windowStart: now };
-        rateLimitStore.set(key, entry);
-      }
-      entry.count++;
-      if (entry.count > LLM_RATE_LIMIT_PER_DAY) {
-        return new Response(
-          JSON.stringify({
-            error: 'Rate limit exceeded',
-            detail: `Max ${LLM_RATE_LIMIT_PER_DAY} LLM calls per day. Resets in ${Math.ceil((entry.windowStart + DAY_MS - now) / 1000 / 60)} minutes.`,
-          }),
-          {
-            status: 429,
-            headers: {
-              'Content-Type': 'application/json',
-              'Retry-After': String(Math.ceil((entry.windowStart + DAY_MS - now) / 1000)),
-            },
+    entry.count++;
+    if (entry.count > LLM_RATE_LIMIT_PER_DAY) {
+      const resetInSecs = Math.ceil((entry.windowStart + DAY_MS - now) / 1000);
+      return new Response(
+        JSON.stringify({
+          error: 'Rate limit exceeded',
+          detail: `Max ${LLM_RATE_LIMIT_PER_DAY} LLM calls per day. Resets in ${Math.ceil(resetInSecs / 60)} minutes.`,
+        }),
+        {
+          status: 429,
+          headers: {
+            'Content-Type': 'application/json',
+            'Retry-After': String(resetInSecs),
           },
-        );
-      }
+        },
+      );
     }
   }
 

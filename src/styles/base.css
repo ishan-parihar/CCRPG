@@ -36,6 +36,31 @@ body {
               color var(--ccrpg-duration-slow, 540ms) var(--ccrpg-ease, ease);
 }
 
+/* Re-enable text selection + touch scrolling for content elements.
+   The body-level user-select:none + touch-action:none is needed for the
+   game canvas (prevents accidental selection/scroll on Phaser). But
+   scrollable route content (settings, recover, telemetry) and form
+   inputs need these re-enabled. */
+input, textarea, select, [contenteditable="true"] {
+  -webkit-user-select: text;
+  user-select: text;
+  touch-action: auto;
+}
+
+pre, code, kbd, samp {
+  -webkit-user-select: text;
+  user-select: text;
+}
+
+/* Scrollable route containers (settings, recover, telemetry) */
+.settings-route,
+.recover-route,
+.telemetry-route,
+.error-page {
+  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch;
+}
+
 /* ─── Game Container ────────────────────────────────────────────── */
 #game-root {
   position: fixed;

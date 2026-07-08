@@ -17,6 +17,7 @@
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
   import BackButton from '$lib/components/BackButton.svelte';
+  import Seo from '$lib/components/Seo.svelte';
   import { accessibilityStore, updateAccessibility, resetAccessibility } from '$lib/stores/accessibilityStore.js';
   import { resetSavesInStorage } from '$lib/stores/saveHydration.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
@@ -62,9 +63,10 @@
   }
 </script>
 
-<svelte:head>
-  <title>CCRPG — Settings</title>
-</svelte:head>
+<Seo
+  title="Settings"
+  description="Adjust accessibility (high contrast, reduced motion), privacy (telemetry opt-in), and manage your save data."
+/>
 
 <div class="settings-route">
   <header class="settings-header" in:stageFade>

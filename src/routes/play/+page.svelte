@@ -14,6 +14,7 @@
 
   import PhaserGameClient from '$lib/components/PhaserGameClient.svelte';
   import BackButton from '$lib/components/BackButton.svelte';
+  import Seo from '$lib/components/Seo.svelte';
   import { goto } from '$app/navigation';
   import { gameStore } from '$lib/stores/gameStore.js';
   import { describeStage } from '$core/presentation/veilDescriptors.js';
@@ -29,9 +30,11 @@
   }
 </script>
 
-<svelte:head>
-  <title>CCRPG — Play</title>
-</svelte:head>
+<Seo
+  title="Play"
+  description="Enter the CCRPG gameplay surface — encounter developmental assessments disguised as gameplay."
+  indexable={false}
+/>
 
 <div class="play-route">
   <!-- Minimal HUD overlay -->

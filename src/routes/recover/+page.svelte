@@ -19,6 +19,7 @@
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
   import BackButton from '$lib/components/BackButton.svelte';
+  import Seo from '$lib/components/Seo.svelte';
   import { stageFade } from '$lib/transitions/stageMotion.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
   import { validateSignificator } from '$infra/persistence/validateSignificator.js';
@@ -131,9 +132,11 @@
   }
 </script>
 
-<svelte:head>
-  <title>CCRPG — Recover Save</title>
-</svelte:head>
+<Seo
+  title="Recover Save"
+  description="Restore your CCRPG progress on a new device using your 12-word recovery phrase."
+  indexable={false}
+/>
 
 <div class="recover-route" in:stageFade>
   <header class="recover-header">

@@ -12,6 +12,7 @@
 
   import { page } from '$app/state';
   import BackButton from '$lib/components/BackButton.svelte';
+  import Seo from '$lib/components/Seo.svelte';
   import { fade } from 'svelte/transition';
 
   const status = $derived(page.status);
@@ -22,9 +23,11 @@
   const showDetail = $derived(import.meta.env.DEV);
 </script>
 
-<svelte:head>
-  <title>CCRPG — {is404 ? 'Not found' : 'Error'}</title>
-</svelte:head>
+<Seo
+  title={is404 ? 'Not Found' : 'Error'}
+  description={is404 ? 'This page does not exist.' : 'An unexpected error occurred.'}
+  indexable={false}
+/>
 
 <div class="error-page" in:fade={{ duration: 400 }}>
   <div class="error-content">

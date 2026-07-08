@@ -17,7 +17,7 @@
   import { browser } from '$app/environment';
   import { fade } from 'svelte/transition';
   import { attachPhaserBridge, detachPhaserBridge } from '$lib/bridge/phaserEventAdapter.js';
-  import { markLoaded } from '$lib/stores/gameStore.js';
+  import { markLoaded, gameStore } from '$lib/stores/gameStore.js';
   import { goto } from '$app/navigation';
 
   type Props = {
@@ -30,7 +30,6 @@
   let container: HTMLDivElement;
   let game: any = null;
   let loadError: string | null = $state(null);
-  let retryNonce = $state(0);
 
   async function bootGame() {
     if (!browser) return;
@@ -74,10 +73,12 @@
       }
       game = null;
     }
+    // G2 fix: reset isLoaded so the root page shows the loading spinner
+    // when PhaserGameClient is re-mounted (e.g. navigating away and back).
+    gameStore.update((s) => ({ ...s, isLoaded: false }));
   });
 
   function retry() {
-    retryNonce++;
     void bootGame();
   }
 

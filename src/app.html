@@ -13,6 +13,22 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="apple-touch-icon" href="/icons/icon-192.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
+    <script>
+      // A3 fix: Set data-stage from localStorage before first paint to
+      // prevent flash of red-themed UI for players at other stages.
+      // Runs synchronously in <head> before body renders.
+      try {
+        var sig = localStorage.getItem('profile:v1');
+        if (sig) {
+          var parsed = JSON.parse(sig);
+          if (parsed && parsed.currentStage) {
+            document.documentElement.setAttribute('data-stage', parsed.currentStage.toLowerCase());
+          }
+        }
+      } catch (e) {
+        // localStorage unavailable (SSR, private mode) — default 'red' stays.
+      }
+    </script>
     %sveltekit.head%
   </head>
   <body class="safe-area" data-sveltekit-preload-data="hover">

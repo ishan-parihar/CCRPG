@@ -1,0 +1,15 @@
+# CCRPG robots.txt
+#
+# Static routes (settings, telemetry, recover) are indexable.
+# /play and / are blocked — they're the game canvas (JS-rendered, no
+# indexable content, and /play is player-specific).
+
+User-agent: *
+Allow: /settings
+Allow: /telemetry
+Allow: /recover
+Disallow: /play
+Disallow: /api/
+
+# Sitemap (when deployed)
+# Sitemap: https://play.ccrpg.game/sitemap.xml

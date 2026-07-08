@@ -45,7 +45,7 @@ describe('accessibilityStore', () => {
 
   it('persists to localStorage', () => {
     updateAccessibility({ highContrast: true, reducedMotion: true });
-    const raw = localStorage.getItem('ccrpg:a11y-settings');
+    const raw = localStorage.getItem('ccrpg:accessibility');
     expect(raw).not.toBeNull();
     const parsed = JSON.parse(raw!);
     expect(parsed.highContrast).toBe(true);
