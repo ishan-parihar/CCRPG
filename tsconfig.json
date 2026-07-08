@@ -1,12 +1,11 @@
 {
+  "extends": "./.svelte-kit/tsconfig.json",
   "compilerOptions": {
     "target": "ES2020",
     "useDefineForClassFields": true,
-    "module": "ESNext",
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
     "skipLibCheck": true,
 
-    "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -19,15 +18,20 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
     "noImplicitOverride": true,
-    "exactOptionalPropertyTypes": false,
-
-    "baseUrl": ".",
-    "paths": {
-      "@core/*": ["src/core/*"],
-      "@game/*": ["src/game/*"],
-      "@infra/*": ["src/infra/*"]
-    }
+    "exactOptionalPropertyTypes": false
+    // NOTE: baseUrl and paths are managed by SvelteKit via .svelte-kit/tsconfig.json
+    // (generated from svelte.config.js kit.alias). Do NOT add them here —
+    // SvelteKit warns about conflicts. Aliases (@core, @game, @infra, $core,
+    // $infra, $game, $shared, $lib) are all in svelte.config.js kit.alias.
   },
-  "include": ["src", "tests"],
-  "exclude": ["node_modules", "dist", "android"]
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.js",
+    "src/**/*.svelte",
+    "tests/**/*.ts",
+    ".svelte-kit/ambient.d.ts",
+    ".svelte-kit/non-ambient.d.ts",
+    ".svelte-kit/types/**/$types.d.ts"
+  ],
+  "exclude": ["node_modules", "dist", "android", ".svelte-kit/build"]
 }

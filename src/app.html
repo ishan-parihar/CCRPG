@@ -1,7 +1,7 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" data-stage="red">
   <head>
-    <meta charset="UTF-8" />
+    <meta charset="utf-8" />
     <meta
       name="viewport"
       content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=1.0, user-scalable=no"
@@ -11,10 +11,9 @@
     <meta name="mobile-web-app-capable" content="yes" />
     <title>CCRPG — Cognitive Combat</title>
     <link rel="stylesheet" href="/style.css" />
+    %sveltekit.head%
   </head>
-  <body class="safe-area">
-    <div id="game-root" aria-label="Cognitive RPG game canvas"></div>
-    <noscript>This game requires JavaScript to run.</noscript>
-    <script type="module" src="/src/main.ts"></script>
+  <body class="safe-area" data-sveltekit-preload-data="hover">
+    <div style="display: contents">%sveltekit.body%</div>
   </body>
 </html>
