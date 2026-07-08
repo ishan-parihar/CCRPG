@@ -1,98 +1,129 @@
 <script lang="ts">
-  // Root page — Phase 0 bridge.
-  //
-  // Mounts the existing Phaser game via startGame() so the game
-  // continues to work identically during the SvelteKit migration.
-  // No visual or functional regression from the pre-SvelteKit state.
-  //
-  // Phase 1: this route becomes the designed main menu (MainMenuScene
-  // migrates here). The Phaser game moves to /play.
-  // Phase 2: the main menu reads stage tokens and re-skins accordingly.
-  //
-  // IMPORTANT: The Phaser game + its deps (SaveRepository, etc.) use Node
-  // built-ins (fs, path, crypto) for the CLI build path. These cannot be
-  // SSR'd. We therefore (a) skip rendering on the server and (b) use a
-  // runtime-only dynamic import so SvelteKit's SSR bundler doesn't try
-  // to resolve the Phaser dependency graph.
+  /**
+   * Root page (/) — the main entry point.
+   *
+   * Audit fixes applied:
+   *   B1: Uses <PhaserGameClient /> instead of hand-rolling startGame().
+   *       Prevents dual-mount when navigating / → /play (PhaserGameClient
+   *       handles destroy in onDestroy).
+   *   F5: Removes duplicate Phaser mount logic (now lives only in
+   *       PhaserGameClient.svelte).
+   *   A1: Polished loading state with branded spinner instead of plain text.
+   *   A2: Svelte transition on the loading → game handoff.
+   *   B2: Removed the inline ssr=false (now handled by +page.ts).
+   */
 
-  import { browser } from '$app/environment';
-  import { onMount } from 'svelte';
+  import PhaserGameClient from '$lib/components/PhaserGameClient.svelte';
+  import { fade } from 'svelte/transition';
+  import { gameStore } from '$lib/stores/gameStore.js';
 
-  let container: HTMLDivElement;
-  let loadError: string | null = $state(null);
-  let isLoaded = $state(false);
-
-  onMount(async () => {
-    if (!browser) return;
-    try {
-      // Dynamic import with a computed specifier prevents SvelteKit's
-      // SSR bundler from following the import graph at build time.
-      // The Phaser bundle (~1MB) is loaded only on the client.
-      const gamePath = '$game/main.js';
-      const mod = await import(/* @vite-ignore */ gamePath);
-      await mod.startGame(container);
-      isLoaded = true;
-    } catch (err) {
-      console.error('CCRPG failed to boot:', err);
-      loadError = err instanceof Error ? err.message : String(err);
-    }
-  });
+  // Reactive: true once PhaserGameClient calls markLoaded()
+  const isLoaded = $derived($gameStore.isLoaded);
 </script>
 
 <svelte:head>
   <title>CCRPG — Cognitive Combat</title>
+  <meta
+    name="description"
+    content="A Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment."
+  />
 </svelte:head>
 
-<div
-  bind:this={container}
-  id="game-root"
-  aria-label="Cognitive RPG game canvas"
-  class="game-root"
->
-  {#if !isLoaded && !loadError}
-    <div class="boot-loading">
-      <p>Loading CCRPG…</p>
-    </div>
-  {/if}
-  {#if loadError}
-    <div class="boot-error">
-      <p>CCRPG failed to boot.</p>
-      <pre>{loadError}</pre>
+<div class="root-route">
+  <PhaserGameClient />
+
+  {#if !isLoaded}
+    <div class="boot-loading" transition:fade={{ duration: 300 }}>
+      <div class="boot-logo" aria-hidden="true">
+        <div class="boot-ring"></div>
+        <div class="boot-ring boot-ring-2"></div>
+        <div class="boot-ring boot-ring-3"></div>
+        <span class="boot-mark">C</span>
+      </div>
+      <p class="boot-text">Loading CCRPG…</p>
     </div>
   {/if}
 </div>
 
 <style>
-  .game-root {
+  .root-route {
     position: fixed;
     inset: 0;
     overflow: hidden;
-    background: #05070b;
+    background: var(--ccrpg-bg, #05070b);
   }
 
-  .boot-loading,
-  .boot-error {
-    position: absolute;
+  .boot-loading {
+    position: fixed;
     inset: 0;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    color: #e7eaf2;
-    font-family: system-ui, sans-serif;
-    text-align: center;
-    padding: 2rem;
+    gap: 1.5rem;
+    background: var(--ccrpg-bg, #05070b);
+    z-index: 10;
+    pointer-events: none;
   }
 
-  .boot-error pre {
-    margin-top: 1rem;
-    padding: 1rem;
-    background: rgba(255, 77, 109, 0.1);
-    border: 1px solid rgba(255, 77, 109, 0.3);
-    border-radius: 6px;
+  .boot-logo {
+    position: relative;
+    width: 80px;
+    height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .boot-ring {
+    position: absolute;
+    inset: 0;
+    border: 2px solid var(--ccrpg-accent, #b8252a);
+    border-radius: 50%;
+    opacity: 0.6;
+    animation: boot-pulse 2s var(--ccrpg-ease, ease) infinite;
+  }
+
+  .boot-ring-2 {
+    animation-delay: 0.4s;
+    inset: 8px;
+  }
+
+  .boot-ring-3 {
+    animation-delay: 0.8s;
+    inset: 16px;
+  }
+
+  .boot-mark {
+    font-family: var(--ccrpg-font-display, serif);
+    font-size: 2rem;
+    font-weight: bold;
+    color: var(--ccrpg-fg, #e7eaf2);
+    z-index: 1;
+  }
+
+  .boot-text {
+    font-family: var(--ccrpg-font-body, system-ui);
     font-size: 0.875rem;
-    max-width: 90vw;
-    overflow-x: auto;
-    color: #ff8c9d;
+    color: var(--ccrpg-fg-muted, #8899aa);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  @keyframes boot-pulse {
+    0% {
+      transform: scale(0.8);
+      opacity: 0.8;
+    }
+    100% {
+      transform: scale(1.1);
+      opacity: 0;
+    }
+  }
+
+  /* Respect reduced-motion */
+  :global([data-motion='reduced']) .boot-ring {
+    animation: none;
+    opacity: 0.4;
   }
 </style>

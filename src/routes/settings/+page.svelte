@@ -2,47 +2,68 @@
   /**
    * /settings route — Svelte replacement for SettingsScene.
    *
-   * Proof-of-pattern for Phase 1 scene migration. Shows that a Phaser
-   * menu scene can become a Svelte route with:
-   * - Same functionality (accessibility toggles, reset, back)
-   * - Better accessibility (semantic HTML, keyboard nav, ARIA)
-   * - Smaller bundle (no Phaser needed for this route)
-   * - Design-token ready (Phase 2 will skin via data-stage)
-   *
-   * Phase 2: wire to actual AccessibilityStore + SaveRepository
-   * (currently uses local state as a stub — full wiring is Phase 2 work).
+   * Audit fixes:
+   *   B4: Toggles now wire to accessibilityStore (real persistence).
+   *       confirmReset() now calls SaveRepository.resetProfile().
+   *   G1: Uses the Svelte-layer accessibilityStore (persists to localStorage,
+   *       same key as Phaser-layer AccessibilityStore → stays in sync).
+   *   F2: All hardcoded colors → var(--ccrpg-*) tokens.
+   *   F3: Font-family → var(--ccrpg-font-body).
+   *   F4: Uses shared <BackButton> component.
+   *   A2: Modal + sections use stage-aware transitions.
+   *   A3: Background + section headers use tokens → re-skins per stage.
    */
 
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
+  import BackButton from '$lib/components/BackButton.svelte';
+  import { accessibilityStore, updateAccessibility, resetAccessibility } from '$lib/stores/accessibilityStore.js';
+  import { stageFade, stageScale } from '$lib/transitions/stageMotion.js';
 
-  let highContrast = $state(false);
-  let telemetry = $state(true);
+  // Subscribe to the accessibility store reactively.
+  const settings = $derived($accessibilityStore);
+
   let showResetConfirm = $state(false);
-
-  // Phase 2: load actual settings from AccessibilityStore on mount.
-  // For Phase 1 proof-of-pattern, we use local state.
+  let resetError = $state<string | null>(null);
+  let isResetting = $state(false);
 
   function backToMenu() {
     goto('/');
   }
 
-  async function confirmReset() {
-    if (!browser) return;
-    // Phase 2: wire to SaveRepository.resetProfile() + resetWorldState()
-    // For now, just close the dialog and navigate to onboarding.
-    showResetConfirm = false;
-    goto('/');
+  function toggleHighContrast() {
+    updateAccessibility({ highContrast: !settings.highContrast });
   }
 
-  function toggleHighContrast() {
-    highContrast = !highContrast;
-    // Phase 2: AccessibilityManager.update({ highContrast })
+  function toggleReducedMotion() {
+    updateAccessibility({ reducedMotion: !settings.reducedMotion });
   }
 
   function toggleTelemetry() {
-    telemetry = !telemetry;
-    // Phase 2: persist to AccessibilityStore
+    updateAccessibility({ telemetryOptIn: !settings.telemetryOptIn });
+  }
+
+  async function confirmReset() {
+    if (!browser) return;
+    isResetting = true;
+    resetError = null;
+    try {
+      // Dynamic import to avoid pulling Node-deps into SSR.
+      const gamePath = '$game/main.js';
+      const mod = await import(/* @vite-ignore */ gamePath);
+      if (mod.Services?.saveRepo) {
+        await mod.Services.saveRepo.resetProfile();
+        await mod.Services.saveRepo.resetWorldState();
+      }
+      // Also reset accessibility to defaults.
+      resetAccessibility();
+      showResetConfirm = false;
+      // Navigate to root — the game will detect no Significator and route to onboarding.
+      goto('/');
+    } catch (err) {
+      resetError = err instanceof Error ? err.message : String(err);
+      isResetting = false;
+    }
   }
 </script>
 
@@ -51,15 +72,13 @@
 </svelte:head>
 
 <div class="settings-route">
-  <header class="settings-header">
-    <button class="back-btn" onclick={backToMenu} aria-label="Back to menu">
-      ← Back
-    </button>
+  <header class="settings-header" in:stageFade>
+    <BackButton onclick={backToMenu} label="Back" />
     <h1>Settings</h1>
   </header>
 
   <main class="settings-content">
-    <section class="setting-group">
+    <section class="setting-group" in:stageFade={{ delay: 60 }}>
       <h2>Accessibility</h2>
 
       <div class="setting-row">
@@ -69,18 +88,35 @@
         </div>
         <button
           class="toggle"
-          class:on={highContrast}
+          class:on={settings.highContrast}
           onclick={toggleHighContrast}
           role="switch"
-          aria-checked={highContrast}
+          aria-checked={settings.highContrast}
           aria-label="Toggle high contrast"
+        >
+          <span class="toggle-knob"></span>
+        </button>
+      </div>
+
+      <div class="setting-row">
+        <div class="setting-label">
+          <span class="setting-name">Reduced Motion</span>
+          <span class="setting-desc">Disable animations and transitions</span>
+        </div>
+        <button
+          class="toggle"
+          class:on={settings.reducedMotion}
+          onclick={toggleReducedMotion}
+          role="switch"
+          aria-checked={settings.reducedMotion}
+          aria-label="Toggle reduced motion"
         >
           <span class="toggle-knob"></span>
         </button>
       </div>
     </section>
 
-    <section class="setting-group">
+    <section class="setting-group" in:stageFade={{ delay: 120 }}>
       <h2>Privacy</h2>
 
       <div class="setting-row">
@@ -90,10 +126,10 @@
         </div>
         <button
           class="toggle"
-          class:on={telemetry}
+          class:on={settings.telemetryOptIn}
           onclick={toggleTelemetry}
           role="switch"
-          aria-checked={telemetry}
+          aria-checked={settings.telemetryOptIn}
           aria-label="Toggle telemetry"
         >
           <span class="toggle-knob"></span>
@@ -101,7 +137,7 @@
       </div>
     </section>
 
-    <section class="setting-group danger">
+    <section class="setting-group danger" in:stageFade={{ delay: 180 }}>
       <h2>Data</h2>
 
       <div class="setting-row">
@@ -122,17 +158,21 @@
       role="dialog"
       aria-modal="true"
       aria-labelledby="reset-title"
-      onclick={() => (showResetConfirm = false)}
+      transition:stageFade={{ duration: 200 }}
+      onclick={() => !isResetting && (showResetConfirm = false)}
     >
-      <div class="modal" onclick={(e) => e.stopPropagation()}>
+      <div class="modal" transition:stageScale={{ duration: 250 }} onclick={(e) => e.stopPropagation()}>
         <h2 id="reset-title">Reset all progress?</h2>
         <p>This will permanently delete your Significator, WorldState, and all encounter history.</p>
+        {#if resetError}
+          <p class="modal-error">{resetError}</p>
+        {/if}
         <div class="modal-actions">
-          <button class="modal-cancel" onclick={() => (showResetConfirm = false)}>
+          <button class="modal-cancel" onclick={() => (showResetConfirm = false)} disabled={isResetting}>
             Cancel
           </button>
-          <button class="modal-confirm" onclick={confirmReset}>
-            Yes, reset everything
+          <button class="modal-confirm" onclick={confirmReset} disabled={isResetting}>
+            {isResetting ? 'Resetting…' : 'Yes, reset everything'}
           </button>
         </div>
       </div>
@@ -143,11 +183,13 @@
 <style>
   .settings-route {
     min-height: 100vh;
-    background: #05070b;
-    color: #e7eaf2;
-    font-family: system-ui, sans-serif;
+    background: var(--ccrpg-bg, #05070b);
+    color: var(--ccrpg-fg, #e7eaf2);
+    font-family: var(--ccrpg-font-body, system-ui);
     padding: 1rem;
-    padding-top: env(safe-area-inset-top, 1rem);
+    padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+    overflow-y: auto;
+    touch-action: pan-y;
   }
 
   .settings-header {
@@ -157,25 +199,12 @@
     margin-bottom: 2rem;
   }
 
-  .back-btn {
-    background: rgba(20, 13, 34, 0.8);
-    border: 1px solid rgba(76, 201, 240, 0.4);
-    color: #e7eaf2;
-    padding: 0.5rem 0.875rem;
-    border-radius: 6px;
-    cursor: pointer;
-    font-size: 0.875rem;
-    transition: background 180ms ease;
-  }
-
-  .back-btn:hover {
-    background: rgba(40, 26, 68, 0.9);
-  }
-
   .settings-header h1 {
     font-size: 1.5rem;
     font-weight: 600;
     margin: 0;
+    font-family: var(--ccrpg-font-display, system-ui);
+    color: var(--ccrpg-fg, #e7eaf2);
   }
 
   .settings-content {
@@ -184,15 +213,21 @@
     gap: 2rem;
     max-width: 600px;
     margin: 0 auto;
+    padding-bottom: 4rem;
   }
 
   .setting-group h2 {
-    font-size: 1rem;
+    font-size: 0.75rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: #88ccff;
+    letter-spacing: 0.08em;
+    color: var(--ccrpg-accent, #b8252a);
     margin: 0 0 1rem 0;
+    font-family: var(--ccrpg-font-body, system-ui);
+  }
+
+  .setting-group.danger h2 {
+    color: #ff6b6b;
   }
 
   .setting-row {
@@ -201,9 +236,14 @@
     justify-content: space-between;
     gap: 1rem;
     padding: 1rem;
-    background: rgba(12, 19, 34, 0.6);
-    border: 1px solid rgba(26, 42, 74, 0.5);
-    border-radius: 8px;
+    background: var(--ccrpg-surface, #1a0f0f);
+    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
+    border-radius: var(--ccrpg-radius-lg, 12px);
+    transition: border-color var(--ccrpg-duration-fast, 180ms) var(--ccrpg-ease, ease);
+  }
+
+  .setting-row + .setting-row {
+    margin-top: 0.75rem;
   }
 
   .setting-label {
@@ -215,28 +255,31 @@
   .setting-name {
     font-size: 1rem;
     font-weight: 500;
+    color: var(--ccrpg-fg, #e7eaf2);
   }
 
   .setting-desc {
     font-size: 0.8125rem;
-    color: #8899aa;
+    color: var(--ccrpg-fg-muted, #a89080);
   }
 
   .toggle {
     width: 48px;
     height: 28px;
-    background: rgba(40, 50, 70, 0.8);
-    border: 1px solid rgba(76, 201, 240, 0.3);
+    background: var(--ccrpg-surface-elevated, #261818);
+    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
     border-radius: 14px;
     position: relative;
     cursor: pointer;
-    transition: background 200ms ease;
+    transition: background var(--ccrpg-duration-base, 320ms) var(--ccrpg-ease, ease),
+                border-color var(--ccrpg-duration-base, 320ms) var(--ccrpg-ease, ease);
     flex-shrink: 0;
+    padding: 0;
   }
 
   .toggle.on {
-    background: rgba(76, 201, 240, 0.4);
-    border-color: rgba(76, 201, 240, 0.8);
+    background: var(--ccrpg-accent, #b8252a);
+    border-color: var(--ccrpg-accent, #b8252a);
   }
 
   .toggle-knob {
@@ -245,29 +288,31 @@
     left: 2px;
     width: 22px;
     height: 22px;
-    background: #e7eaf2;
+    background: var(--ccrpg-fg, #e7eaf2);
     border-radius: 50%;
-    transition: transform 200ms ease;
+    transition: transform var(--ccrpg-duration-base, 320ms) var(--ccrpg-ease, ease);
   }
 
   .toggle.on .toggle-knob {
     transform: translateX(20px);
+    background: var(--ccrpg-accent-fg, #ffffff);
   }
 
   .danger-btn {
-    background: rgba(40, 10, 20, 0.8);
+    background: color-mix(in srgb, #ff4444 15%, var(--ccrpg-surface, #1a0f0f));
     border: 1px solid rgba(255, 102, 102, 0.5);
     color: #ff8888;
     padding: 0.5rem 1rem;
-    border-radius: 6px;
+    border-radius: var(--ccrpg-radius, 6px);
     cursor: pointer;
     font-size: 0.875rem;
-    transition: background 180ms ease;
+    font-family: var(--ccrpg-font-body, system-ui);
+    transition: background var(--ccrpg-duration-fast, 180ms) var(--ccrpg-ease, ease);
     flex-shrink: 0;
   }
 
   .danger-btn:hover {
-    background: rgba(60, 20, 30, 0.9);
+    background: color-mix(in srgb, #ff4444 25%, var(--ccrpg-surface, #1a0f0f));
   }
 
   .modal-overlay {
@@ -282,9 +327,9 @@
   }
 
   .modal {
-    background: #0c1322;
+    background: var(--ccrpg-surface, #0c1322);
     border: 1px solid rgba(255, 102, 102, 0.4);
-    border-radius: 12px;
+    border-radius: var(--ccrpg-radius-lg, 12px);
     padding: 1.5rem;
     max-width: 400px;
     width: 100%;
@@ -294,13 +339,20 @@
     font-size: 1.125rem;
     margin: 0 0 0.75rem 0;
     color: #ff8888;
+    font-family: var(--ccrpg-font-display, system-ui);
   }
 
   .modal p {
     font-size: 0.875rem;
-    color: #a8b3c7;
+    color: var(--ccrpg-fg-muted, #a8b3c7);
     margin: 0 0 1.5rem 0;
     line-height: 1.5;
+  }
+
+  .modal-error {
+    color: #ff8888 !important;
+    font-size: 0.8125rem !important;
+    margin-bottom: 1rem !important;
   }
 
   .modal-actions {
@@ -312,29 +364,36 @@
   .modal-cancel,
   .modal-confirm {
     padding: 0.5rem 1rem;
-    border-radius: 6px;
+    border-radius: var(--ccrpg-radius, 6px);
     cursor: pointer;
     font-size: 0.875rem;
-    transition: background 180ms ease;
+    font-family: var(--ccrpg-font-body, system-ui);
+    transition: background var(--ccrpg-duration-fast, 180ms) var(--ccrpg-ease, ease);
   }
 
   .modal-cancel {
-    background: rgba(40, 50, 70, 0.8);
-    border: 1px solid rgba(76, 201, 240, 0.3);
-    color: #e7eaf2;
+    background: var(--ccrpg-surface-elevated, #261818);
+    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
+    color: var(--ccrpg-fg, #e7eaf2);
   }
 
   .modal-cancel:hover {
-    background: rgba(60, 70, 90, 0.9);
+    background: var(--ccrpg-accent-soft, #5a1318);
   }
 
   .modal-confirm {
-    background: rgba(60, 20, 30, 0.9);
+    background: color-mix(in srgb, #ff4444 30%, var(--ccrpg-surface, #1a0f0f));
     border: 1px solid rgba(255, 102, 102, 0.6);
     color: #ff8888;
   }
 
-  .modal-confirm:hover {
-    background: rgba(80, 30, 40, 1);
+  .modal-confirm:hover:not(:disabled) {
+    background: color-mix(in srgb, #ff4444 45%, var(--ccrpg-surface, #1a0f0f));
+  }
+
+  .modal-confirm:disabled,
+  .modal-cancel:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 </style>
