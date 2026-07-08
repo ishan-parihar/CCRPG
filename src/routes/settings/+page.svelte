@@ -18,13 +18,14 @@
   import { browser } from '$app/environment';
   import BackButton from '$lib/components/BackButton.svelte';
   import { accessibilityStore, updateAccessibility, resetAccessibility } from '$lib/stores/accessibilityStore.js';
+  import { resetSavesInStorage } from '$lib/stores/saveHydration.js';
+  import { setSignificator } from '$lib/stores/gameStore.js';
   import { stageFade, stageScale } from '$lib/transitions/stageMotion.js';
 
   // Subscribe to the accessibility store reactively.
   const settings = $derived($accessibilityStore);
 
   let showResetConfirm = $state(false);
-  let resetError = $state<string | null>(null);
   let isResetting = $state(false);
 
   function backToMenu() {
@@ -43,25 +44,19 @@
     updateAccessibility({ telemetryOptIn: !settings.telemetryOptIn });
   }
 
-  async function confirmReset() {
+  function confirmReset() {
     if (!browser) return;
     isResetting = true;
-    resetError = null;
     try {
-      // Dynamic import to avoid pulling Node-deps into SSR.
-      const gamePath = '$game/main.js';
-      const mod = await import(/* @vite-ignore */ gamePath);
-      if (mod.Services?.saveRepo) {
-        await mod.Services.saveRepo.resetProfile();
-        await mod.Services.saveRepo.resetWorldState();
-      }
-      // Also reset accessibility to defaults.
+      // Lightweight reset — clears localStorage directly (no Phaser import).
+      resetSavesInStorage();
       resetAccessibility();
+      // Clear the game store so the root route routes to onboarding.
+      setSignificator(null);
       showResetConfirm = false;
-      // Navigate to root — the game will detect no Significator and route to onboarding.
       goto('/');
     } catch (err) {
-      resetError = err instanceof Error ? err.message : String(err);
+      console.error('Reset failed:', err);
       isResetting = false;
     }
   }
@@ -135,6 +130,26 @@
           <span class="toggle-knob"></span>
         </button>
       </div>
+
+      <a class="setting-row setting-link" href="/telemetry">
+        <div class="setting-label">
+          <span class="setting-name">What data is collected?</span>
+          <span class="setting-desc">View every event type and sample payload</span>
+        </div>
+        <span class="link-arrow" aria-hidden="true">→</span>
+      </a>
+    </section>
+
+    <section class="setting-group" in:stageFade={{ delay: 150 }}>
+      <h2>Account</h2>
+
+      <a class="setting-row setting-link" href="/recover">
+        <div class="setting-label">
+          <span class="setting-name">Recover Save</span>
+          <span class="setting-desc">Restore progress on a new device using your 12-word recovery phrase</span>
+        </div>
+        <span class="link-arrow" aria-hidden="true">→</span>
+      </a>
     </section>
 
     <section class="setting-group danger" in:stageFade={{ delay: 180 }}>
@@ -164,9 +179,6 @@
       <div class="modal" transition:stageScale={{ duration: 250 }} onclick={(e) => e.stopPropagation()}>
         <h2 id="reset-title">Reset all progress?</h2>
         <p>This will permanently delete your Significator, WorldState, and all encounter history.</p>
-        {#if resetError}
-          <p class="modal-error">{resetError}</p>
-        {/if}
         <div class="modal-actions">
           <button class="modal-cancel" onclick={() => (showResetConfirm = false)} disabled={isResetting}>
             Cancel
@@ -244,6 +256,22 @@
 
   .setting-row + .setting-row {
     margin-top: 0.75rem;
+  }
+
+  .setting-link {
+    text-decoration: none;
+    cursor: pointer;
+  }
+
+  .setting-link:hover {
+    border-color: var(--ccrpg-accent, #b8252a);
+    background: var(--ccrpg-surface-elevated, #261818);
+  }
+
+  .link-arrow {
+    font-size: 1.25rem;
+    color: var(--ccrpg-fg-muted, #a89080);
+    flex-shrink: 0;
   }
 
   .setting-label {
@@ -347,12 +375,6 @@
     color: var(--ccrpg-fg-muted, #a8b3c7);
     margin: 0 0 1.5rem 0;
     line-height: 1.5;
-  }
-
-  .modal-error {
-    color: #ff8888 !important;
-    font-size: 0.8125rem !important;
-    margin-bottom: 1rem !important;
   }
 
   .modal-actions {

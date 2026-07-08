@@ -15,11 +15,15 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
+      - name: Generate SvelteKit types
+        run: npx svelte-kit sync
       - name: Typecheck
         run: npx tsc --noEmit
       - name: Check Invariants
         run: npm run check:invariants
       - name: Test
         run: npx vitest run
-      - name: Build
+      - name: Build (Cloudflare target)
         run: npm run build
+        env:
+          BUILD_TARGET: cloudflare

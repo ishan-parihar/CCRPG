@@ -1,0 +1,44 @@
+# Cloudflare Workers/Pages configuration for CCRPG.
+#
+# This file declares the KV namespaces and Analytics Engine binding
+# that the BFF endpoints (/api/save, /api/recovery, /api/telemetry)
+# use via platform.env in SvelteKit +server.ts handlers.
+#
+# Deploy: npx wrangler pages deploy .svelte-kit/cloudflare --project-name ccrpg
+# Secrets: npx wrangler secret put LLM_API_KEY
+#
+# See: https://developers.cloudflare.com/workers/wrangler/configuration/
+
+name = "ccrpg"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = ".svelte-kit/cloudflare"
+
+# ─── KV Namespaces ─────────────────────────────────────────────────
+# Create before first deploy:
+#   npx wrangler kv namespace create SAVE_KV
+#   npx wrangler kv namespace create RECOVERY_KV
+# Then paste the returned IDs below.
+
+[[kv_namespaces]]
+binding = "SAVE_KV"
+id = "REPLACE_WITH_SAVE_KV_ID"
+preview_id = "REPLACE_WITH_SAVE_KV_PREVIEW_ID"
+
+[[kv_namespaces]]
+binding = "RECOVERY_KV"
+id = "REPLACE_WITH_RECOVERY_KV_ID"
+preview_id = "REPLACE_WITH_RECOVERY_KV_PREVIEW_ID"
+
+# ─── Analytics Engine (telemetry) ──────────────────────────────────
+# Create before first deploy:
+#   npx wrangler analytics-engine dataset create ccrpg_telemetry
+# The dataset name becomes the binding's dataset.
+
+[[analytics_engine_datasets]]
+binding = "ANALYTICS"
+dataset = "ccrpg_telemetry"
+
+# ─── Secrets (set via CLI, NOT in this file) ───────────────────────
+# LLM_API_KEY — the OpenAI/Anthropic API key. Set via:
+#   npx wrangler secret put LLM_API_KEY
+# Never commit secrets to wrangler.toml.

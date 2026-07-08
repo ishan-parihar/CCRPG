@@ -23,10 +23,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
       - run: npm ci
-      - name: Build
-        # npm run build runs: check:invariants + tsc --noEmit + vite build
-        # vite.config.ts sets base: '/CCRPG/' in production mode automatically
+      - name: Generate SvelteKit types
+        run: npx svelte-kit sync
+      - name: Typecheck
+        run: npx tsc --noEmit
+      - name: Test
+        run: npx vitest run
+      - name: Build (static target for GitHub Pages)
         run: npm run build
+        env:
+          BUILD_TARGET: static
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:

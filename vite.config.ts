@@ -19,7 +19,11 @@ import { fileURLToPath, URL } from 'node:url';
  * (tsup.config.ts) and doesn't go through Vite.
  */
 export default defineConfig(({ mode }) => ({
-  // SvelteKit manages base path via adapter — do not set `base` here.
+  // Base path: GitHub Pages serves at /CCRPG/, Cloudflare serves at /.
+  // The BUILD_TARGET env drives both the adapter (svelte.config.js) and
+  // the base path here. For Capacitor (static), base is './' so assets
+  // resolve from the file:// origin.
+  base: process.env.BUILD_TARGET === 'static' ? './' : '/',
   define: {
     __DEV__: JSON.stringify(mode !== 'production'),
   },
@@ -65,6 +69,12 @@ export default defineConfig(({ mode }) => ({
             short_name: 'Settings',
             description: 'Adjust accessibility and privacy',
             url: '/settings',
+          },
+          {
+            name: 'Recover Save',
+            short_name: 'Recover',
+            description: 'Restore progress on a new device',
+            url: '/recover',
           },
         ],
       },

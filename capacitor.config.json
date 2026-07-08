@@ -2,7 +2,24 @@
   "appId": "com.cognitiverpg.game",
   "appName": "CCRPG",
   "webDir": "dist",
+  "server": {
+    "androidScheme": "https",
+    "iosScheme": "https"
+  },
   "android": {
-    "allowMixedContent": false
+    "allowMixedContent": false,
+    "backgroundColor": "#05070b"
+  },
+  "ios": {
+    "backgroundColor": "#05070b",
+    "contentInset": "always",
+    "limitsNavigationsToAppBoundDomains": true
+  },
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 2000,
+      "backgroundColor": "#05070b",
+      "showSpinner": false
+    }
   }
 }

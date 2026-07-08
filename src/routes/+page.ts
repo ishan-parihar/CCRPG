@@ -1,14 +1,12 @@
 // Root page load function.
 //
-// Disables SSR for the root route because the Phaser game + its deps
-// (SaveRepository, etc.) use Node built-ins (fs, path, crypto) that
-// cannot be bundled for the browser. The game is client-only by design.
+// SSR is ALWAYS disabled for the root route because it mounts the Phaser
+// game, whose deps (SaveRepository, etc.) use Node built-ins (fs, path,
+// crypto) that cannot be bundled for the browser.
 //
-// Phase 1 will re-enable SSR for menu routes (which won't import Phaser)
-// and keep SSR disabled only for /play.
+// The +layout.ts handles the BUILD_TARGET=static case globally (disables
+// SSR for all routes); this file ensures / is client-only even when
+// BUILD_TARGET=cloudflare (where other routes CAN be SSR'd).
 
 export const ssr = false;
 export const prerender = false;
-export const load = () => {
-  return {};
-};

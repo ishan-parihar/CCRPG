@@ -21,12 +21,13 @@
   import StageTheme from '$lib/components/StageTheme.svelte';
   import { applyCapabilities, watchCapabilities } from '$lib/capabilities/CapabilityProbe.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
+  import { loadSignificatorFromStorage } from '$lib/stores/saveHydration.js';
 
   let { children } = $props();
 
   let unwatch: (() => void) | null = null;
 
-  onMount(async () => {
+  onMount(() => {
     if (!browser) return;
 
     // 1. Run capability probe immediately on boot.
@@ -34,19 +35,11 @@
     // 2. Watch for changes (orientation flip, gamepad connect, motion toggle).
     unwatch = watchCapabilities();
 
-    // 3. Hydrate gameStore from SaveRepository so non-Phaser routes have data.
-    //    Uses a runtime dynamic import to avoid pulling Node-deps into SSR.
-    try {
-      const gamePath = '$game/main.js';
-      const mod = await import(/* @vite-ignore */ gamePath);
-      if (mod.Services?.saveRepo) {
-        const sig = await mod.Services.saveRepo.loadProfile();
-        if (sig) setSignificator(sig);
-      }
-    } catch {
-      // SaveRepository not available yet (e.g. during SSR or first boot).
-      // The Phaser game will populate the store when it mounts.
-    }
+    // 3. Hydrate gameStore from localStorage (lightweight — no Phaser import).
+    //    This lets non-Phaser routes (/settings, /recover, /telemetry) access
+    //    the player's Significator without booting the game.
+    const sig = loadSignificatorFromStorage();
+    if (sig) setSignificator(sig);
   });
 
   onDestroy(() => {
