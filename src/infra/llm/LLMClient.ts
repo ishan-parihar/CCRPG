@@ -21,6 +21,12 @@ import type { Stage } from '../../core/domain/Stage.js';
 import type { AgentMessage, ToolCall } from '../../core/assessments/agentTypes.js';
 import { filterInput, filterOutput } from './VeilFilter.js';
 import { resolveConfig, isComplete, getModels, type LLMConfig } from './ProviderRegistry.js';
+import {
+  isBrowserWithBFF,
+  proxyQueryLLM,
+  proxyQueryLLMWithTools,
+  proxyEvaluateResponse,
+} from './ProxiedLLMClient.js';
 
 /** T-3.6: Log Veil violations for telemetry. */
 /** R8-BUG-3 (UX-R8): Gate VeilFilter logs behind CCRPG_DEV env var so they
@@ -158,6 +164,27 @@ export async function evaluateResponse(
   rubric: string,
   playerResponse: string,
 ): Promise<LLMEvaluation> {
+  // PHASE-0 SECURITY FIX: In the browser, route through the BFF proxy
+  // so the LLM API key never reaches the client. The CLI (Node) path
+  // below remains unchanged for direct provider calls.
+  if (isBrowserWithBFF()) {
+    const result = await proxyEvaluateResponse(prompt, rubric, playerResponse);
+    let inferredStage: Stage | undefined = undefined;
+    if (result.inferredStage) {
+      const normalized = result.inferredStage.charAt(0).toUpperCase() + result.inferredStage.slice(1).toLowerCase();
+      const stages: string[] = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'];
+      if (stages.includes(normalized)) {
+        inferredStage = normalized as Stage;
+      }
+    }
+    return {
+      score: result.score,
+      feedback: result.feedback,
+      inferredStage,
+      confidence: result.confidence,
+    };
+  }
+
   const config = getEnabledConfig();
   if (!config) return FALLBACK;
 
@@ -226,6 +253,11 @@ export async function queryLLM(
   systemPrompt: string,
   userMessage: string,
 ): Promise<string> {
+  // PHASE-0 SECURITY FIX: In the browser, route through the BFF proxy.
+  if (isBrowserWithBFF()) {
+    return proxyQueryLLM(systemPrompt, userMessage);
+  }
+
   const config = getEnabledConfig();
   if (!config) return '{"error": "LLM unavailable"}';
 
@@ -288,6 +320,15 @@ export async function queryLLMWithTools(
   messages: readonly AgentMessage[],
   tools?: readonly any[],
 ): Promise<LLMToolResponse> {
+  // PHASE-0 SECURITY FIX: In the browser, route through the BFF proxy.
+  if (isBrowserWithBFF()) {
+    const result = await proxyQueryLLMWithTools(systemPrompt, messages, tools);
+    return {
+      content: result.content,
+      toolCalls: result.toolCalls as readonly ToolCall[] | undefined,
+    };
+  }
+
   const config = getEnabledConfig();
   if (!config) return { content: '{"error": "LLM unavailable"}' };
 
