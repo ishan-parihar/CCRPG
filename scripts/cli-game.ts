@@ -3196,11 +3196,20 @@ async function runStatus(): Promise<void> {
           // (LLM-based shadow detection), shadows.entries is typically empty,
           // which the engine reads as "no blocking shadows" — but the player
           // reads as "my shadows are resolved." Make the absence visible.
-          const shadowsDetected = sig.shadows.entries.length > 0;
-          if (shadowsDetected) {
-            console.log(`    shadow clearance ${chalk.dim(bar(report.shadowClearance))} ${chalk.dim(pct(report.shadowClearance))} (critical shadows resolved)`);
-          } else {
+          //
+          // R11-Phase2 update: Now that the LLM fix (U1) is in place, shadow
+          // detection actually fires. Distinguish three states:
+          // 1. No shadows detected at all → "not yet engaged"
+          // 2. Shadows detected but none critical (severity < 0.7) → "X patterns surfaced (working through)"
+          // 3. Critical shadows blocking → original bar display
+          const totalShadows = sig.shadows.entries.length;
+          const unresolvedShadows = sig.shadows.entries.filter(e => e.resolvedAt === null).length;
+          if (totalShadows === 0) {
             console.log(`    shadow clearance ${chalk.dim('— not yet engaged —')} (detection requires more encounters)`);
+          } else if (report.shadowClearance >= 1) {
+            console.log(`    shadow clearance ${chalk.dim(bar(report.shadowClearance))} ${chalk.dim(pct(report.shadowClearance))} (${unresolvedShadows} pattern${unresolvedShadows === 1 ? '' : 's'} surfaced, none critical)`);
+          } else {
+            console.log(`    shadow clearance ${chalk.dim(bar(report.shadowClearance))} ${chalk.dim(pct(report.shadowClearance))} (critical shadows resolved)`);
           }
           // Actionable hint based on the weakest dimension
           // R11-P2: only include shadow clearance in the focus hint if shadows
