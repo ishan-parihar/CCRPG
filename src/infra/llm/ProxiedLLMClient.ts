@@ -35,6 +35,14 @@ async function fetchWithTimeout(
  * Check if the BFF is available (i.e. we're running in the browser
  * with the SvelteKit server running). In SSR or CLI contexts, returns
  * false and the caller falls back to direct LLMClient.
+ *
+ * R11-U1 (Fresh-User UX Audit): Fixed operator-precedence bug. The previous
+ * expression `A && B && C || D` evaluated as `(A && B && C) || D` due to
+ * `&&` binding tighter than `||`. In the CLI, `D` (NODE_ENV !== 'test')
+ * was true, so the function returned true — causing queryLLM to route
+ * through the non-existent BFF proxy at /api/llm/chat, which silently
+ * failed with "LLM synthesis skipped (LLM unavailable)" on every session.
+ * This was the single biggest BLOCKER in the R11 audit.
  */
 export function isBrowserWithBFF(): boolean {
   return (
@@ -42,7 +50,7 @@ export function isBrowserWithBFF(): boolean {
     typeof fetch === 'function' &&
     // Don't use the BFF in test environments (vitest sets up jsdom but
     // there's no server running). Tests mock LLMClient directly.
-    typeof process === 'undefined' || process.env?.NODE_ENV !== 'test'
+    (typeof process === 'undefined' || process.env?.NODE_ENV !== 'test')
   );
 }
 
