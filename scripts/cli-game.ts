@@ -260,7 +260,7 @@ import {
 } from '../src/infra/profiles/ProfileManager.js';
 import { computeConfidence } from '../src/core/assessments/engine.js';
 import type { TrialResult } from '../src/core/assessments/types.js';
-import { renderLayers, renderLayersCompact } from '../src/game/cli/LayerRenderer.js';
+import { renderLayers, renderLayersCompact } from '../src/cli/LayerRenderer.js';
 import { detectBleedThrough } from '../src/core/engines/ThetaDecay.js';
 import { toSnapshot } from '../src/core/domain/SignificatorSnapshot.js';
 import { computeCCI } from '../src/core/engines/CCIEngine.js';

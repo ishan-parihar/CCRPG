@@ -6,7 +6,7 @@
  *
  *   1. Generates a deviceId on first run (stored in localStorage)
  *   2. Debounces Significator mutations (500ms) and POSTs to /api/save
- *   3. On session_ended (via phaserEventAdapter), flushes immediately
+ *   3. On session_ended (via the Svelte gameplay engine), flushes immediately
  *   4. If the BFF is unreachable (BUILD_TARGET=static / offline), silently
  *      no-ops — local saves still work, recovery just isn't available
  *

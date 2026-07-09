@@ -1,19 +1,16 @@
 /**
  * gameStore — Svelte 5 runes-based store mirroring Significator + WorldState.
  *
- * Hydrated from SaveRepository on boot (client-only). Updated by
- * phaserEventAdapter when Phaser emits events.
+ * Hydrated from SaveRepository on boot (client-only). Updated by the
+ * Svelte gameplay engine when encounters complete.
  *
- * This is the single source of truth for the Svelte shell. Phaser
- * reads/writes its own state via the registry; this store is the
- * React/Svelte-side mirror that the DOM shell renders from.
+ * This is the single source of truth for the Svelte shell. The Svelte
+ * gameplay routes (src/routes/play/*) read and write this store directly;
+ * there is no parallel Phaser registry.
  */
 
 import { writable } from 'svelte/store';
 import type { Significator } from '$core/domain/Significator.js';
-
-// Phase 1: minimal store. Phase 2 will add WorldState + derived views.
-// Using Svelte's writable store (not runes) for cross-component simplicity.
 
 interface GameState {
   readonly significator: Significator | null;
@@ -24,14 +21,14 @@ interface GameState {
 
 const initialState: GameState = {
   significator: null,
-  currentStage: 'Red', // default — Phase 2 reads from sig.currentStage
+  currentStage: 'Red',
   isLoaded: false,
   lastEncounterId: null,
 };
 
 export const gameStore = writable<GameState>(initialState);
 
-/** Update the Significator (called by phaserEventAdapter on encounter_completed). */
+/** Update the Significator (called by the gameplay engine on encounter_completed). */
 export function setSignificator(sig: Significator | null): void {
   gameStore.update((s) => ({
     ...s,
@@ -41,7 +38,7 @@ export function setSignificator(sig: Significator | null): void {
   }));
 }
 
-/** Mark that the game has loaded (called by PhaserGameClient on mount). */
+/** Mark that the game has loaded. */
 export function markLoaded(): void {
   gameStore.update((s) => ({ ...s, isLoaded: true }));
 }

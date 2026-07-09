@@ -40,8 +40,7 @@
     "boxen": "^8.0.1",
     "chalk": "^5.6.2",
     "commander": "^15.0.0",
-    "ora": "^9.4.0",
-    "phaser": "^3.80.1"
+    "ora": "^9.4.0"
   },
   "devDependencies": {
     "@capacitor/cli": "^6.1.2",

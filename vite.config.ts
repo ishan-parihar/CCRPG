@@ -4,19 +4,11 @@ import { SvelteKitPWA } from '@vite-pwa/sveltekit';
 import { fileURLToPath, URL } from 'node:url';
 
 /**
- * Vite config — now SvelteKit-powered (Phase 0 migration).
+ * Vite config — SvelteKit-powered pure-Svelte frontend.
  *
- * SvelteKit IS Vite underneath, so the existing Phaser integration
- * continues to work. The Phaser game is mounted inside
- * src/routes/+page.svelte via startGame().
- *
- * The existing path aliases (@core, @game, @infra) are preserved
- * so src/game/main.ts and all existing code keep working unchanged.
- * SvelteKit also gets $core, $infra, $game, $shared aliases (see
- * svelte.config.js).
- *
- * The CLI build (tsup) is unaffected — it has its own config
- * (tsup.config.ts) and doesn't go through Vite.
+ * Phaser was purged in the greenfield rebuild. The UI is now 100% Svelte.
+ * Path aliases: @core/@infra (legacy) + $core/$infra/$shared (SvelteKit).
+ * The CLI build (tsup) is unaffected — it has its own config.
  */
 export default defineConfig(({ mode }) => ({
   // Base path: GitHub Pages serves at /CCRPG/, Cloudflare serves at /.
@@ -79,33 +71,22 @@ export default defineConfig(({ mode }) => ({
         ],
       },
       workbox: {
-        // Precache the app shell + fonts
-        globPatterns: ['**/*.{js,css,html,svg,png,woff2,ttf}'],
-        // Don't precache the Phaser bundle (too large — runtime cache instead)
-        globIgnores: ['**/phaser*', '**/game/main*'],
+        // Precache the app shell + fonts (woff2 only — TTF purged)
+        globPatterns: ['**/*.{js,css,html,svg,png,woff2}'],
         maximumFileSizeToCacheInBytes: 4 * 1024 * 1024, // 4MB
         runtimeCaching: [
           {
-            // Phaser bundle — runtime cache, stale-while-revalidate
-            urlPattern: /.*game\/main.*/,
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'ccrpg-phaser',
-              expiration: { maxEntries: 1, maxAgeSeconds: 60 * 60 * 24 * 30 },
-            },
-          },
-          {
-            // LLM BFF — network-first (don't cache responses)
+            // LLM BFF — network-only (don't cache responses)
             urlPattern: /\/api\/llm\//,
             handler: 'NetworkOnly',
           },
           {
             // Fonts — cache-first (long-lived)
-            urlPattern: /\/fonts\/.*\.ttf$/,
+            urlPattern: /\/fonts\/.*\.woff2$/,
             handler: 'CacheFirst',
             options: {
               cacheName: 'ccrpg-fonts',
-              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
             },
           },
         ],
@@ -118,10 +99,8 @@ export default defineConfig(({ mode }) => ({
   ],
   resolve: {
     alias: {
-      // Legacy @ aliases — keep for existing src/ code that imports
-      // via @core/@game/@infra. New Svelte code uses $core/$game/$infra.
+      // Legacy @ aliases — kept for src/core + src/infra + scripts/cli-game.ts
       '@core': fileURLToPath(new URL('./src/core', import.meta.url)),
-      '@game': fileURLToPath(new URL('./src/game', import.meta.url)),
       '@infra': fileURLToPath(new URL('./src/infra', import.meta.url)),
     },
   },
@@ -130,11 +109,6 @@ export default defineConfig(({ mode }) => ({
     sourcemap: false,
     minify: 'esbuild',
     chunkSizeWarningLimit: 1500,
-    // NOTE: manualChunks for phaser removed — SvelteKit's SSR build
-    // treats phaser as external (browser-only), and manualChunks
-    // conflicts with that. SvelteKit's default chunking is sufficient.
-    // If we need finer chunking for the /play route's lazy-load, we'll
-    // add it via a SvelteKit-specific build hook in a future phase.
   },
   server: {
     host: true,

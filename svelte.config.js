@@ -51,10 +51,8 @@ const config = {
     alias: {
       $core: 'src/core',
       $infra: 'src/infra',
-      $game: 'src/game',
       $shared: 'src/shared',
       '@core': 'src/core',
-      '@game': 'src/game',
       '@infra': 'src/infra',
     },
     typescript: {

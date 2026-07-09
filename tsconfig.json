@@ -21,8 +21,8 @@
     "exactOptionalPropertyTypes": false
     // NOTE: baseUrl and paths are managed by SvelteKit via .svelte-kit/tsconfig.json
     // (generated from svelte.config.js kit.alias). Do NOT add them here —
-    // SvelteKit warns about conflicts. Aliases (@core, @game, @infra, $core,
-    // $infra, $game, $shared, $lib) are all in svelte.config.js kit.alias.
+    // SvelteKit warns about conflicts. Aliases (@core, @infra, $core,
+    // $infra, $shared, $lib) are all in svelte.config.js kit.alias.
   },
   "include": [
     "src/**/*.ts",

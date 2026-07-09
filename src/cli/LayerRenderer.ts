@@ -8,9 +8,9 @@
  */
 
 import chalk from 'chalk';
-import type { Significator } from '../../core/domain/Significator.js';
-import type { Stage } from '../../core/domain/Stage.js';
-import { ALL_STAGES, stageOrdinal } from '../../core/domain/Stage.js';
+import type { Significator } from '../core/domain/Significator.js';
+import type { Stage } from '../core/domain/Stage.js';
+import { ALL_STAGES, stageOrdinal } from '../core/domain/Stage.js';
 
 const LAYER_AESTHETICS: Readonly<Record<Stage, string>> = {
   Infrared: 'cave-dark, primal',
@@ -75,7 +75,7 @@ function computeLayerStates(
   const btStages = bleedThroughStages(bleedThrough);
   const btCounts = bleedThroughCounts(bleedThrough);
 
-  return ALL_STAGES.map((stage) => {
+  return ALL_STAGES.map((stage: Stage) => {
     const idx = stageOrdinal(stage);
     let status: LayerState['status'];
 
