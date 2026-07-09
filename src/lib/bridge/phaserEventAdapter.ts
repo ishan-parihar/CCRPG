@@ -17,6 +17,7 @@
 
 import type Phaser from 'phaser';
 import { setSignificator, setLastEncounter } from '$lib/stores/gameStore.js';
+import { debouncedSync, flushSync } from '$lib/stores/cloudSyncStore.js';
 import type { EventBus } from '$core/events/EventBus.js';
 import type { Significator } from '$core/domain/Significator.js';
 
@@ -44,16 +45,21 @@ export function attachPhaserBridge(game: Phaser.Game): void {
 
   // B5 fix: actually update the store on encounter_completed.
   // The payload includes the encounter record; we extract the id for the HUD.
+  // Cloud sync: debounced POST to /api/save so /recover has data to fetch.
   unsubscribers.push(
     bus.on('encounter_completed', (payload) => {
       const record = payload.record as { encounterId?: string; id?: string };
       const id = record?.encounterId ?? record?.id ?? null;
       setLastEncounter(id);
-      // Also re-sync the Significator from the registry — encounter_completed
+      // Re-sync the Significator from the registry — encounter_completed
       // mutates the Significator, so the registry value is now stale unless
       // the game explicitly re-sets it. We pull the latest as a safety net.
       const sig = game.registry.get('Significator') as Significator | undefined;
-      if (sig) setSignificator(sig);
+      if (sig) {
+        setSignificator(sig);
+        // Cloud sync: debounced write so /recover can fetch this save later.
+        debouncedSync(sig);
+      }
     }),
   );
 
@@ -66,8 +72,10 @@ export function attachPhaserBridge(game: Phaser.Game): void {
   unsubscribers.push(
     bus.on('session_ended', (payload) => {
       console.debug('[bridge] session_ended', payload.timestamp, payload.encounterCount);
-      // Clear the last encounter when the session ends.
       setLastEncounter(null);
+      // Cloud sync: immediate flush on session end.
+      const sig = game.registry.get('Significator') as Significator | undefined;
+      if (sig) flushSync(sig);
     }),
   );
 

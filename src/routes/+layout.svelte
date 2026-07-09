@@ -22,10 +22,14 @@
   import { applyCapabilities, watchCapabilities } from '$lib/capabilities/CapabilityProbe.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
   import { loadSignificatorFromStorage } from '$lib/stores/saveHydration.js';
+  import { flushSync } from '$lib/stores/cloudSyncStore.js';
+  import { get } from 'svelte/store';
+  import { gameStore } from '$lib/stores/gameStore.js';
 
   let { children } = $props();
 
   let unwatch: (() => void) | null = null;
+  let beforeUnloadHandler: (() => void) | null = null;
 
   onMount(() => {
     if (!browser) return;
@@ -36,14 +40,22 @@
     unwatch = watchCapabilities();
 
     // 3. Hydrate gameStore from localStorage (lightweight — no Phaser import).
-    //    This lets non-Phaser routes (/settings, /recover, /telemetry) access
-    //    the player's Significator without booting the game.
     const sig = loadSignificatorFromStorage();
     if (sig) setSignificator(sig);
+
+    // 4. Flush cloud sync on beforeunload (tab close / navigate away).
+    beforeUnloadHandler = () => {
+      const state = get(gameStore);
+      if (state.significator) void flushSync(state.significator);
+    };
+    window.addEventListener('beforeunload', beforeUnloadHandler);
   });
 
   onDestroy(() => {
     if (unwatch) unwatch();
+    if (browser && beforeUnloadHandler) {
+      window.removeEventListener('beforeunload', beforeUnloadHandler);
+    }
   });
 </script>
 
