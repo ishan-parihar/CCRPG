@@ -1,22 +1,26 @@
 import Phaser from 'phaser';
 import { BootScene } from './scenes/BootScene.js';
 import { PreloaderScene } from './scenes/PreloaderScene.js';
-import { MainMenuScene } from './scenes/MainMenuScene.js';
 import { OnboardingScene } from './scenes/OnboardingScene.js';
-import { RadialChartScene } from './scenes/RadialChartScene.js';
-import { SettingsScene } from './scenes/SettingsScene.js';
-import { CodexScene } from './scenes/CodexScene.js';
 import { WorldScene } from './scenes/WorldScene.js';
 import { EncounterScene } from './scenes/EncounterScene.js';
 import { ReflectionScene } from './scenes/ReflectionScene.js';
 import { DilemmaScene } from './scenes/DilemmaScene.js';
-import { JournalScene } from './scenes/JournalScene.js';
 import { AssessmentScene } from './assessments/AssessmentScene.js';
 import { EncounterSelectionScene } from './scenes/EncounterSelectionScene.js';
+import { UIOverlayScene } from './scenes/UIOverlayScene.js';
 
-/** Logical resolution — designed for portrait mobile (9:16). */
-export const VIEWPORT = { width: 1080, height: 1920 } as const;
-
+/**
+ * Phaser scene configuration — gameplay scenes only.
+ *
+ * Menu scenes (MainMenu, RadialChart, Codex, Journal, Settings) have been
+ * migrated to Svelte routes (/ , /profile, /codex, /journal, /settings).
+ * The Phaser game boots directly into World (if save exists) or Onboarding
+ * (if no save) — the Svelte / route is the main menu hub.
+ *
+ * Scenes kept in Phaser are the gameplay surface: they need Phaser's input
+ * manager, tween engine, and timing precision.
+ */
 export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameConfig {
   return {
     type: Phaser.AUTO,
@@ -43,18 +47,17 @@ export function createPhaserConfig(parent: HTMLElement): Phaser.Types.Core.GameC
     scene: [
       BootScene,
       PreloaderScene,
-      MainMenuScene,
       OnboardingScene,
-      RadialChartScene,
-      CodexScene,
       WorldScene,
       EncounterScene,
       ReflectionScene,
       DilemmaScene,
-      JournalScene,
       AssessmentScene,
       EncounterSelectionScene,
-      SettingsScene,
+      UIOverlayScene,
     ],
   };
 }
+
+/** Logical resolution — designed for portrait mobile (9:16). */
+export const VIEWPORT = { width: 1080, height: 1920 } as const;

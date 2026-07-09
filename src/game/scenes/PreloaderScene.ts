@@ -269,7 +269,8 @@ export class PreloaderScene extends Phaser.Scene {
       this.registry.set(RegistryKeys.SaveRepo, repo);
     }
 
-    // Fade out then go to MainMenu
+    // Fade out then go to World (if save exists) or Onboarding (if not).
+    // The MainMenu now lives in the Svelte shell at / — Phaser skips it.
     const cam = this.cameras.main;
     cam.fadeOut(500, 5, 7, 11);
     cam.once('camerafadeoutcomplete', () => {
@@ -281,12 +282,13 @@ export class PreloaderScene extends Phaser.Scene {
           ([sig, world]) => {
             if (sig) this.registry.set(RegistryKeys.Significator, sig);
             if (world) this.registry.set(RegistryKeys.WorldState, world);
-            this.scene.start(SceneKeys.MainMenu);
+            // Route to World if Significator exists, else Onboarding.
+            this.scene.start(sig ? SceneKeys.World : SceneKeys.Onboarding);
           },
-          () => this.scene.start(SceneKeys.MainMenu),
+          () => this.scene.start(SceneKeys.Onboarding),
         );
       } else {
-        this.scene.start(SceneKeys.MainMenu);
+        this.scene.start(SceneKeys.Onboarding);
       }
     });
   }

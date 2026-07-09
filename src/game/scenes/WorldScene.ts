@@ -86,16 +86,16 @@ export class WorldScene extends Phaser.Scene {
       fontSize: '21px', color: '#cccccc', fontFamily: 'monospace',
     }).setDepth(100);
 
-    // Journal, Settings & Menu
+    // Journal, Settings & Menu — navigate to Svelte routes
     this.add.text(width - 60, 20, '[Journal]', {
       fontSize: '24px', color: '#88ccff', fontFamily: 'monospace',
     }).setInteractive().setDepth(100)
-      .on('pointerdown', () => fadeToScene(this, SceneKeys.Journal));
+      .on('pointerdown', () => { window.location.href = '/journal'; });
 
-    this.add.text(width - 140, 20, '⚙️', {
+    this.add.text(width - 140, 20, '[⚙]', {
       fontSize: '18px', color: '#cccccc', fontFamily: 'monospace',
     }).setInteractive().setDepth(100)
-      .on('pointerdown', () => fadeToScene(this, SceneKeys.Settings));
+      .on('pointerdown', () => { window.location.href = '/settings'; });
 
     this.add.text(width - 220, 20, '[Menu]', {
       fontSize: '24px', color: '#aaaaaa', fontFamily: 'monospace',
@@ -429,7 +429,8 @@ export class WorldScene extends Phaser.Scene {
         eventBus.emit('session_ended', { timestamp: now, encounterCount: ended.summary.encountersCompleted });
       }
     }
-    fadeToScene(this, SceneKeys.MainMenu);
+    // Navigate to Svelte main menu route
+    window.location.href = '/';
   }
 
   private drawBadlands(): void {

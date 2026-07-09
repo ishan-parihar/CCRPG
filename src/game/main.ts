@@ -126,28 +126,29 @@ export async function startGame(parent: HTMLElement): Promise<Phaser.Game> {
   }
 
   // ── Android hardware back button ─────────────────────────────────
+  // Navigates to Svelte routes (window.location) since the main menu is now
+  // a Svelte route, not a Phaser scene.
   await native.registerBackHandler(() => {
     const encounter = game.scene.getScene(SceneKeys.Encounter);
     if (encounter && game.scene.isActive(SceneKeys.Encounter)) {
+      // Stop encounter + return to world
       game.scene.stop(SceneKeys.UIOverlay);
-      game.scene.start(SceneKeys.MainMenu);
+      game.scene.start(SceneKeys.World);
       return true;
     }
     const world = game.scene.getScene(SceneKeys.World);
     if (world && game.scene.isActive(SceneKeys.World)) {
-      game.scene.start(SceneKeys.MainMenu);
+      // Exit to Svelte main menu
+      window.location.href = '/';
       return true;
     }
     const onboarding = game.scene.getScene(SceneKeys.Onboarding);
     if (onboarding && game.scene.isActive(SceneKeys.Onboarding)) {
-      game.scene.start(SceneKeys.MainMenu);
+      // Exit to Svelte main menu
+      window.location.href = '/';
       return true;
     }
-    const menu = game.scene.getScene(SceneKeys.MainMenu);
-    if (menu && game.scene.isActive(SceneKeys.MainMenu)) {
-      return false;
-    }
-    return true;
+    return false;
   });
 
   if (typeof window !== 'undefined') {
