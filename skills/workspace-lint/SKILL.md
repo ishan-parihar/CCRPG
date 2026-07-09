@@ -7,6 +7,118 @@ description: Maintain a pristine, project-specific directory structure by enforc
 
 Keep any project's directory structure pristine. The skill enforces rules declared in a root-level config file (`workspace-lint.yaml` by default). After every iteration, run the validator to detect drift before it compounds.
 
+**Design philosophy:** `.gitignore` is the source of truth for exclusions. This linter focuses on structural rules that `.gitignore` cannot express — file placement, naming conventions, orphaned files, and git hygiene.
+
+## Two components work together
+
+1. **Config** (`workspace-lint.yaml`) — declared in the project root. Defines the canonical structure, allowed files per directory, and forbidden patterns. Project-specific.
+2. **Validator** (`scripts/workspace_lint.py`) — bundled with this skill. Audits the project against the config. Reports violations. Optionally fixes them with `--fix`.
+
+Both must exist for the skill to function. The config is per-project; the validator is shared.
+
+## Setup: Author the Config
+
+Place `workspace-lint.yaml` in the project root. The minimum viable config:
+
+```yaml
+project:
+  name: "MyProject"
+  type: "game-typescript"
+
+structure:
+  canonical:
+    - path: "src"
+      purpose: "All source code"
+    - path: "tests"
+      purpose: "All test files"
+    - path: "docs"
+      purpose: "Documentation and reports"
+
+rules:
+  root:
+    forbidden_files:
+      - "*.py"
+      - "*.log"
+    allowed_root_files:
+      - "README.md"
+      - "AGENTS.md"
+      - ".gitignore"
+      - "workspace-lint.yaml"
+
+  files:
+    "*.py":
+      preferred_dir: "src"
+    "*.md":
+      preferred_dir: "docs"
+
+  directories:
+    forbidden_patterns:
+      - "^\\s"     # Leading whitespace
+      - "\\s$"     # Trailing whitespace
+```
+
+## Run the Validator
+
+```bash
+# Default: lint the current directory
+python3 scripts/workspace_lint.py --root .
+
+# Lint with a non-default config
+python3 scripts/workspace_lint.py --config my-lint.yaml
+
+# Auto-fix safe violations (git rm --cached for tracked-but-ignored files)
+python3 scripts/workspace_lint.py --fix
+
+# Show only summary
+python3 scripts/workspace_lint.py --summary
+
+# Output as JSON (for programmatic use)
+python3 scripts/workspace_lint.py --json
+```
+
+Exit codes:
+- `0` — no violations
+- `1` — violations found
+- `2` — config missing or invalid
+
+## What the Validator Checks
+
+| Check | Severity | Description |
+|---|---|---|
+| `root.forbidden_files` | error | File at root matches a forbidden pattern |
+| `root.orphaned` | info | File at root not in allowed list — likely misplaced |
+| `dir.whitespace` | error | Directory has leading/trailing whitespace |
+| `dir.duplicate` | warn | Possible duplicate directory (normalized name collision) |
+| `structure.missing_canonical` | error | A canonical directory from config doesn't exist |
+| `structure.empty_canonical` | warn | Canonical directory is empty |
+| `files.preferred_dir` | warn | File not in its preferred directory |
+| `files.max_size` | warn | File exceeds configured max size |
+| `git.tracked_but_ignored` | error | File is tracked but matches .gitignore — should be `git rm --cached` |
+
+## Interpret Output
+
+```
+<rule>: <message> [<severity>]
+```
+
+| Severity | Meaning |
+|---|---|
+| `error` | Hard violation — must fix before commit |
+| `warn` | Soft violation — should fix but not blocking |
+| `info` | Hint — could improve but not required |
+
+## Bundled Resources
+
+| Resource | Purpose |
+|---|---|
+| `scripts/workspace_lint.py` | The validator. Audit + optional fix. |
+
+# Workspace Lint
+
+Keep any project's directory structure pristine. The skill enforces rules declared in a root-level config file (`workspace-lint.yaml` by default). After every iteration, run the validator to detect drift before it compounds.
+
+**Design philosophy:** `.gitignore` is the source of truth for exclusions. This linter focuses on structural rules that `.gitignore` cannot express — file placement, naming conventions, orphaned files, and git hygiene.
+
 ## When to use
 
 - **Before creating any file**: Check the config to know where it belongs.
@@ -25,12 +137,12 @@ Both must exist for the skill to function. The config is per-project; the valida
 
 ## 1. Setup: Author the Config
 
-Place `workspace-lint.yaml` in the project root. Use the schema in `references/config-schema.md` as a reference. The minimum viable config:
+Place `workspace-lint.yaml` in the project root. The minimum viable config:
 
 ```yaml
 project:
   name: "MyProject"
-  type: "quant-research"     # Free-form tag for grouping rules
+  type: "game-typescript"
 
 structure:
   canonical:
@@ -44,110 +156,95 @@ structure:
 rules:
   root:
     forbidden_files:
-      - "*.py"              # No Python at root
-      - "*.js"
-      - "*.md"              # Exception: README.md, AGENTS.md, CHANGELOG.md
+      - "*.py"
       - "*.log"
     allowed_root_files:
       - "README.md"
       - "AGENTS.md"
-      - "CHANGELOG.md"
       - ".gitignore"
       - "workspace-lint.yaml"
 
   files:
     "*.py":
       preferred_dir: "src"
-      max_size_kb: 100
     "*.md":
       preferred_dir: "docs"
 
   directories:
     forbidden_patterns:
-      - "^\\s"             # Leading whitespace
-      - "\\s$"             # Trailing whitespace
-      - "__pycache__"      # Build artifacts
-      - "node_modules"
+      - "^\\s"     # Leading whitespace
+      - "\\s$"     # Trailing whitespace
 ```
-
-For fuller examples see `references/examples.md` (covers a single-purpose repo, a multi-package monorepo, and a research project).
 
 ## 2. Run the Validator
 
 ```bash
-# Default: lint the current directory using ./workspace-lint.yaml
-python3 scripts/workspace_lint.py
+# Default: lint the current directory
+python3 scripts/workspace_lint.py --root .
 
-# Lint a specific directory
-python3 scripts/workspace_lint.py --root /path/to/project
-
-# Lint with a non-default config name
+# Lint with a non-default config
 python3 scripts/workspace_lint.py --config my-lint.yaml
 
-# Auto-fix safe violations (moves misplaced files, removes __pycache__)
+# Auto-fix safe violations (git rm --cached for tracked-but-ignored files)
 python3 scripts/workspace_lint.py --fix
 
-# Show only summary (no per-file report)
+# Show only summary
 python3 scripts/workspace_lint.py --summary
+
+# Output as JSON (for programmatic use)
+python3 scripts/workspace_lint.py --json
 ```
 
 Exit codes:
 - `0` — no violations
-- `1` — violations found (informational; CI may treat as failure)
+- `1` — violations found
 - `2` — config missing or invalid
 
-## 3. Interpret Validator Output
+## 3. What the Validator Checks
 
-The validator emits one line per violation in this format:
-
-```
-<path>:<line>:<rule>: <message> [<severity>]
-```
-
-| Severity | Meaning | Should auto-fix? |
+| Check | Severity | Description |
 |---|---|---|
-| `error` | Hard violation: file in wrong location, config-required path missing | Yes (move) |
-| `warn` | Soft violation: large file, naming inconsistency, deviated from preferred dir | No |
-| `info` | Hint: could improve but not required | No |
+| `root.forbidden_files` | error | File at root matches a forbidden pattern |
+| `root.orphaned` | info | File at root not in allowed list — likely misplaced |
+| `dir.whitespace` | error | Directory has leading/trailing whitespace |
+| `dir.duplicate` | warn | Possible duplicate directory (normalized name collision) |
+| `structure.missing_canonical` | error | A canonical directory from config doesn't exist |
+| `structure.empty_canonical` | warn | Canonical directory is empty |
+| `files.preferred_dir` | warn | File not in its preferred directory |
+| `files.max_size` | warn | File exceeds configured max size |
+| `git.tracked_but_ignored` | error | File is tracked but matches .gitignore — should be `git rm --cached` |
 
-## 4. Apply the Skill to Your Workflow
+## 4. Interpret Output
 
-When you are about to write a file (after analysis, after running a tool, after generating a report):
+```
+<rule>: <message> [<severity>]
+```
 
-1. **Read the config first.** Locate `workspace-lint.yaml` in the project root. If it doesn't exist, ask the user whether to scaffold one (use the examples in `references/examples.md`).
-2. **Match the file to a rule.** Most projects have rules like `*.py → src/` or `*.md → docs/reports/`. Place the file accordingly.
-3. **If no rule matches:** Place the file in the closest canonical subdirectory, or ask the user. Don't dump files at the root.
-4. **After writing the file**, run the validator:
-   ```bash
-   python3 scripts/workspace_lint.py --root .
-   ```
-   If violations appear, fix them before declaring the iteration done.
-5. **Commit the config alongside the project.** The config is the single source of truth for structure. Any change to layout should update the config in the same commit.
+| Severity | Meaning |
+|---|---|
+| `error` | Hard violation — must fix before commit |
+| `warn` | Soft violation — should fix but not blocking |
+| `info` | Hint — could improve but not required |
 
-## 5. Authoring Style
+## 5. Apply to Your Workflow
 
-Author `workspace-lint.yaml` deliberately:
+When you are about to write a file:
 
-- **Whitelist root files**, don't only blacklist. Whitelisting is safer.
-- **Use glob patterns over per-file entries.** `*.py` covers all Python files.
-- **Avoid deeply nested `preferred_dir`s.** Three levels deep is the readable ceiling.
-- **Make the config human-readable.** Think of it as a manifest, not a database.
-- **Group rules by function.** Keep `structure` (what exists) separate from `rules` (what's allowed).
+1. **Read the config first.** Check `workspace-lint.yaml` for placement rules.
+2. **Match the file to a rule.** Most projects have rules like `*.py → src/` or `*.md → docs/`.
+3. **If no rule matches:** Place the file in the closest canonical subdirectory.
+4. **After writing**, run the validator. Fix violations before declaring done.
+5. **Commit the config alongside the project.** Layout changes → config update in same commit.
 
 ## 6. Common Pitfalls
 
-- **Config drift.** When you reorganize directories, update `workspace-lint.yaml` in the same commit. Out-of-date configs produce false positives.
-- **Whitelist `.gitignore`.** Forgetting it means the validator flags the config itself.
-- **Empty directories.** The validator warns on empty canonical directories. Either commit a `.gitkeep` or remove the rule entry.
-- **Mass moves via `--fix`.** Always review the diff before applying. Auto-fix only moves "obviously misplaced" files; ambiguity triggers a warn, not a fix.
-- **Cross-platform paths.** Use forward slashes (`Scripts/Python/`) everywhere; Windows backslashes are not portable.
+- **Config drift.** When you reorganize directories, update `workspace-lint.yaml` in the same commit.
+- **Tracked-but-ignored files.** Run with `--fix` to untrack them, or `git rm --cached` manually.
+- **Empty directories.** Add a `.gitkeep` or remove the directory from config.
+- **Cross-platform paths.** Use forward slashes everywhere.
 
 ## 7. Bundled Resources
 
 | Resource | Purpose |
 |---|---|
 | `scripts/workspace_lint.py` | The validator. Audit + optional fix. |
-| `references/config-schema.md` | Full YAML schema with all supported keys. |
-| `references/examples.md` | Three worked configs (single-purpose, monorepo, research). |
-| `assets/template-config.yaml` | Drop-in starter config. Copy to project root and edit. |
-| `evals/evals.json` | Reference test cases for the skill. |
