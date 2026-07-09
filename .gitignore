@@ -25,12 +25,12 @@ npm-debug.log*
 # Tests
 coverage/
 
-# Session state
+# Tool & session state (transient)
 .contexty/
 .memsearch/
-
-# Tool session state
 .hive/
-
-# Tool state
+.opencode/
+.playwright-mcp/
+.sisyphus/
 .cortexkit/
+.wrangler/
