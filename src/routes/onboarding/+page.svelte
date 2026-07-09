@@ -2,17 +2,14 @@
   /**
    * /onboarding — the entry point for new players.
    *
-   * Replaces Phaser's OnboardingScene + CompositeOnboarding.
-   *
+   * Parity with CLI runQuickCalibration + createDefaultSignificator.
    * Flow:
    *   1. Welcome screen — explains the game
-   *   2. Quick calibration — a single reflective question per line
-   *   3. Create Significator at the detected stage
+   *   2. Quick calibration — 8-line probe (MCQ for 6 lines + hold probe for Somatic/Willpower)
+   *   3. Create Significator with calibrated altitudes
    *   4. Redirect to /play
    *
-   * For now, we use a simplified flow: ask the player what draws them,
-   * create a Significator at Red stage (the default first vertical slice),
-   * and let the encounter system refine from there.
+   * ponytail: consumes shared CALIBRATION_PROMPTS + CHOICE_THRESHOLDS + HOLD_TARGETS.
    */
 
   import { onMount } from 'svelte';
@@ -25,75 +22,118 @@
   import Stack from '$lib/components/Stack.svelte';
   import Cluster from '$lib/components/Cluster.svelte';
   import Spinner from '$lib/components/Spinner.svelte';
+  import Badge from '$lib/components/Badge.svelte';
+  import HoldProbe from '$lib/components/gameplay/HoldProbe.svelte';
   import { stageFade, stageFly } from '$lib/transitions/stageMotion.js';
   import { createSignificator } from '$core/domain/Significator.js';
   import type { Line, Stage } from '$core/domain/Stage.js';
   import { ALL_LINES } from '$core/domain/Line.js';
+  import { thresholdToStage } from '$core/usecases/ThresholdMaps.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
   import { showToast } from '$lib/stores/toastStore.js';
+  import { CALIBRATION_PROMPTS, CHOICE_THRESHOLDS, HOLD_TARGETS } from '$core/data/calibrationPrompts.js';
+  import { describeStage } from '$core/presentation/veilDescriptors.js';
 
-  type Phase = 'welcome' | 'intent' | 'creating' | 'done';
+  type Phase = 'welcome' | 'calibrating' | 'creating' | 'done';
   let phase: Phase = $state('welcome');
-  let intent: string = $state('');
-  let selectedDraw: string | null = $state(null);
 
-  const draws = [
-    { id: 'growth', label: 'To grow', desc: 'I want to develop across all dimensions' },
-    { id: 'healing', label: 'To heal', desc: 'I want to work through what blocks me' },
-    { id: 'curiosity', label: 'To explore', desc: 'I want to see what this is' },
-    { id: 'mastery', label: 'To master', desc: 'I want to test myself' },
-  ];
+  // Calibration state
+  const lines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
+  // Fisher-Yates shuffle (parity with CLI)
+  let calibrationOrder: Line[] = $state([]);
+  let currentLineIdx = $state(0);
+  let altitudes: Partial<Record<Line, Stage>> = {};
+  let selectedChoice = $state<number | null>(null);
+
+  const currentLine = $derived(calibrationOrder[currentLineIdx]);
+  const currentPrompt = $derived(currentLine ? CALIBRATION_PROMPTS[currentLine] : null);
+  const isHoldProbe = $derived(currentLine === 'Somatic' || currentLine === 'Willpower');
 
   onMount(() => {
     if (!browser) return;
-    // If a save already exists, skip onboarding
     const raw = localStorage.getItem('profile:v1');
     if (raw) {
       goto('/play');
+      return;
+    }
+    // Shuffle lines for calibration
+    calibrationOrder = [...lines];
+    for (let i = calibrationOrder.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [calibrationOrder[i]!, calibrationOrder[j]!] = [calibrationOrder[j]!, calibrationOrder[i]!];
     }
   });
 
-  function selectDraw(id: string) {
-    selectedDraw = id;
+  function beginCalibration() {
+    phase = 'calibrating';
+    currentLineIdx = 0;
   }
 
-  async function beginOnboarding() {
-    phase = 'intent';
+  function selectChoice(idx: number) {
+    selectedChoice = idx;
   }
 
-  async function completeOnboarding() {
+  function submitChoice() {
+    if (!currentLine || selectedChoice === null) return;
+    const thresholds = CHOICE_THRESHOLDS[currentLine];
+    if (!thresholds) return;
+    const threshold = thresholds[Math.min(selectedChoice, 2)]!;
+    const stage = thresholdToStage(currentLine, threshold);
+    altitudes[currentLine] = stage;
+    nextLine();
+  }
+
+  function onHoldComplete(accuracy: number) {
+    if (!currentLine) return;
+    // Somatic: inverted (lower RT = higher stage, range 200-900)
+    // Willpower: standard (higher = better, range 1-12)
+    const threshold = currentLine === 'Somatic'
+      ? 900 - accuracy * 700
+      : 1 + accuracy * 11;
+    const stage = thresholdToStage(currentLine, threshold);
+    altitudes[currentLine] = stage;
+    nextLine();
+  }
+
+  function nextLine() {
+    selectedChoice = null;
+    if (currentLineIdx < calibrationOrder.length - 1) {
+      currentLineIdx++;
+    } else {
+      completeCalibration();
+    }
+  }
+
+  async function completeCalibration() {
     phase = 'creating';
 
-    // Create a fresh Significator at Red stage with all lines at Infrared
-    const id = `sig-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
-    const altitudes: Record<Line, Stage> = {
-      Cognitive: 'Infrared',
-      Emotional: 'Infrared',
-      Moral: 'Infrared',
-      Intrapersonal: 'Infrared',
-      Spiritual: 'Infrared',
-      Somatic: 'Infrared',
-      Willpower: 'Infrared',
-      Interpersonal: 'Infrared',
-    };
-    const sig = createSignificator(id, altitudes, 'Red');
+    // Fill any missing altitudes with Red (fallback)
+    for (const line of ALL_LINES) {
+      if (!altitudes[line]) altitudes[line] = 'Red';
+    }
 
-    // Persist to localStorage
+    // Synthesize the current stage from the highest altitude
+    const stageOrder = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'] as const;
+    const currentStage = (Object.values(altitudes) as Stage[]).reduce<Stage>((max, s) =>
+      stageOrder.indexOf(s) > stageOrder.indexOf(max) ? s : max
+    , 'Red');
+
+    const id = `sig-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const sig = createSignificator(id, altitudes as Record<Line, Stage>, currentStage);
+
     try {
       localStorage.setItem('profile:v1', JSON.stringify(sig));
     } catch (err) {
       console.error('[onboarding] failed to persist Significator:', err);
       showToast('Failed to save progress', 'danger');
-      phase = 'intent';
+      phase = 'calibrating';
       return;
     }
 
-    // Update the game store
     setSignificator(sig);
-    showToast('Your journey begins', 'success', 3000);
-
+    showToast('Calibration complete — your journey begins', 'success', 3000);
     phase = 'done';
-    setTimeout(() => goto('/play'), 1000);
+    setTimeout(() => goto('/play'), 1200);
   }
 </script>
 
@@ -115,57 +155,55 @@
             more clearly and grow across eight dimensions of intelligence. The game
             learns from how you engage, and the world shifts to meet you.
           </p>
-          <Button variant="primary" size="lg" onclick={beginOnboarding}>
-            Begin
+          <p class="welcome-sub">
+            First, a brief calibration: 8 short questions to set your starting altitudes.
+            There are no wrong answers.
+          </p>
+          <Button variant="primary" size="lg" onclick={beginCalibration}>
+            Begin Calibration
           </Button>
         </Stack>
       </div>
-    {:else if phase === 'intent'}
-      <div in:stageFly={{ y: 20, duration: 400 }}>
+    {:else if phase === 'calibrating' && currentPrompt}
+      <div in:stageFade={{ duration: 400 }}>
         <Stack gap="space-5">
-          <h2 class="intent-title">What draws you here?</h2>
-          <p class="intent-text">Choose what resonates. There is no wrong answer.</p>
+          <Cluster gap="space-2" justify="between" wrap={false}>
+            <h2 class="calibration-title">{currentLine}</h2>
+            <Badge variant="default">{currentLineIdx + 1} / {calibrationOrder.length}</Badge>
+          </Cluster>
 
-          <Stack gap="space-3" class="draws-list">
-            {#each draws as draw, i (draw.id)}
-              <Card
-                variant="default"
-                padding="space-5"
-                interactive
-                onclick={() => selectDraw(draw.id)}
-                class="draw-card"
-                style="animation-delay: {i * 80}ms"
-              >
-                <div class="draw-inner" class:selected={selectedDraw === draw.id}>
-                  <div class="draw-info">
-                    <div class="draw-label">{draw.label}</div>
-                    <div class="draw-desc">{draw.desc}</div>
-                  </div>
-                  <div class="draw-marker" aria-hidden="true">
-                    {#if selectedDraw === draw.id}●{:else}○{/if}
-                  </div>
-                </div>
-              </Card>
-            {/each}
-          </Stack>
-
-          {#if selectedDraw}
-            <div in:stageFade={{ duration: 300 }}>
-              <Stack gap="space-3">
-                <Input
-                  type="textarea"
-                  value={intent}
-                  oninput={(v) => intent = v}
-                  placeholder="Say more, if you wish (optional)..."
-                  maxlength={500}
-                  ariaLabel="Optional reflection on what draws you"
-                />
-                <Cluster gap="space-3" justify="between">
-                  <Button variant="ghost" onclick={() => selectedDraw = null}>Back</Button>
-                  <Button variant="primary" onclick={completeOnboarding}>Enter the world</Button>
-                </Cluster>
+          {#if isHoldProbe}
+            <HoldProbe
+              line={currentLine as 'Somatic' | 'Willpower'}
+              targetMs={HOLD_TARGETS[currentLine as 'Somatic' | 'Willpower']!}
+              oncomplete={onHoldComplete}
+            />
+          {:else}
+            <Card variant="elevated" padding="space-6">
+              <Stack gap="space-4">
+                <p class="prompt-text">{currentPrompt.prompt}</p>
+                <Stack gap="space-2">
+                  {#each currentPrompt.options as option, i (option)}
+                    <button
+                      class="option"
+                      class:selected={selectedChoice === i}
+                      onclick={() => selectChoice(i)}
+                      aria-pressed={selectedChoice === i}
+                    >
+                      <span class="option-marker" aria-hidden="true">
+                        {#if selectedChoice === i}●{:else}○{/if}
+                      </span>
+                      <span class="option-label">{option}</span>
+                    </button>
+                  {/each}
+                </Stack>
               </Stack>
-            </div>
+            </Card>
+            <Cluster gap="space-3" justify="end">
+              <Button variant="primary" onclick={submitChoice} disabled={selectedChoice === null}>
+                {currentLineIdx < calibrationOrder.length - 1 ? 'Next' : 'Complete Calibration'}
+              </Button>
+            </Cluster>
           {/if}
         </Stack>
       </div>
@@ -233,67 +271,72 @@
     color: var(--ccrpg-fg-muted);
     text-align: center;
     max-width: 32rem;
+    margin: 0;
   }
 
-  .intent-title {
+  .welcome-sub {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
+    text-align: center;
+    font-style: italic;
+    margin: 0;
+  }
+
+  .calibration-title {
     font-family: var(--ccrpg-font-display);
     font-size: var(--ccrpg-text-xl);
     font-weight: 700;
-    color: var(--ccrpg-fg);
-    margin: 0;
-    text-align: center;
-  }
-
-  .intent-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    text-align: center;
-    margin: 0;
-  }
-
-  .draw-card {
-    animation: draw-enter var(--ccrpg-duration-base) var(--ccrpg-ease-out) backwards;
-  }
-
-  @keyframes draw-enter {
-    from { opacity: 0; transform: translateY(12px); }
-    to { opacity: 1; transform: translateY(0); }
-  }
-
-  .draw-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--ccrpg-space-3);
-  }
-
-  .draw-inner.selected .draw-label {
     color: var(--ccrpg-accent);
+    margin: 0;
+    letter-spacing: var(--ccrpg-tracking-wide);
   }
 
-  .draw-info {
-    flex: 1;
-  }
-
-  .draw-label {
-    font-family: var(--ccrpg-font-display);
+  .prompt-text {
+    font-family: var(--ccrpg-font-body);
     font-size: var(--ccrpg-text-md);
-    font-weight: 600;
+    line-height: var(--ccrpg-leading-relaxed);
     color: var(--ccrpg-fg);
+    margin: 0;
   }
 
-  .draw-desc {
+  .option {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--ccrpg-space-3);
+    width: 100%;
+    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
+    background: var(--ccrpg-surface);
+    border: 1px solid var(--ccrpg-border);
+    border-radius: var(--ccrpg-radius);
+    cursor: pointer;
+    text-align: left;
+    color: var(--ccrpg-fg);
     font-family: var(--ccrpg-font-body);
     font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    margin-top: var(--ccrpg-space-1);
+    -webkit-tap-highlight-color: transparent;
+    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease),
+                border-color var(--ccrpg-duration-fast) var(--ccrpg-ease);
   }
 
-  .draw-marker {
-    font-size: var(--ccrpg-text-lg);
-    color: var(--ccrpg-accent);
+  .option:hover {
+    background: var(--ccrpg-surface-elevated);
+    border-color: var(--ccrpg-accent);
+  }
+
+  .option.selected {
+    background: var(--ccrpg-accent-soft);
+    border-color: var(--ccrpg-accent);
+    color: var(--ccrpg-accent-fg);
+  }
+
+  .option-marker {
     flex-shrink: 0;
+    color: var(--ccrpg-accent);
+  }
+
+  .option.selected .option-marker {
+    color: var(--ccrpg-accent-fg);
   }
 
   .creating-text {
