@@ -104,11 +104,18 @@ export default defineConfig(({ mode }) => ({
       '@infra': fileURLToPath(new URL('./src/infra', import.meta.url)),
     },
   },
+  // Node-only modules used by src/infra/tdg/ (TDGClient imports child_process, fs, path).
+  // These are dynamically imported at runtime (TDGBridge uses `await import('./TDGClient.js')`
+  // only when TDG-Rust is detected, which never happens in the browser). Mark them as
+  // external so Vite doesn't try to bundle them for the browser build.
   build: {
     target: 'es2020',
     sourcemap: false,
     minify: 'esbuild',
     chunkSizeWarningLimit: 1500,
+    rollupOptions: {
+      external: ['child_process', 'fs', 'path', 'os', 'crypto'],
+    },
   },
   server: {
     host: true,

@@ -50,18 +50,18 @@
   <a
     class="btn btn-{variant} btn-{size} {className}"
     {href}
-    {aria-label}
+    aria-label={ariaLabel}
     onclick={handleClick}
   >
     {#if loading}<span class="btn-spinner" aria-hidden="true"></span>{/if}
-    <span class="btn-content" class:loading><slot />{@render children()}</span>
+    <span class="btn-content" class:loading>{@render children()}</span>
   </a>
 {:else}
   <button
     class="btn btn-{variant} btn-{size} {className}"
     {type}
     {disabled}
-    {aria-label}
+    aria-label={ariaLabel}
     onclick={handleClick}
   >
     {#if loading}<span class="btn-spinner" aria-hidden="true"></span>{/if}
