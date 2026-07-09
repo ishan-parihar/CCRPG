@@ -24,7 +24,7 @@ import chalk from 'chalk';
 import { select, text as clackText } from '@clack/prompts';
 import ora from 'ora';
 import boxen from 'boxen';
-import { Command } from 'commander';
+import { Command, Option } from 'commander';
 
 const VERSION = '0.1.0';
 
@@ -58,8 +58,14 @@ const program = new Command()
   // They behave nothing alike but have overlapping names. Keeping the original
   // name for backwards compat, but adding --inject-shadow-keyword as a clearer
   // alias and updating the help description.
-  .option('--force-shadow <quadrant>', 'Inject shadow-keyword text into the response pool for testing shadow detection (alias: --inject-shadow-keyword). Does NOT trigger shadow encounter format — use --modality shadow for that.')
-  .option('--inject-shadow-keyword <quadrant>', 'Alias for --force-shadow (testing only)')
+  //
+  // R11-Y5 (Fresh-User UX Audit): Both flags are testing-only and confusing.
+  // Mark them hidden so they don't appear in default --help output. The
+  // printHelp() banner still mentions them in the FORCED ENCOUNTERS section
+  // for discoverability by developers; that section is also being trimmed
+  // (see printHelp edit below).
+  .addOption(new Option('--force-shadow <quadrant>', 'Inject shadow-keyword text into the response pool for testing shadow detection (alias: --inject-shadow-keyword). Does NOT trigger shadow encounter format — use --modality shadow for that.').hideHelp())
+  .addOption(new Option('--inject-shadow-keyword <quadrant>', 'Alias for --force-shadow (testing only)').hideHelp())
   .option('--skip-calibration', 'Skip calibration, default all lines to Red')
   // R5-CRITICAL (UX-R5): Headless input mechanism. Without this, the LLM
   // hallucinates user answers in --headless mode (the game's core promise
@@ -96,7 +102,8 @@ program
 // requiring users to read the docs.
 program
   .command('glossary')
-  .description('Show definitions for CCRPG terminology');
+  .description('Show definitions for CCRPG terminology (5 essentials by default; --full for all 23)')
+  .option('--full', 'Show all 23 terms (advanced theoretical set)');
 // Profiling system: multi-user support
 program
   .command('profile [action] [name]')
@@ -243,7 +250,7 @@ import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '.
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
-import { GLOSSARY_TERMS } from '../src/core/data/glossary.js';
+import { GLOSSARY_TERMS, PLAYER_GLOSSARY_TERMS, ADVANCED_GLOSSARY_TERMS } from '../src/core/data/glossary.js';
 import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js';
 import type { Modality } from '../src/core/domain/enums.js';
 import { ALL_MODALITIES } from '../src/core/domain/enums.js';
@@ -596,7 +603,12 @@ function inferAltitudesFromAnswers(): Record<Line, Stage> {
   }
 
   if (!JSON_MODE && detectedStage !== 'Red') {
-    info('onboarding', `Answers suggest ${detectedStage} stage — starting there (not Red). Encounters will refine this.`);
+    // R11-P1 (Fresh-User UX Audit): reframe message to be honest about what
+    // was actually measured. The detected stage is inferred from writing
+    // style (vocabulary density + stage markers), not from a deliberative
+    // onboarding interview. The previous phrasing ("Answers suggest X stage")
+    // implied an assessment the player did not consciously participate in.
+    info('onboarding', `Starting altitude: ${detectedStage} (inferred from your writing style). Encounters will refine this.`);
   }
 
   return altitudes;
@@ -1683,7 +1695,22 @@ async function runDirectQuestioningSession(
           encounter.id, encounter.modality, Date.now() % 1000,
         );
         const briefNarrative = truncateNarrative(rawNarrative, 1000);
-        console.log(`\n  ${chalk.dim('\u2726')} ${briefNarrative}`);
+        // R11-P5 (Fresh-User UX Audit): The ✦ glyph precedes the narrative
+        // and looks like the game is about to say something. When the
+        // narrative is just the player's own write-in answer echoed back
+        // (the DQ self-reflection path sets narrativeSummary = writeInValue),
+        // the ✦ becomes a cruel punctuation mark — it promises a response
+        // and delivers only your own words. Detect the echo case and show
+        // an honest "recorded your response" indicator instead. The ✦ +
+        // genuine LLM narrative path is preserved for when U1 ships.
+        const userWriteIn = result.response?.writeInValue?.trim() ?? '';
+        const isEcho = userWriteIn.length > 0
+          && briefNarrative.trim().toLowerCase() === userWriteIn.toLowerCase();
+        if (isEcho) {
+          console.log(`\n  ${chalk.dim('· recorded your response ·')}`);
+        } else {
+          console.log(`\n  ${chalk.dim('\u2726')} ${briefNarrative}`);
+        }
 
         // T-3.4 (Veil compliance): replace "The encounter stirred: ↑ Communion drive, Homeostatic"
         // with a qualitative felt-sense description that doesn't leak drive names.
@@ -2383,7 +2410,16 @@ async function runFullSession(): Promise<void> {
           selectedEncounter.id, selectedEncounter.modality, Date.now() % 1000,
         );
         const briefNarrative = truncateNarrative(rawNarrative, 1000);
-        console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
+        // R11-P5 (Fresh-User UX Audit): Same echo-detection as DQ path (line ~1700).
+        // Suppress ✦ when the "narrative" is just the player's write-in echoed back.
+        const userWriteInStory = result.response?.writeInValue?.trim() ?? '';
+        const isEchoStory = userWriteInStory.length > 0
+          && briefNarrative.trim().toLowerCase() === userWriteInStory.toLowerCase();
+        if (isEchoStory) {
+          console.log(`\n  ${chalk.dim('· recorded your response ·')}`);
+        } else {
+          console.log(`\n  ${chalk.dim('✦')} ${briefNarrative}`);
+        }
 
         // R7-P1-2 (UX-R7): Vary the shadow-surfaced footer (Story-Driven path).
         if (cr.shadowSurfaced) {
@@ -3155,12 +3191,28 @@ async function runStatus(): Promise<void> {
           };
           console.log(`    convergence      ${chalk.dim(bar(report.convergence))} ${chalk.dim(pct(report.convergence))} (lines at current stage)`);
           console.log(`    saturation       ${chalk.dim(bar(report.saturation))} ${chalk.dim(pct(report.saturation))} (encounters processed)`);
-          console.log(`    shadow clearance ${chalk.dim(bar(report.shadowClearance))} ${chalk.dim(pct(report.shadowClearance))} (critical shadows resolved)`);
+          // R11-P2 (Fresh-User UX Audit): Suppress the misleading "100% cleared"
+          // report when no shadows have actually been detected. Without U3
+          // (LLM-based shadow detection), shadows.entries is typically empty,
+          // which the engine reads as "no blocking shadows" — but the player
+          // reads as "my shadows are resolved." Make the absence visible.
+          const shadowsDetected = sig.shadows.entries.length > 0;
+          if (shadowsDetected) {
+            console.log(`    shadow clearance ${chalk.dim(bar(report.shadowClearance))} ${chalk.dim(pct(report.shadowClearance))} (critical shadows resolved)`);
+          } else {
+            console.log(`    shadow clearance ${chalk.dim('— not yet engaged —')} (detection requires more encounters)`);
+          }
           // Actionable hint based on the weakest dimension
+          // R11-P2: only include shadow clearance in the focus hint if shadows
+          // have actually been detected. Otherwise the hint would recommend
+          // shadow-work to a player who has no detected shadows, which is
+          // confusing.
           const dims = [
             { name: 'convergence', val: report.convergence, hint: 'Play encounters across more lines' },
             { name: 'saturation', val: report.saturation, hint: 'Play more encounters at your current stage' },
-            { name: 'shadow clearance', val: report.shadowClearance, hint: 'Engage with shadow-work encounters' },
+            ...(shadowsDetected
+              ? [{ name: 'shadow clearance', val: report.shadowClearance, hint: 'Engage with shadow-work encounters' }]
+              : []),
           ].sort((a, b) => a.val - b.val);
           if (report.overall < 0.8) {
             console.log(`    ${chalk.dim(`Focus: ${dims[0]!.hint} (lowest dimension: ${dims[0]!.name})`)}`);
@@ -3221,24 +3273,45 @@ async function runStatus(): Promise<void> {
 // 1-line definitions for every term, breaching the wall without requiring
 // users to read the docs. The Veil is preserved — these are system-facing
 // terms, not player-facing diagnoses.
-function runGlossary(): void {
-  banner('CCRPG Glossary');
+//
+// R11-Y3 (Fresh-User UX Audit): The 23-term dump was experienced by fresh
+// users as "walking into a graduate seminar 6 months late." Now shows only
+// the 5 player-facing terms by default (Holon, Significator, Line, Stage,
+// Shadow). The full 23-term set is gated behind `ccrpg glossary --full`.
+// JSON_MODE still emits all terms for backwards compatibility (machine
+// consumers expect the full set).
+function runGlossary(showFull = false): void {
+  banner(showFull ? 'CCRPG Glossary (full)' : 'CCRPG Glossary');
   // ponytail: glossary data extracted to src/core/data/glossary.ts (shared with WebUI /glossary route).
-  const terms = GLOSSARY_TERMS;
+  // R11-Y3: player-facing terms by default; full set only with --full.
+  const terms = showFull ? GLOSSARY_TERMS : PLAYER_GLOSSARY_TERMS;
   if (JSON_MODE) {
-    process.stdout.write(JSON.stringify({ type: 'glossary', terms }) + '\n');
+    // JSON consumers (WebUI, agents) always get the full set.
+    process.stdout.write(JSON.stringify({
+      type: 'glossary',
+      terms: GLOSSARY_TERMS,
+      playerTerms: PLAYER_GLOSSARY_TERMS,
+      advancedTerms: ADVANCED_GLOSSARY_TERMS,
+    }) + '\n');
     return;
   }
   console.log('');
   for (const { term, def } of terms) {
     console.log(`  ${chalk.bold.cyan(term.padEnd(16))} ${chalk.dim(def)}`);
   }
+  if (!showFull) {
+    console.log(`\n  ${chalk.dim('— 5 essentials. Run `ccrpg glossary --full` for all 23 terms. —')}`);
+  }
   console.log(`\n  ${chalk.dim('For the full theoretical foundation, see docs/foundations/ and docs/02-glossary.md.')}\n`);
 }
 
 // ── Usage help ──────────────────────────────────────────────────────
 function printHelp(): void {
-  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show definitions for CCRPG terminology\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show full narrative and feedback\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Show holistic primitives (G_z/P_z, rayProfile)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n  --force-shadow=Q             Inject shadow-keyword text (testing only)\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var\n  Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var\n  Saves:     ~/.ccrpg/saves/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --no-llm                   # quick automated test\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg diagnostic                            # system diagnostics\n`);
+  // R11-Y5 (Fresh-User UX Audit): removed --force-shadow=Q from the FORCED
+  // ENCOUNTERS section. The flag is now hidden in commander's auto-help and
+  // was a documented source of user confusion. The printHelp() banner should
+  // not duplicate it.
+  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show 5 essential terms (use --full for all 23)\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show full narrative and feedback\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Show holistic primitives (G_z/P_z, rayProfile)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var\n  Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var\n  Saves:     ~/.ccrpg/saves/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --no-llm                   # quick automated test\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg diagnostic                            # system diagnostics\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────
@@ -3274,7 +3347,13 @@ async function main(): Promise<void> {
 
   if (subcommand === 'setup') { await runSetup(); return; }
   if (subcommand === 'status') { await runStatus(); return; }
-  if (subcommand === 'glossary') { runGlossary(); return; }
+  if (subcommand === 'glossary') {
+    // R11-Y3: `ccrpg glossary --full` shows all 23 terms; bare `ccrpg glossary`
+    // shows only the 5 player-facing essentials.
+    const wantsFull = program.args.includes('--full') || program.args.includes('-f');
+    runGlossary(wantsFull);
+    return;
+  }
   if (subcommand === 'profile') { await runProfile(program.args[1], program.args[2]); return; }
   if (subcommand === 'setup-profile') { await runSetupProfile(); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
