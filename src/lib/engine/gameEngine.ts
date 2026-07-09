@@ -48,6 +48,8 @@ interface EngineState {
   activeOrchestrator: AgenticOrchestrator | null;
   lastResult: OrchestratorResult | null;
   error: string | null;
+  /** ponytail: D — set when a stage transformation fires, so the UI can show an overlay. */
+  transformationSignal: { fromStage: string; toStage: string; readiness: number } | null;
 }
 
 export const engineStore = writable<EngineState>({
@@ -60,6 +62,7 @@ export const engineStore = writable<EngineState>({
   activeOrchestrator: null,
   lastResult: null,
   error: null,
+  transformationSignal: null,
 });
 
 let saveRepo: SaveRepository | null = null;
@@ -300,14 +303,29 @@ async function applyEncounterResult(
   setSignificator(newSig);
   debouncedSync(newSig);
 
+  // ponytail: D — detect stage transformation (parity with CLI transformation_triggered).
+  const fromStage = state.significator.currentStage;
+  const toStage = newSig.currentStage;
+  let transformationSignal: EngineState['transformationSignal'] = null;
+  if (toStage !== fromStage) {
+    transformationSignal = { fromStage, toStage, readiness: 1 };
+    recordEvent('transformation_triggered', { fromStage, toStage });
+  }
+
   engineStore.update((s) => ({
     ...s,
     significator: newSig,
     world: newWorld,
     session: newSession,
+    transformationSignal: transformationSignal ?? s.transformationSignal,
   }));
 
   scheduleEncounters();
+}
+
+/** Clear the transformation signal (called by the UI after the overlay plays). */
+export function clearTransformationSignal(): void {
+  engineStore.update((s) => ({ ...s, transformationSignal: null }));
 }
 
 // ─── Decline encounter ──────────────────────────────────────────────

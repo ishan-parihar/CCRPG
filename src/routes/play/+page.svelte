@@ -23,7 +23,8 @@
   import Spinner from '$lib/components/Spinner.svelte';
   import Stack from '$lib/components/Stack.svelte';
   import Cluster from '$lib/components/Cluster.svelte';
-  import { engineStore, bootEngine, startGameSession, runEncounter, declineEncounter } from '$lib/engine/gameEngine.js';
+  import { engineStore, bootEngine, startGameSession, runEncounter, declineEncounter, clearTransformationSignal } from '$lib/engine/gameEngine.js';
+  import StageTransitionOverlay from '$lib/components/StageTransitionOverlay.svelte';
   import { gameStore } from '$lib/stores/gameStore.js';
   import { loadSignificatorFromStorage } from '$lib/stores/saveHydration.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
@@ -44,6 +45,7 @@
   const activeEncounter = $derived($engineStore.activeEncounter);
   const lastResult = $derived($engineStore.lastResult);
   const engineError = $derived($engineStore.error);
+  const transformationSignal = $derived($engineStore.transformationSignal);
   const stageAesthetic = $derived(sig ? describeStage(sig.currentStage) : '');
 
   onMount(async () => {
@@ -223,6 +225,10 @@
     {/if}
   </main>
 </div>
+
+{#if transformationSignal}
+  <StageTransitionOverlay signal={transformationSignal} oncomplete={clearTransformationSignal} />
+{/if}
 
 <style>
   .play-route {
