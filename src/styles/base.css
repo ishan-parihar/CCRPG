@@ -1,13 +1,8 @@
 /**
  * CCRPG Global Base Styles.
  *
- * This file consolidates the reset, base typography, and layout from the
- * old public/style.css into a token-driven system. It MUST load after
- * tokens.css so that --ccrpg-* variables are defined.
- *
- * Fixes fragmentation F1: the old style.css defined its own :root token
- * namespace (--bg-root, --text-main, --accent) that conflicted with the
- * new --ccrpg-* namespace. This file uses only --ccrpg-* tokens.
+ * Pure-Svelte frontend. Loads after tokens.css so --ccrpg-* variables exist.
+ * No Phaser, no #game-root canvas container — just a clean Svelte app shell.
  */
 
 /* ─── Global Reset ──────────────────────────────────────────────── */
@@ -23,24 +18,26 @@ html,
 body {
   height: 100%;
   width: 100%;
-  background: var(--ccrpg-bg, #05070b);
-  color: var(--ccrpg-fg, #e7eaf2);
-  font-family: var(--ccrpg-font-body, system-ui, sans-serif);
+  background: var(--ccrpg-bg);
+  color: var(--ccrpg-fg);
+  font-family: var(--ccrpg-font-body);
+  font-size: var(--ccrpg-text-base);
+  line-height: var(--ccrpg-leading-normal);
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
   touch-action: none;
-  transition: background var(--ccrpg-duration-slow, 540ms) var(--ccrpg-ease, ease),
-              color var(--ccrpg-duration-slow, 540ms) var(--ccrpg-ease, ease);
+  transition: background var(--ccrpg-duration-slow) var(--ccrpg-ease),
+              color var(--ccrpg-duration-slow) var(--ccrpg-ease),
+              font-family var(--ccrpg-duration-slow) var(--ccrpg-ease);
 }
 
 /* Re-enable text selection + touch scrolling for content elements.
-   The body-level user-select:none + touch-action:none is needed for the
-   game canvas (prevents accidental selection/scroll on Phaser). But
-   scrollable route content (settings, recover, telemetry) and form
-   inputs need these re-enabled. */
+   The body-level user-select:none + touch-action:none prevents accidental
+   selection on gameplay UI. Scrollable route content and form inputs
+   re-enable these. */
 input, textarea, select, [contenteditable="true"] {
   -webkit-user-select: text;
   user-select: text;
@@ -52,49 +49,22 @@ pre, code, kbd, samp {
   user-select: text;
 }
 
-/* Scrollable route containers (settings, recover, telemetry) */
+/* Scrollable route containers */
+.route-shell,
 .settings-route,
 .recover-route,
 .telemetry-route,
+.journal-route,
+.codex-route,
+.profile-route,
+.onboarding-route,
 .error-page {
   touch-action: pan-y;
   -webkit-overflow-scrolling: touch;
 }
 
-/* ─── Game Container ────────────────────────────────────────────── */
-#game-root {
-  position: fixed;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: var(--ccrpg-bg, #05070b);
-  /* Safe area for notches */
-  padding-top: env(safe-area-inset-top);
-  padding-right: env(safe-area-inset-right);
-  padding-bottom: env(safe-area-inset-bottom);
-  padding-left: env(safe-area-inset-left);
-}
-
-#game-root canvas {
-  display: block;
-  image-rendering: auto;
-  outline: none;
-}
-
-/* ─── A11y Overlay (screen reader) ──────────────────────────────── */
-#a11y-overlay {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1000;
-  overflow: hidden;
-}
-
-.a11y-sr-only {
+/* ─── Screen-reader-only utility ────────────────────────────────── */
+.sr-only {
   position: absolute;
   width: 1px;
   height: 1px;
@@ -102,10 +72,7 @@ pre, code, kbd, samp {
   clip: rect(0, 0, 0, 0);
   white-space: nowrap;
   border: 0;
-}
-
-.a11y-focusable {
-  pointer-events: auto;
+  padding: 0;
 }
 
 /* ─── High Contrast Mode (data-contrast="more" OR .a11y-high-contrast) ─── */
@@ -121,9 +88,9 @@ pre, code, kbd, samp {
 
 /* ─── Focus-visible (keyboard nav on any input method) ──────────── */
 *:focus-visible {
-  outline: 2px solid var(--ccrpg-accent, #b8252a);
+  outline: 2px solid var(--ccrpg-accent);
   outline-offset: 2px;
-  border-radius: var(--ccrpg-radius, 6px);
+  border-radius: var(--ccrpg-radius);
 }
 
 /* ─── Noscript Fallback ─────────────────────────────────────────── */
@@ -132,28 +99,12 @@ noscript {
   inset: 0;
   display: grid;
   place-items: center;
-  background: var(--ccrpg-bg, #05070b);
-  color: var(--ccrpg-fg, #e7eaf2);
-  z-index: 9999;
-  padding: 24px;
+  background: var(--ccrpg-bg);
+  color: var(--ccrpg-fg);
+  z-index: var(--ccrpg-z-sr);
+  padding: var(--ccrpg-space-6);
   text-align: center;
-  font-size: 1.5rem;
-}
-
-/* ─── Responsive Breakpoints ────────────────────────────────────── */
-/* Desktop (≥1025px) — center the game canvas with max width */
-@media (min-width: 1025px) {
-  #game-root {
-    max-width: 480px;
-    margin: 0 auto;
-  }
-}
-
-/* Landscape orientation — constrain height */
-@media (orientation: landscape) {
-  #game-root {
-    max-height: 100vh;
-  }
+  font-size: var(--ccrpg-text-lg);
 }
 
 /* ─── Safe area helper ─────────────────────────────────────────── */
@@ -162,4 +113,14 @@ noscript {
   padding-right: env(safe-area-inset-right);
   padding-bottom: env(safe-area-inset-bottom);
   padding-left: env(safe-area-inset-left);
+}
+
+/* ─── Reduced motion (data-motion="reduced") ────────────────────── */
+[data-motion="reduced"] *,
+[data-motion="reduced"] *::before,
+[data-motion="reduced"] *::after {
+  animation-duration: 0.01ms !important;
+  animation-iteration-count: 1 !important;
+  transition-duration: 0.01ms !important;
+  scroll-behavior: auto !important;
 }

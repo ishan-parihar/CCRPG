@@ -12,30 +12,36 @@
    */
 
   type Props = {
-    /** Click handler (takes priority over href). */
+    /** Click handler (takes priority over href/back). */
     onclick?: () => void;
     /** If provided and no onclick, navigates to this URL. */
     href?: string;
+    /** Convenience prop: if string, acts as href; if function, acts as onclick. */
+    back?: string | (() => void);
     /** Button label (default: "Back"). */
     label?: string;
     /** Optional ARIA label override. */
     ariaLabel?: string;
   };
 
-  let { onclick, href, label = 'Back', ariaLabel }: Props = $props();
+  let { onclick, href, back, label = 'Back', ariaLabel }: Props = $props();
+
+  // Resolve back prop into href or onclick
+  const resolvedHref = $derived(back !== undefined ? (typeof back === 'string' ? back : href) : href);
+  const resolvedOnclick = $derived(back !== undefined ? (typeof back === 'function' ? back : onclick) : onclick);
 
   function handleClick(e: MouseEvent) {
-    if (onclick) {
+    if (resolvedOnclick) {
       e.preventDefault();
-      onclick();
-    } else if (href) {
+      resolvedOnclick();
+    } else if (resolvedHref) {
       // SvelteKit navigation via <a href> — no manual goto needed
     }
   }
 </script>
 
-{#if href && !onclick}
-  <a class="back-button" href={href} aria-label={ariaLabel ?? `Back to ${label}`}>
+{#if resolvedHref && !resolvedOnclick}
+  <a class="back-button" href={resolvedHref} aria-label={ariaLabel ?? `Back to ${label}`}>
     <span class="back-arrow" aria-hidden="true">←</span>
     <span class="back-label">{label}</span>
   </a>
@@ -51,32 +57,37 @@
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    background: var(--ccrpg-surface, #1a0f0f);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
-    color: var(--ccrpg-fg, #e7eaf2);
-    padding: 0.5rem 0.875rem;
-    border-radius: var(--ccrpg-radius, 6px);
+    background: var(--ccrpg-surface);
+    border: 1px solid var(--ccrpg-border);
+    color: var(--ccrpg-fg);
+    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
+    border-radius: var(--ccrpg-radius);
     cursor: pointer;
-    font-family: var(--ccrpg-font-body, system-ui);
-    font-size: 0.875rem;
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
     text-decoration: none;
-    transition: background var(--ccrpg-duration-fast, 180ms) var(--ccrpg-ease, ease),
-                border-color var(--ccrpg-duration-fast, 180ms) var(--ccrpg-ease, ease);
+    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease),
+                border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
+                transform var(--ccrpg-duration-instant) var(--ccrpg-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .back-button:hover {
-    background: var(--ccrpg-surface-elevated, #261818);
-    border-color: var(--ccrpg-accent, #b8252a);
+    background: var(--ccrpg-surface-elevated);
+    border-color: var(--ccrpg-accent);
+  }
+
+  .back-button:active {
+    transform: scale(0.98);
   }
 
   .back-button:focus-visible {
-    outline: 2px solid var(--ccrpg-accent, #b8252a);
+    outline: 2px solid var(--ccrpg-accent);
     outline-offset: 2px;
   }
 
   .back-arrow {
-    font-size: 1rem;
+    font-size: var(--ccrpg-text-base);
     line-height: 1;
   }
 

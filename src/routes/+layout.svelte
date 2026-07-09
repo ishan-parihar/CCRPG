@@ -1,16 +1,15 @@
 <script lang="ts">
-  // Root layout — wraps every route.
-  //
-  // Style load order matters:
-  //   1. tokens.css   — defines --ccrpg-* variables per [data-stage]
-  //   2. base.css     — global reset + html/body base styles using tokens
-  //   3. fonts.css    — @font-face declarations
-  //   4. capabilities.css — adaptive overrides based on data-input/data-capability
-  //
-  // Phase 2: mounts <StageTheme> to set data-stage on <html>.
-  // Phase 2.5: runs CapabilityProbe on boot.
-  // Audit fix G2: hydrates gameStore from SaveRepository on boot so routes
-  //   that don't mount Phaser (e.g. /settings) still have Significator data.
+  /**
+   * Root layout — wraps every route.
+   *
+   * Pure-Svelte frontend: no Phaser mount. Provides:
+   *   - Stage theme (data-stage attribute)
+   *   - Accessibility applier (data-motion, data-contrast)
+   *   - Capability probe (data-input, data-capability, etc.)
+   *   - Desktop sidebar + mobile bottom nav
+   *   - Toaster for notifications
+   *   - Cloud sync on beforeunload
+   */
 
   import { onMount, onDestroy } from 'svelte';
   import { browser } from '$app/environment';
@@ -19,6 +18,10 @@
   import '../styles/fonts.css';
   import '../styles/capabilities.css';
   import StageTheme from '$lib/components/StageTheme.svelte';
+  import A11yApplier from '$lib/components/A11yApplier.svelte';
+  import Sidebar from '$lib/components/Sidebar.svelte';
+  import BottomNav from '$lib/components/BottomNav.svelte';
+  import Toaster from '$lib/components/Toaster.svelte';
   import { applyCapabilities, watchCapabilities } from '$lib/capabilities/CapabilityProbe.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
   import { loadSignificatorFromStorage } from '$lib/stores/saveHydration.js';
@@ -39,7 +42,7 @@
     // 2. Watch for changes (orientation flip, gamepad connect, motion toggle).
     unwatch = watchCapabilities();
 
-    // 3. Hydrate gameStore from localStorage (lightweight — no Phaser import).
+    // 3. Hydrate gameStore from localStorage (lightweight — no engine import).
     const sig = loadSignificatorFromStorage();
     if (sig) setSignificator(sig);
 
@@ -60,5 +63,8 @@
 </script>
 
 <StageTheme />
-
+<A11yApplier />
+<Sidebar />
 {@render children()}
+<BottomNav />
+<Toaster />

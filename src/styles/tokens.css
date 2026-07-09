@@ -14,8 +14,8 @@
  *   Turquoise:"crystalline, translucent"
  *   White:    "luminous silence, spacious"
  *
- * Phaser reads these same tokens via getComputedStyle(document.documentElement)
- * — single source of truth, two renderers.
+ * Pure-Svelte frontend: these tokens are the single source of truth.
+ * The Svelte layer consumes them via var(--ccrpg-*).
  */
 
 :root {
@@ -23,12 +23,91 @@
   --ccrpg-radius-sm: 4px;
   --ccrpg-radius: 6px;
   --ccrpg-radius-lg: 12px;
+  --ccrpg-radius-xl: 20px;
+  --ccrpg-radius-full: 9999px;
 
   --ccrpg-ease: cubic-bezier(0.22, 1, 0.36, 1);
   --ccrpg-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ccrpg-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --ccrpg-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ccrpg-duration-instant: 80ms;
   --ccrpg-duration-fast: 180ms;
   --ccrpg-duration-base: 320ms;
   --ccrpg-duration-slow: 540ms;
+  --ccrpg-duration-glacial: 1200ms;
+
+  /* ─── Spacing scale (8-step, 4px base) ─── */
+  --ccrpg-space-0: 0;
+  --ccrpg-space-1: 0.25rem;   /* 4px */
+  --ccrpg-space-2: 0.5rem;    /* 8px */
+  --ccrpg-space-3: 0.75rem;   /* 12px */
+  --ccrpg-space-4: 1rem;      /* 16px */
+  --ccrpg-space-5: 1.5rem;    /* 24px */
+  --ccrpg-space-6: 2rem;      /* 32px */
+  --ccrpg-space-7: 3rem;      /* 48px */
+  --ccrpg-space-8: 4rem;      /* 64px */
+
+  /* ─── Typography scale (modular, 1.125 ratio) ─── */
+  --ccrpg-text-xs: 0.75rem;     /* 12px */
+  --ccrpg-text-sm: 0.875rem;    /* 14px */
+  --ccrpg-text-base: 1rem;      /* 16px */
+  --ccrpg-text-md: 1.125rem;    /* 18px */
+  --ccrpg-text-lg: 1.25rem;     /* 20px */
+  --ccrpg-text-xl: 1.5rem;      /* 24px */
+  --ccrpg-text-2xl: 2rem;       /* 32px */
+  --ccrpg-text-3xl: clamp(2.5rem, 6vw, 4rem); /* display */
+  --ccrpg-leading-tight: 1.2;
+  --ccrpg-leading-normal: 1.5;
+  --ccrpg-leading-relaxed: 1.7;
+  --ccrpg-tracking-tight: -0.01em;
+  --ccrpg-tracking-normal: 0;
+  --ccrpg-tracking-wide: 0.05em;
+  --ccrpg-tracking-wider: 0.1em;
+  --ccrpg-tracking-widest: 0.15em;
+
+  /* ─── Z-index scale ─── */
+  --ccrpg-z-base: 0;
+  --ccrpg-z-hud: 100;
+  --ccrpg-z-overlay: 500;
+  --ccrpg-z-modal: 1000;
+  --ccrpg-z-toast: 1500;
+  --ccrpg-z-sr: 9999;
+
+  /* ─── Shadow scale ─── */
+  --ccrpg-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --ccrpg-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --ccrpg-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --ccrpg-shadow-glow: 0 0 24px var(--ccrpg-accent-soft, #5a1318);
+
+  /* ─── Breakpoints (as values for JS; CSS uses @media directly) ─── */
+  --ccrpg-bp-sm: 480px;
+  --ccrpg-bp-md: 768px;
+  --ccrpg-bp-lg: 1024px;
+  --ccrpg-bp-xl: 1280px;
+  --ccrpg-bp-2xl: 1536px;
+
+  /* ─── Semantic colors ─── */
+  --ccrpg-danger: #b8252a;
+  --ccrpg-danger-soft: #5a1318;
+  --ccrpg-danger-fg: #ffffff;
+  --ccrpg-warning: #d4a425;
+  --ccrpg-warning-soft: #6a5215;
+  --ccrpg-warning-fg: #1a1408;
+  --ccrpg-success: #5aa425;
+  --ccrpg-success-soft: #2a5215;
+  --ccrpg-success-fg: #ffffff;
+  --ccrpg-info: #2590c4;
+  --ccrpg-info-soft: #155068;
+  --ccrpg-info-fg: #ffffff;
+
+  /* ─── Layout tokens ─── */
+  --ccrpg-content-max-width: 640px;
+  --ccrpg-content-max-width-narrow: 480px;
+  --ccrpg-content-max-width-wide: 960px;
+  --ccrpg-route-padding: 1rem;
+  --ccrpg-route-padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+  --ccrpg-route-padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  --ccrpg-nav-height: 56px;
 
   /* Default to Red stage (the first playable vertical slice) */
   --ccrpg-bg: #0d0a0a;

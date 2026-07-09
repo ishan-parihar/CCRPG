@@ -1,19 +1,17 @@
 /**
- * Svelte-layer accessibility store.
+ * Svelte accessibility store — single source of truth.
  *
- * Mirrors the Phaser-layer AccessibilityManager + AccessibilityStore
- * so Svelte routes can read and write accessibility settings without
- * importing Phaser. Persists to localStorage (browser) or no-op (SSR).
+ * Pure-Svelte frontend: no Phaser layer to mirror. This store IS the
+ * accessibility system. A11yApplier.svelte syncs it to data-* attributes
+ * on <html>, which capabilities.css consumes for adaptive styling.
  *
- * Settings are the same shape as core/accessibility/AccessibilitySettings.ts
- * — the Svelte and Phaser layers stay in sync via the shared
- * AccessibilityStore persistence (both read/write the same localStorage key).
+ * Persists to localStorage (browser) or no-op (SSR).
  */
 
 import { writable } from 'svelte/store';
 import { createDefaultSettings, type AccessibilitySettings } from '$core/accessibility/AccessibilitySettings.js';
 
-const STORAGE_KEY = 'ccrpg:accessibility'; // MUST match Phaser-layer AccessibilityStore
+const STORAGE_KEY = 'ccrpg:accessibility';
 
 // Use typeof window check instead of $app/environment for testability.
 // In SvelteKit, $app/environment.browser works, but in vitest with jsdom
