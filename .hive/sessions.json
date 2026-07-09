@@ -769,6 +769,165 @@
       "lastActiveAt": "2026-06-22T20:48:19.809Z",
       "agent": "dreamer",
       "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd47b620ffeywFQEZuvNIeUmZ",
+      "startedAt": "2026-07-05T14:39:26.186Z",
+      "lastActiveAt": "2026-07-05T14:39:26.186Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd482354ffeYzVMEq88hrOG84",
+      "startedAt": "2026-07-05T14:39:26.215Z",
+      "lastActiveAt": "2026-07-05T15:56:34.987Z",
+      "directivePrompt": "§1§ Git pull everything, and compile everything, and then test/run it so that we can see how much development has been done on the remote.\n\nTake these model-config, and see if everything is working effectively:\nOPENCODE_API=sk-R5OM1tkY3bwYUZ7LBCvELlcAiWyWiBtJ8gQEKV3tsrsybZEyMTOUzKDbQPV0wMMe\nBASE_URL=opencode.ai/zen/v1\nMODEL=mimo-v2.5-free",
+      "replayDirectivePending": false,
+      "agent": "​Sisyphus - Ultraworker",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd476a50ffeBHD1MxuRRueUfj",
+      "startedAt": "2026-07-05T14:39:45.590Z",
+      "lastActiveAt": "2026-07-05T14:39:45.590Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd46bb3dffezxux8ibw7xgCqf",
+      "startedAt": "2026-07-05T14:40:30.415Z",
+      "lastActiveAt": "2026-07-05T14:40:30.415Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd44a15bffe6nhCC0AMq2IhUo",
+      "startedAt": "2026-07-05T14:42:48.109Z",
+      "lastActiveAt": "2026-07-05T14:42:48.109Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd06de14ffe5H5KsxFXQlKKtt",
+      "startedAt": "2026-07-05T15:50:15.798Z",
+      "lastActiveAt": "2026-07-05T15:50:15.798Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd05f285ffeKbNADlwXw097Qs",
+      "startedAt": "2026-07-05T15:51:16.098Z",
+      "lastActiveAt": "2026-07-05T15:51:16.098Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd05c92cffenXV3YSrODdWjwq",
+      "startedAt": "2026-07-05T15:51:26.687Z",
+      "lastActiveAt": "2026-07-05T15:51:26.687Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd028e2dffeUTqvyMjohRk3gR",
+      "startedAt": "2026-07-05T15:54:58.397Z",
+      "lastActiveAt": "2026-07-05T15:54:58.397Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cd01cfdeffe66B5UtBuVwa3W1",
+      "startedAt": "2026-07-05T15:55:47.117Z",
+      "lastActiveAt": "2026-07-05T15:55:47.117Z",
+      "agent": "historian",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cc01fee6ffeNXf0PYl9XNaiSG",
+      "startedAt": "2026-07-05T20:35:12.317Z",
+      "lastActiveAt": "2026-07-05T20:35:12.317Z",
+      "agent": "dreamer-memory-mapper",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cbcb1356ffehGHVLrF97BzVLe",
+      "startedAt": "2026-07-05T21:35:11.560Z",
+      "lastActiveAt": "2026-07-05T21:35:11.560Z",
+      "agent": "dreamer-memory-mapper",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cb5d33d7ffeclRK7SPuyaQU5i",
+      "startedAt": "2026-07-05T23:35:12.198Z",
+      "lastActiveAt": "2026-07-05T23:35:12.198Z",
+      "agent": "dreamer-retrospective",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0cb264549ffet0wtsCzf2f1E2R",
+      "startedAt": "2026-07-06T00:35:12.210Z",
+      "lastActiveAt": "2026-07-06T00:35:12.210Z",
+      "agent": "dreamer-classifier",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0c6a4a19effeXd30JqqMwx4BiX",
+      "startedAt": "2026-07-06T21:35:17.192Z",
+      "lastActiveAt": "2026-07-06T21:35:17.192Z",
+      "agent": "dreamer-reviewer",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0c6a49e64ffeqgdm3w43seGqlk",
+      "startedAt": "2026-07-06T21:35:17.931Z",
+      "lastActiveAt": "2026-07-06T21:35:17.931Z",
+      "agent": "dreamer-memory-mapper",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0be7d0da7ffenreBKS5dy9b4ad",
+      "startedAt": "2026-07-08T11:35:28.639Z",
+      "lastActiveAt": "2026-07-08T11:35:28.639Z",
+      "agent": "dreamer-memory-mapper",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0be7c0fb3ffed90gXRy4rr6Z4q",
+      "startedAt": "2026-07-08T11:36:33.976Z",
+      "lastActiveAt": "2026-07-08T12:23:50.590Z",
+      "agent": "​Sisyphus - Ultraworker",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0be7b09f2ffe58DHErXEDwGsqY",
+      "startedAt": "2026-07-08T11:37:40.634Z",
+      "lastActiveAt": "2026-07-08T11:37:40.634Z",
+      "agent": "dreamer-classifier",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0be7a3b3effeBm4b3CRd3LPjFJ",
+      "startedAt": "2026-07-08T11:38:33.545Z",
+      "lastActiveAt": "2026-07-08T11:38:33.545Z",
+      "agent": "dreamer-retrospective",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0be59262effeBTIxUtukkOJVms",
+      "startedAt": "2026-07-08T12:14:41.983Z",
+      "lastActiveAt": "2026-07-08T12:14:41.983Z",
+      "agent": "explore",
+      "sessionKind": "unknown"
+    },
+    {
+      "sessionId": "ses_0bcfc11c6ffez1cYhc43g4dnhs",
+      "startedAt": "2026-07-08T18:35:59.562Z",
+      "lastActiveAt": "2026-07-08T18:36:00.434Z",
+      "agent": "hive-master",
+      "sessionKind": "primary",
+      "baseAgent": "hive-master",
+      "directivePrompt": "§1§ Deploy the latest build on development server so that we can test it",
+      "replayDirectivePending": false
     }
   ]
 }

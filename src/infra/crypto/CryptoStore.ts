@@ -1,13 +1,10 @@
 /**
  * CryptoStore - AES-GCM 256-bit encryption for at-rest data.
  */
-import { webcrypto } from 'crypto';
 
 const DEFAULT_KEY = 'ccrpg-telemetry-key';
 
-const crypto = (typeof globalThis !== 'undefined' && globalThis.crypto && globalThis.crypto.subtle)
-  ? globalThis.crypto
-  : (webcrypto as any);
+const subtleCrypto = globalThis.crypto;
 
 export interface ICryptoStore {
   encrypt(plaintext: string): Promise<string>;
@@ -23,8 +20,8 @@ export class CryptoStore implements ICryptoStore {
 
   private async deriveKey(keyString: string): Promise<CryptoKey> {
     const encoder = new TextEncoder();
-    const keyData = await crypto.subtle.digest('SHA-256', encoder.encode(keyString));
-    return crypto.subtle.importKey(
+    const keyData = await subtleCrypto.subtle.digest('SHA-256', encoder.encode(keyString));
+    return subtleCrypto.subtle.importKey(
       'raw',
       keyData,
       { name: 'AES-GCM' },
@@ -35,11 +32,11 @@ export class CryptoStore implements ICryptoStore {
 
   async encrypt(plaintext: string): Promise<string> {
     const cryptoKey = await this.cryptoKeyPromise;
-    const iv = crypto.getRandomValues(new Uint8Array(12));
+    const iv = subtleCrypto.getRandomValues(new Uint8Array(12));
     const encoder = new TextEncoder();
     const plaintextBuffer = encoder.encode(plaintext);
 
-    const ciphertextBuffer = await crypto.subtle.encrypt(
+    const ciphertextBuffer = await subtleCrypto.subtle.encrypt(
       { name: 'AES-GCM', iv },
       cryptoKey,
       plaintextBuffer
@@ -73,7 +70,7 @@ export class CryptoStore implements ICryptoStore {
     const iv = combined.slice(0, 12);
     const ciphertextBuffer = combined.slice(12);
 
-    const decryptedBuffer = await crypto.subtle.decrypt(
+    const decryptedBuffer = await subtleCrypto.subtle.decrypt(
       { name: 'AES-GCM', iv },
       cryptoKey,
       ciphertextBuffer

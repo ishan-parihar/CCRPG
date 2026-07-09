@@ -142,8 +142,13 @@ function migrate(input: Partial<SaveData>): SaveData {
 // per-profile. Falls back to ~/.ccrpg/ for legacy saves.
 // ═══════════════════════════════════════════════════════════════════════
 
-const CLI_LEGACY_DIR = path.join(os.homedir(), '.ccrpg');
-// CLI_LEGACY_SAVE_FILE — only used as fallback in getSaveFile()
+function getCliLegacyDir(): string {
+  type OsLike = { homedir?: () => string };
+  const osMod = os as unknown as OsLike;
+  const home =
+    typeof osMod.homedir === 'function' ? osMod.homedir() : '/tmp/.ccrpg';
+  return path.join(home, '.ccrpg');
+}
 
 /**
  * QA-FIX-1: Resolve save directory based on active profile.
@@ -152,13 +157,14 @@ const CLI_LEGACY_DIR = path.join(os.homedir(), '.ccrpg');
  */
 function getSaveDir(): string {
   try {
-    const activeSymlink = path.join(CLI_LEGACY_DIR, 'profiles', '_active');
+    const legacy = getCliLegacyDir();
+    const activeSymlink = path.join(legacy, 'profiles', '_active');
     if (fs.existsSync(activeSymlink)) {
       const resolved = fs.realpathSync(activeSymlink);
       if (fs.existsSync(resolved)) return resolved;
     }
   } catch { /* fall through to legacy */ }
-  return CLI_LEGACY_DIR;
+  return getCliLegacyDir();
 }
 
 function getSaveFile(): string {

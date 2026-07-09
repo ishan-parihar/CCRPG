@@ -19,6 +19,12 @@
   import { attachPhaserBridge, detachPhaserBridge } from '$lib/bridge/phaserEventAdapter.js';
   import { markLoaded, gameStore } from '$lib/stores/gameStore.js';
   import { goto } from '$app/navigation';
+  // Static import — routes hosting this component disable SSR (see
+  // src/routes/+page.ts and src/routes/play/+page.ts), so this never
+  // runs server-side. The previous dynamic import + @vite-ignore
+  // trick forced the browser to resolve '$game/main.js' at runtime,
+  // which fails because the $ alias is only a Vite-time mapping.
+  import { startGame } from '$game/main.js';
 
   type Props = {
     /** CSS class for the container div. */
@@ -35,11 +41,6 @@
     if (!browser) return;
     loadError = null;
     try {
-      // Dynamic import with computed specifier prevents SvelteKit's SSR
-      // bundler from following the import graph at build time (Phaser deps
-      // use Node built-ins that can't be SSR'd).
-      const gamePath = '$game/main.js';
-      const mod = await import(/* @vite-ignore */ gamePath);
       // Destroy any existing game before booting a new one (retry case).
       if (game) {
         try {
@@ -50,7 +51,7 @@
         }
         game = null;
       }
-      game = await mod.startGame(container);
+      game = await startGame(container);
       attachPhaserBridge(game);
       markLoaded();
     } catch (err) {
