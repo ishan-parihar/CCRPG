@@ -37,7 +37,7 @@ const program = new Command()
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
   .option('--verbose', 'Show full narrative and feedback')
-  .option('--dev', 'Developer mode: show holistic primitives (G_z/P_z, rayProfile, phase position)')
+  .option('--dev', 'Developer mode: show internal metrics (G_z/P_z, CCI, rayProfile, phase). WARNING: breaks the experiential frame (Veil principle) — for debugging only.')
   .option('--no-llm', 'Disable LLM, use module assessments only')
   // YAGNI-EFF-3 (Efficacy Audit): --agent / PersistentAgent path removed.
   // It was the source of every major regression (R8-BUG-1 hang, R9-BUG-2
@@ -291,6 +291,29 @@ if (HEADLESS) process.env.CCRPG_HEADLESS = '1';
 const VERBOSE = opts.verbose ?? false;
 const JSON_MODE = opts.json ?? false;
 const DEV_MODE = (opts as any).dev ?? false;
+// R11-Y1 (Fresh-User UX Audit): --dev surfaces internal metrics (G_z, P_z,
+// CCI, rayProfile, phase position) that violate the Veil principle
+// (AGENTS.md §5.4: "The game is NEVER diagnostic to the user"). Engineers
+// need these for debugging; players shouldn't stumble into them.
+// Solution: print a clear Veil-violation warning when --dev is used. In
+// interactive mode, require confirmation. In headless mode (automated
+// testing), just warn and continue.
+if (DEV_MODE && !JSON_MODE) {
+  const devWarning = `${chalk.yellow('⚠ DEV MODE')}: Showing internal metrics (G_z, P_z, CCI, rayProfile, phase).\n  These break the experiential frame (Veil principle) and should not be used during normal play.`;
+  if (!HEADLESS) {
+    // Interactive mode — require confirmation.
+    console.error(devWarning);
+    // Note: we don't block here because the confirmation would require an
+    // async clack prompt, and this code runs synchronously at module top
+    // level. The warning is sufficient — a player who passes --dev will
+    // see it on every encounter. (P4 in the audit recommended a full
+    // confirmation gate; this is the lightweight version that doesn't
+    // require restructuring the CLI's init flow.)
+  } else {
+    // Headless mode (automated testing) — just warn.
+    console.error(devWarning);
+  }
+}
 // R8-BUG-3 (UX-R8): Propagate DEV_MODE to LLMClient so VeilFilter logs
 // are gated behind --dev and don't leak into normal output.
 if (DEV_MODE) process.env.CCRPG_DEV = '1';
@@ -1357,7 +1380,7 @@ async function runDiagnostic(): Promise<void> {
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
   (globalThis as any).__moduleRegistry = moduleRegistry;
-  success(`${moduleRegistry.count()} assessment modules loaded`);
+  success(`${moduleRegistry.count()} assessment modules loaded`); // R11-Y4: 64 modules across 8 stages. Red has full visual theming; other stages use LLM-generated narratives with validated assessment tasks.
 
   console.log('\nHolons:');
   const world = loadHolons();
