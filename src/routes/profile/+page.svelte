@@ -13,9 +13,16 @@
   import Card from '$lib/components/Card.svelte';
   import VeiledStat from '$lib/components/VeiledStat.svelte';
   import Stack from '$lib/components/Stack.svelte';
+  import CCIDisplay from '$lib/components/displays/CCIDisplay.svelte';
+  import ShadowsDisplay from '$lib/components/displays/ShadowsDisplay.svelte';
+  import DrivesCompass from '$lib/components/displays/DrivesCompass.svelte';
+  import SessionPosition from '$lib/components/displays/SessionPosition.svelte';
   import { gameStore, setSignificator } from '$lib/stores/gameStore.js';
+  import { engineStore } from '$lib/engine/gameEngine.js';
   import { loadSignificatorFromStorage } from '$lib/stores/saveHydration.js';
   import { describeStage, describeDriveSpread } from '$core/presentation/veilDescriptors.js';
+  import { toSnapshot } from '$core/domain/SignificatorSnapshot.js';
+  import { computeCCI } from '$core/engines/CCIEngine.js';
   import { stageFade } from '$lib/transitions/stageMotion.js';
   import { ALL_LINES } from '$core/domain/Line.js';
   import { ALL_STAGES, stageOrdinal } from '$core/domain/Stage.js';
@@ -60,6 +67,29 @@
     const stage = sig.altitudes[line] ?? 'Infrared';
     return describeStage(stage as Stage);
   }
+
+  // ponytail: C.5 — compute CCI for display (parity with CLI status).
+  const cci = $derived.by(() => {
+    if (!sig) return null;
+    try {
+      const snapshot = toSnapshot(sig);
+      return computeCCI(snapshot, sig);
+    } catch {
+      return null;
+    }
+  });
+
+  // Session position from engineStore (if a session is active).
+  const session = $derived($engineStore.session);
+  const sessionPosition = $derived.by(() => {
+    if (!session) return null;
+    const total = session.strategy?.targetSessionLength ?? 5;
+    const done = session.recentOutcomes.length;
+    const progress = total > 0 ? done / total : 0;
+    const position: 'warmup' | 'peak' | 'cooldown' =
+      progress < 0.3 ? 'warmup' : progress > 0.7 ? 'cooldown' : 'peak';
+    return { position, progress };
+  });
 </script>
 
 <Seo
@@ -138,6 +168,38 @@
           <VeiledStat descriptor={describeDriveSpread(sig.drives.weights)} label="Tendencies" variant="muted" />
         </Stack>
       </Card>
+
+      {#if cci}
+        <Stack gap="space-3">
+          <h2 class="section-title">Consciousness Index</h2>
+          <Card padding="space-5">
+            <CCIDisplay composite={cci.composite} dimensions={cci.dimensions} />
+          </Card>
+        </Stack>
+      {/if}
+
+      {#if sessionPosition}
+        <Stack gap="space-3">
+          <h2 class="section-title">Session Arc</h2>
+          <Card padding="space-5">
+            <SessionPosition position={sessionPosition.position} progress={sessionPosition.progress} />
+          </Card>
+        </Stack>
+      {/if}
+
+      <Stack gap="space-3">
+        <h2 class="section-title">Drive Balance</h2>
+        <Card padding="space-5">
+          <DrivesCompass drives={sig.drives} />
+        </Card>
+      </Stack>
+
+      <Stack gap="space-3">
+        <h2 class="section-title">Active Patterns</h2>
+        <Card padding="space-5">
+          <ShadowsDisplay shadows={sig.shadows} />
+        </Card>
+      </Stack>
 
       <Stack gap="space-3">
         <h2 class="section-title">Capacities</h2>
