@@ -15,6 +15,7 @@ import fnmatch
 import os
 import re
 import shutil
+import subprocess
 import sys
 import textwrap
 from pathlib import Path
@@ -89,20 +90,47 @@ class Violation:
 
 
 def _collect_files(root: Path, ignore_dirs: set) -> list[Path]:
-    """Collect all files under root, skipping ignored directories."""
+    """Collect files git knows about (tracked + untracked non-ignored).
+    Falls back to filesystem walk if not a git repo."""
+    try:
+        result = subprocess.run(
+            ["git", "ls-files", "--cached", "--others", "--exclude-standard"],
+            cwd=root,
+            capture_output=True,
+            text=True,
+            timeout=10,
+        )
+        if result.returncode == 0 and result.stdout.strip():
+            return [root / line for line in result.stdout.splitlines() if line.strip()]
+    except (subprocess.TimeoutExpired, FileNotFoundError):
+        pass
+    # Fallback: filesystem walk with ignore_dirs
     files = []
     for dirpath, dirnames, filenames in os.walk(root):
         dirnames[:] = [
-            d
-            for d in dirnames
-            if not d.startswith(".")
-            and d not in ignore_dirs
-            and d != "__pycache__"
-            and d != "node_modules"
+            d for d in dirnames
+            if not d.startswith(".") and d not in ignore_dirs
         ]
         for fname in filenames:
             files.append(Path(dirpath) / fname)
     return files
+
+
+def _gitignore_dirs(root: Path) -> set:
+    """Parse .gitignore for top-level directory ignore patterns."""
+    gitignore = root / ".gitignore"
+    if not gitignore.exists():
+        return set()
+    dirs = set()
+    with open(gitignore) as f:
+        for line in f:
+            line = line.strip()
+            if not line or line.startswith("#"):
+                continue
+            # Only top-level directory patterns (ending with / and no path separators)
+            if line.endswith("/") and "/" not in line[:-1]:
+                dirs.add(line.rstrip("/"))
+    return dirs
 
 
 def _relpath(p: Path, root: Path) -> str:
@@ -379,7 +407,8 @@ def main():
         sys.exit(2)
 
     config = load_config(args.config, root)
-    ignore_dirs = set(config.get("ignore_dirs", []))
+    # Gitignore is source of truth; config ignore_dirs is additive only
+    ignore_dirs = set(config.get("ignore_dirs", [])) | _gitignore_dirs(root)
 
     files = _collect_files(root, ignore_dirs)
     violations = []

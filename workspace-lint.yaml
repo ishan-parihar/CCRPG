@@ -48,6 +48,7 @@ rules:
       preferred_dir: "docs"
       exclude_dirs:
         - "skills"
+        - ".memsearch"
     "*.py":
       preferred_dir: "scripts"
       max_size_kb: 200
@@ -80,19 +81,5 @@ rules:
       - ".next"
       - ".nuxt"
 
-ignore_dirs:
-  - ".git"
-  - "node_modules"
-  - ".svelte-kit"
-  - "dist"
-  - "build"
-  - ".contexty"
-  - ".memsearch"
-  - ".hive"
-  - ".opencode"
-  - ".playwright-mcp"
-  - ".sisyphus"
-  - ".cortexkit"
-  - ".wrangler"
-  - ".github"
-  - "coverage"
+# ignore_dirs is additive to .gitignore — only add project-specific extras here
+# ignore_dirs:
