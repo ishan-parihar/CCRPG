@@ -66,8 +66,6 @@
 
   const uiHandler: AgenticUIHandler = {
     async askUser(params: AskUserQuestionParams): Promise<AskUserQuestionResult> {
-      // The orchestrator may send multiple questions; we render them one at a time
-      // For now, we render the first question and collect answers
       const answers: UserAnswer[] = [];
 
       for (let i = 0; i < params.questions.length; i++) {
@@ -80,9 +78,19 @@
         showWriteIn = false;
         phase = 'asking';
 
-        // Wait for user to submit their answer
-        const answer = await new Promise<UserAnswer>((resolve) => {
+        // ponytail: B9 fix — race the user response against abort.
+        // If the player exits, reject with AbortError so the orchestrator stops.
+        const answer = await new Promise<UserAnswer>((resolve, reject) => {
           pendingResolver = resolve;
+          const onAbort = () => {
+            abortController?.signal.removeEventListener('abort', onAbort);
+            reject(new DOMException('Encounter aborted', 'AbortError'));
+          };
+          if (abortController?.signal.aborted) {
+            onAbort();
+          } else {
+            abortController?.signal.addEventListener('abort', onAbort);
+          }
         });
 
         answers.push(answer);
@@ -91,6 +99,10 @@
       return { answers };
     },
   };
+
+  // ponytail: B9 fix — AbortController lets us cancel the orchestrator cleanly
+  // when the player exits, instead of feeding it a fake response string.
+  let abortController: AbortController | null = null;
 
   // ─── Lifecycle ──────────────────────────────────────────────────────
 
@@ -104,12 +116,18 @@
   async function startEncounter() {
     try {
       phase = 'starting';
-      const result = await runEncounter(encounter, uiHandler);
+      abortController = new AbortController();
+      const result = await runEncounter(encounter, uiHandler, { signal: abortController.signal });
       phase = 'complete';
       showToast('Encounter complete', 'success', 3000);
       // Brief delay so the user sees the "complete" state before transition
       setTimeout(() => oncomplete(), 800);
     } catch (err) {
+      // ponytail: B9 fix — AbortError is expected when the player exits; not an error.
+      if (err instanceof DOMException && err.name === 'AbortError') {
+        // Player exited — onexit() already called by exitEncounter. No-op here.
+        return;
+      }
       const msg = err instanceof Error ? err.message : String(err);
       errorMessage = msg;
       phase = 'error';
@@ -163,9 +181,14 @@
   }
 
   function exitEncounter() {
+    // ponytail: B9 fix — abort the orchestrator cleanly instead of feeding
+    // it a fake response string. The orchestrator throws AbortError, which
+    // startEncounter() catches and treats as a clean exit.
+    abortController?.abort();
+    abortController = null;
     if (pendingResolver) {
-      // Resolve with empty answer so the orchestrator can continue/exit gracefully
-      pendingResolver({ selectedLabels: [], writeInValue: '[[player exited encounter]]' });
+      // If we're mid-question, reject the pending Promise so the orchestrator's
+      // askUser() doesn't hang. The abort signal will propagate.
       pendingResolver = null;
     }
     onexit();

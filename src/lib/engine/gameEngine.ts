@@ -163,12 +163,14 @@ export function scheduleEncounters(): void {
  * Run an encounter via the AgenticOrchestrator. The UI handler is called
  * whenever the orchestrator needs to ask the user a question.
  *
+ * ponytail: B9 fix — pass an AbortSignal so the caller can cancel cleanly.
+ *
  * Returns the orchestrator result (updated sig, world, scores, feedback).
  */
 export async function runEncounter(
   encounter: ScheduledEncounter,
   uiHandler: AgenticUIHandler,
-  options: { noLlm?: boolean; forceShadow?: string } = {},
+  options: { noLlm?: boolean; forceShadow?: string; signal?: AbortSignal } = {},
 ): Promise<OrchestratorResult> {
   const { significator, world } = get(engineStore);
   if (!significator || !world) {
@@ -191,7 +193,7 @@ export async function runEncounter(
     });
 
     engineStore.update((s) => ({ ...s, activeOrchestrator: orchestrator }));
-    const result = await orchestrator.run();
+    const result = await orchestrator.run(options.signal);
 
     // Apply the result to sig + world + session
     await applyEncounterResult(encounter, result);
@@ -205,6 +207,16 @@ export async function runEncounter(
 
     return result;
   } catch (err) {
+    // ponytail: B9 fix — AbortError is a clean exit, not an error.
+    if (err instanceof DOMException && err.name === 'AbortError') {
+      engineStore.update((s) => ({
+        ...s,
+        activeOrchestrator: null,
+        activeEncounter: null,
+        // Don't set error — abort is expected, not a failure.
+      }));
+      throw err; // re-throw so the caller knows it was aborted
+    }
     const msg = err instanceof Error ? err.message : String(err);
     engineStore.update((s) => ({
       ...s,
@@ -218,6 +230,17 @@ export async function runEncounter(
 
 /**
  * Apply an encounter result: update sig, world, session; persist.
+ *
+ * ponytail: B1+B2 fix — use the real PlayerResponse from the orchestrator
+ * (result.playerResponse) instead of hardcoding 'Sovereign'/'Homeostatic'/'Ambivalent'.
+ * The orchestrator's finalizeEncounter builds this from the LLM's driveSignals
+ * + polarityDirection, so it's the honest evaluation. This matches the CLI path,
+ * which uses the orchestrator's output directly.
+ *
+ * Note: the orchestrator ALREADY called applyConsequences internally (in
+ * finalizeEncounter), so result.updatedSig/updatedWorld are the post-consequence
+ * state. We still call applyResponseOnly here to advance the UserMatrixModel +
+ * transformation state (the orchestrator doesn't do that part).
  */
 async function applyEncounterResult(
   encounter: ScheduledEncounter,
@@ -226,15 +249,18 @@ async function applyEncounterResult(
   const state = get(engineStore);
   if (!state.significator || !state.world || !state.session) return;
 
-  const playerResponse = {
+  // ponytail: B1+B2 fix — use the real playerResponse from the orchestrator.
+  // Fallback to consequenceRecord.polarityTrace if playerResponse is missing
+  // (older result shape). Never hardcode.
+  const playerResponse = result.playerResponse ?? {
     encounterId: encounter.id,
     narrativeSummary: result.narrativeSummary,
-    driveDirectionality: extractDriveDirectionality(result),
+    driveDirectionality: result.consequenceRecord.polarityTrace.driveDirectionality,
     shadowSurfaced: result.consequenceRecord.shadowSurfaced ?? null,
     shadowResolvedId: result.consequenceRecord.shadowResolved ?? null,
-    energeticDirection: 'Sovereign' as const,
-    stageOrientation: 'Homeostatic' as const,
-    sourceOfNourishment: 'Ambivalent' as const,
+    energeticDirection: result.consequenceRecord.polarityTrace.energeticDirection,
+    stageOrientation: result.consequenceRecord.polarityTrace.stageOrientation,
+    sourceOfNourishment: result.consequenceRecord.polarityTrace.sourceOfNourishment,
   };
 
   const { sig: newSig, world: newWorld, sessionState: newSession } = applyResponseOnly(
@@ -262,24 +288,6 @@ async function applyEncounterResult(
   }));
 
   scheduleEncounters();
-}
-
-function extractDriveDirectionality(result: OrchestratorResult): {
-  Agency: 'HealthyBalanced' | 'DarkAddicted' | 'DarkAverted' | 'GoldenAddicted' | 'GoldenAverted';
-  Communion: 'HealthyBalanced' | 'DarkAddicted' | 'DarkAverted' | 'GoldenAddicted' | 'GoldenAverted';
-  Eros: 'HealthyBalanced' | 'DarkAddicted' | 'DarkAverted' | 'GoldenAddicted' | 'GoldenAverted';
-  Agape: 'HealthyBalanced' | 'DarkAddicted' | 'DarkAverted' | 'GoldenAddicted' | 'GoldenAverted';
-} {
-  const ds = result.driveScores;
-  const map = (score: number): 'DarkAddicted' | 'HealthyBalanced' | 'GoldenAddicted' =>
-    score < 0.4 ? 'DarkAddicted' : score > 0.85 ? 'GoldenAddicted' : 'HealthyBalanced';
-
-  return {
-    Agency: map(ds?.agency ?? 0.5),
-    Communion: map(ds?.communion ?? 0.5),
-    Eros: map(ds?.eros ?? 0.5),
-    Agape: map(ds?.agape ?? 0.5),
-  };
 }
 
 // ─── Decline encounter ──────────────────────────────────────────────

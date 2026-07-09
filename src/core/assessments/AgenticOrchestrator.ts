@@ -35,6 +35,19 @@ export interface OrchestratorResult {
   readonly playerWriteIn?: string;
   /** Per-drive scores from the encounter evaluation */
   readonly driveScores?: { agency: number; communion: number; eros: number; agape: number };
+  /**
+   * Per-drive pathology signals from the encounter evaluation.
+   * ponytail: B1 fix — exposed so the WebUI gameEngine doesn't re-derive
+   * with a bad heuristic. Values: HealthyBalanced | DarkAddicted | DarkAverted | GoldenAddicted | GoldenAverted.
+   */
+  readonly driveSignals?: { agency: string; communion: string; eros: string; agape: string };
+  /**
+   * The full PlayerResponse built by finalizeEncounter — drive directionality,
+   * energetic direction, stage orientation, source of nourishment, shadow info.
+   * ponytail: B2 fix — exposed so the WebUI gameEngine uses the real response
+   * instead of hardcoding 'Sovereign'/'Homeostatic'/'Ambivalent'.
+   */
+  readonly playerResponse?: PlayerResponse;
 }
 
 export const ASK_USER_QUESTION_TOOL = {
@@ -297,9 +310,18 @@ export class AgenticOrchestrator {
     return parts.join(' ') + ' Now: ';
   }
 
-  public async run(): Promise<OrchestratorResult> {
+  /**
+   * Run the encounter to completion.
+   * ponytail: B9 fix — optional AbortSignal lets the caller cancel the LLM
+   * loop cleanly (e.g. when the player exits the encounter in the WebUI).
+   * When aborted, throws an AbortError.
+   */
+  public async run(signal?: AbortSignal): Promise<OrchestratorResult> {
     const [line, stage] = this.encounter.moduleRef.split(':') as [Line, Stage];
     const now = Date.now();
+
+    // Check for abort at the start of each major phase.
+    if (signal?.aborted) throw new DOMException('Encounter aborted', 'AbortError');
 
     // If noLlm flag is set, skip LLM entirely and go directly to fallback
     if (this.noLlm) {
@@ -363,6 +385,9 @@ export class AgenticOrchestrator {
 
     while (loopCount < maxLoops) {
       loopCount++;
+
+      // ponytail: B9 fix — check abort before each LLM call.
+      if (signal?.aborted) throw new DOMException('Encounter aborted', 'AbortError');
 
       // Request next turn from LLM
       const res = await queryLLMWithTools(systemPrompt, this.messages, TOOLS);
@@ -1932,6 +1957,10 @@ ${probes}${rubric}
       consequenceRecord: updatedRecord,
       narrativeSummary: params.narrativeSummary,
       feedback,
+      // ponytail: B1+B2 fix — expose the real driveSignals + playerResponse
+      // so callers (CLI + WebUI gameEngine) get the honest evaluation.
+      driveSignals: params.driveSignals as { agency: string; communion: string; eros: string; agape: string } | undefined,
+      playerResponse: response,
     };
   }
 }
