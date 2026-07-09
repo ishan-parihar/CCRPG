@@ -19,6 +19,7 @@
   import '../styles/capabilities.css';
   import StageTheme from '$lib/components/StageTheme.svelte';
   import A11yApplier from '$lib/components/A11yApplier.svelte';
+  import AmbientLayer from '$lib/components/AmbientLayer.svelte';
   import Sidebar from '$lib/components/Sidebar.svelte';
   import BottomNav from '$lib/components/BottomNav.svelte';
   import Toaster from '$lib/components/Toaster.svelte';
@@ -64,6 +65,7 @@
 
 <StageTheme />
 <A11yApplier />
+<AmbientLayer />
 <Sidebar />
 {@render children()}
 <BottomNav />
