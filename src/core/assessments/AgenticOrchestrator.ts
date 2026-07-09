@@ -16,8 +16,8 @@ import { accumulateTension, tryTriggerMacroEvent, type PESTLETension } from '../
 import type { AgentMessage, AskUserQuestionParams, AskUserQuestionResult } from './agentTypes.js';
 import { getRenderer } from './cli/TaskRenderers.js';
 import { computeConfidence } from './engine.js';
-// ponytail: E — shadow keywords loaded from shared JSON data file.
-import SHADOW_KEYWORDS_DATA from '../data/shadowKeywords.json' with { type: 'application/json' };
+// ponytail: E — shadow keywords loaded from shared data file.
+import { SHADOW_KEYWORDS as SHADOW_KEYWORDS_DATA } from '../data/shadowKeywords.js';
 
 const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
 
