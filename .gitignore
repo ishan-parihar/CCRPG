@@ -16,6 +16,10 @@ local.properties
 *.log
 npm-debug.log*
 
+# Build artifacts
+__pycache__/
+*.pyc
+
 # Editor / OS
 .DS_Store
 .idea/

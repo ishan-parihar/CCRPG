@@ -1,0 +1,98 @@
+project:
+  name: "CCRPG"
+  type: "game-typescript-sveltekit"
+
+structure:
+  canonical:
+    - path: "src"
+      purpose: "Application source code (core, infra, game, routes, lib)"
+    - path: "tests"
+      purpose: "Test files"
+    - path: "docs"
+      purpose: "Documentation, audits, plans, foundations, concept-drafts"
+    - path: "scripts"
+      purpose: "Build scripts, utilities, maintenance tools"
+    - path: "static"
+      purpose: "Static assets served by SvelteKit"
+    - path: "skills"
+      purpose: "AI agent skills and templates"
+
+rules:
+  root:
+    forbidden_files:
+      - "*.md"
+      - "*.log"
+      - "*.tmp"
+      - "*.bak"
+    allowed_root_files:
+      - "README.md"
+      - "AGENTS.md"
+      - "CHANGELOG.md"
+      - "LICENSE"
+      - ".gitignore"
+      - "workspace-lint.yaml"
+      - "package.json"
+      - "package-lock.json"
+      - "bun.lock"
+      - "tsconfig.json"
+      - "vite.config.ts"
+      - "tsup.config.ts"
+      - "svelte.config.js"
+      - "capacitor.config.json"
+      - "wrangler.toml"
+      - "lifeos.config.json"
+      - "install.sh"
+
+  files:
+    "*.md":
+      preferred_dir: "docs"
+      exclude_dirs:
+        - "skills"
+    "*.py":
+      preferred_dir: "scripts"
+      max_size_kb: 200
+      exclude_dirs:
+        - "skills"
+    "*.ts":
+      preferred_dir: "src"
+      exclude_dirs:
+        - "tests"
+        - "scripts"
+        - "skills"
+    "*.js":
+      preferred_dir: "src"
+      exclude_dirs:
+        - "scripts"
+        - "skills"
+    "*.svelte":
+      preferred_dir: "src"
+    "*.css":
+      preferred_dir: "src"
+
+  directories:
+    forbidden_patterns:
+      - "^\\s"
+      - "\\s$"
+      - "__pycache__"
+      - "node_modules"
+      - ".pytest_cache"
+      - ".mypy_cache"
+      - ".next"
+      - ".nuxt"
+
+ignore_dirs:
+  - ".git"
+  - "node_modules"
+  - ".svelte-kit"
+  - "dist"
+  - "build"
+  - ".contexty"
+  - ".memsearch"
+  - ".hive"
+  - ".opencode"
+  - ".playwright-mcp"
+  - ".sisyphus"
+  - ".cortexkit"
+  - ".wrangler"
+  - ".github"
+  - "coverage"
