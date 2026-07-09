@@ -23,6 +23,7 @@
       { href: '/journal', label: 'Journal', icon: 'book' },
       { href: '/codex', label: 'Codex', icon: 'book' },
       { href: '/settings', label: 'Settings', icon: 'settings' },
+      { href: '/setup', label: 'Setup', icon: 'settings' },
       { href: '/recover', label: 'Recover', icon: 'recover' },
       { href: '/glossary', label: 'Glossary', icon: 'info' },
     ] as const,
