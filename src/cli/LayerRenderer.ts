@@ -11,17 +11,11 @@ import chalk from 'chalk';
 import type { Significator } from '../core/domain/Significator.js';
 import type { Stage } from '../core/domain/Stage.js';
 import { ALL_STAGES, stageOrdinal } from '../core/domain/Stage.js';
-
-const LAYER_AESTHETICS: Readonly<Record<Stage, string>> = {
-  Infrared: 'cave-dark, primal',
-  Magenta: 'dream-saturated, symbol-rich',
-  Red: 'fortress-sharp, weapon-walls',
-  Amber: 'cathedral-ordered, gold-stone',
-  Orange: 'mechanism-precise, steel-glass',
-  Green: 'garden-lush, earth-toned',
-  Turquoise: 'crystalline, translucent',
-  White: 'luminous silence, spacious',
-};
+// R11-R2: use canonical stage aesthetics from veilDescriptors instead of
+// a duplicated map. The LayerRenderer shows per-LAYER aesthetics (which
+// are stage-keyed), so describeStage is the right function — personal
+// resonance modifiers are only meaningful for the player's current stage.
+import { describeStage } from '../core/presentation/veilDescriptors.js';
 
 function layerColor(stage: Stage): (text: string) => string {
   const colors: Record<Stage, (text: string) => string> = {
@@ -111,7 +105,7 @@ export function renderLayers(
 
   for (const layer of layers) {
     const color = layerColor(layer.stage);
-    const aesthetic = LAYER_AESTHETICS[layer.stage];
+    const aesthetic = describeStage(layer.stage);
     // T-3.4 (Veil compliance): show the aesthetic descriptor, not the stage name.
     const label = aesthetic.padEnd(24);
 
@@ -159,7 +153,7 @@ export function renderLayersCompact(
 
   for (const layer of layers) {
     const color = layerColor(layer.stage);
-    const aesthetic = LAYER_AESTHETICS[layer.stage];
+    const aesthetic = describeStage(layer.stage);
     // T-3.4 (Veil compliance): use aesthetic descriptor, not stage name.
     switch (layer.status) {
       case 'active':

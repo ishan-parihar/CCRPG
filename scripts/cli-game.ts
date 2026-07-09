@@ -248,6 +248,8 @@ import { createCCRPGToolRegistry } from '../src/core/agent/ToolRegistry.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
+// R11-R2: use canonical resonance from veilDescriptors instead of duplicated maps.
+import { describeStage, describePersonalResonance } from '../src/core/presentation/veilDescriptors.js';
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
 import { GLOSSARY_TERMS, PLAYER_GLOSSARY_TERMS, ADVANCED_GLOSSARY_TERMS } from '../src/core/data/glossary.js';
@@ -1005,14 +1007,9 @@ function renderRadarChart(sig: Significator): void {
 function printSignificator(sig: Significator): void {
   // T-3.4 (Veil compliance): printSignificator is only called from
   // diagnostic/verbose paths. Show only id + qualitative state.
+  // R11-R2: use describePersonalResonance for player-responsive resonance.
   info('id', sig.id);
-  const stageAesthetics: Record<string, string> = {
-    Infrared: 'cave-dark, primal', Magenta: 'spirit-saturated, symbolic',
-    Red: 'fortress-sharp, weapon-walls', Amber: 'cathedral-ordered, gold-stone',
-    Orange: 'mechanism-precise, steel-glass', Green: 'garden-lush, earth-toned',
-    Turquoise: 'crystalline, translucent', White: 'luminous silence, spacious',
-  };
-  info('resonance', stageAesthetics[sig.currentStage] ?? 'shifting, becoming');
+  info('resonance', describePersonalResonance(sig));
 }
 
 function printEncounter(enc: ScheduledEncounter, world?: WorldState): void {
@@ -2991,12 +2988,7 @@ async function runStatus(): Promise<void> {
     // pretty-print path — qualitative aesthetic + milestone, not raw
     // clinical state. Stage names and trace counts are exposed because
     // they are already user-visible in the pretty-print table.
-    const stageAesthetics: Record<string, string> = {
-      Infrared: 'cave-dark, primal', Magenta: 'spirit-saturated, symbolic',
-      Red: 'fortress-sharp, weapon-walls', Amber: 'cathedral-ordered, gold-stone',
-      Orange: 'mechanism-precise, steel-glass', Green: 'garden-lush, earth-tones',
-      Turquoise: 'crystalline, translucent', White: 'luminous silence, spacious',
-    };
+    // R11-R2: stageAesthetics map removed — use describeStage from veilDescriptors.
     const stageAestheticsShort: Record<string, string> = {
       Infrared: 'primal', Magenta: 'symbolic', Red: 'power', Amber: 'order',
       Orange: 'reason', Green: 'harmony', Turquoise: 'integral', White: 'unity',
@@ -3019,7 +3011,8 @@ async function runStatus(): Promise<void> {
       },
     };
     if (sig) {
-      const aesthetic = stageAesthetics[sig.currentStage] ?? 'shifting, becoming';
+      // R11-R2: use describePersonalResonance for player-responsive resonance.
+      const aesthetic = describePersonalResonance(sig);
       const milestone = sig.totalEncounters === 0
         ? 'Your path is yet to begin.'
         : sig.totalEncounters < 10
@@ -3110,18 +3103,10 @@ async function runStatus(): Promise<void> {
       // No stage name, no encounter count, no altitudes chart, no shadow/drive displays.
       info('player', sig.id);
 
-      // Qualitative felt-sense description of current stage
-      const stageAesthetics: Record<string, string> = {
-        Infrared: 'cave-dark, primal',
-        Magenta: 'spirit-saturated, symbolic',
-        Red: 'fortress-sharp, weapon-walls',
-        Amber: 'cathedral-ordered, gold-stone',
-        Orange: 'mechanism-precise, steel-glass',
-        Green: 'garden-lush, earth-toned',
-        Turquoise: 'crystalline, translucent',
-        White: 'luminous silence, spacious',
-      };
-      const aesthetic = stageAesthetics[sig.currentStage] ?? 'shifting, becoming';
+      // R11-R2: use describePersonalResonance for player-responsive resonance.
+      // The resonance now changes based on the player's shadow patterns and
+      // drive imbalances, not just their stage label.
+      const aesthetic = describePersonalResonance(sig);
       info('resonance', `The world feels ${aesthetic}.`);
 
       // Qualitative encounter milestone

@@ -31,6 +31,74 @@ export function describeStage(stage: Stage): string {
   return stageAesthetics[stage] ?? 'shifting, becoming';
 }
 
+/**
+ * R11-R2 (Fresh-User UX Audit): Personal resonance descriptor.
+ *
+ * The base stage aesthetic is the same for every player at a given stage.
+ * This function adds a PERSONAL modifier derived from the player's actual
+ * patterns — their dominant shadow quadrant (if any) or drive imbalance.
+ * The modifier is Veil-compliant: poetic, not clinical.
+ *
+ * Before R11: every Orange-stage player saw "mechanism-precise, steel-glass"
+ * regardless of what they wrote. Maya: "The game calling me 'steel-glass'
+ * while I was telling it about my father felt like talking to a wall that
+ * had been pre-decorated."
+ *
+ * After R11: an Orange-stage player with DarkAverted shadows sees
+ * "mechanism-precise, steel-glass, with the flinch remembering" — still
+ * poetic, still Veil-compliant, but actually responsive to their patterns.
+ */
+export function describePersonalResonance(sig: Significator): string {
+  const base = describeStage(sig.currentStage);
+
+  // Derive personal modifier from shadow patterns (most expressive signal).
+  const unresolvedShadows = sig.shadows.entries.filter(e => e.resolvedAt === null);
+
+  if (unresolvedShadows.length > 0) {
+    // Find the dominant shadow quadrant (most recurrent).
+    const quadrantCounts: Record<string, number> = {};
+    for (const e of unresolvedShadows) {
+      quadrantCounts[e.quadrant] = (quadrantCounts[e.quadrant] ?? 0) + 1 + e.recurrenceCount;
+    }
+    const dominantQuadrant = Object.entries(quadrantCounts)
+      .sort((a, b) => b[1] - a[1])[0]?.[0];
+
+    const shadowModifiers: Record<string, string> = {
+      DarkAddiction: 'with the old pull echoing',
+      DarkAllergy: 'with the flinch remembering',
+      GoldenAddiction: 'with the reaching overshooting',
+      GoldenAllergy: 'with the refusal holding',
+    };
+    const modifier = dominantQuadrant ? shadowModifiers[dominantQuadrant] : null;
+    if (modifier) return `${base}, ${modifier}`;
+  }
+
+  // If no shadows, derive from drive imbalance (if significant).
+  const weights = sig.drives.weights;
+  const values = Object.values(weights);
+  if (values.length > 0) {
+    const max = Math.max(...values);
+    const min = Math.min(...values);
+    const spread = max - min;
+    if (spread >= 0.25) {
+      // Find the dominant drive
+      const dominantDrive = Object.entries(weights)
+        .sort((a, b) => b[1] - a[1])[0]?.[0];
+      const driveModifiers: Record<string, string> = {
+        Agency: 'leaning into the forward push',
+        Communion: 'leaning into the reaching out',
+        Eros: 'leaning into the ascending pull',
+        Agape: 'leaning into the descending gift',
+      };
+      const modifier = dominantDrive ? driveModifiers[dominantDrive] : null;
+      if (modifier) return `${base}, ${modifier}`;
+    }
+  }
+
+  // No personal modifier available — return the base stage aesthetic.
+  return base;
+}
+
 /** Qualitative descriptor for drive weight spread. Never shows percentages. */
 export function describeDriveSpread(weights: { readonly [k: string]: number }): string {
   const values = Object.values(weights);
