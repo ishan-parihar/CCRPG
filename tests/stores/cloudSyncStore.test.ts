@@ -18,9 +18,16 @@ import { getDeviceId, flushSync, generateRecoveryMnemonic } from '../../src/lib/
 const mockFetch = vi.fn();
 vi.stubGlobal('fetch', mockFetch);
 
-// Mock crypto.randomUUID
+// Mock crypto — ponytail: C.12 added AES-GCM encryption, so we mock subtle crypto too.
 vi.stubGlobal('crypto', {
   randomUUID: () => 'test-uuid-1234',
+  subtle: {
+    digest: async (_alg: string, data: Uint8Array) => data.buffer,
+    importKey: async () => ({}),
+    encrypt: async () => new ArrayBuffer(16),
+    decrypt: async () => new ArrayBuffer(16),
+  },
+  getRandomValues: (arr: Uint8Array) => arr,
 });
 
 describe('cloudSyncStore', () => {
@@ -52,18 +59,22 @@ describe('cloudSyncStore', () => {
   });
 
   describe('flushSync', () => {
-    it('POSTs save to /api/save with deviceId + blob', async () => {
+    it('POSTs save to /api/save with deviceId + encrypted blob', async () => {
       mockFetch.mockResolvedValueOnce({ ok: true });
 
       // Use a unique sig to avoid the "unchanged" skip
       const sig = { id: 'test-post-' + Date.now(), currentStage: 'Red' };
       await flushSync(sig as any);
 
-      expect(mockFetch).toHaveBeenCalledWith('/api/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ deviceId: 'test-uuid-1234', blob: JSON.stringify(sig) }),
-      });
+      expect(mockFetch).toHaveBeenCalledTimes(1);
+      const [url, opts] = mockFetch.mock.calls[0]!;
+      expect(url).toBe('/api/save');
+      const body = JSON.parse((opts as any).body);
+      expect(body.deviceId).toBe('test-uuid-1234');
+      expect(body.encrypted).toBe(true);
+      expect(typeof body.blob).toBe('string');
+      // blob is now opaque (encrypted) — not the raw JSON
+      expect(body.blob).not.toBe(JSON.stringify(sig));
     });
 
     it('skips if save is unchanged since last sync', async () => {

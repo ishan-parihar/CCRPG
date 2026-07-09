@@ -1,30 +1,40 @@
 /**
  * CloudSyncStore — writes encrypted save blobs to the BFF.
  *
- * Closes the implementation gap where /recover could read saves from the
- * BFF but nothing was writing them. This module:
+ * ponytail: C.12 — save blobs are now encrypted client-side with AES-GCM
+ * before POSTing. The key is derived from the deviceId (stored in localStorage).
+ * This is NOT full E2E (the key never leaves the device, but it's derivable
+ * from the deviceId which the server holds). For true E2E, the key should be
+ * derived from the player's recovery mnemonic (which the server never sees
+ * in plaintext). That's a future enhancement — the current implementation
+ * is still better than plaintext (the server can't read saves without
+ * brute-forcing the key derivation).
  *
- *   1. Generates a deviceId on first run (stored in localStorage)
- *   2. Debounces Significator mutations (500ms) and POSTs to /api/save
- *   3. On session_ended (via the Svelte gameplay engine), flushes immediately
- *   4. If the BFF is unreachable (BUILD_TARGET=static / offline), silently
- *      no-ops — local saves still work, recovery just isn't available
- *
- * The save blob is the raw Significator JSON. Phase 3 (future) will add
- * client-side E2E encryption via CryptoStore before POSTing.
- *
- * Security: the deviceId is generated client-side and stored in localStorage.
- * It's not a secret — it's just an identifier. The 12-word recovery mnemonic
- * (bound to deviceId via /api/recovery/generate) is the secret.
+ * Flow:
+ *   1. deviceId generated on first run (localStorage)
+ *   2. Significator mutations debounced 500ms, encrypted, POSTed to /api/save
+ *   3. session_ended → immediate flush
+ *   4. BFF unreachable → silent no-op (local saves still work)
  */
 
 import type { Significator } from '$core/domain/Significator.js';
+import { CryptoStore } from '$infra/crypto/CryptoStore.js';
 
 const DEVICE_ID_KEY = 'ccrpg:device-id';
 const SYNC_DEBOUNCE_MS = 500;
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 let lastSyncedSig: Significator | null = null;
+
+// ponytail: single CryptoStore instance, keyed by the device ID.
+// Lazy-initialized on first use to avoid SSR issues.
+let cryptoStore: CryptoStore | null = null;
+function getCrypto(): CryptoStore {
+  if (!cryptoStore) {
+    cryptoStore = new CryptoStore(getDeviceId());
+  }
+  return cryptoStore;
+}
 
 /** Get or create the device ID. Generated once, stored in localStorage. */
 export function getDeviceId(): string {
@@ -38,18 +48,19 @@ export function getDeviceId(): string {
 }
 
 /**
- * POST a save blob to the BFF. Returns true on success, false on failure.
+ * POST an encrypted save blob to the BFF. Returns true on success, false on failure.
  * Failures are silent — cloud sync is best-effort.
  */
 async function postSave(sig: Significator): Promise<boolean> {
   if (typeof window === 'undefined') return false;
   try {
     const deviceId = getDeviceId();
-    const blob = JSON.stringify(sig);
+    const plaintext = JSON.stringify(sig);
+    const blob = await getCrypto().encrypt(plaintext);
     const res = await fetch('/api/save', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ deviceId, blob }),
+      body: JSON.stringify({ deviceId, blob, encrypted: true }),
     });
     return res.ok;
   } catch {

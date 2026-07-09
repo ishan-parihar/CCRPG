@@ -98,14 +98,27 @@
       const saveData = await saveRes.json();
 
       try {
-        const sig = validateSignificator(JSON.parse(saveData.blob));
+        // ponytail: C.12 — decrypt the blob if encrypted, else parse as plaintext (backward compat).
+        let plaintext: string;
+        if (saveData.encrypted) {
+          const { CryptoStore } = await import('$infra/crypto/CryptoStore.js');
+          // The key is derived from the deviceId bound to the recovery mnemonic.
+          // The server returns the deviceId with the save; we derive the key from it.
+          const crypto = new CryptoStore(deviceId);
+          plaintext = await crypto.decrypt(saveData.blob);
+        } else {
+          plaintext = saveData.blob;
+        }
+        const sig = validateSignificator(JSON.parse(plaintext));
         if (!sig) throw new Error('Invalid save data');
+        // Restore the deviceId so future syncs use the same key.
+        localStorage.setItem('ccrpg:device-id', deviceId);
         localStorage.setItem('profile:v1', JSON.stringify(sig));
         setSignificator(sig);
         showToast('Save restored', 'success', 3000);
         goto('/');
       } catch {
-        error = 'The recovered save data was corrupt. Contact support.';
+        error = 'The recovered save data was corrupt or the key did not match. Contact support.';
         isRecovering = false;
       }
     } catch (err) {
