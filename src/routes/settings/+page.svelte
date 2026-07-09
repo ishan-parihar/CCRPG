@@ -19,12 +19,17 @@
   import Cluster from '$lib/components/Cluster.svelte';
   import Icon from '$lib/components/Icon.svelte';
   import { accessibilityStore, updateAccessibility, resetAccessibility } from '$lib/stores/accessibilityStore.js';
+  import { sessionControlStore, updateSessionControl } from '$lib/stores/sessionControlStore.js';
   import { resetSavesInStorage } from '$lib/stores/saveHydration.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
   import { showToast } from '$lib/stores/toastStore.js';
   import { stageFade } from '$lib/transitions/stageMotion.js';
+  import { ALL_LINES } from '$core/domain/Line.js';
+  import { ALL_STAGES } from '$core/domain/Stage.js';
+  import { ALL_MODALITIES } from '$core/domain/enums.js';
 
   const settings = $derived($accessibilityStore);
+  const sessionControl = $derived($sessionControlStore);
 
   let showResetConfirm = $state(false);
   let isResetting = $state(false);
@@ -150,6 +155,106 @@
       </Stack>
     </section>
 
+    <!-- Session (parity with CLI flags: --encounters, --line, --stage, --modality) -->
+    <section in:stageFade={{ delay: 165 }}>
+      <Stack gap="space-3">
+        <h2 class="section-title">Session</h2>
+        <Card padding="space-0">
+          <Stack gap="space-0">
+            <div class="setting-row">
+              <div class="setting-label">
+                <span class="setting-name">Encounters per session</span>
+                <span class="setting-desc">How many encounters to schedule (default: 5)</span>
+              </div>
+              <input
+                type="number"
+                min="1"
+                max="20"
+                value={sessionControl.encounterCount}
+                oninput={(e) => updateSessionControl({ encounterCount: Math.max(1, Math.min(20, parseInt(e.currentTarget.value) || 5)) })}
+                class="number-input"
+                aria-label="Encounters per session"
+              />
+            </div>
+            <div class="setting-divider" role="presentation"></div>
+            <div class="setting-row">
+              <div class="setting-label">
+                <span class="setting-name">Force line</span>
+                <span class="setting-desc">Target a specific developmental line (auto = scheduler picks)</span>
+              </div>
+              <select
+                value={sessionControl.forceLine ?? ''}
+                onchange={(e) => updateSessionControl({ forceLine: e.currentTarget.value || null })}
+                class="select-input"
+                aria-label="Force specific line"
+              >
+                <option value="">Auto</option>
+                {#each ALL_LINES as line}
+                  <option value={line}>{line}</option>
+                {/each}
+              </select>
+            </div>
+            <div class="setting-divider" role="presentation"></div>
+            <div class="setting-row">
+              <div class="setting-label">
+                <span class="setting-name">Force stage</span>
+                <span class="setting-desc">Target a specific stage (auto = current stage)</span>
+              </div>
+              <select
+                value={sessionControl.forceStage ?? ''}
+                onchange={(e) => updateSessionControl({ forceStage: e.currentTarget.value || null })}
+                class="select-input"
+                aria-label="Force specific stage"
+              >
+                <option value="">Auto</option>
+                {#each ALL_STAGES as stage}
+                  <option value={stage}>{stage}</option>
+                {/each}
+              </select>
+            </div>
+            <div class="setting-divider" role="presentation"></div>
+            <div class="setting-row">
+              <div class="setting-label">
+                <span class="setting-name">Force modality</span>
+                <span class="setting-desc">Target a specific encounter modality (auto = scheduler picks)</span>
+              </div>
+              <select
+                value={sessionControl.forceModality ?? ''}
+                onchange={(e) => updateSessionControl({ forceModality: e.currentTarget.value || null })}
+                class="select-input"
+                aria-label="Force specific modality"
+              >
+                <option value="">Auto</option>
+                {#each ALL_MODALITIES as modality}
+                  <option value={modality}>{modality}</option>
+                {/each}
+              </select>
+            </div>
+          </Stack>
+        </Card>
+      </Stack>
+    </section>
+
+    <!-- Dev mode (parity with CLI --dev flag) -->
+    <section in:stageFade={{ delay: 175 }}>
+      <Stack gap="space-3">
+        <h2 class="section-title">Developer</h2>
+        <Card padding="space-0">
+          <div class="setting-row">
+            <div class="setting-label">
+              <span class="setting-name">Dev mode</span>
+              <span class="setting-desc">Show holistic primitives (G_z/P_z, rayProfile, phase position) in profile and encounters</span>
+            </div>
+            <Toggle
+              checked={sessionControl.devMode}
+              onchange={(v) => updateSessionControl({ devMode: v })}
+              ariaLabel="Toggle dev mode"
+            />
+          </div>
+        </Card>
+      </Stack>
+    </section>
+
     <!-- Data -->
     <section in:stageFade={{ delay: 180 }}>
       <Stack gap="space-3">
@@ -258,6 +363,32 @@
     flex-shrink: 0;
     display: flex;
     align-items: center;
+  }
+
+  .number-input,
+  .select-input {
+    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
+    background: var(--ccrpg-surface);
+    border: 1px solid var(--ccrpg-border);
+    border-radius: var(--ccrpg-radius);
+    color: var(--ccrpg-fg);
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    min-width: 8rem;
+    transition: border-color var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .number-input:focus,
+  .select-input:focus {
+    outline: none;
+    border-color: var(--ccrpg-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ccrpg-accent) 20%, transparent);
+  }
+
+  .number-input {
+    width: 4rem;
+    text-align: center;
   }
 
   .modal-warning {
