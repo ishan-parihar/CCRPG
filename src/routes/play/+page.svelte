@@ -143,8 +143,12 @@
           {:else}
             <Stack gap="space-3">
               {#each encounters as encounter, i (encounter.id)}
+                {@const holon = world?.holons.find((h) => h.id === encounter.holonSource)}
+                {@const isShadow = encounter.executionMode === 'shadow'}
+                {@const arcLabel = encounter.sessionPosition === 'warmup' ? 'Warmup' : encounter.sessionPosition === 'cooldown' ? 'Cooldown' : 'Peak'}
+                {@const arcVariant = encounter.sessionPosition === 'warmup' ? 'info' : encounter.sessionPosition === 'cooldown' ? 'success' : 'accent'}
                 <Card
-                  variant="default"
+                  variant={isShadow ? 'accent' : 'default'}
                   padding="space-5"
                   interactive
                   onclick={() => startEncounter(encounter)}
@@ -153,10 +157,21 @@
                 >
                   <div class="encounter-card-inner">
                     <div class="encounter-info">
-                      <Cluster gap="space-2" align="start" wrap={false}>
+                      <Cluster gap="space-2" align="start" wrap={true}>
+                        <Badge variant={arcVariant}>{arcLabel}</Badge>
                         <Badge variant="accent">{encounter.modality}</Badge>
-                        <Badge variant="default">{encounter.executionMode}</Badge>
+                        {#if isShadow}
+                          <Badge variant="danger">◆ Shadow-work</Badge>
+                        {/if}
                       </Cluster>
+                      {#if holon}
+                        <p class="encounter-holon">
+                          <span class="holon-name">{holon.name}</span>
+                          {#if holon.narrativeRole}
+                            <span class="holon-role"> · {holon.narrativeRole}</span>
+                          {/if}
+                        </p>
+                      {/if}
                       <p class="encounter-line">{encounter.moduleRef}</p>
                     </div>
                     <div class="encounter-actions">
@@ -342,11 +357,31 @@
     min-width: 0;
   }
 
-  .encounter-line {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
+  .encounter-holon {
+    font-family: var(--ccrpg-font-display);
+    font-size: var(--ccrpg-text-md);
+    font-weight: 600;
     color: var(--ccrpg-fg);
     margin-top: var(--ccrpg-space-2);
+  }
+
+  .holon-name {
+    color: var(--ccrpg-accent);
+  }
+
+  .holon-role {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    font-weight: 400;
+    color: var(--ccrpg-fg-muted);
+    text-transform: capitalize;
+  }
+
+  .encounter-line {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
+    margin-top: var(--ccrpg-space-1);
   }
 
   .encounter-actions {
