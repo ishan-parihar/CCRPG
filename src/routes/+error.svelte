@@ -13,7 +13,7 @@
   import { page } from '$app/state';
   import BackButton from '$lib/components/BackButton.svelte';
   import Seo from '$lib/components/Seo.svelte';
-  import { fade } from 'svelte/transition';
+  import { stageFade } from '$lib/transitions/stageMotion.js';
 
   const status = $derived(page.status);
   const message = $derived(page.error?.message ?? 'Something went wrong');
@@ -29,7 +29,7 @@
   indexable={false}
 />
 
-<div class="error-page" in:fade={{ duration: 400 }}>
+<div class="error-page" in:stageFade={{ duration: 400 }}>
   <div class="error-content">
     <div class="error-code" aria-hidden="true">{status}</div>
     <h1 class="error-title">

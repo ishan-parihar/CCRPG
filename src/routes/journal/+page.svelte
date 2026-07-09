@@ -1,21 +1,20 @@
 <script lang="ts">
   /**
    * /journal route — player journal: codex entries + vows.
-   *
-   * Replaces Phaser JournalScene. Read-only view of Significator data.
-   * Veil-compliant: no raw numbers, no stage labels.
+   * Read-only view of Significator data. Veil-compliant.
    */
 
-  import BackButton from '$lib/components/BackButton.svelte';
-  import Seo from '$lib/components/Seo.svelte';
-  import { gameStore } from '$lib/stores/gameStore.js';
-  import { loadSignificatorFromStorage } from '$lib/stores/saveHydration.js';
-  import { setSignificator } from '$lib/stores/gameStore.js';
-  import { describeEncounterCount, describeSessionCount } from '$core/presentation/veilDescriptors.js';
-  import { stageFade } from '$lib/transitions/stageMotion.js';
-  import type { CodexEntry, Vow } from '$core/domain/SharedTypes.js';
   import { onMount } from 'svelte';
   import { browser } from '$app/environment';
+  import Seo from '$lib/components/Seo.svelte';
+  import RouteShell from '$lib/components/RouteShell.svelte';
+  import Card from '$lib/components/Card.svelte';
+  import Badge from '$lib/components/Badge.svelte';
+  import Stack from '$lib/components/Stack.svelte';
+  import { gameStore, setSignificator } from '$lib/stores/gameStore.js';
+  import { loadSignificatorFromStorage } from '$lib/stores/saveHydration.js';
+  import { describeEncounterCount, describeSessionCount } from '$core/presentation/veilDescriptors.js';
+  import type { CodexEntry, Vow } from '$core/domain/SharedTypes.js';
 
   const sig = $derived($gameStore.significator);
   const entries = $derived((sig?.codexEntries ?? []) as readonly CodexEntry[]);
@@ -44,215 +43,158 @@
   indexable={false}
 />
 
-<div class="journal-route" in:stageFade>
-  <header class="route-header">
-    <BackButton href="/" label="Menu" />
-    <h1>Journal</h1>
-  </header>
+<RouteShell title="Journal" back="/">
+  {#if !sig}
+    <p class="empty-state">No save found. Enter the world to begin your journey.</p>
+  {:else}
+    <Stack gap="space-5">
+      <Card variant="accent" padding="space-5">
+        <Stack gap="space-1">
+          <p class="summary-line">{describeEncounterCount(sig.totalEncounters)}</p>
+          <p class="summary-line muted">{describeSessionCount(sig.totalSessions)}</p>
+        </Stack>
+      </Card>
 
-  <main class="route-content">
-    {#if !sig}
-      <p class="empty-state">No save found. Enter the world to begin your journey.</p>
-    {:else}
-      <section class="summary">
-        <p class="summary-line">{describeEncounterCount(sig.totalEncounters)}</p>
-        <p class="summary-line muted">{describeSessionCount(sig.totalSessions)}</p>
-      </section>
-
-      <section class="vows-section">
-        <h2>Vows</h2>
+      <Stack gap="space-3">
+        <h2 class="section-title">Vows</h2>
         {#if vows.length === 0}
-          <p class="empty-section">No vows made yet.</p>
+          <Card padding="space-5"><p class="empty-section">No vows made yet.</p></Card>
         {:else}
-          <ul class="vow-list">
-            {#each vows as vow}
-              <li class="vow-item" class:fulfilled={vow.fulfilled}>
-                <p class="vow-text">{vow.text}</p>
-                <span class="vow-date">{formatDate(vow.createdAtMs)}</span>
-                {#if vow.fulfilled}
-                  <span class="vow-badge">fulfilled</span>
-                {/if}
-              </li>
-            {/each}
-          </ul>
+          <Card padding="space-0">
+            <ul class="item-list" role="list">
+              {#each vows as vow, i}
+                <li class="item vow-item" class:fulfilled={vow.fulfilled} class:divider={i > 0}>
+                  <p class="item-text">{vow.text}</p>
+                  <div class="item-meta">
+                    <span class="item-date">{formatDate(vow.createdAtMs)}</span>
+                    {#if vow.fulfilled}
+                      <Badge variant="success">fulfilled</Badge>
+                    {/if}
+                  </div>
+                </li>
+              {/each}
+            </ul>
+          </Card>
         {/if}
-      </section>
+      </Stack>
 
-      <section class="entries-section">
-        <h2>Codex Entries</h2>
+      <Stack gap="space-3">
+        <h2 class="section-title">Codex Entries</h2>
         {#if entries.length === 0}
-          <p class="empty-section">No entries yet. Explore the world.</p>
+          <Card padding="space-5"><p class="empty-section">No entries yet. Explore the world.</p></Card>
         {:else}
-          <ul class="entry-list">
-            {#each entries as entry}
-              <li class="entry-item">
-                <h3>{entry.title}</h3>
-                <p class="entry-body">{entry.body}</p>
-                <span class="entry-date">{formatDate(entry.unlockedAtMs)}</span>
-              </li>
-            {/each}
-          </ul>
+          <Card padding="space-0">
+            <ul class="item-list" role="list">
+              {#each entries as entry, i}
+                <li class="item" class:divider={i > 0}>
+                  <h3 class="item-title">{entry.title}</h3>
+                  <p class="item-body">{entry.body}</p>
+                  <span class="item-date">{formatDate(entry.unlockedAtMs)}</span>
+                </li>
+              {/each}
+            </ul>
+          </Card>
         {/if}
-      </section>
-    {/if}
-  </main>
-</div>
+      </Stack>
+    </Stack>
+  {/if}
+</RouteShell>
 
 <style>
-  .journal-route {
-    min-height: 100vh;
-    background: var(--ccrpg-bg, #05070b);
-    color: var(--ccrpg-fg, #e7eaf2);
-    font-family: var(--ccrpg-font-body, system-ui);
-    padding: 1rem;
-    padding-top: calc(1rem + env(safe-area-inset-top, 0px));
-    overflow-y: auto;
-    touch-action: pan-y;
-  }
-
-  .route-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .route-header h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-    font-family: var(--ccrpg-font-display, system-ui);
-  }
-
-  .route-content {
-    max-width: 600px;
-    margin: 0 auto;
-    padding-bottom: 4rem;
-  }
-
   .empty-state {
-    color: var(--ccrpg-fg-muted, #a89080);
+    color: var(--ccrpg-fg-muted);
     font-style: italic;
     text-align: center;
-    padding: 3rem 1rem;
-  }
-
-  .summary {
-    padding: 1.25rem;
-    background: var(--ccrpg-surface, #1a0f0f);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
-    border-radius: var(--ccrpg-radius-lg, 12px);
-    margin-bottom: 2rem;
+    padding: var(--ccrpg-space-7) var(--ccrpg-space-4);
   }
 
   .summary-line {
-    font-size: 1rem;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.5;
-  }
-
-  .summary-line:last-child {
-    margin-bottom: 0;
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-base);
+    color: var(--ccrpg-fg);
+    margin: 0;
   }
 
   .summary-line.muted {
-    font-size: 0.875rem;
-    color: var(--ccrpg-fg-muted, #a89080);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
+    font-style: italic;
   }
 
-  .vows-section,
-  .entries-section {
-    margin-bottom: 2rem;
-  }
-
-  h2 {
-    font-size: 0.75rem;
+  .section-title {
+    font-family: var(--ccrpg-font-display);
+    font-size: var(--ccrpg-text-sm);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ccrpg-accent, #b8252a);
-    margin: 0 0 1rem 0;
-    font-family: var(--ccrpg-font-body, system-ui);
+    letter-spacing: var(--ccrpg-tracking-wider);
+    color: var(--ccrpg-accent);
+    margin: 0;
   }
 
   .empty-section {
-    color: var(--ccrpg-fg-muted, #a89080);
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
     font-style: italic;
-    padding: 1rem 0;
+    text-align: center;
+    margin: 0;
   }
 
-  .vow-list,
-  .entry-list {
+  .item-list {
     list-style: none;
     padding: 0;
     margin: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 0.75rem;
   }
 
-  .vow-item {
-    padding: 1rem 1.25rem;
-    background: var(--ccrpg-surface, #1a0f0f);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
-    border-radius: var(--ccrpg-radius, 6px);
+  .item {
+    padding: var(--ccrpg-space-4) var(--ccrpg-space-5);
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccrpg-space-2);
+  }
+
+  .item.divider {
+    border-top: 1px solid var(--ccrpg-border);
+  }
+
+  .item-text {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-base);
+    color: var(--ccrpg-fg);
+    line-height: var(--ccrpg-leading-normal);
+    margin: 0;
+  }
+
+  .item-meta {
     display: flex;
     align-items: center;
-    gap: 0.75rem;
-    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--ccrpg-space-3);
+  }
+
+  .item-date {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg-muted);
   }
 
   .vow-item.fulfilled {
     opacity: 0.7;
   }
 
-  .vow-text {
-    flex: 1;
-    margin: 0;
-    font-size: 0.9375rem;
-    line-height: 1.5;
-  }
-
-  .vow-date {
-    font-size: 0.75rem;
-    color: var(--ccrpg-fg-muted, #a89080);
-    white-space: nowrap;
-  }
-
-  .vow-badge {
-    font-size: 0.6875rem;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    padding: 0.125rem 0.5rem;
-    background: var(--ccrpg-accent-soft, #5a1318);
-    color: var(--ccrpg-accent-fg, #ffffff);
-    border-radius: var(--ccrpg-radius-sm, 4px);
-  }
-
-  .entry-item {
-    padding: 1.25rem;
-    background: var(--ccrpg-surface, #1a0f0f);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
-    border-radius: var(--ccrpg-radius, 6px);
-  }
-
-  .entry-item h3 {
-    font-size: 1rem;
+  .item-title {
+    font-family: var(--ccrpg-font-display);
+    font-size: var(--ccrpg-text-md);
     font-weight: 600;
-    color: var(--ccrpg-accent, #b8252a);
-    margin: 0 0 0.5rem 0;
-    font-family: var(--ccrpg-font-display, system-ui);
+    color: var(--ccrpg-fg);
+    margin: 0;
   }
 
-  .entry-body {
-    font-size: 0.875rem;
-    line-height: 1.6;
-    color: var(--ccrpg-fg-muted, #a89080);
-    margin: 0 0 0.75rem 0;
-  }
-
-  .entry-date {
-    font-size: 0.75rem;
-    color: var(--ccrpg-fg-muted, #a89080);
+  .item-body {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
+    line-height: var(--ccrpg-leading-relaxed);
+    margin: 0;
   }
 </style>

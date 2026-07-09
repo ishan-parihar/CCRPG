@@ -2,26 +2,22 @@
   /**
    * /recover route — restore save on a new device via 12-word mnemonic.
    *
-   * Audit fix I3: The BFF has /api/recovery/generate and /api/recovery/restore
-   * endpoints, but there was no UI for a player to enter their mnemonic and
-   * restore their save. This route closes that gap.
-   *
    * Flow:
-   *   1. Player enters their 12-word mnemonic
+   *   1. Player enters 12-word mnemonic (paste-distribute or word-by-word)
    *   2. POST /api/recovery/restore → returns deviceId
-   *   3. GET /api/save?deviceId=… → returns encrypted save blob
-   *   4. Decrypt + store in localStorage → redirect to /
-   *
-   * If the BFF is unreachable (BUILD_TARGET=static / offline), show a
-   * friendly error explaining cloud recovery requires an internet connection.
+   *   3. GET /api/save?deviceId=… → returns save blob
+   *   4. Validate + store in localStorage → redirect to /
    */
 
   import { goto } from '$app/navigation';
   import { browser } from '$app/environment';
-  import BackButton from '$lib/components/BackButton.svelte';
   import Seo from '$lib/components/Seo.svelte';
-  import { stageFade } from '$lib/transitions/stageMotion.js';
+  import RouteShell from '$lib/components/RouteShell.svelte';
+  import Card from '$lib/components/Card.svelte';
+  import Button from '$lib/components/Button.svelte';
+  import Stack from '$lib/components/Stack.svelte';
   import { setSignificator } from '$lib/stores/gameStore.js';
+  import { showToast } from '$lib/stores/toastStore.js';
   import { validateSignificator } from '$infra/persistence/validateSignificator.js';
 
   let words = $state(Array(12).fill(''));
@@ -29,26 +25,18 @@
   let isRecovering = $state(false);
   let inputs: HTMLInputElement[] = [];
 
-  function backToMenu() {
-    goto('/');
-  }
-
   function handleInput(i: number, value: string) {
     words[i] = value.trim().toLowerCase();
     error = null;
-    // Auto-focus next input on space or when current is filled
     if (value.includes(' ')) {
-      // Paste handler — split on spaces and distribute
       const pasted = value.trim().toLowerCase().split(/\s+/);
       for (let j = 0; j < 12 && j < pasted.length; j++) {
         words[j] = pasted[j] ?? '';
       }
-      words = [...words]; // trigger reactivity
-      // Focus the last filled input
+      words = [...words];
       const lastIdx = Math.min(pasted.length, 11);
       inputs[lastIdx]?.focus();
     } else if (value.length >= 4 && i < 11) {
-      // Auto-advance for typical word lengths
       inputs[i + 1]?.focus();
     }
   }
@@ -75,7 +63,6 @@
     try {
       const mnemonic = words.join(' ');
 
-      // Step 1: exchange mnemonic for deviceId
       const restoreRes = await fetch('/api/recovery/restore', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -97,7 +84,6 @@
 
       const { deviceId } = await restoreRes.json();
 
-      // Step 2: fetch the encrypted save blob
       const saveRes = await fetch(`/api/save?deviceId=${encodeURIComponent(deviceId)}`);
       if (!saveRes.ok) {
         if (saveRes.status === 404) {
@@ -111,15 +97,12 @@
 
       const saveData = await saveRes.json();
 
-      // Step 3: decrypt + store in localStorage
-      // The save blob is currently stored as a JSON string in the blob field.
-      // Phase 3 will add client-side E2E encryption; for now, the blob is
-      // the raw Significator JSON (dev mode) or encrypted (prod, future).
       try {
         const sig = validateSignificator(JSON.parse(saveData.blob));
         if (!sig) throw new Error('Invalid save data');
         localStorage.setItem('profile:v1', JSON.stringify(sig));
         setSignificator(sig);
+        showToast('Save restored', 'success', 3000);
         goto('/');
       } catch {
         error = 'The recovered save data was corrupt. Contact support.';
@@ -138,19 +121,16 @@
   indexable={false}
 />
 
-<div class="recover-route" in:stageFade>
-  <header class="recover-header">
-    <BackButton onclick={backToMenu} label="Back" />
-    <h1>Recover Save</h1>
-  </header>
+<RouteShell title="Recover Save" back="/">
+  <Stack gap="space-5">
+    <Card padding="space-5">
+      <p class="recover-intro">
+        Enter your 12-word recovery phrase to restore your progress on this device.
+        You can paste the full phrase into any word box.
+      </p>
+    </Card>
 
-  <main class="recover-content">
-    <p class="recover-intro">
-      Enter your 12-word recovery phrase to restore your progress on this device.
-      You can paste the full phrase into any word box.
-    </p>
-
-    <div class="word-grid">
+    <div class="word-grid" role="group" aria-label="12-word recovery phrase">
       {#each words as word, i}
         <div class="word-cell">
           <label for="word-{i}" class="word-label">{i + 1}</label>
@@ -166,6 +146,7 @@
             spellcheck="false"
             class="word-input"
             disabled={isRecovering}
+            aria-label={`Recovery word ${i + 1}`}
           />
         </div>
       {/each}
@@ -175,65 +156,36 @@
       <p class="recover-error" role="alert">{error}</p>
     {/if}
 
-    <button
-      class="recover-button"
+    <Button
+      variant="primary"
+      size="lg"
       onclick={attemptRecovery}
-      disabled={isRecovering || words.filter((w) => w.length > 0).length !== 12}
+      loading={isRecovering}
+      disabled={words.filter((w) => w.length > 0).length !== 12}
     >
-      {isRecovering ? 'Recovering…' : 'Restore Save'}
-    </button>
+      Restore Save
+    </Button>
 
     <p class="recover-note">
       Lost your recovery phrase? Unfortunately, saves cannot be restored without it.
       This is by design — your data is yours alone.
     </p>
-  </main>
-</div>
+  </Stack>
+</RouteShell>
 
 <style>
-  .recover-route {
-    min-height: 100vh;
-    background: var(--ccrpg-bg, #05070b);
-    color: var(--ccrpg-fg, #e7eaf2);
-    font-family: var(--ccrpg-font-body, system-ui);
-    padding: 1rem;
-    padding-top: calc(1rem + env(safe-area-inset-top, 0px));
-    overflow-y: auto;
-    touch-action: pan-y;
-  }
-
-  .recover-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .recover-header h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-    font-family: var(--ccrpg-font-display, system-ui);
-  }
-
-  .recover-content {
-    max-width: 600px;
-    margin: 0 auto;
-    padding-bottom: 4rem;
-  }
-
   .recover-intro {
-    font-size: 0.9375rem;
-    color: var(--ccrpg-fg-muted, #a89080);
-    line-height: 1.6;
-    margin: 0 0 2rem 0;
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
+    line-height: var(--ccrpg-leading-relaxed);
+    margin: 0;
   }
 
   .word-grid {
     display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 0.75rem;
-    margin-bottom: 2rem;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--ccrpg-space-3);
   }
 
   @media (min-width: 640px) {
@@ -245,70 +197,60 @@
   .word-cell {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--ccrpg-space-1);
   }
 
   .word-label {
-    font-size: 0.75rem;
-    color: var(--ccrpg-fg-muted, #a89080);
-    padding-left: 0.5rem;
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg-muted);
+    font-weight: 600;
+    letter-spacing: var(--ccrpg-tracking-wide);
   }
 
   .word-input {
     width: 100%;
-    padding: 0.625rem 0.75rem;
-    background: var(--ccrpg-surface, #1a0f0f);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
-    border-radius: var(--ccrpg-radius, 6px);
-    color: var(--ccrpg-fg, #e7eaf2);
-    font-family: var(--ccrpg-font-body, monospace);
-    font-size: 0.875rem;
-    outline: none;
-    transition: border-color var(--ccrpg-duration-fast, 180ms) var(--ccrpg-ease, ease);
+    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
+    background: var(--ccrpg-surface);
+    border: 1px solid var(--ccrpg-border);
+    border-radius: var(--ccrpg-radius);
+    color: var(--ccrpg-fg);
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    transition: border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
+                box-shadow var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    -webkit-tap-highlight-color: transparent;
   }
 
   .word-input:focus {
-    border-color: var(--ccrpg-accent, #b8252a);
+    outline: none;
+    border-color: var(--ccrpg-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ccrpg-accent) 20%, transparent);
   }
 
-  .recover-error {
-    color: #ff8c9d;
-    font-size: 0.875rem;
-    margin: 0 0 1.5rem 0;
-    padding: 0.75rem 1rem;
-    background: rgba(255, 77, 109, 0.1);
-    border: 1px solid rgba(255, 77, 109, 0.3);
-    border-radius: var(--ccrpg-radius, 6px);
-  }
-
-  .recover-button {
-    width: 100%;
-    padding: 0.875rem;
-    background: var(--ccrpg-accent, #b8252a);
-    border: 1px solid var(--ccrpg-accent, #b8252a);
-    color: var(--ccrpg-accent-fg, #ffffff);
-    border-radius: var(--ccrpg-radius, 6px);
-    font-family: var(--ccrpg-font-body, system-ui);
-    font-size: 1rem;
-    font-weight: 500;
-    cursor: pointer;
-    transition: background var(--ccrpg-duration-fast, 180ms) var(--ccrpg-ease, ease);
-  }
-
-  .recover-button:hover:not(:disabled) {
-    background: var(--ccrpg-accent-soft, #5a1318);
-  }
-
-  .recover-button:disabled {
+  .word-input:disabled {
     opacity: 0.5;
     cursor: not-allowed;
   }
 
+  .recover-error {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-danger);
+    background: var(--ccrpg-danger-soft);
+    border: 1px solid var(--ccrpg-danger);
+    border-radius: var(--ccrpg-radius);
+    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
+    margin: 0;
+  }
+
   .recover-note {
-    font-size: 0.8125rem;
-    color: var(--ccrpg-fg-muted, #a89080);
-    line-height: 1.5;
-    margin: 2rem 0 0 0;
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
+    line-height: var(--ccrpg-leading-relaxed);
     text-align: center;
+    font-style: italic;
+    margin: 0;
   }
 </style>

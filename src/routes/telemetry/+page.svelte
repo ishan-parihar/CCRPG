@@ -1,24 +1,20 @@
 <script lang="ts">
   /**
    * /telemetry route — transparency page.
-   *
-   * Audit fix I4: The plan §8.2 says "Build a /telemetry route showing
-   * every event type with a sample payload — transparent by design."
-   *
-   * This route lists every telemetry event the game collects, with a
-   * sample payload for each. Players can see exactly what data leaves
-   * their device. Opt-out is one tap away (links to /settings).
+   * Lists every telemetry event with sample payloads. Opt-out links to /settings.
    */
 
   import { goto } from '$app/navigation';
-  import BackButton from '$lib/components/BackButton.svelte';
   import Seo from '$lib/components/Seo.svelte';
-  import { stageFade } from '$lib/transitions/stageMotion.js';
+  import RouteShell from '$lib/components/RouteShell.svelte';
+  import Card from '$lib/components/Card.svelte';
+  import Badge from '$lib/components/Badge.svelte';
+  import Button from '$lib/components/Button.svelte';
+  import Stack from '$lib/components/Stack.svelte';
   import { accessibilityStore } from '$lib/stores/accessibilityStore.js';
 
   const settings = $derived($accessibilityStore);
 
-  // Every telemetry event type the game emits (from core/events/GameEvents.ts)
   const eventTypes = [
     {
       name: 'encounter_completed',
@@ -84,14 +80,6 @@
       },
     },
   ];
-
-  function backToMenu() {
-    goto('/');
-  }
-
-  function goToSettings() {
-    goto('/settings');
-  }
 </script>
 
 <Seo
@@ -99,219 +87,160 @@
   description="Transparency: view every telemetry event CCRPG collects, with sample payloads. Opt in or out at any time."
 />
 
-<div class="telemetry-route" in:stageFade>
-  <header class="telemetry-header">
-    <BackButton onclick={backToMenu} label="Back" />
-    <h1>Telemetry</h1>
-  </header>
-
-  <main class="telemetry-content">
-    <section class="status-section">
+<RouteShell title="Telemetry" back="/">
+  <Stack gap="space-5">
+    <!-- Status -->
+    <Card variant="accent" padding="space-5">
       <div class="status-row">
         <div class="status-label">
           <span class="status-name">Telemetry is currently</span>
           <span class="status-desc">
             {#if settings.telemetryOptIn}
-              <strong class="status-on">ON</strong> — events are sent to the server
+              <Badge variant="success">ON</Badge> — events are sent to the server
             {:else}
-              <strong class="status-off">OFF</strong> — no events leave your device
+              <Badge variant="muted">OFF</Badge> — no events leave your device
             {/if}
           </span>
         </div>
-        <button class="settings-link" onclick={goToSettings}>
+        <Button variant="ghost" size="sm" onclick={() => goto('/settings')}>
           {settings.telemetryOptIn ? 'Disable' : 'Enable'} in Settings
-        </button>
+        </Button>
       </div>
-    </section>
+    </Card>
 
-    <section class="intro-section">
-      <p>
-        CCRPG collects anonymous telemetry to understand how the game is used
-        and to improve the developmental assessment engine. We are transparent
-        about every event we send. Below is the complete list.
-      </p>
-      <p>
-        <strong>What we never collect:</strong> your Significator contents,
-        encounter responses, journal entries, or any personally identifiable
-        information. Telemetry events contain only event types, timestamps,
-        and structural metadata (which line, which stage, which shadow ID).
-      </p>
-    </section>
+    <!-- Intro -->
+    <Card padding="space-5">
+      <Stack gap="space-3">
+        <p class="intro-text">
+          CCRPG collects anonymous telemetry to understand how the game is used
+          and to improve the developmental assessment engine. We are transparent
+          about every event we send. Below is the complete list.
+        </p>
+        <p class="intro-text">
+          <strong>What we never collect:</strong> your Significator contents,
+          encounter responses, journal entries, or any personally identifiable
+          information. Telemetry events contain only event types, timestamps,
+          and structural metadata (which line, which stage, which shadow ID).
+        </p>
+      </Stack>
+    </Card>
 
-    <section class="events-section">
-      <h2>Event Types ({eventTypes.length})</h2>
-      <div class="event-list">
-        {#each eventTypes as evt}
-          <article class="event-card">
-            <h3 class="event-name">{evt.name}</h3>
-            <p class="event-desc">{evt.description}</p>
-            <details class="event-payload">
-              <summary>Sample payload</summary>
-              <pre><code>{JSON.stringify(evt.sample, null, 2)}</code></pre>
-            </details>
-          </article>
+    <!-- Event Types -->
+    <Stack gap="space-3">
+      <h2 class="section-title">Event Types ({eventTypes.length})</h2>
+      <Stack gap="space-3">
+        {#each eventTypes as evt (evt.name)}
+          <Card padding="space-5">
+            <Stack gap="space-3">
+              <h3 class="event-name">{evt.name}</h3>
+              <p class="event-desc">{evt.description}</p>
+              <details class="event-payload">
+                <summary>Sample payload</summary>
+                <pre class="payload-code"><code>{JSON.stringify(evt.sample, null, 2)}</code></pre>
+              </details>
+            </Stack>
+          </Card>
         {/each}
-      </div>
-    </section>
-  </main>
-</div>
+      </Stack>
+    </Stack>
+  </Stack>
+</RouteShell>
 
 <style>
-  .telemetry-route {
-    min-height: 100vh;
-    background: var(--ccrpg-bg, #05070b);
-    color: var(--ccrpg-fg, #e7eaf2);
-    font-family: var(--ccrpg-font-body, system-ui);
-    padding: 1rem;
-    padding-top: calc(1rem + env(safe-area-inset-top, 0px));
-    overflow-y: auto;
-    touch-action: pan-y;
-  }
-
-  .telemetry-header {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 2rem;
-  }
-
-  .telemetry-header h1 {
-    font-size: 1.5rem;
-    font-weight: 600;
-    margin: 0;
-    font-family: var(--ccrpg-font-display, system-ui);
-  }
-
-  .telemetry-content {
-    max-width: 700px;
-    margin: 0 auto;
-    padding-bottom: 4rem;
-  }
-
-  .status-section {
-    margin-bottom: 2rem;
-  }
-
   .status-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: 1rem;
-    padding: 1rem;
-    background: var(--ccrpg-surface, #1a0f0f);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
-    border-radius: var(--ccrpg-radius-lg, 12px);
+    gap: var(--ccrpg-space-4);
+    flex-wrap: wrap;
   }
 
   .status-label {
     display: flex;
     flex-direction: column;
-    gap: 0.25rem;
+    gap: var(--ccrpg-space-1);
   }
 
   .status-name {
-    font-size: 1rem;
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-base);
+    color: var(--ccrpg-fg);
     font-weight: 500;
   }
 
   .status-desc {
-    font-size: 0.8125rem;
-    color: var(--ccrpg-fg-muted, #a89080);
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
+    display: flex;
+    align-items: center;
+    gap: var(--ccrpg-space-2);
   }
 
-  .status-on {
-    color: #4cc9f0;
+  .intro-text {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg);
+    line-height: var(--ccrpg-leading-relaxed);
+    margin: 0;
   }
 
-  .status-off {
-    color: var(--ccrpg-fg-muted, #a89080);
-  }
-
-  .settings-link {
-    background: var(--ccrpg-surface-elevated, #261818);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
-    color: var(--ccrpg-fg, #e7eaf2);
-    padding: 0.5rem 1rem;
-    border-radius: var(--ccrpg-radius, 6px);
-    cursor: pointer;
-    font-size: 0.875rem;
-    font-family: var(--ccrpg-font-body, system-ui);
-    white-space: nowrap;
-    transition: background var(--ccrpg-duration-fast, 180ms) var(--ccrpg-ease, ease);
-  }
-
-  .settings-link:hover {
-    background: var(--ccrpg-accent-soft, #5a1318);
-  }
-
-  .intro-section {
-    margin-bottom: 2rem;
-  }
-
-  .intro-section p {
-    font-size: 0.9375rem;
-    line-height: 1.6;
-    color: var(--ccrpg-fg-muted, #a89080);
-    margin: 0 0 1rem 0;
-  }
-
-  .events-section h2 {
-    font-size: 0.75rem;
+  .section-title {
+    font-family: var(--ccrpg-font-display);
+    font-size: var(--ccrpg-text-sm);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: 0.08em;
-    color: var(--ccrpg-accent, #b8252a);
-    margin: 0 0 1rem 0;
-  }
-
-  .event-list {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-  }
-
-  .event-card {
-    background: var(--ccrpg-surface, #1a0f0f);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.3));
-    border-radius: var(--ccrpg-radius-lg, 12px);
-    padding: 1.25rem;
+    letter-spacing: var(--ccrpg-tracking-wider);
+    color: var(--ccrpg-accent);
+    margin: 0;
   }
 
   .event-name {
-    font-family: var(--ccrpg-font-body, monospace);
-    font-size: 0.9375rem;
+    font-family: var(--ccrpg-font-display);
+    font-size: var(--ccrpg-text-md);
     font-weight: 600;
-    color: var(--ccrpg-accent, #b8252a);
-    margin: 0 0 0.5rem 0;
+    color: var(--ccrpg-accent);
+    margin: 0;
   }
 
   .event-desc {
-    font-size: 0.875rem;
-    line-height: 1.5;
-    color: var(--ccrpg-fg-muted, #a89080);
-    margin: 0 0 0.75rem 0;
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg);
+    line-height: var(--ccrpg-leading-relaxed);
+    margin: 0;
+  }
+
+  .event-payload {
+    background: var(--ccrpg-surface);
+    border: 1px solid var(--ccrpg-border);
+    border-radius: var(--ccrpg-radius);
+    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
   }
 
   .event-payload summary {
-    font-size: 0.8125rem;
-    color: var(--ccrpg-fg-muted, #a89080);
     cursor: pointer;
-    padding: 0.25rem 0;
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-fg-muted);
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
-  .event-payload pre {
-    margin: 0.5rem 0 0 0;
-    padding: 0.75rem;
-    background: var(--ccrpg-bg, #05070b);
-    border: 1px solid var(--ccrpg-border, rgba(184, 37, 42, 0.2));
-    border-radius: var(--ccrpg-radius, 6px);
+  .event-payload summary:focus-visible {
+    outline: 2px solid var(--ccrpg-accent);
+    outline-offset: 2px;
+  }
+
+  .payload-code {
+    margin: var(--ccrpg-space-2) 0 0 0;
+    padding: var(--ccrpg-space-3);
+    background: var(--ccrpg-bg);
+    border-radius: var(--ccrpg-radius);
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg-muted);
     overflow-x: auto;
-    font-size: 0.8125rem;
-    line-height: 1.5;
-  }
-
-  .event-payload code {
-    font-family: var(--ccrpg-font-body, monospace);
-    color: var(--ccrpg-fg, #e7eaf2);
+    line-height: var(--ccrpg-leading-normal);
   }
 </style>
