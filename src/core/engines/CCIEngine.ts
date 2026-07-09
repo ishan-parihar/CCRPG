@@ -844,45 +844,9 @@ function clamp(value: number, min = 0.0, max = 1.0): number {
  */
 export async function computeCCIWithTDG(
   snapshot: SignificatorSnapshot,
-  playerId: string,
+  _playerId: string,
 ): Promise<CCIScore> {
-  const baseline = computeCCI(snapshot);
-
-  // Best-effort TDG health fetch — no-op when TDG is not running.
-  // We use a dynamic import to avoid a static dependency cycle: CCIEngine is
-  // imported broadly, and TDGBridge imports ConsequenceEngine which imports
-  // engines that import CCIEngine. Dynamic import breaks the cycle.
-  let tdgHealth: { gz: number; pz: number; total: number } | null = null;
-  try {
-    const { getTDGHooks } = await import('../../infra/tdg/TDGBridge.js');
-    const hooks = getTDGHooks();
-    if (hooks && hooks.isActive()) {
-      tdgHealth = await hooks.getHealth(`player:${playerId}`);
-    }
-  } catch {
-    tdgHealth = null;
-  }
-
-  if (!tdgHealth) {
-    return baseline; // TDG unavailable — return pure baseline, zero regression
-  }
-
-  // Blend TDG's G_z/P_z into the metabolic dimension (conservative 20% weight).
-  // This augments — never replaces — the baseline CCI computation.
-  // If the baseline has no metabolicHealth (older snapshot shape), return as-is.
-  if (!baseline.metabolicHealth) {
-    return baseline;
-  }
-  const tdgTotal = clamp(tdgHealth.total);
-  const blendedTotal = clamp(baseline.metabolicHealth.total * 0.8 + tdgTotal * 0.2);
-
-  return {
-    ...baseline,
-    metabolicHealth: {
-      ...baseline.metabolicHealth,
-      total: blendedTotal,
-      // interpretation is a closed union type — leave the baseline value intact.
-      // Callers can detect TDG augmentation via getTDGBridgeStatus() if needed.
-    },
-  };
+  // ponytail: TDG-Rust integration removed. Returns pure baseline — no
+  // graph-level health augmentation. Signature preserved for callers.
+  return computeCCI(snapshot);
 }

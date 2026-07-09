@@ -2215,15 +2215,16 @@ async function runFullSession(): Promise<void> {
     // stays (only fires when the binary is actually installed, which is
     // useful signal). The underlying infrastructure stays for when someone
     // installs TDG-Rust.
-    await startTDGBridge().catch(() => { /* TDG unavailable — continue with CCRPG tools only */ });
-    const tdgStatus = getTDGBridgeStatus();
+    // ponytail: TDG-Rust integration removed. USE_PERSISTENT_AGENT is always
+    // false, so this block never executes. Stub preserved for compile.
+    const tdgStatus = { running: false } as const;
     if (tdgStatus.running && !JSON_MODE) {
       info('tdg', `${chalk.green('TDG-Rust active')} — graph memory online`);
     }
     // Build the tool registry with CCRPG + TDG tools (TDG tools added only if running)
     const toolRegistry = createCCRPGToolRegistry();
     if (tdgStatus.running) {
-      await registerTDGTools(toolRegistry);
+      // ponytail: registerTDGTools removed with TDG integration.
     }
     persistentAgent = new PersistentAgent({
       sig: currentSig,

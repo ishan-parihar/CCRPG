@@ -32,7 +32,7 @@ import {
   summarizeUserMatrix,
   type UserMatrixModel,
 } from './engines/UserMatrixModel.js';
-import { maybeFireHook } from '../infra/tdg/TDGBridge.js';
+import { maybeFireHook } from './engines/hooks.js';
 import { stageOrdinal } from './domain/Stage.js';
 
 export interface TickResult {
@@ -205,86 +205,19 @@ export async function startSessionWithTDG(
   sig: Significator,
   session: SessionContext,
 ): Promise<SessionState> {
-  // Always compute the baseline sync CCI first — this is the source of truth.
-  const snapshot = toSnapshot(sig);
-  // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
-  const baselineCCI = computeCCI(snapshot, sig);
-
-  // Best-effort TDG augmentation — no-op when TDG is not running.
-  let cci = baselineCCI;
-  let tdgReflection: { pathology: string | null; catalystSuggestion: string | null; developmentalFocus: string | null } | null = null;
-  try {
-    const { getTDGHooks } = await import('../infra/tdg/TDGBridge.js');
-    const hooks = getTDGHooks();
-    if (hooks && hooks.isActive()) {
-      // Augment CCI with TDG G_z/P_z (conservative 20% blend, see CCIEngine.computeCCIWithTDG)
-      const { computeCCIWithTDG } = await import('./engines/CCIEngine.js');
-      cci = await computeCCIWithTDG(snapshot, sig.id);
-
-      // Run graph-level reflection to seed strategy with cross-session insights.
-      // This is the TDG→CCRPG feedback hook 7 (onReflectComplete). When the
-      // TDG-Rust environment has an LLM backend configured, this returns a
-      // developmental diagnosis that supplements CCRPG's own detectThreshold.
-      tdgReflection = await hooks.runReflection(sig);
-    }
-  } catch {
-    // TDG unavailable or failed — fall back to pure baseline. Zero regression.
-  }
-
-  const strategy = generateSessionStrategy(cci, session, null);
-
-  // If TDG reflection surfaced a developmental focus, annotate the strategy's
-  // themeRationale so the session strategy carries the insight forward. We
-  // don't override the computed theme (TDG supplements, never replaces), but
-  // we record the suggestion for telemetry + the agent's system prompt.
-  let annotatedStrategy = strategy;
-  if (tdgReflection && (tdgReflection.catalystSuggestion || tdgReflection.developmentalFocus)) {
-    const tdgNote = [
-      tdgReflection.catalystSuggestion ? `TDG catalyst: ${tdgReflection.catalystSuggestion}` : null,
-      tdgReflection.developmentalFocus ? `TDG focus: ${tdgReflection.developmentalFocus}` : null,
-      tdgReflection.pathology ? `TDG pathology: ${tdgReflection.pathology}` : null,
-    ].filter(Boolean).join(' | ');
-    annotatedStrategy = {
-      ...strategy,
-      themeRationale: strategy.themeRationale
-        ? `${strategy.themeRationale} | ${tdgNote}`
-        : tdgNote,
-    };
-  }
-
-  return {
-    strategy: annotatedStrategy,
-    cci,
-    recentOutcomes: [],
-    encountersSinceRefresh: 0,
-    // P0-7: reconstruct from sig instead of always createInitialTransformationState()
-    transformationState: reconstructTransformationState(sig),
-    userMatrixModel: createInitialUserMatrixModel(),
-    sessionStartMs: Date.now(),
-  };
+  // ponytail: TDG-Rust integration removed. This now delegates to the sync
+  // startSession — same behavior, no dynamic TDG import. Signature preserved
+  // so the CLI's USE_PERSISTENT_AGENT branch still compiles (it's always false).
+  return startSession(sig, session);
 }
 
 /**
- * M4 (TDG→CCRPG feedback): Query TDG's transformation pressure to supplement
- * CCRPG's own detectThreshold signal.
- *
- * Returns a number in [0, 1] representing TDG's graph-level readiness for
- * stage transition, or null when TDG is not running. Callers (e.g. the CLI
- * session loop) can use this to inform when to push toward transformation
- * vs. consolidate. This is supplementary — CCRPG's detectThreshold remains
- * the authoritative signal.
- *
- * Safe to call from any async context — no-ops immediately when TDG absent.
+ * ponytail: TDG-Rust integration removed. Always returns null — no
+ * graph-level transformation pressure without TDG. CCRPG's own
+ * detectThreshold remains the authoritative signal.
  */
-export async function getTDGTransformationPressure(sig: Significator): Promise<number | null> {
-  try {
-    const { getTDGHooks } = await import('../infra/tdg/TDGBridge.js');
-    const hooks = getTDGHooks();
-    if (!hooks || !hooks.isActive()) return null;
-    return await hooks.getTransformationPressure(sig);
-  } catch {
-    return null;
-  }
+export async function getTDGTransformationPressure(_sig: Significator): Promise<number | null> {
+  return null;
 }
 
 /**
@@ -803,18 +736,8 @@ export async function endSessionAsync(
     totalSessions: encountersCompleted > 0 ? sig.totalSessions + 1 : sig.totalSessions,
   };
 
-  // Hook 4: onSessionEnd — AWAIT the hook so tdg_consolidate + tdg_save_mind_state
-  // complete before the caller calls stopTDGBridge(). This prevents the race
-  // condition where the TDG-Rust process is killed mid-call.
-  try {
-    const { getTDGHooks } = await import('../infra/tdg/TDGBridge.js');
-    const hooks = getTDGHooks();
-    if (hooks && hooks.isActive()) {
-      await hooks.onSessionEnd(updatedSig);
-    }
-  } catch {
-    // TDG unavailable or hook failed — best-effort, never break the session end.
-  }
+  // ponytail: TDG-Rust onSessionEnd hook removed. The async endSessionAsync
+  // now has the same behavior as the sync endSession — no TDG hook to await.
 
   return {
     sig: updatedSig,

@@ -1,5 +1,6 @@
 /**
- * Boot all registries. Called once at app startup before Phaser init.
+ * Boot all registries. Called once at app startup.
+ * ponytail: tasks/abilities/narrative registries removed — registered but never queried.
  */
 import { register as cognitive } from './lines/01-cognitive.module.js';
 import { register as emotional } from './lines/02-emotional.module.js';
@@ -31,11 +32,7 @@ import { register as agency } from './drives/01-agency.module.js';
 import { register as communion } from './drives/02-communion.module.js';
 import { register as eros } from './drives/03-eros.module.js';
 import { register as agape } from './drives/04-agape.module.js';
-
-import { register as tasks } from './tasks/tasks.module.js';
-import { register as abilities } from './abilities/abilities.module.js';
 import { register as redEncounters } from './encounters/red-encounters.module.js';
-import { register as redNarrative } from './narrative/red-narrative.module.js';
 
 export function bootRegistries(): void {
   // Lines
@@ -73,9 +70,6 @@ export function bootRegistries(): void {
   eros();
   agape();
 
-  // Tasks, Abilities, Encounters, Narrative
-  tasks();
-  abilities();
+  // Encounters
   redEncounters();
-  redNarrative();
 }

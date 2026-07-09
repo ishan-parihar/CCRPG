@@ -15,7 +15,7 @@ import type { ShadowEntry } from '../domain/ShadowLedger.js';
 import { recordTrace } from './PolarityEngine.js';
 import type { WorldState } from './CandidateGeneration.js';
 import { EncounterRegistry } from '../registries/index.js';
-import { maybeFireHook } from '../../infra/tdg/TDGBridge.js';
+import { maybeFireHook } from './hooks.js';
 // WIRE-3: Import computeContactBoundaryPermeability to update sig field
 import { computeContactBoundaryPermeability } from './GreaterCycleEngine.js';
 

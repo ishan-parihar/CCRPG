@@ -1,10 +1,11 @@
 /**
- * All eight canonical registries instantiated.
+ * Canonical registries — live set.
+ * ponytail: TaskRegistry, AbilityRegistry, NarrativeRegistry removed (registered but never queried).
  */
 import type { Drive } from '../domain/Drive.js';
 import type { EncounterSpec } from '../domain/Encounter.js';
 import type { Line } from '../domain/Line.js';
-import type { Quadrant, TaskSlug } from '../domain/SharedTypes.js';
+import type { Quadrant } from '../domain/SharedTypes.js';
 import type { Ray } from '../domain/Ray.js';
 import type { Stage } from '../domain/Stage.js';
 import { createRegistry } from '../usecases/RegistryEngine.js';
@@ -14,7 +15,7 @@ import { createRegistry } from '../usecases/RegistryEngine.js';
 export interface LineModule {
   readonly line: Line;
   readonly quadrant: Quadrant;
-  readonly taskSlugs: readonly TaskSlug[];
+  readonly taskSlugs?: readonly string[];
   readonly description: string;
 }
 
@@ -23,19 +24,13 @@ export interface StageModule {
   readonly ray: Ray;
   readonly description: string;
   readonly stub: boolean;
-  /**
-   * UX-02: Perceptual-layer palette and audio cues for this stage.
-   * Per foundations/21 §2.1, each stage has its own perceptual layer
-   * (palette/audio/NPC visibility/encounter eligibility/physics).
-   * Optional — stages without palette data fall back to the ray's paletteAnchor.
-   */
   readonly palette?: {
-    readonly primary: string;     // hex color, e.g. '#8B0000'
+    readonly primary: string;
     readonly secondary: string;
     readonly accent: string;
   };
-  readonly audioMode?: string;    // e.g., 'tribal-drums', 'ambient-bells'
-  readonly physicsGravity?: number;  // Phaser arcade gravity override
+  readonly audioMode?: string;
+  readonly physicsGravity?: number;
 }
 
 export interface RayModule {
@@ -45,19 +40,6 @@ export interface RayModule {
   readonly harvestRole: string;
 }
 
-export interface TaskModule {
-  readonly slug: TaskSlug;
-  readonly line: Line;
-  readonly networkClaim: string;
-}
-
-export interface AbilityModule {
-  readonly slug: string;
-  readonly line: Line;
-  readonly taskSlug: TaskSlug;
-  readonly name: string;
-}
-
 export interface EncounterModule extends EncounterSpec {}
 
 export interface DriveModule {
@@ -65,19 +47,10 @@ export interface DriveModule {
   readonly description: string;
 }
 
-export interface NarrativeBeatModule {
-  readonly beatId: string;
-  readonly stage: Stage;
-  readonly text: string;
-}
-
 // --- Registry instances ---
 
 export const LineRegistry = createRegistry<Line, LineModule>();
 export const StageRegistry = createRegistry<Stage, StageModule>();
 export const RayRegistry = createRegistry<Ray, RayModule>();
-export const TaskRegistry = createRegistry<TaskSlug, TaskModule>();
-export const AbilityRegistry = createRegistry<string, AbilityModule>();
 export const EncounterRegistry = createRegistry<string, EncounterModule>();
 export const DriveRegistry = createRegistry<Drive, DriveModule>();
-export const NarrativeRegistry = createRegistry<string, NarrativeBeatModule>();

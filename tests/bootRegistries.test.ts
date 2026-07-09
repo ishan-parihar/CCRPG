@@ -5,10 +5,7 @@ import {
   StageRegistry,
   RayRegistry,
   DriveRegistry,
-  TaskRegistry,
-  AbilityRegistry,
   EncounterRegistry,
-  NarrativeRegistry,
 } from '../src/core/registries/index.js';
 
 describe('bootRegistries', () => {
@@ -32,28 +29,8 @@ describe('bootRegistries', () => {
     expect(DriveRegistry.all()).toHaveLength(4);
   });
 
-  it('registers all 9 tasks', () => {
-    expect(TaskRegistry.all()).toHaveLength(9);
-  });
-
-  it('registers at least 10 abilities (one per line minimum)', () => {
-    expect(AbilityRegistry.all().length).toBeGreaterThanOrEqual(10);
-  });
-
   it('registers Red stage encounters (38 total: 30 side + 3 mini + 1 main + 4 threshold)', () => {
     expect(EncounterRegistry.all()).toHaveLength(38);
-  });
-
-  it('registers Red narrative beats', () => {
-    expect(NarrativeRegistry.all().length).toBeGreaterThanOrEqual(4);
-  });
-
-  it('every line has at least one ability', () => {
-    const lines = LineRegistry.all().map(([k]) => k);
-    for (const line of lines) {
-      const abilities = AbilityRegistry.keysFor({ line });
-      expect(abilities.length, `Line ${line} has no abilities`).toBeGreaterThanOrEqual(1);
-    }
   });
 
   it('Red stage has a main-boss encounter', () => {
@@ -68,11 +45,5 @@ describe('bootRegistries', () => {
     expect(mainBoss!.quadrants).toContain('UR');
     expect(mainBoss!.quadrants).toContain('LL');
     expect(mainBoss!.quadrants).toContain('LR');
-  });
-
-  it('every task has a networkClaim', () => {
-    for (const [, task] of TaskRegistry.all()) {
-      expect(task.networkClaim.length).toBeGreaterThan(0);
-    }
   });
 });

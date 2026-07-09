@@ -29,7 +29,6 @@ import {
   LineRegistry,
   StageRegistry,
   RayRegistry,
-  TaskRegistry,
   DriveRegistry,
 } from '../src/core/registries/index.js';
 
@@ -184,12 +183,6 @@ check('DriveRegistry has all 4 drives registered', () => {
   for (const drive of ALL_DRIVES) {
     if (!DriveRegistry.get(drive)) throw new Error(`Drive ${drive} not registered`);
   }
-});
-
-check('TaskRegistry has at least 5 task slugs registered', () => {
-  bootRegistries();
-  // Just check count — exact slugs depend on boot
-  if (TaskRegistry.all().length < 5) throw new Error(`TaskRegistry has ${TaskRegistry.all().length} tasks, expected ≥5`);
 });
 
 // --- Significator factory ---
