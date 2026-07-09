@@ -312,3 +312,42 @@ The 4 AQAL quadrants (UL/UR/LL/LR) are implicitly present in the line taxonomy. 
 3. If implementation reveals design problems, update the concept-draft first
 4. Follow the existing architecture (core/infra/game layers, registries)
 5. All code must pass build + tests before being committed
+
+### 7.5 The Iteration Protocol (MANDATORY)
+
+Every development iteration — no exceptions — must follow this sequence:
+
+```
+1. Make changes (code, docs, config)
+2. Run workspace-lint:  python3 skills/workspace-lint/scripts/workspace_lint.py --root .
+3. Run build + tests:   npm run build && npm test
+4. Fix any violations
+5. Git commit + push to BOTH remotes
+```
+
+**Step-by-step:**
+
+1. **Workspace lint** — Run `python3 skills/workspace-lint/scripts/workspace_lint.py --root .` after every change. Violations must be fixed before committing. The linter natively respects `.gitignore` — do NOT manually add ignored paths to `workspace-lint.yaml`.
+
+2. **Build + test** — Run `npm run build` (builds both Vite browser bundle and tsup CLI). Run `npm test` if tests exist. Both must pass.
+
+3. **Git commit** — Stage only the intended files (`git add <files>`). Never `git add .` blindly. Write a concise commit message.
+
+4. **Git push to both remotes** — Push to GitHub AND GitLab:
+   ```
+   git push origin main
+   git push gitlab main
+   ```
+   Both remotes MUST stay in sync. Never push to only one.
+
+5. **Never commit:**
+   - `.env` files
+   - `node_modules/`, `dist/`, `build/`, `__pycache__/`
+   - `.hive/`, `.memsearch/`, `.contexty/`, `.opencode/`, `.sisyphus/`
+   - Any file matched by `.gitignore`
+
+**Workspace-lint config:** `workspace-lint.yaml` at project root. The validator script is at `skills/workspace-lint/scripts/workspace_lint.py`. It uses `.gitignore` as the source of truth for exclusions — config only adds project-specific overrides.
+
+**Remotes:**
+- GitHub: `origin` → `https://github.com/ishan-parihar/CCRPG.git`
+- GitLab: `gitlab` → `https://gitlab.com/ishan-parihar/CCRPG.git`
