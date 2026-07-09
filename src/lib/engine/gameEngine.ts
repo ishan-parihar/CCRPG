@@ -34,6 +34,7 @@ import { SaveRepository } from '$infra/persistence/SaveRepository.js';
 import { createKeyValueStore } from '$infra/persistence/createKeyValueStore.js';
 import { setSignificator, setLastEncounter } from '$lib/stores/gameStore.js';
 import { debouncedSync, flushSync } from '$lib/stores/cloudSyncStore.js';
+import { recordEvent } from '$lib/stores/telemetryStore.js';
 
 // ─── Engine state ────────────────────────────────────────────────────
 
@@ -179,6 +180,7 @@ export async function runEncounter(
 
   setLastEncounter(encounter.id);
   engineStore.update((s) => ({ ...s, activeEncounter: encounter, error: null }));
+  recordEvent('session_started', { encounterId: encounter.id, moduleRef: encounter.moduleRef });
 
   try {
     const orchestrator = new AgenticOrchestrator({
@@ -197,6 +199,24 @@ export async function runEncounter(
 
     // Apply the result to sig + world + session
     await applyEncounterResult(encounter, result);
+
+    // ponytail: C.11 — emit telemetry events (parity with CLI emitEvent).
+    recordEvent('encounter_completed', {
+      encounterId: encounter.id,
+      moduleRef: encounter.moduleRef,
+      passed: result.finalResult.passed,
+    });
+    if (result.consequenceRecord.shadowSurfaced) {
+      recordEvent('shadow_surfaced', {
+        encounterId: encounter.id,
+        quadrant: result.consequenceRecord.shadowSurfaced,
+      });
+    }
+    if (result.consequenceRecord.shadowResolved) {
+      recordEvent('shadow_resolved', {
+        shadowId: result.consequenceRecord.shadowResolved,
+      });
+    }
 
     engineStore.update((s) => ({
       ...s,
@@ -293,6 +313,11 @@ async function applyEncounterResult(
 // ─── Decline encounter ──────────────────────────────────────────────
 
 export async function declineEncounter(encounter: ScheduledEncounter): Promise<void> {
+  // ponytail: C.11 — emit encounter_declined (parity with CLI emitEvent).
+  recordEvent('encounter_declined', {
+    encounterId: encounter.id,
+    moduleRef: encounter.moduleRef,
+  });
   engineStore.update((s) => ({
     ...s,
     encounters: s.encounters.filter((e) => e.id !== encounter.id),
