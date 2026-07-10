@@ -10,4 +10,4 @@
  * Existing imports from '@infra/llm/VeilFilter.js' continue to work via
  * this re-export.
  */
-export { filterInput, filterOutput } from '$shared/llm/VeilFilter.js';
+export { filterInput, filterOutput, stripNonAsciiScriptLeaks } from '$shared/llm/VeilFilter.js';

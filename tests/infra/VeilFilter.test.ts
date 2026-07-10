@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { filterInput, filterOutput } from '../../src/infra/llm/VeilFilter.js';
+import { filterInput, filterOutput, stripNonAsciiScriptLeaks } from '../../src/infra/llm/VeilFilter.js';
 
 describe('VeilFilter', () => {
   describe('filterInput', () => {
@@ -152,6 +152,78 @@ describe('VeilFilter', () => {
       const result = filterOutput(content);
       expect(result.passed).toBe(true);
       expect(result.violations).toHaveLength(0);
+    });
+  });
+
+  // P1-F8 (Fresh-User UX Audit): Non-ASCII script leak stripping.
+  // The audit caught the LLM slipping 礼貌 (lǐmào, "politeness") into mid-
+  // English output. These tests verify the fix.
+  describe('stripNonAsciiScriptLeaks (P1-F8)', () => {
+    it('strips CJK characters wedged between English words', () => {
+      const input = "Not respect — that's just power wearing礼貌.";
+      const result = stripNonAsciiScriptLeaks(input);
+      expect(result).not.toContain('礼貌');
+      // The space insertion ensures 'wearing' and the period aren't jammed together
+      expect(result).toContain('wearing');
+      expect(result).toMatch(/[wearing]\s*\./);
+    });
+
+    it('preserves standard ASCII prose', () => {
+      const input = "The warrior stood at the threshold between two fires — the forge of strength and the hearth of mercy.";
+      const result = stripNonAsciiScriptLeaks(input);
+      expect(result).toBe(input);
+    });
+
+    it('preserves common typographic glyphs (em-dash, curly quotes, ellipsis)', () => {
+      const input = "She paused — 'perhaps,' he whispered, 'the answer is…'";
+      const result = stripNonAsciiScriptLeaks(input);
+      expect(result).toBe(input);
+    });
+
+    it('strips Cyrillic characters', () => {
+      const input = "The warrior felt a strange холод in the air.";
+      const result = stripNonAsciiScriptLeaks(input);
+      expect(result).not.toContain('холод');
+      expect(result).toContain('strange');
+      expect(result).toContain('in the air');
+    });
+
+    it('strips Arabic characters', () => {
+      const input = "He spoke of سلام as if he knew the word.";
+      const result = stripNonAsciiScriptLeaks(input);
+      expect(result).not.toContain('سلام');
+      expect(result).toContain('spoke of');
+    });
+
+    it('returns empty string unchanged', () => {
+      expect(stripNonAsciiScriptLeaks('')).toBe('');
+    });
+
+    it('handles a string of only non-ASCII characters', () => {
+      const result = stripNonAsciiScriptLeaks('礼貌你好');
+      expect(result).toBe('');
+    });
+
+    it('preserves newlines and tabs', () => {
+      const input = 'Line one\nLine two\n\tIndented line';
+      const result = stripNonAsciiScriptLeaks(input);
+      expect(result).toBe(input);
+    });
+  });
+
+  describe('filterOutput (P1-F8 integration)', () => {
+    it('reports non-ascii-script-leak violation when CJK characters present', () => {
+      const content = "Not respect — that's just power wearing礼貌.";
+      const result = filterOutput(content);
+      expect(result.violations).toContain('non-ascii-script-leak');
+      expect(result.filtered).not.toContain('礼貌');
+    });
+
+    it('still detects Veil violations alongside script leaks', () => {
+      const content = 'At Turquoise stage, the player wears礼貌.';
+      const result = filterOutput(content);
+      expect(result.violations).toContain('non-ascii-script-leak');
+      expect(result.violations).toContain('stage-as-developmental-label');
     });
   });
 });
