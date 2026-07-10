@@ -279,6 +279,11 @@ import { pickFallbackNarrative } from '../src/core/agent/FallbackNarratives.js';
 // the profile directory so Session N doesn't repeat questions from
 // Sessions 1..N-1.
 import { loadAskedPrompts, saveAskedPrompts } from '../src/infra/llm/FallbackProvider.js';
+// NF-5 (Fresh-User Re-Audit): Route verbose feedback through VeilFilter so
+// clinical labels (DarkAllergy, DarkAverted, etc.) and metrics (93% conceptual
+// density) don't leak through --verbose. The Veil principle applies to all
+// user-facing output, not just the normal path.
+import { filterOutput } from '../src/infra/llm/VeilFilter.js';
 import {
   listProfiles, createProfile, setActiveProfile, deleteProfile,
   loadProfile, buildContextInjection, updateProfileAfterSession,
@@ -1906,14 +1911,21 @@ async function runDirectQuestioningSession(
         // This gives curious players / developers a window into the engine
         // without breaking the Veil (no raw G_z/P_z/CCI — those stay behind --dev).
         if (VERBOSE) {
-          const feedback = result.outcome.feedback?.slice(0, 280) ?? '';
-          if (feedback && feedback !== result.narrativeSummary?.slice(0, 280)) {
-            verbose('feedback', feedback);
+          // NF-5: Route feedback through VeilFilter so clinical labels
+          // (DarkAllergy, DarkAverted) and metrics (93% conceptual density)
+          // don't leak through --verbose. The Veil applies to all user-facing
+          // output, not just the normal path.
+          const rawFeedback = result.outcome.feedback?.slice(0, 280) ?? '';
+          const veiledFeedback = filterOutput(rawFeedback).filtered;
+          if (veiledFeedback && veiledFeedback !== result.narrativeSummary?.slice(0, 280)) {
+            verbose('feedback', veiledFeedback);
           }
+          // NF-5: Translate clinical drive labels to Veil-compliant descriptions.
+          // Old: 'Agency:DarkAverted' (clinical). New: 'Agency: a rejection of a lower capacity' (qualitative).
           const driveExpr = cr.polarityTrace.driveDirectionality;
           const driveSummary = Object.entries(driveExpr)
             .filter(([, v]) => v !== 'HealthyBalanced')
-            .map(([k, v]) => `${k}:${v}`).join(', ') || 'balanced';
+            .map(([k, v]) => `${k}: ${veilDriveDirection(v as string)}`).join(', ') || 'balanced';
           verbose('drives', driveSummary);
           verbose('arc', `${encounter.sessionPosition} · encounter ${i + 1}/${linesToRun.length}`);
           verbose('total', `${currentSig.totalEncounters} cumulative encounters`);
@@ -2554,9 +2566,11 @@ async function runFullSession(): Promise<void> {
         // R6-P2-2 (UX-R6): Only print 'feedback' if it differs from 'narrative'.
         // In no-LLM mode they're identical (both use fallback); in LLM mode
         // they should differ. Printing both when identical is wasteful.
-        const feedback = result.outcome.feedback?.slice(0, 200) ?? '';
-        if (feedback && feedback !== result.narrativeSummary.slice(0, 200)) {
-          verbose('feedback', feedback);
+        // NF-5: Route through VeilFilter to strip clinical labels + metrics.
+        const rawFeedback = result.outcome.feedback?.slice(0, 200) ?? '';
+        const veiled = filterOutput(rawFeedback).filtered;
+        if (veiled && veiled !== result.narrativeSummary.slice(0, 200)) {
+          verbose('feedback', veiled);
         }
         verbose('updatedEncounters', String(currentSig.totalEncounters));
       }
@@ -3003,6 +3017,28 @@ function veilThemeHint(theme: string): string {
     case 'transformation-prep':  return 'The work prepares the ground for a shift.';
     case 'balanced-development': return 'The field is open; the work moves where it will.';
     default:                     return 'The work continues.';
+  }
+}
+
+/**
+ * NF-5 (Fresh-User Re-Audit): Translate a raw drive-directionality code into
+ * a Veil-compliant qualitative description. Used by --verbose so the player
+ * sees 'Agency: a pull toward over-reliance on a familiar capacity' instead
+ * of 'Agency:DarkAddicted'. The four directions (per the polarity trace):
+ *   DarkAddicted   → submergent fixation (clings to lower capacity)
+ *   DarkAverted    → submergent aversion (rejects lower capacity)
+ *   GoldenAddicted → emergent fixation (bypasses toward higher)
+ *   GoldenAverted  → emergent aversion (refuses the call to grow)
+ *   HealthyBalanced→ filtered out before this function is called
+ */
+function veilDriveDirection(direction: string): string {
+  switch (direction) {
+    case 'DarkAddicted':    return 'a pull toward the familiar';
+    case 'DarkAverted':     return 'a rejection of something familiar';
+    case 'GoldenAddicted':  return 'a pull to bypass toward the higher';
+    case 'GoldenAverted':   return 'a resistance to the call forward';
+    case 'HealthyBalanced': return 'balanced';
+    default:                return 'an unnamed movement';
   }
 }
 
