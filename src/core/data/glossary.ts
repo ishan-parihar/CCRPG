@@ -30,7 +30,10 @@ export const PLAYER_GLOSSARY_TERMS: readonly GlossaryTerm[] = [
 export const ADVANCED_GLOSSARY_TERMS: readonly GlossaryTerm[] = [
   { term: 'Module', def: 'A specific Line × Stage combination. 8 lines × 8 stages = 64 modules total, each with its own assessment content.', audience: 'advanced' },
   { term: 'Modality', def: 'How an encounter is delivered. 7 types: Deterministic (timed trials), LanguageReflective (open questions), ScenarioChoice, Embodied, Strategic, SocialCooperative, ImmersiveRPG.', audience: 'advanced' },
-  { term: 'CCI', def: 'Cumulative Consciousness Index — a 0-1 composite of altitude, drive health, polarity, shadow topology, and transformation readiness.', audience: 'advanced' },
+  // NF-6 (Fresh-User Re-Audit): Added interpretation bands so users know what
+  // the number means. The re-audit found users could see CCI change but had
+  // no idea if the change was good or bad.
+  { term: 'CCI', def: 'Cumulative Consciousness Index — a 0-1 composite of altitude, drive health, polarity, shadow topology, and transformation readiness. Most players start around 0.50. Interpretation: below 0.40 = struggling (heavy shadow load); 0.40-0.55 = working (the common range); 0.55-0.70 = developing (integrating); above 0.70 = flourishing.', audience: 'advanced' },
   { term: 'rayProfile', def: 'Activation level (0-1) of each of the 7 energy rays: Red, Orange, Yellow, Green, Blue, Indigo, Violet. Maps to stages.', audience: 'advanced' },
   { term: 'G_z / P_z', def: 'Metabolic-health primitives. G_z = generative z-potential (capacity to grow); P_z = pathogenic z-potential (distortion load). Higher G_z, lower P_z is healthier.', audience: 'advanced' },
   { term: 'Arc', def: 'Session position: WARMUP (first 1-2 encounters), PEAK (middle), COOLDOWN (last 1-2). Maps to how contemplative practice actually works.', audience: 'advanced' },

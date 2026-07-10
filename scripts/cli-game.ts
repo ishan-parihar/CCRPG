@@ -1435,7 +1435,15 @@ async function runDiagnostic(): Promise<void> {
     recentLines: [],
   };
   const sessionState = startSession(sig, session);
-  info('CCI', sessionState.cci.composite.toFixed(4));
+  // NF-6 (Fresh-User Re-Audit): Show CCI with a qualitative interpretation
+  // so the user knows what the number means. The re-audit found users could
+  // see CCI change (0.5036 → 0.4749) but had no idea if that was good or bad.
+  const cciVal = sessionState.cci.composite;
+  const cciInterp = cciVal >= 0.7 ? 'flourishing'
+    : cciVal >= 0.55 ? 'developing'
+    : cciVal >= 0.4 ? 'working'
+    : 'struggling';
+  info('CCI', `${cciVal.toFixed(4)} (${cciInterp})`);
   // R4-P2-3 (UX-R4): Explain what 'theme' means — it biases encounter selection.
   info('theme', `${sessionState.strategy.theme} (session strategy — biases encounter selection)`);
   // R4-P2-2 (UX-R4): Explain what 'totalTarget' means — it's the encounter budget.
