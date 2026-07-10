@@ -1596,6 +1596,83 @@ const DQ_SCENE_SETTINGS = [
 ];
 
 /**
+ * P0-U2 (Fresh-User UX Audit): Integration ritual at session end.
+ *
+ * The catalyst→experience→integration cycle (AGENTS.md §5.4) was broken:
+ * the game did catalyst (the question) and experience (the answer +
+ * reflection) but skipped integration entirely. The reflection evaporated.
+ * The audit subagent's verdict: "Intrigued, not transformed."
+ *
+ * This function presents a 90-second reflective prompt at session end:
+ *   "Before you go, take a breath. What did you notice? What surprised
+ *    you? What wants to move?"
+ *
+ * The player's response is captured and persisted to the profile's
+ * narrative-memory.md under a "## Integration" section. It is surfaced
+ * in the next session's opening ("Last time, you noticed...") to create
+ * continuity across sessions and give the player a felt sense of growth.
+ *
+ * Design:
+ *   - Optional: player can press Enter to skip (no penalty)
+ *   - Veil-compliant: no clinical language, no metric framing
+ *   - 90-second timeout in interactive mode (player can take longer)
+ *   - In headless mode: reads from the --answers pool if available,
+ *     otherwise skips gracefully
+ *   - In JSON mode: emits an `integration_prompt` event and reads the
+ *     next --answer if available
+ */
+async function runIntegrationRitual(profileName: string | null): Promise<string | null> {
+  const prompts = [
+    'Before you go, take a breath. What did you notice?',
+    'Before you go — what surprised you in this session?',
+    'Before you go — what wants to move?',
+    'Before you go — what landed that you want to remember?',
+  ];
+  const prompt = prompts[Math.floor(Math.random() * prompts.length)];
+
+  let response: string | null = null;
+
+  if (JSON_MODE) {
+    // JSON mode: emit event, read from --answers pool
+    emitEvent('integration_prompt', { prompt });
+    response = consumeUserAnswer() ?? null;
+    if (response) {
+      emitEvent('integration_response', { response });
+    } else {
+      emitEvent('integration_skipped', {});
+    }
+  } else if (HEADLESS) {
+    // Headless non-JSON: read from --answers pool, no prompt display
+    response = consumeUserAnswer() ?? null;
+  } else {
+    // Interactive mode: display prompt and capture response
+    console.log(`\n  ${chalk.dim('═══ Integration ═══')}`);
+    console.log(`\n  ${chalk.italic.cyan(prompt)}`);
+    const answer = await ask('\n  Your reflection (press Enter to skip): ');
+    response = answer.trim() || null;
+  }
+
+  // Persist to profile's narrative-memory.md under "## Integration" section
+  if (response && profileName) {
+    try {
+      const profileDir = getActiveProfileDir();
+      if (profileDir) {
+        const memPath = path.join(profileDir, 'narrative-memory.md');
+        let existing = '';
+        try { existing = fs.readFileSync(memPath, 'utf8'); } catch { /* new file */ }
+        const timestamp = new Date().toISOString();
+        const entry = `## Integration\n- **Session ${timestamp}:** ${response}\n\n`;
+        // Prepend integration entries (most recent first)
+        const newContent = entry + existing;
+        fs.writeFileSync(memPath, newContent, 'utf8');
+      }
+    } catch { /* best-effort — don't break session end */ }
+  }
+
+  return response;
+}
+
+/**
  * Post-session LLM synthesis: reads the encounter log from this session,
  * asks the LLM to extract key insights, and appends them to narrative-memory.md.
  * This is the "profile evolution" step — the profile grows smarter after every session.
@@ -1862,6 +1939,36 @@ async function runDirectQuestioningSession(
 ): Promise<void> {
   banner('DIRECT QUESTIONING');
   if (!JSON_MODE) console.log(`  ${chalk.dim('A series of open questions. Answer each in your own words.')}\n`);
+
+  // P0-U2 (Fresh-User UX Audit): Surface the previous session's integration
+  // reflection at the start of the next session. This creates continuity
+  // across sessions and gives the player a felt sense that their reflections
+  // are being held by the game. The integration entries are stored in
+  // narrative-memory.md under "## Integration" by runIntegrationRitual().
+  if (!JSON_MODE) {
+    try {
+      const profileDir = getActiveProfileDir();
+      if (profileDir) {
+        const memPath = path.join(profileDir, 'narrative-memory.md');
+        if (fs.existsSync(memPath)) {
+          const mem = fs.readFileSync(memPath, 'utf8');
+          const integrationBullets = extractMdSectionBullets(mem, 'Integration');
+          if (integrationBullets.length > 0) {
+            const lastIntegration = integrationBullets[0]!;
+            // Strip the **Session <timestamp>:** prefix — the colon is inside
+            // the bold markers, so we need to match **...:** (colon before closing **)
+            const cleanText = lastIntegration.replace(/^\*\*[^*]+:\*\*\s*/, '')
+              .replace(/^\*\*[^*]+\*\*:\s*/, '');
+            if (cleanText.length > 10) {
+              console.log(`  ${chalk.dim('Last time, you noticed:')}`);
+              console.log(`  ${chalk.italic(cleanText)}`);
+              console.log(`  ${chalk.dim('Has anything shifted since?')}\n`);
+            }
+          }
+        }
+      }
+    } catch { /* best-effort — don't break session start */ }
+  }
 
   // P1-F10 (Fresh-User UX Audit): Make the adaptive session focus perceptible.
   // The game silently shifts its session strategy based on the player's
@@ -2266,6 +2373,13 @@ async function runDirectQuestioningSession(
     if (!JSON_MODE) info('synthesis', `${chalk.dim('Synthesizing session insights...')}`);
     await synthesizeSessionInsights(_profileName, history.length);
   }
+
+  // P0-U2 (Fresh-User UX Audit): Integration ritual at session end.
+  // Closes the catalyst→experience→integration cycle (AGENTS.md §5.4).
+  // The player is invited to reflect on what landed before the session
+  // closes. Their response is persisted to narrative-memory.md and
+  // surfaced in the next session's opening for continuity.
+  await runIntegrationRitual(_profileName);
 
   // NF-3: Persist the asked-prompts set so the next session avoids repeats.
   saveAskedPrompts(getActiveProfileDir());
@@ -2882,6 +2996,10 @@ async function runFullSession(): Promise<void> {
     console.log('\nFinal Significator:');
     printSignificator(sessionEnd.sig);
   }
+
+  // P0-U2 (Fresh-User UX Audit): Integration ritual at session end.
+  // Closes the catalyst→experience→integration cycle (AGENTS.md §5.4).
+  await runIntegrationRitual(getActiveProfileName());
 
   // NF-3: Persist the asked-prompts set for cross-session de-duplication.
   saveAskedPrompts(getActiveProfileDir());
