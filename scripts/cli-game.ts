@@ -1081,7 +1081,11 @@ function printSignificator(sig: Significator): void {
   // diagnostic/verbose paths. Show only id + qualitative state.
   // R11-R2: use describePersonalResonance for player-responsive resonance.
   info('id', sig.id);
-  info('resonance', describePersonalResonance(sig));
+  // NF-9 (Fresh-User Re-Audit): Add inline gloss so a new user doesn't think
+  // 'fortress-sharp, weapon-walls' is a bug. The gloss explains it's the
+  // poetic aesthetic of the current stage + shadow state.
+  const resonance = describePersonalResonance(sig);
+  info('resonance', `${resonance}  ${chalk.dim('(the poetic texture of your current stage)')}`);
 }
 
 function printEncounter(enc: ScheduledEncounter, world?: WorldState): void {
@@ -3514,7 +3518,7 @@ async function runStatus(): Promise<void> {
       // The resonance now changes based on the player's shadow patterns and
       // drive imbalances, not just their stage label.
       const aesthetic = describePersonalResonance(sig);
-      info('resonance', `The world feels ${aesthetic}.`);
+      info('resonance', `The world feels ${aesthetic}. ${chalk.dim('(the poetic texture of your current stage)')}`);
 
       // Qualitative encounter milestone
       const milestone = sig.totalEncounters === 0
