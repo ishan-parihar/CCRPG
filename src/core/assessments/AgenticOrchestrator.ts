@@ -240,6 +240,63 @@ export class AgenticOrchestrator {
   }
 
   /**
+   * P0-BUG (Fresh-User UX Audit): Build a Veil-compliant fallback narrative
+   * when the LLM is unavailable or returns an error. The previous code used
+   * the player's raw writeInValue as the narrativeSummary, which caused 7/8
+   * encounters in the audit's session 2 to echo the user's answer verbatim.
+   *
+   * This method generates a proper reflective narrative that:
+   *   1. Never echoes the player's raw answer verbatim
+   *   2. References the line and stage thematically
+   *   3. Acknowledges that something was offered (without quoting it)
+   *   4. Honors the Veil principle (no clinical labels, no metrics)
+   *
+   * The player's actual answer is captured separately in playerWriteIn
+   * for the engine's pattern detection and scoring.
+   */
+  private buildFallbackNarrative(line: Line, stage: Stage, playerResponse: string, isSelfReflection: boolean): string {
+    // If the player offered nothing, use a contemplative silence narrative
+    if (!playerResponse || playerResponse.trim().length === 0) {
+      const silenceOpeners = [
+        `The question hung in the air. Silence answered — not empty, but full of what could not yet be spoken.`,
+        `A long pause. The moment stretched, holding something that had no words. The ${line.toLowerCase()} dimension waited, patient.`,
+        `No answer came. The silence itself was a response — a holding, a protecting, a thing too tender to name.`,
+      ];
+      return silenceOpeners[Math.floor(Math.random() * silenceOpeners.length)];
+    }
+
+    // For self-reflection (Direct Questioning), generate a reflective narrative
+    // that acknowledges the player's offering without quoting it verbatim.
+    if (isSelfReflection) {
+      const responseLen = playerResponse.trim().length;
+      const isShort = responseLen < 15;
+      const isLong = responseLen > 100;
+
+      const reflectiveOpeners = isShort
+        ? [
+            `Something was offered — brief, almost missed. The ${line.toLowerCase()} dimension received it and held it up to the light. There was more beneath the surface, but the surface itself was honest.`,
+            `A few words, and then stillness. The ${line.toLowerCase()} question found its answer in the space between what was said and what was meant. The moment passed, but something had been named.`,
+            `The offering was sparse but true. At the ${stage.toLowerCase()} stage, ${line.toLowerCase()} work often begins this way — a single thread pulled, and the fabric shifts.`,
+          ]
+        : isLong
+        ? [
+            `Words came freely, weaving a longer thread. The ${line.toLowerCase()} dimension received the full offering — there was thoughtfulness in it, a willingness to stay with the question. At the ${stage.toLowerCase()} stage, this is the work: to speak what is true and let the speaking itself be the practice.`,
+            `The reflection ran deep, touching multiple edges. The ${line.toLowerCase()} question had opened a door, and the player walked through it. Something was seen that had not been seen before — or something was named that had only been felt.`,
+            `A substantial offering. The ${line.toLowerCase()} dimension holds complexity at the ${stage.toLowerCase()} stage, and the player met that complexity. The narrative closes here, but the reflection continues beneath the surface.`,
+          ]
+        : [
+            `The ${line.toLowerCase()} question was met with something honest. Not everything was said, but what was said was true. At the ${stage.toLowerCase()} stage, this is enough — the door was opened, and the player chose to walk through it.`,
+            `Something was named. The ${line.toLowerCase()} dimension received the offering and reflected it back, changed. The ${stage.toLowerCase()} stage holds this kind of seeing — partial, but real.`,
+            `The moment held. The ${line.toLowerCase()} question found its response, and the response found its ground. Not a completion, but a beginning — something moved that will continue to move.`,
+          ];
+      return reflectiveOpeners[Math.floor(Math.random() * reflectiveOpeners.length)];
+    }
+
+    // For non-self-reflection fallbacks, use a generic narrative
+    return `The ${line.toLowerCase()} encounter at the ${stage.toLowerCase()} stage unfolded. ${playerResponse ? 'The player met the moment with something genuine.' : 'The moment passed, leaving a subtle shift.'} The ${line.toLowerCase()} dimension received what was offered and held it.`;
+  }
+
+  /**
    * Build a narrative continuity context from the last 3 encounters.
    * Injected into both LLM system prompt and fallback task framing.
    */
@@ -787,11 +844,19 @@ INSTRUCTIONS:
       }],
     };    const result = await this.uiHandler.askUser(askParams);
     const answer = result.answers[0];
-      const narrativeSummary = answer?.writeInValue ?? (answer?.selectedLabels[0] ?? 'The player engaged with the encounter.');
+
+    // P0-BUG (Fresh-User UX Audit): The previous line used the player's raw
+    // writeInValue as the narrativeSummary. This caused 7/8 encounters in the
+    // audit's session 2 to echo the user's answer verbatim instead of weaving
+    // a reflective narrative. The narrativeSummary must ALWAYS be a proper
+    // reflective narrative — never the player's raw input. The player's input
+    // is captured separately in playerWriteIn for the engine to use.
+    const playerResponseText = answer?.writeInValue ?? (answer?.selectedLabels[0] ?? '');
+    const narrativeSummary = this.buildFallbackNarrative(line, stage, playerResponseText, isSelfReflection);
 
     const evaluated = isSelfReflection
-      ? this.evaluateSelfReflection(narrativeSummary)
-      : this.evaluateFallbackResponse(narrativeSummary);
+      ? this.evaluateSelfReflection(playerResponseText)
+      : this.evaluateFallbackResponse(playerResponseText);
 
     const fallbackParams = {
       passed: evaluated.passed,
@@ -799,7 +864,7 @@ INSTRUCTIONS:
       polarityDirection: evaluated.polarityDirection,
       driveScores: evaluated.driveScores,
       driveSignals: evaluated.driveSignals,
-      narrativeSummary: typeof narrativeSummary === 'string' ? narrativeSummary : 'The player engaged with the encounter.',
+      narrativeSummary,
     };
 
     const finalResult = this.createAssessmentResult(evaluated.passed, {}, evaluated.driveScores);
@@ -809,7 +874,7 @@ INSTRUCTIONS:
       ...outcome,
       finalResult,
       messages: this.messages,
-      playerWriteIn: isSelfReflection ? narrativeSummary : undefined,
+      playerWriteIn: isSelfReflection ? playerResponseText : undefined,
       driveScores: evaluated.driveScores,
     };
   }
