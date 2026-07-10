@@ -483,26 +483,74 @@ export function getSaveFilePath(profileName: string): string {
 }
 
 export function migrateLegacySave(): string | null {
+  // P0-F4 (Fresh-User UX Audit): Fixed migration file-path mismatch.
+  //
+  // BUG: The original code copied the legacy save-all.json envelope to
+  // getSaveFilePath(name) which returns 'live-state.json'. But SaveRepository
+  // reads from getSaveFile() which returns 'save.json', and loadAll() reads
+  // from getAtomicSaveFile() which returns 'save-all.json'. Neither of those
+  // files was written during migration, so on the NEXT session loadSave()/
+  // loadAll() found nothing and created a FRESH Significator with
+  // totalEncounters=0 — silently destroying all progress from the session
+  // that ran before migration.
+  //
+  // FIX: Write ALL THREE files the SaveRepository expects:
+  //   1. save-all.json  (atomic envelope: {version, savedAt, sig, world})
+  //   2. save.json      (raw Significator, for loadSave() fallback)
+  //   3. world.json     (WorldState, for loadWorldState() fallback)
+  // Then DELETE the legacy file so a future re-migration can't pick up
+  // stale data and overwrite the profile's now-live progress.
   const legacy = path.join(CCRPG_DIR, 'save-all.json');
   if (!fs.existsSync(legacy)) return null;
+
+  // Also check for the legacy world.json + save.json (pre-profile format).
+  const legacyWorld = path.join(CCRPG_DIR, 'world.json');
+  const legacySave = path.join(CCRPG_DIR, 'save.json');
+
   try {
-    const data = JSON.parse(fs.readFileSync(legacy, 'utf8'));
-    const sig = data.sig ?? data;
+    const raw = fs.readFileSync(legacy, 'utf8');
+    const data = JSON.parse(raw);
+    // The legacy save-all.json is an envelope {version, savedAt, sig, world}.
+    // Older formats may be a raw Significator (no envelope).
+    const isEnvelope = data && typeof data === 'object' && data.sig && data.world;
+    const sig = isEnvelope ? data.sig : data;
+    const world = isEnvelope ? data.world : null;
     const name = (sig.id && sig.id !== 'cli-player') ? sig.id : 'default';
+
+    // createProfile sets the active symlink and writes fresh profile metadata.
     createProfile(name);
-    fs.copyFileSync(legacy, getSaveFilePath(name));
     const dir = path.join(PROFILES_DIR, name);
+
+    // Write all three save files the SaveRepository expects.
+    fs.writeFileSync(path.join(dir, 'save-all.json'), raw, 'utf8'); // envelope (source of truth)
+    fs.writeFileSync(path.join(dir, 'save.json'), JSON.stringify(sig, null, 2), 'utf8'); // raw sig
+    if (world) {
+      fs.writeFileSync(path.join(dir, 'world.json'), JSON.stringify(world, null, 2), 'utf8');
+    } else if (fs.existsSync(legacyWorld)) {
+      fs.copyFileSync(legacyWorld, path.join(dir, 'world.json'));
+    }
+
+    // Update identity.yaml with the migrated counts.
     const id = yamlRead(path.join(dir, 'identity.yaml'));
     id.total_sessions = sig.totalSessions ?? 0;
     id.total_encounters = sig.totalEncounters ?? 0;
     id.current_stage = sig.currentStage ?? 'Red';
     id.lifecycle = sig.lifecycle ?? 'Exploring';
     yamlWrite(path.join(dir, 'identity.yaml'), id);
+
+    // Sync developmental state.
     const ds = yamlRead(path.join(dir, 'developmental-state.yaml'));
     ds.altitudes = sig.altitudes ?? ds.altitudes;
     ds.drives = sig.drives?.weights ?? ds.drives;
     ds.ray_profile = sig.rayProfile ?? ds.ray_profile;
     yamlWrite(path.join(dir, 'developmental-state.yaml'), ds);
+
+    // P0-F4: Delete the legacy files so a future re-migration (e.g. if the
+    // profile is deleted) can't pick up stale data and overwrite live progress.
+    try { fs.unlinkSync(legacy); } catch { /* already gone */ }
+    try { fs.unlinkSync(legacySave); } catch { /* already gone */ }
+    try { fs.unlinkSync(legacyWorld); } catch { /* already gone */ }
+
     return name;
   } catch { return null; }
 }
