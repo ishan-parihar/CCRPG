@@ -33,7 +33,15 @@ const VERSION = '0.1.0';
 const program = new Command()
   .name('ccrpg')
   .version(VERSION)
-  .description('CCRPG — A developmental RPG where every encounter is a validated assessment that simultaneously diagnoses and evolves your cognitive, emotional, moral, and spiritual capacities across 8 lines of intelligence and 8 stages of consciousness.')
+  // P2-F14 (Fresh-User UX Audit): The old description was a syllabus —
+  // "A developmental RPG where every encounter is a validated assessment
+  // that simultaneously diagnoses and evolves your cognitive, emotional,
+  // moral, and spiritual capacities across 8 lines of intelligence and 8
+  // stages of consciousness." A fresh user read it twice and felt like
+  // they were entering a research instrument, not a game. The new line is
+  // a hook: it tells you what the game FEELS like, not what it measures.
+  // The theory unfolds through play.
+  .description('CCRPG — A contemplative RPG that mirrors you back to yourself. Answer honest questions; the game reflects your inner landscape in mythopoetic prose. No wrong answers.')
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
   .option('--verbose', 'Show additional encounter detail (feedback line, drive expression, arc position)')
@@ -3663,21 +3671,33 @@ async function main(): Promise<void> {
 
   if (!JSON_MODE) {
     console.log(`\n${chalk.bold.cyan('CCRPG')} v${VERSION}`);
-    // UX-P1-1: First-run onboarding — show intro text if no save exists
+    // UX-P1-1 / P2-F13+F15 (Fresh-User UX Audit): First-run onboarding.
+    // The old welcome dumped 5 glossary terms in one breath before the
+    // player had seen a single question — high cognitive load, felt like
+    // "walking into a graduate seminar 6 months late." The new welcome is
+    // softer: one orienting sentence, a theory disclosure (so the player
+    // knows they're being measured against a specific developmental model,
+    // not objective truth), and a single command hint. Terms are introduced
+    // contextually via `ccrpg glossary` when the player hits one they don't
+    // know, not dumped up front.
     if (!hasSave()) {
-      console.log(`\n${chalk.dim('Welcome to CCRPG — a developmental RPG.')}`);
-      console.log(`${chalk.dim('You\'ll be asked questions across 8 lines of intelligence.')}`);
-      console.log(`${chalk.dim('Your answers shape your developmental profile.')}`);
-      console.log(`${chalk.dim('There are no wrong answers. Take your time.')}`);
-      // GAP-5 (Efficacy Audit): Auto-print key glossary terms on first run.
-      // The vocabulary wall is the #1 bounce risk. Instead of just telling
-      // users to run 'ccrpg glossary', show them the 5 most important terms
-      // inline so they're oriented immediately.
-      console.log(`\n${chalk.dim('Key terms: Significator = your developmental profile. Holon = an NPC or place. Line = a developmental dimension (Cognitive, Emotional, etc.). Stage = your current altitude (Red→White). Veil = the game never shows you clinical labels.')}`);
-      console.log(`${chalk.dim(`Run \`ccrpg glossary\` for the full list of ${GLOSSARY_TERMS.length} terms.`)}`);
-      console.log(`${chalk.dim('Run `ccrpg diagnostic` to check system status.')}`);
-      console.log(`${chalk.dim('Run `ccrpg status` to see your progress.')}`);
-      console.log(`${chalk.dim('Run `ccrpg new-game` to start over.')}\n`);
+      console.log(`\n${chalk.dim('Welcome. This is a contemplative game — it will ask you honest questions')}`);
+      console.log(`${chalk.dim('and reflect your answers back as mythopoetic prose. There are no wrong answers.')}`);
+      console.log(`${chalk.dim('Take your time. Say as much or as little as you want.')}`);
+      // P2-F15 (Fresh-User UX Audit): Theory disclosure. CCRPG is grounded
+      // in Integral Theory (Ken Wilber), Spiral Dynamics, and the Law of One
+      // cosmology. A player deserves to know they're being measured against
+      // one specific developmental model, not objective truth. This is a
+      // one-line disclosure, not a lecture — the full theory unfolds
+      // through play and is available in docs/foundations/ for those who
+      // want it.
+      console.log(`\n${chalk.dim('The game draws on Integral Theory and Spiral Dynamics for its')}`);
+      console.log(`${chalk.dim('developmental model. You can see what it has noticed about you at any')}`);
+      console.log(`${chalk.dim('time with')} ${chalk.bold('ccrpg profile show')}${chalk.dim('.')}`);
+      console.log(`\n${chalk.dim('Useful commands:')}`);
+      console.log(`  ${chalk.dim('ccrpg glossary      — definitions for unfamiliar terms')}`);
+      console.log(`  ${chalk.dim('ccrpg status         — your progress')}`);
+      console.log(`  ${chalk.dim('ccrpg new-game       — start over')}\n`);
     }
   }
 
