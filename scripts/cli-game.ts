@@ -2817,10 +2817,20 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
     console.log(`  ${chalk.bold('Last active:')} ${id.last_active ? new Date(id.last_active as string).toLocaleString() : 'never'}`);
 
     // ── Active Focus ──
-    if (goals.active_focus && String(goals.active_focus).trim()) {
+    // NF-1 (Fresh-User Re-Audit): The YAML parser returns {} (empty object)
+    // for an empty `active_focus:` value. String({}) === '[object Object]',
+    // which is what the user saw in the most important reflection field.
+    // Fix: coerce to string safely; treat non-string / empty-object as unset.
+    const rawFocus = goals.active_focus;
+    const focusStr = (typeof rawFocus === 'string')
+      ? rawFocus
+      : (rawFocus && typeof rawFocus === 'object' && Object.keys(rawFocus).length === 0)
+        ? ''  // empty object from YAML parser — treat as unset
+        : String(rawFocus ?? '');
+    if (focusStr.trim()) {
       console.log(`\n  ${chalk.cyan.bold('▸ Active Focus')}`);
       console.log(`  ${chalk.dim('What the game senses you are currently processing:')}`);
-      console.log(`  ${chalk.italic(String(goals.active_focus))}`);
+      console.log(`  ${chalk.italic(focusStr)}`);
     } else {
       console.log(`\n  ${chalk.dim('▸ Active Focus: (not yet set — play a session to generate one)')}`);
     }
