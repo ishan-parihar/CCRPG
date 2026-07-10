@@ -40,7 +40,13 @@ export const ADVANCED_GLOSSARY_TERMS: readonly GlossaryTerm[] = [
   { term: 'Transformation', def: 'A stage transition. Fires when readiness ≥ 0.8, with sufficient line convergence, shadow clearance, and AQAL quadrant coverage.', audience: 'advanced' },
   { term: 'Veil', def: 'A design principle: the game never shows you clinical labels about yourself. You see qualitative felt-sense language, not diagnoses.', audience: 'advanced' },
   { term: 'Resonance', def: 'A poetic 2-3 word description of your current stage\'s aesthetic (e.g. "fortress-sharp, weapon-walls" for Red).', audience: 'advanced' },
-  { term: 'Aesthetic Label', def: 'The bracketed word next to each developmental line in status output (e.g. [power]). It is the short form of your current stage: [primal]=Infrared, [symbolic]=Magenta, [power]=Red, [order]=Amber, [reason]=Orange, [harmony]=Green, [integral]=Turquoise, [unity]=White.', audience: 'advanced' },
+  // NF-4 (Fresh-User Re-Audit): The '[h' in '[harmony]' was being consumed by
+  // terminal ANSI-escape interpretation (ESC [ H = cursor home), making the
+  // rendered output show 'armony]=Green' instead of '[harmony]=Green'. This
+  // survived two audits because the source is byte-correct but the terminal
+  // eats the '[h'. Fix: use a space-separated format instead of bracket
+  // notation so no '[X' sequence can be misinterpreted as an escape.
+  { term: 'Aesthetic Label', def: 'The bracketed word next to each developmental line in status output (e.g. [power]). It is the short form of your current stage: primal=Infrared, symbolic=Magenta, power=Red, order=Amber, reason=Orange, harmony=Green, integral=Turquoise, unity=White.', audience: 'advanced' },
   { term: 'Theme', def: 'The session strategy that biases encounter selection (e.g. "balanced-development"). Shown in diagnostic. Different themes emphasize different lines or shadow work.', audience: 'advanced' },
   { term: 'Encounter', def: 'A single developmental exchange. May be a question, a choice, a trial, or a narrative scene — depending on modality.', audience: 'advanced' },
   { term: 'Calibration', def: 'The initial 8-question session that establishes your baseline across all 8 lines. Runs automatically on first play.', audience: 'advanced' },
