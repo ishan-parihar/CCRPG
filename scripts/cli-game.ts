@@ -1579,11 +1579,45 @@ const DQ_SCENE_SETTINGS = [
  * happened and synthesizes it into long-term memory.
  */
 async function synthesizeSessionInsights(profileName: string, encounterCount: number): Promise<void> {
-  if (!LLM_ACTIVE || JSON_MODE) return; // only synthesize with LLM, skip in JSON mode
+  // NF3-1 (Fresh-User Audit 3): Even when LLM is inactive, run the lighter-
+  // weight fallback so the Active Focus doesn't go stale. The audit found
+  // synthesis succeeds only 25% of the time — and when the LLM is unreachable
+  // (LLM_ACTIVE=false), the old code returned immediately with no fallback,
+  // leaving the Active Focus frozen on the last successful synthesis.
+  if (JSON_MODE) return; // skip in JSON mode
   try {
     const { agentReadProfileFile, agentWriteProfileFile } = await import('../src/infra/profiles/ProfileManager.js');
     const encounterLog = agentReadProfileFile('encounter-log.md');
     if (!encounterLog || encounterLog.length < 100) return; // nothing to synthesize
+
+    // If LLM is inactive, skip the full synthesis but still run the fallback
+    // so the Active Focus has something current (the session's last narrative).
+    if (!LLM_ACTIVE) {
+      const encounters = encounterLog.split('## Encounter ');
+      const recentEncounters = encounters.slice(-encounterCount - 1).join('## Encounter ');
+      const fallbackFocus = extractLastNarrativeAsFocus(recentEncounters);
+      if (fallbackFocus) {
+        try {
+          const goals = agentReadProfileFile('goals.yaml');
+          if (goals) {
+            let updatedGoals = goals.replace(/active_focus:.*$/m, `active_focus: "${fallbackFocus.replace(/"/g, "'")}"`);
+            if (/last_synthesis_session:/m.test(updatedGoals)) {
+              updatedGoals = updatedGoals.replace(/last_synthesis_session:.*$/m, `last_synthesis_session: "${new Date().toISOString()}" (fallback)`);
+            } else {
+              updatedGoals = updatedGoals.trimEnd() + `\nlast_synthesis_session: "${new Date().toISOString()}" (fallback)\n`;
+            }
+            agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
+            if (!JSON_MODE) {
+              info('synthesis', `${chalk.dim('LLM unavailable — using the session\'s last narrative as a placeholder focus')}`);
+              console.log(`  ${chalk.dim('Run `ccrpg profile show` to see it. Full synthesis will run when the LLM is reachable.')}`);
+            }
+          }
+        } catch { /* best-effort */ }
+      } else {
+        if (!JSON_MODE) info('synthesis', `${chalk.dim('LLM unavailable — no narrative to use as placeholder focus')}`);
+      }
+      return;
+    }
 
     // Take the last N encounters from this session
     const encounters = encounterLog.split('## Encounter ');
@@ -1668,7 +1702,18 @@ ${recentEncounters.slice(0, 1500)}`;
         try {
           const goals = agentReadProfileFile('goals.yaml');
           if (goals) {
-            const updatedGoals = goals.replace(/active_focus:.*$/m, `active_focus: "${active.replace(/"/g, "'")}"`);
+            // NF3-5: Also store last_synthesis_session so profile show can
+            // display when the Active Focus was last updated. The audit found
+            // players can't tell if the focus they're reading is current.
+            const { getActiveProfileName } = await import('../src/infra/profiles/ProfileManager.js');
+            const profileNameForCount = getActiveProfileName();
+            let updatedGoals = goals.replace(/active_focus:.*$/m, `active_focus: "${active.replace(/"/g, "'")}"`);
+            // Add or update last_synthesis_session field
+            if (/last_synthesis_session:/m.test(updatedGoals)) {
+              updatedGoals = updatedGoals.replace(/last_synthesis_session:.*$/m, `last_synthesis_session: ${profileNameForCount ? '' : ''}"${new Date().toISOString()}"`);
+            } else {
+              updatedGoals = updatedGoals.trimEnd() + `\nlast_synthesis_session: "${new Date().toISOString()}"\n`;
+            }
             agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
           }
         } catch { /* best-effort */ }
@@ -1705,7 +1750,14 @@ ${recentEncounters.slice(0, 1500)}`;
           try {
             const goals = agentReadProfileFile('goals.yaml');
             if (goals) {
-              const updatedGoals = goals.replace(/active_focus:.*$/m, `active_focus: "${fallbackFocus.replace(/"/g, "'")}"`);
+              // NF3-5: Store last_synthesis_session timestamp + mark as fallback
+              // so profile show can display "(placeholder — full synthesis pending)"
+              let updatedGoals = goals.replace(/active_focus:.*$/m, `active_focus: "${fallbackFocus.replace(/"/g, "'")}"`);
+              if (/last_synthesis_session:/m.test(updatedGoals)) {
+                updatedGoals = updatedGoals.replace(/last_synthesis_session:.*$/m, `last_synthesis_session: "${new Date().toISOString()}" (fallback)`);
+              } else {
+                updatedGoals = updatedGoals.trimEnd() + `\nlast_synthesis_session: "${new Date().toISOString()}" (fallback)\n`;
+              }
               agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
               if (!JSON_MODE) {
                 info('synthesis', `${chalk.dim('the reflection engine could not be reached — using the session\'s last narrative as a placeholder focus')}`);
@@ -1748,7 +1800,32 @@ function extractLastNarrativeAsFocus(encounterLogText: string): string | null {
   const lastNarrative = narrativeMatches[narrativeMatches.length - 1]!
     .replace(/^\*\*LLM narrative:\*\*\s*/, '')
     .trim();
-  if (lastNarrative.length < 20) return null;
+  if (lastNarrative.length < 10) return null;
+
+  // NF3-1: If the "LLM narrative" is just the user's answer echoed back
+  // (the echo fallback path), extract the QUESTION instead — it's a better
+  // placeholder focus than the user's own words. The question represents
+  // what the game was probing, which is more useful as a "current focus"
+  // than a verbatim echo.
+  const userAnswerMatches = encounterLogText.match(/\*\*User's answer:\*\*\s*(.+?)(?=\n\*\*|\n##|\n$|$)/gs);
+  const lastUserAnswer = userAnswerMatches?.[userAnswerMatches.length - 1]
+    ?.replace(/^\*\*User's answer:\*\*\s*/, '')
+    .trim();
+  if (lastUserAnswer && lastNarrative.trim().toLowerCase() === lastUserAnswer.trim().toLowerCase()) {
+    // Echo case — extract the question instead
+    const questionMatches = encounterLogText.match(/\*\*Question:\*\*\s*([\s\S]+?)(?=\n\*\*|\n##|\n$|$)/g);
+    if (questionMatches && questionMatches.length > 0) {
+      const lastQuestion = questionMatches[questionMatches.length - 1]!
+        .replace(/^\*\*Question:\*\*\s*/, '')
+        .trim();
+      if (lastQuestion.length > 10) {
+        // Take the first sentence of the question
+        const qSentence = lastQuestion.match(/^[^.!?]*[.!?]/)?.[0] ?? lastQuestion.slice(0, 180);
+        return `Exploring: ${qSentence.trim()}`;
+      }
+    }
+  }
+
   // Take the first sentence (up to the first period, exclamation, or question mark)
   const firstSentence = lastNarrative.match(/^[^.!?]*[.!?]/)?.[0] ?? lastNarrative.slice(0, 180);
   return firstSentence.trim();
@@ -2989,6 +3066,26 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
       console.log(`\n  ${chalk.cyan.bold('▸ Active Focus')}`);
       console.log(`  ${chalk.dim('What the game senses you are currently processing:')}`);
       console.log(`  ${chalk.italic(focusStr)}`);
+      // NF3-5 (Fresh-User Audit 3): Show when the Active Focus was last
+      // updated so the player can calibrate trust. The audit found players
+      // can't tell if the focus is current or stale from a failed-synthesis
+      // session. The last_synthesis_session field is written by
+      // synthesizeSessionInsights() (with "(fallback)" suffix when the
+      // lighter-weight fallback ran).
+      const rawSynthTime = goals.last_synthesis_session;
+      const synthStr = (typeof rawSynthTime === 'string')
+        ? rawSynthTime
+        : (rawSynthTime && typeof rawSynthTime === 'object' && Object.keys(rawSynthTime).length === 0)
+          ? ''
+          : String(rawSynthTime ?? '');
+      if (synthStr.trim()) {
+        const isFallback = synthStr.includes('(fallback)');
+        const timePart = synthStr.replace(/\s*\(fallback\)\s*$/, '').trim().replace(/^"|"$/g, '');
+        const timeLabel = isFallback ? 'last updated (placeholder)' : 'last updated';
+        const dateStr = timePart ? new Date(timePart).toLocaleString() : 'unknown';
+        const suffix = isFallback ? chalk.yellow(' — full synthesis pending') : '';
+        console.log(`  ${chalk.dim(`${timeLabel}: ${dateStr}`)}${suffix}`);
+      }
     } else {
       console.log(`\n  ${chalk.dim('▸ Active Focus: (not yet set — play a session to generate one)')}`);
     }
