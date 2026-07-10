@@ -36,7 +36,7 @@ const program = new Command()
   .description('CCRPG — A developmental RPG where every encounter is a validated assessment that simultaneously diagnoses and evolves your cognitive, emotional, moral, and spiritual capacities across 8 lines of intelligence and 8 stages of consciousness.')
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
-  .option('--verbose', 'Show full narrative and feedback')
+  .option('--verbose', 'Show additional encounter detail (feedback line, drive expression, arc position)')
   .option('--dev', 'Developer mode: show internal metrics (G_z/P_z, CCI, rayProfile, phase). WARNING: breaks the experiential frame (Veil principle) — for debugging only.')
   .option('--no-llm', 'Disable LLM, use module assessments only')
   // YAGNI-EFF-3 (Efficacy Audit): --agent / PersistentAgent path removed.
@@ -1853,6 +1853,29 @@ async function runDirectQuestioningSession(
           const filled = Math.min(8, Math.round(progress.ratio * 8));
           const bar = '▓'.repeat(filled) + '░'.repeat(8 - filled);
           console.log(`  ${chalk.dim(`${line.padEnd(13)} ${bar} ${progress.traces}/${progress.threshold}`)}`);
+        }
+
+        // P1-F6 (Fresh-User UX Audit): --verbose was a no-op in the DQ
+        // (headless) session path — the flag was advertised in --help but
+        // never referenced in runDirectQuestioningSession(). Now it surfaces:
+        //   1. The LLM feedback line (distinct from narrative; normally suppressed)
+        //   2. The encounter's drive expression (qualitative, Veil-compliant)
+        //   3. The session arc position (warmup/peak/cooldown)
+        //   4. The running total encounters
+        // This gives curious players / developers a window into the engine
+        // without breaking the Veil (no raw G_z/P_z/CCI — those stay behind --dev).
+        if (VERBOSE) {
+          const feedback = result.outcome.feedback?.slice(0, 280) ?? '';
+          if (feedback && feedback !== result.narrativeSummary?.slice(0, 280)) {
+            verbose('feedback', feedback);
+          }
+          const driveExpr = cr.polarityTrace.driveDirectionality;
+          const driveSummary = Object.entries(driveExpr)
+            .filter(([, v]) => v !== 'HealthyBalanced')
+            .map(([k, v]) => `${k}:${v}`).join(', ') || 'balanced';
+          verbose('drives', driveSummary);
+          verbose('arc', `${encounter.sessionPosition} · encounter ${i + 1}/${linesToRun.length}`);
+          verbose('total', `${currentSig.totalEncounters} cumulative encounters`);
         }
       }
 
