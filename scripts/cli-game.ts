@@ -1639,7 +1639,16 @@ ${recentEncounters.slice(0, 3000)}`;
         info('synthesis', `${chalk.dim('No extractable insights from this session')}`);
       }
     } else {
-      if (!JSON_MODE) info('synthesis', `${chalk.dim('LLM synthesis skipped (LLM unavailable)')}`);
+      // NF-2 (Fresh-User Re-Audit): Distinguish "LLM unavailable" (the call
+      // failed) from "LLM returned empty" (the call succeeded but the response
+      // was unusable). The old message was always "LLM unavailable" even when
+      // the boot probe had succeeded — which contradicted "LLM active" and
+      // confused users. Now we check the error shape and report honestly.
+      const isUnavailable = !result || result.startsWith('{"error"');
+      const reason = isUnavailable
+        ? 'the reflection engine could not be reached this session'
+        : 'the reflection did not surface anything new this session';
+      if (!JSON_MODE) info('synthesis', `${chalk.dim(reason)}`);
     }
   } catch (e: any) {
     if (!JSON_MODE) info('synthesis', `${chalk.dim('Synthesis error: ' + (e?.message || e))}`);

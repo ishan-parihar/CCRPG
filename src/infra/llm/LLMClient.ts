@@ -52,6 +52,13 @@ const FALLBACK: LLMEvaluation = { score: 0.5, feedback: 'LLM unavailable' };
 /** Timeout for LLM fetch calls (30 seconds) */
 const LLM_TIMEOUT_MS = 30_000;
 
+/** NF-2 (Fresh-User Re-Audit): Retry count for transient LLM failures.
+ * The re-audit found a 44% narrative success rate — many failures were
+ * transient (rate limits, momentary unavailability) that a single retry
+ * would have recovered. We retry once on any fetch error or 5xx/429. */
+const LLM_RETRY_COUNT = 1;
+const LLM_RETRY_BACKOFF_MS = 1500;
+
 /** Fetch with AbortController timeout to prevent hangs */
 async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = LLM_TIMEOUT_MS): Promise<Response> {
   const controller = new AbortController();
@@ -61,6 +68,40 @@ async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = LLM_
   } finally {
     clearTimeout(timer);
   }
+}
+
+/**
+ * NF-2: Fetch with retry. Retries on network errors, timeouts, HTTP 429
+ * (rate limit), and HTTP 5xx (server errors). Does NOT retry on 4xx
+ * (client errors — those won't fix themselves). Returns the last response
+ * (which may be an error response) so callers can inspect res.ok.
+ */
+async function fetchWithRetry(url: string, init: RequestInit, timeoutMs = LLM_TIMEOUT_MS): Promise<Response> {
+  let lastRes: Response | null = null;
+  let lastErr: any = null;
+  for (let attempt = 0; attempt <= LLM_RETRY_COUNT; attempt++) {
+    try {
+      const res = await fetchWithTimeout(url, init, timeoutMs);
+      // Retry on rate-limit (429) and server errors (5xx) — these are transient
+      if ((res.status === 429 || res.status >= 500) && attempt < LLM_RETRY_COUNT) {
+        await new Promise(r => setTimeout(r, LLM_RETRY_BACKOFF_MS));
+        continue;
+      }
+      return res;
+    } catch (err: any) {
+      lastErr = err;
+      lastRes = null;
+      // Network error / timeout — retry once
+      if (attempt < LLM_RETRY_COUNT) {
+        await new Promise(r => setTimeout(r, LLM_RETRY_BACKOFF_MS));
+        continue;
+      }
+    }
+  }
+  // All retries exhausted — re-throw the last error so callers can catch it
+  if (lastErr) throw lastErr;
+  // Shouldn't reach here, but return last response as fallback
+  return lastRes ?? new Response('{"error":"retry exhausted"}', { status: 503 });
 }
 
 /**
@@ -194,7 +235,7 @@ export async function evaluateResponse(
   try {
     let res: Response;
     if (isAnthropicProtocol(config)) {
-      res = await fetchWithTimeout(`${config.baseUrl}/messages`, {
+      res = await fetchWithRetry(`${config.baseUrl}/messages`, {
         method: 'POST',
         headers: buildHeaders(config),
         body: JSON.stringify({
@@ -206,7 +247,7 @@ export async function evaluateResponse(
         }),
       });
     } else {
-      res = await fetchWithTimeout(`${config.baseUrl}/chat/completions`, {
+      res = await fetchWithRetry(`${config.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: buildHeaders(config),
         body: JSON.stringify({
@@ -272,7 +313,7 @@ export async function queryLLM(
   try {
     let res: Response;
     if (isAnthropicProtocol(config)) {
-      res = await fetchWithTimeout(`${config.baseUrl}/messages`, {
+      res = await fetchWithRetry(`${config.baseUrl}/messages`, {
         method: 'POST',
         headers: buildHeaders(config),
         body: JSON.stringify({
@@ -284,7 +325,7 @@ export async function queryLLM(
         }),
       });
     } else {
-      res = await fetchWithTimeout(`${config.baseUrl}/chat/completions`, {
+      res = await fetchWithRetry(`${config.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: buildHeaders(config),
         body: JSON.stringify({
@@ -370,7 +411,7 @@ export async function queryLLMWithTools(
           input_schema: t.function?.parameters ?? t.parameters ?? { type: 'object', properties: {} },
         }));
       }
-      res = await fetchWithTimeout(`${config.baseUrl}/messages`, {
+      res = await fetchWithRetry(`${config.baseUrl}/messages`, {
         method: 'POST',
         headers: buildHeaders(config),
         body: JSON.stringify(body),
@@ -382,7 +423,7 @@ export async function queryLLMWithTools(
         temperature: 0.7,
       };
       if (tools && tools.length > 0) body.tools = tools;
-      res = await fetchWithTimeout(`${config.baseUrl}/chat/completions`, {
+      res = await fetchWithRetry(`${config.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: buildHeaders(config),
         body: JSON.stringify(body),
