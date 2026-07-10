@@ -480,6 +480,24 @@ function truncateNarrative(text: string, max: number): string {
   return cut + '…';
 }
 
+/**
+ * NF-8 (Fresh-User Re-Audit): Truncate at a word boundary under `max` chars.
+ * Unlike truncateNarrative (which targets narrative prose), this is for
+ * shorter fields like session key_shift where a mid-word cut is jarring.
+ * Returns the text unchanged if it fits; otherwise cuts at the last space
+ * under the limit and appends an ellipsis.
+ */
+function truncateAtWordBoundary(text: string, max: number): string {
+  if (text.length <= max) return text;
+  const cut = text.slice(0, max);
+  const lastSpace = cut.lastIndexOf(' ');
+  if (lastSpace > max * 0.5) {
+    return cut.slice(0, lastSpace) + '…';
+  }
+  // No good word boundary — hard cut with ellipsis
+  return cut.trimEnd() + '…';
+}
+
 // P0-2 (UX-R3): Emit holistic dev primitives when --dev is set, so the
 // --help promise ("show holistic primitives (G_z/P_z, rayProfile, phase
 // position)") is honored during sessions, not just in `status`.
@@ -2959,7 +2977,14 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
       for (const s of sessions.slice(-5)) {
         const ss: any = s;
         const date = ss.date ? new Date(ss.date).toLocaleDateString() : '?';
-        console.log(`  ${chalk.dim(date)} — ${ss.key_shift || ss.theme || 'session'}`);
+        // NF-8 (Fresh-User Re-Audit): Truncate at word boundary, not mid-word.
+        // The old code did ss.key_shift (which was sliced at 200 chars with no
+        // word-boundary awareness), so the user saw 'That's the wor' instead
+        // of 'That's the work.' Now we truncate at the last word boundary
+        // under 200 chars and add an ellipsis if truncated.
+        const raw = ss.key_shift || ss.theme || 'session';
+        const truncated = truncateAtWordBoundary(raw, 200);
+        console.log(`  ${chalk.dim(date)} — ${truncated}`);
       }
     }
 
