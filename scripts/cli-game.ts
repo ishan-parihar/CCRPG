@@ -1463,7 +1463,29 @@ async function runAgenticEncounter(
     agentSynthesis,
   });
 
-  const outcome = await orchestrator.run();
+  // P1-R5 (Fresh-User UX Audit): Thinking indicator during LLM round-trip.
+  // The audit found 60-300s session runtimes with no 'thinking...' indicator,
+  // making the wait feel broken. ora (already a dependency) displays a
+  // contemplative spinner during the orchestrator's LLM call.
+  // In JSON/headless mode, skip the spinner (would pollute JSON output).
+  let spinner: any = null;
+  if (!JSON_MODE && !HEADLESS) {
+    const thinkingPhrases = [
+      'the question is finding you',
+      'the reflection is forming',
+      'the moment is gathering',
+      'the mirror is turning',
+    ];
+    const phrase = thinkingPhrases[Math.floor(Math.random() * thinkingPhrases.length)]!;
+    spinner = ora({ text: chalk.dim(phrase + '...'), color: 'cyan' }).start();
+  }
+
+  let outcome;
+  try {
+    outcome = await orchestrator.run();
+  } finally {
+    if (spinner) spinner.stop();
+  }
 
   // Build a PlayerResponse from the orchestrator's consequence record
   const cr = outcome.consequenceRecord;
@@ -2089,6 +2111,27 @@ async function runDirectQuestioningSession(
 
     // T-3.4 (Veil compliance): don't leak the line taxonomy name.
     separator(`Question ${i + 1}/${linesToRun.length}`);
+
+    // P1-U1 (Fresh-User UX Audit): Embodied pause protocol.
+    // Before each encounter, invite the player to arrive in their body.
+    // The audit found that all encounters are intellectual/cognitive, even
+    // the somatic line. This 5-second breath cue is the lightest possible
+    // intervention that honors the body the game claims to develop.
+    // Skipped in JSON/headless mode for CI throughput.
+    if (!JSON_MODE && !HEADLESS) {
+      const breathCues = [
+        'Take a breath. Feel your feet on the floor.',
+        'Take a breath. Let your shoulders settle.',
+        'Take a breath. Notice where you are holding.',
+        'Take a breath. Arrive here, now.',
+        'Take a breath. Let the body be present.',
+      ];
+      const cue = breathCues[i % breathCues.length]!;
+      const spinner = ora({ text: chalk.dim(cue), color: 'cyan' }).start();
+      await new Promise(r => setTimeout(r, 5000));
+      spinner.stop();
+      console.log(`  ${chalk.dim(cue)}`);
+    }
 
     // ponytail: synthetic encounter forces LanguageReflective modality
     const encounter: ScheduledEncounter = {
