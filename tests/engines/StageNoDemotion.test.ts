@@ -21,8 +21,10 @@ import type { Stage } from '../../src/core/domain/Stage.js';
 
 describe('P1-F7: stages never demote (regression guard)', () => {
   it('commitTransformation returns null targetStage when phase is not "complete"', () => {
-    const states = ['idle', 'preparing', 'active'] as const;
-    for (const phase of states) {
+    // Valid phases: 'idle' | 'threshold' | 'unravelling' | 'crucible' | 'emergence' | 'complete'
+    // Only 'complete' returns a targetStage. All others return null.
+    const nonCompletePhases = ['idle', 'threshold', 'unravelling', 'crucible', 'emergence'] as const;
+    for (const phase of nonCompletePhases) {
       const state = { ...createInitialTransformationState(), phase, targetStage: 'Amber' as Stage };
       const result = commitTransformation(state);
       expect(result.targetStage).toBeNull();
