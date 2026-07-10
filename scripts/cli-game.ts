@@ -627,13 +627,21 @@ function inferAltitudesFromAnswers(): Record<Line, Stage> {
     altitudes[line] = detectedStage;
   }
 
-  if (!JSON_MODE && detectedStage !== 'Red') {
-    // R11-P1 (Fresh-User UX Audit): reframe message to be honest about what
-    // was actually measured. The detected stage is inferred from writing
-    // style (vocabulary density + stage markers), not from a deliberative
-    // onboarding interview. The previous phrasing ("Answers suggest X stage")
-    // implied an assessment the player did not consciously participate in.
-    info('onboarding', `Starting altitude: ${detectedStage} (inferred from your writing style). Encounters will refine this.`);
+  if (!JSON_MODE && detectedStage !== 'Red' && USER_ANSWERS.length > 0) {
+    // P0-F2 (Fresh-User UX Audit): Be honest about WHAT was measured and WHEN.
+    // The previous message ("inferred from your writing style") fired at boot
+    // time, before the player had seen any question — because in --headless
+    // mode the --answer flags are already in USER_ANSWERS. The player's
+    // experiential reality was "I haven't written anything yet" while the
+    // game claimed to have inferred something from their writing. This
+    // destroyed trust in every subsequent claim the game made.
+    //
+    // Fix: (1) gate on USER_ANSWERS.length > 0 so the message never fires
+    // when there's genuinely nothing to infer from; (2) reframe to be
+    // honest that the inference is from the answers the player brought to
+    // the session, not from writing produced during play; (3) soften the
+    // claim — this is a rough seed, not a diagnosis.
+    info('onboarding', `Starting altitude: ${detectedStage} (a rough seed from the answers you brought; encounters will refine it).`);
   }
 
   return altitudes;
