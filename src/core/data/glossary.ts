@@ -38,7 +38,14 @@ export const ADVANCED_GLOSSARY_TERMS: readonly GlossaryTerm[] = [
   { term: 'G_z / P_z', def: 'Metabolic-health primitives. G_z = generative z-potential (capacity to grow); P_z = pathogenic z-potential (distortion load). Higher G_z, lower P_z is healthier.', audience: 'advanced' },
   { term: 'Arc', def: 'Session position: WARMUP (first 1-2 encounters), PEAK (middle), COOLDOWN (last 1-2). Maps to how contemplative practice actually works.', audience: 'advanced' },
   { term: 'Saturation', def: 'How many encounters you have completed at your current stage per line. Reaching the threshold is required for stage transition.', audience: 'advanced' },
+  // NF-10 (Fresh-User Re-Audit): The engine has two naming schemes for shadow
+  // distortions — DriveDirectionality (DarkAddicted/DarkAverted/etc., adjective
+  // form, used in drive expression) and ShadowQuadrant (DarkAddiction/DarkAllergy/
+  // etc., noun form, used in shadow content). The LLM can surface either form.
+  // The glossary previously only defined the adjective form. Now both are
+  // defined so no clinical label that appears in output is undefined.
   { term: 'Drive', def: 'One of 4 fundamental drives: Agency, Communion, Eros, Agape. Each can be healthy-balanced or distorted (DarkAddicted, DarkAverted, GoldenAddicted, GoldenAverted).', audience: 'advanced' },
+  { term: 'Shadow Quadrant', def: 'The four shadow patterns: DarkAddiction (submergent fixation — clings to a lower capacity), DarkAllergy (submergent aversion — rejects a lower capacity), GoldenAddiction (emergent fixation — bypasses toward higher without integration), GoldenAllergy (emergent aversion — refuses the call to grow). The game surfaces these qualitatively, never as clinical labels.', audience: 'advanced' },
   { term: 'Polarity', def: 'The energetic direction of an encounter: Absorptive (taking in), Radiative (giving out), or Homeostatic (balanced).', audience: 'advanced' },
   { term: 'Transformation', def: 'A stage transition. Fires when readiness ≥ 0.8, with sufficient line convergence, shadow clearance, and AQAL quadrant coverage.', audience: 'advanced' },
   { term: 'Veil', def: 'A design principle: the game never shows you clinical labels about yourself. You see qualitative felt-sense language, not diagnoses.', audience: 'advanced' },
