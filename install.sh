@@ -175,12 +175,16 @@ else
     warn "Build invariants check failed (CCRPG may still run, but with warnings)"
 fi
 
-# Build the CLI bundle so `ccrpg` is runnable without tsx
-info "Building CLI bundle (tsup)..."
-if npx tsup >/dev/null 2>&1; then
+# Build the CLI bundle so `ccrpg` is runnable without tsx.
+# Uses `npm run build:cli` which runs `svelte-kit sync && tsup` — the sync step
+# is REQUIRED because tsup needs the SvelteKit-generated path aliases
+# ($shared, $core, $infra) in .svelte-kit/tsconfig.json to resolve imports.
+# Without sync, tsup fails with "Could not resolve '$shared/llm/VeilFilter.js'".
+info "Building CLI bundle (svelte-kit sync + tsup)..."
+if npm run build:cli >/dev/null 2>&1; then
     ok "CLI bundle built → dist/cli/cli-game.js"
 else
-    warn "CLI bundle build failed — you can still run via 'npx tsx scripts/cli-game.ts'"
+    warn "CLI bundle build failed — try 'npm run build:cli' manually to see errors"
 fi
 
 # ── Step 4: Install TDG-Rust (optional) ─────────────────────────────
@@ -265,7 +269,8 @@ fi
 step "Final verification"
 
 info "CCRPG CLI smoke test (--headless --no-llm)..."
-if npx tsx scripts/cli-game.ts session --headless --no-llm --encounters=1 --json >/dev/null 2>&1; then
+# P0-F1 fix: svelte-kit sync must run before tsx so path aliases resolve.
+if npm run cli -- session --headless --no-llm --encounters=1 --json >/dev/null 2>&1; then
     ok "CCRPG CLI runs (headless mode)"
 else
     warn "CCRPG CLI smoke test failed — check the output above"
@@ -303,10 +308,10 @@ fi
 echo ""
 echo -e "  ${BOLD}Quick start:${NC}"
 echo -e "    cd $CCRPG_DIR"
-echo -e "    npx tsx scripts/cli-game.ts                    ${CYAN}# interactive session${NC}"
-echo -e "    npx tsx scripts/cli-game.ts session --agent    ${CYAN}# 15-tool PersistentAgent${NC}"
-echo -e "    npx tsx scripts/cli-game.ts diagnostic         ${CYAN}# system diagnostics${NC}"
-echo -e "    npx tsx scripts/cli-game.ts --help             ${CYAN}# full help${NC}"
+echo -e "    npm run cli                                    ${CYAN}# interactive session${NC}"
+echo -e "    npm run cli -- diagnostic                      ${CYAN}# system diagnostics${NC}"
+echo -e "    npm run cli -- --help                          ${CYAN}# full help${NC}"
+echo -e "    node dist/cli/cli-game.js                      ${CYAN}# bundled CLI (no tsx needed)${NC}"
 echo ""
 if [[ "$INSTALL_TDG" == "true" ]]; then
     echo -e "  ${BOLD}TDG-Rust note:${NC} the binary requires LD_LIBRARY_PATH to find libonnxruntime."
@@ -315,7 +320,7 @@ if [[ "$INSTALL_TDG" == "true" ]]; then
 fi
 echo ""
 echo -e "  ${BOLD}Configure LLM (optional, for full agent experience):${NC}"
-echo -e "    npx tsx scripts/cli-game.ts setup"
+echo -e "    npm run cli -- setup"
 echo ""
 echo -e "  ${BOLD}Uninstall:${NC}  bash install.sh --uninstall"
 echo ""
