@@ -1589,6 +1589,12 @@ async function synthesizeSessionInsights(profileName: string, encounterCount: nu
     const encounters = encounterLog.split('## Encounter ');
     const recentEncounters = encounters.slice(-encounterCount - 1).join('## Encounter ');
 
+    // NF3-1 (Fresh-User Audit 3): Shortened the synthesis prompt from 3000 to
+    // 1500 chars. The audit found synthesis succeeds only 25% of the time —
+    // the heavier prompt (3000 chars of encounter log + full instructions)
+    // was likely causing timeouts or rate-limit failures on the free-tier
+    // model. 1500 chars is still enough context for the LLM to extract
+    // insight/pattern/active from the last 1-2 encounters.
     const synthesisPrompt = `You are a developmental synthesis engine. Read the following encounter log from a CCRPG session and extract:
 
 1. KEY INSIGHT: One sentence capturing the most important therapeutic insight from this session (what the user discovered or what the LLM named that landed).
@@ -1601,7 +1607,7 @@ PATTERN: <one sentence or "none">
 ACTIVE: <one sentence>
 
 Encounter log:
-${recentEncounters.slice(0, 3000)}`;
+${recentEncounters.slice(0, 1500)}`;
 
     const result = await queryLLM('You are a developmental synthesis engine. Be concise and precise.', synthesisPrompt);
     if (result && !result.startsWith('{"error"')) {
@@ -1685,14 +1691,67 @@ ${recentEncounters.slice(0, 3000)}`;
       // the boot probe had succeeded — which contradicted "LLM active" and
       // confused users. Now we check the error shape and report honestly.
       const isUnavailable = !result || result.startsWith('{"error"');
-      const reason = isUnavailable
-        ? 'the reflection engine could not be reached this session'
-        : 'the reflection did not surface anything new this session';
-      if (!JSON_MODE) info('synthesis', `${chalk.dim(reason)}`);
+
+      // NF3-1 (Fresh-User Audit 3): Lighter-weight fallback when LLM synthesis
+      // fails. The audit found synthesis succeeds only 25% of the time, leaving
+      // the Active Focus/Insights/Patterns stale. Instead of going silent, we
+      // extract a simple insight from the last encounter's LLM narrative (the
+      // richest in-session text) and write it as the Active Focus. This keeps
+      // the reflection layer alive even when the synthesis LLM call fails —
+      // the player always has *something* current to read in profile show.
+      if (isUnavailable) {
+        const fallbackFocus = extractLastNarrativeAsFocus(recentEncounters);
+        if (fallbackFocus) {
+          try {
+            const goals = agentReadProfileFile('goals.yaml');
+            if (goals) {
+              const updatedGoals = goals.replace(/active_focus:.*$/m, `active_focus: "${fallbackFocus.replace(/"/g, "'")}"`);
+              agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
+              if (!JSON_MODE) {
+                info('synthesis', `${chalk.dim('the reflection engine could not be reached — using the session\'s last narrative as a placeholder focus')}`);
+                console.log(`  ${chalk.dim('Run `ccrpg profile show` to see it. Full synthesis will run next session.')}`);
+              }
+            } else {
+              if (!JSON_MODE) info('synthesis', `${chalk.dim('the reflection engine could not be reached this session')}`);
+            }
+          } catch {
+            if (!JSON_MODE) info('synthesis', `${chalk.dim('the reflection engine could not be reached this session')}`);
+          }
+        } else {
+          if (!JSON_MODE) info('synthesis', `${chalk.dim('the reflection engine could not be reached this session')}`);
+        }
+      } else {
+        if (!JSON_MODE) info('synthesis', `${chalk.dim('the reflection did not surface anything new this session')}`);
+      }
     }
   } catch (e: any) {
     if (!JSON_MODE) info('synthesis', `${chalk.dim('Synthesis error: ' + (e?.message || e))}`);
   }
+}
+
+/**
+ * NF3-1 (Fresh-User Audit 3): Extract a simple one-sentence focus from the
+ * last encounter's LLM narrative. Used as a fallback when the full LLM
+ * synthesis call fails — so the Active Focus always has *something* current
+ * rather than going stale. Returns null if no usable narrative is found.
+ */
+function extractLastNarrativeAsFocus(encounterLogText: string): string | null {
+  // The encounter log has entries like:
+  //   ## Encounter N — <timestamp>
+  //   **Line:** ... | **Stage:** ...
+  //   **Question:** ...
+  //   **User's answer:** ...
+  //   **LLM narrative:** <this is what we want>
+  // Find the LAST "LLM narrative:" line and extract its first sentence.
+  const narrativeMatches = encounterLogText.match(/\*\*LLM narrative:\*\*\s*(.+?)(?=\n\*\*|\n##|\n$|$)/gs);
+  if (!narrativeMatches || narrativeMatches.length === 0) return null;
+  const lastNarrative = narrativeMatches[narrativeMatches.length - 1]!
+    .replace(/^\*\*LLM narrative:\*\*\s*/, '')
+    .trim();
+  if (lastNarrative.length < 20) return null;
+  // Take the first sentence (up to the first period, exclamation, or question mark)
+  const firstSentence = lastNarrative.match(/^[^.!?]*[.!?]/)?.[0] ?? lastNarrative.slice(0, 180);
+  return firstSentence.trim();
 }
 
 async function runDirectQuestioningSession(
