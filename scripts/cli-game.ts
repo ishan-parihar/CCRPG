@@ -1645,6 +1645,24 @@ async function runDirectQuestioningSession(
   banner('DIRECT QUESTIONING');
   if (!JSON_MODE) console.log(`  ${chalk.dim('A series of open questions. Answer each in your own words.')}\n`);
 
+  // P1-F10 (Fresh-User UX Audit): Make the adaptive session focus perceptible.
+  // The game silently shifts its session strategy based on the player's
+  // surfacing shadows (e.g. from 'balanced-development' to 'shadow-integration')
+  // — but this was completely invisible during normal play. The fresh-user
+  // only discovered it by running `diagnostic`. Now we surface a Veil-compliant
+  // qualitative hint at session start so the player can FEEL the game
+  // responding to them, without breaking the Veil (no clinical labels, no
+  // raw theme names, no metrics).
+  if (!JSON_MODE) {
+    const activeShadows = (initialSig.shadows?.entries ?? []).filter(s => !s.resolvedAt).length;
+    const hint = activeShadows >= 3
+      ? 'The work turns toward what has been avoided.'
+      : activeShadows >= 1
+        ? 'Something stirs beneath the surface — the work edges closer to it.'
+        : 'The field is open; the work moves where it will.';
+    console.log(`  ${chalk.dim(hint)}\n`);
+  }
+
   const ALL_LINES: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
   // UX-P0-1: Respect --encounters, --line, --stage flags in DQ mode.
   // Previously these were silently ignored — user asks for 3 encounters, gets 8.
@@ -2197,7 +2215,13 @@ async function runFullSession(): Promise<void> {
   }
 
   banner('SESSION START');
-  info('theme', `${chalk.cyan(sessionState.strategy.theme)}`);
+  // P1-F10: Surface the adaptive theme with a Veil-compliant qualitative
+  // gloss, so the player can feel the game responding to their state without
+  // seeing raw engine labels. The raw theme name is still shown (in dim) for
+  // developers, but the qualitative hint is what the player reads.
+  const themeHint = veilThemeHint(sessionState.strategy.theme);
+  info('focus', `${chalk.cyan(themeHint)}`);
+  if (VERBOSE || DEV_MODE) info('theme', `${chalk.dim(sessionState.strategy.theme)}`);
   info('target', `${encounterCount} encounters`);
   console.log('');
 
@@ -2914,6 +2938,26 @@ function veilShadowMovement(quadrant: string | undefined): string {
     case 'GoldenAddiction': return 'A pull to bypass toward higher capacities without integrating the lower';
     case 'GoldenAversion': return 'A resistance to the call to grow';
     default:               return 'An unnamed movement';
+  }
+}
+
+/**
+ * P1-F10 (Fresh-User UX Audit): Translate a raw session-strategy theme name
+ * into a Veil-compliant qualitative hint. The game's session strategy engine
+ * silently shifts theme based on the player's surfacing shadows, drive
+ * imbalances, and transformation proximity — but the raw theme names
+ * ('shadow-integration', 'drive-rebalancing', etc.) are engine labels the
+ * player shouldn't see. This function returns a one-line qualitative hint
+ * that lets the player FEEL the game responding without breaking the Veil.
+ */
+function veilThemeHint(theme: string): string {
+  switch (theme) {
+    case 'shadow-integration':   return 'The work turns toward what has been avoided.';
+    case 'drive-rebalancing':    return 'The work seeks balance between forces that have pulled apart.';
+    case 'polarity-alignment':   return 'The work seeks alignment between inner and outer.';
+    case 'transformation-prep':  return 'The work prepares the ground for a shift.';
+    case 'balanced-development': return 'The field is open; the work moves where it will.';
+    default:                     return 'The work continues.';
   }
 }
 
