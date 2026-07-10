@@ -17,13 +17,18 @@ export interface GlossaryTerm {
   readonly audience?: 'player' | 'advanced';
 }
 
-/** Player-facing essentials — shown by default in `ccrpg glossary`. */
+/** Player-facing essentials — shown by default in `ccrpg glossary`.
+ *  P2-R3 (Fresh-User UX Audit v2): Rewritten as player-voice testimonials.
+ *  The audit found the clinical definitions ('Red corresponds to the power
+ *  stage of Spiral Dynamics, characterized by...') felt like a textbook.
+ *  Player-voice testimonials convey the same information in the
+ *  contemplative voice the game actually uses. */
 export const PLAYER_GLOSSARY_TERMS: readonly GlossaryTerm[] = [
-  { term: 'Holon', def: 'An autonomous whole that is itself part of a larger whole. NPCs, factions, and locations are all holons.', audience: 'player' },
-  { term: 'Significator', def: 'The persistent soul-pattern of the player — your saved state across sessions. Carries altitudes, drives, shadows, and ray profile.', audience: 'player' },
-  { term: 'Line', def: 'One of 8 lines of intelligence: Cognitive, Emotional, Moral, Intrapersonal, Spiritual, Interpersonal, Somatic, Willpower.', audience: 'player' },
-  { term: 'Stage', def: 'One of 8 developmental altitudes: Infrared, Magenta, Red, Amber, Orange, Green, Turquoise, White. You progress through them.', audience: 'player' },
-  { term: 'Shadow', def: 'An unresolved developmental pattern. Surfacing shadows is part of the work; integrating them is the goal. The game never labels them clinically.', audience: 'player' },
+  { term: 'Holon', def: 'A holon is a whole that is also part of a larger whole — like you, and like the cell that is also part of you. When the game mentions a holon, it is pointing at something that has its own integrity but belongs to something bigger. You will meet holons as guides, allies, and mirrors throughout the game.', audience: 'player' },
+  { term: 'Significator', def: 'Your Significator is the persistent pattern the game holds of you across sessions — not a score, not a label, but a living memory of what you have touched and what has touched you. It carries your developmental history so the game can meet you where you actually are, not where it assumes you should be.', audience: 'player' },
+  { term: 'Line', def: 'There are 8 lines of intelligence the game explores: Cognitive (how you think), Emotional (how you feel), Moral (how you choose), Intrapersonal (how you know yourself), Spiritual (what means most), Interpersonal (how you connect), Somatic (what your body knows), and Willpower (what holds you upright). Each session touches a different line; over time, all eight deepen together.', audience: 'player' },
+  { term: 'Stage', def: 'When the game says you are at a stage — Red, Amber, Orange, and so on — it is not a judgment. It is a name for the way you have been showing up. Red feels fortress-sharp, weapon-walls. The game will not tell you to leave Red. It will tell you Red has something to offer, and something to outgrow. Stages unfold; they are not climbed.', audience: 'player' },
+  { term: 'Shadow', def: 'A shadow is an unresolved pattern — something that keeps showing up because it wants to be met, not because it is wrong. The game surfaces shadows gently, in the language of movement rather than diagnosis. You will never see a clinical label about yourself. You will see: something stirs here. Something wants to move. The work is in the meeting.', audience: 'player' },
 ];
 
 /** Advanced theoretical set — only shown with `ccrpg glossary --full`. */
