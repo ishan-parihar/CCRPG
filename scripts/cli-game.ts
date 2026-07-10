@@ -3041,13 +3041,14 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
   // P0-F3 (Fresh-User UX Audit): `profile show` — surface the synthesized
   // insights, patterns, and active focus that the post-session synthesis
   // (synthesizeSessionInsights) writes to narrative-memory.md and goals.yaml.
-  // Before this command, the game printed "✓ Profile updated: insight +
-  // pattern + active focus" after every session but gave the player NO way to
-  // see what those insights/patterns/focus actually were. The Veil principle
-  // (never show clinical labels) was being over-extended to hide the player's
-  // own patterns from the player. This command respects the Veil — it shows
-  // the qualitative narrative memory (the LLM's own synthesized sentences),
-  // not the raw clinical primitives (G_z/P_z, quadrant codes, drive scores).
+  // P0-R1 (Fresh-User UX Audit v2): Rewritten as a NARRATIVE LETTER format.
+  // The previous version used categorized bullet lists (Surfacing Patterns,
+  // Integrated Patterns, Active Focus) that read like a therapist's chart
+  // despite Veil-compliant language. The audit subagent said: "Integrated
+  // Patterns list reads like a therapist's chart: A rejection of a lower
+  // capacity that still has something to offer × 14 entries — Veil feels
+  // violated." The new format weaves the same data into a reflective letter
+  // that honors the contemplative voice.
   if (action === 'show') {
     const targetName = profileName ?? getActiveProfileName();
     if (!targetName) {
@@ -3068,35 +3069,45 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
 
     const id = profile.identity || {};
     const goals = profile.goals || {};
-    const dev = profile.developmentalState || {};
 
-    // ── Identity ──
-    console.log(`\n  ${chalk.bold('Stage:')} ${stageColor(id.current_stage || 'Red')(id.current_stage || 'Red')}`);
-    console.log(`  ${chalk.bold('Sessions:')} ${id.total_sessions ?? 0}  |  ${chalk.bold('Encounters:')} ${id.total_encounters ?? 0}`);
-    console.log(`  ${chalk.bold('Lifecycle:')} ${id.lifecycle || 'Onboarding'}`);
-    console.log(`  ${chalk.bold('Last active:')} ${id.last_active ? new Date(id.last_active as string).toLocaleString() : 'never'}`);
+    // P0-R1: Narrative letter format. Instead of categorized bullet lists,
+    // weave the same data into a flowing reflective letter. The letter has:
+    //   1. Opening (greeting + stage/sessions context in natural language)
+    //   2. Body (active focus + patterns + insights woven into prose)
+    //   3. Closing (an invitation, not a label)
+    // The clinical data (shadow quadrants, drive scores) stays in the
+    // Significator for the engine to use; the player sees only the letter.
 
-    // ── Active Focus ──
-    // NF-1 (Fresh-User Re-Audit): The YAML parser returns {} (empty object)
-    // for an empty `active_focus:` value. String({}) === '[object Object]',
-    // which is what the user saw in the most important reflection field.
-    // Fix: coerce to string safely; treat non-string / empty-object as unset.
+    // ── Letter Opening ──
+    const stageName = id.current_stage || 'Red';
+    const sessionCount = id.total_sessions ?? 0;
+    const encounterCount = id.total_encounters ?? 0;
+    const lifecycle = id.lifecycle || 'Onboarding';
+
+    console.log(`\n  ${chalk.dim('═══ A letter to you ═══')}`);
+    console.log(`\n  ${chalk.italic('Dear player,')}`);
+
+    // Opening paragraph: context in natural language
+    const sessionWord = sessionCount === 1 ? 'session' : 'sessions';
+    const encounterWord = encounterCount === 1 ? 'encounter' : 'encounters';
+    const openingLines = [
+      `You have been with me for ${sessionCount} ${sessionWord}, across ${encounterCount} ${encounterWord}. You are currently at the ${stageColor(stageName)(stageName)} stage of the journey — ${lifecycle.toLowerCase()}.`,
+      `I have been holding ${sessionCount} ${sessionWord} of your reflections — ${encounterCount} ${encounterWord} where you showed up and let something be seen. You are at ${stageColor(stageName)(stageName)} right now, and the work continues.`,
+      `We have sat together ${sessionCount} times now. ${encounterCount} ${encounterWord} have passed between us. You are at the ${stageColor(stageName)(stageName)} stage — and there is more here than metrics can hold.`,
+    ];
+    console.log(`\n  ${chalk.dim(openingLines[Math.floor(Math.random() * openingLines.length)])}`);
+
+    // ── Active Focus as prose, not a labeled field ──
     const rawFocus = goals.active_focus;
     const focusStr = (typeof rawFocus === 'string')
       ? rawFocus
       : (rawFocus && typeof rawFocus === 'object' && Object.keys(rawFocus).length === 0)
-        ? ''  // empty object from YAML parser — treat as unset
+        ? ''
         : String(rawFocus ?? '');
+
     if (focusStr.trim()) {
-      console.log(`\n  ${chalk.cyan.bold('▸ Active Focus')}`);
-      console.log(`  ${chalk.dim('What the game senses you are currently processing:')}`);
-      console.log(`  ${chalk.italic(focusStr)}`);
-      // NF3-5 (Fresh-User Audit 3): Show when the Active Focus was last
-      // updated so the player can calibrate trust. The audit found players
-      // can't tell if the focus is current or stale from a failed-synthesis
-      // session. The last_synthesis_session field is written by
-      // synthesizeSessionInsights() (with "(fallback)" suffix when the
-      // lighter-weight fallback ran).
+      console.log(`\n  ${chalk.italic(focusStr)}`);
+      // Subtle timestamp (not a "last updated:" clinical label)
       const rawSynthTime = goals.last_synthesis_session;
       const synthStr = (typeof rawSynthTime === 'string')
         ? rawSynthTime
@@ -3106,92 +3117,128 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
       if (synthStr.trim()) {
         const isFallback = synthStr.includes('(fallback)');
         const timePart = synthStr.replace(/\s*\(fallback\)\s*$/, '').trim().replace(/^"|"$/g, '');
-        const timeLabel = isFallback ? 'last updated (placeholder)' : 'last updated';
-        const dateStr = timePart ? new Date(timePart).toLocaleString() : 'unknown';
-        const suffix = isFallback ? chalk.yellow(' — full synthesis pending') : '';
-        console.log(`  ${chalk.dim(`${timeLabel}: ${dateStr}`)}${suffix}`);
-      }
-    } else {
-      console.log(`\n  ${chalk.dim('▸ Active Focus: (not yet set — play a session to generate one)')}`);
-    }
-
-    // ── Self-declared goals ──
-    if (Array.isArray(goals.self_declared) && goals.self_declared.length > 0) {
-      console.log(`\n  ${chalk.cyan.bold('▸ Your Stated Goals')}`);
-      for (const g of goals.self_declared) console.log(`  • ${g}`);
-    }
-
-    // ── Narrative memory: parse the markdown sections ──
-    // narrative-memory.md has sections: Key Insights, Patterns, Active Work,
-    // Resolved, Unresolved. Each section has bullet lines (- **...**: text).
-    const mem = profile.narrativeMemory || '';
-    if (mem.trim().length > 50) {
-      const sections: Array<{ key: string; label: string; hint: string }> = [
-        { key: 'Key Insights', label: 'Insights (what landed)', hint: 'Synthesized from your sessions — moments the game named something that resonated.' },
-        { key: 'Patterns', label: 'Patterns (recurring themes)', hint: 'Things that showed up across multiple encounters.' },
-        { key: 'Active Work', label: 'Active Work', hint: 'What the game senses is currently being processed.' },
-        { key: 'Resolved', label: 'Resolved (integrated)', hint: 'Patterns that have been worked through.' },
-        { key: 'Unresolved', label: 'Unresolved (surfaced, not yet worked)', hint: 'Patterns that surfaced but are still open.' },
-      ];
-      for (const sec of sections) {
-        const bullets = extractMdSectionBullets(mem, sec.key);
-        if (bullets.length > 0) {
-          console.log(`\n  ${chalk.cyan.bold('▸ ' + sec.label)}`);
-          console.log(`  ${chalk.dim(sec.hint)}`);
-          for (const b of bullets) console.log(`  ${chalk.dim('•')} ${b}`);
+        const dateStr = timePart ? new Date(timePart).toLocaleString() : '';
+        if (dateStr) {
+          const suffix = isFallback ? chalk.yellow(' (still forming)') : '';
+          console.log(`  ${chalk.dim(`— noticed ${dateStr}`)}${suffix}`);
         }
       }
     }
 
-    // ── Shadow ledger (Veil-compliant: qualitative description only) ──
-    // P0-F3: The shadow-ledger.json stores clinical quadrant codes
-    // (DarkAddiction, DarkAllergy, GoldenAddiction, GoldenAverted) and drive
-    // labels. The Veil principle says the game never shows clinical labels.
-    // `profile show` respects this by translating the codes into plain
-    // qualitative movement descriptions. The player sees "a pull toward
-    // over-reliance on a lower capacity" (DarkAddiction) or "a rejection of
-    // a lower capacity" (DarkAllergy), not the codes themselves.
+    // ── Narrative memory: weave insights + patterns into prose ──
+    const mem = profile.narrativeMemory || '';
+    if (mem.trim().length > 50) {
+      const insights = extractMdSectionBullets(mem, 'Key Insights');
+      const patterns = extractMdSectionBullets(mem, 'Patterns');
+      const activeWork = extractMdSectionBullets(mem, 'Active Work');
+
+      // Weave insights into a prose paragraph
+      if (insights.length > 0) {
+        console.log(`\n  ${chalk.dim('Some things have landed:')}`);
+        // Take up to 3 insights and weave them into prose
+        const topInsights = insights.slice(0, 3);
+        for (const insight of topInsights) {
+          // Strip the **label**: prefix if present, keep the text
+          const cleanText = insight.replace(/^\*\*[^*]+\*\*:\s*/, '');
+          console.log(`  ${chalk.dim('—')} ${chalk(cleanText)}`);
+        }
+      }
+
+      // Weave patterns into a prose reflection
+      if (patterns.length > 0) {
+        console.log(`\n  ${chalk.dim('I have noticed some things returning:')}`);
+        const topPatterns = patterns.slice(0, 3);
+        for (const pattern of topPatterns) {
+          const cleanText = pattern.replace(/^\*\*[^*]+\*\*:\s*/, '');
+          console.log(`  ${chalk.dim('—')} ${chalk(cleanText)}`);
+        }
+      }
+
+      // Active work as a gentle naming
+      if (activeWork.length > 0) {
+        console.log(`\n  ${chalk.dim('Something is being worked on:')}`);
+        for (const work of activeWork.slice(0, 2)) {
+          const cleanText = work.replace(/^\*\*[^*]+\*\*:\s*/, '');
+          console.log(`  ${chalk.dim('—')} ${chalk.italic(cleanText)}`);
+        }
+      }
+    }
+
+    // ── Shadow ledger: woven into prose, NOT categorized bullet lists ──
+    // P0-R1: The previous version had "Surfacing Patterns" and "Integrated
+    // Patterns" as separate bullet lists with movement descriptions. The
+    // audit found this reads like a therapist's chart. Now we weave the
+    // same data into 1-2 prose sentences that acknowledge the movement
+    // without categorizing it into lists.
     const shadows = profile.shadowLedger?.shadows ?? [];
     if (shadows.length > 0) {
       const surfacing = shadows.filter((s: any) => s.status !== 'integrated');
       const integrated = shadows.filter((s: any) => s.status === 'integrated');
+
       if (surfacing.length > 0) {
-        console.log(`\n  ${chalk.cyan.bold('▸ Surfacing Patterns')}`);
-        console.log(`  ${chalk.dim('Recurring edges the game has noticed — not diagnoses, just movements to be aware of:')}`);
+        // Group by line for a more cohesive narrative
+        const byLine: Record<string, number> = {};
         for (const s of surfacing) {
-          const ss = s as any;
-          const movement = veilShadowMovement(ss.quadrant);
-          const drive = ss.drive || ss.line || 'an unnamed drive';
-          console.log(`  ${chalk.dim('•')} ${movement} — in the ${ss.line || 'unknown'} line  ${chalk.dim(`(${ss.sessions_active ?? 1} session${ss.sessions_active === 1 ? '' : 's'})`)}`);
+          const line = (s as any).line || 'an unnamed dimension';
+          byLine[line] = (byLine[line] || 0) + 1;
+        }
+        const lineEntries = Object.entries(byLine);
+        if (lineEntries.length === 1) {
+          const [line, count] = lineEntries[0]!;
+          const edgeWord = count === 1 ? 'an edge' : 'edges';
+          console.log(`\n  ${chalk.dim(`There is ${edgeWord} in the ${line.toLowerCase()} dimension that keeps showing up. Something there wants to be met.`)}`);
+        } else {
+          const lines = lineEntries.map(([line, count]) => `${line.toLowerCase()} (${count})`).join(', ');
+          console.log(`\n  ${chalk.dim(`There are edges showing up across several dimensions: ${lines}. Something in each wants to be met.`)}`);
         }
       }
+
       if (integrated.length > 0) {
-        console.log(`\n  ${chalk.green.bold('▸ Integrated Patterns')}`);
-        console.log(`  ${chalk.dim('Movements that have been worked through:')}`);
-        for (const s of integrated) {
-          const ss = s as any;
-          const movement = veilShadowMovement(ss.quadrant);
-          console.log(`  ${chalk.green('✓')} ${movement} — in the ${ss.line || 'unknown'} line`);
+        const count = integrated.length;
+        const lineNames = [...new Set(integrated.map((s: any) => (s as any).line).filter(Boolean))];
+        if (lineNames.length === 1) {
+          console.log(`  ${chalk.green.dim(`Something in the ${lineNames[0]!.toLowerCase()} dimension has shifted — a movement that was once surfacing has found its way through.`)}`);
+        } else {
+          console.log(`  ${chalk.green.dim(`${count} movements have found their way through — things that were once surfacing have settled in ${lineNames.length} dimensions.`)}`);
         }
       }
     }
 
-    // ── Recent sessions ──
+    // ── Self-declared goals woven in naturally ──
+    if (Array.isArray(goals.self_declared) && goals.self_declared.length > 0) {
+      console.log(`\n  ${chalk.dim('You told me you wanted:')}`);
+      for (const g of goals.self_declared) {
+        console.log(`  ${chalk.dim('—')} ${chalk(g)}`);
+      }
+    }
+
+    // ── Recent sessions as a gentle arc, not a log ──
     const sessions = profile.sessionHistory?.sessions ?? [];
     if (sessions.length > 0) {
-      console.log(`\n  ${chalk.cyan.bold('▸ Recent Sessions')}`);
-      for (const s of sessions.slice(-5)) {
+      console.log(`\n  ${chalk.dim('Lately, you have been sitting with:')}`);
+      for (const s of sessions.slice(-3)) {
         const ss: any = s;
-        const date = ss.date ? new Date(ss.date).toLocaleDateString() : '?';
-        // NF-8 (Fresh-User Re-Audit): Truncate at word boundary, not mid-word.
-        // The old code did ss.key_shift (which was sliced at 200 chars with no
-        // word-boundary awareness), so the user saw 'That's the wor' instead
-        // of 'That's the work.' Now we truncate at the last word boundary
-        // under 200 chars and add an ellipsis if truncated.
-        const raw = ss.key_shift || ss.theme || 'session';
-        const truncated = truncateAtWordBoundary(raw, 200);
-        console.log(`  ${chalk.dim(date)} — ${truncated}`);
+        const raw = ss.key_shift || ss.theme || '';
+        if (raw) {
+          const truncated = truncateAtWordBoundary(raw, 180);
+          console.log(`  ${chalk.dim('—')} ${chalk.italic(truncated)}`);
+        }
       }
+    }
+
+    // ── Letter Closing ──
+    const closings = [
+      `Something wants to shift. The next session will find you where you are.`,
+      `There is more here, and it will keep unfolding. The next session will meet you where you are.`,
+      `Take your time. The work is not going anywhere, and neither is the invitation.`,
+      `Something is moving beneath the surface. The next session will find it.`,
+    ];
+    console.log(`\n  ${chalk.italic.cyan(closings[Math.floor(Math.random() * closings.length)])}`);
+    console.log(`\n  ${chalk.dim('— the game')}`);
+
+    // ── Last active timestamp (subtle, at the bottom) ──
+    if (id.last_active) {
+      console.log(`\n  ${chalk.dim(`(last active: ${new Date(id.last_active as string).toLocaleString()})`)}`);
     }
 
     console.log('');
