@@ -2004,10 +2004,15 @@ async function runDirectQuestioningSession(
           // (DarkAllergy, DarkAverted) and metrics (93% conceptual density)
           // don't leak through --verbose. The Veil applies to all user-facing
           // output, not just the normal path.
-          const rawFeedback = result.outcome.feedback?.slice(0, 280) ?? '';
+          // NF3-2 (Fresh-User Audit 3): Use truncateAtWordBoundary instead of
+          // raw .slice(0, 280) so feedback doesn't cut mid-word ("patter" instead
+          // of "pattern"). The audit found --verbose feedback was still truncating
+          // mid-word because NF-8's fix only applied to Recent Sessions.
+          const rawFeedback = result.outcome.feedback ?? '';
           const veiledFeedback = filterOutput(rawFeedback).filtered;
-          if (veiledFeedback && veiledFeedback !== result.narrativeSummary?.slice(0, 280)) {
-            verbose('feedback', veiledFeedback);
+          const truncatedFeedback = truncateAtWordBoundary(veiledFeedback, 280);
+          if (truncatedFeedback && truncatedFeedback !== truncateAtWordBoundary(result.narrativeSummary ?? '', 280)) {
+            verbose('feedback', truncatedFeedback);
           }
           // NF-5: Translate clinical drive labels to Veil-compliant descriptions.
           // Old: 'Agency:DarkAverted' (clinical). New: 'Agency: a rejection of a lower capacity' (qualitative).
@@ -2659,10 +2664,12 @@ async function runFullSession(): Promise<void> {
         // In no-LLM mode they're identical (both use fallback); in LLM mode
         // they should differ. Printing both when identical is wasteful.
         // NF-5: Route through VeilFilter to strip clinical labels + metrics.
-        const rawFeedback = result.outcome.feedback?.slice(0, 200) ?? '';
+        // NF3-2: Use truncateAtWordBoundary instead of raw .slice(0, 200).
+        const rawFeedback = result.outcome.feedback ?? '';
         const veiled = filterOutput(rawFeedback).filtered;
-        if (veiled && veiled !== result.narrativeSummary.slice(0, 200)) {
-          verbose('feedback', veiled);
+        const truncated = truncateAtWordBoundary(veiled, 200);
+        if (truncated && truncated !== truncateAtWordBoundary(result.narrativeSummary, 200)) {
+          verbose('feedback', truncated);
         }
         verbose('updatedEncounters', String(currentSig.totalEncounters));
       }
