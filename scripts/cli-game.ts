@@ -512,6 +512,51 @@ function truncateAtWordBoundary(text: string, max: number): string {
   return cut.trimEnd() + '…';
 }
 
+/**
+ * P1-U4/Y4/R2 (Fresh-User UX Audit): Felt-sense indicator helpers.
+ *
+ * The audit found that CCI numeric displays (0.4115), readiness percentages
+ * (76%), and saturation percentages (28%) violate the Veil principle and
+ * read like an RPG quest tracker. These helpers convert quantitative metrics
+ * to qualitative felt-sense language that preserves the information without
+ * breaking the contemplative frame.
+ *
+ * Band vocabulary:
+ *   < 0.30 → 'arriving'     (just beginning)
+ *   0.30-0.50 → 'working'   (engaged with the work)
+ *   0.50-0.70 → 'integrating' (patterns finding their place)
+ *   0.70-0.85 → 'transforming' (something is shifting)
+ *   > 0.85 → 'embodying'    (the shift has landed)
+ *
+ * Saturation vocabulary (encounters processed at current stage):
+ *   < 0.3 → 'holding'       (still gathering)
+ *   0.3-0.6 → 'opening'     (the work is opening up)
+ *   0.6-0.9 → 'deepening'   (the work is deepening)
+ *   > 0.9 → 'ready to shift' (threshold approaching)
+ */
+function cciToFeltSense(cci: number): string {
+  if (cci < 0.30) return 'arriving';
+  if (cci < 0.50) return 'working';
+  if (cci < 0.70) return 'integrating';
+  if (cci < 0.85) return 'transforming';
+  return 'embodying';
+}
+
+function saturationToFeltSense(saturation: number): string {
+  if (saturation < 0.3) return 'holding';
+  if (saturation < 0.6) return 'opening';
+  if (saturation < 0.9) return 'deepening';
+  return 'ready to shift';
+}
+
+function readinessToFeltSense(readiness: number): string {
+  if (readiness < 0.3) return 'the work is still gathering';
+  if (readiness < 0.5) return 'the work is finding its feet';
+  if (readiness < 0.7) return 'something is building';
+  if (readiness < 0.8) return 'something is approaching';
+  return 'the threshold is here';
+}
+
 // P0-2 (UX-R3): Emit holistic dev primitives when --dev is set, so the
 // --help promise ("show holistic primitives (G_z/P_z, rayProfile, phase
 // position)") is honored during sessions, not just in `status`.
@@ -1474,11 +1519,13 @@ async function runDiagnostic(): Promise<void> {
   // NF-6 (Fresh-User Re-Audit): Show CCI with a qualitative interpretation
   // so the user knows what the number means. The re-audit found users could
   // see CCI change (0.5036 → 0.4749) but had no idea if that was good or bad.
+  // P1-Y4 (Fresh-User UX Audit v2): Cut the numeric CCI display entirely.
+  // The audit found 'CCI 0.4115 with clinical interpretation bands' is a
+  // Veil violation — a number with bands IS diagnostic regardless of labels.
+  // Now we show only the qualitative band. The numeric value is available
+  // via --dev for engineers.
   const cciVal = sessionState.cci.composite;
-  const cciInterp = cciVal >= 0.7 ? 'flourishing'
-    : cciVal >= 0.55 ? 'developing'
-    : cciVal >= 0.4 ? 'working'
-    : 'struggling';
+  const cciBand = cciToFeltSense(cciVal);
   // NF3-6 (Fresh-User Audit 3): Add trajectory interpretation. A CCI drop
   // during shadow work is EXPECTED (shadows surfacing is part of the work,
   // not a sign of getting worse). The audit found players couldn't tell if
@@ -1486,11 +1533,15 @@ async function runDiagnostic(): Promise<void> {
   // with shadow activity to give a trajectory note.
   const activeShadows = (sig.shadows?.entries ?? []).filter(s => !s.resolvedAt).length;
   const trajectoryNote = activeShadows >= 2
-    ? '; shadows surfacing — expected during this phase'
+    ? ' — shadows surfacing, which is expected during this phase'
     : activeShadows >= 1
-      ? '; a shadow is surfacing — the dip is part of the work'
+      ? ' — a shadow is surfacing, the dip is part of the work'
       : '';
-  info('CCI', `${cciVal.toFixed(4)} (${cciInterp}${trajectoryNote})`);
+  if (DEV_MODE) {
+    info('CCI', `${cciVal.toFixed(4)} (${cciBand}${trajectoryNote})`);
+  } else {
+    info('state', `${cciBand}${trajectoryNote}`);
+  }
   // R4-P2-3 (UX-R4): Explain what 'theme' means — it biases encounter selection.
   info('theme', `${sessionState.strategy.theme} (session strategy — biases encounter selection)`);
   // R4-P2-2 (UX-R4): Explain what 'totalTarget' means — it's the encounter budget.
@@ -3901,35 +3952,37 @@ async function runStatus(): Promise<void> {
       // UX-P2-1: Show per-line progress as a Veil-compliant qualitative display.
       // Previously status showed only flavor text — no visible progression.
       // Now the user can see which lines they've explored and a sense of depth.
+      // P2-Y5 (Fresh-User UX Audit v2): Cut the per-line stage bars (RPG
+      // character-sheet frame). Replace with a single 'current edge' line
+      // that names the line the player has been working on most. The per-line
+      // data remains in the Significator for the engine; the player sees a
+      // qualitative pointer to their current edge.
       const ALL_LINES_DISPLAY: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
-      // UX-R2-2: Veil-compliant stage labels — qualitative, not clinical
-      const stageAestheticsShort: Record<string, string> = {
-        Infrared: 'primal', Magenta: 'symbolic', Red: 'power', Amber: 'order',
-        Orange: 'reason', Green: 'harmony', Turquoise: 'integral', White: 'unity',
-      };
-      const stageSymbols: Record<string, string> = {
-        Infrared: '◇', Magenta: '◈', Red: '◆', Amber: '✦',
-        Orange: '★', Green: '❋', Turquoise: '✺', White: '☉',
-      };
-      console.log(`\n  ${chalk.bold('Developmental Lines')}`);
-      // P2-3 (UX-R3): Replace the static [power] label with actionable info.
-      // Previously every line showed '[power]' (the Red stage aesthetic) with
-      // no explanation of what it meant or whether it was good. Now we show
-      // the stage aesthetic + progress toward the saturation threshold, so
-      // the user can see they're moving toward a stage transition.
       const progressAll = getLineProgress(sig);
+      // Find the line with the highest progress (the player's current edge)
+      let edgeLine: Line | null = null;
+      let edgeRatio = 0;
+      let edgeTraces = 0;
       for (const line of ALL_LINES_DISPLAY) {
         const stage = sig.altitudes[line] ?? 'Red';
-        const symbol = stageSymbols[stage] ?? '◆';
-        const aesthetic = stageAestheticsShort[stage] ?? 'power';
         const cellKey = `${line}:${stage}`;
         const traces = sig.polarity.cells[cellKey]?.traceCount ?? 0;
         const prog = progressAll.find(p => p.line === line);
-        const threshold = prog?.threshold ?? 6;
         const ratio = prog?.ratio ?? 0;
-        const filled = Math.min(8, Math.round(ratio * 8));
-        const bar = '▓'.repeat(filled) + '░'.repeat(8 - filled);
-        console.log(`    ${chalk.cyan(line.padEnd(16))} ${symbol} ${chalk.dim(`[${aesthetic}]`)} ${chalk.dim(bar)} ${chalk.dim(`${traces}/${threshold}`)}`);
+        if (traces > 0 && ratio > edgeRatio) {
+          edgeRatio = ratio;
+          edgeLine = line;
+          edgeTraces = traces;
+        }
+      }
+      if (edgeLine) {
+        const satBand = saturationToFeltSense(edgeRatio);
+        console.log(`\n  ${chalk.bold('Current Edge')}`);
+        console.log(`  ${chalk.dim('You have been sitting with the')}`);
+        console.log(`  ${chalk.cyan(edgeLine.toLowerCase())} ${chalk.dim('dimension —')} ${chalk.italic(satBand)}`);
+      } else {
+        console.log(`\n  ${chalk.bold('Current Edge')}`);
+        console.log(`  ${chalk.dim('The work is still opening. Play a session to find your edge.')}`);
       }
 
       // R4-P2-1 (UX-R4): Transformation Readiness indicator. Shows the user
@@ -3937,23 +3990,27 @@ async function runStatus(): Promise<void> {
       // visibility gap. Previously, a fresh user could play 8 encounters and
       // see only "1/20" per line with no sense of what 1/20 meant or where it
       // was going. Now they see the composite readiness + what's blocking.
+      // P1-R2 (Fresh-User UX Audit v2): De-quantified. Replaced percentages
+      // and progress bars with qualitative felt-sense language. The numeric
+      // data is available via --dev for engineers.
       // Veil-compliant: structural progress, not clinical state.
       try {
         const currentOrd = stageOrdinal(sig.currentStage);
         if (currentOrd < ALL_STAGES.length - 1) {
           const targetStage = ALL_STAGES[currentOrd + 1]!;
           const report = computeReadiness(sig, targetStage);
-          console.log(`\n  ${chalk.bold('Transformation Readiness')}`);
-          info('current stage', `${sig.currentStage} → next: ${targetStage}`);
-          info('readiness', `${(report.overall * 100).toFixed(0)}% (needs 80% to transition)`);
-          // Sub-metrics as a compact bar
-          const pct = (v: number) => `${(v * 100).toFixed(0)}%`;
-          const bar = (v: number) => {
-            const filled = Math.min(10, Math.round(v * 10));
-            return '▓'.repeat(filled) + '░'.repeat(10 - filled);
-          };
-          console.log(`    convergence      ${chalk.dim(bar(report.convergence))} ${chalk.dim(pct(report.convergence))} (lines at current stage)`);
-          console.log(`    saturation       ${chalk.dim(bar(report.saturation))} ${chalk.dim(pct(report.saturation))} (encounters processed)`);
+          console.log(`\n  ${chalk.bold('Trajectory')}`);
+          const readinessBand = readinessToFeltSense(report.overall);
+          if (DEV_MODE) {
+            info('readiness', `${(report.overall * 100).toFixed(0)}% — ${readinessBand}`);
+          } else {
+            info('trajectory', readinessBand);
+          }
+          // Qualitative dimension descriptions
+          const convergenceBand = saturationToFeltSense(report.convergence);
+          const saturationBand = saturationToFeltSense(report.saturation);
+          console.log(`    ${chalk.dim(`lines explored: ${convergenceBand}`)}`);
+          console.log(`    ${chalk.dim(`depth at current stage: ${saturationBand}`)}`);
           // R11-P2 (Fresh-User UX Audit): Suppress the misleading "100% cleared"
           // report when no shadows have actually been detected. Without U3
           // (LLM-based shadow detection), shadows.entries is typically empty,
@@ -3968,12 +4025,14 @@ async function runStatus(): Promise<void> {
           const totalShadows = sig.shadows.entries.length;
           const unresolvedShadows = sig.shadows.entries.filter(e => e.resolvedAt === null).length;
           const shadowsDetected = totalShadows > 0; // NF3-9: define shadowsDetected (was undefined, causing the Focus hint to throw)
-          if (totalShadows === 0) {
-            console.log(`    shadow clearance ${chalk.dim('— not yet engaged —')} (detection requires more encounters)`);
+          if (unresolvedShadows === 0 && totalShadows === 0) {
+            console.log(`    ${chalk.dim('shadows: not yet engaged (detection requires more encounters)')}`);
+          } else if (unresolvedShadows === 0) {
+            console.log(`    ${chalk.dim(`shadows: all ${totalShadows} pattern${totalShadows === 1 ? '' : 's'} resolved`)}`);
           } else if (report.shadowClearance >= 1) {
-            console.log(`    shadow clearance ${chalk.dim(bar(report.shadowClearance))} ${chalk.dim(pct(report.shadowClearance))} (${unresolvedShadows} pattern${unresolvedShadows === 1 ? '' : 's'} surfaced, none critical)`);
+            console.log(`    ${chalk.dim(`shadows: ${unresolvedShadows} pattern${unresolvedShadows === 1 ? '' : 's'} surfaced, working through`)}`);
           } else {
-            console.log(`    shadow clearance ${chalk.dim(bar(report.shadowClearance))} ${chalk.dim(pct(report.shadowClearance))} (critical shadows resolved)`);
+            console.log(`    ${chalk.dim('shadows: critical patterns resolving')}`);
           }
           // Actionable hint based on the weakest dimension
           // R11-P2: only include shadow clearance in the focus hint if shadows
@@ -3988,9 +4047,9 @@ async function runStatus(): Promise<void> {
               : []),
           ].sort((a, b) => a.val - b.val);
           if (report.overall < 0.8) {
-            console.log(`    ${chalk.dim(`Focus: ${dims[0]!.hint} (lowest dimension: ${dims[0]!.name})`)}`);
+            console.log(`    ${chalk.dim(`Focus: ${dims[0]!.hint}`)}`);
           } else {
-            console.log(`    ${chalk.green('✓ Threshold reached — transformation may fire this session')}`);
+            console.log(`    ${chalk.green('✓ The threshold is here — transformation may fire this session')}`);
           }
           // NF3-9 (Fresh-User Audit 3): Tell the player what transforming will
           // feel like. The audit found: 'The Transformation Readiness block
@@ -4000,7 +4059,7 @@ async function runStatus(): Promise<void> {
           // emotional pull toward the work.' This line gives the pull.
           console.log(`    ${chalk.dim(`When you transform ${sig.currentStage} → ${targetStage}: the resonance will shift, new encounter types will unlock, and the work will deepen.`)}`);
         } else {
-          console.log(`\n  ${chalk.bold('Transformation Readiness')}`);
+          console.log(`\n  ${chalk.bold('Trajectory')}`);
           info('stage', `${sig.currentStage} (maximum — no further transitions)`);
         }
       } catch {
