@@ -2098,6 +2098,20 @@ async function runDirectQuestioningSession(
   saveAll(currentSig, currentWorld);
   if (!JSON_MODE) info('save', `${chalk.green('Progress saved')}`);
 
+  // NF3-3 (Fresh-User Audit 3): If no profile is active (first session),
+  // migrate the legacy save NOW so the profile exists immediately — not
+  // deferred to the next session start or a `profile list` invocation.
+  // The audit found: after Session 1, `profile show` said "No active
+  // profile yet" even though the player had just played, because
+  // migrateLegacySave() was only called in runFullSession() (next session)
+  // and profile list. Now it's called here, right after the save lands.
+  if (!getActiveProfileName()) {
+    const migrated = migrateLegacySave();
+    if (migrated && !JSON_MODE) {
+      info('profile', `${chalk.green('✓')} Profile "${migrated}" created.`);
+    }
+  }
+
   // Profiling system: update the active profile after session end.
   const _profileName = getActiveProfileName();
   if (_profileName) {
