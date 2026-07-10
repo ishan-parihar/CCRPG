@@ -1465,7 +1465,18 @@ async function runDiagnostic(): Promise<void> {
     : cciVal >= 0.55 ? 'developing'
     : cciVal >= 0.4 ? 'working'
     : 'struggling';
-  info('CCI', `${cciVal.toFixed(4)} (${cciInterp})`);
+  // NF3-6 (Fresh-User Audit 3): Add trajectory interpretation. A CCI drop
+  // during shadow work is EXPECTED (shadows surfacing is part of the work,
+  // not a sign of getting worse). The audit found players couldn't tell if
+  // a downward trajectory was healthy or unhealthy. Now we correlate CCI
+  // with shadow activity to give a trajectory note.
+  const activeShadows = (sig.shadows?.entries ?? []).filter(s => !s.resolvedAt).length;
+  const trajectoryNote = activeShadows >= 2
+    ? '; shadows surfacing — expected during this phase'
+    : activeShadows >= 1
+      ? '; a shadow is surfacing — the dip is part of the work'
+      : '';
+  info('CCI', `${cciVal.toFixed(4)} (${cciInterp}${trajectoryNote})`);
   // R4-P2-3 (UX-R4): Explain what 'theme' means — it biases encounter selection.
   info('theme', `${sessionState.strategy.theme} (session strategy — biases encounter selection)`);
   // R4-P2-2 (UX-R4): Explain what 'totalTarget' means — it's the encounter budget.
