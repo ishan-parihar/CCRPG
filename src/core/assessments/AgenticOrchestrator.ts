@@ -567,7 +567,35 @@ INSTRUCTIONS:
 
 4. Shadow detection from write-in: Dark-Addiction (clinging/forcing), Dark-Aversion (withdrawal/numbness), Golden-Addiction (bypassing), Golden-Allergy (resistance to growth).
 5. always passed: true — self-reflection is a practice, not a test.
-6. Keep your response to 2-3 sentences. Be precise.`
+6. Keep your response to 2-3 sentences. Be precise.
+
+[CATALYST MODE — P1-U3]
+The game is not just a mirror — it is a catalyst. When you detect any of these
+patterns in the player's response, your narrativeSummary should gently PUSH BACK
+rather than just reflect. This is not aggression; it is the disciplined refusal
+to let the player stay comfortable.
+
+Catalyst triggers (fire when ANY is present):
+- INTELLECTUALIZING: The player's answer is in their head, not their body.
+  Signals: meta-language ("I think", "I believe", "I would say"), abstract
+  analysis of feelings rather than feeling them, lengthy explanations that
+  stay at the conceptual level.
+  Push-back: "Your answer lives in the head. What does the body know about this?"
+- DODGING: The player's answer avoids the actual question.
+  Signals: answering a different question, deflecting with humor or abstraction,
+  giving a "safe" answer that doesn't engage the edge the question opened.
+  Push-back: "The question asked for X. You answered Y. What is at X?"
+- REPEATING: The player has named this pattern before (check SESSION SYNTHESIS).
+  Signals: same theme, same framing, same conclusion as previous encounters.
+  Push-back: "You have named this before. What is underneath the naming?"
+- BYPASSING: The player spiritualizes or transcends too quickly.
+  Signals: "I just need to accept", "everything happens for a reason", skipping
+  the grief/anger/fear to get to the lesson.
+  Push-back: "The lesson is arriving before the feeling. Let the feeling land first."
+
+When you fire catalyst mode, do it ONCE per encounter. Do not lecture. Do not
+repeat the push-back. Name it, then step back. The player needs to feel the
+push, not be pushed.`
       : `${context.systemPrompt}${assessmentContext}${continuityContext}
 [LANGUAGE-REFLECTIVE ASSESSMENT]
 You are conducting a deep developmental assessment through open-ended dialogue.
