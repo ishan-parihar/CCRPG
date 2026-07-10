@@ -95,6 +95,13 @@ export function applyResponseOnly(
   }
 
   // Check for transformation commit
+  // P1-F7 (Fresh-User UX Audit): Stages NEVER demote. commitTransformation
+  // only returns a targetStage when phase === 'complete', and the target is
+  // always ALL_STAGES[currentOrd + 1] (the next stage UP). There is no code
+  // path that lowers currentStage. The "stage regression" reported in the
+  // fresh-user audit was a symptom of the F4 migration bug (which destroyed
+  // the save and created a fresh Red significator), not a demotion mechanic.
+  // See tests/engines/StageNoDemotion.test.ts for the regression guard.
   const commitResult = commitTransformation(updatedTransformationState);
   if (commitResult.targetStage) {
     // Hook 3: onTransformation — fire before we mutate sig, using the pre-commit stage as `from`.
