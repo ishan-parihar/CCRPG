@@ -3788,6 +3788,7 @@ async function runStatus(): Promise<void> {
           // 3. Critical shadows blocking → original bar display
           const totalShadows = sig.shadows.entries.length;
           const unresolvedShadows = sig.shadows.entries.filter(e => e.resolvedAt === null).length;
+          const shadowsDetected = totalShadows > 0; // NF3-9: define shadowsDetected (was undefined, causing the Focus hint to throw)
           if (totalShadows === 0) {
             console.log(`    shadow clearance ${chalk.dim('— not yet engaged —')} (detection requires more encounters)`);
           } else if (report.shadowClearance >= 1) {
@@ -3812,6 +3813,13 @@ async function runStatus(): Promise<void> {
           } else {
             console.log(`    ${chalk.green('✓ Threshold reached — transformation may fire this session')}`);
           }
+          // NF3-9 (Fresh-User Audit 3): Tell the player what transforming will
+          // feel like. The audit found: 'The Transformation Readiness block
+          // tells me the threshold (80%) but not what crossing it will feel
+          // like or unlock. At 11% saturation after 4 sessions, I'd need ~36
+          // more sessions to transform — a massive investment with no
+          // emotional pull toward the work.' This line gives the pull.
+          console.log(`    ${chalk.dim(`When you transform ${sig.currentStage} → ${targetStage}: the resonance will shift, new encounter types will unlock, and the work will deepen.`)}`);
         } else {
           console.log(`\n  ${chalk.bold('Transformation Readiness')}`);
           info('stage', `${sig.currentStage} (maximum — no further transitions)`);
