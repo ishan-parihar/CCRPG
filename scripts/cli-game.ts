@@ -2097,7 +2097,10 @@ async function runFullSession(): Promise<void> {
     // Auto-migrate legacy save if no profile exists
     const migrated = migrateLegacySave();
     if (migrated && !JSON_MODE) info('profile', `${chalk.green('✓')} Migrated existing save to profile "${migrated}"`);
-    else if (!JSON_MODE) warn('No active profile. Run `ccrpg setup-profile` to create one, or `ccrpg profile list` to see options.');
+    // NF-7: Don't tell the user to run setup-profile — it requires interactive
+    // mode and fails in headless. The game will auto-create a 'default' profile
+    // when the session saves. Just play.
+    else if (!JSON_MODE) info('profile', `${chalk.dim('No profile yet — one will be created automatically when you play.')}`);
   }
 
   // NF-3 (Fresh-User Re-Audit): Load the cross-session asked-prompts set so
@@ -2844,7 +2847,11 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
   if (action === 'show') {
     const targetName = profileName ?? getActiveProfileName();
     if (!targetName) {
-      error('No active profile. Run `ccrpg setup-profile` to create one.');
+      // NF-7 (Fresh-User Re-Audit): The old message told users to run
+      // `ccrpg setup-profile`, but that command requires interactive mode
+      // and fails in headless. The game auto-creates a profile on the first
+      // session anyway. The honest message: play a session first.
+      error('No active profile yet. Play a session (ccrpg session) and one will be created automatically. To customize your profile name and pronouns interactively, run `ccrpg setup-profile` in a real terminal.');
       return;
     }
     const profile = loadProfile(targetName);
