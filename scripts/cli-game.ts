@@ -3203,10 +3203,15 @@ async function runStatus(): Promise<void> {
       config: {
         configDir: CONFIG_DIR,
         hasConfigFile: fs.existsSync(CONFIG_FILE),
-        provider: config.llm?.provider ?? 'gemini',
-        model: config.llm?.model ?? model,
-        hasApiKey: !!config.llm?.apiKey,
-        apiKeyPrefix: config.llm?.apiKey ? config.llm.apiKey.slice(0, 8) + '...' : null,
+        // P1-F5: resolved runtime config (env vars + config file + CLI flags),
+        // not just the saved config file. Matches the pretty-print path.
+        provider,
+        providerName: resolvedLLM.providerName,
+        endpoint: baseUrl,
+        model,
+        llmActive: LLM_ACTIVE,
+        hasApiKey: !!(apiKey && apiKey !== 'sk-placeholder'),
+        apiKeyPrefix: (apiKey && apiKey !== 'sk-placeholder') ? apiKey.slice(0, 8) + '...' : null,
       },
       system: {
         modulesLoaded: moduleRegistry.count(),
@@ -3293,10 +3298,20 @@ async function runStatus(): Promise<void> {
 
   banner('CCRPG Status');
   console.log(`\n  ${chalk.bold('Configuration')}`);
-  info('config', fs.existsSync(CONFIG_FILE) ? CONFIG_FILE : '(no config file)');
-  info('provider', config.llm?.provider ?? 'gemini (default)');
-  info('model', config.llm?.model ?? model);
-  info('api key', config.llm?.apiKey ? `${config.llm.apiKey.slice(0, 8)}...` : 'not set');
+  info('config', fs.existsSync(CONFIG_FILE) ? CONFIG_FILE : '(no config file — using env vars)');
+  // P1-F5 (Fresh-User UX Audit): Show the RESOLVED runtime LLM config, not
+  // the stale saved config file. Before this fix, `status` reported
+  // 'provider: gemini (default)' and 'api key: not set' even when the LLM
+  // was clearly active via env vars (OPENCODE_API_KEY + MODEL) — because it
+  // read from the saved config file, which was empty. The `diagnostic`
+  // command correctly showed 'LLM: active' because it used the resolved
+  // config. This inconsistency made users think nothing was configured.
+  // Now both commands use the resolved runtime config.
+  info('provider', `${provider} (${resolvedLLM.providerName})`);
+  info('endpoint', baseUrl);
+  info('model', model);
+  info('api key', apiKey && apiKey !== 'sk-placeholder' ? `${apiKey.slice(0, 8)}...` : 'not set');
+  info('llm active', LLM_ACTIVE ? `${chalk.green('yes')}` : `${chalk.red('no')}`);
 
   console.log(`\n  ${chalk.bold('Game State')}`);
   if (hasSave()) {
