@@ -44,8 +44,13 @@ const program = new Command()
   .description('CCRPG — A contemplative RPG that mirrors you back to yourself. Answer honest questions; the game reflects your inner landscape in mythopoetic prose. No wrong answers.')
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
-  .option('--verbose', 'Show additional encounter detail (feedback line, drive expression, arc position)')
-  .option('--dev', 'Developer mode: show internal metrics (G_z/P_z, CCI, rayProfile, phase). WARNING: breaks the experiential frame (Veil principle) — for debugging only.')
+  // P0-R4 (Fresh-User UX Audit): --verbose hidden from default --help.
+  // The audit found that --verbose exposes XP-style progress bars, drive
+  // distortion mappings, line×stage coordinates, and arc-position counters
+  // — all of which break the Veil principle. --verbose now requires --dev
+  // (enforced below). The option stays for backwards compat but is hidden.
+  .addOption(new Option('--verbose', 'Show additional encounter detail (requires --dev)').hideHelp())
+  .option('--dev', 'Developer mode: show internal metrics (G_z/P_z, CCI, rayProfile, phase) and enable --verbose. WARNING: breaks the experiential frame (Veil principle) — for debugging only.')
   .option('--no-llm', 'Disable LLM, use module assessments only')
   // YAGNI-EFF-3 (Efficacy Audit): --agent / PersistentAgent path removed.
   // It was the source of every major regression (R8-BUG-1 hang, R9-BUG-2
@@ -311,9 +316,18 @@ let HEADLESS = opts.headless ?? false;
 // can lower its maxLoops budget. Without this, --agent + LLM hangs because
 // the agent makes up to 30 sequential LLM calls (30×20s = 600s).
 if (HEADLESS) process.env.CCRPG_HEADLESS = '1';
-const VERBOSE = opts.verbose ?? false;
-const JSON_MODE = opts.json ?? false;
+// P0-R4 (Fresh-User UX Audit): --verbose requires --dev. The audit found
+// that --verbose exposes the entire machinery (XP bars, drive distortion
+// mappings, line×stage coordinates, arc counters) which breaks the Veil
+// principle. A curious user who tries --verbose without --dev now gets a
+// warning and verbose is silently downgraded to false.
+const RAW_VERBOSE = opts.verbose ?? false;
 const DEV_MODE = (opts as any).dev ?? false;
+const VERBOSE = RAW_VERBOSE && DEV_MODE;
+if (RAW_VERBOSE && !DEV_MODE) {
+  console.error(`${chalk.yellow('⚠ --verbose requires --dev')}: --verbose exposes internal metrics that break the contemplative frame (Veil principle). Use --dev --verbose together for debugging. Continuing without --verbose.`);
+}
+const JSON_MODE = opts.json ?? false;
 // R11-Y1 (Fresh-User UX Audit): --dev surfaces internal metrics (G_z, P_z,
 // CCI, rayProfile, phase position) that violate the Veil principle
 // (AGENTS.md §5.4: "The game is NEVER diagnostic to the user"). Engineers
