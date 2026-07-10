@@ -1228,10 +1228,62 @@ const DET_BY_LINE_RED: Record<string, ContentPool> = {
 // ============================================================================
 
 // PILOT-5.4 (Efficacy Pilot): Track asked questions to avoid repetition.
-// Maya saw the same question in S2 and S3. This tracks prompts within
-// the process lifetime. Cross-session de-dup would require persisting
-// to the save file (future enhancement).
+// NF-3 (Fresh-User Re-Audit): Cross-session de-dup is now implemented.
+// The re-audit found Session 4 was entirely verbatim duplicates from
+// earlier sessions — the in-memory Set was empty on each new process.
+// Now the set is persisted to the profile directory (asked-prompts.json)
+// and loaded at session start.
 const _askedPrompts = new Set<string>();
+
+const ASKED_PROMPTS_MAX = 200; // cap to prevent unbounded growth
+
+/**
+ * NF-3: Load the asked-prompts set from the active profile directory.
+ * Called by the CLI at session start. No-op if no profile is active
+ * or the file doesn't exist yet.
+ */
+export function loadAskedPrompts(profileDir: string | null): void {
+  _askedPrompts.clear();
+  if (!profileDir) return;
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    const file = path.join(profileDir, 'asked-prompts.json');
+    if (fs.existsSync(file)) {
+      const data = JSON.parse(fs.readFileSync(file, 'utf8'));
+      if (Array.isArray(data.prompts)) {
+        for (const p of data.prompts) {
+          if (typeof p === 'string') _askedPrompts.add(p);
+        }
+      }
+    }
+  } catch { /* best-effort — start with empty set */ }
+}
+
+/**
+ * NF-3: Save the asked-prompts set to the active profile directory.
+ * Called by the CLI at session end. No-op if no profile is active.
+ */
+export function saveAskedPrompts(profileDir: string | null): void {
+  if (!profileDir) return;
+  try {
+    const fs = require('fs');
+    const path = require('path');
+    fs.mkdirSync(profileDir, { recursive: true });
+    // Cap the set to the most recent N prompts (Set preserves insertion order)
+    const prompts = [..._askedPrompts];
+    const capped = prompts.length > ASKED_PROMPTS_MAX
+      ? prompts.slice(prompts.length - ASKED_PROMPTS_MAX)
+      : prompts;
+    const file = path.join(profileDir, 'asked-prompts.json');
+    fs.writeFileSync(file, JSON.stringify({ prompts: capped }, null, 2), 'utf8');
+  } catch { /* best-effort — don't break session end */ }
+}
+
+/** NF-3: Test helper — clear the in-memory set (for unit tests). */
+export function _clearAskedPromptsForTest(): void {
+  _askedPrompts.clear();
+}
 
 function pickRandom<T>(arr: readonly T[]): T {
   // If the array items have a 'prompt' field, try to avoid repeating

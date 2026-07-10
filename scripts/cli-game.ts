@@ -274,11 +274,16 @@ import { thresholdToStage } from '../src/core/usecases/ThresholdMaps.js';
 import { setSaturationThreshold, getLineProgress, computeReadiness } from '../src/core/engines/TransformationDetector.js';
 // R5-BUG-5 (UX-R5): fallback narrative pool for empty LLM responses.
 import { pickFallbackNarrative } from '../src/core/agent/FallbackNarratives.js';
+// NF-3 (Fresh-User Re-Audit): Cross-session question de-duplication.
+// loadAskedPrompts / saveAskedPrompts persist the asked-prompts set to
+// the profile directory so Session N doesn't repeat questions from
+// Sessions 1..N-1.
+import { loadAskedPrompts, saveAskedPrompts } from '../src/infra/llm/FallbackProvider.js';
 import {
   listProfiles, createProfile, setActiveProfile, deleteProfile,
   loadProfile, buildContextInjection, updateProfileAfterSession,
   appendEncounterLog, agentReadProfileFile, agentWriteProfileFile,
-  getSaveFilePath, getActiveProfileName, migrateLegacySave,
+  getSaveFilePath, getActiveProfileName, getActiveProfileDir, migrateLegacySave,
   getProfilesDir,
 } from '../src/infra/profiles/ProfileManager.js';
 import { computeConfidence } from '../src/core/assessments/engine.js';
@@ -2040,6 +2045,9 @@ async function runDirectQuestioningSession(
     await synthesizeSessionInsights(_profileName, history.length);
   }
 
+  // NF-3: Persist the asked-prompts set so the next session avoids repeats.
+  saveAskedPrompts(getActiveProfileDir());
+
   emitEvent('session_ended', {
     mode: 'direct',
     linesAssessed: history.length,
@@ -2071,6 +2079,13 @@ async function runFullSession(): Promise<void> {
     if (migrated && !JSON_MODE) info('profile', `${chalk.green('✓')} Migrated existing save to profile "${migrated}"`);
     else if (!JSON_MODE) warn('No active profile. Run `ccrpg setup-profile` to create one, or `ccrpg profile list` to see options.');
   }
+
+  // NF-3 (Fresh-User Re-Audit): Load the cross-session asked-prompts set so
+  // Session N doesn't repeat questions from Sessions 1..N-1. The re-audit
+  // found Session 4 was entirely verbatim duplicates — the in-memory Set
+  // was empty on each new process invocation. Now it's persisted to the
+  // profile directory (asked-prompts.json).
+  loadAskedPrompts(getActiveProfileDir());
 
   // Boot with ora spinners for clean loading UX
   const s1 = JSON_MODE ? null : ora('Booting registries...').start();
@@ -2638,6 +2653,9 @@ async function runFullSession(): Promise<void> {
     console.log('\nFinal Significator:');
     printSignificator(sessionEnd.sig);
   }
+
+  // NF-3: Persist the asked-prompts set for cross-session de-duplication.
+  saveAskedPrompts(getActiveProfileDir());
 
   emitEvent('session_ended', {
     encountersCompleted: completedCount,
