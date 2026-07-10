@@ -102,8 +102,9 @@ program
 // requiring users to read the docs.
 program
   .command('glossary')
-  .description('Show definitions for CCRPG terminology (5 essentials by default; --full for all 23)')
-  .option('--full', 'Show all 23 terms (advanced theoretical set)');
+  // P1-F9: counts are dynamic so they never drift from the actual data.
+  .description(`Show definitions for CCRPG terminology (${PLAYER_GLOSSARY_TERMS.length} essentials by default; --full for all ${GLOSSARY_TERMS.length})`)
+  .option('--full', `Show all ${GLOSSARY_TERMS.length} terms (advanced theoretical set)`);
 // Profiling system: multi-user support
 // P0-F3 (Fresh-User UX Audit): Added 'show' action — the synthesis engine
 // writes rich data (insights, patterns, active focus) to narrative-memory.md
@@ -3535,7 +3536,7 @@ function runGlossary(showFull = false): void {
     console.log(`  ${chalk.bold.cyan(term.padEnd(16))} ${chalk.dim(def)}`);
   }
   if (!showFull) {
-    console.log(`\n  ${chalk.dim('— 5 essentials. Run `ccrpg glossary --full` for all 23 terms. —')}`);
+    console.log(`\n  ${chalk.dim(`— ${PLAYER_GLOSSARY_TERMS.length} essentials. Run \`ccrpg glossary --full\` for all ${GLOSSARY_TERMS.length} terms. —`)}`);
   }
   console.log(`\n  ${chalk.dim('For the full theoretical foundation, see docs/foundations/ and docs/02-glossary.md.')}\n`);
 }
@@ -3546,7 +3547,7 @@ function printHelp(): void {
   // ENCOUNTERS section. The flag is now hidden in commander's auto-help and
   // was a documented source of user confusion. The printHelp() banner should
   // not duplicate it.
-  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show 5 essential terms (use --full for all 23)\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show full narrative and feedback\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Show holistic primitives (G_z/P_z, rayProfile)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var\n  Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var\n  Saves:     ~/.ccrpg/saves/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --no-llm                   # quick automated test\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg diagnostic                            # system diagnostics\n`);
+  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show ${PLAYER_GLOSSARY_TERMS.length} essential terms (use --full for all ${GLOSSARY_TERMS.length})\n  ccrpg profile show           See what the game has noticed about you\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show additional encounter detail (feedback, drives, arc)\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Show holistic primitives (G_z/P_z, rayProfile)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.ccrpg/config.json or MODEL env var\n  Saves:     ~/.ccrpg/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --encounters=5             # headless session\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg profile show                          # see your synthesized insights\n  ccrpg diagnostic                            # system diagnostics\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────
@@ -3583,7 +3584,7 @@ async function main(): Promise<void> {
   if (subcommand === 'setup') { await runSetup(); return; }
   if (subcommand === 'status') { await runStatus(); return; }
   if (subcommand === 'glossary') {
-    // R11-Y3: `ccrpg glossary --full` shows all 23 terms; bare `ccrpg glossary`
+    // R11-Y3 / P1-F9: `ccrpg glossary --full` shows all terms; bare `ccrpg glossary`
     // shows only the 5 player-facing essentials.
     const wantsFull = program.args.includes('--full') || program.args.includes('-f');
     runGlossary(wantsFull);
@@ -3629,7 +3630,7 @@ async function main(): Promise<void> {
       // users to run 'ccrpg glossary', show them the 5 most important terms
       // inline so they're oriented immediately.
       console.log(`\n${chalk.dim('Key terms: Significator = your developmental profile. Holon = an NPC or place. Line = a developmental dimension (Cognitive, Emotional, etc.). Stage = your current altitude (Red→White). Veil = the game never shows you clinical labels.')}`);
-      console.log(`${chalk.dim('Run `ccrpg glossary` for the full list of 22 terms.')}`);
+      console.log(`${chalk.dim(`Run \`ccrpg glossary\` for the full list of ${GLOSSARY_TERMS.length} terms.`)}`);
       console.log(`${chalk.dim('Run `ccrpg diagnostic` to check system status.')}`);
       console.log(`${chalk.dim('Run `ccrpg status` to see your progress.')}`);
       console.log(`${chalk.dim('Run `ccrpg new-game` to start over.')}\n`);
