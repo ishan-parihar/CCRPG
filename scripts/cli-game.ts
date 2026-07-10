@@ -105,9 +105,13 @@ program
   .description('Show definitions for CCRPG terminology (5 essentials by default; --full for all 23)')
   .option('--full', 'Show all 23 terms (advanced theoretical set)');
 // Profiling system: multi-user support
+// P0-F3 (Fresh-User UX Audit): Added 'show' action — the synthesis engine
+// writes rich data (insights, patterns, active focus) to narrative-memory.md
+// and goals.yaml after every session, but there was no command to read it
+// back. The game whispered about the player behind their back.
 program
   .command('profile [action] [name]')
-  .description('Manage user profiles (list, switch, create, delete)');
+  .description('Manage user profiles (list, switch, create, delete, show)');
 program
   .command('setup-profile')
   .description('Create a new user profile with onboarding questions');
@@ -1618,6 +1622,10 @@ ${recentEncounters.slice(0, 3000)}`;
 
       if (wroteSomething && !JSON_MODE) {
         info('synthesis', `${chalk.green('✓')} Profile updated: insight + pattern + active focus`);
+        // P0-F3: Tell the player how to SEE what was synthesized. Before this
+        // hint, the game said "profile updated" but gave no way to view the
+        // update — the #1 frustration in the fresh-user audit.
+        console.log(`  ${chalk.dim('Run `ccrpg profile show` to see what the game has noticed.')}`);
       } else if (!JSON_MODE) {
         info('synthesis', `${chalk.dim('No extractable insights from this session')}`);
       }
@@ -2718,7 +2726,171 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
     return;
   }
 
-  error(`Unknown profile action: ${action}. Valid: list, switch, create, delete`);
+  // P0-F3 (Fresh-User UX Audit): `profile show` — surface the synthesized
+  // insights, patterns, and active focus that the post-session synthesis
+  // (synthesizeSessionInsights) writes to narrative-memory.md and goals.yaml.
+  // Before this command, the game printed "✓ Profile updated: insight +
+  // pattern + active focus" after every session but gave the player NO way to
+  // see what those insights/patterns/focus actually were. The Veil principle
+  // (never show clinical labels) was being over-extended to hide the player's
+  // own patterns from the player. This command respects the Veil — it shows
+  // the qualitative narrative memory (the LLM's own synthesized sentences),
+  // not the raw clinical primitives (G_z/P_z, quadrant codes, drive scores).
+  if (action === 'show') {
+    const targetName = profileName ?? getActiveProfileName();
+    if (!targetName) {
+      error('No active profile. Run `ccrpg setup-profile` to create one.');
+      return;
+    }
+    const profile = loadProfile(targetName);
+    if (!profile) {
+      error(`Profile "${targetName}" not found. Run \`ccrpg profile list\` to see options.`);
+      return;
+    }
+
+    banner(`Profile: ${targetName}`);
+
+    const id = profile.identity || {};
+    const goals = profile.goals || {};
+    const dev = profile.developmentalState || {};
+
+    // ── Identity ──
+    console.log(`\n  ${chalk.bold('Stage:')} ${stageColor(id.current_stage || 'Red')(id.current_stage || 'Red')}`);
+    console.log(`  ${chalk.bold('Sessions:')} ${id.total_sessions ?? 0}  |  ${chalk.bold('Encounters:')} ${id.total_encounters ?? 0}`);
+    console.log(`  ${chalk.bold('Lifecycle:')} ${id.lifecycle || 'Onboarding'}`);
+    console.log(`  ${chalk.bold('Last active:')} ${id.last_active ? new Date(id.last_active as string).toLocaleString() : 'never'}`);
+
+    // ── Active Focus ──
+    if (goals.active_focus && String(goals.active_focus).trim()) {
+      console.log(`\n  ${chalk.cyan.bold('▸ Active Focus')}`);
+      console.log(`  ${chalk.dim('What the game senses you are currently processing:')}`);
+      console.log(`  ${chalk.italic(String(goals.active_focus))}`);
+    } else {
+      console.log(`\n  ${chalk.dim('▸ Active Focus: (not yet set — play a session to generate one)')}`);
+    }
+
+    // ── Self-declared goals ──
+    if (Array.isArray(goals.self_declared) && goals.self_declared.length > 0) {
+      console.log(`\n  ${chalk.cyan.bold('▸ Your Stated Goals')}`);
+      for (const g of goals.self_declared) console.log(`  • ${g}`);
+    }
+
+    // ── Narrative memory: parse the markdown sections ──
+    // narrative-memory.md has sections: Key Insights, Patterns, Active Work,
+    // Resolved, Unresolved. Each section has bullet lines (- **...**: text).
+    const mem = profile.narrativeMemory || '';
+    if (mem.trim().length > 50) {
+      const sections: Array<{ key: string; label: string; hint: string }> = [
+        { key: 'Key Insights', label: 'Insights (what landed)', hint: 'Synthesized from your sessions — moments the game named something that resonated.' },
+        { key: 'Patterns', label: 'Patterns (recurring themes)', hint: 'Things that showed up across multiple encounters.' },
+        { key: 'Active Work', label: 'Active Work', hint: 'What the game senses is currently being processed.' },
+        { key: 'Resolved', label: 'Resolved (integrated)', hint: 'Patterns that have been worked through.' },
+        { key: 'Unresolved', label: 'Unresolved (surfaced, not yet worked)', hint: 'Patterns that surfaced but are still open.' },
+      ];
+      for (const sec of sections) {
+        const bullets = extractMdSectionBullets(mem, sec.key);
+        if (bullets.length > 0) {
+          console.log(`\n  ${chalk.cyan.bold('▸ ' + sec.label)}`);
+          console.log(`  ${chalk.dim(sec.hint)}`);
+          for (const b of bullets) console.log(`  ${chalk.dim('•')} ${b}`);
+        }
+      }
+    }
+
+    // ── Shadow ledger (Veil-compliant: qualitative description only) ──
+    // P0-F3: The shadow-ledger.json stores clinical quadrant codes
+    // (DarkAddiction, DarkAllergy, GoldenAddiction, GoldenAverted) and drive
+    // labels. The Veil principle says the game never shows clinical labels.
+    // `profile show` respects this by translating the codes into plain
+    // qualitative movement descriptions. The player sees "a pull toward
+    // over-reliance on a lower capacity" (DarkAddiction) or "a rejection of
+    // a lower capacity" (DarkAllergy), not the codes themselves.
+    const shadows = profile.shadowLedger?.shadows ?? [];
+    if (shadows.length > 0) {
+      const surfacing = shadows.filter((s: any) => s.status !== 'integrated');
+      const integrated = shadows.filter((s: any) => s.status === 'integrated');
+      if (surfacing.length > 0) {
+        console.log(`\n  ${chalk.cyan.bold('▸ Surfacing Patterns')}`);
+        console.log(`  ${chalk.dim('Recurring edges the game has noticed — not diagnoses, just movements to be aware of:')}`);
+        for (const s of surfacing) {
+          const ss = s as any;
+          const movement = veilShadowMovement(ss.quadrant);
+          const drive = ss.drive || ss.line || 'an unnamed drive';
+          console.log(`  ${chalk.dim('•')} ${movement} — in the ${ss.line || 'unknown'} line  ${chalk.dim(`(${ss.sessions_active ?? 1} session${ss.sessions_active === 1 ? '' : 's'})`)}`);
+        }
+      }
+      if (integrated.length > 0) {
+        console.log(`\n  ${chalk.green.bold('▸ Integrated Patterns')}`);
+        console.log(`  ${chalk.dim('Movements that have been worked through:')}`);
+        for (const s of integrated) {
+          const ss = s as any;
+          const movement = veilShadowMovement(ss.quadrant);
+          console.log(`  ${chalk.green('✓')} ${movement} — in the ${ss.line || 'unknown'} line`);
+        }
+      }
+    }
+
+    // ── Recent sessions ──
+    const sessions = profile.sessionHistory?.sessions ?? [];
+    if (sessions.length > 0) {
+      console.log(`\n  ${chalk.cyan.bold('▸ Recent Sessions')}`);
+      for (const s of sessions.slice(-5)) {
+        const ss: any = s;
+        const date = ss.date ? new Date(ss.date).toLocaleDateString() : '?';
+        console.log(`  ${chalk.dim(date)} — ${ss.key_shift || ss.theme || 'session'}`);
+      }
+    }
+
+    console.log('');
+    return;
+  }
+
+  error(`Unknown profile action: ${action}. Valid: list, switch, create, delete, show`);
+}
+
+/**
+ * Extract bullet lines from a named markdown section in narrative-memory.md.
+ * Sections look like: `## Key Insights\n- **Session 1:** text\n- **...:** text\n\n## Next Section`
+ * Returns the bullet text (without the leading `- ` and without the `## ` header).
+ */
+function extractMdSectionBullets(md: string, sectionName: string): string[] {
+  const header = `## ${sectionName}`;
+  const idx = md.indexOf(header);
+  if (idx < 0) return [];
+  const afterHeader = idx + header.length;
+  const nextSection = md.indexOf('\n## ', afterHeader);
+  const sectionText = nextSection >= 0 ? md.slice(afterHeader, nextSection) : md.slice(afterHeader);
+  const bullets: string[] = [];
+  for (const line of sectionText.split('\n')) {
+    const trimmed = line.trim();
+    if (trimmed.startsWith('- ')) {
+      // Strip the leading "- " and return the rest (which may include **bold** labels)
+      bullets.push(trimmed.slice(2));
+    }
+  }
+  return bullets;
+}
+
+/**
+ * Translate a clinical shadow-quadrant code into a Veil-compliant qualitative
+ * movement description. Used by `profile show` so the player sees a plain
+ * English movement ("a pull toward over-reliance on a familiar capacity")
+ * instead of the raw code ("DarkAddiction").
+ *
+ * The four quadrants (per AGENTS.md §5.2):
+ *   DarkAddiction  → submergent fixation  (clings to lower capacity)
+ *   DarkAllergy    → submergent aversion  (rejects lower capacity)
+ *   GoldenAddiction → emergent fixation   (bypasses toward higher without integration)
+ *   GoldenAversion → emergent aversion   (refuses the call to grow)
+ */
+function veilShadowMovement(quadrant: string | undefined): string {
+  switch (quadrant) {
+    case 'DarkAddiction':  return 'A pull toward over-reliance on a familiar, lower capacity';
+    case 'DarkAllergy':    return 'A rejection of a lower capacity that still has something to offer';
+    case 'GoldenAddiction': return 'A pull to bypass toward higher capacities without integrating the lower';
+    case 'GoldenAversion': return 'A resistance to the call to grow';
+    default:               return 'An unnamed movement';
+  }
 }
 
 async function runSetupProfile(): Promise<void> {
