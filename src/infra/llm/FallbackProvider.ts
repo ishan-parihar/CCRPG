@@ -56,6 +56,21 @@ const LR_COGNITIVE_RED: readonly FallbackContent[] = [
     prompt: 'Your thinking has patterns — shortcuts your mind takes without asking. Name one.',
     followUps: ['When did you first notice it?', 'How does it serve you, and how does it limit you?'],
   },
+  // NF3-4 (Fresh-User Audit 3): Expanded from 2 to 5 prompts per line to reduce
+  // cross-session repetition. The audit found verbatim duplicates within 4
+  // sessions because the pool was exhausted after 2 questions per line.
+  {
+    prompt: 'You are certain about something that matters. What would it take for you to be wrong about it?',
+    followUps: ['What does certainty feel like in your body?', 'When did you last change your mind about something important?'],
+  },
+  {
+    prompt: 'Your mind races ahead of the moment. Where does it go when it leaves the present?',
+    followUps: ['Is it planning, rehearsing, or escaping?', 'What does the present moment feel like when you return to it?'],
+  },
+  {
+    prompt: 'When you face a decision, what does your mind trust more — logic, instinct, or experience? And which has betrayed you?',
+    followUps: ['Can you separate the three?', 'Which one would you trust if the other two failed?'],
+  },
 ];
 
 const LR_EMOTIONAL_RED: readonly FallbackContent[] = [
@@ -66,6 +81,19 @@ const LR_EMOTIONAL_RED: readonly FallbackContent[] = [
   {
     prompt: 'Name an emotion you avoid. What would happen if you stayed with it for a full minute?',
     followUps: ['What are you afraid it will reveal?', 'What does avoidance cost you?'],
+  },
+  // NF3-4: Expanded from 2 to 5 prompts to reduce cross-session repetition.
+  {
+    prompt: 'Joy arrives — and something in you flinches. What is the flinch protecting?',
+    followUps: ['What happened the last time you let joy in fully?', 'Is the flinch older than the joy?'],
+  },
+  {
+    prompt: 'You felt something shift in you recently. Can you name it — without naming the event that triggered it?',
+    followUps: ['Is the shift permanent or passing?', 'What does the new feeling need from you?'],
+  },
+  {
+    prompt: 'Sadness has a texture. Describe yours — not what it is about, but how it feels.',
+    followUps: ['Where in your body does it live?', 'Has it always felt this way?'],
   },
 ];
 
@@ -78,6 +106,19 @@ const LR_MORAL_RED: readonly FallbackContent[] = [
     prompt: 'When does honesty become cruel? Where is your line?',
     followUps: ['Has someone crossed that line with you?', 'Who decides where the line falls?'],
   },
+  // NF3-4: Expanded from 2 to 5 prompts to reduce cross-session repetition.
+  {
+    prompt: 'You broke a promise. Not a big one — a small one. What did you tell yourself to make it okay?',
+    followUps: ['Who paid the cost?', 'Would you break it again?'],
+  },
+  {
+    prompt: 'Someone trusts you completely. What would it take for you to betray that trust — and would you admit it?',
+    followUps: ['Is there a betrayal you have not admitted?', 'What does trust mean to you?'],
+  },
+  {
+    prompt: 'You have a moral line you will not cross. Where did it come from — and have you ever wanted to move it?',
+    followUps: ['Is the line yours or inherited?', 'What lies on the other side?'],
+  },
 ];
 
 const LR_INTRAPERSONAL_RED: readonly FallbackContent[] = [
@@ -88,6 +129,19 @@ const LR_INTRAPERSONAL_RED: readonly FallbackContent[] = [
   {
     prompt: 'You carry a version of yourself that no one else sees. Describe it.',
     followUps: ['Is that version you, or a mask?', 'What would happen if it surfaced?'],
+  },
+  // NF3-4: Expanded from 2 to 5 prompts to reduce cross-session repetition.
+  {
+    prompt: 'You tell yourself a story about who you are. What is the story — and what part of it is a lie?',
+    followUps: ['Who would you be without the story?', 'What does the lie protect?'],
+  },
+  {
+    prompt: 'Something in you wants attention. What is it — and what happens when you give it to it?',
+    followUps: ['Is it a part, a feeling, or a need?', 'What would it take to listen?'],
+  },
+  {
+    prompt: 'You are pretending not to know something about yourself. What is it?',
+    followUps: ['How long have you known?', 'What would change if you admitted it?'],
   },
 ];
 
@@ -100,6 +154,19 @@ const LR_SPIRITUAL_RED: readonly FallbackContent[] = [
     prompt: 'If everything you do were erased tomorrow, what would remain of you?',
     followUps: ['Does that thought liberate or terrify you?', 'What is left when achievement falls away?'],
   },
+  // NF3-4: Expanded from 2 to 5 prompts to reduce cross-session repetition.
+  {
+    prompt: 'You felt small before something vast. What was it — and what did the smallness teach you?',
+    followUps: ['Was it awe or fear?', 'What did you want to do with the feeling?'],
+  },
+  {
+    prompt: 'There is something you call sacred. Name it — without using the word "sacred."',
+    followUps: ['What would it mean to violate it?', 'Has it always been sacred to you?'],
+  },
+  {
+    prompt: 'You are waiting for something. What is it — and is the waiting active or passive?',
+    followUps: ['Are you waiting or avoiding?', 'What would it mean to stop waiting?'],
+  },
 ];
 
 const LR_INTERPERSONAL_RED: readonly FallbackContent[] = [
@@ -110,6 +177,19 @@ const LR_INTERPERSONAL_RED: readonly FallbackContent[] = [
   {
     prompt: 'Who in your life can you be fully honest with — and what makes that possible?',
     followUps: ['What prevents that honesty with others?', 'Is the barrier theirs or yours?'],
+  },
+  // NF3-4: Expanded from 2 to 5 prompts to reduce cross-session repetition.
+  {
+    prompt: 'You are performing a version of yourself for someone. Who — and what would drop if you stopped?',
+    followUps: ['Are they watching, or is it your own expectation?', 'What would it cost to be seen?'],
+  },
+  {
+    prompt: 'Someone is pulling away from you. What is your first instinct — and where did you learn it?',
+    followUps: ['Is the instinct to chase, retreat, or punish?', 'Has it ever worked?'],
+  },
+  {
+    prompt: 'You owe someone an apology you have not given. What is stopping you — and is it actually about them?',
+    followUps: ['What would the apology cost you?', 'What does the silence cost them?'],
   },
 ];
 
@@ -122,6 +202,19 @@ const LR_SOMATIC_RED: readonly FallbackContent[] = [
     prompt: 'Your body speaks in sensations, not words. What is it saying to you right now?',
     followUps: ['When did you last listen?', 'What happens when you stop and attend to it?'],
   },
+  // NF3-4: Expanded from 2 to 5 prompts to reduce cross-session repetition.
+  {
+    prompt: 'You are tired but will not rest. What is the tiredness protecting you from feeling?',
+    followUps: ['What would happen if you stopped?', 'Is the tiredness physical or emotional?'],
+  },
+  {
+    prompt: 'Your breath changes when you think of something difficult. What is the thought — and what does the breath do?',
+    followUps: ['Can you soften the breath without changing the thought?', 'What does the breath know that the mind does not?'],
+  },
+  {
+    prompt: 'There is a sensation you avoid — a place in your body you do not like to feel. Where is it?',
+    followUps: ['What happened there?', 'What would it mean to stay with it for one breath?'],
+  },
 ];
 
 const LR_WILLPOWER_RED: readonly FallbackContent[] = [
@@ -132,6 +225,19 @@ const LR_WILLPOWER_RED: readonly FallbackContent[] = [
   {
     prompt: 'Your willpower has a direction. What is it pointed at — and what is it pointed away from?',
     followUps: ['Is that direction yours or inherited?', 'What would it feel like to aim it somewhere new?'],
+  },
+  // NF3-4: Expanded from 2 to 5 prompts to reduce cross-session repetition.
+  {
+    prompt: 'You said yes when you meant no. What made the yes feel safer than the no?',
+    followUps: ['What would the no have cost?', 'Whose voice is in the yes?'],
+  },
+  {
+    prompt: 'There is something you keep promising yourself you will do — and keep not doing. What is it?',
+    followUps: ['Is the promise real or decorative?', 'What would it mean to drop the promise entirely?'],
+  },
+  {
+    prompt: 'You are holding something together. What would happen if you let it fall apart — just for a moment?',
+    followUps: ['What are you afraid would break?', 'Has holding it together become the thing itself?'],
   },
 ];
 
