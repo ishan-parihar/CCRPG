@@ -2061,6 +2061,16 @@ async function runDirectQuestioningSession(
         ? 'Something stirs beneath the surface — the work edges closer to it.'
         : 'The field is open; the work moves where it will.';
     console.log(`  ${chalk.dim(hint)}\n`);
+
+    // NEXT-2 (Fresh-User UX Re-Audit): Session runtime expectation-setting.
+    // The re-audit found 15-30s per encounter with no frame for the wait.
+    // The thinking indicator (R5) makes the wait feel intentional, but the
+    // player still doesn't know how long the session will take. This one-line
+    // frame sets expectations without breaking the contemplative voice.
+    const encounterCountForEstimate = FORCE_LINE ? 1 : Math.min(encounterCount, 8);
+    const estimatedSeconds = encounterCountForEstimate * 20;
+    const estimateWord = estimatedSeconds < 60 ? `${estimatedSeconds} seconds` : `${Math.round(estimatedSeconds / 60)} minutes`;
+    console.log(`  ${chalk.dim(`Each encounter takes about 20 seconds. This session will take roughly ${estimateWord}. Take your time between them.`)}\n`);
   }
 
   const ALL_LINES: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
