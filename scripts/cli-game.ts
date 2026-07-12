@@ -4132,13 +4132,12 @@ async function runStatus(): Promise<void> {
     }
   } else {
     info('save', `${chalk.yellow('no saved game')} — run ${chalk.bold('ccrpg session')} to start`);
-    // UX-R2-6: Show the 8-line table even when no save exists, so the user
-    // can see the shape of the journey before they begin.
-    const EMPTY_LINES: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
-    console.log(`\n  ${chalk.bold('Developmental Lines')}`);
-    for (const line of EMPTY_LINES) {
-      console.log(`    ${chalk.cyan(line.padEnd(16))} ◆ ${chalk.dim('[power]')} ${chalk.dim('░░░░░░░░')} ${chalk.dim('0 encounters')}`);
-    }
+    // P2-Y5 (Fresh-User UX Audit v2): The pre-play status previously showed
+    // the full 8-line table with stage bars and '0 encounters' counts — an
+    // RPG character-sheet frame that violates the Veil. Replaced with a
+    // single qualitative invitation that matches the post-play format.
+    console.log(`\n  ${chalk.bold('Current Edge')}`);
+    console.log(`  ${chalk.dim('The work is still opening. Play a session to find your edge.')}`);
   }
 
   console.log(`\n  ${chalk.bold('System')}`);
