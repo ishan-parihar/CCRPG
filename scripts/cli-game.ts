@@ -116,8 +116,9 @@ program
 program
   .command('glossary')
   // P1-F9: counts are dynamic so they never drift from the actual data.
-  .description(`Show definitions for CCRPG terminology (${PLAYER_GLOSSARY_TERMS.length} essentials by default; --full for all ${GLOSSARY_TERMS.length})`)
-  .option('--full', `Show all ${GLOSSARY_TERMS.length} terms (advanced theoretical set)`);
+  // P2-U5: --full now requires --dev. Default shows Tier 1 + unlocked Tier 2.
+  .description(`Show definitions for CCRPG terminology (${PLAYER_GLOSSARY_TERMS.length} essentials + unlocked terms; --full requires --dev)`)
+  .option('--full', `Show all ${GLOSSARY_TERMS.length} terms (requires --dev — clinical definitions)`);
 // Profiling system: multi-user support
 // P0-F3 (Fresh-User UX Audit): Added 'show' action — the synthesis engine
 // writes rich data (insights, patterns, active focus) to narrative-memory.md
@@ -270,7 +271,7 @@ import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState
 import { describeStage, describePersonalResonance } from '../src/core/presentation/veilDescriptors.js';
 
 import holonsJson from '../src/core/data/red-layer-holons.json';
-import { GLOSSARY_TERMS, PLAYER_GLOSSARY_TERMS, ADVANCED_GLOSSARY_TERMS } from '../src/core/data/glossary.js';
+import { GLOSSARY_TERMS, PLAYER_GLOSSARY_TERMS, ADVANCED_GLOSSARY_TERMS, TIER2_GLOSSARY_TERMS, checkTermUnlocks } from '../src/core/data/glossary.js';
 import type { ConsequenceRecord } from '../src/core/domain/ConsequenceRecord.js';
 import type { Modality } from '../src/core/domain/enums.js';
 import { ALL_MODALITIES } from '../src/core/domain/enums.js';
@@ -295,6 +296,7 @@ import {
   appendEncounterLog, agentReadProfileFile, agentWriteProfileFile,
   getSaveFilePath, getActiveProfileName, getActiveProfileDir, migrateLegacySave,
   getProfilesDir,
+  loadUnlockedTerms, addUnlockedTerms,
 } from '../src/infra/profiles/ProfileManager.js';
 import { computeConfidence } from '../src/core/assessments/engine.js';
 import type { TrialResult } from '../src/core/assessments/types.js';
@@ -2104,6 +2106,21 @@ async function runDirectQuestioningSession(
     }
   }
 
+  // P2-U5 (Fresh-User UX Re-Audit): Ensure profile exists BEFORE the DQ loop
+  // so that progressive vocabulary unlock can persist terms during the session.
+  // Previously the profile was created after the session ended, which meant
+  // getActiveProfileDir() returned null during the encounter loop and unlocks
+  // were silently dropped.
+  if (!getActiveProfileName()) {
+    // Try migrating legacy save first; if that fails, create a default profile
+    const migrated = migrateLegacySave();
+    if (!migrated) {
+      try {
+        createProfile('default');
+      } catch { /* profile may already exist */ }
+    }
+  }
+
   for (let i = 0; i < linesToRun.length; i++) {
     const line = linesToRun[i]!;
     // UX-P0-1: Respect --stage forcing
@@ -2355,6 +2372,29 @@ async function runDirectQuestioningSession(
         narrative: result.narrativeSummary,
         totalEncounters: currentSig.totalEncounters,
       });
+
+      // P2-U5 (Fresh-User UX Re-Audit): Progressive vocabulary unlock.
+      // Check the narrative for Tier 2 glossary terms. When a term is
+      // encountered for the first time, it unlocks and is persisted to
+      // the profile. The player is notified (non-JSON mode only).
+      if (result.narrativeSummary) {
+        const profileDir = getActiveProfileDir();
+        if (profileDir) {
+          const alreadyUnlocked = loadUnlockedTerms(profileDir);
+          const newlyUnlocked = checkTermUnlocks(result.narrativeSummary, alreadyUnlocked);
+          if (newlyUnlocked.length > 0) {
+            const trulyNew = addUnlockedTerms(profileDir, newlyUnlocked);
+            if (trulyNew.length > 0) {
+              if (!JSON_MODE) {
+                for (const term of trulyNew) {
+                  console.log(`  ${chalk.dim('✦ New term unlocked:')} ${chalk.cyan(term)} ${chalk.dim('— run `ccrpg glossary` to see its definition')}`);
+                }
+              }
+              emitEvent('terms_unlocked', { terms: trulyNew });
+            }
+          }
+        }
+      }
 
       // P0-2 (UX-R3): Honor --dev during DQ sessions.
       emitDevPrimitives(currentSig, `dq:${line}:${currentStage}`);
@@ -4157,33 +4197,72 @@ async function runStatus(): Promise<void> {
 //
 // R11-Y3 (Fresh-User UX Audit): The 23-term dump was experienced by fresh
 // users as "walking into a graduate seminar 6 months late." Now shows only
-// the 5 player-facing terms by default (Holon, Significator, Line, Stage,
-// Shadow). The full 23-term set is gated behind `ccrpg glossary --full`.
-// JSON_MODE still emits all terms for backwards compatibility (machine
-// consumers expect the full set).
+// the Tier 1 essentials (Line, Stage, Shadow) + any Tier 2 terms the player
+// has unlocked by encountering them in play.
+// P2-U5 (Fresh-User UX Re-Audit): Progressive vocabulary unlock. The --full
+// flag now requires --dev (it exposes clinical definitions). Default view
+// shows Tier 1 + unlocked Tier 2 terms only.
 function runGlossary(showFull = false): void {
-  banner(showFull ? 'CCRPG Glossary (full)' : 'CCRPG Glossary');
-  // ponytail: glossary data extracted to src/core/data/glossary.ts (shared with WebUI /glossary route).
-  // R11-Y3: player-facing terms by default; full set only with --full.
-  const terms = showFull ? GLOSSARY_TERMS : PLAYER_GLOSSARY_TERMS;
+  // P2-U5: --full requires --dev (clinical definitions are engineering vocabulary)
+  if (showFull && !DEV_MODE) {
+    banner('CCRPG Glossary');
+    console.log(`\n  ${chalk.yellow('⚠ --full requires --dev')}: the full glossary contains clinical definitions (CCI bands, G_z/P_z, shadow quadrants) that break the contemplative frame. Use --dev --full for engineering access.`);
+    console.log(`\n  ${chalk.dim('Showing player-facing terms instead:')}\n`);
+    showFull = false;
+  }
+
+  banner(showFull ? 'CCRPG Glossary (full — dev mode)' : 'CCRPG Glossary');
+
+  // P2-U5: Load unlocked terms from profile
+  const profileDir = getActiveProfileDir();
+  const unlockedTerms = loadUnlockedTerms(profileDir);
+
   if (JSON_MODE) {
-    // JSON consumers (WebUI, agents) always get the full set.
+    // JSON consumers (WebUI, agents) always get the full set + unlock status.
     process.stdout.write(JSON.stringify({
       type: 'glossary',
       terms: GLOSSARY_TERMS,
       playerTerms: PLAYER_GLOSSARY_TERMS,
+      tier2Terms: TIER2_GLOSSARY_TERMS,
       advancedTerms: ADVANCED_GLOSSARY_TERMS,
+      unlockedTerms,
     }) + '\n');
     return;
   }
+
+  if (showFull) {
+    // --dev --full: show everything
+    console.log('');
+    for (const { term, def } of GLOSSARY_TERMS) {
+      console.log(`  ${chalk.bold.cyan(term.padEnd(16))} ${chalk.dim(def)}`);
+    }
+    console.log(`\n  ${chalk.dim(`— ${GLOSSARY_TERMS.length} terms (dev mode). —`)}\n`);
+    return;
+  }
+
+  // Default: Tier 1 (always available) + unlocked Tier 2 terms
   console.log('');
-  for (const { term, def } of terms) {
+  console.log(`  ${chalk.dim('— Always available —')}`);
+  for (const { term, def } of PLAYER_GLOSSARY_TERMS) {
     console.log(`  ${chalk.bold.cyan(term.padEnd(16))} ${chalk.dim(def)}`);
   }
-  if (!showFull) {
-    console.log(`\n  ${chalk.dim(`— ${PLAYER_GLOSSARY_TERMS.length} essentials. Run \`ccrpg glossary --full\` for all ${GLOSSARY_TERMS.length} terms. —`)}`);
+
+  // Show unlocked Tier 2 terms
+  const unlockedTier2 = TIER2_GLOSSARY_TERMS.filter(t => unlockedTerms.includes(t.term));
+  if (unlockedTier2.length > 0) {
+    console.log(`\n  ${chalk.dim('— Unlocked through play —')}`);
+    for (const { term, def } of unlockedTier2) {
+      console.log(`  ${chalk.bold.cyan(term.padEnd(16))} ${chalk.dim(def)}`);
+    }
   }
-  console.log(`\n  ${chalk.dim('For the full theoretical foundation, see docs/foundations/ and docs/02-glossary.md.')}\n`);
+
+  const lockedCount = TIER2_GLOSSARY_TERMS.length - unlockedTier2.length;
+  if (lockedCount > 0) {
+    console.log(`\n  ${chalk.dim(`— ${lockedCount} term${lockedCount === 1 ? '' : 's'} still locked. Play more sessions to unlock them. —`)}`);
+  } else if (unlockedTier2.length > 0) {
+    console.log(`\n  ${chalk.green.dim('— All player terms unlocked. —')}`);
+  }
+  console.log('');
 }
 
 // ── Usage help ──────────────────────────────────────────────────────
@@ -4192,7 +4271,7 @@ function printHelp(): void {
   // ENCOUNTERS section. The flag is now hidden in commander's auto-help and
   // was a documented source of user confusion. The printHelp() banner should
   // not duplicate it.
-  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show ${PLAYER_GLOSSARY_TERMS.length} essential terms (use --full for all ${GLOSSARY_TERMS.length})\n  ccrpg profile show           See what the game has noticed about you\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --verbose                    Show additional encounter detail (feedback, drives, arc)\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Show holistic primitives (G_z/P_z, rayProfile)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n  --responses=1,2,3            Force specific option selections\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.ccrpg/config.json or MODEL env var\n  Saves:     ~/.ccrpg/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --encounters=5             # headless session\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg profile show                          # see your synthesized insights\n  ccrpg diagnostic                            # system diagnostics\n`);
+  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show essential + unlocked terms\n  ccrpg profile show           See what the game has noticed about you\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Developer mode (enables --verbose, shows metrics)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.ccrpg/config.json or MODEL env var\n  Saves:     ~/.ccrpg/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --encounters=5             # headless session\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg profile show                          # see your synthesized insights\n  ccrpg diagnostic                            # system diagnostics\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────

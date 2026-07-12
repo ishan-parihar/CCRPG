@@ -554,3 +554,48 @@ export function migrateLegacySave(): string | null {
     return name;
   } catch { return null; }
 }
+
+// ── P2-U5: Progressive vocabulary unlock ──────────────────────────────
+
+/**
+ * P2-U5 (Fresh-User UX Re-Audit): Load the set of Tier 2 glossary terms
+ * the player has unlocked by encountering them in play. Stored as a simple
+ * JSON array in unlocked-terms.json. Returns empty array if no profile
+ * or no file.
+ */
+export function loadUnlockedTerms(profileDir: string | null): readonly string[] {
+  if (!profileDir) return [];
+  try {
+    const filePath = path.join(profileDir, 'unlocked-terms.json');
+    const data = JSON.parse(fs.readFileSync(filePath, 'utf8'));
+    if (Array.isArray(data.terms)) return data.terms as string[];
+    return [];
+  } catch { return []; }
+}
+
+/**
+ * P2-U5: Save the updated set of unlocked terms. Creates the file if it
+ * doesn't exist. Called after each encounter when new terms are unlocked.
+ */
+export function saveUnlockedTerms(profileDir: string | null, terms: readonly string[]): void {
+  if (!profileDir) return;
+  try {
+    const filePath = path.join(profileDir, 'unlocked-terms.json');
+    fs.writeFileSync(filePath, JSON.stringify({ terms, updatedAt: new Date().toISOString() }, null, 2), 'utf8');
+  } catch { /* best-effort — don't break encounter flow */ }
+}
+
+/**
+ * P2-U5: Add newly unlocked terms to the profile and return the list of
+ * terms that were newly unlocked (for the CLI to display a notification).
+ * If no new terms, returns empty array and does not write.
+ */
+export function addUnlockedTerms(profileDir: string | null, newTerms: readonly string[]): readonly string[] {
+  if (!profileDir || newTerms.length === 0) return [];
+  const existing = loadUnlockedTerms(profileDir);
+  const trulyNew = newTerms.filter(t => !existing.includes(t));
+  if (trulyNew.length === 0) return [];
+  const updated = [...existing, ...trulyNew];
+  saveUnlockedTerms(profileDir, updated);
+  return trulyNew;
+}
