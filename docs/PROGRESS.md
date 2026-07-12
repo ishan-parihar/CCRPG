@@ -86,6 +86,17 @@ changes that are out of scope for this iteration).**
 - 0a115ba — feat(P1-U3): catalyst mode LLM prompts — push back on intellectualizing
 - 3b5d64b — chore(P3-Y1+Y2): cut dead weight — 36 TTF files + 9 usecase files
 - e5da3e5 — feat(P2-R3): glossary testimonials replace clinical definitions
+- fdc649b — fix(P2-Y5): pre-play status also uses qualitative format
+- 584a5f1 — feat(P2-U5): progressive vocabulary unlock — terms unlock through play
+- f41d091 — feat(NEXT-2): session runtime expectation-setting
+- 414173a — feat(NEXT-3): deeper catalyst mode triggers — reference player's specific patterns
+- 2778d81 — feat(NEXT-4): felt-sense feedback between sessions — resonance shift surfacing
+
+### Next iteration (re-audit priorities) — ALL COMPLETE:
+- ✅ NEXT-1 (U5): Progressive vocabulary unlock — Tier 1 (always) + Tier 2 (unlock through play) + Advanced (--dev only)
+- ✅ NEXT-2: Session runtime expectation-setting — "Each encounter takes about 20 seconds..."
+- ✅ NEXT-3: Deeper catalyst mode triggers — LLM now references player's actual words and patterns
+- ✅ NEXT-4: Felt-sense feedback between sessions — resonance shift surfacing at session start
 
 ### GitLab push status:
 GitLab push fails with 403 (token may not have GitLab access or repo doesn't exist on GitLab).
