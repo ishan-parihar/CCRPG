@@ -2041,6 +2041,29 @@ async function runDirectQuestioningSession(
             }
           }
         }
+
+        // NEXT-4 (Fresh-User UX Re-Audit): Felt-sense feedback between sessions.
+        // Surface resonance shifts as a visible felt-sense change. The re-audit
+        // found the resonance line shifts (fortress-sharp → cathedral-ordered)
+        // but this is too subtle. Now we explicitly surface the shift at the
+        // next session's opening so the player can feel the change.
+        const identityPath = path.join(profileDir, 'identity.yaml');
+        if (fs.existsSync(identityPath)) {
+          const identityContent = fs.readFileSync(identityPath, 'utf8');
+          // Lightweight YAML parse for the resonance fields
+          const lastResMatch = identityContent.match(/^last_resonance:\s*(.+)$/m);
+          const prevResMatch = identityContent.match(/^previous_resonance:\s*(.+)$/m);
+          if (lastResMatch && prevResMatch) {
+            const lastRes = lastResMatch[1]!.trim().replace(/^["']|["']$/g, '');
+            const prevRes = prevResMatch[1]!.trim().replace(/^["']|["']$/g, '');
+            if (lastRes && prevRes && lastRes !== prevRes) {
+              console.log(`  ${chalk.dim('Something has shifted since last time:')}`);
+              console.log(`  ${chalk.dim('The resonance was:')} ${chalk.italic(prevRes)}`);
+              console.log(`  ${chalk.dim('The resonance is now:')} ${chalk.cyan.italic(lastRes)}`);
+              console.log(`  ${chalk.dim('Feel the difference. What moved?')}\n`);
+            }
+          }
+        }
       }
     } catch { /* best-effort — don't break session start */ }
   }
@@ -2509,6 +2532,8 @@ async function runDirectQuestioningSession(
         cci: 0.5,
         sessionEntry,
         shadows: currentSig.shadows.entries,
+        // NEXT-4: Store the resonance for felt-sense feedback between sessions
+        lastResonance: describePersonalResonance(currentSig),
       });
     } catch { /* best-effort — don't break session end */ }
 

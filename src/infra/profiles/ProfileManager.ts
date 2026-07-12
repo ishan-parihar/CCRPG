@@ -303,6 +303,7 @@ export function updateProfileAfterSession(profileName: string, updates: {
   sessionEntry?: Record<string, any>; narrativeInsight?: string;
   newShadow?: Record<string, any>; activeFocus?: string;
   shadows?: readonly any[]; // full shadow ledger from sig
+  lastResonance?: string; // NEXT-4: for felt-sense feedback between sessions
 }): void {
   const dir = path.join(PROFILES_DIR, profileName);
   if (!fs.existsSync(dir)) return;
@@ -314,6 +315,13 @@ export function updateProfileAfterSession(profileName: string, updates: {
   identity.total_sessions = updates.totalSessions;
   identity.total_encounters = updates.totalEncounters;
   identity.current_stage = updates.currentStage;
+  // NEXT-4 (Fresh-User UX Re-Audit): Store the resonance after each session
+  // so the next session can detect and surface resonance shifts as felt-sense
+  // feedback between sessions.
+  if (updates.lastResonance) {
+    identity.previous_resonance = identity.last_resonance ?? null;
+    identity.last_resonance = updates.lastResonance;
+  }
   if (identity.lifecycle === 'Onboarding') identity.lifecycle = 'Exploring';
   yamlWrite(path.join(dir, 'identity.yaml'), identity);
 
