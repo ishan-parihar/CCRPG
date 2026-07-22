@@ -24,7 +24,8 @@ import { DEFAULT_FORGETTING_PARAMS, depthOrdinal } from './types.js';
 export function computeRetention(curve: ForgettingCurve, now: number): number {
   const elapsed = now - curve.lastRetrievedAt;
   if (elapsed <= 0) return curve.retention;
-  return Math.max(0, Math.min(1, curve.retention * Math.exp(-elapsed / curve.halfLifeMs)));
+  // True half-life decay: retention drops to 50% after halfLifeMs
+  return Math.max(0, Math.min(1, curve.retention * Math.pow(2, -elapsed / curve.halfLifeMs)));
 }
 
 /** Compute retention from a ConceptState (uses stored half-life). */
