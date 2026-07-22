@@ -17,6 +17,8 @@ import { ALL_DRIVES } from '../../core/domain/Drive.js';
 import type { Drive } from '../../core/domain/Drive.js';
 import type { ShadowLedger, ShadowEntry } from '../../core/domain/ShadowLedger.js';
 import type { PolarityState } from '../../core/domain/PolarityCellVector.js';
+import type { KnowledgeState, ConceptState } from '../../core/curriculum/types.js';
+import { ALL_DEPTH_LEVELS } from '../../core/curriculum/types.js';
 
 const VALID_STAGES = new Set<string>(ALL_STAGES);
 const VALID_LINES = new Set<string>(ALL_LINES);
@@ -160,6 +162,42 @@ export function validateSignificator(input: unknown): Significator | null {
   const codexEntries = asArray(obj.codexEntries);
   const avoidedEncounters = asArray<string>(obj.avoidedEncounters).filter(isString);
 
+  // --- Knowledge (curriculum expansion) ---
+  let knowledge: KnowledgeState | undefined;
+  if (obj.knowledge && typeof obj.knowledge === 'object') {
+    const kRaw = asRecord(obj.knowledge);
+    // Reconstruct conceptStates Map from serialized object
+    const conceptStatesRaw = asRecord(kRaw.conceptStates);
+    const conceptStates = new Map<string, ConceptState>();
+    for (const [key, val] of Object.entries(conceptStatesRaw)) {
+      const cs = asRecord(val);
+      const depthLevel = (isString(cs.depthLevel) && ALL_DEPTH_LEVELS.includes(cs.depthLevel as any))
+        ? cs.depthLevel as ConceptState['depthLevel'] : 'absent';
+      conceptStates.set(key, {
+        depthLevel,
+        retention: isNumber(cs.retention) ? cs.retention : 1.0,
+        lastReviewedAt: isNumber(cs.lastReviewedAt) ? cs.lastReviewedAt : Date.now(),
+        reviewCount: isNumber(cs.reviewCount) ? cs.reviewCount : 0,
+        depthHistory: asArray(cs.depthHistory),
+        misconceptionFlags: asArray<string>(cs.misconceptionFlags).filter(isString),
+      });
+    }
+    // Reconstruct subjectProgress Map
+    const subjectProgressRaw = asRecord(kRaw.subjectProgress);
+    const subjectProgress = new Map<string, any>();
+    for (const [key, val] of Object.entries(subjectProgressRaw)) {
+      subjectProgress.set(key, val);
+    }
+    knowledge = {
+      conceptStates: conceptStates as ReadonlyMap<string, ConceptState>,
+      subjectProgress: subjectProgress as ReadonlyMap<string, any>,
+      studyHistory: asArray(kRaw.studyHistory),
+      learningProfile: (kRaw.learningProfile && typeof kRaw.learningProfile === 'object')
+        ? kRaw.learningProfile as KnowledgeState['learningProfile']
+        : { preferredModalities: [], metacognitionScore: 0.5, calibrationAccuracy: 0.5, transferCapacity: 0.5, studyEfficiency: 0.5 },
+    };
+  }
+
   const result: Significator = {
     id: obj.id,
     createdAt,
@@ -185,6 +223,7 @@ export function validateSignificator(input: unknown): Significator | null {
     totalSessions,
     avoidedEncounters,
     recentEncounters,
+    knowledge,
   };
 
   return result;
