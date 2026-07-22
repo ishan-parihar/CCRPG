@@ -1,0 +1,400 @@
+[
+  {
+    "id": "cs.foundations.logic",
+    "name": "Formal Logic",
+    "description": "The foundation of computational thinking: propositional and predicate logic, truth tables, logical operators, and proof techniques.",
+    "level": "concept",
+    "parentId": "cs.foundations",
+    "childIds": [],
+    "phases": {
+      "observation": {
+        "question": "What patterns of valid reasoning can you identify in everyday arguments?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify premises and conclusions in natural language statements"
+      },
+      "principle": {
+        "question": "What are the formal rules that make an argument logically valid regardless of its content?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain truth tables, logical operators (AND, OR, NOT, IMPLIES), and validity vs. soundness"
+      },
+      "application": {
+        "question": "How do you use logical operators to express complex conditions precisely?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can translate natural language into propositional logic and evaluate truth values"
+      },
+      "integration": {
+        "question": "Where does formal logic connect to other domains of reasoning?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can map logical structure to circuit design, database queries, and program control flow"
+      },
+      "creation": {
+        "question": "How can you construct a novel logical argument that withstands scrutiny?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can construct valid proofs using direct, contrapositive, and contradiction methods"
+      }
+    },
+    "isomorphisms": [
+      {
+        "pattern": "conditional branching based on truth values",
+        "targetConceptId": "cs.foundations.recursion",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "IF-THEN logic maps to base-case checking in recursion",
+        "limitations": "Recursion adds temporal depth (calls stack) that static logic does not"
+      }
+    ],
+    "prerequisites": [],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": ["Intrapersonal"],
+      "stageRange": { "min": "Amber", "max": "Orange" }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "absent",
+      "targetDepthRange": { "min": "memorized", "max": "evaluated" },
+      "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated"]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 86400000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Formal logic provides a rigorous framework for reasoning. Propositional logic deals with statements that are true or false, combined using operators like AND (∧), OR (∨), NOT (¬), and IMPLIES (→). A truth table exhaustively maps all possible truth values of compound expressions.",
+      "examples": ["IF it rains THEN the ground is wet (P → Q)", "The ground is NOT wet AND it is NOT raining (¬Q ∧ ¬P)", "It is raining OR it is cold (P ∨ Q)"],
+      "nonExamples": ["It might rain tomorrow (not a logical statement — probabilistic)", "Rain feels cold (subjective experience, not truth-functional)"],
+      "analogies": ["Logic gates in circuits mirror logical operators", "SQL WHERE clauses are applied propositional logic"],
+      "visuals": ["Truth table for P → Q showing the only false case: true antecedent, false consequent"],
+      "practiceProblems": [
+        { "id": "logic.p1", "problemText": "Construct a truth table for (P → Q) ∧ (Q → P). What is this equivalence called?", "targetDepth": "applied" },
+        { "id": "logic.p2", "problemText": "Translate into propositional logic: 'If I study and understand the material, then I will pass the exam.'", "targetDepth": "comprehended" }
+      ]
+    },
+    "misconceptions": [
+      {
+        "id": "logic.mc1",
+        "statement": "IF P THEN Q means P causes Q",
+        "whyItFeelsRight": "In everyday language, 'if-then' often implies causation",
+        "structuralReason": "Material conditional only constrains truth values, not causal relationships. P → Q is false only when P is true and Q is false.",
+        "diagnosticTaskId": "logic.mc1.diag"
+      }
+    ],
+    "depthRubric": {
+      "conceptId": "cs.foundations.logic",
+      "levels": {
+        "memorized": {
+          "evidence": "Can recall definitions of AND, OR, NOT, IMPLIES from memory",
+          "canDo": ["Name the logical operators", "Recall truth table structure"],
+          "cannotDo": ["Construct a truth table from scratch", "Evaluate complex expressions"],
+          "appropriateTasks": ["factual_recall"],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain WHY each operator works the way it does",
+          "canDo": ["Explain each operator's truth conditions", "Distinguish validity from soundness"],
+          "cannotDo": ["Apply logic to novel domains", "Identify logical fallacies in complex arguments"],
+          "appropriateTasks": ["concept_explanation", "analogy_mapping"],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can translate between natural language and formal logic",
+          "canDo": ["Translate sentences to propositional logic", "Evaluate compound expressions", "Use truth tables"],
+          "cannotDo": ["Analyze the structure of arguments for hidden assumptions", "Construct formal proofs"],
+          "appropriateTasks": ["application_problem"],
+          "threshold": 0.65
+        },
+        "analyzed": {
+          "evidence": "Can decompose complex arguments into logical components and identify fallacies",
+          "canDo": ["Identify hidden premises", "Detect common fallacies", "Map logical structure across domains"],
+          "cannotDo": ["Evaluate competing logical frameworks", "Create novel proof strategies"],
+          "appropriateTasks": ["case_study_analysis", "debate_position"],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can critically assess the limits of formal logic and choose appropriate frameworks",
+          "canDo": ["Compare formal vs. informal reasoning", "Evaluate when logic alone is insufficient", "Judge argument quality across contexts"],
+          "cannotDo": ["Synthesize new logical systems", "Integrate logic with embodied knowledge"],
+          "appropriateTasks": ["peer_review", "debate_position"],
+          "threshold": 0.9
+        },
+        "transformed": {
+          "evidence": "Logic has become a lens through which the student sees ALL reasoning — they automatically formalize claims, detect structural weakness, and build airtight arguments in any domain",
+          "canDo": ["Apply logical rigor to any field", "Teach logic to others", "Create novel formalizations"],
+          "cannotDo": [],
+          "appropriateTasks": ["peer_teaching", "creative_synthesis"],
+          "threshold": 0.95
+        }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "ScenarioChoice", "Deterministic"]
+  },
+  {
+    "id": "cs.foundations.sets",
+    "name": "Set Theory",
+    "description": "The mathematical foundation of data structures: sets, relations, functions, cardinality, and the algebra of collections.",
+    "level": "concept",
+    "parentId": "cs.foundations",
+    "childIds": [],
+    "phases": {
+      "observation": {
+        "question": "How do you naturally group and categorize things in your daily life?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify examples of sets, subsets, and membership in everyday contexts"
+      },
+      "principle": {
+        "question": "What are the formal operations that govern how collections interact?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can define union, intersection, difference, complement, and power set"
+      },
+      "application": {
+        "question": "How do you use set operations to solve real computational problems?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can solve problems involving Venn diagrams, counting, and set-builder notation"
+      },
+      "integration": {
+        "question": "How do sets connect to logic, databases, and type systems?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can map set operations to SQL JOINs, logical connectives, and type intersections"
+      },
+      "creation": {
+        "question": "How can you model a complex real-world system using set-theoretic structures?",
+        "assessmentType": "project_based",
+        "completionEvidence": "Student can formalize a domain model using sets, relations, and functions"
+      }
+    },
+    "isomorphisms": [
+      {
+        "pattern": "combining elements under well-defined rules",
+        "targetConceptId": "cs.foundations.logic",
+        "targetDomain": "Logic",
+        "mappingDescription": "Set operations (union, intersection) parallel logical connectives (OR, AND)",
+        "limitations": "Sets deal with membership; logic deals with truth values"
+      }
+    ],
+    "prerequisites": ["cs.foundations.logic"],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": ["Interpersonal"],
+      "stageRange": { "min": "Amber", "max": "Green" }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "memorized",
+      "targetDepthRange": { "min": "memorized", "max": "transformed" },
+      "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 86400000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "A set is a well-defined collection of distinct elements. Set theory provides the language for describing collections and their relationships. Core operations include union (A ∪ B), intersection (A ∩ B), difference (A \\ B), and complement (A'). Functions are special relations where each input maps to exactly one output.",
+      "examples": ["The set of even numbers: {2, 4, 6, 8, ...}", "Union of {1,2,3} and {2,3,4} = {1,2,3,4}", "A function f: ℕ → ℕ where f(n) = n²"],
+      "nonExamples": ["A list with duplicate elements (multiset, not a set)", "A vague collection like 'tall people' (not well-defined)"],
+      "analogies": ["SQL tables are finite sets of rows", "TypeScript union types (A | B) model set union", "Database INNER JOIN is set intersection"],
+      "visuals": ["Venn diagram showing A ∩ B and A ∪ B", "Mapping diagram of a function vs. a relation"],
+      "practiceProblems": [
+        { "id": "sets.p1", "problemText": "Given A = {1,2,3,4} and B = {3,4,5,6}, find A ∩ B, A ∪ B, and A \\ B.", "targetDepth": "memorized" },
+        { "id": "sets.p2", "problemText": "Explain why the power set of {1,2,3} has exactly 8 elements.", "targetDepth": "comprehended" }
+      ]
+    },
+    "misconceptions": [
+      {
+        "id": "sets.mc1",
+        "statement": "Sets can contain duplicate elements",
+        "whyItFeelsRight": "Lists and arrays allow duplicates, and we often think of collections that way",
+        "structuralReason": "By definition, a set contains each element exactly once. Duplicates collapse. This is what distinguishes sets from multisets or lists.",
+        "diagnosticTaskId": "sets.mc1.diag"
+      }
+    ],
+    "depthRubric": {
+      "conceptId": "cs.foundations.sets",
+      "levels": {
+        "memorized": {
+          "evidence": "Can recall definitions of set, union, intersection, difference",
+          "canDo": ["Name set operations", "Identify elements in a set"],
+          "cannotDo": ["Apply operations to solve problems", "Distinguish sets from other collections"],
+          "appropriateTasks": ["factual_recall"],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain how set operations work and why they matter",
+          "canDo": ["Explain each operation's semantics", "Draw Venn diagrams"],
+          "cannotDo": ["Solve complex counting problems", "Apply to abstract domains"],
+          "appropriateTasks": ["concept_explanation"],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can use set operations to solve concrete problems",
+          "canDo": ["Compute set expressions", "Translate word problems to set notation"],
+          "cannotDo": ["Analyze the structure of set systems", "Connect to other mathematical structures"],
+          "appropriateTasks": ["application_problem"],
+          "threshold": 0.65
+        },
+        "analyzed": {
+          "evidence": "Can decompose complex systems into set-theoretic components",
+          "canDo": ["Model databases using set theory", "Map set operations to logical connectives"],
+          "cannotDo": ["Evaluate competing formalizations", "Create novel set-based models"],
+          "appropriateTasks": ["case_study_analysis"],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can assess the appropriateness of set-theoretic models for different problems",
+          "canDo": ["Choose the right formalization", "Identify limits of set-based modeling"],
+          "cannotDo": ["Create new mathematical frameworks"],
+          "appropriateTasks": ["peer_review"],
+          "threshold": 0.9
+        },
+        "transformed": {
+          "evidence": "Set theory has become an intuitive lens — the student naturally thinks in terms of collections, relations, and mappings across all domains",
+          "canDo": ["Formalize any domain using sets", "Teach set theory", "Create novel algebraic structures"],
+          "cannotDo": [],
+          "appropriateTasks": ["peer_teaching", "creative_synthesis"],
+          "threshold": 0.95
+        }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ScenarioChoice"]
+  },
+  {
+    "id": "cs.foundations.recursion",
+    "name": "Recursion",
+    "description": "The self-referential heart of computation: recursive definitions, divide-and-conquer, and the relationship between recursion and induction.",
+    "level": "concept",
+    "parentId": "cs.foundations",
+    "childIds": [],
+    "phases": {
+      "observation": {
+        "question": "Where do you see self-similar patterns repeating in nature or daily life?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify examples of recursive structure (fractals, nested containers, family trees)"
+      },
+      "principle": {
+        "question": "What are the minimal components that make a recursive definition well-founded?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain base case, recursive case, and the necessity of termination"
+      },
+      "application": {
+        "question": "How do you decompose a problem into smaller instances of itself?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can write recursive functions and trace their execution through the call stack"
+      },
+      "integration": {
+        "question": "How does recursion connect to mathematical induction, trees, and self-reference?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can prove correctness via induction and map recursion to tree traversal"
+      },
+      "creation": {
+        "question": "How can you design a novel recursive solution that elegantly decomposes a complex problem?",
+        "assessmentType": "project_based",
+        "completionEvidence": "Student can design and implement a divide-and-conquer algorithm for a novel problem"
+      }
+    },
+    "isomorphisms": [
+      {
+        "pattern": "self-similar structure at different scales",
+        "targetConceptId": "cs.foundations.logic",
+        "targetDomain": "Logic",
+        "mappingDescription": "Recursive base cases parallel logical base truths; recursive cases parallel logical deduction chains",
+        "limitations": "Recursion adds execution order and stack depth; logic is timeless"
+      },
+      {
+        "pattern": "combining smaller instances into a whole",
+        "targetConceptId": "cs.foundations.sets",
+        "targetDomain": "Mathematics",
+        "mappingDescription": "Divide-and-conquer splits a set into subsets; union recombines results",
+        "limitations": "Sets are flat; recursion creates hierarchical structure"
+      }
+    ],
+    "prerequisites": ["cs.foundations.logic", "cs.foundations.sets"],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": ["Spiritual", "Intrapersonal"],
+      "stageRange": { "min": "Orange", "max": "Green" }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "memorized",
+      "targetDepthRange": { "min": "memorized", "max": "transformed" },
+      "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 86400000,
+      "halfLifeMultiplier": 2.0,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Recursion is a method where the solution depends on solutions to smaller instances of the same problem. A well-formed recursive function has a base case (termination condition) and a recursive case (calls itself with a smaller input). The call stack manages the chain of pending computations.",
+      "examples": ["Factorial: fact(0)=1, fact(n)=n*fact(n-1)", "Fibonacci: fib(0)=0, fib(1)=1, fib(n)=fib(n-1)+fib(n-2)", "Tree traversal: visit left, visit root, visit right"],
+      "nonExamples": ["An infinite loop without a base case (not recursion, just repetition)", "Iterative loops (recursion uses self-reference, iteration uses state mutation)"],
+      "analogies": ["Russian nesting dolls (matryoshka)", "A dictionary that defines words using other words — eventually you reach words you already know (base case)"],
+      "visuals": ["Call stack diagram showing nested calls unwinding", "Tree structure showing recursive decomposition"],
+      "practiceProblems": [
+        { "id": "rec.p1", "problemText": "Write a recursive function to compute the sum of a list. Identify the base case and recursive case.", "targetDepth": "applied" },
+        { "id": "rec.p2", "problemText": "Trace the execution of fib(5) showing all recursive calls. How many calls are made?", "targetDepth": "comprehended" }
+      ]
+    },
+    "misconceptions": [
+      {
+        "id": "rec.mc1",
+        "statement": "Recursion is always slower than iteration",
+        "whyItFeelsRight": "Function calls have overhead; loops don't",
+        "structuralReason": "While individual calls have overhead, recursive algorithms can have better time complexity (e.g., merge sort O(n log n) vs. naive O(n²)). Tail-call optimization eliminates overhead in many languages.",
+        "diagnosticTaskId": "rec.mc1.diag"
+      },
+      {
+        "id": "rec.mc2",
+        "statement": "You need to understand the entire call stack to write recursion",
+        "whyItFeelsRight": "Tracing recursive calls is mentally demanding",
+        "structuralReason": "The trust-the-protocol principle: if the recursive call works correctly for smaller inputs, and the base case is correct, the whole function is correct. You don't need to trace the full stack.",
+        "diagnosticTaskId": "rec.mc2.diag"
+      }
+    ],
+    "depthRubric": {
+      "conceptId": "cs.foundations.recursion",
+      "levels": {
+        "memorized": {
+          "evidence": "Can recall the definition of recursion and identify base/recursive cases in given code",
+          "canDo": ["Name the components of a recursive function", "Trace a simple recursive execution"],
+          "cannotDo": ["Write recursive functions from scratch", "Identify when recursion is appropriate"],
+          "appropriateTasks": ["factual_recall"],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain HOW recursion works (call stack, unwinding) and WHY it terminates",
+          "canDo": ["Explain the call stack mechanism", "Verify termination conditions", "Compare to iteration"],
+          "cannotDo": ["Design recursive solutions to novel problems", "Analyze time/space complexity"],
+          "appropriateTasks": ["concept_explanation", "analogy_mapping"],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can write correct recursive functions for standard problems",
+          "canDo": ["Implement factorial, Fibonacci, list operations", "Debug recursive code", "Use recursion on trees"],
+          "cannotDo": ["Optimize for efficiency", "Choose between recursive approaches"],
+          "appropriateTasks": ["application_problem"],
+          "threshold": 0.65
+        },
+        "analyzed": {
+          "evidence": "Can decompose complex problems into recursive sub-problems and analyze their properties",
+          "canDo": ["Design divide-and-conquer algorithms", "Analyze time/space complexity", "Map recursion to induction proofs"],
+          "cannotDo": ["Evaluate trade-offs between recursive approaches", "Create novel recursive data structures"],
+          "appropriateTasks": ["case_study_analysis", "research_question"],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can assess when recursion is the right tool and evaluate the quality of recursive designs",
+          "canDo": ["Choose between recursion and iteration", "Evaluate recursive algorithm efficiency", "Judge the elegance of recursive solutions"],
+          "cannotDo": ["Invent new recursive paradigms"],
+          "appropriateTasks": ["peer_review", "debate_position"],
+          "threshold": 0.9
+        },
+        "transformed": {
+          "evidence": "Recursive thinking has become natural — the student sees self-similar structure everywhere and instinctively decomposes problems hierarchically",
+          "canDo": ["Design novel recursive algorithms", "Teach recursion effectively", "See recursive structure in non-CS domains"],
+          "cannotDo": [],
+          "appropriateTasks": ["peer_teaching", "creative_synthesis"],
+          "threshold": 0.95
+        }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ImmersiveRPG"]
+  }
+]

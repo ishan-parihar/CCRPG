@@ -10,4 +10,5 @@ export { computeRetention, computeConceptRetention, updateAfterSuccess, updateAf
 export { classifyDepth, assessDualDepth, updateConceptState } from './DepthAssessment.js';
 export { CurriculumRegistry, getCurriculumRegistry, resetCurriculumRegistry } from './CurriculumRegistry.js';
 export { bridgeCurriculumToDevelopmental, bridgeDevelopmentalToCurriculum, computeCurriculumReviewSchedule, computeDepthProgressions, computeKnowledgeHealth } from './CurriculumBridge.js';
+export { lintHolon, lintRegistry } from './CurriculumLinter.js';
 export type { CurriculumBridgeResult, DevelopmentalNeed } from './CurriculumBridge.js';
