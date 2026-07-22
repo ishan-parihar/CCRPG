@@ -17,7 +17,7 @@ import type {
   DepthLevel,
   ForgettingCurve,
 } from './types.js';
-import { ALL_DEPTH_LEVELS, EMPTY_KNOWLEDGE_STATE } from './types.js';
+import { ALL_DEPTH_LEVELS } from './types.js';
 import { computeReviewCandidates, depthOrdinal } from './ForgettingCurve.js';
 
 // ---------------------------------------------------------------------------
@@ -43,9 +43,22 @@ export interface CurriculumBridgeResult {
  * This is the core integration function that connects curriculum
  * completion to the existing developmental engine.
  */
+const EMPTY_KS: KnowledgeState = {
+  conceptStates: new Map(),
+  subjectProgress: new Map(),
+  studyHistory: [],
+  learningProfile: {
+    preferredModalities: [],
+    metacognitionScore: 0.5,
+    calibrationAccuracy: 0.5,
+    transferCapacity: 0.5,
+    studyEfficiency: 0.5,
+  },
+};
+
 export function bridgeCurriculumToDevelopmental(
   result: DualDepthResult,
-  existingKnowledge: KnowledgeState = EMPTY_KNOWLEDGE_STATE,
+  existingKnowledge: KnowledgeState = EMPTY_KS,
 ): CurriculumBridgeResult {
   const now = result.timestamp;
   const depth = result.knowledgeDepth.level;

@@ -220,6 +220,8 @@ export const DEFAULT_FORGETTING_PARAMS: ForgettingParams = {
   maxHalfLifeMs: 365 * 24 * 60 * 60 * 1000, // 1 year
 };
 
+
+
 /** Developmental mapping for a curriculum holon. */
 export interface CurriculumDevMapping {
   readonly primaryLine: Line;
@@ -336,19 +338,7 @@ export interface KnowledgeState {
   readonly learningProfile: LearningProfile;
 }
 
-/** Default empty knowledge state. */
-export const EMPTY_KNOWLEDGE_STATE: KnowledgeState = {
-  conceptStates: new Map(),
-  subjectProgress: new Map(),
-  studyHistory: [],
-  learningProfile: {
-    preferredModalities: [],
-    metacognitionScore: 0.5,
-    calibrationAccuracy: 0.5,
-    transferCapacity: 0.5,
-    studyEfficiency: 0.5,
-  },
-};
+
 
 // ---------------------------------------------------------------------------
 // Dual-Depth Assessment Result (foundations/31)
@@ -394,58 +384,6 @@ export interface ForgettingCurve {
   readonly retrievalCount: number;
   readonly retention: number;
   readonly halfLifeMs: number;
-}
-
-/** Compute current retention from a forgetting curve state. */
-export function computeRetention(curve: ForgettingCurve, now: number): number {
-  const elapsed = now - curve.lastRetrievedAt;
-  if (elapsed <= 0) return curve.retention;
-  return Math.max(0, Math.min(1, curve.retention * Math.exp(-elapsed / curve.halfLifeMs)));
-}
-
-/** Update a forgetting curve after a retrieval attempt. */
-export function updateForgettingCurve(
-  curve: ForgettingCurve,
-  success: boolean,
-  now: number,
-  params: ForgettingParams = DEFAULT_FORGETTING_PARAMS,
-): ForgettingCurve {
-  if (success) {
-    const newHalfLife = Math.min(
-      curve.halfLifeMs * params.halfLifeMultiplier,
-      params.maxHalfLifeMs,
-    );
-    return {
-      ...curve,
-      lastRetrievedAt: now,
-      retrievalCount: curve.retrievalCount + 1,
-      retention: 1.0,
-      halfLifeMs: newHalfLife,
-    };
-  }
-  // Failed retrieval: reset to initial half-life
-  return {
-    ...curve,
-    lastRetrievedAt: now,
-    retention: Math.max(0.1, curve.retention * 0.5),
-    halfLifeMs: params.initialHalfLifeMs,
-  };
-}
-
-/** Create a new forgetting curve for a freshly-learned concept. */
-export function createForgettingCurve(
-  conceptId: string,
-  now: number,
-  params: ForgettingParams = DEFAULT_FORGETTING_PARAMS,
-): ForgettingCurve {
-  return {
-    conceptId,
-    firstLearnedAt: now,
-    lastRetrievedAt: now,
-    retrievalCount: 0,
-    retention: 1.0,
-    halfLifeMs: params.initialHalfLifeMs,
-  };
 }
 
 // ---------------------------------------------------------------------------

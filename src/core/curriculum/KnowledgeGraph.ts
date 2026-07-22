@@ -9,11 +9,6 @@
  * Pure functions: graph in, results out. No side effects.
  */
 import type { CurriculumHolon, DepthLevel } from './types.js';
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
-const DEPTH_ORDER_FOR_GRAPH: readonly DepthLevel[] = [
-  'absent', 'memorized', 'comprehended', 'applied',
-  'analyzed', 'evaluated', 'transformed',
-];
 
 // ---------------------------------------------------------------------------
 // Types
@@ -243,7 +238,7 @@ export function findReadyConcepts(
 ): readonly string[] {
   const ready: string[] = [];
 
-  for (const [concept, _deps] of adjacency) {
+  for (const [concept] of adjacency) {
     if (conceptDepths.has(concept)) continue; // Already encountered
 
     const prereqs = allPrerequisites(concept, adjacency);
@@ -264,6 +259,4 @@ export function findReadyConcepts(
 // Helpers
 // ---------------------------------------------------------------------------
 
-function depthOrdinal(level: DepthLevel): number {
-  return DEPTH_ORDER_FOR_GRAPH.indexOf(level);
-}
+import { depthOrdinal } from './types.js';
