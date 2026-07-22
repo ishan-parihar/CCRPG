@@ -18,6 +18,9 @@ import { EncounterRegistry } from '../registries/index.js';
 import { maybeFireHook } from './hooks.js';
 // WIRE-3: Import computeContactBoundaryPermeability to update sig field
 import { computeContactBoundaryPermeability } from './GreaterCycleEngine.js';
+// Curriculum expansion: update knowledge state on curriculum encounter completion.
+import type { ConceptState, KnowledgeState } from '../curriculum/types.js';
+import { ALL_DEPTH_LEVELS, depthOrdinal } from '../curriculum/types.js';
 
 export interface PlayerResponse {
   readonly encounterId: string;
@@ -255,6 +258,8 @@ export function applyConsequences(
       rayProfile: newRayProfile as Significator['rayProfile'],
       totalEncounters: sig.totalEncounters + 1,
     }),
+    // Curriculum expansion: update knowledge state on curriculum encounter completion.
+    knowledge: updateKnowledgeFromEncounter(sig, encounter, allDrivesHealthy, record.timestamp),
   };
 
   // 6. Update NPC Relationships and recentEncounterIds
@@ -433,4 +438,116 @@ function lookupCodexEntry(encounter: ScheduledEncounter): string | null {
   }
 
   return null;
+}
+
+// ---------------------------------------------------------------------------
+// Curriculum knowledge state update
+// ---------------------------------------------------------------------------
+
+/**
+ * Update knowledge state after any encounter.
+ * For curriculum encounters (identified by curriculumConceptId), updates the
+ * concept's depth level and retention based on whether the player passed.
+ * For non-curriculum encounters, returns the existing knowledge unchanged.
+ */
+function updateKnowledgeFromEncounter(
+  sig: Significator,
+  encounter: ScheduledEncounter,
+  passed: boolean,
+  now: number,
+): KnowledgeState | undefined {
+  // Only update for curriculum encounters
+  const conceptId = encounter.curriculumConceptId;
+  if (!conceptId) return sig.knowledge;
+
+  const knowledge = sig.knowledge ?? {
+    conceptStates: new Map<string, ConceptState>(),
+    subjectProgress: new Map(),
+    studyHistory: [],
+    learningProfile: {
+      preferredModalities: [],
+      metacognitionScore: 0.5,
+      calibrationAccuracy: 0.5,
+      transferCapacity: 0.5,
+      studyEfficiency: 0.5,
+    },
+  };
+
+  const existingConcept = knowledge.conceptStates.get(conceptId);
+  const action = encounter.curriculumAction ?? (existingConcept ? 'deepen' : 'new_material');
+  const prevDepth = existingConcept?.depthLevel ?? 'absent';
+  const prevRetention = existingConcept?.retention ?? 0;
+
+  // Determine new depth level based on curriculum action and outcome.
+  // Each action has a distinct target depth:
+  //   new_material → memorize (first encounter)
+  //   review      → keep current depth, boost retention on pass
+  //   deepen      → advance one level on pass
+  //   connect     → keep current depth, boost integration
+  let newDepthLevel: ConceptState['depthLevel'] = prevDepth;
+  let newRetention: number;
+
+  switch (action) {
+    case 'new_material':
+      newDepthLevel = passed ? 'memorized' : 'absent';
+      newRetention = passed ? 1.0 : prevRetention;
+      break;
+    case 'review':
+      // Keep current depth; retention boosted on pass, decayed on failure
+      newRetention = passed
+        ? Math.min(1, prevRetention + 0.3) // Spaced-repetition boost
+        : Math.max(0.1, prevRetention * 0.7);
+      break;
+    case 'deepen':
+      if (passed) {
+        const currentOrdinal = depthOrdinal(prevDepth);
+        const maxOrdinal = ALL_DEPTH_LEVELS.length - 1;
+        newDepthLevel = currentOrdinal < maxOrdinal
+          ? ALL_DEPTH_LEVELS[currentOrdinal + 1]!
+          : prevDepth;
+      }
+      newRetention = passed ? 1.0 : Math.max(0.1, prevRetention * 0.7);
+      break;
+    case 'connect':
+      // Keep current depth and retention; integration is implicit
+      newDepthLevel = prevDepth;
+      newRetention = prevRetention;
+      break;
+    default:
+      newRetention = passed ? 1.0 : Math.max(0.1, prevRetention * 0.7);
+  }
+
+  const newConceptState: ConceptState = {
+    depthLevel: newDepthLevel,
+    retention: newRetention,
+    lastReviewedAt: now,
+    reviewCount: (existingConcept?.reviewCount ?? 0) + 1,
+    depthHistory: [
+      ...(existingConcept?.depthHistory ?? []),
+      { level: newDepthLevel, timestamp: now, evidence: `Encounter ${encounter.id} — ${action} — ${passed ? 'passed' : 'failed'}` },
+    ],
+    misconceptionFlags: existingConcept?.misconceptionFlags ?? [],
+  };
+
+  const newConceptStates = new Map(knowledge.conceptStates);
+  newConceptStates.set(conceptId, newConceptState);
+
+  // Cap studyHistory to bound memory (keep last 200 entries)
+  const newStudyHistory = [
+    ...knowledge.studyHistory,
+    {
+      conceptId,
+      depthAchieved: newDepthLevel,
+      modality: encounter.modality,
+      timestamp: now,
+      retentionBefore: prevRetention,
+      retentionAfter: newRetention,
+    },
+  ].slice(-200);
+
+  return {
+    ...knowledge,
+    conceptStates: newConceptStates as ReadonlyMap<string, ConceptState>,
+    studyHistory: newStudyHistory,
+  };
 }
