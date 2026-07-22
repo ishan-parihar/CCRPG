@@ -418,7 +418,17 @@ export function generateCurriculumCandidates(
           continue;
         }
         // Never encountered — rank by prerequisite readiness
-        const prereqsMet = holon.prerequisites.every(p => encountered.has(p));
+        // P-A: Also check that prerequisites are at the required depth level,
+        // not just that they've been encountered. This prevents scheduling
+        // advanced material before foundational mastery.
+        const prereqsMet = holon.prerequisites.every(p => {
+          if (!encountered.has(p)) return false;
+          const prereqCs = knowledge.conceptStates.get(p);
+          if (!prereqCs) return false;
+          const prereqHolon = registry.get(p);
+          const requiredDepth = prereqHolon?.depthMeta.requiredPrerequisiteDepth ?? 'memorized';
+          return depthOrdinal(prereqCs.depthLevel) >= depthOrdinal(requiredDepth);
+        });
         unmastered.push({ id: holon.id, depth: prereqsMet ? -1 : -2 });
       }
 

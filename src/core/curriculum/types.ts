@@ -285,6 +285,9 @@ export interface CurriculumHolon {
 
   /** Which modalities can deliver this content */
   readonly supportedModalities: readonly Modality[];
+
+  /** Version of this holon (for curriculum versioning). */
+  readonly version?: string;
 }
 
 // ---------------------------------------------------------------------------

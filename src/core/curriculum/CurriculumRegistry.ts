@@ -42,6 +42,17 @@ export class CurriculumRegistry {
     return this.byLevel.get(level) ?? [];
   }
 
+  /** Get all holons whose parentId matches the given ID. */
+  getByParent(parentId: string): readonly CurriculumHolon[] {
+    const result: CurriculumHolon[] = [];
+    for (const holon of this.modules.values()) {
+      if (holon.parentId === parentId) {
+        result.push(holon);
+      }
+    }
+    return result;
+  }
+
   getPrerequisites(conceptId: string): readonly CurriculumHolon[] {
     const module = this.modules.get(conceptId);
     if (!module) return [];

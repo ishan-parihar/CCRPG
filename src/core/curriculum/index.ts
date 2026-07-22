@@ -12,4 +12,6 @@ export { CurriculumRegistry, getCurriculumRegistry, resetCurriculumRegistry, isR
 export { bridgeCurriculumToDevelopmental, bridgeDevelopmentalToCurriculum, computeCurriculumReviewSchedule, computeDepthProgressions, computeKnowledgeHealth } from './CurriculumBridge.js';
 export { lintHolon, lintRegistry } from './CurriculumLinter.js';
 export { seedCurriculumRegistry } from './CurriculumSeed.js';
+export { computeLearningAnalytics } from './LearningAnalytics.js';
+export type { LearningAnalyticsReport, StudyEfficiency, LearningVelocity, ModalityEffectiveness, OptimalReviewInterval } from './LearningAnalytics.js';
 export type { CurriculumBridgeResult, DevelopmentalNeed } from './CurriculumBridge.js';
