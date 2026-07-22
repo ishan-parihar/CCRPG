@@ -20,4 +20,12 @@ export interface ScheduledEncounter {
   readonly executionMode: ModuleExecutionMode;
   /** Codex entry text unlocked upon completing this encounter. */
   readonly codexEntry?: string;
+  /**
+   * Curriculum expansion: when present, this is a curriculum encounter
+   * (knowledge study) rather than a developmental encounter (assessment).
+   * The conceptId identifies which curriculum holon is being studied.
+   */
+  readonly curriculumConceptId?: string;
+  /** Curriculum action: review, deepen, new_material, or connect. */
+  readonly curriculumAction?: 'review' | 'deepen' | 'new_material' | 'connect';
 }

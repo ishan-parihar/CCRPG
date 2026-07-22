@@ -34,9 +34,15 @@ import {
 } from './engines/UserMatrixModel.js';
 import { maybeFireHook } from './engines/hooks.js';
 import { stageOrdinal } from './domain/Stage.js';
-// Curriculum expansion: session-end retention decay for knowledge state.
+import type { Line } from './domain/Line.js';
+import type { Stage } from './domain/Stage.js';
+import type { Modality } from './domain/enums.js';
+// Curriculum expansion: session-end retention decay and curriculum scheduling.
 import { DEFAULT_FORGETTING_PARAMS } from './curriculum/types.js';
-import type { ConceptState } from './curriculum/types.js';
+import type { ConceptState, StudyTheme } from './curriculum/types.js';
+import { generateCurriculumCandidates, type CurriculumCandidate } from './engines/CandidateGeneration.js';
+import { getCurriculumRegistry } from './curriculum/CurriculumRegistry.js';
+
 
 export interface TickResult {
   readonly encounter: ScheduledEncounter | null;
@@ -171,6 +177,11 @@ export interface SessionState {
   readonly userMatrixModel: UserMatrixModel;
   /** Wave 3.4: Explicit session start time for accurate shadow-counting. */
   readonly sessionStartMs?: number;
+  /**
+   * Curriculum expansion: number of curriculum encounters consumed this session.
+   * Used to enforce the curriculum slot budget from AutoModeStrategy.
+   */
+  readonly curriculumEncountersThisSession?: number;
 }
 
 /**
@@ -304,6 +315,19 @@ export function tickWithStrategy(
     // when the cadence triggers (every 3 encounters at current stage).
     scheduled = scheduleNextWithHolonicReturn(updatedSig, updatedWorld, session, now, 5, biasedWeights, bleedThrough, undefined, sessionState.userMatrixModel, sessionState.encountersSinceRefresh);
   }
+  // 5. Curriculum expansion: generate curriculum encounters and interleave them.
+  let curriculumEncountersConsumed = sessionState.curriculumEncountersThisSession ?? 0;
+  const curriculumEncounters = generateCurriculumEncounters(
+    updatedSig, sessionState, session, now,
+  );
+  // Interleave: take up to 1 curriculum encounter per scheduling tick,
+  // placed after the first developmental encounter if slots remain.
+  if (curriculumEncounters.length > 0 && scheduled.length > 0) {
+    const curriculumEnc = curriculumEncounters[0]!;
+    scheduled = [scheduled[0]!, curriculumEnc, ...scheduled.slice(1)].slice(0, 5);
+    curriculumEncountersConsumed++;
+  }
+
   const encounter = scheduled[0] ?? null;
 
   // 6. Check transformation threshold and advance state machine.
@@ -463,6 +487,7 @@ export function tickWithStrategy(
     encountersSinceRefresh,
     transformationState: updatedTransformationState,
     userMatrixModel: updatedUserMatrix,
+    curriculumEncountersThisSession: curriculumEncountersConsumed,
   };
 
   return { tickResult, sessionState: newSessionState };
@@ -527,6 +552,92 @@ function estimateResponseQuality(response: PlayerResponse): number {
   else if (response.narrativeSummary.length > 50) quality += 0.05;
 
   return Math.min(1.0, quality);
+}
+
+// ---------------------------------------------------------------------------
+// Curriculum encounter scheduling
+// ---------------------------------------------------------------------------
+
+/**
+ * Convert a CurriculumCandidate into a ScheduledEncounter.
+ * This bridges the curriculum system (pure knowledge study) into the
+ * encounter scheduling pipeline (developmental assessment).
+ */
+function curriculumCandidateToEncounter(
+  candidate: CurriculumCandidate,
+  studyTheme: StudyTheme,
+  sessionPosition: 'warmup' | 'peak' | 'cooldown',
+  now: number,
+): ScheduledEncounter {
+  // Map study theme to modality
+  const themeModality: Record<StudyTheme, string> = {
+    review_decay: 'LanguageReflective',
+    depth_push: 'ScenarioChoice',
+    new_material: 'LanguageReflective',
+    cross_domain: 'ScenarioChoice',
+    misconception_repair: 'LanguageReflective',
+    integration_sprint: 'ImmersiveRPG',
+  };
+  // Look up the holon in the registry for devMapping (line, stage).
+  const registry = getCurriculumRegistry();
+  const holon = registry.get(candidate.conceptId);
+  const primaryLine = (holon?.devMapping.primaryLine ?? 'Cognitive') as Line;
+  const stageMin = (holon?.devMapping.stageRange.min ?? 'Red') as Stage;
+  return {
+    id: `curriculum:${candidate.conceptId}:${now}`,
+    moduleRef: `curriculum:${candidate.conceptId}`,
+    modality: (themeModality[studyTheme] ?? 'LanguageReflective') as Modality,
+    targetLines: [primaryLine],
+    stage: stageMin,
+    holonSource: candidate.conceptId,
+    shadowTarget: null,
+    polarityMode: 'Exploring',
+    difficulty: 0.5,
+    sessionPosition,
+    priority: candidate.priority,
+    driveTarget: null,
+    executionMode: 'capacity',
+    curriculumConceptId: candidate.conceptId,
+    curriculumAction: candidate.action,
+  };
+}
+
+/**
+ * Generate curriculum encounters for the current session.
+ * Returns curriculum encounters interleaved with developmental encounters,
+ * respecting the session's curriculum slot budget.
+ */
+export function generateCurriculumEncounters(
+  sig: Significator,
+  sessionState: SessionState,
+  session: SessionContext,
+  now: number,
+): readonly ScheduledEncounter[] {
+  const kh = sessionState.cci.knowledgeHealth;
+  if (!kh || (kh.conceptCoverage === 0 && kh.averageDepth === 0)) return [];
+
+  const studyTheme = sessionState.strategy.studyTheme;
+  const maxSlots = sessionState.strategy.curriculumSlots ?? 0;
+  const consumed = sessionState.curriculumEncountersThisSession ?? 0;
+  const remaining = Math.max(0, maxSlots - consumed);
+  if (remaining <= 0 || !studyTheme) return [];
+
+  const registry = getCurriculumRegistry();
+  const candidates = generateCurriculumCandidates(
+    sig.knowledge,
+    studyTheme,
+    remaining,
+    registry,
+  );
+
+  if (candidates.length === 0) return [];
+
+  // Convert to ScheduledEncounters
+  const progress = session.encountersSoFar / Math.max(1, session.targetSessionLength);
+  const position: 'warmup' | 'peak' | 'cooldown' =
+    progress < 0.2 ? 'warmup' : progress > 0.8 ? 'cooldown' : 'peak';
+
+  return candidates.map(c => curriculumCandidateToEncounter(c, studyTheme, position, now));
 }
 
 /**
