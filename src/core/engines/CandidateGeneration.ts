@@ -324,6 +324,7 @@ export function createModuleTaskTypesProvider(
 // ---------------------------------------------------------------------------
 
 import type { KnowledgeState, StudyTheme, CurriculumRecommendation } from '../curriculum/types.js';
+import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD } from '../curriculum/ForgettingCurve.js';
 
 // Reuse CurriculumRecommendation from curriculum/types.ts — no duplicate interface.
 export type CurriculumCandidate = CurriculumRecommendation;
@@ -352,8 +353,7 @@ export function generateCurriculumCandidates(
     case 'review_decay': {
       // Find concepts with low retention that need review (no forgetting curve needed —
       // ConceptState.retention is the canonical source; ForgettingCurve enriches when available)
-      const REVIEW_THRESHOLD = 0.7;
-      const CRITICAL_THRESHOLD = 0.3;
+      // Use shared constants from ForgettingCurve to prevent drift
       for (const [conceptId, cs] of knowledge.conceptStates) {
         if (candidates.length >= maxSlots) break;
         if (cs.retention < REVIEW_THRESHOLD) {

@@ -96,10 +96,10 @@ export function createCurve(
 // ---------------------------------------------------------------------------
 
 /** Threshold below which a concept needs review. */
-const REVIEW_THRESHOLD = 0.7;
+export const REVIEW_THRESHOLD = 0.7;
 
 /** Threshold below which a concept is critically decayed. */
-const CRITICAL_THRESHOLD = 0.3;
+export const CRITICAL_THRESHOLD = 0.3;
 
 /** Compute review candidates from a set of concept states and curves. */
 export function computeReviewCandidates(

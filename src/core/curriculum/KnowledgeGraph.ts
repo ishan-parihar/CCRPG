@@ -114,12 +114,9 @@ export function topologicalSort(
   const inDegree = new Map<string, number>();
   const result: string[] = [];
 
-  // Count in-degrees
+  // Count in-degrees: each node's in-degree = number of its prerequisites
   for (const [node, deps] of adjacency) {
-    if (!inDegree.has(node)) inDegree.set(node, 0);
-    for (const dep of deps) {
-      inDegree.set(dep, (inDegree.get(dep) ?? 0) + 1);
-    }
+    inDegree.set(node, deps.length);
   }
 
   // Seed queue with nodes that have no prerequisites
@@ -192,34 +189,34 @@ export function detectGaps(
 // Learning Path
 // ---------------------------------------------------------------------------
 
-/** Find the shortest learning path between two concepts. */
+/** Find the shortest learning path between two concepts (downstream via dependents). */
 export function learningPath(
   from: string,
   to: string,
-  adjacency: ReadonlyMap<string, readonly string[]>,
+  reverseAdjacency: ReadonlyMap<string, readonly string[]>,
 ): readonly string[] {
-  // Forward BFS from `from` to `to`
-  const visited2 = new Map<string, string>();
-  const queue2 = [from];
-  visited2.set(from, '');
+  // BFS over dependents (downstream) — the learning path from one concept to another
+  const visited = new Map<string, string>();
+  const queue = [from];
+  visited.set(from, '');
 
-  while (queue2.length > 0) {
-    const current = queue2.shift()!;
+  while (queue.length > 0) {
+    const current = queue.shift()!;
     if (current === to) {
       const path: string[] = [];
       let node: string | undefined = current;
       while (node !== undefined && node !== '') {
         path.unshift(node);
-        node = visited2.get(node);
+        node = visited.get(node);
       }
       return path;
     }
 
-    const deps = adjacency.get(current) ?? [];
-    for (const dep of deps) {
-      if (!visited2.has(dep)) {
-        visited2.set(dep, current);
-        queue2.push(dep);
+    const neighbors = reverseAdjacency.get(current) ?? [];
+    for (const neighbor of neighbors) {
+      if (!visited.has(neighbor)) {
+        visited.set(neighbor, current);
+        queue.push(neighbor);
       }
     }
   }
