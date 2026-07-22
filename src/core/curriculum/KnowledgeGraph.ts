@@ -9,6 +9,7 @@
  * Pure functions: graph in, results out. No side effects.
  */
 import type { CurriculumHolon, DepthLevel } from './types.js';
+import { depthOrdinal } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -255,8 +256,4 @@ export function findReadyConcepts(
   return ready;
 }
 
-// ---------------------------------------------------------------------------
-// Helpers
-// ---------------------------------------------------------------------------
 
-import { depthOrdinal } from './types.js';

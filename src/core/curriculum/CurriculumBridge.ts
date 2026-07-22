@@ -17,8 +17,8 @@ import type {
   DepthLevel,
   ForgettingCurve,
 } from './types.js';
-import { ALL_DEPTH_LEVELS } from './types.js';
-import { computeReviewCandidates, depthOrdinal } from './ForgettingCurve.js';
+import { ALL_DEPTH_LEVELS, depthOrdinal } from './types.js';
+import { computeReviewCandidates } from './ForgettingCurve.js';
 
 // ---------------------------------------------------------------------------
 // Curriculum → Developmental Signal
@@ -43,22 +43,24 @@ export interface CurriculumBridgeResult {
  * This is the core integration function that connects curriculum
  * completion to the existing developmental engine.
  */
-const EMPTY_KS: KnowledgeState = {
-  conceptStates: new Map(),
-  subjectProgress: new Map(),
-  studyHistory: [],
-  learningProfile: {
-    preferredModalities: [],
-    metacognitionScore: 0.5,
-    calibrationAccuracy: 0.5,
-    transferCapacity: 0.5,
-    studyEfficiency: 0.5,
-  },
-};
+function emptyKS(): KnowledgeState {
+  return {
+    conceptStates: new Map(),
+    subjectProgress: new Map(),
+    studyHistory: [],
+    learningProfile: {
+      preferredModalities: [],
+      metacognitionScore: 0.5,
+      calibrationAccuracy: 0.5,
+      transferCapacity: 0.5,
+      studyEfficiency: 0.5,
+    },
+  };
+}
 
 export function bridgeCurriculumToDevelopmental(
   result: DualDepthResult,
-  existingKnowledge: KnowledgeState = EMPTY_KS,
+  existingKnowledge: KnowledgeState = emptyKS(),
 ): CurriculumBridgeResult {
   const now = result.timestamp;
   const depth = result.knowledgeDepth.level;
@@ -304,7 +306,6 @@ function updateConceptFromResult(
 }
 
 function inferPrimaryLine(result: DualDepthResult): string {
-  // Infer from drive scores — the strongest drive suggests the primary line
   const drives = result.developmentalSignal.driveScores;
   let maxDrive = 'Agency';
   let maxValue = 0;
@@ -314,7 +315,7 @@ function inferPrimaryLine(result: DualDepthResult): string {
       maxDrive = drive;
     }
   }
-  // Map drive back to a default line (simplified)
+  // Canonical drive→line mapping (mirrors src/core/domain/Drive.ts LINE_DRIVE inverse)
   const driveToLine: Record<string, string> = {
     Agency: 'Cognitive',
     Communion: 'Interpersonal',

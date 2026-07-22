@@ -14,7 +14,7 @@ import type {
   DepthLevel,
   ReviewCandidate,
 } from './types.js';
-import { DEFAULT_FORGETTING_PARAMS } from './types.js';
+import { DEFAULT_FORGETTING_PARAMS, depthOrdinal } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Retention Computation
@@ -142,21 +142,13 @@ export function computeReviewCandidates(
 // Depth Progression
 // ---------------------------------------------------------------------------
 
-const DEPTH_ORDER: readonly DepthLevel[] = [
-  'absent', 'memorized', 'comprehended', 'applied',
-  'analyzed', 'evaluated', 'transformed',
-];
+import { ALL_DEPTH_LEVELS } from './types.js';
 
 /** Get the next depth level for review escalation. */
 export function nextDepthLevel(current: DepthLevel): DepthLevel {
-  const idx = DEPTH_ORDER.indexOf(current);
-  if (idx < 0 || idx >= DEPTH_ORDER.length - 1) return current;
-  return DEPTH_ORDER[idx + 1];
-}
-
-/** Get the depth level ordinal. */
-export function depthOrdinal(level: DepthLevel): number {
-  return DEPTH_ORDER.indexOf(level);
+  const idx = depthOrdinal(current);
+  if (idx < 0 || idx >= ALL_DEPTH_LEVELS.length - 1) return current;
+  return ALL_DEPTH_LEVELS[idx + 1];
 }
 
 // ---------------------------------------------------------------------------
