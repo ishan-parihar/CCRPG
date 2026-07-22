@@ -202,6 +202,15 @@
       </Stack>
 
       <Stack gap="space-3">
+        <h2 class="section-title">Knowledge</h2>
+        <a href="/knowledge" class="knowledge-link">
+          <Card padding="space-4">
+            <span class="link-text">View Knowledge Dashboard →</span>
+          </Card>
+        </a>
+      </Stack>
+
+      <Stack gap="space-3">
         <h2 class="section-title">Capacities</h2>
         <Card padding="space-0">
           <ul class="line-list" role="list">
@@ -278,5 +287,26 @@
     color: var(--ccrpg-fg-muted);
     font-style: italic;
     text-align: right;
+  }
+
+  .knowledge-link {
+    text-decoration: none;
+    display: block;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  .knowledge-link:hover {
+    transform: translateY(-2px);
+  }
+
+  .knowledge-link:hover :global(.card) {
+    box-shadow: 0 4px 12px var(--ccrpg-shadow-md);
+  }
+
+  .link-text {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-sm);
+    color: var(--ccrpg-accent);
+    font-weight: 500;
   }
 </style>

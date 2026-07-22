@@ -23,6 +23,7 @@ import { stageOrdinal } from '../domain/Stage.js';
 import { computeMetabolicHealth } from './GreaterCycleEngine.js';
 // Curriculum expansion: import knowledge health computation from CurriculumBridge.
 import { computeKnowledgeHealth } from '../curriculum/CurriculumBridge.js';
+import { getCurriculumRegistry } from '../curriculum/CurriculumRegistry.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -735,8 +736,11 @@ export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): 
 
   let knowledgeHealthValue = 0;
   let knowledgeHealthMetrics: CCIScore['knowledgeHealth'];
-  if (sig?.knowledge && sig.knowledge.conceptStates.size > 0) {
-    const kh = computeKnowledgeHealth(sig.knowledge, sig.knowledge.conceptStates.size);
+  const registryCount = getCurriculumRegistry().count();
+  if (sig?.knowledge && sig.knowledge.conceptStates.size > 0 && registryCount > 0) {
+    // Use the curriculum registry's total count for conceptCoverage calculation.
+    // Previously this used conceptStates.size which made coverage always 1.0.
+    const kh = computeKnowledgeHealth(sig.knowledge, registryCount);
     const composite = (kh.conceptCoverage * KH_COVERAGE_W + kh.averageDepth * KH_DEPTH_W +
       kh.retentionHealth * KH_RETENTION_W + kh.integrationDensity * KH_INTEGRATION_W +
       (1 - kh.misconceptionLoad) * KH_MISCONCEPTION_W);

@@ -7,6 +7,7 @@
  */
 import type { CurriculumHolon } from './types.js';
 import { getCurriculumRegistry, isRegistrySeeded, markSeeded } from './CurriculumRegistry.js';
+import { lintRegistry } from './CurriculumLinter.js';
 
 // Import seed data modules
 import csFoundations from './data/cs.foundations.json';
@@ -33,6 +34,21 @@ export function seedCurriculumRegistry(): number {
     for (const holon of module.data) {
       registry.register(holon);
       total++;
+    }
+  }
+
+  // Run linter on the seeded registry to catch structural/pedagogical issues
+  // at startup rather than at runtime.
+  const lintResult = lintRegistry(registry);
+  if (!lintResult.overallPassed) {
+    console.warn(`[CurriculumSeed] Lint errors in seeded data (${lintResult.totalErrors} errors, ${lintResult.totalWarnings} warnings):`);
+    for (const issue of lintResult.graphIssues) {
+      console.warn(`  [${issue.severity}] ${issue.message}`);
+    }
+    for (const report of lintResult.holonReports) {
+      for (const err of report.errors) {
+        console.warn(`  [${err.checkId}] ${err.location}: ${err.message}`);
+      }
     }
   }
 
