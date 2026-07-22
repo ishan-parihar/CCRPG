@@ -324,7 +324,7 @@ export function createModuleTaskTypesProvider(
 // ---------------------------------------------------------------------------
 
 import type { KnowledgeState, StudyTheme, CurriculumRecommendation } from '../curriculum/types.js';
-import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD } from '../curriculum/ForgettingCurve.js';
+import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD } from '../curriculum/types.js';
 
 // Reuse CurriculumRecommendation from curriculum/types.ts — no duplicate interface.
 export type CurriculumCandidate = CurriculumRecommendation;

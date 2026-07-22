@@ -455,3 +455,13 @@ export interface CurriculumRecommendation {
   readonly priority: number;
   readonly targetDepth: DepthLevel;
 }
+
+// ---------------------------------------------------------------------------
+// Review Scheduling Constants (foundations/29, 34)
+// ---------------------------------------------------------------------------
+
+/** Threshold below which a concept needs review. */
+export const REVIEW_THRESHOLD = 0.7;
+
+/** Threshold below which a concept is critically decayed. */
+export const CRITICAL_THRESHOLD = 0.3;

@@ -14,7 +14,7 @@ import type {
   DepthLevel,
   ReviewCandidate,
 } from './types.js';
-import { DEFAULT_FORGETTING_PARAMS, depthOrdinal } from './types.js';
+import { DEFAULT_FORGETTING_PARAMS, depthOrdinal, ALL_DEPTH_LEVELS, REVIEW_THRESHOLD, CRITICAL_THRESHOLD } from './types.js';
 
 // ---------------------------------------------------------------------------
 // Retention Computation
@@ -95,12 +95,6 @@ export function createCurve(
 // Review Scheduling
 // ---------------------------------------------------------------------------
 
-/** Threshold below which a concept needs review. */
-export const REVIEW_THRESHOLD = 0.7;
-
-/** Threshold below which a concept is critically decayed. */
-export const CRITICAL_THRESHOLD = 0.3;
-
 /** Compute review candidates from a set of concept states and curves. */
 export function computeReviewCandidates(
   concepts: ReadonlyMap<string, ConceptState>,
@@ -142,8 +136,6 @@ export function computeReviewCandidates(
 // ---------------------------------------------------------------------------
 // Depth Progression
 // ---------------------------------------------------------------------------
-
-import { ALL_DEPTH_LEVELS } from './types.js';
 
 /** Get the next depth level for review escalation. */
 export function nextDepthLevel(current: DepthLevel): DepthLevel {
