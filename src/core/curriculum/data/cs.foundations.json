@@ -1,5 +1,39 @@
 [
   {
+    "id": "cs.foundations",
+    "name": "Computer Science Foundations",
+    "description": "The foundational concepts of computational thinking: formal logic, set theory, and recursion — the bedrock upon which all CS is built.",
+    "level": "branch",
+    "parentId": null,
+    "childIds": ["cs.foundations.logic", "cs.foundations.sets", "cs.foundations.recursion"],
+    "phases": {
+      "observation": { "question": "What computational patterns do you notice in the world around you?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify computational thinking in everyday situations" },
+      "principle": { "question": "What are the core abstractions that unify all of computer science?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain how logic, sets, and recursion form the foundation" },
+      "application": { "question": "How do these foundations apply to real software systems?", "assessmentType": "application_problem", "completionEvidence": "Student can identify foundational concepts in software artifacts" },
+      "integration": { "question": "How do these foundations connect to each other and to other disciplines?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map relationships between foundational concepts" },
+      "creation": { "question": "How can you combine these foundations to solve novel problems?", "assessmentType": "project_based", "completionEvidence": "Student can integrate multiple foundational concepts in a solution" }
+    },
+    "isomorphisms": [],
+    "prerequisites": [],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Amber", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 86400000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Computer science foundations encompass the core abstractions that make computation possible. Logic provides the language of valid reasoning. Set theory provides the mathematics of collections and relationships. Recursion provides the mechanism of self-referential decomposition. Together, they form the bedrock upon which algorithms, data structures, programming languages, and systems are built.", "examples": ["Logic gates implement propositional logic in hardware", "Databases store and query sets of records", "Compilers use recursion to parse nested syntax"], "nonExamples": ["User interface design (applied, not foundational)", "Network protocols (systems built on foundations)"], "analogies": ["Foundations are to CS what grammar is to language — invisible when working, obvious when broken"], "visuals": ["Map showing how logic → sets → recursion interconnect"], "practiceProblems": [{ "id": "csf.p1", "problemText": "Identify at least one example of logic, sets, and recursion in a web browser.", "targetDepth": "comprehended" }] },
+    "misconceptions": [],
+    "depthRubric": {
+      "conceptId": "cs.foundations",
+      "levels": {
+        "memorized": { "evidence": "Can name the three foundational areas", "canDo": ["Identify logic, sets, recursion as foundations"], "cannotDo": ["Explain how they interconnect"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how each foundation contributes to CS", "canDo": ["Describe the role of each foundation"], "cannotDo": ["Map cross-foundational relationships"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can identify foundational concepts in real software", "canDo": ["Locate logic, sets, recursion in code"], "cannotDo": ["Analyze foundational choices in system design"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can decompose systems into foundational components", "canDo": ["Map software to foundational abstractions"], "cannotDo": ["Evaluate foundational trade-offs"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can assess when foundational approaches are appropriate", "canDo": ["Choose foundational tools for problems"], "cannotDo": ["Create novel foundational frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Foundational thinking is instinctive — the student sees logic, sets, and recursion everywhere", "canDo": ["Teach foundations", "Create novel abstractions"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "ScenarioChoice", "Deterministic"]
+  },
+  {
     "id": "cs.foundations.logic",
     "name": "Formal Logic",
     "description": "The foundation of computational thinking: propositional and predicate logic, truth tables, logical operators, and proof techniques.",

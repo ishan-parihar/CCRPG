@@ -11,10 +11,12 @@ import { lintRegistry } from './CurriculumLinter.js';
 
 // Import seed data modules
 import csFoundations from './data/cs.foundations.json';
+import mathFoundations from './data/math.foundations.json';
 
 /** All seed data modules. Each entry is an array of CurriculumHolon objects. */
 const SEED_MODULES: readonly { name: string; data: CurriculumHolon[] }[] = [
   { name: 'cs.foundations', data: csFoundations as unknown as CurriculumHolon[] },
+  { name: 'math.foundations', data: mathFoundations as unknown as CurriculumHolon[] },
 ];
 
 /**
