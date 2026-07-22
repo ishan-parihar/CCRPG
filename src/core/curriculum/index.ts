@@ -11,4 +11,5 @@ export { classifyDepth, assessDualDepth, updateConceptState } from './DepthAsses
 export { CurriculumRegistry, getCurriculumRegistry, resetCurriculumRegistry } from './CurriculumRegistry.js';
 export { bridgeCurriculumToDevelopmental, bridgeDevelopmentalToCurriculum, computeCurriculumReviewSchedule, computeDepthProgressions, computeKnowledgeHealth } from './CurriculumBridge.js';
 export { lintHolon, lintRegistry } from './CurriculumLinter.js';
+export { seedCurriculumRegistry } from './CurriculumSeed.js';
 export type { CurriculumBridgeResult, DevelopmentalNeed } from './CurriculumBridge.js';

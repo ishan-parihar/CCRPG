@@ -106,4 +106,18 @@ export function getCurriculumRegistry(): CurriculumRegistry {
 /** Reset the singleton (for testing). */
 export function resetCurriculumRegistry(): void {
   _instance = null;
+  // Also reset the seed flag so re-seeding works after registry reset.
+  _seeded = false;
+}
+
+let _seeded = false;
+
+/** Mark as seeded (called by CurriculumSeed). */
+export function markSeeded(): void {
+  _seeded = true;
+}
+
+/** Check if the registry has been seeded. */
+export function isRegistrySeeded(): boolean {
+  return _seeded;
 }

@@ -42,6 +42,7 @@ import { DEFAULT_FORGETTING_PARAMS } from './curriculum/types.js';
 import type { ConceptState, StudyTheme } from './curriculum/types.js';
 import { generateCurriculumCandidates, type CurriculumCandidate } from './engines/CandidateGeneration.js';
 import { getCurriculumRegistry } from './curriculum/CurriculumRegistry.js';
+import { seedCurriculumRegistry } from './curriculum/CurriculumSeed.js';
 
 
 export interface TickResult {
@@ -194,6 +195,10 @@ export interface SessionState {
  * when they last exited, they resume mid-crucible instead of resetting to idle.
  */
 export function startSession(sig: Significator, session: SessionContext): SessionState {
+  // Curriculum expansion: seed the registry with curriculum data if not already done.
+  // This is idempotent — safe to call on every session start.
+  seedCurriculumRegistry();
+
   const snapshot = toSnapshot(sig);
   // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
   const cci = computeCCI(snapshot, sig);
