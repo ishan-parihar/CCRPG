@@ -90,7 +90,7 @@ export function computeLearningAnalytics(
   const now = Date.now();
 
   const studyEfficiency = computeStudyEfficiency(knowledge, now);
-  const velocity = computeLearningVelocity(knowledge, now);
+  const velocity = computeLearningVelocity(knowledge);
   const modalityEffectiveness = computeModalityEffectiveness(knowledge);
   const reviewIntervals = computeOptimalReviewIntervals(knowledge, now);
 
@@ -146,7 +146,6 @@ function computeStudyEfficiency(
 
 function computeLearningVelocity(
   knowledge: KnowledgeState,
-  _now: number,
 ): LearningVelocity {
   const events = knowledge.studyHistory;
   if (events.length === 0) {

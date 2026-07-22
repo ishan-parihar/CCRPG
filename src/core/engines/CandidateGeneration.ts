@@ -381,10 +381,23 @@ export function generateCurriculumCandidates(
     }
 
     case 'depth_push': {
-      // Find concepts at lower depth that should be pushed deeper
+      // Find concepts at lower depth that should be pushed deeper.
+      // P-A: Also enforce prerequisite depth — a concept can't be deepened
+      // if its prerequisites haven't reached the required depth.
+      if (!registry) break;
       for (const [conceptId, cs] of knowledge.conceptStates) {
         if (candidates.length >= maxSlots) break;
         if (cs.retention > 0.5) {
+          const holon = registry.get(conceptId);
+          if (!holon) continue;
+          const prereqsMet = holon.prerequisites.every(p => {
+            const prereqCs = knowledge.conceptStates.get(p);
+            if (!prereqCs) return false;
+            const prereqHolon = registry.get(p);
+            const requiredDepth = prereqHolon?.depthMeta.requiredPrerequisiteDepth ?? 'memorized';
+            return depthOrdinal(prereqCs.depthLevel) >= depthOrdinal(requiredDepth);
+          });
+          if (!prereqsMet) continue;
           candidates.push({
             conceptId,
             action: 'deepen',
