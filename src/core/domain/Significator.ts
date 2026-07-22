@@ -191,5 +191,19 @@ export function createSignificator(
     greatWayDirection: null,
     greatWayPressure: 0,
     contactBoundaryPermeability: 0.5, // DEV-4: default Goldilocks zone
+    // Curriculum expansion: empty knowledge state — backward-compatible with existing saves.
+    // The knowledge field is populated when curriculum data is loaded.
+    knowledge: {
+      conceptStates: new Map(),
+      subjectProgress: new Map(),
+      studyHistory: [],
+      learningProfile: {
+        preferredModalities: [],
+        metacognitionScore: 0.5,
+        calibrationAccuracy: 0.5,
+        transferCapacity: 0.5,
+        studyEfficiency: 0.5,
+      },
+    },
   };
 }

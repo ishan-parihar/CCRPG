@@ -21,6 +21,8 @@ import { stageOrdinal } from '../domain/Stage.js';
 // P1-15: Import GreaterCycleEngine.computeMetabolicHealth so CCI can delegate
 // G_z/P_z computation to the canonical source instead of duplicating the formula.
 import { computeMetabolicHealth } from './GreaterCycleEngine.js';
+// Curriculum expansion: import knowledge health computation from CurriculumBridge.
+import { computeKnowledgeHealth } from '../curriculum/CurriculumBridge.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -719,9 +721,37 @@ export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): 
   // 3. Adjust weights based on state
   const weights = adjustWeights(DEFAULT_CCI_WEIGHTS, inputs);
 
-  // 4. Compute weighted composite (knowledgeHealth defaults to 0 when not provided)
-  // TODO: wire in real KnowledgeState from sig.knowledge when curriculum data is populated
-  const knowledgeHealthValue = 0; // Default when no curriculum data available
+  // 4. Compute weighted composite.
+  // Knowledge health: computed from player's KnowledgeState when curriculum data
+  // exists; defaults to 0 when no concepts have been encountered (backward compat).
+  // Sub-dimension weights: coverage/depth/retention share equal weight (0.25 each);
+  // integration (0.15) reflects transfer capacity; misconception penalty (0.10)
+  // reduces health proportionally to flagged misconceptions.
+  const KH_COVERAGE_W = 0.25;
+  const KH_DEPTH_W = 0.25;
+  const KH_RETENTION_W = 0.25;
+  const KH_INTEGRATION_W = 0.15;
+  const KH_MISCONCEPTION_W = 0.10;
+
+  let knowledgeHealthValue = 0;
+  let knowledgeHealthMetrics: CCIScore['knowledgeHealth'];
+  if (sig?.knowledge && sig.knowledge.conceptStates.size > 0) {
+    const kh = computeKnowledgeHealth(sig.knowledge, sig.knowledge.conceptStates.size);
+    const composite = (kh.conceptCoverage * KH_COVERAGE_W + kh.averageDepth * KH_DEPTH_W +
+      kh.retentionHealth * KH_RETENTION_W + kh.integrationDensity * KH_INTEGRATION_W +
+      (1 - kh.misconceptionLoad) * KH_MISCONCEPTION_W);
+    knowledgeHealthValue = clamp(composite);
+    knowledgeHealthMetrics = { ...kh, composite: knowledgeHealthValue };
+  } else {
+    knowledgeHealthMetrics = {
+      conceptCoverage: 0,
+      averageDepth: 0,
+      retentionHealth: 0,
+      integrationDensity: 0,
+      misconceptionLoad: 0,
+      composite: 0,
+    };
+  }
   const composite = clamp(
     dimensions.altitude * weights.altitude +
     dimensions.driveHealth * weights.driveHealth +
@@ -738,7 +768,7 @@ export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): 
     { key: 'polarity', value: dimensions.polarity * weights.polarity },
     { key: 'shadowTopology', value: dimensions.shadowTopology * weights.shadowTopology },
     { key: 'transformationReadiness', value: dimensions.transformationReadiness * weights.transformationReadiness },
-    // NOTE: knowledgeHealth excluded from dominantDimension until real curriculum data is wired in
+    { key: 'knowledgeHealth', value: knowledgeHealthValue * weights.knowledgeHealth },
   ];
   contributions.sort((a, b) => b.value - a.value);
   const dominantDimension = contributions[0].key;
@@ -834,14 +864,7 @@ export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): 
     dominantDimension,
     sessionSignals,
     metabolicHealth: { gz, pz, total, interpretation, liminalitySignature },
-    knowledgeHealth: {
-      conceptCoverage: 0,
-      averageDepth: 0,
-      retentionHealth: 0,
-      integrationDensity: 0,
-      misconceptionLoad: 0,
-      composite: 0,
-    },
+    knowledgeHealth: knowledgeHealthMetrics,
   };
 }
 

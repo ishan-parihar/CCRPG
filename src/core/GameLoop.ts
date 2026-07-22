@@ -34,6 +34,9 @@ import {
 } from './engines/UserMatrixModel.js';
 import { maybeFireHook } from './engines/hooks.js';
 import { stageOrdinal } from './domain/Stage.js';
+// Curriculum expansion: session-end retention decay for knowledge state.
+import { DEFAULT_FORGETTING_PARAMS } from './curriculum/types.js';
+import type { ConceptState } from './curriculum/types.js';
 
 export interface TickResult {
   readonly encounter: ScheduledEncounter | null;
@@ -656,13 +659,39 @@ export function endSession(
     }
   }
 
+  // Curriculum expansion: apply retention decay to all known concepts at session end.
+  // ConceptState stores lastReviewedAt but not the forgetting curve parameters
+  // (halfLifeMs is on the separate ForgettingCurve). We compute basic decay using
+  // a default half-life (24h) elapsed since lastReviewedAt. This ensures the
+  // Significator's knowledge state reflects current retention when persisted,
+  // so CCI computes accurate knowledgeHealth at next session start.
+  let finalSig = updatedSig;
+  const knowledge = updatedSig.knowledge;
+  if (knowledge && knowledge.conceptStates.size > 0) {
+    const decayedConcepts = new Map<string, ConceptState>();
+    for (const [key, concept] of knowledge.conceptStates) {
+      const elapsed = now - concept.lastReviewedAt;
+      const decayedRetention = elapsed > 0
+        ? Math.max(0, Math.min(1, concept.retention * Math.pow(2, -elapsed / DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs)))
+        : concept.retention;
+      decayedConcepts.set(key, { ...concept, retention: decayedRetention });
+    }
+    finalSig = {
+      ...updatedSig,
+      knowledge: {
+        ...knowledge,
+        conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState>,
+      },
+    };
+  }
+
   // Hook 4: onSessionEnd — fire fire-and-forget for the sync path.
   // Callers that need to await the hook (e.g. CLI --agent before stopTDGBridge)
   // should use endSessionAsync() instead, which awaits the hook before returning.
-  maybeFireHook('onSessionEnd', (h) => h.onSessionEnd(updatedSig));
+  maybeFireHook('onSessionEnd', (h) => h.onSessionEnd(finalSig));
 
   return {
-    sig: updatedSig,
+    sig: finalSig,
     ...(updatedWorld !== world ? { world: updatedWorld } : {}),
     summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced },
     // P2-Critical: harvest check result (null unless player is at White stage)

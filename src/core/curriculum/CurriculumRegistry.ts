@@ -83,3 +83,27 @@ export class CurriculumRegistry {
     return [...this.modules.keys()];
   }
 }
+
+// ---------------------------------------------------------------------------
+// Singleton instance
+// ---------------------------------------------------------------------------
+
+/**
+ * Global curriculum registry instance.
+ * Populated at startup from curriculum data files (JSON).
+ * Parallel to the ModuleRegistry singleton for developmental assessments.
+ */
+let _instance: CurriculumRegistry | null = null;
+
+/** Get or create the global CurriculumRegistry singleton. */
+export function getCurriculumRegistry(): CurriculumRegistry {
+  if (!_instance) {
+    _instance = new CurriculumRegistry();
+  }
+  return _instance;
+}
+
+/** Reset the singleton (for testing). */
+export function resetCurriculumRegistry(): void {
+  _instance = null;
+}
