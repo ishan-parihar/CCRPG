@@ -324,7 +324,8 @@ export function createModuleTaskTypesProvider(
 // ---------------------------------------------------------------------------
 
 import type { KnowledgeState, StudyTheme, CurriculumRecommendation } from '../curriculum/types.js';
-import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD } from '../curriculum/types.js';
+import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD, depthOrdinal } from '../curriculum/types.js';
+import type { CurriculumRegistry } from '../curriculum/CurriculumRegistry.js';
 
 // Reuse CurriculumRecommendation from curriculum/types.ts — no duplicate interface.
 export type CurriculumCandidate = CurriculumRecommendation;
@@ -336,12 +337,14 @@ export type CurriculumCandidate = CurriculumRecommendation;
  * @param knowledge - The player's current KnowledgeState from the Significator
  * @param studyTheme - The active study theme from AutoModeStrategy
  * @param maxSlots - Maximum number of curriculum encounters to generate
+ * @param registry - Optional CurriculumRegistry for discovering new material
  * @returns Array of CurriculumCandidate ranked by priority (descending)
  */
 export function generateCurriculumCandidates(
   knowledge: KnowledgeState | undefined,
   studyTheme: StudyTheme | undefined,
   maxSlots: number,
+  registry?: CurriculumRegistry,
 ): readonly CurriculumCandidate[] {
   if (!knowledge || maxSlots <= 0 || !studyTheme) return [];
 
@@ -396,8 +399,51 @@ export function generateCurriculumCandidates(
     }
 
     case 'new_material': {
-      // TODO: wire in CurriculumRegistry to discover unmastered concepts
-      // For now, return empty — no phantom candidates
+      // Discover unmastered concepts from the CurriculumRegistry.
+      // Filter: concept not in knowledge.conceptStates OR at 'absent' depth.
+      // Prefer concepts whose prerequisites are already mastered.
+      if (!registry) break;
+
+      const encountered = new Set(knowledge.conceptStates.keys());
+      const unmastered: { id: string; depth: number }[] = [];
+
+      for (const holon of registry.getAll()) {
+        if (candidates.length >= maxSlots) break;
+        if (encountered.has(holon.id)) {
+          // Already encountered — check if it needs depth advancement
+          const cs = knowledge.conceptStates.get(holon.id);
+          if (cs && depthOrdinal(cs.depthLevel) < depthOrdinal(holon.depthMeta.targetDepthRange.max)) {
+            unmastered.push({ id: holon.id, depth: depthOrdinal(cs.depthLevel) });
+          }
+          continue;
+        }
+        // Never encountered — rank by prerequisite readiness
+        const prereqsMet = holon.prerequisites.every(p => encountered.has(p));
+        unmastered.push({ id: holon.id, depth: prereqsMet ? -1 : -2 });
+      }
+
+      // Sort: prereqs-met (depth=-1) before prereqs-not-met (depth=-2), then by lowest current depth
+      unmastered.sort((a, b) => b.depth - a.depth);
+
+      for (const { id } of unmastered) {
+        if (candidates.length >= maxSlots) break;
+        const holon = registry.get(id);
+        if (!holon) continue;
+        const prereqsMet = holon.prerequisites.every(p => encountered.has(p));
+        const cs = knowledge.conceptStates.get(id);
+        const currentDepth = cs?.depthLevel ?? 'absent';
+
+        candidates.push({
+          conceptId: id,
+          action: cs ? 'deepen' : 'new_material',
+          priority: prereqsMet ? 0.7 : 0.4,
+          estimatedMinutes: 15,
+          rationale: cs
+            ? `At ${currentDepth} depth — advance toward ${holon.depthMeta.targetDepthRange.max}`
+            : `New concept — prerequisites ${prereqsMet ? 'met' : 'not yet met'}`,
+          targetDepth: holon.depthMeta.targetDepthRange.min,
+        });
+      }
       break;
     }
 

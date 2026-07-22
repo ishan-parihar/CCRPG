@@ -8,6 +8,9 @@ import { selectStudyTheme, computeCurriculumSlots } from '../../src/core/engines
 import { generateCurriculumCandidates } from '../../src/core/engines/CandidateGeneration.js';
 import type { CCIScore } from '../../src/core/engines/CCIEngine.js';
 import type { KnowledgeState } from '../../src/core/curriculum/types.js';
+import type { SessionContext } from '../../src/core/engines/PriorityComputation.js';
+import { CurriculumRegistry } from '../../src/core/curriculum/CurriculumRegistry.js';
+import type { CurriculumHolon } from '../../src/core/curriculum/types.js';
 
 // ---------------------------------------------------------------------------
 // Fixtures
@@ -79,6 +82,63 @@ function makeKnowledgeState(overrides: Partial<KnowledgeState> = {}): KnowledgeS
     },
     ...overrides,
   };
+}
+
+function makeSession(overrides: Partial<SessionContext> = {}): SessionContext {
+  return {
+    encountersSoFar: 0,
+    sessionDurationMs: 0,
+    targetSessionLength: 10,
+    recentLines: [],
+    ...overrides,
+  };
+}
+
+function makeHolon(id: string, prerequisites: readonly string[] = []): CurriculumHolon {
+  return {
+    id,
+    name: id.split('.').pop() ?? id,
+    description: `Test concept ${id}`,
+    level: 'concept' as const,
+    parentId: null,
+    childIds: [],
+    phases: {
+      observation: { question: 'q', assessmentType: 'factual_recall', completionEvidence: 'e' },
+      principle: { question: 'q', assessmentType: 'concept_explanation', completionEvidence: 'e' },
+      application: { question: 'q', assessmentType: 'application_problem', completionEvidence: 'e' },
+      integration: { question: 'q', assessmentType: 'analogy_mapping', completionEvidence: 'e' },
+      creation: { question: 'q', assessmentType: 'creative_synthesis', completionEvidence: 'e' },
+    },
+    isomorphisms: [],
+    prerequisites,
+    devMapping: { primaryLine: 'Cognitive' as const, secondaryLines: [], stageRange: { min: 'Red' as const, max: 'Red' as const } },
+    depthMeta: {
+      requiredPrerequisiteDepth: 'memorized' as const,
+      targetDepthRange: { min: 'memorized' as const, max: 'applied' as const },
+      depthProgression: ['memorized', 'comprehended', 'applied'] as const,
+    },
+    forgettingParams: { initialHalfLifeMs: 86400000, halfLifeMultiplier: 2.5, maxHalfLifeMs: 31536000000 },
+    content: { explanation: '', examples: [], nonExamples: [], analogies: [], visuals: [], practiceProblems: [] },
+    misconceptions: [],
+    depthRubric: {
+      conceptId: id,
+      levels: {
+        memorized: { evidence: '', canDo: [], cannotDo: [], appropriateTasks: [], threshold: 0.3 },
+        comprehended: { evidence: '', canDo: [], cannotDo: [], appropriateTasks: [], threshold: 0.5 },
+        applied: { evidence: '', canDo: [], cannotDo: [], appropriateTasks: [], threshold: 0.7 },
+        analyzed: { evidence: '', canDo: [], cannotDo: [], appropriateTasks: [], threshold: 0.8 },
+        evaluated: { evidence: '', canDo: [], cannotDo: [], appropriateTasks: [], threshold: 0.9 },
+        transformed: { evidence: '', canDo: [], cannotDo: [], appropriateTasks: [], threshold: 0.95 },
+      },
+    },
+    supportedModalities: ['LanguageReflective'] as const,
+  };
+}
+
+function makeRegistry(holons: CurriculumHolon[]): CurriculumRegistry {
+  const reg = new CurriculumRegistry();
+  for (const h of holons) reg.register(h);
+  return reg;
 }
 
 // ---------------------------------------------------------------------------
@@ -156,17 +216,17 @@ describe('computeCurriculumSlots', () => {
   it('returns 0 when knowledgeHealth is absent', () => {
     const cci = makeCCI();
     delete (cci as any).knowledgeHealth;
-    expect(computeCurriculumSlots({ targetSessionLength: 10 } as any, cci)).toBe(0);
+    expect(computeCurriculumSlots(makeSession(), cci)).toBe(0);
   });
 
   it('returns 0 when conceptCoverage is 0', () => {
     const cci = makeCCI({ conceptCoverage: 0 });
-    expect(computeCurriculumSlots({ targetSessionLength: 10 } as any, cci)).toBe(0);
+    expect(computeCurriculumSlots(makeSession(), cci)).toBe(0);
   });
 
   it('returns at least 1 slot when conceptCoverage > 0', () => {
     const cci = makeCCI({ conceptCoverage: 0.5, composite: 0.5 });
-    const slots = computeCurriculumSlots({ targetSessionLength: 10 } as any, cci);
+    const slots = computeCurriculumSlots(makeSession(), cci);
     expect(slots).toBeGreaterThanOrEqual(1);
     expect(slots).toBeLessThanOrEqual(3);
   });
@@ -174,14 +234,14 @@ describe('computeCurriculumSlots', () => {
   it('scales slots with knowledge health composite', () => {
     const lowCCI = makeCCI({ conceptCoverage: 0.5, composite: 0.2 });
     const highCCI = makeCCI({ conceptCoverage: 0.5, composite: 0.9 });
-    const lowSlots = computeCurriculumSlots({ targetSessionLength: 10 } as any, lowCCI);
-    const highSlots = computeCurriculumSlots({ targetSessionLength: 10 } as any, highCCI);
+    const lowSlots = computeCurriculumSlots(makeSession(), lowCCI);
+    const highSlots = computeCurriculumSlots(makeSession(), highCCI);
     expect(highSlots).toBeGreaterThanOrEqual(lowSlots);
   });
 
   it('caps at 3 slots maximum', () => {
     const cci = makeCCI({ conceptCoverage: 0.9, composite: 1.0 });
-    const slots = computeCurriculumSlots({ targetSessionLength: 100 } as any, cci);
+    const slots = computeCurriculumSlots(makeSession({ targetSessionLength: 100 }), cci);
     expect(slots).toBeLessThanOrEqual(3);
   });
 });
@@ -236,9 +296,49 @@ describe('generateCurriculumCandidates', () => {
     expect(candidates).toHaveLength(0);
   });
 
-  it('returns empty for new_material theme (not yet wired)', () => {
+  it('returns empty for new_material when no registry provided', () => {
     const candidates = generateCurriculumCandidates(makeKnowledgeState(), 'new_material', 5);
     expect(candidates).toHaveLength(0);
+  });
+
+  it('discovers unmastered concepts from registry for new_material', () => {
+    const registry = makeRegistry([
+      makeHolon('math.algebra'),
+      makeHolon('math.geometry', ['math.algebra']),
+      makeHolon('math.calculus', ['math.algebra', 'math.geometry']),
+      makeHolon('math.topology', ['math.calculus']),
+    ]);
+    const candidates = generateCurriculumCandidates(makeKnowledgeState(), 'new_material', 5, registry);
+    // math.algebra is already in knowledge (comprehended) — should get deepen candidate
+    // math.geometry is in knowledge (memorized) — should get deepen candidate
+    // math.calculus is in knowledge (analyzed) — should get deepen candidate
+    // math.topology is NOT in knowledge — should get new_material candidate (prereqs not met)
+    expect(candidates.length).toBeGreaterThanOrEqual(1);
+    // Candidates should be sorted by priority descending
+    for (let i = 1; i < candidates.length; i++) {
+      expect(candidates[i - 1].priority).toBeGreaterThanOrEqual(candidates[i].priority);
+    }
+  });
+
+  it('prioritizes concepts with met prerequisites in new_material', () => {
+    const registry = makeRegistry([
+      makeHolon('math.algebra'),
+      makeHolon('math.geometry', ['math.algebra']),
+    ]);
+    const knowledge = makeKnowledgeState({
+      conceptStates: new Map([
+        ['math.algebra', { depthLevel: 'memorized', retention: 0.9, lastReviewedAt: Date.now(), reviewCount: 1, depthHistory: [], misconceptionFlags: [] }],
+      ]),
+    });
+    const candidates = generateCurriculumCandidates(knowledge, 'new_material', 5, registry);
+    // math.algebra is mastered (memorized) — deepen candidate
+    // math.geometry has prereq met — new_material candidate with higher priority
+    expect(candidates.length).toBe(2);
+    // math.geometry (prereqs met) should have priority 0.7, math.algebra (already mastered) lower
+    const geoCandidate = candidates.find(c => c.conceptId === 'math.geometry');
+    expect(geoCandidate).toBeDefined();
+    expect(geoCandidate!.action).toBe('new_material');
+    expect(geoCandidate!.priority).toBe(0.7);
   });
 
   it('respects maxSlots limit', () => {
