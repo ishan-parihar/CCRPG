@@ -203,7 +203,7 @@ describe('FullSession Integration', () => {
 
       const sum = cci.weights.altitude + cci.weights.driveHealth
         + cci.weights.polarity + cci.weights.shadowTopology
-        + cci.weights.transformationReadiness;
+        + cci.weights.transformationReadiness + cci.weights.knowledgeHealth;
       expect(sum).toBeCloseTo(1.0, 5);
     });
   });

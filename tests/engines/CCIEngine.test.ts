@@ -352,7 +352,7 @@ describe('CCIEngine', () => {
         transformationReadiness: makeTransformationReadinessInput({ pendingTransformation: true }),
       };
       const weights = adjustWeights(DEFAULT_CCI_WEIGHTS, inputs);
-      expect(weights.transformationReadiness).toBe(0.70);
+      expect(weights.transformationReadiness).toBe(0.65);
       expect(weights.altitude).toBe(0.05);
       expect(weights.polarity).toBe(0.05);
     });
@@ -367,7 +367,7 @@ describe('CCIEngine', () => {
       };
       const weights = adjustWeights(DEFAULT_CCI_WEIGHTS, inputs);
       const sum = weights.altitude + weights.driveHealth + weights.polarity
-        + weights.shadowTopology + weights.transformationReadiness;
+        + weights.shadowTopology + weights.transformationReadiness + weights.knowledgeHealth;
       expect(sum).toBeCloseTo(1.0, 5);
     });
   });
@@ -529,7 +529,7 @@ describe('CCIEngine', () => {
       const snapshot = makeMinimalSnapshot();
       const score = computeCCI(snapshot);
       const sum = score.weights.altitude + score.weights.driveHealth + score.weights.polarity
-        + score.weights.shadowTopology + score.weights.transformationReadiness;
+        + score.weights.shadowTopology + score.weights.transformationReadiness + score.weights.knowledgeHealth;
       expect(sum).toBeCloseTo(1.0, 5);
     });
 
