@@ -163,8 +163,9 @@
 
 **Changes:**
 1. **New holon level: `research`:**
-   - `src/core/curriculum/types.ts` — Add `ResearchHolon` interface extending `CurriculumHolon`
-   - Fields: `researchQuestion`, `methodology`, `expectedContribution`, `advisorId`, `committeeIds`, `milestones`
+   - `src/core/curriculum/types.ts` — Add `ResearchHolon` as a union variant of `CurriculumHolon` (discriminator: `level: 'research'`)
+   - Additional fields: `researchQuestion`, `methodology`, `expectedContribution`, `advisorId`, `committeeIds`, `milestones`
+   - Note: `AdvisorNPC` is a new type to create in `src/core/curriculum/ResearchPipeline.ts`, not in the existing `src/core/domain/Holon.ts`
 2. **AdvisorNPC role:**
    - `src/core/domain/Holon.ts` — Add `AdvisorNPC` type
    - Provides feedback, approves milestones, suggests方向
@@ -291,13 +292,13 @@ formal_sciences (branch)
 ## 5. Dependencies
 
 ```
-Phase A (prereq depth) ──→ Phase B (holarchy)
+Phase A (prereq depth) ──→ Phase B (holarchy) ──→ Phase G (management)
                                     │
 Phase C (dual-depth) ──→ Phase D (LLM content)
                                     │
-Phase E (analytics) ──→ Phase G (management)
+Phase E (analytics) ───────────────→ (standalone, benefits from B)
                                     │
-Phase F (research) ────────────────→ (standalone)
+Phase F (research) ────────────────→ (standalone, benefits from C+D)
 ```
 
 **Critical path:** A → B → C → D → F

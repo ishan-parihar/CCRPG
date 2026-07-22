@@ -15,6 +15,8 @@ This document answers: **How does the framework-complexity line — the structur
 
 The framework-complexity line (KosmOS `_Ontology/lines/framework-complexity`) measures the maximum order of hierarchical embedding, recursive self-reference, and cross-paradigm integration a framework can sustain. It is the *epistemic skeleton* upon which all other lines of intelligence build their domain-specific knowledge.
 
+**Note on stage count:** The KosmOS ontology defines 17 IST stage directories (01–17) for this line, while the original line definition header references `matrix_cells_required: 13`. The 17-stage ladder below reflects the actual directory structure and is the authoritative source. The 13-cell reference in the header is a legacy artifact from the initial stub.
+
 **The key insight:** A curriculum that only teaches *content* (facts, procedures, applications) without teaching *framework complexity* (how to construct, compare, and transcend formal systems) will produce learners who can operate within a single paradigm but cannot navigate paradigm shifts, integrate cross-domain insights, or generate novel theoretical frameworks.
 
 ---
@@ -79,16 +81,16 @@ For practical curriculum design, the 17 stages collapse into four tiers:
 
 ### 3.1 HolonLevel ↔ Framework-Complexity Tier
 
-The five `HolonLevel` values in the `CurriculumHolon` type map directly to the four tiers:
+The five `HolonLevel` values in the `CurriculumHolon` type map to the four tiers. The overlap between tiers is intentional — a `concept` at IST stage 10 (Concrete Peak) has different framework complexity than one at stage 3 (Basic Impulse), even though both are at the same holon level. The tier represents the *maximum* complexity the holon can sustain:
 
 ```
-HolonLevel          Framework-Complexity Tier    IST Stages    Depth Range
-─────────────────────────────────────────────────────────────────────────
-instance            Tier 1: Foundational         1–5           memorized
-concept             Tier 1–2: Foundational–Systematic  3–10     memorized → evaluated
-topic               Tier 2–3: Systematic–Meta     6–14          comprehended → transformed
-subject             Tier 3–4: Meta–Trans          10–17         applied → transformed
-branch              Tier 4: Trans-paradigmatic    14–17         evaluated → transformed
+HolonLevel          Framework-Complexity Tier         IST Stages    Depth Range
+──────────────────────────────────────────────────────────────────────────────
+instance            Tier 1: Foundational              1–5           memorized
+concept             Tier 1→2: Foundational→Systematic  3–10        memorized → evaluated
+topic               Tier 2→3: Systematic→Meta          6–14       comprehended → transformed
+subject             Tier 3→4: Meta→Trans               10–17      applied → transformed
+branch              Tier 4: Trans-paradigmatic         14–17       evaluated → transformed
 ```
 
 **The critical design principle:** Each holon level is not just a filing category — it represents a *qualitatively different kind of knowing*. A `concept`-level holon asks "what is this and how does it work?" A `topic`-level holon asks "how do multiple concepts relate within a coherent system?" A `subject`-level holon asks "how do multiple topics compare across paradigms?" A `branch`-level holon asks "what universal principles govern all subjects in this domain?"
@@ -211,7 +213,7 @@ A branch is considered "curriculum-complete" when it has:
 - At least 1 cross-domain isomorphism per concept
 - At least 1 misconception per concept at Tier 2+
 
-**Minimum for a branch:** 1 + 2×3 + 2×3×3 + 2×3×3×2 = **97 holons**
+**Minimum for a branch:** 1 (branch) + 2 (subjects) + 2×3 (topics) + 2×3×3 (concepts) + 2×3×3×2 (instances) = 1 + 6 + 18 + 36 + 36 = **97 holons**
 
 ### 5.3 The Scaling Projection
 
