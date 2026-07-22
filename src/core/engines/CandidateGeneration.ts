@@ -319,4 +319,156 @@ export function createModuleTaskTypesProvider(
   };
 }
 
+// ---------------------------------------------------------------------------
+// Curriculum Candidate Generation (foundations/34)
+// ---------------------------------------------------------------------------
+
+import type { KnowledgeState, StudyTheme, DepthLevel } from '../curriculum/types.js';
+import { computeReviewCandidates } from '../curriculum/ForgettingCurve.js';
+
+export interface CurriculumCandidate {
+  readonly conceptId: string;
+  readonly action: 'review' | 'new_material' | 'deepen' | 'connect';
+  readonly priority: number;
+  readonly estimatedMinutes: number;
+  readonly rationale: string;
+  readonly targetDepth: DepthLevel;
+}
+
+/**
+ * Generate curriculum encounter candidates from the player's knowledge state.
+ * These candidates are interleaved with developmental encounters during scheduling.
+ *
+ * @param knowledge - The player's current KnowledgeState from the Significator
+ * @param studyTheme - The active study theme from AutoModeStrategy
+ * @param maxSlots - Maximum number of curriculum encounters to generate
+ * @returns Array of CurriculumCandidate ranked by priority (descending)
+ */
+export function generateCurriculumCandidates(
+  knowledge: KnowledgeState | undefined,
+  studyTheme: StudyTheme | undefined,
+  maxSlots: number,
+): readonly CurriculumCandidate[] {
+  if (!knowledge || maxSlots <= 0 || !studyTheme) return [];
+
+  const candidates: CurriculumCandidate[] = [];
+  const now = Date.now();
+
+  // Get review candidates (concepts due for spaced repetition)
+  // Pass empty curves map — ConceptState.retention is used as fallback when no curve exists
+  const reviewCandidates = computeReviewCandidates(knowledge.conceptStates, new Map(), now);
+
+  // Route by study theme
+  switch (studyTheme) {
+    case 'review_decay': {
+      // Prioritize overdue reviews
+      const overdue = reviewCandidates
+        .filter(rc => rc.overdueDays > 0)
+        .sort((a, b) => b.priority - a.priority)
+        .slice(0, maxSlots);
+      for (const rc of overdue) {
+        candidates.push({
+          conceptId: rc.conceptId,
+          action: 'review',
+          priority: rc.priority,
+          estimatedMinutes: 10,
+          rationale: `Retention at ${(rc.currentRetention * 100).toFixed(0)}% — review overdue by ${rc.overdueDays}d`,
+          targetDepth: rc.targetDepth,
+        });
+      }
+      break;
+    }
+
+    case 'depth_push': {
+      // Find concepts at lower depth that should be pushed deeper
+      for (const [conceptId, cs] of knowledge.conceptStates) {
+        if (candidates.length >= maxSlots) break;
+        if (cs.retention > 0.5) {
+          candidates.push({
+            conceptId,
+            action: 'deepen',
+            priority: 0.6,
+            estimatedMinutes: 15,
+            rationale: `Current depth: ${cs.depthLevel} — push to next level`,
+            targetDepth: 'comprehended', // Will be refined by DepthAssessment
+          });
+        }
+      }
+      break;
+    }
+
+    case 'new_material': {
+      // Find concepts not yet started (not in conceptStates)
+      // This is a placeholder — the real implementation needs the CurriculumRegistry
+      // For now, signal that new material is available
+      candidates.push({
+        conceptId: 'new-material-available',
+        action: 'new_material',
+        priority: 0.5,
+        estimatedMinutes: 20,
+        rationale: 'New material ready for introduction',
+        targetDepth: 'memorized',
+      });
+      break;
+    }
+
+    case 'cross_domain': {
+      // Find concepts with cross-domain connections
+      for (const [conceptId, cs] of knowledge.conceptStates) {
+        if (candidates.length >= maxSlots) break;
+        if (cs.depthLevel === 'analyzed' || cs.depthLevel === 'evaluated') {
+          candidates.push({
+            conceptId,
+            action: 'connect',
+            priority: 0.55,
+            estimatedMinutes: 15,
+            rationale: `At ${cs.depthLevel} depth — explore cross-domain connections`,
+            targetDepth: 'transformed',
+          });
+        }
+      }
+      break;
+    }
+
+    case 'misconception_repair': {
+      // Find concepts with misconception flags
+      for (const [conceptId, cs] of knowledge.conceptStates) {
+        if (candidates.length >= maxSlots) break;
+        if (cs.misconceptionFlags.length > 0) {
+          candidates.push({
+            conceptId,
+            action: 'deepen',
+            priority: 0.8,
+            estimatedMinutes: 15,
+            rationale: `${cs.misconceptionFlags.length} misconception(s) flagged — repair needed`,
+            targetDepth: cs.depthLevel,
+          });
+        }
+      }
+      break;
+    }
+
+    case 'integration_sprint': {
+      // Find concepts at high depth for integration work
+      for (const [conceptId, cs] of knowledge.conceptStates) {
+        if (candidates.length >= maxSlots) break;
+        if (cs.depthLevel === 'evaluated' || cs.depthLevel === 'transformed') {
+          candidates.push({
+            conceptId,
+            action: 'connect',
+            priority: 0.65,
+            estimatedMinutes: 20,
+            rationale: `At ${cs.depthLevel} — sprint toward integration`,
+            targetDepth: 'transformed',
+          });
+        }
+      }
+      break;
+    }
+  }
+
+  // Sort by priority descending
+  return candidates.sort((a, b) => b.priority - a.priority).slice(0, maxSlots);
+}
+
 

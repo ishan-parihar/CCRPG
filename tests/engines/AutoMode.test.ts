@@ -42,6 +42,7 @@ function makeCCIScore(overrides: Partial<CCIScore> = {}): CCIScore {
       polarity: 0.15,
       shadowTopology: 0.25,
       transformationReadiness: 0.20,
+      knowledgeHealth: 0.05,
     },
     dominantDimension: 'driveHealth',
     sessionSignals: {

@@ -7,6 +7,7 @@ import type { PolarityState } from './PolarityCellVector.js';
 import type { ShadowLedger } from './ShadowLedger.js';
 import type { CodexEntry } from './SharedTypes.js';
 import type { TransformationPhase } from '../engines/TransformationDetector.js';
+import type { KnowledgeState } from '../curriculum/types.js';
 
 import { ALL_DRIVES } from './Drive.js';
 import { ALL_RAYS } from './Ray.js';
@@ -127,6 +128,13 @@ export interface Significator {
    * emergence = low for integration).
    */
   readonly contactBoundaryPermeability?: number;
+  /**
+   * Curriculum expansion: knowledge state for self-directed learning.
+   * Tracks concept depth levels, retention curves, study history,
+   * and learning profile. Embedded in Significator per foundations/34 §3.1.
+   * Empty by default — backward-compatible with existing saves.
+   */
+  readonly knowledge?: KnowledgeState;
 }
 
 function zeroRecord<K extends string>(keys: readonly K[]): Record<K, number> {

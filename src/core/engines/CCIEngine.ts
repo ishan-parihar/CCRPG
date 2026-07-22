@@ -32,14 +32,16 @@ export interface CCIWeights {
   polarity: number;
   shadowTopology: number;
   transformationReadiness: number;
+  knowledgeHealth: number;
 }
 
 export const DEFAULT_CCI_WEIGHTS: CCIWeights = {
-  altitude: 0.15,
-  driveHealth: 0.25,
-  polarity: 0.15,
-  shadowTopology: 0.25,
-  transformationReadiness: 0.20,
+  altitude: 0.12,
+  driveHealth: 0.20,
+  polarity: 0.12,
+  shadowTopology: 0.20,
+  transformationReadiness: 0.16,
+  knowledgeHealth: 0.20,
 };
 
 export type SessionTheme =
@@ -99,6 +101,19 @@ export interface CCIScore {
       readonly subDensitySaturation: boolean;
       readonly isTransitional: boolean;
     };
+  };
+  /**
+   * Curriculum expansion: knowledge health dimension.
+   * Tracks concept coverage, depth, retention, and integration density.
+   * Defaults to zero when no curriculum data is available (backward compat).
+   */
+  knowledgeHealth?: {
+    conceptCoverage: number;
+    averageDepth: number;
+    retentionHealth: number;
+    integrationDensity: number;
+    misconceptionLoad: number;
+    composite: number;
   };
 }
 
@@ -458,7 +473,8 @@ export function adjustWeights(
       driveHealth: 0.10,
       polarity: 0.05,
       shadowTopology: 0.10,
-      transformationReadiness: 0.70,
+      transformationReadiness: 0.65,
+      knowledgeHealth: 0.05,
     };
   }
 
@@ -490,10 +506,11 @@ export function adjustWeights(
   adjusted.polarity = Math.max(0.01, adjusted.polarity);
   adjusted.shadowTopology = Math.max(0.01, adjusted.shadowTopology);
   adjusted.transformationReadiness = Math.max(0.01, adjusted.transformationReadiness);
+  adjusted.knowledgeHealth = Math.max(0.01, adjusted.knowledgeHealth);
 
   // Normalise to sum to 1.0
   const total = adjusted.altitude + adjusted.driveHealth + adjusted.polarity
-    + adjusted.shadowTopology + adjusted.transformationReadiness;
+    + adjusted.shadowTopology + adjusted.transformationReadiness + adjusted.knowledgeHealth;
 
   if (total <= 0) {
     // Safety: if adjustments produced all-zero/negative, return defaults
@@ -506,6 +523,7 @@ export function adjustWeights(
     polarity: adjusted.polarity / total,
     shadowTopology: adjusted.shadowTopology / total,
     transformationReadiness: adjusted.transformationReadiness / total,
+    knowledgeHealth: adjusted.knowledgeHealth / total,
   };
 }
 
@@ -701,13 +719,16 @@ export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): 
   // 3. Adjust weights based on state
   const weights = adjustWeights(DEFAULT_CCI_WEIGHTS, inputs);
 
-  // 4. Compute weighted composite
+  // 4. Compute weighted composite (knowledgeHealth defaults to 0 when not provided)
+  // TODO: wire in real KnowledgeState from sig.knowledge when curriculum data is populated
+  const knowledgeHealthValue = 0; // Default when no curriculum data available
   const composite = clamp(
     dimensions.altitude * weights.altitude +
     dimensions.driveHealth * weights.driveHealth +
     dimensions.polarity * weights.polarity +
     dimensions.shadowTopology * weights.shadowTopology +
-    dimensions.transformationReadiness * weights.transformationReadiness
+    dimensions.transformationReadiness * weights.transformationReadiness +
+    knowledgeHealthValue * weights.knowledgeHealth
   );
 
   // 5. Identify dominant dimension (highest weighted contribution)
@@ -717,6 +738,7 @@ export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): 
     { key: 'polarity', value: dimensions.polarity * weights.polarity },
     { key: 'shadowTopology', value: dimensions.shadowTopology * weights.shadowTopology },
     { key: 'transformationReadiness', value: dimensions.transformationReadiness * weights.transformationReadiness },
+    // NOTE: knowledgeHealth excluded from dominantDimension until real curriculum data is wired in
   ];
   contributions.sort((a, b) => b.value - a.value);
   const dominantDimension = contributions[0].key;
@@ -812,6 +834,14 @@ export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): 
     dominantDimension,
     sessionSignals,
     metabolicHealth: { gz, pz, total, interpretation, liminalitySignature },
+    knowledgeHealth: {
+      conceptCoverage: 0,
+      averageDepth: 0,
+      retentionHealth: 0,
+      integrationDensity: 0,
+      misconceptionLoad: 0,
+      composite: 0,
+    },
   };
 }
 

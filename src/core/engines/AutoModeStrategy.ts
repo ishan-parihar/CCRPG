@@ -13,6 +13,7 @@ import type { SignificatorSnapshot } from '../domain/SignificatorSnapshot.js';
 import type { PriorityWeights, SessionContext } from './PriorityComputation.js';
 import { DEFAULT_WEIGHTS } from './PriorityComputation.js';
 import type { CCIScore, SessionTheme } from './CCIEngine.js';
+import type { StudyTheme } from '../curriculum/types.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -86,6 +87,10 @@ export interface SessionStrategy {
   encounterBudget: EncounterBudget;
   modalityBias: Partial<Record<string, number>>;
   adjustmentThresholds: AdjustmentThresholds;
+  /** Curriculum study theme — derived from knowledge state when available. */
+  studyTheme?: StudyTheme;
+  /** Curriculum encounter slots within the session budget. */
+  curriculumSlots?: number;
 }
 
 export interface SessionStrategyAdjustment {
@@ -124,6 +129,10 @@ export function generateSessionStrategy(
   const modalityBias = computeModalityBias(theme);
   const adjustmentThresholds = { ...DEFAULT_ADJUSTMENT_THRESHOLDS };
 
+  // 6. Derive curriculum study theme and slots from knowledge health
+  const studyTheme = selectStudyTheme(cci);
+  const curriculumSlots = computeCurriculumSlots(session, arc, cci);
+
   return {
     theme,
     themeRationale: `CCI dominant dimension: ${cci.dominantDimension}; composite: ${cci.composite.toFixed(2)}`,
@@ -132,7 +141,77 @@ export function generateSessionStrategy(
     encounterBudget,
     modalityBias,
     adjustmentThresholds,
+    studyTheme,
+    curriculumSlots,
   };
+}
+
+// ---------------------------------------------------------------------------
+// Curriculum study theme selection (foundations/34)
+// ---------------------------------------------------------------------------
+
+/**
+ * Select the curriculum study theme based on CCI knowledge health signals.
+ * Maps the CCI's knowledgeHealth composite to a StudyTheme that biases
+ * which curriculum encounters are scheduled.
+ *
+ * Priority order: review_decay > misconception_repair > depth_push >
+ *                 cross_domain > integration_sprint > new_material.
+ */
+export function selectStudyTheme(cci: CCIScore): StudyTheme | undefined {
+  const kh = cci.knowledgeHealth;
+  if (!kh) return undefined;
+
+  // No curriculum data yet — defer entirely
+  if (kh.conceptCoverage === 0 && kh.averageDepth === 0) return undefined;
+
+  // High misconception load demands repair
+  if (kh.misconceptionLoad > 0.3) return 'misconception_repair';
+
+  // Low retention health demands spaced review
+  if (kh.retentionHealth < 0.4) return 'review_decay';
+
+  // Low average depth — push deeper into current material
+  if (kh.averageDepth < 0.3) return 'depth_push';
+
+  // Low integration density — connect concepts across domains
+  if (kh.integrationDensity < 0.3) return 'cross_domain';
+
+  // High coverage but moderate depth — sprint toward synthesis
+  if (kh.conceptCoverage > 0.6 && kh.averageDepth > 0.4) return 'integration_sprint';
+
+  // Default: introduce new material when fundamentals are healthy
+  if (kh.conceptCoverage < 0.6) return 'new_material';
+
+  // Fallback: balanced review
+  return 'review_decay';
+}
+
+/**
+ * Compute the number of curriculum encounter slots for this session.
+ * Slots are carved from the total encounter budget. When no curriculum
+ * data is available, returns 0 (pure developmental session).
+ */
+export function computeCurriculumSlots(
+  session: SessionContext,
+  _arc: ParameterisedSessionArc,
+  cci: CCIScore,
+): number {
+  const kh = cci.knowledgeHealth;
+  if (!kh || kh.conceptCoverage === 0) return 0;
+
+  const totalTarget = session.targetSessionLength;
+
+  // Curriculum slots: 10-20% of total, scaled by knowledge health composite
+  // Higher composite = more slots (the player is ready for more curriculum)
+  const maxSlots = Math.max(1, Math.round(totalTarget * 0.2));
+  const minSlots = Math.min(1, maxSlots);
+
+  // Scale by knowledge health composite (0-1)
+  const scaledSlots = Math.round(minSlots + (kh.composite * (maxSlots - minSlots)));
+
+  // Clamp to reasonable bounds (at most 3 curriculum encounters per session)
+  return Math.max(0, Math.min(3, scaledSlots));
 }
 
 // ---------------------------------------------------------------------------
@@ -518,6 +597,8 @@ export function computeEncounterBudget(
     practiceSlots,
   };
 }
+
+
 
 // ---------------------------------------------------------------------------
 // Mid-session adjustment
