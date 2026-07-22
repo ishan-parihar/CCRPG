@@ -12,7 +12,7 @@
 4. `01-first-principles.md`
 5. `02-glossary.md`
 6. `03-research-methodology.md`
-7. `foundations/00-...27-...` (in order -- **00-09 substrate, 10-14 lesser cycle, 15-27 greater cycle**)
+7. `foundations/00-...34-...` (in order -- **00-09 substrate, 10-14 lesser cycle, 15-27 greater cycle, 28-34 curriculum expansion**)
 8. `lines/00-overview-multi-line.md` then `01-...08-...` (any order)
 9. `stages/00-overview-eight-stages.md` then `01-...08-...` (in order)
 10. `STAGE-ASSESSMENT-ARCHITECTURE.md`
@@ -33,7 +33,7 @@
 - `02-glossary.md`
 - `03-research-methodology.md`
 
-### `foundations/` (28)
+### `foundations/` (34)
 
 #### Theoretical substrate (00–09)
 
@@ -73,6 +73,17 @@
 - `25-cumulative-consciousness-index.md` -- CCI composite metric
 - `26-unified-core-architecture.md` -- the unified core architecture spec
 - `27-auto-mode-strategy-engine.md` -- auto-mode session strategy generation
+- `28-holoos-open-joints-mapping.md` -- HoloOS open-joints tracking
+
+#### Curriculum expansion (29–34)
+> The theoretical substrate and architectural contract for extending CCRPG with modular curriculum support — knowledge taxonomies, subject concepts, depth rubrics, and progression. These documents ground the curriculum plug system in meta-learning science and holonic architecture.
+
+- `29-meta-learning-science.md` — the neuroscience and cognitive science of how learning works
+- `30-holonic-curriculum-architecture.md` — holonic principles applied to knowledge organization
+- `31-depth-assessment-model.md` — surface-to-transformative depth spectrum, dual-depth assessment
+- `32-agentic-curriculum-linter.md` — the three-agent validation workflow (Generator → Critic → Integrator)
+- `33-self-directed-dashboard.md` — the five dashboard views for learner self-direction
+- `34-curriculum-engine-bridge.md` — the integration contract between curriculum modules and the existing engine
 
 ### `lines/` (9) — one per line of intelligence
 

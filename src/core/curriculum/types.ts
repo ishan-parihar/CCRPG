@@ -1,0 +1,519 @@
+/**
+ * Core type system for the curriculum expansion.
+ * Spec: docs/foundations/29-meta-learning-science.md, 30-holonic-curriculum-architecture.md,
+ *       31-depth-assessment-model.md, 34-curriculum-engine-bridge.md
+ *
+ * All types are readonly interfaces. No runtime behavior lives here.
+ * Follows the same conventions as src/core/assessments/types.ts.
+ */
+import type { Line } from '../domain/Line.js';
+import type { Stage } from '../domain/Stage.js';
+import type { Modality } from '../domain/enums.js';
+
+// ---------------------------------------------------------------------------
+// Depth Levels (foundations/31)
+// ---------------------------------------------------------------------------
+
+export type DepthLevel =
+  | 'absent'
+  | 'memorized'
+  | 'comprehended'
+  | 'applied'
+  | 'analyzed'
+  | 'evaluated'
+  | 'transformed';
+
+export const ALL_DEPTH_LEVELS: readonly DepthLevel[] = [
+  'absent', 'memorized', 'comprehended', 'applied',
+  'analyzed', 'evaluated', 'transformed',
+];
+
+/** Ordinal index of a depth level (0 = absent, 6 = transformed). */
+export function depthOrdinal(level: DepthLevel): number {
+  return ALL_DEPTH_LEVELS.indexOf(level);
+}
+
+/** Check if depth A is deeper than depth B. */
+export function isDeeperThan(a: DepthLevel, b: DepthLevel): boolean {
+  return depthOrdinal(a) > depthOrdinal(b);
+}
+
+/** Check if depth A is at least as deep as depth B. */
+export function isAtLeast(a: DepthLevel, b: DepthLevel): boolean {
+  return depthOrdinal(a) >= depthOrdinal(b);
+}
+
+// ---------------------------------------------------------------------------
+// Bloom's Taxonomy Levels (foundations/29, 31)
+// ---------------------------------------------------------------------------
+
+export type BloomLevel =
+  | 'remember'
+  | 'understand'
+  | 'apply'
+  | 'analyze'
+  | 'evaluate'
+  | 'create';
+
+export const ALL_BLOOM_LEVELS: readonly BloomLevel[] = [
+  'remember', 'understand', 'apply', 'analyze', 'evaluate', 'create',
+];
+
+/** Map DepthLevel to the corresponding BloomLevel. */
+export function depthToBloom(depth: DepthLevel): BloomLevel {
+  switch (depth) {
+    case 'absent': return 'remember';
+    case 'memorized': return 'remember';
+    case 'comprehended': return 'understand';
+    case 'applied': return 'apply';
+    case 'analyzed': return 'analyze';
+    case 'evaluated': return 'evaluate';
+    case 'transformed': return 'create';
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Curriculum Task Types (foundations/31)
+// ---------------------------------------------------------------------------
+
+export type CurriculumTaskType =
+  | 'factual_recall'
+  | 'concept_explanation'
+  | 'application_problem'
+  | 'analogy_mapping'
+  | 'misconception_check'
+  | 'socratic_dialogue'
+  | 'peer_teaching'
+  | 'project_based'
+  | 'research_question'
+  | 'peer_review'
+  | 'debate_position'
+  | 'case_study_analysis'
+  | 'lab_simulation'
+  | 'creative_synthesis';
+
+export const ALL_CURRICULUM_TASK_TYPES: readonly CurriculumTaskType[] = [
+  'factual_recall', 'concept_explanation', 'application_problem',
+  'analogy_mapping', 'misconception_check', 'socratic_dialogue',
+  'peer_teaching', 'project_based', 'research_question',
+  'peer_review', 'debate_position', 'case_study_analysis',
+  'lab_simulation', 'creative_synthesis',
+];
+
+// ---------------------------------------------------------------------------
+// Holon Levels (foundations/30)
+// ---------------------------------------------------------------------------
+
+export type HolonLevel = 'branch' | 'subject' | 'topic' | 'concept' | 'instance';
+
+export const ALL_HOLON_LEVELS: readonly HolonLevel[] = [
+  'branch', 'subject', 'topic', 'concept', 'instance',
+];
+
+// ---------------------------------------------------------------------------
+// Mastery Levels (foundations/34)
+// ---------------------------------------------------------------------------
+
+export type MasteryLevel = 'novice' | 'beginner' | 'competent' | 'proficient' | 'expert';
+
+export const ALL_MASTERY_LEVELS: readonly MasteryLevel[] = [
+  'novice', 'beginner', 'competent', 'proficient', 'expert',
+];
+
+// ---------------------------------------------------------------------------
+// Curriculum Holon (foundations/30, 34)
+// ---------------------------------------------------------------------------
+
+export interface HolonPhase {
+  /** What this phase asks */
+  readonly question: string;
+  /** How this phase is assessed */
+  readonly assessmentType: CurriculumTaskType;
+  /** What evidence indicates completion */
+  readonly completionEvidence: string;
+}
+
+export interface Isomorphism {
+  /** The structural pattern shared */
+  readonly pattern: string;
+  /** The other concept that shares this pattern */
+  readonly targetConceptId: string;
+  /** The domain of the target concept */
+  readonly targetDomain: string;
+  /** How the mapping works (structural, not surface) */
+  readonly mappingDescription: string;
+  /** Where the analogy breaks down */
+  readonly limitations?: string;
+}
+
+export interface CurriculumContent {
+  /** Core explanation (adapted by LLM to student's level) */
+  readonly explanation: string;
+  /** Examples of the concept */
+  readonly examples: readonly string[];
+  /** Non-examples (what the concept is NOT) */
+  readonly nonExamples: readonly string[];
+  /** Analogies to other concepts */
+  readonly analogies: readonly string[];
+  /** Visual/diagram descriptions */
+  readonly visuals: readonly string[];
+  /** Practice problems */
+  readonly practiceProblems: readonly PracticeProblem[];
+}
+
+export interface PracticeProblem {
+  readonly id: string;
+  readonly problemText: string;
+  readonly targetDepth: DepthLevel;
+  readonly solution?: string;
+  readonly hints?: readonly string[];
+}
+
+export interface Misconception {
+  readonly id: string;
+  readonly statement: string;
+  readonly whyItFeelsRight: string;
+  readonly structuralReason: string;
+  /** Assessment task designed to reveal this misconception */
+  readonly diagnosticTaskId: string;
+}
+
+export interface DepthRubricEntry {
+  /** What evidence distinguishes this depth level for THIS concept */
+  readonly evidence: string;
+  /** What the learner can do at this level */
+  readonly canDo: readonly string[];
+  /** What the learner CANNOT yet do */
+  readonly cannotDo: readonly string[];
+  /** Task types appropriate for assessing this level */
+  readonly appropriateTasks: readonly CurriculumTaskType[];
+  /** Threshold score to be classified at this level (0-1) */
+  readonly threshold: number;
+  /** LLM rubric prompt for scoring open-ended responses */
+  readonly llmRubric?: string;
+}
+
+/** The complete depth rubric for a single concept. */
+export interface DepthRubric {
+  readonly conceptId: string;
+  readonly levels: {
+    readonly memorized: DepthRubricEntry;
+    readonly comprehended: DepthRubricEntry;
+    readonly applied: DepthRubricEntry;
+    readonly analyzed: DepthRubricEntry;
+    readonly evaluated: DepthRubricEntry;
+    readonly transformed: DepthRubricEntry;
+  };
+}
+
+/** Forgetting curve parameters for a concept. */
+export interface ForgettingParams {
+  readonly initialHalfLifeMs: number;
+  readonly halfLifeMultiplier: number;
+  readonly maxHalfLifeMs: number;
+}
+
+/** Default forgetting curve parameters. */
+export const DEFAULT_FORGETTING_PARAMS: ForgettingParams = {
+  initialHalfLifeMs: 24 * 60 * 60 * 1000, // 1 day
+  halfLifeMultiplier: 2.5,
+  maxHalfLifeMs: 365 * 24 * 60 * 60 * 1000, // 1 year
+};
+
+/** Developmental mapping for a curriculum holon. */
+export interface CurriculumDevMapping {
+  readonly primaryLine: Line;
+  readonly secondaryLines: readonly Line[];
+  readonly stageRange: { readonly min: Stage; readonly max: Stage };
+}
+
+/** Depth metadata for a curriculum holon. */
+export interface CurriculumDepthMeta {
+  readonly requiredPrerequisiteDepth: DepthLevel;
+  readonly targetDepthRange: { readonly min: DepthLevel; readonly max: DepthLevel };
+  readonly depthProgression: readonly DepthLevel[];
+}
+
+/** A single curriculum holon — the atomic unit of knowledge. */
+export interface CurriculumHolon {
+  /** Unique identifier (e.g., "cs.algorithms.recursion") */
+  readonly id: string;
+  /** Human-readable name */
+  readonly name: string;
+  /** Description */
+  readonly description: string;
+
+  /** Position in the holarchy */
+  readonly level: HolonLevel;
+  readonly parentId: string | null;
+  readonly childIds: readonly string[];
+
+  /** The five-phase internal structure (self-similar at every level) */
+  readonly phases: {
+    readonly observation: HolonPhase;
+    readonly principle: HolonPhase;
+    readonly application: HolonPhase;
+    readonly integration: HolonPhase;
+    readonly creation: HolonPhase;
+  };
+
+  /** Structural isomorphisms — what this holon is structurally similar to */
+  readonly isomorphisms: readonly Isomorphism[];
+
+  /** Prerequisite holons (structural, not just sequential) */
+  readonly prerequisites: readonly string[];
+
+  /** Developmental mapping */
+  readonly devMapping: CurriculumDevMapping;
+
+  /** Depth metadata */
+  readonly depthMeta: CurriculumDepthMeta;
+
+  /** Forgetting curve parameters */
+  readonly forgettingParams: ForgettingParams;
+
+  /** Content for this concept */
+  readonly content: CurriculumContent;
+
+  /** Misconceptions mapped to this concept */
+  readonly misconceptions: readonly Misconception[];
+
+  /** Depth rubric */
+  readonly depthRubric: DepthRubric;
+
+  /** Which modalities can deliver this content */
+  readonly supportedModalities: readonly Modality[];
+}
+
+// ---------------------------------------------------------------------------
+// Concept State (what the learner knows — stored on Significator)
+// ---------------------------------------------------------------------------
+
+export interface DepthHistoryEntry {
+  readonly level: DepthLevel;
+  readonly timestamp: number;
+  readonly evidence: string;
+}
+
+export interface ConceptState {
+  readonly depthLevel: DepthLevel;
+  readonly retention: number;
+  readonly lastReviewedAt: number;
+  readonly reviewCount: number;
+  readonly depthHistory: readonly DepthHistoryEntry[];
+  readonly misconceptionFlags: readonly string[];
+}
+
+export interface SubjectProgress {
+  readonly modulesCompleted: number;
+  readonly averageDepth: number;
+  readonly masteryLevel: MasteryLevel;
+  readonly crossDomainConnections: readonly string[];
+}
+
+export interface StudyEvent {
+  readonly conceptId: string;
+  readonly depthAchieved: DepthLevel;
+  readonly modality: Modality;
+  readonly timestamp: number;
+  readonly retentionBefore: number;
+  readonly retentionAfter: number;
+}
+
+export interface LearningProfile {
+  readonly preferredModalities: readonly Modality[];
+  readonly metacognitionScore: number;
+  readonly calibrationAccuracy: number;
+  readonly transferCapacity: number;
+  readonly studyEfficiency: number;
+}
+
+/** The knowledge state embedded in the Significator. */
+export interface KnowledgeState {
+  readonly conceptStates: ReadonlyMap<string, ConceptState>;
+  readonly subjectProgress: ReadonlyMap<string, SubjectProgress>;
+  readonly studyHistory: readonly StudyEvent[];
+  readonly learningProfile: LearningProfile;
+}
+
+/** Default empty knowledge state. */
+export const EMPTY_KNOWLEDGE_STATE: KnowledgeState = {
+  conceptStates: new Map(),
+  subjectProgress: new Map(),
+  studyHistory: [],
+  learningProfile: {
+    preferredModalities: [],
+    metacognitionScore: 0.5,
+    calibrationAccuracy: 0.5,
+    transferCapacity: 0.5,
+    studyEfficiency: 0.5,
+  },
+};
+
+// ---------------------------------------------------------------------------
+// Dual-Depth Assessment Result (foundations/31)
+// ---------------------------------------------------------------------------
+
+export interface DualDepthResult {
+  readonly conceptId: string;
+  readonly timestamp: number;
+
+  /** Knowledge depth assessment */
+  readonly knowledgeDepth: {
+    readonly level: DepthLevel;
+    readonly confidence: number;
+    readonly evidence: readonly string[];
+    readonly dimensions: Readonly<Record<string, number>>;
+  };
+
+  /** Developmental signal assessment */
+  readonly developmentalSignal: {
+    readonly driveScores: Readonly<Record<string, number>>;
+    readonly driveSignals: Readonly<Record<string, string>>;
+    readonly shadowDetected: string | null;
+    readonly shadowIntensity: number;
+  };
+
+  /** Metacognitive calibration */
+  readonly metacognition: {
+    readonly predictedDepth: DepthLevel;
+    readonly actualDepth: DepthLevel;
+    readonly calibrationError: number;
+    readonly confidenceInPrediction: number;
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Forgetting Curve Runtime State
+// ---------------------------------------------------------------------------
+
+export interface ForgettingCurve {
+  readonly conceptId: string;
+  readonly firstLearnedAt: number;
+  readonly lastRetrievedAt: number;
+  readonly retrievalCount: number;
+  readonly retention: number;
+  readonly halfLifeMs: number;
+}
+
+/** Compute current retention from a forgetting curve state. */
+export function computeRetention(curve: ForgettingCurve, now: number): number {
+  const elapsed = now - curve.lastRetrievedAt;
+  if (elapsed <= 0) return curve.retention;
+  return Math.max(0, Math.min(1, curve.retention * Math.exp(-elapsed / curve.halfLifeMs)));
+}
+
+/** Update a forgetting curve after a retrieval attempt. */
+export function updateForgettingCurve(
+  curve: ForgettingCurve,
+  success: boolean,
+  now: number,
+  params: ForgettingParams = DEFAULT_FORGETTING_PARAMS,
+): ForgettingCurve {
+  if (success) {
+    const newHalfLife = Math.min(
+      curve.halfLifeMs * params.halfLifeMultiplier,
+      params.maxHalfLifeMs,
+    );
+    return {
+      ...curve,
+      lastRetrievedAt: now,
+      retrievalCount: curve.retrievalCount + 1,
+      retention: 1.0,
+      halfLifeMs: newHalfLife,
+    };
+  }
+  // Failed retrieval: reset to initial half-life
+  return {
+    ...curve,
+    lastRetrievedAt: now,
+    retention: Math.max(0.1, curve.retention * 0.5),
+    halfLifeMs: params.initialHalfLifeMs,
+  };
+}
+
+/** Create a new forgetting curve for a freshly-learned concept. */
+export function createForgettingCurve(
+  conceptId: string,
+  now: number,
+  params: ForgettingParams = DEFAULT_FORGETTING_PARAMS,
+): ForgettingCurve {
+  return {
+    conceptId,
+    firstLearnedAt: now,
+    lastRetrievedAt: now,
+    retrievalCount: 0,
+    retention: 1.0,
+    halfLifeMs: params.initialHalfLifeMs,
+  };
+}
+
+// ---------------------------------------------------------------------------
+// Study Themes (foundations/34)
+// ---------------------------------------------------------------------------
+
+export type StudyTheme =
+  | 'review_decay'
+  | 'new_material'
+  | 'depth_push'
+  | 'cross_domain'
+  | 'misconception_repair'
+  | 'integration_sprint';
+
+export const ALL_STUDY_THEMES: readonly StudyTheme[] = [
+  'review_decay', 'new_material', 'depth_push',
+  'cross_domain', 'misconception_repair', 'integration_sprint',
+];
+
+// ---------------------------------------------------------------------------
+// Linter Types (foundations/32)
+// ---------------------------------------------------------------------------
+
+export interface LinterIssue {
+  readonly checkId: string;
+  readonly category: 'structural' | 'pedagogical' | 'developmental' | 'epistemic';
+  readonly severity: 'error' | 'warning' | 'info';
+  readonly message: string;
+  readonly suggestion?: string;
+  readonly location?: string;
+}
+
+export interface CurriculumLinterReport {
+  readonly moduleId: string;
+  readonly timestamp: number;
+  readonly passed: boolean;
+  readonly errors: readonly LinterIssue[];
+  readonly warnings: readonly LinterIssue[];
+  readonly infos: readonly LinterIssue[];
+  readonly summary: {
+    readonly totalChecks: number;
+    readonly passed: number;
+    readonly errors: number;
+    readonly warnings: number;
+    readonly infos: number;
+  };
+  readonly pedagogicalQuality: number;
+  readonly developmentalIntegration: number;
+}
+
+// ---------------------------------------------------------------------------
+// Review Candidates (for scheduler integration)
+// ---------------------------------------------------------------------------
+
+export interface ReviewCandidate {
+  readonly conceptId: string;
+  readonly currentRetention: number;
+  readonly currentDepth: DepthLevel;
+  readonly targetDepth: DepthLevel;
+  readonly priority: number;
+  readonly overdueDays: number;
+}
+
+export interface CurriculumRecommendation {
+  readonly conceptId: string;
+  readonly action: 'review' | 'new_material' | 'deepen' | 'connect';
+  readonly estimatedMinutes: number;
+  readonly rationale: string;
+  readonly priority: number;
+  readonly targetDepth: DepthLevel;
+}
