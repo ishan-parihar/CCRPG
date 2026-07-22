@@ -323,17 +323,10 @@ export function createModuleTaskTypesProvider(
 // Curriculum Candidate Generation (foundations/34)
 // ---------------------------------------------------------------------------
 
-import type { KnowledgeState, StudyTheme, DepthLevel } from '../curriculum/types.js';
-import { computeReviewCandidates } from '../curriculum/ForgettingCurve.js';
+import type { KnowledgeState, StudyTheme, CurriculumRecommendation } from '../curriculum/types.js';
 
-export interface CurriculumCandidate {
-  readonly conceptId: string;
-  readonly action: 'review' | 'new_material' | 'deepen' | 'connect';
-  readonly priority: number;
-  readonly estimatedMinutes: number;
-  readonly rationale: string;
-  readonly targetDepth: DepthLevel;
-}
+// Reuse CurriculumRecommendation from curriculum/types.ts — no duplicate interface.
+export type CurriculumCandidate = CurriculumRecommendation;
 
 /**
  * Generate curriculum encounter candidates from the player's knowledge state.
@@ -354,28 +347,33 @@ export function generateCurriculumCandidates(
   const candidates: CurriculumCandidate[] = [];
   const now = Date.now();
 
-  // Get review candidates (concepts due for spaced repetition)
-  // Pass empty curves map — ConceptState.retention is used as fallback when no curve exists
-  const reviewCandidates = computeReviewCandidates(knowledge.conceptStates, new Map(), now);
-
   // Route by study theme
   switch (studyTheme) {
     case 'review_decay': {
-      // Prioritize overdue reviews
-      const overdue = reviewCandidates
-        .filter(rc => rc.overdueDays > 0)
-        .sort((a, b) => b.priority - a.priority)
-        .slice(0, maxSlots);
-      for (const rc of overdue) {
-        candidates.push({
-          conceptId: rc.conceptId,
-          action: 'review',
-          priority: rc.priority,
-          estimatedMinutes: 10,
-          rationale: `Retention at ${(rc.currentRetention * 100).toFixed(0)}% — review overdue by ${rc.overdueDays}d`,
-          targetDepth: rc.targetDepth,
-        });
+      // Find concepts with low retention that need review (no forgetting curve needed —
+      // ConceptState.retention is the canonical source; ForgettingCurve enriches when available)
+      const REVIEW_THRESHOLD = 0.7;
+      const CRITICAL_THRESHOLD = 0.3;
+      for (const [conceptId, cs] of knowledge.conceptStates) {
+        if (candidates.length >= maxSlots) break;
+        if (cs.retention < REVIEW_THRESHOLD) {
+          const retentionPriority = 1 - cs.retention;
+          const criticalBoost = cs.retention < CRITICAL_THRESHOLD ? 0.3 : 0;
+          const overdueMs = now - cs.lastReviewedAt;
+          const overdueDays = overdueMs / (24 * 60 * 60 * 1000);
+          const overdueBoost = Math.min(0.2, overdueDays * 0.02);
+          candidates.push({
+            conceptId,
+            action: 'review',
+            priority: Math.min(1, retentionPriority + criticalBoost + overdueBoost),
+            estimatedMinutes: 10,
+            rationale: `Retention at ${(cs.retention * 100).toFixed(0)}% — reviewed ${Math.round(overdueDays)}d ago`,
+            targetDepth: cs.depthLevel,
+          });
+        }
       }
+      // Sort by priority descending
+      candidates.sort((a, b) => b.priority - a.priority);
       break;
     }
 
