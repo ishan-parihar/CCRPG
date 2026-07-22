@@ -131,7 +131,7 @@ export function generateSessionStrategy(
 
   // 6. Derive curriculum study theme and slots from knowledge health
   const studyTheme = selectStudyTheme(cci);
-  const curriculumSlots = computeCurriculumSlots(session, arc, cci);
+  const curriculumSlots = computeCurriculumSlots(session, cci);
 
   return {
     theme,
@@ -181,7 +181,7 @@ export function selectStudyTheme(cci: CCIScore): StudyTheme | undefined {
   if (kh.conceptCoverage > 0.6 && kh.averageDepth > 0.4) return 'integration_sprint';
 
   // Default: introduce new material when fundamentals are healthy
-  if (kh.conceptCoverage < 0.6) return 'new_material';
+  if (kh.conceptCoverage <= 0.6) return 'new_material';
 
   // Fallback: balanced review
   return 'review_decay';
@@ -194,7 +194,6 @@ export function selectStudyTheme(cci: CCIScore): StudyTheme | undefined {
  */
 export function computeCurriculumSlots(
   session: SessionContext,
-  _arc: ParameterisedSessionArc,
   cci: CCIScore,
 ): number {
   const kh = cci.knowledgeHealth;

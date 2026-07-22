@@ -398,17 +398,8 @@ export function generateCurriculumCandidates(
     }
 
     case 'new_material': {
-      // Find concepts not yet started (not in conceptStates)
-      // This is a placeholder — the real implementation needs the CurriculumRegistry
-      // For now, signal that new material is available
-      candidates.push({
-        conceptId: 'new-material-available',
-        action: 'new_material',
-        priority: 0.5,
-        estimatedMinutes: 20,
-        rationale: 'New material ready for introduction',
-        targetDepth: 'memorized',
-      });
+      // TODO: wire in CurriculumRegistry to discover unmastered concepts
+      // For now, return empty — no phantom candidates
       break;
     }
 
@@ -470,5 +461,6 @@ export function generateCurriculumCandidates(
   // Sort by priority descending
   return candidates.sort((a, b) => b.priority - a.priority).slice(0, maxSlots);
 }
+
 
 
