@@ -64,6 +64,7 @@ const program = new Command()
   .option('-l, --line <line>', 'Force a specific line')
   .option('-s, --stage <stage>', 'Force a specific stage')
   .option('--modality <mod>', 'Force a specific modality')
+  .option('--curriculum', 'Force curriculum encounters (knowledge study mode)')
   // P1-6 (UX-R3): Clarify what --force-shadow actually does. The audit found
   // users confused about the difference between --modality shadow (which
   // triggers the shadow encounter format) and --force-shadow (which injects
@@ -395,6 +396,7 @@ const FORCE_SHADOW = (opts.forceShadow ?? (opts as any).injectShadowKeyword) as 
 const FORCE_RESPONSES = undefined; // ponytail: --responses removed, wasn't in commander spec
 const NEW_GAME = opts.newGame ?? false;
 const SKIP_CALIBRATION = opts.skipCalibration ?? false;
+const CURRICULUM_MODE = opts.curriculum ?? false;
 
 // R5-CRITICAL (UX-R5): Headless input mechanism. Load user-provided answers
 // from --answers <file> (one per line) and/or --answer <text> (repeatable).
@@ -1707,6 +1709,12 @@ async function runDiagnostic(): Promise<void> {
     recentLines: [],
   };
   const sessionState = startSession(sig, session);
+  // --curriculum flag: force curriculum encounters.
+  // Note: strategy is readonly in SessionState, so we cast through `any`
+  // to override curriculumSlots. Safe because startSession returns a fresh object.
+  if (CURRICULUM_MODE) {
+    (sessionState as any).strategy = { ...sessionState.strategy, curriculumSlots: Math.max(sessionState.strategy.curriculumSlots ?? 0, 3) };
+  }
   // NF-6 (Fresh-User Re-Audit): Show CCI with a qualitative interpretation
   // so the user knows what the number means. The re-audit found users could
   // see CCI change (0.5036 → 0.4749) but had no idea if that was good or bad.
@@ -1775,6 +1783,10 @@ async function runSingleEncounter(): Promise<void> {
     ...(FORCE_MODALITY ? { forceModality: FORCE_MODALITY } : {}),
   } as any;
   const sessionState = startSession(sig, session);
+  // --curriculum flag: force curriculum encounters (same cast as DQ path above)
+  if (CURRICULUM_MODE) {
+    (sessionState as any).strategy = { ...sessionState.strategy, curriculumSlots: Math.max(sessionState.strategy.curriculumSlots ?? 0, 3) };
+  }
 
   const now = Date.now();
   let { tickResult } = tickWithStrategy(sig, world, session, sessionState, null, null, now);
@@ -2894,6 +2906,10 @@ async function runFullSession(): Promise<void> {
   let sessionState = USE_PERSISTENT_AGENT
     ? await startSessionWithTDG(sig, session)
     : startSession(sig, session);
+  // --curriculum flag: force curriculum encounters (same cast as DQ path above)
+  if (CURRICULUM_MODE) {
+    (sessionState as any).strategy = { ...sessionState.strategy, curriculumSlots: Math.max(sessionState.strategy.curriculumSlots ?? 0, 3) };
+  }
 
   // Declare mutable state BEFORE the banner so it can reference them
   let currentSig = sig;
