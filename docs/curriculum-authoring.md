@@ -88,6 +88,28 @@ Each holon specifies `requiredPrerequisiteDepth` — the minimum depth level its
 
 **Rule:** `requiredPrerequisiteDepth` must be strictly less than `targetDepthRange.min`.
 
+### 2.4 Forgetting Curve Parameters
+
+Each holon specifies `forgettingParams` to control spaced repetition behavior:
+
+```json
+{
+  "forgettingParams": {
+    "initialHalfLifeMs": 86400000,
+    "halfLifeMultiplier": 2.5,
+    "maxHalfLifeMs": 31536000000
+  }
+}
+```
+
+| Parameter | Default | Description |
+|---|---|---|
+| `initialHalfLifeMs` | 86400000 (1 day) | Retention half-life after first review |
+| `halfLifeMultiplier` | 2.5 | Multiplier applied to half-life after each successful retrieval |
+| `maxHalfLifeMs` | 31536000000 (1 year) | Upper bound on half-life |
+
+**Override per concept:** Branch-level holons can set `forgettingParams` to customize spaced repetition for their children. If a concept doesn't specify its own params, it inherits from its parent or falls back to `DEFAULT_FORGETTING_PARAMS`.
+
 ---
 
 ## 3. The Five-Phase Internal Structure
@@ -252,6 +274,8 @@ const SEED_MODULES: CurriculumHolon[] = [
 ];
 ```
 
+**Runtime requirement:** The `seedCurriculumRegistry()` function must be called at runtime before the registry is populated. Routes like `/curriculum` and `/knowledge` call this in their `onMount` hook. The function is idempotent — it checks an internal `_seeded` flag and only populates once, so multiple calls are safe.
+
 ### Step 3: Run the linter
 
 ```bash
@@ -260,7 +284,11 @@ npm test -- --grep "CurriculumLinter"
 
 Fix any errors (S-1, S-2, P-1, D-1, D-2, E-2) before proceeding.
 
-### Step 4: Validate end-to-end
+### Step 4: Update schema version (if modifying existing curricula)
+
+If you're updating an existing curriculum (not adding a new one), bump the `curriculumVersion` in `CurriculumMigration.ts` and add a migration function. The `CurriculumMigration` module handles version detection and forward-compatible migration at session load time.
+
+### Step 5: Validate end-to-end
 
 ```bash
 npx tsc --noEmit
@@ -294,12 +322,14 @@ npm test
 
 ## 8. Adaptive Difficulty
 
-The scheduling engine uses adaptive difficulty for curriculum encounters:
+The scheduling engine uses adaptive difficulty for curriculum encounters, adjusting both the target depth and scheduling priority based on the learner's performance:
 
-- **`computeAdaptiveTargetDepth`:** When retention > 0.8 AND reviewCount ≥ 3, pushes 1 level deeper. Otherwise stays at current depth for consolidation.
-- **`computeAdaptivePriority`:** Priority inversely proportional to retention. Struggle boost (reviewCount > 5 AND retention < 0.6) for concepts that need extra attention.
+- **`computeAdaptiveTargetDepth(cs, holon)`:** When `retention > 0.8` AND `reviewCount >= 3`, pushes 1 level deeper (e.g., memorized → comprehended). When retention is medium or reviewCount is insufficient, stays at current depth for consolidation. Never exceeds `holon.depthMeta.targetDepthRange.max`.
+- **`computeAdaptivePriority(cs)`:** Priority inversely proportional to retention — low retention = higher priority. Struggle boost activates only when `reviewCount > 5` AND `retention < 0.6`, preventing nearly-mastered concepts from being unnecessarily boosted.
 
 This applies across all study themes: `depth_push`, `new_material`, `cross_domain`, `review_decay`, `misconception_repair`, and `integration_sprint`.
+
+**Feedback loop:** `LearningAnalytics` and `DepthAssessment` feed performance data back into `CandidateGeneration` via adaptive difficulty, creating a closed loop where scheduling adapts to the learner's evolving knowledge state.
 
 ---
 
@@ -331,13 +361,17 @@ Each concept tracks which of the 5 holonic phases have been completed via `Conce
 ```
 JSON Seed Data → CurriculumRegistry → CurriculumLinter (validation)
                                           ↓
-                              CandidateGeneration (scheduling)
-                                          ↓
-                              EncounterScheduler (interleaving)
-                                          ↓
-                              Significator.knowledge (state)
-                                          ↓
-                              CCIEngine.knowledgeHealth (composite)
+                              CandidateGeneration (scheduling) ←──────┐
+                                          ↓                              │
+                              EncounterScheduler (interleaving)        │
+                                          ↓                              │
+                              Significator.knowledge (state)           │
+                                          ↓                              │
+                              CCIEngine.knowledgeHealth ───────────────┘
+                              ↕                    ↕
+                              LearningAnalytics  DepthAssessment
+                              (modality          (knowledge +
+                               effectiveness)     developmental)
 ```
 
 **Key files:**
