@@ -5,40 +5,179 @@
     "description": "A complete undergraduate program in Computer Science, from foundations through advanced topics. Self-contained demo curriculum.",
     "level": "program",
     "parentId": null,
-    "childIds": ["cs.program.bachelors"],
+    "childIds": [
+      "cs.program.bachelors"
+    ],
     "phases": {
-      "observation": { "question": "What is computer science?", "assessmentType": "factual_recall", "completionEvidence": "Can describe CS as a discipline" },
-      "principle": { "question": "What are the core principles?", "assessmentType": "concept_explanation", "completionEvidence": "Can explain computational thinking" },
-      "application": { "question": "How do these principles apply?", "assessmentType": "application_problem", "completionEvidence": "Can apply principles to problems" },
-      "integration": { "question": "How do these connect to other fields?", "assessmentType": "analogy_mapping", "completionEvidence": "Can draw cross-disciplinary connections" },
-      "creation": { "question": "What can you build?", "assessmentType": "creative_synthesis", "completionEvidence": "Can create original computational artifacts" }
+      "observation": {
+        "question": "What is computer science?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can describe CS as a discipline"
+      },
+      "principle": {
+        "question": "What are the core principles?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain computational thinking"
+      },
+      "application": {
+        "question": "How do these principles apply?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can apply principles to problems"
+      },
+      "integration": {
+        "question": "How do these connect to other fields?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can draw cross-disciplinary connections"
+      },
+      "creation": {
+        "question": "What can you build?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can create original computational artifacts"
+      }
     },
     "isomorphisms": [],
     "prerequisites": [],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal"], "stageRange": { "min": "Red", "max": "Orange" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 604800000, "halfLifeMultiplier": 2.0, "maxHalfLifeMs": 31536000000 },
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Intrapersonal"
+      ],
+      "stageRange": {
+        "min": "Red",
+        "max": "Orange"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "absent",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 604800000,
+      "halfLifeMultiplier": 2.0,
+      "maxHalfLifeMs": 31536000000
+    },
     "content": {
       "explanation": "Computer Science is the study of computation, information, and automation. It spans theoretical disciplines such as algorithms, theory of computation, and information theory to applied disciplines including the design and implementation of hardware and software.",
-      "examples": ["Algorithm design", "Software engineering", "Artificial intelligence", "Data science"],
-      "nonExamples": ["Electrical engineering (hardware focus)", "Information technology (IT support)"],
-      "analogies": ["Like mathematics, CS provides formal tools for reasoning about problems"],
-      "visuals": ["Discipline map showing theoretical vs applied branches"],
+      "examples": [
+        "Algorithm design",
+        "Software engineering",
+        "Artificial intelligence",
+        "Data science"
+      ],
+      "nonExamples": [
+        "Electrical engineering (hardware focus)",
+        "Information technology (IT support)"
+      ],
+      "analogies": [
+        "Like mathematics, CS provides formal tools for reasoning about problems"
+      ],
+      "visuals": [
+        "Discipline map showing theoretical vs applied branches"
+      ],
       "practiceProblems": []
     },
     "misconceptions": [],
     "depthRubric": {
       "conceptId": "cs.program",
       "levels": {
-        "memorized": { "evidence": "Can name CS subdisciplines", "canDo": ["name_subdisciplines"], "cannotDo": ["explain_relationships"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain how subdisciplines relate", "canDo": ["explain_relationships", "describe_history"], "cannotDo": ["compare_approaches"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
-        "applied": { "evidence": "Can apply CS thinking to new problems", "canDo": ["apply_to_novel"], "cannotDo": ["critique_methods"], "appropriateTasks": ["application_problem"], "threshold": 0.7 },
-        "analyzed": { "evidence": "Can compare and critique CS approaches", "canDo": ["compare_approaches", "critique_methods"], "cannotDo": ["synthesize_frameworks"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.8 },
-        "evaluated": { "evidence": "Can evaluate trade-offs between CS paradigms", "canDo": ["evaluate_tradeoffs", "assess_validity"], "cannotDo": ["create_new_paradigms"], "appropriateTasks": ["debate_position"], "threshold": 0.9 },
-        "transformed": { "evidence": "Can create original computational frameworks", "canDo": ["create_new_paradigms", "synthesize_frameworks"], "cannotDo": [], "appropriateTasks": ["creative_synthesis"], "threshold": 0.95 }
+        "memorized": {
+          "evidence": "Can name CS subdisciplines",
+          "canDo": [
+            "name_subdisciplines"
+          ],
+          "cannotDo": [
+            "explain_relationships"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain how subdisciplines relate",
+          "canDo": [
+            "explain_relationships",
+            "describe_history"
+          ],
+          "cannotDo": [
+            "compare_approaches"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can apply CS thinking to new problems",
+          "canDo": [
+            "apply_to_novel"
+          ],
+          "cannotDo": [
+            "critique_methods"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can compare and critique CS approaches",
+          "canDo": [
+            "compare_approaches",
+            "critique_methods"
+          ],
+          "cannotDo": [
+            "synthesize_frameworks"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can evaluate trade-offs between CS paradigms",
+          "canDo": [
+            "evaluate_tradeoffs",
+            "assess_validity"
+          ],
+          "cannotDo": [
+            "create_new_paradigms"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        },
+        "transformed": {
+          "evidence": "Can create original computational frameworks",
+          "canDo": [
+            "create_new_paradigms",
+            "synthesize_frameworks"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "creative_synthesis"
+          ],
+          "threshold": 0.95
+        }
       }
     },
-    "supportedModalities": ["LanguageReflective", "ScenarioChoice", "ImmersiveRPG"]
+    "supportedModalities": [
+      "LanguageReflective",
+      "ScenarioChoice",
+      "ImmersiveRPG"
+    ]
   },
   {
     "id": "cs.program.bachelors",
@@ -46,41 +185,180 @@
     "description": "Bachelor of Science degree tier covering core CS curriculum.",
     "level": "degree",
     "parentId": "cs.program",
-    "childIds": ["cs.program.algorithms"],
+    "childIds": [
+      "cs.program.algorithms"
+    ],
     "phases": {
-      "observation": { "question": "What does a CS degree cover?", "assessmentType": "factual_recall", "completionEvidence": "Can list core areas" },
-      "principle": { "question": "Why is this structure used?", "assessmentType": "concept_explanation", "completionEvidence": "Can explain curriculum design rationale" },
-      "application": { "question": "How do courses build on each other?", "assessmentType": "application_problem", "completionEvidence": "Can map course dependencies" },
-      "integration": { "question": "How does this prepare you for industry/research?", "assessmentType": "analogy_mapping", "completionEvidence": "Can connect curriculum to career paths" },
-      "creation": { "question": "What specialization would you design?", "assessmentType": "creative_synthesis", "completionEvidence": "Can propose curriculum modifications" }
+      "observation": {
+        "question": "What does a CS degree cover?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can list core areas"
+      },
+      "principle": {
+        "question": "Why is this structure used?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain curriculum design rationale"
+      },
+      "application": {
+        "question": "How do courses build on each other?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can map course dependencies"
+      },
+      "integration": {
+        "question": "How does this prepare you for industry/research?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can connect curriculum to career paths"
+      },
+      "creation": {
+        "question": "What specialization would you design?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can propose curriculum modifications"
+      }
     },
     "isomorphisms": [],
     "prerequisites": [],
     "crossBranchPrerequisites": [],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal", "Interpersonal"], "stageRange": { "min": "Red", "max": "Orange" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "memorized", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 604800000, "halfLifeMultiplier": 2.0, "maxHalfLifeMs": 31536000000 },
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Intrapersonal",
+        "Interpersonal"
+      ],
+      "stageRange": {
+        "min": "Red",
+        "max": "Orange"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "memorized",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 604800000,
+      "halfLifeMultiplier": 2.0,
+      "maxHalfLifeMs": 31536000000
+    },
     "content": {
       "explanation": "The B.S. in Computer Science provides a structured path through foundational theory, algorithm design, and systems engineering.",
-      "examples": ["Core theory courses", "Elective specializations", "Capstone projects"],
-      "nonExamples": ["B.A. in Computer Science (more liberal arts focus)", "B.S. in Software Engineering (more applied)"],
-      "analogies": ["Like a building: foundations first, then walls, then roof"],
-      "visuals": ["Degree audit flowchart"],
+      "examples": [
+        "Core theory courses",
+        "Elective specializations",
+        "Capstone projects"
+      ],
+      "nonExamples": [
+        "B.A. in Computer Science (more liberal arts focus)",
+        "B.S. in Software Engineering (more applied)"
+      ],
+      "analogies": [
+        "Like a building: foundations first, then walls, then roof"
+      ],
+      "visuals": [
+        "Degree audit flowchart"
+      ],
       "practiceProblems": []
     },
     "misconceptions": [],
     "depthRubric": {
       "conceptId": "cs.program.bachelors",
       "levels": {
-        "memorized": { "evidence": "Can list degree requirements", "canDo": ["list_requirements"], "cannotDo": ["explain_structure"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain why courses are ordered this way", "canDo": ["explain_structure", "describe_prerequisites"], "cannotDo": ["evaluate_curriculum"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
-        "applied": { "evidence": "Can plan a course sequence for a goal", "canDo": ["plan_sequence"], "cannotDo": ["critique_structure"], "appropriateTasks": ["application_problem"], "threshold": 0.7 },
-        "analyzed": { "evidence": "Can compare CS degree structures across universities", "canDo": ["compare_programs", "critique_structure"], "cannotDo": ["design_program"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.8 },
-        "evaluated": { "evidence": "Can evaluate trade-offs in curriculum design", "canDo": ["evaluate_curriculum", "assess_outcomes"], "cannotDo": ["design_program"], "appropriateTasks": ["debate_position"], "threshold": 0.9 },
-        "transformed": { "evidence": "Can design an original CS curriculum", "canDo": ["design_program"], "cannotDo": [], "appropriateTasks": ["creative_synthesis"], "threshold": 0.95 }
+        "memorized": {
+          "evidence": "Can list degree requirements",
+          "canDo": [
+            "list_requirements"
+          ],
+          "cannotDo": [
+            "explain_structure"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain why courses are ordered this way",
+          "canDo": [
+            "explain_structure",
+            "describe_prerequisites"
+          ],
+          "cannotDo": [
+            "evaluate_curriculum"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can plan a course sequence for a goal",
+          "canDo": [
+            "plan_sequence"
+          ],
+          "cannotDo": [
+            "critique_structure"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can compare CS degree structures across universities",
+          "canDo": [
+            "compare_programs",
+            "critique_structure"
+          ],
+          "cannotDo": [
+            "design_program"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can evaluate trade-offs in curriculum design",
+          "canDo": [
+            "evaluate_curriculum",
+            "assess_outcomes"
+          ],
+          "cannotDo": [
+            "design_program"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        },
+        "transformed": {
+          "evidence": "Can design an original CS curriculum",
+          "canDo": [
+            "design_program"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "creative_synthesis"
+          ],
+          "threshold": 0.95
+        }
       }
     },
-    "supportedModalities": ["LanguageReflective", "ScenarioChoice", "ImmersiveRPG", "Strategic"]
+    "supportedModalities": [
+      "LanguageReflective",
+      "ScenarioChoice",
+      "ImmersiveRPG",
+      "Strategic"
+    ]
   },
   {
     "id": "cs.program.algorithms",
@@ -88,41 +366,193 @@
     "description": "The study of efficient computation: algorithm design, complexity analysis, and fundamental data structures.",
     "level": "course",
     "parentId": "cs.program.bachelors",
-    "childIds": ["cs.program.alg.sorting"],
+    "childIds": [
+      "cs.program.alg.sorting"
+    ],
     "phases": {
-      "observation": { "question": "What is an algorithm?", "assessmentType": "factual_recall", "completionEvidence": "Can define algorithm and give examples" },
-      "principle": { "question": "How do we measure algorithm efficiency?", "assessmentType": "concept_explanation", "completionEvidence": "Can explain Big-O notation" },
-      "application": { "question": "When should you use which algorithm?", "assessmentType": "application_problem", "completionEvidence": "Can select appropriate algorithms for problems" },
-      "integration": { "question": "How do algorithms connect to other CS areas?", "assessmentType": "analogy_mapping", "completionEvidence": "Can draw connections to databases, networks, AI" },
-      "creation": { "question": "Can you design a novel algorithm?", "assessmentType": "creative_synthesis", "completionEvidence": "Can invent algorithms for novel problems" }
+      "observation": {
+        "question": "What is an algorithm?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can define algorithm and give examples"
+      },
+      "principle": {
+        "question": "How do we measure algorithm efficiency?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain Big-O notation"
+      },
+      "application": {
+        "question": "When should you use which algorithm?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can select appropriate algorithms for problems"
+      },
+      "integration": {
+        "question": "How do algorithms connect to other CS areas?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can draw connections to databases, networks, AI"
+      },
+      "creation": {
+        "question": "Can you design a novel algorithm?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can invent algorithms for novel problems"
+      }
     },
-    "isomorphisms": [{ "pattern": "divide_and_conquer", "targetConceptId": "math.foundations.algebra", "targetDomain": "Mathematics", "mappingDescription": "Both break complex problems into simpler subproblems", "limitations": "Mathematical induction is more general than D&C" }],
+    "isomorphisms": [
+      {
+        "pattern": "divide_and_conquer",
+        "targetConceptId": "math.foundations.algebra",
+        "targetDomain": "Mathematics",
+        "mappingDescription": "Both break complex problems into simpler subproblems",
+        "limitations": "Mathematical induction is more general than D&C"
+      }
+    ],
     "prerequisites": [],
     "crossBranchPrerequisites": [],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal"], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 259200000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 25920000000 },
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Intrapersonal"
+      ],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "absent",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 259200000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 25920000000
+    },
     "content": {
       "explanation": "Algorithms are step-by-step procedures for solving computational problems. Data structures are the organized formats that store and organize data. Together, they form the backbone of efficient software.",
-      "examples": ["Sorting algorithms (quicksort, mergesort)", "Search algorithms (binary search)", "Graph algorithms (BFS, DFS)", "Dynamic programming"],
-      "nonExamples": ["Heuristic methods (approximate, not guaranteed)", "Brute force (exhaustive search)"],
-      "analogies": ["Like recipes: the algorithm is the recipe, the data structure is the pantry organization"],
-      "visuals": ["Complexity comparison chart", "Data structure memory layout diagrams"],
+      "examples": [
+        "Sorting algorithms (quicksort, mergesort)",
+        "Search algorithms (binary search)",
+        "Graph algorithms (BFS, DFS)",
+        "Dynamic programming"
+      ],
+      "nonExamples": [
+        "Heuristic methods (approximate, not guaranteed)",
+        "Brute force (exhaustive search)"
+      ],
+      "analogies": [
+        "Like recipes: the algorithm is the recipe, the data structure is the pantry organization"
+      ],
+      "visuals": [
+        "Complexity comparison chart",
+        "Data structure memory layout diagrams"
+      ],
       "practiceProblems": []
     },
     "misconceptions": [],
     "depthRubric": {
       "conceptId": "cs.program.algorithms",
       "levels": {
-        "memorized": { "evidence": "Can name common algorithms and their use cases", "canDo": ["name_algorithms", "state_complexity"], "cannotDo": ["explain_why_complexity"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain why an algorithm has its complexity", "canDo": ["explain_why_complexity", "trace_execution"], "cannotDo": ["analyze_new_algorithms"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
-        "applied": { "evidence": "Can implement algorithms from pseudocode", "canDo": ["implement_algorithms", "select_appropriate"], "cannotDo": ["prove_correctness"], "appropriateTasks": ["application_problem"], "threshold": 0.7 },
-        "analyzed": { "evidence": "Can analyze time/space complexity of novel algorithms", "canDo": ["analyze_new_algorithms", "prove_correctness", "compare_approaches"], "cannotDo": ["design_novel_algorithms"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.8 },
-        "evaluated": { "evidence": "Can evaluate algorithm trade-offs and optimize", "canDo": ["evaluate_tradeoffs", "optimize_algorithms"], "cannotDo": ["create_algorithms"], "appropriateTasks": ["debate_position"], "threshold": 0.9 },
-        "transformed": { "evidence": "Can design novel algorithms for unprecedented problems", "canDo": ["create_algorithms", "design_novel_algorithms"], "cannotDo": [], "appropriateTasks": ["creative_synthesis"], "threshold": 0.95 }
+        "memorized": {
+          "evidence": "Can name common algorithms and their use cases",
+          "canDo": [
+            "name_algorithms",
+            "state_complexity"
+          ],
+          "cannotDo": [
+            "explain_why_complexity"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain why an algorithm has its complexity",
+          "canDo": [
+            "explain_why_complexity",
+            "trace_execution"
+          ],
+          "cannotDo": [
+            "analyze_new_algorithms"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can implement algorithms from pseudocode",
+          "canDo": [
+            "implement_algorithms",
+            "select_appropriate"
+          ],
+          "cannotDo": [
+            "prove_correctness"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can analyze time/space complexity of novel algorithms",
+          "canDo": [
+            "analyze_new_algorithms",
+            "prove_correctness",
+            "compare_approaches"
+          ],
+          "cannotDo": [
+            "design_novel_algorithms"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can evaluate algorithm trade-offs and optimize",
+          "canDo": [
+            "evaluate_tradeoffs",
+            "optimize_algorithms"
+          ],
+          "cannotDo": [
+            "create_algorithms"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        },
+        "transformed": {
+          "evidence": "Can design novel algorithms for unprecedented problems",
+          "canDo": [
+            "create_algorithms",
+            "design_novel_algorithms"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "creative_synthesis"
+          ],
+          "threshold": 0.95
+        }
       }
     },
-    "supportedModalities": ["LanguageReflective", "Deterministic", "Strategic", "ImmersiveRPG"]
+    "supportedModalities": [
+      "LanguageReflective",
+      "Deterministic",
+      "Strategic",
+      "ImmersiveRPG"
+    ]
   },
   {
     "id": "cs.program.alg.sorting",
@@ -130,39 +560,177 @@
     "description": "Study of comparison-based and non-comparison sorting: quicksort, mergesort, heapsort, radix sort, and their complexity trade-offs.",
     "level": "module",
     "parentId": "cs.program.algorithms",
-    "childIds": ["cs.program.alg.sorting.quicksort", "cs.program.alg.sorting.mergesort"],
+    "childIds": [
+      "cs.program.alg.sorting.divide-conquer",
+      "cs.program.alg.sorting.comparison-basics"
+    ],
     "phases": {
-      "observation": { "question": "What does it mean to sort data?", "assessmentType": "factual_recall", "completionEvidence": "Can define sorting and list common algorithms" },
-      "principle": { "question": "Why can't we sort faster than O(n log n)?", "assessmentType": "concept_explanation", "completionEvidence": "Can explain the comparison-based lower bound" },
-      "application": { "question": "Which sort for which situation?", "assessmentType": "application_problem", "completionEvidence": "Can select sorting algorithm based on constraints" },
-      "integration": { "question": "How do sorting algorithms relate to divide-and-conquer?", "assessmentType": "analogy_mapping", "completionEvidence": "Can connect sorting to broader algorithmic paradigms" },
-      "creation": { "question": "Can you invent a sorting algorithm for a novel constraint?", "assessmentType": "creative_synthesis", "completionEvidence": "Can design custom sorting for special cases" }
+      "observation": {
+        "question": "What does it mean to sort data?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can define sorting and list common algorithms"
+      },
+      "principle": {
+        "question": "Why can't we sort faster than O(n log n)?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain the comparison-based lower bound"
+      },
+      "application": {
+        "question": "Which sort for which situation?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can select sorting algorithm based on constraints"
+      },
+      "integration": {
+        "question": "How do sorting algorithms relate to divide-and-conquer?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can connect sorting to broader algorithmic paradigms"
+      },
+      "creation": {
+        "question": "Can you invent a sorting algorithm for a novel constraint?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can design custom sorting for special cases"
+      }
     },
-    "isomorphisms": [{ "pattern": "divide_and_conquer", "targetConceptId": "math.foundations.algebra", "targetDomain": "Mathematics", "mappingDescription": "Mergesort exemplifies the D&C paradigm from algebra", "limitations": "Sorting has tighter lower bounds than general D&C problems" }],
-    "prerequisites": ["cs.program.algorithms"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "evaluated" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated"] },
-    "forgettingParams": { "initialHalfLifeMs": 259200000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 25920000000 },
+    "isomorphisms": [
+      {
+        "pattern": "divide_and_conquer",
+        "targetConceptId": "math.foundations.algebra",
+        "targetDomain": "Mathematics",
+        "mappingDescription": "Mergesort exemplifies the D&C paradigm from algebra",
+        "limitations": "Sorting has tighter lower bounds than general D&C problems"
+      }
+    ],
+    "prerequisites": [
+      "cs.program.algorithms"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "comprehended",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "evaluated"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 259200000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 25920000000
+    },
     "content": {
       "explanation": "Sorting algorithms arrange elements in a specific order. Comparison-based sorts have a theoretical lower bound of O(n log n). Different algorithms optimize for different constraints: time, space, stability, and data distribution.",
-      "examples": ["Quicksort (average O(n log n), in-place)", "Mergesort (O(n log n), stable, extra space)", "Heapsort (O(n log n), in-place, not stable)", "Radix sort (O(nk), non-comparison)"],
-      "nonExamples": ["Binary search (searching, not sorting)", "Hash tables (unordered lookup)"],
-      "analogies": ["Like organizing a library: different methods for different collection sizes and constraints"],
-      "visuals": ["Sorting algorithm comparison table", "Recursion tree diagrams"],
+      "examples": [
+        "Quicksort (average O(n log n), in-place)",
+        "Mergesort (O(n log n), stable, extra space)",
+        "Heapsort (O(n log n), in-place, not stable)",
+        "Radix sort (O(nk), non-comparison)"
+      ],
+      "nonExamples": [
+        "Binary search (searching, not sorting)",
+        "Hash tables (unordered lookup)"
+      ],
+      "analogies": [
+        "Like organizing a library: different methods for different collection sizes and constraints"
+      ],
+      "visuals": [
+        "Sorting algorithm comparison table",
+        "Recursion tree diagrams"
+      ],
       "practiceProblems": []
     },
     "misconceptions": [],
     "depthRubric": {
       "conceptId": "cs.program.alg.sorting",
       "levels": {
-        "memorized": { "evidence": "Can name 3+ sorting algorithms and their Big-O", "canDo": ["name_sorts", "state_complexity"], "cannotDo": ["explain_why"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain how each sort works and why it has its complexity", "canDo": ["explain_why", "trace_sort"], "cannotDo": ["analyze_tradeoffs"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
-        "applied": { "evidence": "Can implement any comparison sort from scratch", "canDo": ["implement_sorts", "select_sort_for_context"], "cannotDo": ["prove_lower_bound"], "appropriateTasks": ["application_problem"], "threshold": 0.7 },
-        "analyzed": { "evidence": "Can prove the O(n log n) lower bound and compare sort trade-offs", "canDo": ["prove_lower_bound", "analyze_tradeoffs", "compare_sorts"], "cannotDo": ["design_novel_sort"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.8 },
-        "evaluated": { "evidence": "Can evaluate which sort is optimal for a given data distribution", "canDo": ["evaluate_optimality", "design_novel_sort"], "cannotDo": [], "appropriateTasks": ["debate_position"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can name 3+ sorting algorithms and their Big-O",
+          "canDo": [
+            "name_sorts",
+            "state_complexity"
+          ],
+          "cannotDo": [
+            "explain_why"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain how each sort works and why it has its complexity",
+          "canDo": [
+            "explain_why",
+            "trace_sort"
+          ],
+          "cannotDo": [
+            "analyze_tradeoffs"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can implement any comparison sort from scratch",
+          "canDo": [
+            "implement_sorts",
+            "select_sort_for_context"
+          ],
+          "cannotDo": [
+            "prove_lower_bound"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can prove the O(n log n) lower bound and compare sort trade-offs",
+          "canDo": [
+            "prove_lower_bound",
+            "analyze_tradeoffs",
+            "compare_sorts"
+          ],
+          "cannotDo": [
+            "design_novel_sort"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can evaluate which sort is optimal for a given data distribution",
+          "canDo": [
+            "evaluate_optimality",
+            "design_novel_sort"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["LanguageReflective", "Deterministic", "Strategic"]
+    "supportedModalities": [
+      "LanguageReflective",
+      "Deterministic",
+      "Strategic"
+    ]
   },
   {
     "id": "cs.program.alg.sorting.quicksort",
@@ -172,38 +740,183 @@
     "parentId": "cs.program.alg.sorting",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What does quicksort do step by step?", "assessmentType": "factual_recall", "completionEvidence": "Can describe the partition-based approach" },
-      "principle": { "question": "Why is quicksort efficient on average?", "assessmentType": "concept_explanation", "completionEvidence": "Can explain average-case analysis and pivot selection" },
-      "application": { "question": "When does quicksort perform poorly?", "assessmentType": "application_problem", "completionEvidence": "Can identify and handle worst-case scenarios" },
-      "integration": { "question": "How does quicksort relate to other D&C algorithms?", "assessmentType": "analogy_mapping", "completionEvidence": "Can connect to mergesort and general D&C" },
-      "creation": { "question": "Can you design a pivot strategy for a specific data distribution?", "assessmentType": "creative_synthesis", "completionEvidence": "Can invent domain-specific pivot selection" }
+      "observation": {
+        "question": "What does quicksort do step by step?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can describe the partition-based approach"
+      },
+      "principle": {
+        "question": "Why is quicksort efficient on average?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain average-case analysis and pivot selection"
+      },
+      "application": {
+        "question": "When does quicksort perform poorly?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can identify and handle worst-case scenarios"
+      },
+      "integration": {
+        "question": "How does quicksort relate to other D&C algorithms?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can connect to mergesort and general D&C"
+      },
+      "creation": {
+        "question": "Can you design a pivot strategy for a specific data distribution?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can invent domain-specific pivot selection"
+      }
     },
     "isomorphisms": [],
-    "prerequisites": ["cs.program.alg.sorting"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 25920000000 },
+    "prerequisites": [
+      "cs.program.alg.sorting"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "comprehended",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 172800000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 25920000000
+    },
     "content": {
-      "explanation": "Quicksort selects a pivot element, partitions the array around it (elements less than pivot go left, greater go right), then recursively sorts the sub-arrays. Average case is O(n log n) with good pivot selection; worst case is O(n²) with poor pivots.",
-      "examples": ["Hoare partition scheme", "Lomuto partition scheme", "Median-of-three pivot", "Randomized pivot"],
-      "nonExamples": ["Merge sort (uses extra space, always O(n log n))", "Insertion sort (O(n²), not divide-and-conquer)"],
-      "analogies": ["Like a tournament: pick a referee (pivot), split teams by who they can beat, then recursively sort each half"],
-      "visuals": ["Partition step animation", "Recursion tree with pivot choices"],
+      "explanation": "Quicksort selects a pivot element, partitions the array around it (elements less than pivot go left, greater go right), then recursively sorts the sub-arrays. Average case is O(n log n) with good pivot selection; worst case is O(n\u00b2) with poor pivots.",
+      "examples": [
+        "Hoare partition scheme",
+        "Lomuto partition scheme",
+        "Median-of-three pivot",
+        "Randomized pivot"
+      ],
+      "nonExamples": [
+        "Merge sort (uses extra space, always O(n log n))",
+        "Insertion sort (O(n\u00b2), not divide-and-conquer)"
+      ],
+      "analogies": [
+        "Like a tournament: pick a referee (pivot), split teams by who they can beat, then recursively sort each half"
+      ],
+      "visuals": [
+        "Partition step animation",
+        "Recursion tree with pivot choices"
+      ],
       "practiceProblems": []
     },
     "misconceptions": [],
     "depthRubric": {
       "conceptId": "cs.program.alg.sorting.quicksort",
       "levels": {
-        "memorized": { "evidence": "Can describe quicksort's basic steps", "canDo": ["describe_steps", "state_complexity"], "cannotDo": ["explain_pivot_choice"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain why pivot choice matters and how partitioning works", "canDo": ["explain_pivot_choice", "explain_partitioning", "trace_algorithm"], "cannotDo": ["analyze_average_case"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
-        "applied": { "evidence": "Can implement quicksort with different pivot strategies", "canDo": ["implement_quicksort", "handle_edge_cases", "choose_pivot_strategy"], "cannotDo": ["prove_average_complexity"], "appropriateTasks": ["application_problem"], "threshold": 0.7 },
-        "analyzed": { "evidence": "Can prove average-case complexity and analyze partition balance", "canDo": ["prove_average_complexity", "analyze_partition_balance", "compare_to_mergesort"], "cannotDo": ["optimize_for_distributions"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.8 },
-        "evaluated": { "evidence": "Can evaluate pivot strategies for different data distributions", "canDo": ["evaluate_pivot_strategies", "optimize_for_distributions", "design_hybrid"], "cannotDo": ["create_novel_sort"], "appropriateTasks": ["debate_position"], "threshold": 0.9 },
-        "transformed": { "evidence": "Can design a novel partitioning scheme for a constrained environment", "canDo": ["create_novel_sort", "design_partition_scheme"], "cannotDo": [], "appropriateTasks": ["creative_synthesis"], "threshold": 0.95 }
+        "memorized": {
+          "evidence": "Can describe quicksort's basic steps",
+          "canDo": [
+            "describe_steps",
+            "state_complexity"
+          ],
+          "cannotDo": [
+            "explain_pivot_choice"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain why pivot choice matters and how partitioning works",
+          "canDo": [
+            "explain_pivot_choice",
+            "explain_partitioning",
+            "trace_algorithm"
+          ],
+          "cannotDo": [
+            "analyze_average_case"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can implement quicksort with different pivot strategies",
+          "canDo": [
+            "implement_quicksort",
+            "handle_edge_cases",
+            "choose_pivot_strategy"
+          ],
+          "cannotDo": [
+            "prove_average_complexity"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can prove average-case complexity and analyze partition balance",
+          "canDo": [
+            "prove_average_complexity",
+            "analyze_partition_balance",
+            "compare_to_mergesort"
+          ],
+          "cannotDo": [
+            "optimize_for_distributions"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can evaluate pivot strategies for different data distributions",
+          "canDo": [
+            "evaluate_pivot_strategies",
+            "optimize_for_distributions",
+            "design_hybrid"
+          ],
+          "cannotDo": [
+            "create_novel_sort"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        },
+        "transformed": {
+          "evidence": "Can design a novel partitioning scheme for a constrained environment",
+          "canDo": [
+            "create_novel_sort",
+            "design_partition_scheme"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "creative_synthesis"
+          ],
+          "threshold": 0.95
+        }
       }
     },
-    "supportedModalities": ["LanguageReflective", "Deterministic", "Strategic", "ImmersiveRPG"]
+    "supportedModalities": [
+      "LanguageReflective",
+      "Deterministic",
+      "Strategic",
+      "ImmersiveRPG"
+    ]
   },
   {
     "id": "cs.program.alg.sorting.mergesort",
@@ -213,37 +926,514 @@
     "parentId": "cs.program.alg.sorting",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What does mergesort do step by step?", "assessmentType": "factual_recall", "completionEvidence": "Can describe the merge-based approach" },
-      "principle": { "question": "Why is mergesort always O(n log n)?", "assessmentType": "concept_explanation", "completionEvidence": "Can explain the guaranteed complexity" },
-      "application": { "question": "When should you prefer mergesort over quicksort?", "assessmentType": "application_problem", "completionEvidence": "Can identify stability and worst-case requirements" },
-      "integration": { "question": "How does mergesort connect to external sorting?", "assessmentType": "analogy_mapping", "completionEvidence": "Can connect to external merge sort for large datasets" },
-      "creation": { "question": "Can you design a bottom-up mergesort for a linked list?", "assessmentType": "creative_synthesis", "completionEvidence": "Can adapt mergesort to linked list constraints" }
+      "observation": {
+        "question": "What does mergesort do step by step?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can describe the merge-based approach"
+      },
+      "principle": {
+        "question": "Why is mergesort always O(n log n)?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain the guaranteed complexity"
+      },
+      "application": {
+        "question": "When should you prefer mergesort over quicksort?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can identify stability and worst-case requirements"
+      },
+      "integration": {
+        "question": "How does mergesort connect to external sorting?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can connect to external merge sort for large datasets"
+      },
+      "creation": {
+        "question": "Can you design a bottom-up mergesort for a linked list?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can adapt mergesort to linked list constraints"
+      }
     },
-    "isomorphisms": [{ "pattern": "divide_and_conquer", "targetConceptId": "cs.program.alg.sorting.quicksort", "targetDomain": "Computer Science", "mappingDescription": "Both are D&C sorts but differ in merge vs partition strategy", "limitations": "Mergesort uses extra space; quicksort is in-place" }],
-    "prerequisites": ["cs.program.alg.sorting"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 25920000000 },
+    "isomorphisms": [
+      {
+        "pattern": "divide_and_conquer",
+        "targetConceptId": "cs.program.alg.sorting.quicksort",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Both are D&C sorts but differ in merge vs partition strategy",
+        "limitations": "Mergesort uses extra space; quicksort is in-place"
+      }
+    ],
+    "prerequisites": [
+      "cs.program.alg.sorting"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "comprehended",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 172800000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 25920000000
+    },
     "content": {
       "explanation": "Mergesort recursively divides the array in half until single elements remain, then merges sorted sub-arrays in order. It guarantees O(n log n) time but requires O(n) extra space. It is stable (preserves relative order of equal elements).",
-      "examples": ["Top-down mergesort", "Bottom-up mergesort (iterative)", "In-place mergesort variants"],
-      "nonExamples": ["Quicksort (not stable, not guaranteed O(n log n))", "Heapsort (O(n log n) but not stable)"],
-      "analogies": ["Like a tournament bracket: split into halves, sort each half, then merge winners"],
-      "visuals": ["Merge step animation", "Space usage comparison with quicksort"],
+      "examples": [
+        "Top-down mergesort",
+        "Bottom-up mergesort (iterative)",
+        "In-place mergesort variants"
+      ],
+      "nonExamples": [
+        "Quicksort (not stable, not guaranteed O(n log n))",
+        "Heapsort (O(n log n) but not stable)"
+      ],
+      "analogies": [
+        "Like a tournament bracket: split into halves, sort each half, then merge winners"
+      ],
+      "visuals": [
+        "Merge step animation",
+        "Space usage comparison with quicksort"
+      ],
       "practiceProblems": []
     },
     "misconceptions": [],
     "depthRubric": {
       "conceptId": "cs.program.alg.sorting.mergesort",
       "levels": {
-        "memorized": { "evidence": "Can describe mergesort's basic steps", "canDo": ["describe_steps", "state_complexity"], "cannotDo": ["explain_merge_step"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain the merge step and why it's O(n)", "canDo": ["explain_merge_step", "explain_stability"], "cannotDo": ["prove_complexity"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
-        "applied": { "evidence": "Can implement mergesort including the merge step", "canDo": ["implement_mergesort", "handle_stability"], "cannotDo": ["optimize_space"], "appropriateTasks": ["application_problem"], "threshold": 0.7 },
-        "analyzed": { "evidence": "Can prove O(n log n) and analyze space-time trade-offs", "canDo": ["prove_complexity", "analyze_space_tradeoff", "compare_to_quicksort"], "cannotDo": ["design_optimal_variant"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.8 },
-        "evaluated": { "evidence": "Can evaluate when mergesort is optimal vs alternatives", "canDo": ["evaluate_optimality", "select_for_context"], "cannotDo": ["design_novel_merge"], "appropriateTasks": ["debate_position"], "threshold": 0.9 },
-        "transformed": { "evidence": "Can design an in-place stable sort that improves on mergesort", "canDo": ["design_optimal_variant", "design_novel_merge"], "cannotDo": [], "appropriateTasks": ["creative_synthesis"], "threshold": 0.95 }
+        "memorized": {
+          "evidence": "Can describe mergesort's basic steps",
+          "canDo": [
+            "describe_steps",
+            "state_complexity"
+          ],
+          "cannotDo": [
+            "explain_merge_step"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain the merge step and why it's O(n)",
+          "canDo": [
+            "explain_merge_step",
+            "explain_stability"
+          ],
+          "cannotDo": [
+            "prove_complexity"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can implement mergesort including the merge step",
+          "canDo": [
+            "implement_mergesort",
+            "handle_stability"
+          ],
+          "cannotDo": [
+            "optimize_space"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can prove O(n log n) and analyze space-time trade-offs",
+          "canDo": [
+            "prove_complexity",
+            "analyze_space_tradeoff",
+            "compare_to_quicksort"
+          ],
+          "cannotDo": [
+            "design_optimal_variant"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can evaluate when mergesort is optimal vs alternatives",
+          "canDo": [
+            "evaluate_optimality",
+            "select_for_context"
+          ],
+          "cannotDo": [
+            "design_novel_merge"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        },
+        "transformed": {
+          "evidence": "Can design an in-place stable sort that improves on mergesort",
+          "canDo": [
+            "design_optimal_variant",
+            "design_novel_merge"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "creative_synthesis"
+          ],
+          "threshold": 0.95
+        }
       }
     },
-    "supportedModalities": ["LanguageReflective", "Deterministic", "Strategic"]
+    "supportedModalities": [
+      "LanguageReflective",
+      "Deterministic",
+      "Strategic"
+    ]
+  },
+  {
+    "id": "cs.program.alg.sorting.divide-conquer",
+    "name": "Divide-and-Conquer Sorting",
+    "description": "Sorting algorithms that decompose the problem into smaller subproblems: quicksort and mergesort.",
+    "level": "unit",
+    "parentId": "cs.program.alg.sorting",
+    "childIds": [
+      "cs.program.alg.sorting.quicksort",
+      "cs.program.alg.sorting.mergesort"
+    ],
+    "phases": {
+      "observation": {
+        "question": "What do quicksort and mergesort have in common?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can identify the divide-conquer pattern in both"
+      },
+      "principle": {
+        "question": "How does splitting the problem reduce total work?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain the recursive decomposition strategy"
+      },
+      "application": {
+        "question": "When would you choose mergesort over quicksort?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can select based on stability, space, and worst-case needs"
+      },
+      "integration": {
+        "question": "How does this connect to the broader divide-and-conquer paradigm?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can map to binary search, Strassen, and other D&C algorithms"
+      },
+      "creation": {
+        "question": "Can you design a hybrid sort that combines both strategies?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can design introsort or Timsort-style hybrid"
+      }
+    },
+    "isomorphisms": [],
+    "prerequisites": [
+      "cs.program.alg.sorting"
+    ],
+    "crossBranchPrerequisites": [],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "memorized",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "evaluated"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 259200000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 25920000000
+    },
+    "content": {
+      "explanation": "Divide-and-conquer sorting splits the array into halves, recursively sorts each half, then combines. Quicksort partitions around a pivot; mergesort merges sorted halves.",
+      "examples": [
+        "Quicksort partition-and-recurse",
+        "Mergesort split-and-merge"
+      ],
+      "nonExamples": [
+        "Heapsort (selection-based, not divide-conquer)"
+      ],
+      "analogies": [
+        "Like sorting two halves of a deck then interleaving"
+      ],
+      "visuals": [
+        "Recursion tree for mergesort",
+        "Partition diagram for quicksort"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [],
+    "depthRubric": {
+      "conceptId": "cs.program.alg.sorting.divide-conquer",
+      "levels": {
+        "memorized": {
+          "evidence": "Can name both D&C sorts and their recurrence relations",
+          "canDo": [
+            "name_algorithms",
+            "state_recurrences"
+          ],
+          "cannotDo": [
+            "explain_partitioning"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can trace through the recursive decomposition of both",
+          "canDo": [
+            "trace_recursion",
+            "explain_merging"
+          ],
+          "cannotDo": [
+            "analyze_partition_quality"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can implement both from scratch with correct base cases",
+          "canDo": [
+            "implement_both",
+            "handle_edge_cases"
+          ],
+          "cannotDo": [
+            "prove_correctness"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can compare space/time trade-offs and prove correctness",
+          "canDo": [
+            "prove_correctness",
+            "compare_tradeoffs"
+          ],
+          "cannotDo": [
+            "design_hybrid"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can evaluate which D&C strategy fits a given constraint landscape",
+          "canDo": [
+            "evaluate_fit",
+            "design_hybrid"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        }
+      }
+    },
+    "supportedModalities": [
+      "LanguageReflective",
+      "Deterministic",
+      "Strategic"
+    ]
+  },
+  {
+    "id": "cs.program.alg.sorting.comparison-basics",
+    "name": "Comparison-Based Sorting Fundamentals",
+    "description": "The theoretical foundations of comparison-based sorting: lower bounds, decision trees, and information-theoretic limits.",
+    "level": "unit",
+    "parentId": "cs.program.alg.sorting",
+    "childIds": [],
+    "phases": {
+      "observation": {
+        "question": "What limits how fast we can sort?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can state the O(n log n) lower bound"
+      },
+      "principle": {
+        "question": "Why does comparison-based sorting have a lower bound?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain via decision tree and information theory"
+      },
+      "application": {
+        "question": "How do you prove a sorting algorithm is optimal?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can construct a decision tree proof"
+      },
+      "integration": {
+        "question": "How does this connect to computational complexity theory?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can relate to P vs NP, reductions, and lower bound techniques"
+      },
+      "creation": {
+        "question": "Can you find a lower bound for a non-sorting problem using the same technique?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can apply decision tree lower bounds to selection, merging, etc."
+      }
+    },
+    "isomorphisms": [],
+    "prerequisites": [
+      "cs.program.alg.sorting"
+    ],
+    "crossBranchPrerequisites": [],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "comprehended",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "evaluated"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 259200000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 25920000000
+    },
+    "content": {
+      "explanation": "Any comparison-based sorting algorithm must make at least O(n log n) comparisons in the worst case. This follows from the decision tree model: a tree with n! leaves must have depth at least log2(n!).",
+      "examples": [
+        "Decision tree for 3-element sort",
+        "Information-theoretic argument"
+      ],
+      "nonExamples": [
+        "Counting sort (non-comparison, O(n))"
+      ],
+      "analogies": [
+        "Like 20 questions: you need enough questions to distinguish all outcomes"
+      ],
+      "visuals": [
+        "Decision tree for sorting 3 elements",
+        "log2(n!) growth curve"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [],
+    "depthRubric": {
+      "conceptId": "cs.program.alg.sorting.comparison-basics",
+      "levels": {
+        "memorized": {
+          "evidence": "Can state the O(n log n) lower bound for comparison sorts",
+          "canDo": [
+            "state_bound"
+          ],
+          "cannotDo": [
+            "prove_bound"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain the decision tree argument",
+          "canDo": [
+            "explain_tree",
+            "count_leaves"
+          ],
+          "cannotDo": [
+            "construct_proof"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can construct a decision tree for a small sort and count comparisons",
+          "canDo": [
+            "construct_tree",
+            "count_comparisons"
+          ],
+          "cannotDo": [
+            "generalize_proof"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can prove the lower bound formally using information theory",
+          "canDo": [
+            "prove_formally",
+            "analyze_entropy"
+          ],
+          "cannotDo": [
+            "apply_to_other_problems"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can apply the technique to derive lower bounds for other comparison problems",
+          "canDo": [
+            "derive_new_bounds",
+            "compare_techniques"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        }
+      }
+    },
+    "supportedModalities": [
+      "LanguageReflective",
+      "Deterministic"
+    ]
   }
 ]

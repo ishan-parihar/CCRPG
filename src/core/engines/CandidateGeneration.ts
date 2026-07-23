@@ -397,7 +397,9 @@ function prerequisitesAtRequiredDepth(
 ): boolean {
   const holon = registry.get(conceptId);
   if (!holon) return false;
-  return holon.prerequisites.every(p => {
+
+  // Check same-branch prerequisites
+  const sameBranchMet = holon.prerequisites.every(p => {
     if (encountered && !encountered.has(p)) return false;
     const prereqCs = knowledge.conceptStates.get(p);
     if (!prereqCs) return false;
@@ -405,6 +407,17 @@ function prerequisitesAtRequiredDepth(
     const requiredDepth = prereqHolon?.depthMeta.requiredPrerequisiteDepth ?? 'memorized';
     return depthOrdinal(prereqCs.depthLevel) >= depthOrdinal(requiredDepth);
   });
+  if (!sameBranchMet) return false;
+
+  // Check cross-branch prerequisites (must exist in knowledge state at required depth)
+  const crossBranchMet = (holon.crossBranchPrerequisites ?? []).every(cbId => {
+    const cbCs = knowledge.conceptStates.get(cbId);
+    if (!cbCs) return false;
+    const cbHolon = registry.get(cbId);
+    const requiredDepth = cbHolon?.depthMeta.requiredPrerequisiteDepth ?? 'memorized';
+    return depthOrdinal(cbCs.depthLevel) >= depthOrdinal(requiredDepth);
+  });
+  return crossBranchMet;
 }
 
 /**
