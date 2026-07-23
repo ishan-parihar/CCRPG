@@ -204,6 +204,19 @@ describe('CurriculumLinter', () => {
       expect(result.totalErrors).toBe(0);
     });
 
+    it('detects missing cross-branch prerequisites', () => {
+      const holonWithMissingCB: CurriculumHolon = {
+        ...BASE_HOLON,
+        id: 'test.missing.cb',
+        crossBranchPrerequisites: ['nonexistent.holon.x', 'nonexistent.holon.y'],
+      };
+      const missingCBRegistry = makeRegistry([holonWithMissingCB]);
+      const result = lintRegistry(missingCBRegistry);
+      expect(result.overallPassed).toBe(false);
+      expect(result.graphIssues.some(i => i.checkId === 'G-CB-MISSING')).toBe(true);
+      expect(result.graphIssues.filter(i => i.checkId === 'G-CB-MISSING').length).toBe(2);
+    });
+
     it('detects prerequisite cycles', () => {
       const holonA: CurriculumHolon = {
         ...BASE_HOLON,

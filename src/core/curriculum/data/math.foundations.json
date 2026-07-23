@@ -2,445 +2,2453 @@
   {
     "id": "math.foundations",
     "name": "Mathematics Foundations",
-    "description": "The foundational concepts of mathematical thinking: number theory, algebra, and geometry — the bedrock upon which all mathematics is built.",
+    "description": "The foundational concepts of mathematical thinking: number theory, algebra, and geometry \u2014 the bedrock upon which all mathematics is built.",
     "level": "branch",
     "parentId": null,
-    "childIds": ["math.number_theory", "math.algebra", "math.geometry", "math.foundations.numbers", "math.foundations.proof"],
+    "childIds": [
+      "math.number_theory",
+      "math.algebra",
+      "math.geometry",
+      "math.foundations.numbers",
+      "math.foundations.proof"
+    ],
     "phases": {
-      "observation": { "question": "What patterns exist in number systems?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify and describe basic numerical patterns" },
-      "principle": { "question": "Why do these mathematical structures behave consistently?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain the logical foundation of arithmetic operations" },
-      "application": { "question": "How do we apply these structures to solve novel problems?", "assessmentType": "application_problem", "completionEvidence": "Student can use number theory to solve unfamiliar problems" },
-      "integration": { "question": "How do different branches of mathematics connect through number foundations?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map structural similarities across mathematical domains" },
-      "creation": { "question": "What new mathematical structures can emerge from these foundations?", "assessmentType": "research_question", "completionEvidence": "Student can formulate and investigate novel mathematical questions" }
+      "observation": {
+        "question": "What patterns exist in number systems?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify and describe basic numerical patterns"
+      },
+      "principle": {
+        "question": "Why do these mathematical structures behave consistently?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain the logical foundation of arithmetic operations"
+      },
+      "application": {
+        "question": "How do we apply these structures to solve novel problems?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can use number theory to solve unfamiliar problems"
+      },
+      "integration": {
+        "question": "How do different branches of mathematics connect through number foundations?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can map structural similarities across mathematical domains"
+      },
+      "creation": {
+        "question": "What new mathematical structures can emerge from these foundations?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can formulate and investigate novel mathematical questions"
+      }
     },
     "isomorphisms": [
-      { "pattern": "axiomatic foundation → emergent complexity", "targetConceptId": "cs.foundations.logic", "targetDomain": "Computer Science", "mappingDescription": "Both logic and math build complex systems from simple axioms" }
+      {
+        "pattern": "axiomatic foundation \u2192 emergent complexity",
+        "targetConceptId": "cs.foundations.logic",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Both logic and math build complex systems from simple axioms"
+      }
     ],
     "prerequisites": [],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal"], "stageRange": { "min": "Red", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 86400000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Mathematics Foundations covers the structural bedrock of mathematical thinking.", "examples": ["Natural numbers and their properties", "The logical structure of proof"], "nonExamples": ["Applied engineering calculations", "Statistical data analysis"], "analogies": ["Mathematics is to science what grammar is to literature"], "visuals": ["Number line", "Set membership diagram"], "practiceProblems": [] },
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Intrapersonal"
+      ],
+      "stageRange": {
+        "min": "Red",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "absent",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 86400000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Mathematics Foundations covers the structural bedrock of mathematical thinking.",
+      "examples": [
+        "Natural numbers and their properties",
+        "The logical structure of proof"
+      ],
+      "nonExamples": [
+        "Applied engineering calculations",
+        "Statistical data analysis"
+      ],
+      "analogies": [
+        "Mathematics is to science what grammar is to literature"
+      ],
+      "visuals": [
+        "Number line",
+        "Set membership diagram"
+      ],
+      "practiceProblems": []
+    },
     "misconceptions": [],
     "depthRubric": {
       "conceptId": "math.foundations",
       "levels": {
-        "memorized": { "evidence": "Can recall basic mathematical definitions", "canDo": ["Name basic number sets"], "cannotDo": ["Explain why operations are consistent"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain why mathematical structures work", "canDo": ["Explain why addition is commutative"], "cannotDo": ["Apply to novel domains"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can use mathematical foundations to solve problems", "canDo": ["Solve novel number theory problems"], "cannotDo": ["Generalize across mathematical domains"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can decompose mathematical structures and identify patterns", "canDo": ["Analyze axiomatic systems"], "cannotDo": ["Create new mathematical frameworks"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can critique and compare mathematical frameworks", "canDo": ["Evaluate proof strategies"], "cannotDo": ["Synthesize novel frameworks"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can create new mathematical structures", "canDo": ["Design novel axiom systems"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can recall basic mathematical definitions",
+          "canDo": [
+            "Name basic number sets"
+          ],
+          "cannotDo": [
+            "Explain why operations are consistent"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain why mathematical structures work",
+          "canDo": [
+            "Explain why addition is commutative"
+          ],
+          "cannotDo": [
+            "Apply to novel domains"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can use mathematical foundations to solve problems",
+          "canDo": [
+            "Solve novel number theory problems"
+          ],
+          "cannotDo": [
+            "Generalize across mathematical domains"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can decompose mathematical structures and identify patterns",
+          "canDo": [
+            "Analyze axiomatic systems"
+          ],
+          "cannotDo": [
+            "Create new mathematical frameworks"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can critique and compare mathematical frameworks",
+          "canDo": [
+            "Evaluate proof strategies"
+          ],
+          "cannotDo": [
+            "Synthesize novel frameworks"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can create new mathematical structures",
+          "canDo": [
+            "Design novel axiom systems"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.number_theory",
     "name": "Number Theory",
-    "description": "The study of integers, divisibility, primes, and modular arithmetic — the purest branch of mathematics.",
+    "description": "The study of integers, divisibility, primes, and modular arithmetic \u2014 the purest branch of mathematics.",
     "level": "subject",
     "parentId": "math.foundations",
-    "childIds": ["math.number_theory.divisibility", "math.number_theory.primes"],
+    "childIds": [
+      "math.number_theory.divisibility",
+      "math.number_theory.primes"
+    ],
     "phases": {
-      "observation": { "question": "What patterns emerge when we examine divisibility and primes?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify prime numbers and divisibility patterns" },
-      "principle": { "question": "Why does unique prime factorization hold?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain the Fundamental Theorem of Arithmetic" },
-      "application": { "question": "How can we apply number theory to cryptography and coding?", "assessmentType": "application_problem", "completionEvidence": "Student can apply modular arithmetic to real problems" },
-      "integration": { "question": "How does number theory connect to algebra and geometry?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can draw structural parallels across branches" },
-      "creation": { "question": "What open questions remain in number theory?", "assessmentType": "research_question", "completionEvidence": "Student can formulate conjectures about unsolved problems" }
+      "observation": {
+        "question": "What patterns emerge when we examine divisibility and primes?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify prime numbers and divisibility patterns"
+      },
+      "principle": {
+        "question": "Why does unique prime factorization hold?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain the Fundamental Theorem of Arithmetic"
+      },
+      "application": {
+        "question": "How can we apply number theory to cryptography and coding?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can apply modular arithmetic to real problems"
+      },
+      "integration": {
+        "question": "How does number theory connect to algebra and geometry?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can draw structural parallels across branches"
+      },
+      "creation": {
+        "question": "What open questions remain in number theory?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can formulate conjectures about unsolved problems"
+      }
     },
     "isomorphisms": [
-      { "pattern": "prime decomposition as atomic analysis", "targetConceptId": "cs.foundations.sets", "targetDomain": "Computer Science", "mappingDescription": "Both decompose complex structures into irreducible components" }
+      {
+        "pattern": "prime decomposition as atomic analysis",
+        "targetConceptId": "cs.foundations.sets",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Both decompose complex structures into irreducible components"
+      }
     ],
-    "prerequisites": ["math.foundations"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal"], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "memorized", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 129600000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Number Theory explores the deep properties of integers.", "examples": ["Prime numbers as atoms of arithmetic", "Modular arithmetic and clocks"], "nonExamples": ["Calculus and continuous functions", "Linear algebra with real numbers"], "analogies": ["Number theory is to mathematics what chemistry is to physics — examining the fundamental constituents"], "visuals": ["Sieve of Eratosthenes visualization", "Modular clock diagram"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.nt.m1", "statement": "Number theory has no practical applications", "whyItFeelsRight": "It seems purely abstract", "structuralReason": "Number theory underpins modern cryptography (RSA, elliptic curves)", "diagnosticTaskId": "math.nt.d1" }],
+    "prerequisites": [
+      "math.foundations"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Intrapersonal"
+      ],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "memorized",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 129600000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Number Theory explores the deep properties of integers.",
+      "examples": [
+        "Prime numbers as atoms of arithmetic",
+        "Modular arithmetic and clocks"
+      ],
+      "nonExamples": [
+        "Calculus and continuous functions",
+        "Linear algebra with real numbers"
+      ],
+      "analogies": [
+        "Number theory is to mathematics what chemistry is to physics \u2014 examining the fundamental constituents"
+      ],
+      "visuals": [
+        "Sieve of Eratosthenes visualization",
+        "Modular clock diagram"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.nt.m1",
+        "statement": "Number theory has no practical applications",
+        "whyItFeelsRight": "It seems purely abstract",
+        "structuralReason": "Number theory underpins modern cryptography (RSA, elliptic curves)",
+        "diagnosticTaskId": "math.nt.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.number_theory",
       "levels": {
-        "memorized": { "evidence": "Can define primes, divisibility, modular arithmetic", "canDo": ["List primes below 100", "Compute modular addition"], "cannotDo": ["Explain unique factorization"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain why factorization is unique", "canDo": ["Prove simple divisibility results"], "cannotDo": ["Apply to cryptographic contexts"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can apply number theory to solve problems", "canDo": ["Use modular arithmetic for scheduling"], "cannotDo": ["Analyze algorithmic complexity"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can decompose and compare number-theoretic structures", "canDo": ["Analyze primality testing algorithms"], "cannotDo": ["Create new conjectures"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can critique number-theoretic proofs and methods", "canDo": ["Evaluate proof strategies"], "cannotDo": ["Synthesize novel theorems"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can formulate and prove novel number-theoretic results", "canDo": ["Construct original proofs"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can define primes, divisibility, modular arithmetic",
+          "canDo": [
+            "List primes below 100",
+            "Compute modular addition"
+          ],
+          "cannotDo": [
+            "Explain unique factorization"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain why factorization is unique",
+          "canDo": [
+            "Prove simple divisibility results"
+          ],
+          "cannotDo": [
+            "Apply to cryptographic contexts"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can apply number theory to solve problems",
+          "canDo": [
+            "Use modular arithmetic for scheduling"
+          ],
+          "cannotDo": [
+            "Analyze algorithmic complexity"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can decompose and compare number-theoretic structures",
+          "canDo": [
+            "Analyze primality testing algorithms"
+          ],
+          "cannotDo": [
+            "Create new conjectures"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can critique number-theoretic proofs and methods",
+          "canDo": [
+            "Evaluate proof strategies"
+          ],
+          "cannotDo": [
+            "Synthesize novel theorems"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can formulate and prove novel number-theoretic results",
+          "canDo": [
+            "Construct original proofs"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.number_theory.divisibility",
     "name": "Divisibility and Modular Arithmetic",
-    "description": "The structure of divisibility relations and arithmetic on remainders — foundational to both pure math and computer science.",
+    "description": "The structure of divisibility relations and arithmetic on remainders \u2014 foundational to both pure math and computer science.",
     "level": "topic",
     "parentId": "math.number_theory",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What patterns emerge when we group numbers by their remainders?", "assessmentType": "factual_recall", "completionEvidence": "Student can compute modular arithmetic operations" },
-      "principle": { "question": "Why does modular arithmetic form a ring?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain closure, associativity, and inverses" },
-      "application": { "question": "How can we solve scheduling and hashing problems with modular arithmetic?", "assessmentType": "application_problem", "completionEvidence": "Student can apply modular arithmetic to real-world problems" },
-      "integration": { "question": "How does divisibility connect to group theory and cryptography?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map divisibility structures to abstract algebra" },
-      "creation": { "question": "What new divisibility structures can we define?", "assessmentType": "research_question", "completionEvidence": "Student can propose novel divisibility-based frameworks" }
+      "observation": {
+        "question": "What patterns emerge when we group numbers by their remainders?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can compute modular arithmetic operations"
+      },
+      "principle": {
+        "question": "Why does modular arithmetic form a ring?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain closure, associativity, and inverses"
+      },
+      "application": {
+        "question": "How can we solve scheduling and hashing problems with modular arithmetic?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can apply modular arithmetic to real-world problems"
+      },
+      "integration": {
+        "question": "How does divisibility connect to group theory and cryptography?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can map divisibility structures to abstract algebra"
+      },
+      "creation": {
+        "question": "What new divisibility structures can we define?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can propose novel divisibility-based frameworks"
+      }
     },
     "isomorphisms": [
-      { "pattern": "partitioning by equivalence", "targetConceptId": "cs.foundations.sets", "targetDomain": "Computer Science", "mappingDescription": "Modular equivalence classes are equivalence relations, same as set partitions" }
+      {
+        "pattern": "partitioning by equivalence",
+        "targetConceptId": "cs.foundations.sets",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Modular equivalence classes are equivalence relations, same as set partitions"
+      }
     ],
-    "prerequisites": ["math.number_theory", "math.foundations.numbers"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Divisibility and modular arithmetic form the algebraic backbone of number theory.", "examples": ["Clock arithmetic (mod 12)", "Check digits (ISBN, credit cards)"], "nonExamples": ["Continuous functions on real numbers", "Matrix multiplication"], "analogies": ["Modular arithmetic is like working in a finite universe where after reaching the modulus, you wrap around"], "visuals": ["Clock face diagram", "Modular equivalence classes"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.div.m1", "statement": "Modular arithmetic is just clock math", "whyItFeelsRight": "The clock analogy is intuitive", "structuralReason": "Modular arithmetic forms a rich algebraic structure (rings, fields) with deep applications", "diagnosticTaskId": "math.div.d1" }],
+    "prerequisites": [
+      "math.number_theory",
+      "math.foundations.numbers"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "comprehended",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 172800000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Divisibility and modular arithmetic form the algebraic backbone of number theory.",
+      "examples": [
+        "Clock arithmetic (mod 12)",
+        "Check digits (ISBN, credit cards)"
+      ],
+      "nonExamples": [
+        "Continuous functions on real numbers",
+        "Matrix multiplication"
+      ],
+      "analogies": [
+        "Modular arithmetic is like working in a finite universe where after reaching the modulus, you wrap around"
+      ],
+      "visuals": [
+        "Clock face diagram",
+        "Modular equivalence classes"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.div.m1",
+        "statement": "Modular arithmetic is just clock math",
+        "whyItFeelsRight": "The clock analogy is intuitive",
+        "structuralReason": "Modular arithmetic forms a rich algebraic structure (rings, fields) with deep applications",
+        "diagnosticTaskId": "math.div.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.number_theory.divisibility",
       "levels": {
-        "memorized": { "evidence": "Can compute modular operations", "canDo": ["Compute 17 mod 5", "Determine divisibility by 3"], "cannotDo": ["Explain why mod forms a ring"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain the algebraic structure of modular arithmetic", "canDo": ["Explain closure and inverses mod n"], "cannotDo": ["Apply to cryptographic contexts"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can solve real problems with modular arithmetic", "canDo": ["Design a hash function using mod"], "cannotDo": ["Analyze the security of the hash"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze modular structures comparatively", "canDo": ["Compare Z/nZ for different n"], "cannotDo": ["Prove novel results about modular forms"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate modular-arithmetic-based protocols", "canDo": ["Critique an RSA implementation"], "cannotDo": ["Invent new cryptographic protocols"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can invent new modular structures", "canDo": ["Define novel modular systems"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can compute modular operations",
+          "canDo": [
+            "Compute 17 mod 5",
+            "Determine divisibility by 3"
+          ],
+          "cannotDo": [
+            "Explain why mod forms a ring"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain the algebraic structure of modular arithmetic",
+          "canDo": [
+            "Explain closure and inverses mod n"
+          ],
+          "cannotDo": [
+            "Apply to cryptographic contexts"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can solve real problems with modular arithmetic",
+          "canDo": [
+            "Design a hash function using mod"
+          ],
+          "cannotDo": [
+            "Analyze the security of the hash"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze modular structures comparatively",
+          "canDo": [
+            "Compare Z/nZ for different n"
+          ],
+          "cannotDo": [
+            "Prove novel results about modular forms"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate modular-arithmetic-based protocols",
+          "canDo": [
+            "Critique an RSA implementation"
+          ],
+          "cannotDo": [
+            "Invent new cryptographic protocols"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can invent new modular structures",
+          "canDo": [
+            "Define novel modular systems"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.number_theory.primes",
     "name": "Prime Numbers and Factorization",
-    "description": "The Fundamental Theorem of Arithmetic and the distribution of primes — the atoms and molecules of number theory.",
+    "description": "The Fundamental Theorem of Arithmetic and the distribution of primes \u2014 the atoms and molecules of number theory.",
     "level": "topic",
     "parentId": "math.number_theory",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What patterns exist in the distribution of primes?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify primes and compute factorizations" },
-      "principle": { "question": "Why does every integer have a unique prime factorization?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain the Fundamental Theorem of Arithmetic" },
-      "application": { "question": "How does prime factorization enable RSA cryptography?", "assessmentType": "application_problem", "completionEvidence": "Student can trace the RSA algorithm using primes" },
-      "integration": { "question": "How do primes connect to the Riemann Hypothesis and the distribution of primes?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can relate prime distribution to analytic number theory" },
-      "creation": { "question": "What conjectures about primes can we formulate?", "assessmentType": "research_question", "completionEvidence": "Student can propose testable conjectures about prime distribution" }
+      "observation": {
+        "question": "What patterns exist in the distribution of primes?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify primes and compute factorizations"
+      },
+      "principle": {
+        "question": "Why does every integer have a unique prime factorization?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain the Fundamental Theorem of Arithmetic"
+      },
+      "application": {
+        "question": "How does prime factorization enable RSA cryptography?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can trace the RSA algorithm using primes"
+      },
+      "integration": {
+        "question": "How do primes connect to the Riemann Hypothesis and the distribution of primes?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can relate prime distribution to analytic number theory"
+      },
+      "creation": {
+        "question": "What conjectures about primes can we formulate?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can propose testable conjectures about prime distribution"
+      }
     },
     "isomorphisms": [
-      { "pattern": "irreducible decomposition", "targetConceptId": "cs.foundations.logic", "targetDomain": "Computer Science", "mappingDescription": "Primes as irreducibles mirrors logical atoms in propositional logic" }
+      {
+        "pattern": "irreducible decomposition",
+        "targetConceptId": "cs.foundations.logic",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Primes as irreducibles mirrors logical atoms in propositional logic"
+      }
     ],
-    "prerequisites": ["math.number_theory", "math.foundations.proof"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Prime numbers are the irreducible building blocks of all integers.", "examples": ["2, 3, 5, 7, 11 are primes", "60 = 2² × 3 × 5"], "nonExamples": ["Composite numbers", "Negative numbers"], "analogies": ["Primes are to integers what elements are to chemistry — irreducible constituents"], "visuals": ["Sieve of Eratosthenes animation", "Factor tree diagrams"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.prime.m1", "statement": "1 is a prime number", "whyItFeelsRight": "1 is divisible only by 1 and itself", "structuralReason": "Including 1 would break unique factorization (60 = 1 × 60 = 1 × 1 × 60...)", "diagnosticTaskId": "math.prime.d1" }],
+    "prerequisites": [
+      "math.number_theory",
+      "math.foundations.proof"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "comprehended",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 172800000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Prime numbers are the irreducible building blocks of all integers.",
+      "examples": [
+        "2, 3, 5, 7, 11 are primes",
+        "60 = 2\u00b2 \u00d7 3 \u00d7 5"
+      ],
+      "nonExamples": [
+        "Composite numbers",
+        "Negative numbers"
+      ],
+      "analogies": [
+        "Primes are to integers what elements are to chemistry \u2014 irreducible constituents"
+      ],
+      "visuals": [
+        "Sieve of Eratosthenes animation",
+        "Factor tree diagrams"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.prime.m1",
+        "statement": "1 is a prime number",
+        "whyItFeelsRight": "1 is divisible only by 1 and itself",
+        "structuralReason": "Including 1 would break unique factorization (60 = 1 \u00d7 60 = 1 \u00d7 1 \u00d7 60...)",
+        "diagnosticTaskId": "math.prime.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.number_theory.primes",
       "levels": {
-        "memorized": { "evidence": "Can identify primes and compute basic factorizations", "canDo": ["List primes below 50", "Factor 360 into primes"], "cannotDo": ["Prove unique factorization"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain why unique factorization holds", "canDo": ["Outline the proof of FTA"], "cannotDo": ["Apply factorization to cryptography"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can use prime factorization to solve problems", "canDo": ["Trace RSA encryption steps"], "cannotDo": ["Analyze security of RSA parameters"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze prime distribution and factorization algorithms", "canDo": ["Compare trial division vs. quadratic sieve"], "cannotDo": ["Prove theorems about prime distribution"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate cryptographic security based on factorization difficulty", "canDo": ["Assess RSA key strength"], "cannotDo": ["Design new factorization-resistant systems"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can formulate conjectures about prime distribution", "canDo": ["Propose novel primality criteria"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can identify primes and compute basic factorizations",
+          "canDo": [
+            "List primes below 50",
+            "Factor 360 into primes"
+          ],
+          "cannotDo": [
+            "Prove unique factorization"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain why unique factorization holds",
+          "canDo": [
+            "Outline the proof of FTA"
+          ],
+          "cannotDo": [
+            "Apply factorization to cryptography"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can use prime factorization to solve problems",
+          "canDo": [
+            "Trace RSA encryption steps"
+          ],
+          "cannotDo": [
+            "Analyze security of RSA parameters"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze prime distribution and factorization algorithms",
+          "canDo": [
+            "Compare trial division vs. quadratic sieve"
+          ],
+          "cannotDo": [
+            "Prove theorems about prime distribution"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate cryptographic security based on factorization difficulty",
+          "canDo": [
+            "Assess RSA key strength"
+          ],
+          "cannotDo": [
+            "Design new factorization-resistant systems"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can formulate conjectures about prime distribution",
+          "canDo": [
+            "Propose novel primality criteria"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.algebra",
     "name": "Algebra",
-    "description": "The study of mathematical symbols, structures, and the rules for manipulating them — from basic equations to abstract algebra.",
+    "description": "The study of mathematical symbols, structures, and the rules for manipulating them \u2014 from basic equations to abstract algebra.",
     "level": "subject",
     "parentId": "math.foundations",
-    "childIds": ["math.algebra.linear", "math.algebra.abstract"],
+    "childIds": [
+      "math.algebra.structures"
+    ],
     "phases": {
-      "observation": { "question": "What patterns do we see when we generalize arithmetic to variables?", "assessmentType": "factual_recall", "completionEvidence": "Student can use variables and solve linear equations" },
-      "principle": { "question": "Why do algebraic structures (groups, rings, fields) exhibit consistent behavior?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain the axioms underlying algebraic structures" },
-      "application": { "question": "How do we apply algebraic thinking to model real-world systems?", "assessmentType": "application_problem", "completionEvidence": "Student can construct algebraic models of real phenomena" },
-      "integration": { "question": "How does algebra unify different mathematical domains?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can show how algebra structures appear across math" },
-      "creation": { "question": "What new algebraic structures can we define?", "assessmentType": "research_question", "completionEvidence": "Student can define and explore novel algebraic systems" }
+      "observation": {
+        "question": "What patterns do we see when we generalize arithmetic to variables?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can use variables and solve linear equations"
+      },
+      "principle": {
+        "question": "Why do algebraic structures (groups, rings, fields) exhibit consistent behavior?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain the axioms underlying algebraic structures"
+      },
+      "application": {
+        "question": "How do we apply algebraic thinking to model real-world systems?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can construct algebraic models of real phenomena"
+      },
+      "integration": {
+        "question": "How does algebra unify different mathematical domains?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can show how algebra structures appear across math"
+      },
+      "creation": {
+        "question": "What new algebraic structures can we define?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can define and explore novel algebraic systems"
+      }
     },
     "isomorphisms": [
-      { "pattern": "abstraction from concrete to general", "targetConceptId": "cs.algorithms.fundamentals", "targetDomain": "Computer Science", "mappingDescription": "Algebra abstracts arithmetic just as algorithms abstract computation patterns" }
+      {
+        "pattern": "abstraction from concrete to general",
+        "targetConceptId": "cs.algorithms.fundamentals",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Algebra abstracts arithmetic just as algorithms abstract computation patterns"
+      }
     ],
-    "prerequisites": ["math.foundations"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal"], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "memorized", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 129600000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Algebra generalizes arithmetic through symbols and structure-preserving operations.", "examples": ["Solving linear equations", "Group operations on symmetries"], "nonExamples": ["Numerical computation without variables", "Geometric constructions"], "analogies": ["Algebra is to mathematics what grammar is to language — it provides the structural rules"], "visuals": ["Commutative diagrams", "Group multiplication tables"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.alg.m1", "statement": "Algebra is just about solving equations for x", "whyItFeelsRight": "Most early algebra education focuses on equation solving", "structuralReason": "Algebra studies abstract structures (groups, rings, fields) that generalize far beyond equations", "diagnosticTaskId": "math.alg.d1" }],
+    "prerequisites": [
+      "math.foundations"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Intrapersonal"
+      ],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "memorized",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 129600000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Algebra generalizes arithmetic through symbols and structure-preserving operations.",
+      "examples": [
+        "Solving linear equations",
+        "Group operations on symmetries"
+      ],
+      "nonExamples": [
+        "Numerical computation without variables",
+        "Geometric constructions"
+      ],
+      "analogies": [
+        "Algebra is to mathematics what grammar is to language \u2014 it provides the structural rules"
+      ],
+      "visuals": [
+        "Commutative diagrams",
+        "Group multiplication tables"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.alg.m1",
+        "statement": "Algebra is just about solving equations for x",
+        "whyItFeelsRight": "Most early algebra education focuses on equation solving",
+        "structuralReason": "Algebra studies abstract structures (groups, rings, fields) that generalize far beyond equations",
+        "diagnosticTaskId": "math.alg.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.algebra",
       "levels": {
-        "memorized": { "evidence": "Can solve basic equations and manipulate expressions", "canDo": ["Solve 2x + 3 = 7", "Expand (x+1)²"], "cannotDo": ["Explain why operations are valid"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain the logical structure of algebraic operations", "canDo": ["Explain why factoring works"], "cannotDo": ["Apply to abstract structures"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can model real problems with algebra", "canDo": ["Set up and solve word problems"], "cannotDo": ["Analyze algebraic structures abstractly"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze and compare algebraic structures", "canDo": ["Compare groups, rings, fields"], "cannotDo": ["Create novel algebraic systems"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate algebraic proofs and methods", "canDo": ["Critique proof strategies"], "cannotDo": ["Invent new algebraic structures"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can define and explore novel algebraic structures", "canDo": ["Define a new algebraic system and explore its properties"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can solve basic equations and manipulate expressions",
+          "canDo": [
+            "Solve 2x + 3 = 7",
+            "Expand (x+1)\u00b2"
+          ],
+          "cannotDo": [
+            "Explain why operations are valid"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain the logical structure of algebraic operations",
+          "canDo": [
+            "Explain why factoring works"
+          ],
+          "cannotDo": [
+            "Apply to abstract structures"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can model real problems with algebra",
+          "canDo": [
+            "Set up and solve word problems"
+          ],
+          "cannotDo": [
+            "Analyze algebraic structures abstractly"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze and compare algebraic structures",
+          "canDo": [
+            "Compare groups, rings, fields"
+          ],
+          "cannotDo": [
+            "Create novel algebraic systems"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate algebraic proofs and methods",
+          "canDo": [
+            "Critique proof strategies"
+          ],
+          "cannotDo": [
+            "Invent new algebraic structures"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can define and explore novel algebraic structures",
+          "canDo": [
+            "Define a new algebraic system and explore its properties"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.algebra.linear",
     "name": "Linear Algebra",
-    "description": "The study of vectors, matrices, and linear transformations — the mathematics of space, dimension, and transformation.",
+    "description": "The study of vectors, matrices, and linear transformations \u2014 the mathematics of space, dimension, and transformation.",
     "level": "topic",
     "parentId": "math.algebra",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What patterns emerge when we study systems of linear equations?", "assessmentType": "factual_recall", "completionEvidence": "Student can solve systems of linear equations" },
-      "principle": { "question": "Why do vector spaces exhibit consistent structural properties?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain vector space axioms and their consequences" },
-      "application": { "question": "How can we use matrices to model transformations in data science and physics?", "assessmentType": "application_problem", "completionEvidence": "Student can apply matrix operations to real-world problems" },
-      "integration": { "question": "How does linear algebra connect to geometry, analysis, and computer science?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map linear structures across domains" },
-      "creation": { "question": "What novel applications of linear algebra can we envision?", "assessmentType": "research_question", "completionEvidence": "Student can propose novel applications or extensions" }
+      "observation": {
+        "question": "What patterns emerge when we study systems of linear equations?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can solve systems of linear equations"
+      },
+      "principle": {
+        "question": "Why do vector spaces exhibit consistent structural properties?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain vector space axioms and their consequences"
+      },
+      "application": {
+        "question": "How can we use matrices to model transformations in data science and physics?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can apply matrix operations to real-world problems"
+      },
+      "integration": {
+        "question": "How does linear algebra connect to geometry, analysis, and computer science?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can map linear structures across domains"
+      },
+      "creation": {
+        "question": "What novel applications of linear algebra can we envision?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can propose novel applications or extensions"
+      }
     },
     "isomorphisms": [
-      { "pattern": "transformation preserving structure", "targetConceptId": "cs.data_structures.basics", "targetDomain": "Computer Science", "mappingDescription": "Linear transformations preserve vector space structure, like well-designed data structures preserve invariants" }
+      {
+        "pattern": "transformation preserving structure",
+        "targetConceptId": "cs.data_structures.basics",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Linear transformations preserve vector space structure, like well-designed data structures preserve invariants"
+      }
     ],
-    "prerequisites": ["math.algebra", "math.foundations.numbers"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Somatic"], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Linear algebra studies vectors, matrices, and the transformations that map between vector spaces.", "examples": ["Solving 3x3 systems with Gaussian elimination", "Eigenvalue decomposition of a matrix"], "nonExamples": ["Nonlinear optimization", "Polynomial factoring"], "analogies": ["Linear algebra is the mathematics of dimension — it tells us what 'space' means"], "visuals": ["Vector field plots", "Matrix transformation animations"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.la.m1", "statement": "Matrices are just grids of numbers", "whyItFeelsRight": "Matrices look like number grids", "structuralReason": "Matrices represent linear transformations and algebraic structures, not just data storage", "diagnosticTaskId": "math.la.d1" }],
+    "prerequisites": [
+      "math.algebra",
+      "math.foundations.numbers"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Somatic"
+      ],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "comprehended",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 172800000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Linear algebra studies vectors, matrices, and the transformations that map between vector spaces.",
+      "examples": [
+        "Solving 3x3 systems with Gaussian elimination",
+        "Eigenvalue decomposition of a matrix"
+      ],
+      "nonExamples": [
+        "Nonlinear optimization",
+        "Polynomial factoring"
+      ],
+      "analogies": [
+        "Linear algebra is the mathematics of dimension \u2014 it tells us what 'space' means"
+      ],
+      "visuals": [
+        "Vector field plots",
+        "Matrix transformation animations"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.la.m1",
+        "statement": "Matrices are just grids of numbers",
+        "whyItFeelsRight": "Matrices look like number grids",
+        "structuralReason": "Matrices represent linear transformations and algebraic structures, not just data storage",
+        "diagnosticTaskId": "math.la.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.algebra.linear",
       "levels": {
-        "memorized": { "evidence": "Can perform basic matrix operations", "canDo": ["Multiply 2x2 matrices", "Solve 2x2 systems"], "cannotDo": ["Explain what a linear transformation is"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain vector spaces and transformations conceptually", "canDo": ["Explain why matrix multiplication is associative"], "cannotDo": ["Apply to high-dimensional problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can apply linear algebra to real problems", "canDo": ["Use SVD for data compression"], "cannotDo": ["Analyze convergence properties"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze and compare linear algebraic methods", "canDo": ["Compare eigenvalue methods for different matrix types"], "cannotDo": ["Extend to infinite-dimensional spaces"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate and critique linear algebraic proofs", "canDo": ["Evaluate the correctness of a proof about subspaces"], "cannotDo": ["Generalize to abstract vector spaces"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can extend linear algebra to novel contexts", "canDo": ["Apply linear algebra to quantum computing models"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can perform basic matrix operations",
+          "canDo": [
+            "Multiply 2x2 matrices",
+            "Solve 2x2 systems"
+          ],
+          "cannotDo": [
+            "Explain what a linear transformation is"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain vector spaces and transformations conceptually",
+          "canDo": [
+            "Explain why matrix multiplication is associative"
+          ],
+          "cannotDo": [
+            "Apply to high-dimensional problems"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can apply linear algebra to real problems",
+          "canDo": [
+            "Use SVD for data compression"
+          ],
+          "cannotDo": [
+            "Analyze convergence properties"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze and compare linear algebraic methods",
+          "canDo": [
+            "Compare eigenvalue methods for different matrix types"
+          ],
+          "cannotDo": [
+            "Extend to infinite-dimensional spaces"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate and critique linear algebraic proofs",
+          "canDo": [
+            "Evaluate the correctness of a proof about subspaces"
+          ],
+          "cannotDo": [
+            "Generalize to abstract vector spaces"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can extend linear algebra to novel contexts",
+          "canDo": [
+            "Apply linear algebra to quantum computing models"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.algebra.abstract",
     "name": "Abstract Algebra",
-    "description": "The study of algebraic structures — groups, rings, fields, and their homomorphisms — the deepest level of algebraic abstraction.",
+    "description": "The study of algebraic structures \u2014 groups, rings, fields, and their homomorphisms \u2014 the deepest level of algebraic abstraction.",
     "level": "topic",
     "parentId": "math.algebra",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What common patterns appear across different algebraic systems?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify groups, rings, and fields from examples" },
-      "principle": { "question": "Why do axioms like closure, associativity, and identity produce rich structure?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain how axioms generate emergent properties" },
-      "application": { "question": "How do homomorphisms enable us to relate different algebraic structures?", "assessmentType": "application_problem", "completionEvidence": "Student can construct and use homomorphisms" },
-      "integration": { "question": "How does abstract algebra unify number theory, geometry, and combinatorics?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can demonstrate deep structural connections" },
-      "creation": { "question": "What novel algebraic structures can we define and explore?", "assessmentType": "research_question", "completionEvidence": "Student can define new algebraic systems and prove basic theorems" }
+      "observation": {
+        "question": "What common patterns appear across different algebraic systems?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify groups, rings, and fields from examples"
+      },
+      "principle": {
+        "question": "Why do axioms like closure, associativity, and identity produce rich structure?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain how axioms generate emergent properties"
+      },
+      "application": {
+        "question": "How do homomorphisms enable us to relate different algebraic structures?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can construct and use homomorphisms"
+      },
+      "integration": {
+        "question": "How does abstract algebra unify number theory, geometry, and combinatorics?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can demonstrate deep structural connections"
+      },
+      "creation": {
+        "question": "What novel algebraic structures can we define and explore?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can define new algebraic systems and prove basic theorems"
+      }
     },
     "isomorphisms": [
-      { "pattern": "axiomatic structure generation", "targetConceptId": "cs.foundations.logic", "targetDomain": "Computer Science", "mappingDescription": "Abstract algebra axiomatizes structure just as formal logic axiomatizes reasoning" }
+      {
+        "pattern": "axiomatic structure generation",
+        "targetConceptId": "cs.foundations.logic",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Abstract algebra axiomatizes structure just as formal logic axiomatizes reasoning"
+      }
     ],
-    "prerequisites": ["math.algebra", "math.foundations.proof"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal"], "stageRange": { "min": "Amber", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "applied", "targetDepthRange": { "min": "comprehended", "max": "transformed" }, "depthProgression": ["comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 259200000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Abstract algebra studies the general structures underlying all algebraic systems.", "examples": ["The group of symmetries of a square (D₄)", "The ring of polynomials over ℤ"], "nonExamples": ["Numerical computation", "Elementary equation solving"], "analogies": ["Abstract algebra is the study of symmetry at the deepest level"], "visuals": ["Cayley tables for groups", "Lattice diagrams for posets"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.aa.m1", "statement": "Abstract algebra is useless for real applications", "whyItFeelsRight": "It seems purely theoretical", "structuralReason": "Abstract algebra underpins cryptography, coding theory, and physics (gauge theories)", "diagnosticTaskId": "math.aa.d1" }],
+    "prerequisites": [
+      "math.algebra",
+      "math.foundations.proof"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Intrapersonal"
+      ],
+      "stageRange": {
+        "min": "Amber",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "applied",
+      "targetDepthRange": {
+        "min": "comprehended",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 259200000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Abstract algebra studies the general structures underlying all algebraic systems.",
+      "examples": [
+        "The group of symmetries of a square (D\u2084)",
+        "The ring of polynomials over \u2124"
+      ],
+      "nonExamples": [
+        "Numerical computation",
+        "Elementary equation solving"
+      ],
+      "analogies": [
+        "Abstract algebra is the study of symmetry at the deepest level"
+      ],
+      "visuals": [
+        "Cayley tables for groups",
+        "Lattice diagrams for posets"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.aa.m1",
+        "statement": "Abstract algebra is useless for real applications",
+        "whyItFeelsRight": "It seems purely theoretical",
+        "structuralReason": "Abstract algebra underpins cryptography, coding theory, and physics (gauge theories)",
+        "diagnosticTaskId": "math.aa.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.algebra.abstract",
       "levels": {
-        "memorized": { "evidence": "Can identify groups, rings, fields from definitions", "canDo": ["Determine if a structure is a group", "List group axioms"], "cannotDo": ["Explain the significance of axioms"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain how axioms generate structure", "canDo": ["Explain why every group has a unique identity"], "cannotDo": ["Construct homomorphisms"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can use algebraic structures to solve problems", "canDo": ["Apply group actions to count symmetries"], "cannotDo": ["Analyze structure-preserving maps abstractly"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can compare and decompose algebraic structures", "canDo": ["Use the First Isomorphism Theorem"], "cannotDo": ["Create new algebraic theories"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can critique algebraic proofs and methods", "canDo": ["Evaluate a classification theorem proof"], "cannotDo": ["Extend to abstract categories"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can define and prove theorems about novel algebraic structures", "canDo": ["Define a new algebraic structure and prove basic properties"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can identify groups, rings, fields from definitions",
+          "canDo": [
+            "Determine if a structure is a group",
+            "List group axioms"
+          ],
+          "cannotDo": [
+            "Explain the significance of axioms"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain how axioms generate structure",
+          "canDo": [
+            "Explain why every group has a unique identity"
+          ],
+          "cannotDo": [
+            "Construct homomorphisms"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can use algebraic structures to solve problems",
+          "canDo": [
+            "Apply group actions to count symmetries"
+          ],
+          "cannotDo": [
+            "Analyze structure-preserving maps abstractly"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can compare and decompose algebraic structures",
+          "canDo": [
+            "Use the First Isomorphism Theorem"
+          ],
+          "cannotDo": [
+            "Create new algebraic theories"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can critique algebraic proofs and methods",
+          "canDo": [
+            "Evaluate a classification theorem proof"
+          ],
+          "cannotDo": [
+            "Extend to abstract categories"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can define and prove theorems about novel algebraic structures",
+          "canDo": [
+            "Define a new algebraic structure and prove basic properties"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.geometry",
     "name": "Geometry",
-    "description": "The study of shapes, spaces, and transformations — from Euclidean constructions to topology and differential geometry.",
+    "description": "The study of shapes, spaces, and transformations \u2014 from Euclidean constructions to topology and differential geometry.",
     "level": "subject",
     "parentId": "math.foundations",
-    "childIds": ["math.geometry.topology", "math.geometry.differential"],
+    "childIds": [
+      "math.geometry.topology",
+      "math.geometry.differential"
+    ],
     "phases": {
-      "observation": { "question": "What patterns do we observe in geometric objects and their relationships?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify and classify geometric objects" },
-      "principle": { "question": "Why do geometric theorems hold across different spaces?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain the axiomatic foundations of geometry" },
-      "application": { "question": "How can we use geometry to model physical and abstract systems?", "assessmentType": "application_problem", "completionEvidence": "Student can apply geometric reasoning to real problems" },
-      "integration": { "question": "How does geometry connect to algebra, analysis, and physics?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can demonstrate deep geometric connections across domains" },
-      "creation": { "question": "What new geometric structures can we define and explore?", "assessmentType": "research_question", "completionEvidence": "Student can define novel geometric frameworks" }
+      "observation": {
+        "question": "What patterns do we observe in geometric objects and their relationships?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify and classify geometric objects"
+      },
+      "principle": {
+        "question": "Why do geometric theorems hold across different spaces?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain the axiomatic foundations of geometry"
+      },
+      "application": {
+        "question": "How can we use geometry to model physical and abstract systems?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can apply geometric reasoning to real problems"
+      },
+      "integration": {
+        "question": "How does geometry connect to algebra, analysis, and physics?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can demonstrate deep geometric connections across domains"
+      },
+      "creation": {
+        "question": "What new geometric structures can we define and explore?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can define novel geometric frameworks"
+      }
     },
     "isomorphisms": [
-      { "pattern": "structure-preserving maps between spaces", "targetConceptId": "cs.algorithms.fundamentals", "targetDomain": "Computer Science", "mappingDescription": "Geometric transformations preserve structure, like well-designed algorithms preserve invariants" }
+      {
+        "pattern": "structure-preserving maps between spaces",
+        "targetConceptId": "cs.algorithms.fundamentals",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Geometric transformations preserve structure, like well-designed algorithms preserve invariants"
+      }
     ],
-    "prerequisites": ["math.foundations"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Somatic"], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "memorized", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 129600000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Geometry studies the properties of shapes, spaces, and the transformations that relate them.", "examples": ["Pythagorean theorem", "Euler characteristic of polyhedra"], "nonExamples": ["Algebraic manipulation", "Numerical approximation"], "analogies": ["Geometry is the mathematics of space — it tells us what shape means"], "visuals": ["Tessellation patterns", "Manifold diagrams"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.geo.m1", "statement": "Geometry is only about flat, Euclidean space", "whyItFeelsRight": "Most school geometry is Euclidean", "structuralReason": "Modern geometry includes curved spaces, topology, and non-Euclidean geometries", "diagnosticTaskId": "math.geo.d1" }],
+    "prerequisites": [
+      "math.foundations"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Somatic"
+      ],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "memorized",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 129600000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Geometry studies the properties of shapes, spaces, and the transformations that relate them.",
+      "examples": [
+        "Pythagorean theorem",
+        "Euler characteristic of polyhedra"
+      ],
+      "nonExamples": [
+        "Algebraic manipulation",
+        "Numerical approximation"
+      ],
+      "analogies": [
+        "Geometry is the mathematics of space \u2014 it tells us what shape means"
+      ],
+      "visuals": [
+        "Tessellation patterns",
+        "Manifold diagrams"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.geo.m1",
+        "statement": "Geometry is only about flat, Euclidean space",
+        "whyItFeelsRight": "Most school geometry is Euclidean",
+        "structuralReason": "Modern geometry includes curved spaces, topology, and non-Euclidean geometries",
+        "diagnosticTaskId": "math.geo.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.geometry",
       "levels": {
-        "memorized": { "evidence": "Can recall basic geometric facts and formulas", "canDo": ["State the Pythagorean theorem", "Compute area of common shapes"], "cannotDo": ["Explain why theorems hold"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain the logical foundations of geometry", "canDo": ["Explain why the Pythagorean theorem holds"], "cannotDo": ["Apply to non-Euclidean spaces"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can use geometry to solve real problems", "canDo": ["Use geometric reasoning in optimization"], "cannotDo": ["Analyze curvature abstractly"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze and compare geometric structures", "canDo": ["Compare Euclidean and hyperbolic geometry"], "cannotDo": ["Define new geometric frameworks"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate geometric proofs and constructions", "canDo": ["Critique a geometric proof"], "cannotDo": ["Invent new geometric structures"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can define and explore novel geometric structures", "canDo": ["Define a new geometric framework"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can recall basic geometric facts and formulas",
+          "canDo": [
+            "State the Pythagorean theorem",
+            "Compute area of common shapes"
+          ],
+          "cannotDo": [
+            "Explain why theorems hold"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain the logical foundations of geometry",
+          "canDo": [
+            "Explain why the Pythagorean theorem holds"
+          ],
+          "cannotDo": [
+            "Apply to non-Euclidean spaces"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can use geometry to solve real problems",
+          "canDo": [
+            "Use geometric reasoning in optimization"
+          ],
+          "cannotDo": [
+            "Analyze curvature abstractly"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze and compare geometric structures",
+          "canDo": [
+            "Compare Euclidean and hyperbolic geometry"
+          ],
+          "cannotDo": [
+            "Define new geometric frameworks"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate geometric proofs and constructions",
+          "canDo": [
+            "Critique a geometric proof"
+          ],
+          "cannotDo": [
+            "Invent new geometric structures"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can define and explore novel geometric structures",
+          "canDo": [
+            "Define a new geometric framework"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.geometry.topology",
     "name": "Topology",
-    "description": "The study of spatial properties preserved under continuous deformations — rubber-sheet geometry.",
+    "description": "The study of spatial properties preserved under continuous deformations \u2014 rubber-sheet geometry.",
     "level": "topic",
     "parentId": "math.geometry",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What properties of shapes remain unchanged when we stretch and bend them?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify topological invariants" },
-      "principle": { "question": "Why do some properties survive deformation while others don't?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain continuity and homeomorphism" },
-      "application": { "question": "How can topology model data, networks, and physical systems?", "assessmentType": "application_problem", "completionEvidence": "Student can apply topological methods to real problems" },
-      "integration": { "question": "How does topology connect geometry, algebra, and analysis?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can demonstrate deep connections across domains" },
-      "creation": { "question": "What new topological structures can we define?", "assessmentType": "research_question", "completionEvidence": "Student can define and explore novel topological spaces" }
+      "observation": {
+        "question": "What properties of shapes remain unchanged when we stretch and bend them?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify topological invariants"
+      },
+      "principle": {
+        "question": "Why do some properties survive deformation while others don't?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain continuity and homeomorphism"
+      },
+      "application": {
+        "question": "How can topology model data, networks, and physical systems?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can apply topological methods to real problems"
+      },
+      "integration": {
+        "question": "How does topology connect geometry, algebra, and analysis?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can demonstrate deep connections across domains"
+      },
+      "creation": {
+        "question": "What new topological structures can we define?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can define and explore novel topological spaces"
+      }
     },
     "isomorphisms": [
-      { "pattern": "properties preserved under transformation", "targetConceptId": "cs.data_structures.basics", "targetDomain": "Computer Science", "mappingDescription": "Topological invariants are preserved under homeomorphism, like data structure invariants under operations" }
+      {
+        "pattern": "properties preserved under transformation",
+        "targetConceptId": "cs.data_structures.basics",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Topological invariants are preserved under homeomorphism, like data structure invariants under operations"
+      }
     ],
-    "prerequisites": ["math.geometry", "math.foundations.proof"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Amber", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 259200000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Topology studies properties of spaces that are preserved under continuous deformation.", "examples": ["A coffee mug is homeomorphic to a donut", "Euler characteristic is a topological invariant"], "nonExamples": ["Distance and angle (metric geometry)", "Area and volume (measure theory)"], "analogies": ["Topology is geometry without measurement — it studies shape at the most fundamental level"], "visuals": ["Klein bottle", "Mobius strip", "Fundamental group diagrams"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.topo.m1", "statement": "Topology is just about shapes", "whyItFeelsRight": "Topology deals with geometric objects", "structuralReason": "Topology studies abstract properties of spaces that go far beyond visual shapes", "diagnosticTaskId": "math.topo.d1" }],
+    "prerequisites": [
+      "math.geometry",
+      "math.foundations.proof"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Amber",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "comprehended",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 259200000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Topology studies properties of spaces that are preserved under continuous deformation.",
+      "examples": [
+        "A coffee mug is homeomorphic to a donut",
+        "Euler characteristic is a topological invariant"
+      ],
+      "nonExamples": [
+        "Distance and angle (metric geometry)",
+        "Area and volume (measure theory)"
+      ],
+      "analogies": [
+        "Topology is geometry without measurement \u2014 it studies shape at the most fundamental level"
+      ],
+      "visuals": [
+        "Klein bottle",
+        "Mobius strip",
+        "Fundamental group diagrams"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.topo.m1",
+        "statement": "Topology is just about shapes",
+        "whyItFeelsRight": "Topology deals with geometric objects",
+        "structuralReason": "Topology studies abstract properties of spaces that go far beyond visual shapes",
+        "diagnosticTaskId": "math.topo.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.geometry.topology",
       "levels": {
-        "memorized": { "evidence": "Can define basic topological concepts", "canDo": ["Define open sets", "Determine if a map is continuous"], "cannotDo": ["Explain why topological properties matter"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain topological invariants and homeomorphisms", "canDo": ["Explain why a coffee mug is homeomorphic to a donut"], "cannotDo": ["Apply to data analysis"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can apply topological methods to real problems", "canDo": ["Use persistent homology for data analysis"], "cannotDo": ["Prove theorems about topological spaces"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze and compare topological spaces", "canDo": ["Compare homotopy and homeomorphism"], "cannotDo": ["Define new topological invariants"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate topological proofs and methods", "canDo": ["Evaluate a proof about fundamental groups"], "cannotDo": ["Extend to abstract categories"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can define and explore novel topological structures", "canDo": ["Define a new topological invariant"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can define basic topological concepts",
+          "canDo": [
+            "Define open sets",
+            "Determine if a map is continuous"
+          ],
+          "cannotDo": [
+            "Explain why topological properties matter"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain topological invariants and homeomorphisms",
+          "canDo": [
+            "Explain why a coffee mug is homeomorphic to a donut"
+          ],
+          "cannotDo": [
+            "Apply to data analysis"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can apply topological methods to real problems",
+          "canDo": [
+            "Use persistent homology for data analysis"
+          ],
+          "cannotDo": [
+            "Prove theorems about topological spaces"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze and compare topological spaces",
+          "canDo": [
+            "Compare homotopy and homeomorphism"
+          ],
+          "cannotDo": [
+            "Define new topological invariants"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate topological proofs and methods",
+          "canDo": [
+            "Evaluate a proof about fundamental groups"
+          ],
+          "cannotDo": [
+            "Extend to abstract categories"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can define and explore novel topological structures",
+          "canDo": [
+            "Define a new topological invariant"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.geometry.differential",
     "name": "Differential Geometry",
-    "description": "The study of curves, surfaces, and manifolds using calculus — the mathematics of curvature and smooth structure.",
+    "description": "The study of curves, surfaces, and manifolds using calculus \u2014 the mathematics of curvature and smooth structure.",
     "level": "topic",
     "parentId": "math.geometry",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What patterns emerge when we measure curvature of surfaces?", "assessmentType": "factual_recall", "completionEvidence": "Student can compute curvature of basic curves and surfaces" },
-      "principle": { "question": "Why does curvature capture intrinsic properties of surfaces?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain Gauss's Theorema Egregium" },
-      "application": { "question": "How can we use differential geometry in physics and machine learning?", "assessmentType": "application_problem", "completionEvidence": "Student can apply differential geometry to real problems" },
-      "integration": { "question": "How does differential geometry connect analysis, topology, and physics?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can demonstrate deep connections across domains" },
-      "creation": { "question": "What novel geometric structures can we explore with calculus?", "assessmentType": "research_question", "completionEvidence": "Student can define and explore novel differential-geometric structures" }
+      "observation": {
+        "question": "What patterns emerge when we measure curvature of surfaces?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can compute curvature of basic curves and surfaces"
+      },
+      "principle": {
+        "question": "Why does curvature capture intrinsic properties of surfaces?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain Gauss's Theorema Egregium"
+      },
+      "application": {
+        "question": "How can we use differential geometry in physics and machine learning?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can apply differential geometry to real problems"
+      },
+      "integration": {
+        "question": "How does differential geometry connect analysis, topology, and physics?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can demonstrate deep connections across domains"
+      },
+      "creation": {
+        "question": "What novel geometric structures can we explore with calculus?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can define and explore novel differential-geometric structures"
+      }
     },
     "isomorphisms": [
-      { "pattern": "local structure determining global behavior", "targetConceptId": "cs.algorithms.fundamentals", "targetDomain": "Computer Science", "mappingDescription": "Local differential data determines global manifold structure, like local algorithm analysis determines global complexity" }
+      {
+        "pattern": "local structure determining global behavior",
+        "targetConceptId": "cs.algorithms.fundamentals",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Local differential data determines global manifold structure, like local algorithm analysis determines global complexity"
+      }
     ],
-    "prerequisites": ["math.geometry", "math.algebra.linear"],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Somatic"], "stageRange": { "min": "Amber", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "applied", "targetDepthRange": { "min": "comprehended", "max": "transformed" }, "depthProgression": ["comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 259200000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Differential geometry uses calculus to study the intrinsic properties of curved spaces.", "examples": ["Gaussian curvature of a sphere", "Geodesics on a torus"], "nonExamples": ["Discrete geometry", "Metric topology"], "analogies": ["Differential geometry is where calculus meets geometry — it studies how shapes bend and curve"], "visuals": ["Curvature tensor diagrams", "Geodesic visualizations"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.dg.m1", "statement": "Curvature is just how much a shape bends", "whyItFeelsRight": "The intuitive picture of curvature is bending", "structuralReason": "Curvature is a tensor field encoding intrinsic geometry independent of embedding", "diagnosticTaskId": "math.dg.d1" }],
+    "prerequisites": [
+      "math.geometry",
+      "math.algebra.linear"
+    ],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Somatic"
+      ],
+      "stageRange": {
+        "min": "Amber",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "applied",
+      "targetDepthRange": {
+        "min": "comprehended",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 259200000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Differential geometry uses calculus to study the intrinsic properties of curved spaces.",
+      "examples": [
+        "Gaussian curvature of a sphere",
+        "Geodesics on a torus"
+      ],
+      "nonExamples": [
+        "Discrete geometry",
+        "Metric topology"
+      ],
+      "analogies": [
+        "Differential geometry is where calculus meets geometry \u2014 it studies how shapes bend and curve"
+      ],
+      "visuals": [
+        "Curvature tensor diagrams",
+        "Geodesic visualizations"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.dg.m1",
+        "statement": "Curvature is just how much a shape bends",
+        "whyItFeelsRight": "The intuitive picture of curvature is bending",
+        "structuralReason": "Curvature is a tensor field encoding intrinsic geometry independent of embedding",
+        "diagnosticTaskId": "math.dg.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.geometry.differential",
       "levels": {
-        "memorized": { "evidence": "Can compute basic curvature quantities", "canDo": ["Compute Gaussian curvature of a sphere"], "cannotDo": ["Explain the intrinsic meaning"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain intrinsic geometric properties", "canDo": ["Explain Gauss's Theorema Egregium"], "cannotDo": ["Apply to general relativity"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can apply differential geometry to real problems", "canDo": ["Model spacetime curvature in GR"], "cannotDo": ["Analyze abstract Riemannian manifolds"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze and compare differential-geometric structures", "canDo": ["Compare curvature on different manifolds"], "cannotDo": ["Prove theorems about curvature bounds"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate proofs in differential geometry", "canDo": ["Evaluate a proof about geodesic completeness"], "cannotDo": ["Extend to infinite-dimensional settings"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can define and explore novel differential-geometric structures", "canDo": ["Define a new geometric flow"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can compute basic curvature quantities",
+          "canDo": [
+            "Compute Gaussian curvature of a sphere"
+          ],
+          "cannotDo": [
+            "Explain the intrinsic meaning"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain intrinsic geometric properties",
+          "canDo": [
+            "Explain Gauss's Theorema Egregium"
+          ],
+          "cannotDo": [
+            "Apply to general relativity"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can apply differential geometry to real problems",
+          "canDo": [
+            "Model spacetime curvature in GR"
+          ],
+          "cannotDo": [
+            "Analyze abstract Riemannian manifolds"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze and compare differential-geometric structures",
+          "canDo": [
+            "Compare curvature on different manifolds"
+          ],
+          "cannotDo": [
+            "Prove theorems about curvature bounds"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate proofs in differential geometry",
+          "canDo": [
+            "Evaluate a proof about geodesic completeness"
+          ],
+          "cannotDo": [
+            "Extend to infinite-dimensional settings"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can define and explore novel differential-geometric structures",
+          "canDo": [
+            "Define a new geometric flow"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.foundations.numbers",
     "name": "Number Systems",
-    "description": "The hierarchy of number systems: naturals, integers, rationals, reals, and complex numbers — the scaffolding of all mathematics.",
+    "description": "The hierarchy of number systems: naturals, integers, rationals, reals, and complex numbers \u2014 the scaffolding of all mathematics.",
     "level": "concept",
     "parentId": "math.foundations",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What new properties emerge as we extend number systems?", "assessmentType": "factual_recall", "completionEvidence": "Student can describe properties of each number system" },
-      "principle": { "question": "Why do we need each extension — what problem does it solve?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain why negative numbers, fractions, irrationals, and complex numbers are needed" },
-      "application": { "question": "How do we use complex numbers to solve problems impossible with reals?", "assessmentType": "application_problem", "completionEvidence": "Student can solve polynomial equations using complex roots" },
-      "integration": { "question": "How do number systems connect across algebra and analysis?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map structural relationships between number systems" },
-      "creation": { "question": "What new number systems could we define?", "assessmentType": "research_question", "completionEvidence": "Student can propose and explore novel number systems" }
+      "observation": {
+        "question": "What new properties emerge as we extend number systems?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can describe properties of each number system"
+      },
+      "principle": {
+        "question": "Why do we need each extension \u2014 what problem does it solve?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain why negative numbers, fractions, irrationals, and complex numbers are needed"
+      },
+      "application": {
+        "question": "How do we use complex numbers to solve problems impossible with reals?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can solve polynomial equations using complex roots"
+      },
+      "integration": {
+        "question": "How do number systems connect across algebra and analysis?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can map structural relationships between number systems"
+      },
+      "creation": {
+        "question": "What new number systems could we define?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can propose and explore novel number systems"
+      }
     },
     "isomorphisms": [
-      { "pattern": "extension to solve limitations", "targetConceptId": "cs.foundations.logic", "targetDomain": "Computer Science", "mappingDescription": "Number system extensions mirror type system extensions in programming languages" }
+      {
+        "pattern": "extension to solve limitations",
+        "targetConceptId": "cs.foundations.logic",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Number system extensions mirror type system extensions in programming languages"
+      }
     ],
     "prerequisites": [],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 86400000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Number systems form a hierarchy where each extension solves the limitations of its predecessor.", "examples": ["ℤ extends ℕ to allow subtraction", "ℂ extends ℝ to allow all polynomial roots"], "nonExamples": ["Sets without algebraic structure", "Formal languages"], "analogies": ["Number systems are like levels of a video game — each new level unlocks new capabilities"], "visuals": ["Number system inclusion diagram (ℕ ⊂ ℤ ⊂ ℚ ⊂ ℝ ⊂ ℂ)"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.ns.m1", "statement": "Complex numbers are imaginary and therefore not real", "whyItFeelsRight": "They are called 'imaginary'", "structuralReason": "Complex numbers are as mathematically valid as reals — 'imaginary' is a historical naming artifact", "diagnosticTaskId": "math.ns.d1" }],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "absent",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 86400000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Number systems form a hierarchy where each extension solves the limitations of its predecessor.",
+      "examples": [
+        "\u2124 extends \u2115 to allow subtraction",
+        "\u2102 extends \u211d to allow all polynomial roots"
+      ],
+      "nonExamples": [
+        "Sets without algebraic structure",
+        "Formal languages"
+      ],
+      "analogies": [
+        "Number systems are like levels of a video game \u2014 each new level unlocks new capabilities"
+      ],
+      "visuals": [
+        "Number system inclusion diagram (\u2115 \u2282 \u2124 \u2282 \u211a \u2282 \u211d \u2282 \u2102)"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.ns.m1",
+        "statement": "Complex numbers are imaginary and therefore not real",
+        "whyItFeelsRight": "They are called 'imaginary'",
+        "structuralReason": "Complex numbers are as mathematically valid as reals \u2014 'imaginary' is a historical naming artifact",
+        "diagnosticTaskId": "math.ns.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.foundations.numbers",
       "levels": {
-        "memorized": { "evidence": "Can list and describe number systems", "canDo": ["List ℕ, ℤ, ℚ, ℝ, ℂ and their basic properties"], "cannotDo": ["Explain why extensions are needed"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain the motivation for each extension", "canDo": ["Explain why ℝ is needed (completeness)"], "cannotDo": ["Apply to novel contexts"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can use extended number systems to solve problems", "canDo": ["Use complex numbers to solve cubics"], "cannotDo": ["Analyze algebraic closures abstractly"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze structural relationships between number systems", "canDo": ["Compare field extensions"], "cannotDo": ["Define new number systems"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate proofs about number system properties", "canDo": ["Evaluate a proof about algebraic closure"], "cannotDo": ["Extend to abstract algebra"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can define and explore novel number systems", "canDo": ["Define p-adic numbers and explore their properties"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can list and describe number systems",
+          "canDo": [
+            "List \u2115, \u2124, \u211a, \u211d, \u2102 and their basic properties"
+          ],
+          "cannotDo": [
+            "Explain why extensions are needed"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain the motivation for each extension",
+          "canDo": [
+            "Explain why \u211d is needed (completeness)"
+          ],
+          "cannotDo": [
+            "Apply to novel contexts"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can use extended number systems to solve problems",
+          "canDo": [
+            "Use complex numbers to solve cubics"
+          ],
+          "cannotDo": [
+            "Analyze algebraic closures abstractly"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze structural relationships between number systems",
+          "canDo": [
+            "Compare field extensions"
+          ],
+          "cannotDo": [
+            "Define new number systems"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate proofs about number system properties",
+          "canDo": [
+            "Evaluate a proof about algebraic closure"
+          ],
+          "cannotDo": [
+            "Extend to abstract algebra"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can define and explore novel number systems",
+          "canDo": [
+            "Define p-adic numbers and explore their properties"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
   },
   {
     "id": "math.foundations.proof",
     "name": "Mathematical Proof",
-    "description": "The art and science of rigorous mathematical argumentation — direct proof, contradiction, induction, and construction.",
+    "description": "The art and science of rigorous mathematical argumentation \u2014 direct proof, contradiction, induction, and construction.",
     "level": "concept",
     "parentId": "math.foundations",
     "childIds": [],
     "phases": {
-      "observation": { "question": "What makes a mathematical argument convincing?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify valid proof techniques" },
-      "principle": { "question": "Why is rigorous proof necessary for mathematical truth?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain the role of proof in mathematics" },
-      "application": { "question": "How do we construct proofs for mathematical statements?", "assessmentType": "application_problem", "completionEvidence": "Student can write proofs using standard techniques" },
-      "integration": { "question": "How do different proof techniques relate to each other?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can show connections between proof methods" },
-      "creation": { "question": "What new proof techniques can we develop?", "assessmentType": "research_question", "completionEvidence": "Student can invent novel proof strategies" }
+      "observation": {
+        "question": "What makes a mathematical argument convincing?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Student can identify valid proof techniques"
+      },
+      "principle": {
+        "question": "Why is rigorous proof necessary for mathematical truth?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Student can explain the role of proof in mathematics"
+      },
+      "application": {
+        "question": "How do we construct proofs for mathematical statements?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Student can write proofs using standard techniques"
+      },
+      "integration": {
+        "question": "How do different proof techniques relate to each other?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Student can show connections between proof methods"
+      },
+      "creation": {
+        "question": "What new proof techniques can we develop?",
+        "assessmentType": "research_question",
+        "completionEvidence": "Student can invent novel proof strategies"
+      }
     },
     "isomorphisms": [
-      { "pattern": "rigorous logical argumentation", "targetConceptId": "cs.foundations.logic", "targetDomain": "Computer Science", "mappingDescription": "Mathematical proof is formal logic applied to mathematical statements" }
+      {
+        "pattern": "rigorous logical argumentation",
+        "targetConceptId": "cs.foundations.logic",
+        "targetDomain": "Computer Science",
+        "mappingDescription": "Mathematical proof is formal logic applied to mathematical statements"
+      }
     ],
     "prerequisites": [],
-    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal"], "stageRange": { "min": "Orange", "max": "Green" } },
-    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
-    "forgettingParams": { "initialHalfLifeMs": 86400000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
-    "content": { "explanation": "Mathematical proof is the method by which we establish mathematical truth with certainty.", "examples": ["Direct proof that √2 is irrational", "Induction proof that 1+2+...+n = n(n+1)/2"], "nonExamples": ["Empirical evidence", "Plausible reasoning"], "analogies": ["Proof is to mathematics what experiment is to science — the ultimate arbiter of truth"], "visuals": ["Proof structure diagrams", "Decision tree for proof technique selection"], "practiceProblems": [] },
-    "misconceptions": [{ "id": "math.proof.m1", "statement": "Proof by example is valid", "whyItFeelsRight": "Examples feel convincing", "structuralReason": "Examples illustrate but cannot prove universal statements — a single counterexample disproves", "diagnosticTaskId": "math.proof.d1" }],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [
+        "Intrapersonal"
+      ],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "absent",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "transformed"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated",
+        "transformed"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 86400000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 31536000000
+    },
+    "content": {
+      "explanation": "Mathematical proof is the method by which we establish mathematical truth with certainty.",
+      "examples": [
+        "Direct proof that \u221a2 is irrational",
+        "Induction proof that 1+2+...+n = n(n+1)/2"
+      ],
+      "nonExamples": [
+        "Empirical evidence",
+        "Plausible reasoning"
+      ],
+      "analogies": [
+        "Proof is to mathematics what experiment is to science \u2014 the ultimate arbiter of truth"
+      ],
+      "visuals": [
+        "Proof structure diagrams",
+        "Decision tree for proof technique selection"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [
+      {
+        "id": "math.proof.m1",
+        "statement": "Proof by example is valid",
+        "whyItFeelsRight": "Examples feel convincing",
+        "structuralReason": "Examples illustrate but cannot prove universal statements \u2014 a single counterexample disproves",
+        "diagnosticTaskId": "math.proof.d1"
+      }
+    ],
     "depthRubric": {
       "conceptId": "math.foundations.proof",
       "levels": {
-        "memorized": { "evidence": "Can identify standard proof techniques", "canDo": ["Name direct proof, contradiction, induction"], "cannotDo": ["Construct proofs independently"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
-        "comprehended": { "evidence": "Can explain why each proof technique works", "canDo": ["Explain the logic of proof by contradiction"], "cannotDo": ["Write proofs for novel statements"], "appropriateTasks": ["concept_explanation"], "threshold": 0.45 },
-        "applied": { "evidence": "Can write proofs for standard mathematical statements", "canDo": ["Prove divisibility results by induction"], "cannotDo": ["Prove complex theorems"], "appropriateTasks": ["application_problem"], "threshold": 0.6 },
-        "analyzed": { "evidence": "Can analyze and compare proof strategies", "canDo": ["Compare multiple proof approaches for the same theorem"], "cannotDo": ["Create new proof techniques"], "appropriateTasks": ["analogy_mapping"], "threshold": 0.7 },
-        "evaluated": { "evidence": "Can evaluate the correctness and elegance of proofs", "canDo": ["Find gaps in a proof"], "cannotDo": ["Invent new proof paradigms"], "appropriateTasks": ["debate_position"], "threshold": 0.8 },
-        "transformed": { "evidence": "Can develop novel proof techniques", "canDo": ["Invent a new proof strategy for a class of problems"], "cannotDo": [], "appropriateTasks": ["research_question"], "threshold": 0.9 }
+        "memorized": {
+          "evidence": "Can identify standard proof techniques",
+          "canDo": [
+            "Name direct proof, contradiction, induction"
+          ],
+          "cannotDo": [
+            "Construct proofs independently"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain why each proof technique works",
+          "canDo": [
+            "Explain the logic of proof by contradiction"
+          ],
+          "cannotDo": [
+            "Write proofs for novel statements"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.45
+        },
+        "applied": {
+          "evidence": "Can write proofs for standard mathematical statements",
+          "canDo": [
+            "Prove divisibility results by induction"
+          ],
+          "cannotDo": [
+            "Prove complex theorems"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.6
+        },
+        "analyzed": {
+          "evidence": "Can analyze and compare proof strategies",
+          "canDo": [
+            "Compare multiple proof approaches for the same theorem"
+          ],
+          "cannotDo": [
+            "Create new proof techniques"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.7
+        },
+        "evaluated": {
+          "evidence": "Can evaluate the correctness and elegance of proofs",
+          "canDo": [
+            "Find gaps in a proof"
+          ],
+          "cannotDo": [
+            "Invent new proof paradigms"
+          ],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.8
+        },
+        "transformed": {
+          "evidence": "Can develop novel proof techniques",
+          "canDo": [
+            "Invent a new proof strategy for a class of problems"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "research_question"
+          ],
+          "threshold": 0.9
+        }
       }
     },
-    "supportedModalities": ["Deterministic", "LanguageReflective"],
+    "supportedModalities": [
+      "Deterministic",
+      "LanguageReflective"
+    ],
     "version": "1.0"
+  },
+  {
+    "id": "math.algebra.structures",
+    "name": "Algebraic Structures",
+    "description": "Groups, rings, fields, and vector spaces \u2014 the abstract algebraic structures underlying linear and abstract algebra.",
+    "level": "unit",
+    "parentId": "math.algebra",
+    "childIds": [
+      "math.algebra.linear",
+      "math.algebra.abstract"
+    ],
+    "phases": {
+      "observation": {
+        "question": "What do groups, rings, and fields have in common?",
+        "assessmentType": "factual_recall",
+        "completionEvidence": "Can identify shared axioms (closure, associativity, identity, inverses)"
+      },
+      "principle": {
+        "question": "Why do algebraic structures matter?",
+        "assessmentType": "concept_explanation",
+        "completionEvidence": "Can explain how abstraction reveals common patterns across systems"
+      },
+      "application": {
+        "question": "How do you prove a set is a group?",
+        "assessmentType": "application_problem",
+        "completionEvidence": "Can verify group axioms for concrete and abstract examples"
+      },
+      "integration": {
+        "question": "How do algebraic structures connect to symmetry and physics?",
+        "assessmentType": "analogy_mapping",
+        "completionEvidence": "Can map groups to symmetry transformations and Noether's theorem"
+      },
+      "creation": {
+        "question": "Can you define a new algebraic structure for a novel context?",
+        "assessmentType": "creative_synthesis",
+        "completionEvidence": "Can design a structure with consistent axioms for a specific problem"
+      }
+    },
+    "isomorphisms": [],
+    "prerequisites": [
+      "math.algebra"
+    ],
+    "crossBranchPrerequisites": [],
+    "devMapping": {
+      "primaryLine": "Cognitive",
+      "secondaryLines": [],
+      "stageRange": {
+        "min": "Orange",
+        "max": "Green"
+      }
+    },
+    "depthMeta": {
+      "requiredPrerequisiteDepth": "memorized",
+      "targetDepthRange": {
+        "min": "memorized",
+        "max": "evaluated"
+      },
+      "depthProgression": [
+        "memorized",
+        "comprehended",
+        "applied",
+        "analyzed",
+        "evaluated"
+      ]
+    },
+    "forgettingParams": {
+      "initialHalfLifeMs": 259200000,
+      "halfLifeMultiplier": 2.5,
+      "maxHalfLifeMs": 25920000000
+    },
+    "content": {
+      "explanation": "Algebraic structures abstract common patterns: groups model symmetry, rings model number systems, fields enable division, vector spaces model linear combinations.",
+      "examples": [
+        "Integers under addition (group)",
+        "Polynomials under multiplication (ring)",
+        "Real numbers (field)",
+        "R^n (vector space)"
+      ],
+      "nonExamples": [
+        "Natural numbers under subtraction (no inverses)"
+      ],
+      "analogies": [
+        "Like discovering the same blueprint underlies many different buildings"
+      ],
+      "visuals": [
+        "Venn diagram of algebraic structure hierarchy",
+        "Cayley tables for small groups"
+      ],
+      "practiceProblems": []
+    },
+    "misconceptions": [],
+    "depthRubric": {
+      "conceptId": "math.algebra.structures",
+      "levels": {
+        "memorized": {
+          "evidence": "Can name groups, rings, fields and their axioms",
+          "canDo": [
+            "name_structures",
+            "state_axioms"
+          ],
+          "cannotDo": [
+            "prove_membership"
+          ],
+          "appropriateTasks": [
+            "factual_recall"
+          ],
+          "threshold": 0.3
+        },
+        "comprehended": {
+          "evidence": "Can explain why each axiom matters with examples",
+          "canDo": [
+            "explain_why",
+            "give_examples"
+          ],
+          "cannotDo": [
+            "prove_theorems"
+          ],
+          "appropriateTasks": [
+            "concept_explanation"
+          ],
+          "threshold": 0.5
+        },
+        "applied": {
+          "evidence": "Can prove a given set is a group under specified operations",
+          "canDo": [
+            "prove_group",
+            "verify_axioms"
+          ],
+          "cannotDo": [
+            "design_structure"
+          ],
+          "appropriateTasks": [
+            "application_problem"
+          ],
+          "threshold": 0.7
+        },
+        "analyzed": {
+          "evidence": "Can compare structures, identify isomorphisms",
+          "canDo": [
+            "compare_structures",
+            "find_isomorphisms"
+          ],
+          "cannotDo": [
+            "novel_structure"
+          ],
+          "appropriateTasks": [
+            "analogy_mapping"
+          ],
+          "threshold": 0.8
+        },
+        "evaluated": {
+          "evidence": "Can design new structures for novel constraints",
+          "canDo": [
+            "design_structure",
+            "evaluate_consistency"
+          ],
+          "cannotDo": [],
+          "appropriateTasks": [
+            "debate_position"
+          ],
+          "threshold": 0.9
+        }
+      }
+    },
+    "supportedModalities": [
+      "LanguageReflective",
+      "Deterministic"
+    ]
   }
 ]
