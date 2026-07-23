@@ -339,6 +339,7 @@ export function createModuleTaskTypesProvider(
 import type { KnowledgeState, StudyTheme, CurriculumRecommendation, CurriculumTaskType } from '../curriculum/types.js';
 import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD, depthOrdinal } from '../curriculum/types.js';
 import type { CurriculumRegistry } from '../curriculum/CurriculumRegistry.js';
+import { buildGraph, topologicalSort } from '../curriculum/KnowledgeGraph.js';
 
 /**
  * Mapping from CurriculumTaskType to eligible Modalities.
@@ -597,8 +598,26 @@ export function generateCurriculumCandidates(
     }
   }
 
-  // Sort by priority descending
-  return candidates.sort((a, b) => b.priority - a.priority).slice(0, maxSlots);
+  // Phase 4A: Sort candidates by prerequisite depth using topological order.
+  // Concepts whose prerequisites are met come first, ensuring the learner
+  // follows the DAG rather than receiving random-seeming material.
+  if (registry && candidates.length > 1) {
+    const graph = buildGraph(registry.getAll());
+    const topoOrder = topologicalSort(graph.adjacency);
+    const orderMap = new Map<string, number>();
+    topoOrder.forEach((id, idx) => orderMap.set(id, idx));
+    candidates.sort((a, b) => {
+      const orderA = orderMap.get(a.conceptId) ?? Infinity;
+      const orderB = orderMap.get(b.conceptId) ?? Infinity;
+      if (orderA !== orderB) return orderA - orderB;
+      // Same topological position: break tie by priority
+      return b.priority - a.priority;
+    });
+  } else {
+    candidates.sort((a, b) => b.priority - a.priority);
+  }
+
+  return candidates.slice(0, maxSlots);
 }
 
 
