@@ -534,6 +534,8 @@ export function generateCurriculumCandidates(
       // Discover unmastered concepts from the CurriculumRegistry.
       // Filter: concept not in knowledge.conceptStates OR at 'absent' depth.
       // Prefer concepts whose prerequisites are already mastered.
+      // Phase 6C: Adaptive difficulty — use computeAdaptiveTargetDepth for
+      // encountered concepts that need depth advancement.
       if (!registry) break;
 
       const encountered = new Set(knowledge.conceptStates.keys());
@@ -550,9 +552,6 @@ export function generateCurriculumCandidates(
           continue;
         }
         // Never encountered — rank by prerequisite readiness
-        // P-A: Also check that prerequisites are at the required depth level,
-        // not just that they've been encountered. This prevents scheduling
-        // advanced material before foundational mastery.
         const prereqsMet = prerequisitesAtRequiredDepth(holon.id, knowledge, registry, encountered);
         unmastered.push({ id: holon.id, depth: prereqsMet ? -1 : -2 });
       }
@@ -568,29 +567,40 @@ export function generateCurriculumCandidates(
         const cs = knowledge.conceptStates.get(id);
         const currentDepth = cs?.depthLevel ?? 'absent';
 
+        // Adaptive: for encountered concepts, compute target depth dynamically
+        const targetDepth = cs
+          ? computeAdaptiveTargetDepth(cs, holon)
+          : holon.depthMeta.targetDepthRange.min;
+        const adaptivePriority = cs
+          ? computeAdaptivePriority({ retention: cs.retention, reviewCount: cs.reviewCount })
+          : (prereqsMet ? 0.7 : 0.4);
+
         candidates.push({
           conceptId: id,
           action: cs ? 'deepen' : 'new_material',
-          priority: prereqsMet ? 0.7 : 0.4,
+          priority: adaptivePriority,
           estimatedMinutes: 15,
           rationale: cs
-            ? `At ${currentDepth} depth — advance toward ${holon.depthMeta.targetDepthRange.max}`
+            ? `At ${currentDepth} depth — advance toward ${targetDepth} (adaptive)`
             : `New concept — prerequisites ${prereqsMet ? 'met' : 'not yet met'}`,
-          targetDepth: holon.depthMeta.targetDepthRange.min,
+          targetDepth,
         });
       }
       break;
     }
 
     case 'cross_domain': {
-      // Find concepts with cross-domain connections
+      // Find concepts with cross-domain connections.
+      // Phase 6C: Adaptive difficulty — use computeAdaptivePriority to
+      // rank concepts by their readiness for cross-domain exploration.
       for (const [conceptId, cs] of knowledge.conceptStates) {
         if (candidates.length >= maxSlots) break;
         if (cs.depthLevel === 'analyzed' || cs.depthLevel === 'evaluated') {
+          const adaptivePriority = computeAdaptivePriority({ retention: cs.retention, reviewCount: cs.reviewCount });
           candidates.push({
             conceptId,
             action: 'connect',
-            priority: 0.55,
+            priority: adaptivePriority,
             estimatedMinutes: 15,
             rationale: `At ${cs.depthLevel} depth — explore cross-domain connections`,
             targetDepth: 'transformed',
