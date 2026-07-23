@@ -218,7 +218,7 @@ describe('CurriculumLinter', () => {
       const cycleRegistry = makeRegistry([holonA, holonB]);
       const result = lintRegistry(cycleRegistry);
       expect(result.overallPassed).toBe(false);
-      expect(result.graphIssues.some(i => i.checkId === 'S-CYCLE')).toBe(true);
+      expect(result.graphIssues.some(i => i.checkId === 'G-CYCLE')).toBe(true);
     });
 
     it('aggregates errors across all holons', () => {

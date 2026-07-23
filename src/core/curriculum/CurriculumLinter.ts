@@ -422,51 +422,6 @@ const checkRubricCompleteness: LinterCheck = (holon) => {
  * Detect prerequisite cycles across the entire registry.
  * Returns issues for each holon involved in a cycle.
  */
-function detectPrerequisiteCycles(registry: CurriculumRegistry): LinterIssue[] {
-  const issues: LinterIssue[] = [];
-  const visited = new Set<string>();
-  const inStack = new Set<string>();
-
-  function dfs(id: string, path: string[]): void {
-    if (inStack.has(id)) {
-      // Found a cycle — report it
-      const cycleStart = path.indexOf(id);
-      const cycle = path.slice(cycleStart).concat(id);
-      for (const nodeId of cycle) {
-        issues.push({
-          checkId: 'S-CYCLE',
-          category: 'structural',
-          severity: 'error',
-          message: `Prerequisite cycle detected: ${cycle.join(' → ')}`,
-          suggestion: `Break the cycle by removing one prerequisite reference`,
-          location: nodeId,
-        });
-      }
-      return;
-    }
-    if (visited.has(id)) return;
-
-    visited.add(id);
-    inStack.add(id);
-    path.push(id);
-
-    const holon = registry.get(id);
-    if (holon) {
-      for (const prereqId of holon.prerequisites) {
-        dfs(prereqId, path);
-      }
-    }
-
-    path.pop();
-    inStack.delete(id);
-  }
-
-  for (const holon of registry.getAll()) {
-    dfs(holon.id, []);
-  }
-
-  return issues;
-}
 
 // ---------------------------------------------------------------------------
 // Main entry point
@@ -575,6 +530,86 @@ export function lintHolon(
  * Lint an entire curriculum registry.
  * Returns a report for each holon plus a graph-level report.
  */
+/**
+ * G-CB: Cross-branch chain completability.
+ * Validates that:
+ * 1. All cross-branch prerequisite IDs exist in the registry
+ * 2. Cross-branch prerequisite chains don't create cycles
+ * 3. The full prerequisite graph (same-branch + cross-branch) is acyclic
+ */
+function checkCrossBranchChainCompletability(
+  registry: CurriculumRegistry,
+): LinterIssue[] {
+  const issues: LinterIssue[] = [];
+  const allHolons = registry.getAll();
+  const registryIds = new Set(allHolons.map(h => h.id));
+
+  // Check 1: All cross-branch prerequisite IDs exist in the registry
+  for (const holon of allHolons) {
+    if (!holon.crossBranchPrerequisites) continue;
+    for (const cbId of holon.crossBranchPrerequisites) {
+      if (!registryIds.has(cbId)) {
+        issues.push({
+          checkId: 'G-CB-MISSING',
+          category: 'structural',
+          severity: 'error',
+          message: `Cross-branch prerequisite "${cbId}" not found in registry`,
+          suggestion: `Add the missing holon to the seed data or remove the reference`,
+          location: `${holon.id}.crossBranchPrerequisites`,
+        });
+      }
+    }
+  }
+
+  // Check 2: Full prerequisite graph (same-branch + cross-branch) is acyclic
+  const visited = new Set<string>();
+  const inStack = new Set<string>();
+
+  function dfs(id: string, path: string[]): void {
+    if (inStack.has(id)) {
+      const cycleStart = path.indexOf(id);
+      const cycle = path.slice(cycleStart).concat(id);
+      issues.push({
+        checkId: 'G-CYCLE',
+        category: 'structural',
+        severity: 'error',
+        message: `Cross-branch prerequisite cycle: ${cycle.join(' → ')}`,
+        suggestion: `Break the cycle by removing one cross-branch prerequisite reference`,
+        location: cycle[0]!,
+      });
+      return;
+    }
+    if (visited.has(id)) return;
+
+    visited.add(id);
+    inStack.add(id);
+    path.push(id);
+
+    const holon = registry.get(id);
+    if (holon) {
+      // Follow same-branch prerequisites
+      for (const prereqId of holon.prerequisites) {
+        dfs(prereqId, path);
+      }
+      // Follow cross-branch prerequisites
+      for (const cbId of holon.crossBranchPrerequisites ?? []) {
+        if (registryIds.has(cbId)) {
+          dfs(cbId, path);
+        }
+      }
+    }
+
+    path.pop();
+    inStack.delete(id);
+  }
+
+  for (const holon of allHolons) {
+    dfs(holon.id, []);
+  }
+
+  return issues;
+}
+
 export function lintRegistry(
   registry: CurriculumRegistry,
 ): {
@@ -595,9 +630,10 @@ export function lintRegistry(
     totalWarnings += report.warnings.length;
   }
 
-  // Graph-level checks
-  const graphIssues = detectPrerequisiteCycles(registry);
+  // Graph-level checks: full prerequisite graph (same-branch + cross-branch)
+  const graphIssues = checkCrossBranchChainCompletability(registry);
   totalErrors += graphIssues.filter(i => i.severity === 'error').length;
+  totalWarnings += graphIssues.filter(i => i.severity === 'warning').length;
 
   return {
     holonReports,
