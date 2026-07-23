@@ -43,6 +43,7 @@ import type { ConceptState, StudyTheme } from './curriculum/types.js';
 import { generateCurriculumCandidates, type CurriculumCandidate } from './engines/CandidateGeneration.js';
 import { getCurriculumRegistry } from './curriculum/CurriculumRegistry.js';
 import { seedCurriculumRegistry } from './curriculum/CurriculumSeed.js';
+import { computeLearningAnalytics } from './curriculum/LearningAnalytics.js';
 
 
 export interface TickResult {
@@ -775,7 +776,7 @@ export function endSession(
     }
   }
 
-  // Curriculum expansion: apply retention decay to all known concepts at session end.
+  // Curriculum expansion: apply retention decay + update learning analytics at session end.
   // ConceptState stores lastReviewedAt but not the forgetting curve parameters
   // (halfLifeMs is on the separate ForgettingCurve). We compute basic decay using
   // a default half-life (24h) elapsed since lastReviewedAt. This ensures the
@@ -792,11 +793,30 @@ export function endSession(
         : concept.retention;
       decayedConcepts.set(key, { ...concept, retention: decayedRetention });
     }
+
+    // Phase 4C: Update learning profile with analytics data so the scheduler
+    // can use modality effectiveness data in future sessions.
+    let updatedProfile = knowledge.learningProfile;
+    if (knowledge.studyHistory.length >= 3) {
+      const analytics = computeLearningAnalytics({ ...knowledge, conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState> });
+      const modalityEff: Record<string, number> = {};
+      for (const me of analytics.modalityEffectiveness) {
+        modalityEff[me.modality] = me.effectiveness;
+      }
+      updatedProfile = {
+        ...updatedProfile,
+        modalityEffectiveness: modalityEff,
+        learningVelocity: analytics.velocity.conceptsPerSession,
+        lastAnalyticsAt: now,
+      };
+    }
+
     finalSig = {
       ...updatedSig,
       knowledge: {
         ...knowledge,
         conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState>,
+        learningProfile: updatedProfile,
       },
     };
   }
