@@ -212,7 +212,7 @@
             </div>
           {/if}
 
-          <!-- Modality Effectiveness -->
+          <!-- Best Modality -->
           {#if analytics.modalityEffectiveness.length > 0}
             <div class="analytics-card">
               <span class="analytics-label">Best Modality</span>
@@ -231,6 +231,25 @@
           {/if}
         </div>
 
+        <!-- Modality Effectiveness Chart -->
+        {#if analytics.modalityEffectiveness.length > 0}
+          <div class="modality-chart">
+            <h4 class="sub-title">Modality Effectiveness</h4>
+            {#each analytics.modalityEffectiveness as me (me.modality)}
+              <div class="modality-row">
+                <span class="modality-name">{me.modality}</span>
+                <div class="modality-bar">
+                  <div
+                    class="modality-bar-fill"
+                    style="width: {me.effectiveness * 100}%; background: {me.effectiveness > 0.7 ? 'var(--ccrpg-success)' : me.effectiveness > 0.4 ? 'var(--ccrpg-warning)' : 'var(--ccrpg-danger)'}"
+                  ></div>
+                </div>
+                <span class="modality-stat">{me.eventCount} sessions</span>
+              </div>
+            {/each}
+          </div>
+        {/if}
+
         <!-- Top review candidates -->
         {#if analytics.reviewIntervals.length > 0}
           <div class="review-list">
@@ -244,6 +263,37 @@
             {/each}
           </div>
         {/if}
+      </div>
+    {/if}
+
+    <!-- Forgetting Curve Summary -->
+    {#if knowledge?.forgettingCurves && knowledge.forgettingCurves.size > 0}
+      <div class="section">
+        <h3 class="section-title">Retention Curves</h3>
+        <div class="curve-summary">
+          {@const curves = [...knowledge.forgettingCurves.values()]}
+          {@const avgHalfLife = curves.reduce((s, c) => s + c.halfLifeMs, 0) / curves.length}
+          {@const strongCount = curves.filter(c => c.retention > 0.7).length}
+          {@const fadingCount = curves.filter(c => c.retention <= 0.5).length}
+          <div class="curve-metrics">
+            <div class="curve-metric">
+              <span class="curve-metric-value">{curves.length}</span>
+              <span class="curve-metric-label">tracked concepts</span>
+            </div>
+            <div class="curve-metric">
+              <span class="curve-metric-value" style="color: var(--ccrpg-success)">{strongCount}</span>
+              <span class="curve-metric-label">strong retention</span>
+            </div>
+            <div class="curve-metric">
+              <span class="curve-metric-value" style="color: {fadingCount > 0 ? 'var(--ccrpg-danger)' : 'var(--ccrpg-fg-muted)'}">{fadingCount}</span>
+              <span class="curve-metric-label">fading</span>
+            </div>
+            <div class="curve-metric">
+              <span class="curve-metric-value">{Math.round(avgHalfLife / 86400000)}d</span>
+              <span class="curve-metric-label">avg half-life</span>
+            </div>
+          </div>
+        </div>
       </div>
     {/if}
   {/if}
@@ -478,9 +528,101 @@
     text-transform: capitalize;
   }
 
-  .review-days {
+    .review-days {
     font-family: var(--ccrpg-font-body);
     font-size: var(--ccrpg-text-xs);
     font-weight: 500;
+  }
+
+  /* Modality Effectiveness Chart */
+  .modality-chart {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccrpg-space-1);
+    margin-top: var(--ccrpg-space-2);
+  }
+
+  .sub-title {
+    font-family: var(--ccrpg-font-display);
+    font-size: 0.65rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: var(--ccrpg-tracking-wider);
+    color: var(--ccrpg-fg-muted);
+    margin: 0 0 var(--ccrpg-space-1);
+  }
+
+  .modality-row {
+    display: grid;
+    grid-template-columns: 8rem 1fr 5rem;
+    align-items: center;
+    gap: var(--ccrpg-space-2);
+  }
+
+  .modality-name {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg-muted);
+    text-transform: capitalize;
+  }
+
+  .modality-bar {
+    height: 6px;
+    background: var(--ccrpg-surface);
+    border-radius: var(--ccrpg-radius-full);
+    overflow: hidden;
+  }
+
+  .modality-bar-fill {
+    height: 100%;
+    border-radius: var(--ccrpg-radius-full);
+    transition: width var(--ccrpg-duration-slow) var(--ccrpg-ease-out);
+  }
+
+  .modality-stat {
+    font-family: var(--ccrpg-font-body);
+    font-size: 0.65rem;
+    color: var(--ccrpg-fg-muted);
+    text-align: right;
+  }
+
+  /* Forgetting Curve Summary */
+  .curve-summary {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccrpg-space-2);
+  }
+
+  .curve-metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: var(--ccrpg-space-2);
+  }
+
+  .curve-metric {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ccrpg-space-1);
+    padding: var(--ccrpg-space-2);
+    border-radius: var(--ccrpg-radius-md);
+    background: color-mix(in srgb, var(--ccrpg-surface) 50%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ccrpg-fg-muted) 10%, transparent);
+  }
+
+  .curve-metric-value {
+    font-family: var(--ccrpg-font-display);
+    font-size: var(--ccrpg-text-sm);
+    font-weight: 700;
+    color: var(--ccrpg-fg);
+  }
+
+  .curve-metric-label {
+    font-family: var(--ccrpg-font-body);
+    font-size: 0.6rem;
+    color: var(--ccrpg-fg-muted);
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: var(--ccrpg-tracking-wide);
   }
 </style>
