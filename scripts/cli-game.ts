@@ -310,6 +310,7 @@ import { computeCCI } from '../src/core/engines/CCIEngine.js';
 import { SessionAgent } from '../src/core/assessments/SessionAgent.js';
 import { getCurriculumRegistry } from '../src/core/curriculum/CurriculumRegistry.js';
 import { seedCurriculumRegistry } from '../src/core/curriculum/CurriculumSeed.js';
+import { seedInitialKnowledge } from '../src/core/curriculum/SeedInitialKnowledge.js';
 import { lintRegistry } from '../src/core/curriculum/CurriculumLinter.js';
 
 /**
@@ -1133,7 +1134,16 @@ async function createDefaultSignificator(): Promise<Significator> {
     }
   }
 
-  return createSignificator('cli-player', altitudes, dominantStage);
+  const sig = createSignificator('cli-player', altitudes, dominantStage);
+
+  // P0-COLDSTART: Seed initial knowledge state so curriculum encounters
+  // appear from the first session. Without this, generateCurriculumCandidates()
+  // returns empty because conceptStates is empty for fresh players.
+  const initialKnowledge = seedInitialKnowledge('Cognitive', dominantStage);
+  if (initialKnowledge.conceptStates.size > 0) {
+    return { ...sig, knowledge: initialKnowledge };
+  }
+  return sig;
 }
 
 // ── JSON event emitter for AI-agent consumption ───────────────────────
