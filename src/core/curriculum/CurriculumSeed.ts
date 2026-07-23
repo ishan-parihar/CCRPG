@@ -14,6 +14,7 @@ import csFoundations from './data/cs.foundations.json';
 import csProgram from './data/cs.program.json';
 import mathFoundations from './data/math.foundations.json';
 import physicsFoundations from './data/physics.foundations.json';
+import physicsProgram from './data/physics.program.json';
 
 /** All seed data modules. Each entry is an array of CurriculumHolon objects. */
 const SEED_MODULES: readonly { name: string; data: CurriculumHolon[] }[] = [
@@ -21,6 +22,7 @@ const SEED_MODULES: readonly { name: string; data: CurriculumHolon[] }[] = [
   { name: 'cs.foundations', data: csFoundations as unknown as CurriculumHolon[] },
   { name: 'math.foundations', data: mathFoundations as unknown as CurriculumHolon[] },
   { name: 'physics.foundations', data: physicsFoundations as unknown as CurriculumHolon[] },
+  { name: 'physics.program', data: physicsProgram as unknown as CurriculumHolon[] },
 ];
 
 /**
