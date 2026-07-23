@@ -331,6 +331,28 @@ import type { CurriculumRegistry } from '../curriculum/CurriculumRegistry.js';
 export type CurriculumCandidate = CurriculumRecommendation;
 
 /**
+ * Check if all prerequisites of a holon are at the required depth level.
+ * Shared helper to eliminate duplication across new_material and depth_push cases.
+ */
+function prerequisitesAtRequiredDepth(
+  conceptId: string,
+  knowledge: KnowledgeState,
+  registry: CurriculumRegistry,
+  encountered?: ReadonlySet<string>,
+): boolean {
+  const holon = registry.get(conceptId);
+  if (!holon) return false;
+  return holon.prerequisites.every(p => {
+    if (encountered && !encountered.has(p)) return false;
+    const prereqCs = knowledge.conceptStates.get(p);
+    if (!prereqCs) return false;
+    const prereqHolon = registry.get(p);
+    const requiredDepth = prereqHolon?.depthMeta.requiredPrerequisiteDepth ?? 'memorized';
+    return depthOrdinal(prereqCs.depthLevel) >= depthOrdinal(requiredDepth);
+  });
+}
+
+/**
  * Generate curriculum encounter candidates from the player's knowledge state.
  * These candidates are interleaved with developmental encounters during scheduling.
  *
@@ -387,17 +409,7 @@ export function generateCurriculumCandidates(
       if (!registry) break;
       for (const [conceptId, cs] of knowledge.conceptStates) {
         if (candidates.length >= maxSlots) break;
-        if (cs.retention > 0.5) {
-          const holon = registry.get(conceptId);
-          if (!holon) continue;
-          const prereqsMet = holon.prerequisites.every(p => {
-            const prereqCs = knowledge.conceptStates.get(p);
-            if (!prereqCs) return false;
-            const prereqHolon = registry.get(p);
-            const requiredDepth = prereqHolon?.depthMeta.requiredPrerequisiteDepth ?? 'memorized';
-            return depthOrdinal(prereqCs.depthLevel) >= depthOrdinal(requiredDepth);
-          });
-          if (!prereqsMet) continue;
+        if (cs.retention > 0.5 && prerequisitesAtRequiredDepth(conceptId, knowledge, registry)) {
           candidates.push({
             conceptId,
             action: 'deepen',
@@ -434,14 +446,7 @@ export function generateCurriculumCandidates(
         // P-A: Also check that prerequisites are at the required depth level,
         // not just that they've been encountered. This prevents scheduling
         // advanced material before foundational mastery.
-        const prereqsMet = holon.prerequisites.every(p => {
-          if (!encountered.has(p)) return false;
-          const prereqCs = knowledge.conceptStates.get(p);
-          if (!prereqCs) return false;
-          const prereqHolon = registry.get(p);
-          const requiredDepth = prereqHolon?.depthMeta.requiredPrerequisiteDepth ?? 'memorized';
-          return depthOrdinal(prereqCs.depthLevel) >= depthOrdinal(requiredDepth);
-        });
+        const prereqsMet = prerequisitesAtRequiredDepth(holon.id, knowledge, registry, encountered);
         unmastered.push({ id: holon.id, depth: prereqsMet ? -1 : -2 });
       }
 

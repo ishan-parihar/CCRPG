@@ -21,6 +21,7 @@ import { computeContactBoundaryPermeability } from './GreaterCycleEngine.js';
 // Curriculum expansion: update knowledge state on curriculum encounter completion.
 import type { ConceptState, KnowledgeState } from '../curriculum/types.js';
 import { ALL_DEPTH_LEVELS, depthOrdinal } from '../curriculum/types.js';
+import { assessDualDepth, updateConceptState } from '../curriculum/DepthAssessment.js';
 
 export interface PlayerResponse {
   readonly encounterId: string;
@@ -478,56 +479,84 @@ function updateKnowledgeFromEncounter(
   const prevDepth = existingConcept?.depthLevel ?? 'absent';
   const prevRetention = existingConcept?.retention ?? 0;
 
-  // Determine new depth level based on curriculum action and outcome.
-  // Each action has a distinct target depth:
-  //   new_material → memorize (first encounter)
-  //   review      → keep current depth, boost retention on pass
-  //   deepen      → advance one level on pass
-  //   connect     → keep current depth, boost integration
-  let newDepthLevel: ConceptState['depthLevel'] = prevDepth;
-  let newRetention: number;
+  // Phase C: Dual-depth assessment — when a depthRubric is available on the
+  // encounter, use the full DepthAssessment pipeline to classify response quality
+  // into a specific depth level. When no rubric is present, fall back to the
+  // binary pass/fail heuristic for backward compatibility.
+  let newConceptState: ConceptState;
 
-  switch (action) {
-    case 'new_material':
-      newDepthLevel = passed ? 'memorized' : 'absent';
-      newRetention = passed ? 1.0 : prevRetention;
-      break;
-    case 'review':
-      // Keep current depth; retention boosted on pass, decayed on failure
-      newRetention = passed
-        ? Math.min(1, prevRetention + 0.3) // Spaced-repetition boost
-        : Math.max(0.1, prevRetention * 0.7);
-      break;
-    case 'deepen':
-      if (passed) {
-        const currentOrdinal = depthOrdinal(prevDepth);
-        const maxOrdinal = ALL_DEPTH_LEVELS.length - 1;
-        newDepthLevel = currentOrdinal < maxOrdinal
-          ? ALL_DEPTH_LEVELS[currentOrdinal + 1]!
-          : prevDepth;
-      }
-      newRetention = passed ? 1.0 : Math.max(0.1, prevRetention * 0.7);
-      break;
-    case 'connect':
-      // Keep current depth and retention; integration is implicit
-      newDepthLevel = prevDepth;
-      newRetention = prevRetention;
-      break;
-    default:
-      newRetention = passed ? 1.0 : Math.max(0.1, prevRetention * 0.7);
+  if (encounter.depthRubric) {
+    // Dual-depth path: use DepthAssessment to classify the response.
+    // We construct knowledgeScores from the binary outcome + action context,
+    // since the full assessment pipeline isn't wired into ConsequenceEngine yet.
+    // This is a bridge implementation that will be refined when the encounter
+    // execution pipeline provides detailed response scores.
+    const knowledgeScores: Record<string, number> = {
+      accuracy: passed ? 0.8 : 0.2,
+      depth: action === 'deepen' ? 0.7 : 0.5,
+      integration: action === 'connect' ? 0.8 : 0.5,
+      retention: prevRetention,
+    };
+
+    const dualResult = assessDualDepth({
+      conceptId,
+      knowledgeScores,
+      depthRubric: encounter.depthRubric,
+      driveScores: {},
+      driveSignals: {},
+      shadowDetected: null,
+      shadowIntensity: 0,
+      predictedDepth: prevDepth,
+      confidenceInPrediction: 0.5,
+      timestamp: now,
+    });
+
+    newConceptState = updateConceptState(existingConcept, dualResult, now);
+  } else {
+    // Binary pass/fail heuristic (backward-compatible fallback)
+    let fbDepth: ConceptState['depthLevel'] = prevDepth;
+    let fbRetention: number;
+
+    switch (action) {
+      case 'new_material':
+        fbDepth = passed ? 'memorized' : 'absent';
+        fbRetention = passed ? 1.0 : prevRetention;
+        break;
+      case 'review':
+        fbRetention = passed
+          ? Math.min(1, prevRetention + 0.3)
+          : Math.max(0.1, prevRetention * 0.7);
+        break;
+      case 'deepen':
+        if (passed) {
+          const currentOrdinal = depthOrdinal(prevDepth);
+          const maxOrdinal = ALL_DEPTH_LEVELS.length - 1;
+          fbDepth = currentOrdinal < maxOrdinal
+            ? ALL_DEPTH_LEVELS[currentOrdinal + 1]!
+            : prevDepth;
+        }
+        fbRetention = passed ? 1.0 : Math.max(0.1, prevRetention * 0.7);
+        break;
+      case 'connect':
+        fbDepth = prevDepth;
+        fbRetention = prevRetention;
+        break;
+      default:
+        fbRetention = passed ? 1.0 : Math.max(0.1, prevRetention * 0.7);
+    }
+
+    newConceptState = {
+      depthLevel: fbDepth,
+      retention: fbRetention,
+      lastReviewedAt: now,
+      reviewCount: (existingConcept?.reviewCount ?? 0) + 1,
+      depthHistory: [
+        ...(existingConcept?.depthHistory ?? []),
+        { level: fbDepth, timestamp: now, evidence: `Encounter ${encounter.id} — ${action} — ${passed ? 'passed' : 'failed'}` },
+      ],
+      misconceptionFlags: existingConcept?.misconceptionFlags ?? [],
+    };
   }
-
-  const newConceptState: ConceptState = {
-    depthLevel: newDepthLevel,
-    retention: newRetention,
-    lastReviewedAt: now,
-    reviewCount: (existingConcept?.reviewCount ?? 0) + 1,
-    depthHistory: [
-      ...(existingConcept?.depthHistory ?? []),
-      { level: newDepthLevel, timestamp: now, evidence: `Encounter ${encounter.id} — ${action} — ${passed ? 'passed' : 'failed'}` },
-    ],
-    misconceptionFlags: existingConcept?.misconceptionFlags ?? [],
-  };
 
   const newConceptStates = new Map(knowledge.conceptStates);
   newConceptStates.set(conceptId, newConceptState);
@@ -537,11 +566,11 @@ function updateKnowledgeFromEncounter(
     ...knowledge.studyHistory,
     {
       conceptId,
-      depthAchieved: newDepthLevel,
+      depthAchieved: newConceptState.depthLevel,
       modality: encounter.modality,
       timestamp: now,
       retentionBefore: prevRetention,
-      retentionAfter: newRetention,
+      retentionAfter: newConceptState.retention,
     },
   ].slice(-200);
 

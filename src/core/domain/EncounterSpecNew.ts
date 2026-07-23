@@ -3,6 +3,7 @@ import type { Line } from './Line.js';
 import type { Stage } from './Stage.js';
 import type { Modality, ShadowQuadrant, PolarityMode } from './enums.js';
 import type { ModuleExecutionMode } from '../assessments/types.js';
+import type { DepthRubric } from '../curriculum/types.js';
 
 export interface ScheduledEncounter {
   readonly id: string;
@@ -28,4 +29,10 @@ export interface ScheduledEncounter {
   readonly curriculumConceptId?: string;
   /** Curriculum action: review, deepen, new_material, or connect. */
   readonly curriculumAction?: 'review' | 'deepen' | 'new_material' | 'connect';
+  /**
+   * Curriculum expansion: when present, the depth rubric for the concept
+   * being studied. Used by DepthAssessment to classify response quality
+   * into a specific depth level rather than binary pass/fail.
+   */
+  readonly depthRubric?: DepthRubric;
 }
