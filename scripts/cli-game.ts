@@ -1139,7 +1139,8 @@ async function createDefaultSignificator(): Promise<Significator> {
   // P0-COLDSTART: Seed initial knowledge state so curriculum encounters
   // appear from the first session. Without this, generateCurriculumCandidates()
   // returns empty because conceptStates is empty for fresh players.
-  const initialKnowledge = seedInitialKnowledge('Cognitive', dominantStage);
+  const seedLine = (Object.entries(altitudes).find(([_, s]) => s === dominantStage)?.[0] ?? 'Cognitive') as Line;
+  const initialKnowledge = seedInitialKnowledge(seedLine, dominantStage);
   if (initialKnowledge.conceptStates.size > 0) {
     return { ...sig, knowledge: initialKnowledge };
   }
