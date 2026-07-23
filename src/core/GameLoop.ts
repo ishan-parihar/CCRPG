@@ -955,8 +955,56 @@ export async function endSessionAsync(
   // ponytail: TDG-Rust onSessionEnd hook removed. The async endSessionAsync
   // now has the same behavior as the sync endSession — no TDG hook to await.
 
+  // Phase 5A parity: Apply retention decay + persist forgetting curves
+  // (mirrors the sync endSession path above).
+  let finalSig = updatedSig;
+  const knowledge = updatedSig.knowledge;
+  if (knowledge && knowledge.conceptStates.size > 0) {
+    const decayedConcepts = new Map<string, ConceptState>();
+    for (const [key, concept] of knowledge.conceptStates) {
+      const elapsed = now - concept.lastReviewedAt;
+      const decayedRetention = elapsed > 0
+        ? Math.max(0, Math.min(1, concept.retention * Math.pow(2, -elapsed / DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs)))
+        : concept.retention;
+      decayedConcepts.set(key, { ...concept, retention: decayedRetention });
+    }
+
+    // Build forgetting curves (same logic as sync endSession)
+    const curves = new Map<string, ForgettingCurve>(
+      [...(knowledge.forgettingCurves ?? new Map())],
+    );
+    for (const [key, concept] of decayedConcepts) {
+      const existing = curves.get(key);
+      if (existing) {
+        curves.set(key, {
+          ...existing,
+          retention: concept.retention,
+          lastRetrievedAt: now,
+        });
+      } else if (concept.reviewCount > 0) {
+        curves.set(key, {
+          conceptId: key,
+          firstLearnedAt: concept.lastReviewedAt,
+          lastRetrievedAt: now,
+          retention: concept.retention,
+          retrievalCount: concept.reviewCount,
+          halfLifeMs: DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs,
+        });
+      }
+    }
+
+    finalSig = {
+      ...updatedSig,
+      knowledge: {
+        ...knowledge,
+        conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState>,
+        forgettingCurves: curves as ReadonlyMap<string, ForgettingCurve>,
+      },
+    };
+  }
+
   return {
-    sig: updatedSig,
+    sig: finalSig,
     ...(updatedWorld !== world ? { world: updatedWorld } : {}),
     summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced },
   };
