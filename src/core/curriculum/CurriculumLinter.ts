@@ -106,21 +106,26 @@ const checkIsomorphismTargets: LinterCheck = (holon, registry) => {
 
 /**
  * S-5: Level consistency — holon level is appropriate for its position.
- * branch → parentId should be null; concept → should have a parent.
+ * Phase 2B: Extended to support academic hierarchy levels.
+ * Top-level holons (program, branch) → parentId should be null.
+ * Leaf-level holons (concept, instance, lesson) → should have a parent.
  */
+const TOP_LEVELS = new Set(['program', 'branch']);
+const LEAF_LEVELS = new Set(['concept', 'instance', 'lesson']);
+
 const checkLevelConsistency: LinterCheck = (holon) => {
   const issues: LinterIssue[] = [];
-  if (holon.level === 'branch' && holon.parentId !== null) {
+  if (TOP_LEVELS.has(holon.level) && holon.parentId !== null) {
     issues.push({
       checkId: 'S-5',
       category: 'structural',
       severity: 'warning',
-      message: `Branch-level holon "${holon.id}" has a parent — branches are typically top-level`,
-      suggestion: `Consider setting parentId to null for branch holons`,
+      message: `${holon.level}-level holon "${holon.id}" has a parent — top-level holons are typically root nodes`,
+      suggestion: `Consider setting parentId to null for ${holon.level} holons`,
       location: holon.id,
     });
   }
-  if ((holon.level === 'concept' || holon.level === 'instance') && holon.parentId === null) {
+  if (LEAF_LEVELS.has(holon.level) && holon.parentId === null) {
     issues.push({
       checkId: 'S-5',
       category: 'structural',

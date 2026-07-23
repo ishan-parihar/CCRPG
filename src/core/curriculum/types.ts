@@ -104,11 +104,39 @@ export const ALL_CURRICULUM_TASK_TYPES: readonly CurriculumTaskType[] = [
 // Holon Levels (foundations/30)
 // ---------------------------------------------------------------------------
 
-export type HolonLevel = 'branch' | 'subject' | 'topic' | 'concept' | 'instance';
+/**
+ * Holon levels — the holonic hierarchy depth.
+ * Phase 2A: Extended with academic hierarchy levels for Ph.D-level scaling.
+ * Original 5 levels preserved for backward compatibility.
+ * New 6 levels enable program → degree → course → module → unit → lesson → concept.
+ */
+export type HolonLevel =
+  | 'program'    // Top-level academic program (e.g., "CS Bachelor's")
+  | 'degree'     // Degree tier (e.g., "B.S. Computer Science")
+  | 'course'     // Individual course (e.g., "CS101: Intro to Programming")
+  | 'module'     // Course module / unit (e.g., "Algorithms Module")
+  | 'unit'       // Teaching unit within a module (e.g., "Sorting Algorithms")
+  | 'lesson'     // Individual lesson (e.g., "Quicksort")
+  | 'branch'     // Top-level domain branch (backward compat)
+  | 'subject'    // Domain subject (backward compat)
+  | 'topic'      // Topic within a subject (backward compat)
+  | 'concept'    // Atomic concept (backward compat)
+  | 'instance';  // Concrete exercise / example (backward compat)
 
 export const ALL_HOLON_LEVELS: readonly HolonLevel[] = [
+  'program', 'degree', 'course', 'module', 'unit', 'lesson',
   'branch', 'subject', 'topic', 'concept', 'instance',
 ];
+
+/** Level ordinal — deeper = higher number. Used for depth validation in linter. */
+export function holonLevelOrdinal(level: HolonLevel): number {
+  return ALL_HOLON_LEVELS.indexOf(level);
+}
+
+/** Check if level A is deeper than level B in the hierarchy. */
+export function isDeeperLevel(a: HolonLevel, b: HolonLevel): boolean {
+  return holonLevelOrdinal(a) > holonLevelOrdinal(b);
+}
 
 // ---------------------------------------------------------------------------
 // Mastery Levels (foundations/34)
@@ -265,6 +293,11 @@ export interface CurriculumHolon {
   /** Prerequisite holons (structural, not just sequential) */
   readonly prerequisites: readonly string[];
 
+  /** Phase 3A: Cross-branch prerequisites — holons from other branches that
+   *  must be completed before this holon can be studied. Checked by the
+   *  curriculum linter and enforced by CandidateGeneration. */
+  readonly crossBranchPrerequisites?: readonly string[];
+
   /** Developmental mapping */
   readonly devMapping: CurriculumDevMapping;
 
@@ -307,6 +340,10 @@ export interface ConceptState {
   readonly reviewCount: number;
   readonly depthHistory: readonly DepthHistoryEntry[];
   readonly misconceptionFlags: readonly string[];
+  /** Phase 3C: Which of the 5 holonic phases have been completed.
+   *  Tracks observation → principle → application → integration → creation.
+   *  Used to determine if a holon is fully mastered (all phases complete). */
+  readonly completedPhases?: readonly string[];
 }
 
 export interface SubjectProgress {
