@@ -21,7 +21,7 @@ import { computeContactBoundaryPermeability } from './GreaterCycleEngine.js';
 // Curriculum expansion: update knowledge state on curriculum encounter completion.
 import type { ConceptState, KnowledgeState } from '../curriculum/types.js';
 import { ALL_DEPTH_LEVELS, depthOrdinal } from '../curriculum/types.js';
-import { assessDualDepth, updateConceptState } from '../curriculum/DepthAssessment.js';
+import { assessDualDepth, updateConceptState, type RubricEvaluationInput } from '../curriculum/DepthAssessment.js';
 
 export interface PlayerResponse {
   readonly encounterId: string;
@@ -508,39 +508,51 @@ function updateKnowledgeFromEncounter(
       case 'DarkAverted':
       case 'GoldenAverted': driveScores[d] = 0.3; break;
     }
-  }
+  }    // Phase C: Dual-depth assessment — when a depthRubric is available on the
+    // encounter, use the full DepthAssessment pipeline to classify response quality
+    // into a specific depth level. When no rubric is present, fall back to the
+    // binary pass/fail heuristic for backward compatibility.
+    let newConceptState: ConceptState;
 
-  // Phase C: Dual-depth assessment — when a depthRubric is available on the
-  // encounter, use the full DepthAssessment pipeline to classify response quality
-  // into a specific depth level. When no rubric is present, fall back to the
-  // binary pass/fail heuristic for backward compatibility.
-  let newConceptState: ConceptState;
+    if (encounter.depthRubric) {
+      // Dual-depth path: use DepthAssessment to classify the response.
+      // Build multi-dimensional rubric evaluation input from the encounter
+      // outcome: demonstrated capabilities, task type alignment, and numeric scores.
+      const evaluationInput: RubricEvaluationInput = {
+        demonstratedCapabilities: passed
+          ? [action === 'deepen' ? 'deep_analysis' : 'correct_response', 'engagement']
+          : [],
+        failedCapabilities: passed ? [] : ['incomplete_response'],
+        taskType: encounter.modality === 'LanguageReflective' ? 'factual_recall'
+          : encounter.modality === 'ScenarioChoice' ? 'application_problem'
+          : encounter.modality === 'Deterministic' ? 'application_problem'
+          : encounter.modality === 'SocialCooperative' ? 'peer_teaching'
+          : encounter.modality === 'ImmersiveRPG' ? 'case_study_analysis'
+          : encounter.modality === 'Embodied' ? 'lab_simulation'
+          : encounter.modality === 'Strategic' ? 'project_based'
+          : 'concept_explanation',
+        scores: {
+          accuracy: passed ? 0.8 : 0.2,
+          depth: action === 'deepen' ? 0.7 : 0.5,
+          integration: action === 'connect' ? 0.8 : 0.5,
+          retention: prevRetention,
+        },
+      };
 
-  if (encounter.depthRubric) {
-    // Dual-depth path: use DepthAssessment to classify the response.
-    // Knowledge scores derived from binary outcome + action context;
-    // drive/shadow signals now come from the real encounter record.
-    const knowledgeScores: Record<string, number> = {
-      accuracy: passed ? 0.8 : 0.2,
-      depth: action === 'deepen' ? 0.7 : 0.5,
-      integration: action === 'connect' ? 0.8 : 0.5,
-      retention: prevRetention,
-    };
-
-    const dualResult = assessDualDepth({
-      conceptId,
-      knowledgeScores,
-      depthRubric: encounter.depthRubric,
-      driveScores,
-      driveSignals,
-      // TODO: replace fixed 0.5 with dynamic severity from the ShadowEntry
-      // already computed in applyConsequences (line ~135–145).
-      shadowDetected: record.shadowSurfaced ?? null,
-      shadowIntensity: record.shadowSurfaced ? 0.5 : 0,
-      predictedDepth: prevDepth,
-      confidenceInPrediction: 0.5,
-      timestamp: now,
-    });
+      const dualResult = assessDualDepth({
+        conceptId,
+        evaluationInput,
+        depthRubric: encounter.depthRubric,
+        driveScores,
+        driveSignals,
+        // TODO: replace fixed 0.5 with dynamic severity from the ShadowEntry
+        // already computed in applyConsequences (line ~135–145).
+        shadowDetected: record.shadowSurfaced ?? null,
+        shadowIntensity: record.shadowSurfaced ? 0.5 : 0,
+        predictedDepth: prevDepth,
+        confidenceInPrediction: 0.5,
+        timestamp: now,
+      });
 
     newConceptState = updateConceptState(existingConcept, dualResult, now);
   } else {
