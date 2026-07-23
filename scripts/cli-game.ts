@@ -309,6 +309,17 @@ import { SessionAgent } from '../src/core/assessments/SessionAgent.js';
 import { getCurriculumRegistry } from '../src/core/curriculum/CurriculumRegistry.js';
 import { seedCurriculumRegistry } from '../src/core/curriculum/CurriculumSeed.js';
 
+/**
+ * --curriculum flag: force curriculum encounters by injecting slots.
+ * strategy is readonly in SessionState, so we cast through `any`.
+ * Safe because startSession/startSessionWithTDG returns a fresh mutable object.
+ */
+function applyCurriculumMode(sessionState: { strategy: any }): void {
+  if (CURRICULUM_MODE) {
+    sessionState.strategy = { ...sessionState.strategy, curriculumSlots: Math.max(sessionState.strategy.curriculumSlots ?? 0, 3) };
+  }
+}
+
 /** P0-1: Resolve a curriculum concept ID to a display label. Returns empty string if not found. */
 function curriculumLabel(conceptId: string | undefined): string {
   if (!conceptId) return '';
@@ -1709,12 +1720,7 @@ async function runDiagnostic(): Promise<void> {
     recentLines: [],
   };
   const sessionState = startSession(sig, session);
-  // --curriculum flag: force curriculum encounters.
-  // Note: strategy is readonly in SessionState, so we cast through `any`
-  // to override curriculumSlots. Safe because startSession returns a fresh object.
-  if (CURRICULUM_MODE) {
-    (sessionState as any).strategy = { ...sessionState.strategy, curriculumSlots: Math.max(sessionState.strategy.curriculumSlots ?? 0, 3) };
-  }
+  applyCurriculumMode(sessionState);
   // NF-6 (Fresh-User Re-Audit): Show CCI with a qualitative interpretation
   // so the user knows what the number means. The re-audit found users could
   // see CCI change (0.5036 → 0.4749) but had no idea if that was good or bad.
@@ -1783,10 +1789,7 @@ async function runSingleEncounter(): Promise<void> {
     ...(FORCE_MODALITY ? { forceModality: FORCE_MODALITY } : {}),
   } as any;
   const sessionState = startSession(sig, session);
-  // --curriculum flag: force curriculum encounters (same cast as DQ path above)
-  if (CURRICULUM_MODE) {
-    (sessionState as any).strategy = { ...sessionState.strategy, curriculumSlots: Math.max(sessionState.strategy.curriculumSlots ?? 0, 3) };
-  }
+  applyCurriculumMode(sessionState);
 
   const now = Date.now();
   let { tickResult } = tickWithStrategy(sig, world, session, sessionState, null, null, now);
@@ -2906,10 +2909,7 @@ async function runFullSession(): Promise<void> {
   let sessionState = USE_PERSISTENT_AGENT
     ? await startSessionWithTDG(sig, session)
     : startSession(sig, session);
-  // --curriculum flag: force curriculum encounters (same cast as DQ path above)
-  if (CURRICULUM_MODE) {
-    (sessionState as any).strategy = { ...sessionState.strategy, curriculumSlots: Math.max(sessionState.strategy.curriculumSlots ?? 0, 3) };
-  }
+  applyCurriculumMode(sessionState);
 
   // Declare mutable state BEFORE the banner so it can reference them
   let currentSig = sig;
