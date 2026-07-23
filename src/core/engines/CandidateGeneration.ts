@@ -130,6 +130,19 @@ const TIME_GATED: Modality[] = ['Strategic'];
  * the module's tasks are excluded. When not provided, all non-blocked
  * modalities are eligible (legacy behavior — root cause of modality collapse).
  */
+/**
+ * Generate all eligible encounter candidates given current significator and world state.
+ * Applies 5 filters: layer-perception, altitude, cooldown, narrative gate, modality availability.
+ *
+ * T-0.4 (HS-13 fix): the optional `moduleTaskTypesProvider` callback lets the
+ * scheduler filter modalities by what the target module actually supports.
+ * When provided, modalities whose preferred task-type chain has no match in
+ * the module's tasks are excluded. When not provided, all non-blocked
+ * modalities are eligible (legacy behavior — root cause of modality collapse).
+ *
+ * Phase 1B: When `rubricTaskTypes` is provided, modalities that align with
+ * the rubric's appropriateTasks are ranked higher (bias toward rubric-aligned modalities).
+ */
 export function generateCandidates(
   sig: Significator,
   world: WorldState,
@@ -323,9 +336,50 @@ export function createModuleTaskTypesProvider(
 // Curriculum Candidate Generation (foundations/34)
 // ---------------------------------------------------------------------------
 
-import type { KnowledgeState, StudyTheme, CurriculumRecommendation } from '../curriculum/types.js';
+import type { KnowledgeState, StudyTheme, CurriculumRecommendation, CurriculumTaskType } from '../curriculum/types.js';
 import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD, depthOrdinal } from '../curriculum/types.js';
 import type { CurriculumRegistry } from '../curriculum/CurriculumRegistry.js';
+
+/**
+ * Mapping from CurriculumTaskType to eligible Modalities.
+ * Used to bias modality selection for curriculum encounters toward
+ * assessment types aligned with the rubric's appropriateTasks.
+ */
+const TASK_TYPE_TO_MODALITIES: Record<CurriculumTaskType, readonly Modality[]> = {
+  factual_recall: ['LanguageReflective', 'Deterministic'],
+  concept_explanation: ['LanguageReflective', 'ImmersiveRPG'],
+  application_problem: ['Deterministic', 'ScenarioChoice', 'ImmersiveRPG'],
+  analogy_mapping: ['LanguageReflective', 'ImmersiveRPG'],
+  misconception_check: ['LanguageReflective', 'ScenarioChoice'],
+  socratic_dialogue: ['LanguageReflective', 'SocialCooperative'],
+  peer_teaching: ['SocialCooperative', 'LanguageReflective'],
+  project_based: ['Strategic', 'ImmersiveRPG'],
+  research_question: ['LanguageReflective'],
+  peer_review: ['SocialCooperative', 'LanguageReflective'],
+  debate_position: ['SocialCooperative', 'LanguageReflective'],
+  case_study_analysis: ['ImmersiveRPG', 'ScenarioChoice'],
+  lab_simulation: ['Embodied', 'Deterministic'],
+  creative_synthesis: ['ImmersiveRPG', 'LanguageReflective'],
+};
+
+/**
+ * Get the modalities best suited for a given set of appropriate task types.
+ * Returns modalities sorted by how many task types they cover (descending).
+ */
+export function getModalitiesForTaskTypes(
+  appropriateTasks: readonly CurriculumTaskType[],
+): readonly Modality[] {
+  const modalityScore = new Map<Modality, number>();
+  for (const taskType of appropriateTasks) {
+    const modalities = TASK_TYPE_TO_MODALITIES[taskType] ?? [];
+    for (const m of modalities) {
+      modalityScore.set(m, (modalityScore.get(m) ?? 0) + 1);
+    }
+  }
+  return [...modalityScore.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .map(([m]) => m);
+}
 
 // Reuse CurriculumRecommendation from curriculum/types.ts — no duplicate interface.
 export type CurriculumCandidate = CurriculumRecommendation;
@@ -527,6 +581,19 @@ export function generateCurriculumCandidates(
         }
       }
       break;
+    }
+  }  // Enrich candidates with rubric-appropriate task types from the holon.
+  // Phase 1B: look up the target depth level's appropriateTasks from the
+  // holon's depthRubric so the scheduler can bias modality selection.
+  if (registry) {
+    for (let i = 0; i < candidates.length; i++) {
+      const c = candidates[i]!;
+      const holon = registry.get(c.conceptId);
+      if (!holon) continue;
+      const levelEntry = holon.depthRubric.levels[c.targetDepth as keyof typeof holon.depthRubric.levels];
+      if (levelEntry && levelEntry.appropriateTasks.length > 0) {
+        candidates[i] = { ...c, preferredTaskTypes: levelEntry.appropriateTasks };
+      }
     }
   }
 

@@ -457,6 +457,8 @@ export interface CurriculumRecommendation {
   readonly rationale: string;
   readonly priority: number;
   readonly targetDepth: DepthLevel;
+  /** Phase 1B: task types appropriate for assessing this depth level. */
+  readonly preferredTaskTypes?: readonly CurriculumTaskType[];
 }
 
 // ---------------------------------------------------------------------------
