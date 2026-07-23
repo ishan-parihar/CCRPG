@@ -333,6 +333,71 @@ function curriculumLabel(conceptId: string | undefined): string {
   } catch { return ''; }
 }
 
+/**
+ * P3-4: Check prerequisites for a curriculum concept and return missing ones.
+ * Returns an array of { id, name, type } for each unmet prerequisite.
+ * type is 'same-branch' or 'cross-branch'.
+ */
+function checkPrerequisiteGaps(
+  conceptId: string,
+  knowledge: { conceptStates: Map<string, { depthLevel: string }> } | undefined,
+): { id: string; name: string; type: 'same-branch' | 'cross-branch' }[] {
+  if (!knowledge) return [];
+  try {
+    const reg = getCurriculumRegistry();
+    const holon = reg.get(conceptId);
+    if (!holon) return [];
+
+    const missing: { id: string; name: string; type: 'same-branch' | 'cross-branch' }[] = [];
+
+    // Check same-branch prerequisites
+    for (const prereqId of holon.prerequisites) {
+      if (!knowledge.conceptStates.has(prereqId)) {
+        const prereqHolon = reg.get(prereqId);
+        missing.push({
+          id: prereqId,
+          name: prereqHolon?.name ?? prereqId.split('.').pop() ?? prereqId,
+          type: 'same-branch',
+        });
+      }
+    }
+
+    // Check cross-branch prerequisites
+    for (const cbId of (holon.crossBranchPrerequisites ?? [])) {
+      if (!knowledge.conceptStates.has(cbId)) {
+        const cbHolon = reg.get(cbId);
+        missing.push({
+          id: cbId,
+          name: cbHolon?.name ?? cbId.split('.').pop() ?? cbId,
+          type: 'cross-branch',
+        });
+      }
+    }
+
+    return missing;
+  } catch { return []; }
+}
+
+/**
+ * P3-4: Render prerequisite gap feedback for a curriculum encounter.
+ * Shows what material needs review before this concept can be studied.
+ */
+function renderPrerequisiteGaps(
+  conceptId: string,
+  knowledge: { conceptStates: Map<string, { depthLevel: string }> } | undefined,
+): void {
+  if (JSON_MODE || !knowledge) return;
+  const gaps = checkPrerequisiteGaps(conceptId, knowledge);
+  if (gaps.length === 0) return;
+
+  console.log(`  ${chalk.yellow('⚠')} Before studying this, review:`);
+  for (const gap of gaps) {
+    const tag = gap.type === 'cross-branch' ? chalk.magenta('[cross-branch]') : '';
+    console.log(`    ${chalk.dim('•')} ${chalk.bold(gap.name)} ${tag}`);
+  }
+  console.log('');
+}
+
 // ── Full parse with subcommands (after project imports) ──────────────
 program.parse();
 const opts = program.opts();
@@ -1441,6 +1506,10 @@ async function runAgenticEncounter(
           // P0-1 (Fresh-User UX Audit): If this is a curriculum encounter,
           // prepend the concept name so the player knows what they're studying.
           if (forcedEncounter.curriculumConceptId) {
+            // P3-4: Show prerequisite gaps before the encounter label
+            if (sig?.knowledge) {
+              renderPrerequisiteGaps(forcedEncounter.curriculumConceptId, sig.knowledge);
+            }
             const label = curriculumLabel(forcedEncounter.curriculumConceptId);
             if (label) {
               const actionLabel = {
