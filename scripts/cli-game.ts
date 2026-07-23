@@ -284,7 +284,7 @@ import { pickFallbackNarrative } from '../src/core/agent/FallbackNarratives.js';
 // loadAskedPrompts / saveAskedPrompts persist the asked-prompts set to
 // the profile directory so Session N doesn't repeat questions from
 // Sessions 1..N-1.
-import { loadAskedPrompts, saveAskedPrompts } from '../src/infra/llm/FallbackProvider.js';
+import { loadAskedPrompts, saveAskedPrompts } from '../src/core/fallback/FallbackProvider.js';
 // NF-5 (Fresh-User Re-Audit): Route verbose feedback through VeilFilter so
 // clinical labels (DarkAllergy, DarkAverted, etc.) and metrics (93% conceptual
 // density) don't leak through --verbose. The Veil principle applies to all
@@ -305,6 +305,17 @@ import { detectBleedThrough } from '../src/core/engines/ThetaDecay.js';
 import { toSnapshot } from '../src/core/domain/SignificatorSnapshot.js';
 import { computeCCI } from '../src/core/engines/CCIEngine.js';
 import { SessionAgent } from '../src/core/assessments/SessionAgent.js';
+import { getCurriculumRegistry } from '../src/core/curriculum/CurriculumRegistry.js';
+
+/** P0-1: Resolve a curriculum concept ID to a display label. Returns empty string if not found. */
+function curriculumLabel(conceptId: string | undefined): string {
+  if (!conceptId) return '';
+  try {
+    const reg = getCurriculumRegistry();
+    const h = reg.get(conceptId);
+    return h ? ` ${h.name}` : '';
+  } catch { return ''; }
+}
 
 // ── Full parse with subcommands (after project imports) ──────────────
 program.parse();
@@ -591,6 +602,145 @@ function emitDevPrimitives(sig: Significator, label: string): void {
   } catch {
     // Best-effort — dev mode should never break a session.
   }
+}
+
+/**
+ * P0-3 (Fresh-User UX Audit): Post-session summary.
+ * Displays what emerged during the session without breaking the Veil.
+ * Shows: shadows surfaced, patterns identified, suggested focus,
+ * and glossary terms unlocked. All in felt-sense language.
+ */
+function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[]): void {
+  if (JSON_MODE) return;
+
+  console.log(`\n  ${chalk.bold.cyan('═══ Session Complete ═══')}`);
+
+  // 1. What happened: lines explored (Veil-compliant — just count, not names)
+  const linesExplored = new Set(history.map(h => h.line)).size;
+  if (linesExplored > 0) {
+    info('explored', `${linesExplored} aspect${linesExplored !== 1 ? 's' : ''} of your inner landscape`);
+  }
+
+  // 2. Shadows surfaced: group by quadrant and describe qualitatively
+  const activeShadows = sig.shadows.entries.filter(e => !e.resolvedAt);
+  if (activeShadows.length > 0) {
+    const quadrantCounts: Record<string, number> = {};
+    for (const s of activeShadows) {
+      const q = s.quadrant ?? 'Unknown';
+      quadrantCounts[q] = (quadrantCounts[q] ?? 0) + 1;
+    }
+    const shadowDesc = Object.entries(quadrantCounts)
+      .map(([q, count]) => {
+        const desc = describeShadowMovement(q);
+        return count > 1 ? `${desc} (${count}×)` : desc;
+      })
+      .join(', ');
+    info('surfaced', `${activeShadows.length} pattern${activeShadows.length !== 1 ? 's' : ''} that want attention: ${shadowDesc}`);
+  } else {
+    info('shadows', `${chalk.green('none surfacing right now — the field is clear')}`);
+  }
+
+  // 3. Lines touched: show which developmental dimensions were engaged
+  if (history.length > 0) {
+    const lineNames = [...new Set(history.map(h => h.line))];
+    console.log(`  ${chalk.dim('dimensions:')} ${lineNames.join(', ')}`);
+  }
+
+  // 4. Knowledge state: if curriculum data exists, show a brief summary
+  if (sig.knowledge && sig.knowledge.conceptStates.size > 0) {
+    const conceptCount = sig.knowledge.conceptStates.size;
+    const avgRetention = [...sig.knowledge.conceptStates.values()]
+      .reduce((sum, cs) => sum + cs.retention, 0) / conceptCount;
+    const retentionDesc = avgRetention > 0.7 ? 'well-held'
+      : avgRetention > 0.4 ? 'developing'
+      : 'fading';
+    info('knowledge', `${conceptCount} concept${conceptCount !== 1 ? 's' : ''} studied, ${retentionDesc}`);
+  }
+
+  // 5. Glossary terms unlocked this session
+  const unlockedThisSession = loadUnlockedTerms();
+  if (unlockedThisSession.length > 0) {
+    const newTerms = unlockedThisSession.filter(t => !['Line', 'Stage', 'Shadow'].includes(t));
+    if (newTerms.length > 0) {
+      info('unlocked', `${newTerms.length} new term${newTerms.length !== 1 ? 's' : ''}: ${newTerms.slice(0, 3).join(', ')}${newTerms.length > 3 ? '…' : ''}`);
+    }
+  }
+
+  // 6. Suggested focus for next session (from goals.yaml active_focus)
+  try {
+    const profileDir = getActiveProfileDir();
+    if (profileDir) {
+      const goalsPath = path.join(profileDir, 'goals.yaml');
+      if (fs.existsSync(goalsPath)) {
+        const goalsContent = fs.readFileSync(goalsPath, 'utf8');
+        const focusMatch = goalsContent.match(/active_focus:\s*"([^"]+)"/);
+        if (focusMatch && focusMatch[1] && focusMatch[1].length > 5) {
+          console.log(`\n  ${chalk.dim('For next time:')}`);
+          console.log(`  ${chalk.italic(focusMatch[1])}`);
+        }
+      }
+    }
+  } catch { /* best-effort */ }
+
+  console.log('');
+}
+
+/**
+ * Translate a clinical shadow-quadrant code into a Veil-compliant
+ * qualitative movement description.
+ */
+function describeShadowMovement(quadrant: string): string {
+  switch (quadrant) {
+    case 'DarkAddiction': return 'a pull toward a familiar capacity';
+    case 'DarkAllergy': return 'an aversion to something still needed';
+    case 'GoldenAddiction': return 'a reach toward something not yet integrated';
+    case 'GoldenAllergy': return 'a resistance to growth in a specific area';
+    default: return 'an unresolved pattern';
+  }
+}
+
+/**
+ * P0-2 (Fresh-User UX Audit): Generate a practice hint from the player's
+ * integration response and current shadow state. Returns a single-sentence
+ * practice assignment that the player can carry into their daily life.
+ * Returns null if the response is too short or no practice can be inferred.
+ */
+function generatePracticeHint(response: string, sig: Significator): string | null {
+  if (response.length < 10) return null;
+
+  const lower = response.toLowerCase();
+
+  // Map integration response keywords to practice assignments
+  // These are lightweight heuristics — the LLM synthesis handles deeper work
+  const practiceMap: [RegExp, string][] = [
+    [/surprise|unexpected|didn't expect/, 'Tomorrow, notice the moment you feel surprised. Pause for 3 breaths before responding. What does the surprise reveal about your assumptions?'],
+    [/stuck|stuck|can't move|paralyzed/, 'When you notice being stuck this week, try doing the opposite of your first impulse. If you usually push harder, pause. If you usually withdraw, reach out.'],
+    [/avoid|avoiding|run away|retreat/, 'One time this week, stay with an uncomfortable feeling for 60 seconds longer than you usually would. Notice what happens in your body, not your mind.'],
+    [/anger|furious|rage|mad/, 'The next time anger rises, name it aloud before acting: "I notice anger." Then take one breath before choosing your response.'],
+    [/honest|truth|lie|withhold/, 'Notice one moment today where you choose honesty over comfort. You don't have to act on it — just notice the choice point.'],
+    [/body|tension|breathe|physical/, 'Set a timer for 3 random points tomorrow. When it rings, check in with your body for 10 seconds: where is the tension? What is it holding?'],
+    [/relationship|connection|alone|lonely/, 'Reach out to one person this week with a question you normally wouldn't ask. Not about them — about what you notice between you.'],
+    [/pattern|repeat|again|same/, 'Notice when the pattern you named shows up this week. You don't have to change it — just see it happening in real time.'],
+    [/push|harder|force|will/, 'One time this week, when you notice yourself pushing, stop. Ask: what would happen if I didn't? Stay with the answer for 3 breaths.'],
+    [/meaning|purpose|why|point/, 'Spend 5 minutes this week sitting with the question you named, without trying to answer it. Let the question be the practice.'],
+  ];
+
+  for (const [pattern, practice] of practiceMap) {
+    if (pattern.test(lower)) {
+      return practice;
+    }
+  }
+
+  // Fallback: use shadow state to generate a generic practice
+  const activeShadows = sig.shadows.entries.filter(e => !e.resolvedAt);
+  if (activeShadows.length > 0) {
+    const shadow = activeShadows[0]!;
+    const movement = describeShadowMovement(shadow.quadrant ?? 'Unknown');
+    return `Notice when ${movement} shows up this week. You don't have to fix it — just see it clearly.`;
+  }
+
+  // Default practice for any response
+  return 'Tomorrow, notice one moment where you have a choice between comfort and growth. You don't have to choose differently — just see the choice.';
 }
 
 // Interactive prompt helper — uses @clack/prompts for beautiful UI
@@ -1270,6 +1420,21 @@ async function runAgenticEncounter(
           const mod = forcedEncounter.modality;
           const isShadow = forcedEncounter.executionMode === 'shadow';
           let modHeader = '';
+
+          // P0-1 (Fresh-User UX Audit): If this is a curriculum encounter,
+          // prepend the concept name so the player knows what they're studying.
+          if (forcedEncounter.curriculumConceptId) {
+            const label = curriculumLabel(forcedEncounter.curriculumConceptId);
+            if (label) {
+              const actionLabel = {
+                review: 'Review',
+                deepen: 'Deepen',
+                new_material: 'New Material',
+                connect: 'Connect',
+              }[forcedEncounter.curriculumAction ?? 'review'] ?? 'Study';
+              modHeader = `\n  ${chalk.bold.cyan(`📚 ${actionLabel}:`)}${label}\n`;
+            }
+          }
 
           switch (mod) {
             case 'Deterministic':
@@ -2548,10 +2713,26 @@ async function runDirectQuestioningSession(
   // The player is invited to reflect on what landed before the session
   // closes. Their response is persisted to narrative-memory.md and
   // surfaced in the next session's opening for continuity.
-  await runIntegrationRitual(_profileName);
+  const integrationResponse = await runIntegrationRitual(_profileName);
+
+  // P0-2 (Fresh-User UX Audit): Connect integration response to practice.
+  // When the player reflects on what surprised them or what wants to move,
+  // seed a practice assignment for the next session based on their response.
+  if (integrationResponse && !JSON_MODE) {
+    const practiceHint = generatePracticeHint(integrationResponse, currentSig);
+    if (practiceHint) {
+      console.log(`\n  ${chalk.dim('═══ Practice ═══')}`);
+      console.log(`  ${chalk.italic(practiceHint)}`);
+    }
+  }
 
   // NF-3: Persist the asked-prompts set so the next session avoids repeats.
   saveAskedPrompts(getActiveProfileDir());
+
+  // P0-3 (Fresh-User UX Audit): Post-session summary.
+  // Gives the player a sense of what happened, what emerged, and what to
+  // focus on next — without breaking the Veil (no metrics, no labels).
+  renderPostSessionSummary(currentSig, history);
 
   emitEvent('session_ended', {
     mode: 'direct',
@@ -2905,13 +3086,17 @@ async function runFullSession(): Promise<void> {
           // Direct mode: show LINE + stage, personality-test style
           const lineLabel = CHALLENGE_NAMES[encLineName ?? ''] ?? encLineName;
           const stageCol = stageColor(st ?? 'Red');
-          const label = `${idx + 1}. ${chalk.bold(lineLabel)}  ${stageCol(st ?? 'Red')}  ${chalk.dim(enc.modality)}  ${posLabel(enc.sessionPosition)}`;
+          // P0-1 (Fresh-User UX Audit): Show curriculum concept name if available
+          const curLabel = curriculumLabel(enc.curriculumConceptId);
+          const label = `${idx + 1}. ${chalk.bold(lineLabel)}  ${stageCol(st ?? 'Red')}  ${chalk.dim(enc.modality)}  ${posLabel(enc.sessionPosition)}${curLabel ? ' 📚' + curLabel : ''}`;
           return { value: idx, label };
         }
         // Story mode: show location/NPC name
         const holon = world.holons.find(h => h.id === enc.holonSource);
         const location = holon?.name ?? encLineName;
-        const label = `${idx + 1}. ${chalk.cyan(location)}  ${chalk.dim(enc.modality)}  ${posLabel(enc.sessionPosition)}`;
+        // P0-1 (Fresh-User UX Audit): Show curriculum concept name if available
+        const curLabelStory = curriculumLabel(enc.curriculumConceptId);
+        const label = `${idx + 1}. ${chalk.cyan(location)}  ${chalk.dim(enc.modality)}  ${posLabel(enc.sessionPosition)}${curLabelStory ? ' 📚' + curLabelStory : ''}`;
         return { value: idx, label };
       });
       const choice = await select({
@@ -3080,6 +3265,11 @@ async function runFullSession(): Promise<void> {
         passed: result.outcome.finalResult.passed,
         narrative: result.narrativeSummary,
         totalEncounters: currentSig.totalEncounters,
+        // P0-1: Include curriculum fields for downstream analytics
+        ...(selectedEncounter.curriculumConceptId ? {
+          curriculumConceptId: selectedEncounter.curriculumConceptId,
+          curriculumAction: selectedEncounter.curriculumAction,
+        } : {}),
       });
 
       // P0-2 (UX-R3): Honor --dev during Story-Driven sessions.
@@ -3167,11 +3357,22 @@ async function runFullSession(): Promise<void> {
   }
 
   // P0-U2 (Fresh-User UX Audit): Integration ritual at session end.
-  // Closes the catalyst→experience→integration cycle (AGENTS.md §5.4).
-  await runIntegrationRitual(getActiveProfileName());
+  const integrationResponse2 = await runIntegrationRitual(getActiveProfileName());
+
+  // P0-2 (Fresh-User UX Audit): Connect integration response to practice.
+  if (integrationResponse2 && !JSON_MODE) {
+    const practiceHint = generatePracticeHint(integrationResponse2, currentSig);
+    if (practiceHint) {
+      console.log(`\n  ${chalk.dim('═══ Practice ═══')}`);
+      console.log(`  ${chalk.italic(practiceHint)}`);
+    }
+  }
 
   // NF-3: Persist the asked-prompts set for cross-session de-duplication.
   saveAskedPrompts(getActiveProfileDir());
+
+  // P0-3 (Fresh-User UX Audit): Post-session summary.
+  renderPostSessionSummary(currentSig, []);
 
   emitEvent('session_ended', {
     encountersCompleted: completedCount,
