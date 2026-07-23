@@ -368,6 +368,12 @@ export interface LearningProfile {
   readonly calibrationAccuracy: number;
   readonly transferCapacity: number;
   readonly studyEfficiency: number;
+  /** Phase 4C: Modality effectiveness scores derived from LearningAnalytics. */
+  readonly modalityEffectiveness?: Readonly<Record<string, number>>;
+  /** Phase 4C: Overall learning velocity (concepts per session). */
+  readonly learningVelocity?: number;
+  /** Phase 4C: Timestamp of last analytics computation. */
+  readonly lastAnalyticsAt?: number;
 }
 
 /** The knowledge state embedded in the Significator. */
@@ -376,6 +382,10 @@ export interface KnowledgeState {
   readonly subjectProgress: ReadonlyMap<string, SubjectProgress>;
   readonly studyHistory: readonly StudyEvent[];
   readonly learningProfile: LearningProfile;
+  /** Phase 5A: Persisted forgetting curves for cross-session spaced repetition. */
+  readonly forgettingCurves?: ReadonlyMap<string, ForgettingCurve>;
+  /** Phase 5B: Curriculum schema version for migration support. */
+  readonly curriculumVersion?: string;
 }
 
 

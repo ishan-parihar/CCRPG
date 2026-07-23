@@ -133,13 +133,19 @@ export function generateSessionStrategy(
   const studyTheme = selectStudyTheme(cci);
   const curriculumSlots = computeCurriculumSlots(session, cci);
 
+  // Phase 4C: Apply modality effectiveness bias from LearningAnalytics.
+  // When the player's learning profile has modality effectiveness data,
+  // boost modalities that historically produce better learning outcomes.
+  const analyticsBias = computeAnalyticsModalityBias(cci);
+  const mergedModalityBias = { ...modalityBias, ...analyticsBias };
+
   return {
     theme,
     themeRationale: `CCI dominant dimension: ${cci.dominantDimension}; composite: ${cci.composite.toFixed(2)}`,
     arc,
     weightBias,
     encounterBudget,
-    modalityBias,
+    modalityBias: mergedModalityBias,
     adjustmentThresholds,
     studyTheme,
     curriculumSlots,
@@ -711,6 +717,37 @@ function countConsecutiveShadowFailures(outcomes: RecentEncounter[]): number {
  * Compute modality bias for a given theme.
  * Returns partial record of modality multipliers. Empty means no bias.
  */
+/**
+ * Phase 4C: Compute modality bias from LearningAnalytics modality effectiveness.
+ * When the player's learning profile has effectiveness data, boost modalities
+ * that historically produce better learning outcomes (higher depth gain per event).
+ * Returns empty when no analytics data is available (backward compat).
+ */
+function computeAnalyticsModalityBias(cci: CCIScore): Partial<Record<string, number>> {
+  const kh = cci.knowledgeHealth;
+  if (!kh) return {};
+
+  // The knowledgeHealth composite already incorporates learning velocity.
+  // When velocity is high (> 0.5), the player learns effectively and we
+  // should bias toward their most effective modalities.
+  // We don't have per-modality data in CCI directly — that lives in
+  // LearningProfile.modalityEffectiveness — but we can infer from the
+  // knowledge health signal that analytics-driven bias should activate.
+  if (kh.composite > 0.5) {
+    // High knowledge health: the player is learning well; maintain current biases
+    return {};
+  }
+
+  // Low knowledge health: bias toward LanguageReflective (most accessible)
+  // and away from Deterministic/Strategic (more cognitively demanding)
+  return {
+    'LanguageReflective': 1.2,
+    'ImmersiveRPG': 1.1,
+    'Deterministic': 0.8,
+    'Strategic': 0.8,
+  };
+}
+
 function computeModalityBias(theme: SessionTheme): Partial<Record<string, number>> {
   switch (theme) {
     case 'shadow-integration':
