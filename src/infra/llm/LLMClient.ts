@@ -26,6 +26,7 @@ import {
   proxyQueryLLM,
   proxyQueryLLMWithTools,
   proxyEvaluateResponse,
+  proxyQueryLLMStream,
 } from './ProxiedLLMClient.js';
 
 /** T-3.6: Log Veil violations for telemetry. */
@@ -349,6 +350,112 @@ export async function queryLLM(
   } catch (err: any) {
     return `{"error": "exception: ${err.message || err}"}`;
   }
+}
+
+/**
+ * Streaming version of queryLLM.
+ * Returns a ReadableStream of text deltas (strings).
+ *
+ * AUDIT v1: added for WebUI LLM-dependence.
+ */
+export async function queryLLMStream(
+  systemPrompt: string,
+  userMessage: string,
+): Promise<ReadableStream<string>> {
+  // In the browser, route through the BFF proxy.
+  if (isBrowserWithBFF()) {
+    return proxyQueryLLMStream(systemPrompt, userMessage);
+  }
+
+  const config = getEnabledConfig();
+  if (!config) {
+    return new ReadableStream({
+      start(controller) {
+        controller.enqueue('{"error": "LLM unavailable"}');
+        controller.close();
+      },
+    });
+  }
+
+  const veiledSystemPrompt = filterInput(systemPrompt);
+  const veiledUserMessage = filterInput(userMessage);
+
+  // For Node/CLI path, we implement a basic SSE consumer.
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        let res: Response;
+        if (isAnthropicProtocol(config)) {
+          res = await fetchWithRetry(`${config.baseUrl}/messages`, {
+            method: 'POST',
+            headers: buildHeaders(config),
+            body: JSON.stringify({
+              model: config.model,
+              system: veiledSystemPrompt,
+              messages: [{ role: 'user', content: veiledUserMessage }],
+              temperature: 0.7,
+              max_tokens: 4096,
+              stream: true,
+            }),
+          });
+        } else {
+          res = await fetchWithRetry(`${config.baseUrl}/chat/completions`, {
+            method: 'POST',
+            headers: buildHeaders(config),
+            body: JSON.stringify({
+              model: config.model,
+              messages: [
+                { role: 'system', content: veiledSystemPrompt },
+                { role: 'user', content: veiledUserMessage },
+              ],
+              temperature: 0.7,
+              stream: true,
+            }),
+          });
+        }
+
+        if (!res.ok || !res.body) {
+          controller.enqueue(`{"error": "fetch error: ${res.status}"}`);
+          controller.close();
+          return;
+        }
+
+        const reader = res.body.getReader();
+        const decoder = new TextDecoder();
+        let buffer = '';
+
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith('data:')) continue;
+            const raw = trimmed.slice(5).trim();
+            if (raw === '[DONE]') continue;
+            try {
+              const data = JSON.parse(raw);
+              if (isAnthropicProtocol(config)) {
+                if (data.type === 'content_block_delta' && data.delta?.text) {
+                  controller.enqueue(data.delta.text);
+                }
+              } else {
+                const delta = data.choices?.[0]?.delta?.content;
+                if (delta) controller.enqueue(delta);
+              }
+            } catch { /* ignore malformed */ }
+          }
+        }
+        controller.close();
+      } catch (err: any) {
+        controller.enqueue(`{"error": "exception: ${err.message || err}"}`);
+        controller.close();
+      }
+    }
+  });
 }
 
 export interface LLMToolResponse {

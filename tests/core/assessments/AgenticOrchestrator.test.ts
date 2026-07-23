@@ -330,6 +330,10 @@ describe('AgenticOrchestrator', () => {
     };
 
     mockFetch.mockResolvedValueOnce(fallbackCallError as any);
+    // AUDIT v1: subsequent fetches (opener/summary/options calls from
+    // runFallback / buildModuleNarrative) also fall back. Use the
+    // generic mockResolvedValue so they all return the same error.
+    mockFetch.mockResolvedValue(fallbackCallError as any);
 
     const orchestrator2 = new AgenticOrchestrator({
       encounter,
@@ -341,7 +345,13 @@ describe('AgenticOrchestrator', () => {
     });
 
     const result2 = await orchestrator2.run();
-    expect(mockFetch).toHaveBeenCalledTimes(1); // Should only query once and trigger fallback
+    // AUDIT v1: post-audit, the WebUI's fallback path is also LLM-first.
+    // After run()'s loop-1 returns an error, runFallback invokes:
+    //   - opener (tryLlmText for modalityOpenerTemplate) = 1 fetch
+    //   - summary (buildModuleNarrative via runModuleAssessment,
+    //     since this test sets up a module) = 1 fetch
+    // Total: 1 (loop1) + 1 (opener) + 1 (summary) = 3 fetches.
+    expect(mockFetch).toHaveBeenCalledTimes(3);
     expect(uiHandler.askUser).toHaveBeenCalledTimes(1); // Fallback triggers askUser
     expect(result2.finalResult.passed).toBe(true);
   });
@@ -361,6 +371,10 @@ describe('AgenticOrchestrator', () => {
       })
     };
     mockFetch.mockResolvedValueOnce(fallbackCallError as any);
+    // AUDIT v1: subsequent fetches (opener/summary/options calls from
+    // runFallback / buildModuleNarrative) also fall back. The test
+    // expects the same error response.
+    mockFetch.mockResolvedValue(fallbackCallError as any);
 
     const uiHandler: AgenticUIHandler = {
       askUser: vi.fn().mockResolvedValue({
@@ -430,6 +444,8 @@ describe('AgenticOrchestrator', () => {
       })
     };
     mockFetch.mockResolvedValueOnce(fallbackCallError as any);
+    // AUDIT v1: subsequent fetches also fall back.
+    mockFetch.mockResolvedValue(fallbackCallError as any);
 
     const uiHandler: AgenticUIHandler = {
       askUser: vi.fn().mockResolvedValue({
@@ -501,6 +517,8 @@ describe('AgenticOrchestrator', () => {
       })
     };
     mockFetch.mockResolvedValueOnce(fallbackCallError as any);
+    // AUDIT v1: subsequent fetches also fall back.
+    mockFetch.mockResolvedValue(fallbackCallError as any);
 
     const uiHandler: AgenticUIHandler = {
       askUser: vi.fn().mockResolvedValue({
@@ -569,6 +587,8 @@ describe('AgenticOrchestrator', () => {
       })
     };
     mockFetch.mockResolvedValueOnce(fallbackCallError as any);
+    // AUDIT v1: subsequent fetches also fall back.
+    mockFetch.mockResolvedValue(fallbackCallError as any);
 
     const uiHandler: AgenticUIHandler = {
       askUser: vi.fn().mockResolvedValue({

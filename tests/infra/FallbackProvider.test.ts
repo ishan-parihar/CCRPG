@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { getFallback } from '../../src/infra/llm/FallbackProvider.js';
+import { getFallback } from '../../src/core/fallback/FallbackProvider.js';
 import { filterOutput } from '../../src/infra/llm/VeilFilter.js';
 
 describe('FallbackProvider', () => {

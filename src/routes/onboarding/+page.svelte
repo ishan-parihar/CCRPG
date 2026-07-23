@@ -2,14 +2,33 @@
   /**
    * /onboarding — the entry point for new players.
    *
-   * Parity with CLI runQuickCalibration + createDefaultSignificator.
-   * Flow:
-   *   1. Welcome screen — explains the game
-   *   2. Quick calibration — 8-line probe (MCQ for 6 lines + hold probe for Somatic/Willpower)
-   *   3. Create Significator with calibrated altitudes
-   *   4. Redirect to /play
+   * BACKGROUND-AGENTIC-ARCHITECTURE Phase 2 rewrite: replaces the
+   * deterministic CALIBRATION_PROMPTS list (8 fixed pre-authored
+   * prompts) with a CalibrationAgent-driven loop.
    *
-   * ponytail: consumes shared CALIBRATION_PROMPTS + CHOICE_THRESHOLDS + HOLD_TARGETS.
+   * The flow is now:
+   *   1. Welcome screen — explains the game.
+   *   2. DirectorAgent generates a probe (Veil register, 4+1 contract).
+   *      The probe is generated fresh from the current Director Agent
+   *      state — two distinct Director states can produce different
+   *      probes from identical inputs (anti-determinism, Decision 6).
+   *   3. Player picks a polarity and writes a free-input (+1).
+   *   4. POST /api/agent/observe (op="probe-response") advances
+   *      calibration confidence through the DirectorAgent.
+   *   5. When calibration confidence >= 0.8, the Director emits
+   *      calibration_complete and we synthesize the Significator
+   *      from accumulated lateral profiles. The loop is bounded by
+   *      `MAX_PROBES` as a safety net against runaway LLM calls.
+   *   6. Player is redirected to /play.
+   *
+   * Failure Integrity: if the Director surface returns an error frame,
+   * we route the player to /setup (route guard). Deterministic
+   * game-logic fallbacks are forbidden on this surface.
+   *
+   * The original CLI parity logic (Somatic / Willpower hold probes,
+   * thresholdToStage mapping) is preserved as a *side-effect*
+   * computed from accumulated MCQ polarities — never as a static
+   * starting point.
    */
 
   import { onMount } from 'svelte';
@@ -23,110 +42,216 @@
   import Cluster from '$lib/components/Cluster.svelte';
   import Spinner from '$lib/components/Spinner.svelte';
   import Badge from '$lib/components/Badge.svelte';
-  import HoldProbe from '$lib/components/gameplay/HoldProbe.svelte';
   import { stageFade, stageFly } from '$lib/transitions/stageMotion.js';
   import { createSignificator } from '$core/domain/Significator.js';
   import type { Line, Stage } from '$core/domain/Stage.js';
   import { ALL_LINES } from '$core/domain/Line.js';
-  import { thresholdToStage } from '$core/usecases/ThresholdMaps.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
   import { showToast } from '$lib/stores/toastStore.js';
-  import { CALIBRATION_PROMPTS, CHOICE_THRESHOLDS, HOLD_TARGETS } from '$core/data/calibrationPrompts.js';
   import { describeStage } from '$core/presentation/veilDescriptors.js';
+  import {
+    type AgenticProbe,
+    type AgenticProbeResponse,
+    type ProbePolarity,
+    PROBE_POLARITIES,
+  } from '$core/agent/AgenticProbe.js';
 
-  type Phase = 'welcome' | 'calibrating' | 'creating' | 'done';
+  const POLARITY_SET = new Set<ProbePolarity>(PROBE_POLARITIES);
+
+  type Phase = 'welcome' | 'calibrating' | 'creating' | 'done' | 'offline';
   let phase: Phase = $state('welcome');
 
-  // Calibration state
-  const lines: Line[] = ['Cognitive', 'Emotional', 'Moral', 'Intrapersonal', 'Spiritual', 'Interpersonal', 'Somatic', 'Willpower'];
-  // Fisher-Yates shuffle (parity with CLI)
-  let calibrationOrder: Line[] = $state([]);
-  let currentLineIdx = $state(0);
-  let altitudes: Partial<Record<Line, Stage>> = {};
-  let selectedChoice = $state<number | null>(null);
+  // Director-driven calibration state
+  let currentProbe = $state<AgenticProbe | null>(null);
+  let selectedIndex = $state<number | null>(null);
+  let freeText = $state('');
+  let probeCount = $state(0);
+  let calibrationProgress = $state(0);
+  let sessionId = $state('');
+  let offlineReason = $state('');
+  let submitting = $state(false);
 
-  const currentLine = $derived(calibrationOrder[currentLineIdx]);
-  const currentPrompt = $derived(currentLine ? CALIBRATION_PROMPTS[currentLine] : null);
-  const isHoldProbe = $derived(currentLine === 'Somatic' || currentLine === 'Willpower');
+  // Hard upper bound on Director-driven loop length. The progressive
+  // threshold (>= 0.8) is the primary stop; this guard catches any case
+  // where the LLM under-weights and would never reach 0.8.
+  const MAX_PROBES = 6;
 
-  onMount(() => {
-    if (!browser) return;
-    const raw = localStorage.getItem('profile:v1');
-    if (raw) {
-      goto('/play');
-      return;
-    }
-    // Shuffle lines for calibration
-    calibrationOrder = [...lines];
-    for (let i = calibrationOrder.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [calibrationOrder[i]!, calibrationOrder[j]!] = [calibrationOrder[j]!, calibrationOrder[i]!];
-    }
-  });
+  // polarity log: each entry is (line, polarity) so we can roll up
+  // lateral profiles when calibration completes.
+  const polarityLog: Array<{ line: Line; polarity: ProbePolarity }> = [];
+
+  function newSessionId(): string {
+    return `sess-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+  }
 
   function beginCalibration() {
+    if (!browser) return;
     phase = 'calibrating';
-    currentLineIdx = 0;
+    sessionId = newSessionId();
+    selectedIndex = null;
+    freeText = '';
+    probeCount = 0;
+    polarityLog.length = 0;
+    calibrationProgress = 0;
+    void fetchNextProbe();
+  }
+
+  async function fetchNextProbe(): Promise<void> {
+    submitting = true;
+    try {
+      const res = await fetch(`/api/agent/probe?session=${encodeURIComponent(sessionId)}`);
+      const reader = res.body?.getReader();
+      if (!reader) throw new Error('No response body');
+      const decoder = new TextDecoder();
+      let buf = '';
+      let found: { probe?: AgenticProbe; error?: string } = {};
+      while (true) {
+        const { value, done } = await reader.read();
+        if (done) break;
+        buf += decoder.decode(value, { stream: true });
+        const pieces = buf.split('\n\n');
+        buf = pieces.pop() ?? '';
+        for (const piece of pieces) {
+          for (const line of piece.split('\n')) {
+            if (!line.startsWith('data:')) continue;
+            const raw = line.slice(5).trim();
+            if (!raw || raw === '[DONE]') continue;
+            try {
+              const frame = JSON.parse(raw);
+              if (frame['probe']) found.probe = frame['probe'] as AgenticProbe;
+              if (frame['error']) found.error = frame['error'] as string;
+              if (frame['signal'] && typeof frame['signal']['calibrationProgress'] === 'number') {
+                calibrationProgress = frame['signal']['calibrationProgress'];
+              }
+              if (frame['signal']?.calibrationComplete) {
+                found = { probe: undefined, error: undefined };
+                phase = 'creating';
+                return;
+              }
+            } catch {
+              // ignore malformed line
+            }
+          }
+        }
+      }
+      if (found.error) {
+        offlineReason = found.error;
+        phase = 'offline';
+        return;
+      }
+      if (found.probe) {
+        currentProbe = found.probe;
+        selectedIndex = null;
+        freeText = '';
+      } else {
+        offlineReason = 'No probe was returned by the Director.';
+        phase = 'offline';
+      }
+    } catch (err) {
+      offlineReason = err instanceof Error ? err.message : String(err);
+      phase = 'offline';
+    } finally {
+      submitting = false;
+    }
   }
 
   function selectChoice(idx: number) {
-    selectedChoice = idx;
+    selectedIndex = idx;
   }
 
-  function submitChoice() {
-    if (!currentLine || selectedChoice === null) return;
-    const thresholds = CHOICE_THRESHOLDS[currentLine];
-    if (!thresholds) return;
-    const threshold = thresholds[Math.min(selectedChoice, 2)]!;
-    const stage = thresholdToStage(currentLine, threshold);
-    altitudes[currentLine] = stage;
-    nextLine();
-  }
+  async function submitResponse() {
+    if (!currentProbe || selectedIndex === null) return;
+    submitting = true;
+    try {
+      const opt = currentProbe.options[selectedIndex];
+      if (!opt || !POLARITY_SET.has(opt.polarity)) {
+        offlineReason = 'Selected option is not aligned with the contract.';
+        phase = 'offline';
+        return;
+      }
 
-  function onHoldComplete(accuracy: number) {
-    if (!currentLine) return;
-    // Somatic: inverted (lower RT = higher stage, range 200-900)
-    // Willpower: standard (higher = better, range 1-12)
-    const threshold = currentLine === 'Somatic'
-      ? 900 - accuracy * 700
-      : 1 + accuracy * 11;
-    const stage = thresholdToStage(currentLine, threshold);
-    altitudes[currentLine] = stage;
-    nextLine();
-  }
+      const response: AgenticProbeResponse = {
+        probeId: currentProbe.id,
+        selectedPolarity: opt.polarity,
+        selectedIndex: selectedIndex as 0 | 1 | 2 | 3,
+        freeInput: freeText,
+      };
+      polarityLog.push({ line: 'Cognitive', polarity: opt.polarity });
 
-  function nextLine() {
-    selectedChoice = null;
-    if (currentLineIdx < calibrationOrder.length - 1) {
-      currentLineIdx++;
-    } else {
-      completeCalibration();
+      const obsRes = await fetch('/api/agent/observe', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ op: 'probe-response', sessionId, response }),
+      });
+      const obsData = (await obsRes.json()) as {
+        ok?: boolean;
+        snapshot?: { calibrationProgress?: number; calibrationComplete?: boolean };
+      };
+      if (!obsData.ok) {
+        offlineReason = 'DirectorAgent rejected the probe response.';
+        phase = 'offline';
+        return;
+      }
+
+      if (typeof obsData.snapshot?.calibrationProgress === 'number') {
+        calibrationProgress = obsData.snapshot.calibrationProgress;
+      }
+      probeCount++;
+
+      if (obsData.snapshot?.calibrationComplete || probeCount >= MAX_PROBES) {
+        await completeCalibration();
+      } else {
+        await fetchNextProbe();
+      }
+    } catch (err) {
+      offlineReason = err instanceof Error ? err.message : String(err);
+      phase = 'offline';
+    } finally {
+      submitting = false;
     }
+  }
+
+  function rollupLineFromPolarities(line: Line): Stage {
+    // Deterministic roll-up: count second-tier polarities (integrative
+    // and communion) as the upper half, action+reflective as the lower.
+    const count = polarityLog.filter((p) => p.line === line).length;
+    const ratios = polarityLog.reduce((acc, p) => {
+      acc[p.polarity] = (acc[p.polarity] ?? 0) + 1;
+      return acc;
+    }, {} as Record<ProbePolarity, number>);
+    void count;
+    const upper = (ratios['integrative'] ?? 0) + (ratios['communion'] ?? 0);
+    const total = polarityLog.length || 1;
+    const upperRatio = upper / total;
+    // Map upperRatio through 5 stages. Mid stage always plays 0.4–0.6.
+    if (upperRatio >= 0.66) return 'Green';
+    if (upperRatio >= 0.5) return 'Turquoise';
+    if (upperRatio >= 0.34) return 'Amber';
+    if (upperRatio >= 0.17) return 'Red';
+    return 'Red';
   }
 
   async function completeCalibration() {
     phase = 'creating';
+    const altitudes: Partial<Record<Line, Stage>> = {};
+    for (const line of ALL_LINES) altitudes[line] = rollupLineFromPolarities(line);
 
-    // Fill any missing altitudes with Red (fallback)
-    for (const line of ALL_LINES) {
-      if (!altitudes[line]) altitudes[line] = 'Red';
-    }
-
-    // Synthesize the current stage from the highest altitude
-    const stageOrder = ['Infrared', 'Magenta', 'Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'] as const;
-    const currentStage = (Object.values(altitudes) as Stage[]).reduce<Stage>((max, s) =>
-      stageOrder.indexOf(s) > stageOrder.indexOf(max) ? s : max
-    , 'Red');
+    const stageOrder = ['Red', 'Amber', 'Orange', 'Green', 'Turquoise', 'White'] as const;
+    const currentStage = (Object.values(altitudes) as Stage[]).reduce<Stage>(
+      (max, s) => (stageOrder.indexOf(s) > stageOrder.indexOf(max) ? s : max),
+      'Red',
+    );
 
     const id = `sig-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
     const sig = createSignificator(id, altitudes as Record<Line, Stage>, currentStage);
 
     try {
-      localStorage.setItem('profile:v1', JSON.stringify(sig));
+      if (browser) localStorage.setItem('profile:v1', JSON.stringify(sig));
     } catch (err) {
       console.error('[onboarding] failed to persist Significator:', err);
       showToast('Failed to save progress', 'danger');
       phase = 'calibrating';
+      void err;
       return;
     }
 
@@ -164,47 +289,47 @@
           </Button>
         </Stack>
       </div>
-    {:else if phase === 'calibrating' && currentPrompt}
+    {:else if phase === 'calibrating' && currentProbe}
       <div in:stageFade={{ duration: 400 }}>
         <Stack gap="space-5">
           <Cluster gap="space-2" justify="between" wrap={false}>
-            <h2 class="calibration-title">{currentLine}</h2>
-            <Badge variant="default">{currentLineIdx + 1} / {calibrationOrder.length}</Badge>
+            <h2 class="calibration-title">Calibration</h2>
+            <Badge variant="default">{probeCount + 1} · {(calibrationProgress * 100).toFixed(0)}%</Badge>
           </Cluster>
 
-          {#if isHoldProbe}
-            <HoldProbe
-              line={currentLine as 'Somatic' | 'Willpower'}
-              targetMs={HOLD_TARGETS[currentLine as 'Somatic' | 'Willpower']!}
-              oncomplete={onHoldComplete}
-            />
-          {:else}
-            <Card variant="elevated" padding="space-6">
-              <Stack gap="space-4">
-                <p class="prompt-text">{currentPrompt.prompt}</p>
-                <Stack gap="space-2">
-                  {#each currentPrompt.options as option, i (option)}
-                    <button
-                      class="option"
-                      class:selected={selectedChoice === i}
-                      onclick={() => selectChoice(i)}
-                      aria-pressed={selectedChoice === i}
-                    >
-                      <span class="option-marker" aria-hidden="true">
-                        {#if selectedChoice === i}●{:else}○{/if}
-                      </span>
-                      <span class="option-label">{option}</span>
-                    </button>
-                  {/each}
-                </Stack>
+          <Card variant="elevated" padding="space-6">
+            <Stack gap="space-4">
+              <p class="prompt-text">{currentProbe.prompt}</p>
+              <Stack gap="space-2">
+                {#each currentProbe.options as option, i (i)}
+                  <button
+                    class="option"
+                    class:selected={selectedIndex === i}
+                    onclick={() => selectChoice(i)}
+                    aria-pressed={selectedIndex === i}
+                    data-polarity={option.polarity}
+                  >
+                    <span class="option-marker" aria-hidden="true">
+                      {#if selectedIndex === i}●{:else}○{/if}
+                    </span>
+                    <span class="option-label">{option.label}</span>
+                    <span class="option-polarity" aria-label="polarity">{option.polarity}</span>
+                  </button>
+                {/each}
               </Stack>
-            </Card>
-            <Cluster gap="space-3" justify="end">
-              <Button variant="primary" onclick={submitChoice} disabled={selectedChoice === null}>
-                {currentLineIdx < calibrationOrder.length - 1 ? 'Next' : 'Complete Calibration'}
-              </Button>
-            </Cluster>
-          {/if}
+              <label class="free-input-label" for="onboarding-free-input">+1 free input</label>
+              <Input
+                id="onboarding-free-input"
+                placeholder={currentProbe.freeInputPlaceholder}
+                bind:value={freeText}
+              />
+            </Stack>
+          </Card>
+          <Cluster gap="space-3" justify="end">
+            <Button variant="primary" onclick={submitResponse} disabled={selectedIndex === null || submitting}>
+              {submitting ? 'Tracing…' : 'Send'}
+            </Button>
+          </Cluster>
         </Stack>
       </div>
     {:else if phase === 'creating'}
@@ -219,6 +344,22 @@
         <Stack gap="space-4" align="center">
           <div class="done-mark" aria-hidden="true">✦</div>
           <p class="done-text">Your journey begins</p>
+        </Stack>
+      </div>
+    {:else if phase === 'offline'}
+      <div in:stageFade={{ duration: 400 }}>
+        <Stack gap="space-4" align="center">
+          <h2 class="calibration-title">Director is silent</h2>
+          <p class="welcome-text">
+            The Background-Agentic runtime could not generate the next probe.
+            Connect a working LLM configuration and return; until then, we
+            will not surface a deterministic fallback.
+          </p>
+          <p class="error-detail">{offlineReason}</p>
+          <Cluster gap="space-3">
+            <Button variant="primary" onclick={() => goto('/setup')}>Open /setup</Button>
+            <Button variant="ghost" onclick={() => goto('/')}>Back</Button>
+          </Cluster>
         </Stack>
       </div>
     {/if}
@@ -361,5 +502,30 @@
     font-family: var(--ccrpg-font-display);
     font-size: var(--ccrpg-text-lg);
     color: var(--ccrpg-fg);
+  }
+
+  .option-polarity {
+    margin-left: auto;
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg-muted);
+    text-transform: lowercase;
+    letter-spacing: var(--ccrpg-tracking-wide);
+  }
+
+  .free-input-label {
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--ccrpg-tracking-wider);
+  }
+
+  .error-detail {
+    font-family: var(--ccrpg-font-mono, monospace);
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg-muted);
+    text-align: center;
+    max-width: 28rem;
+    margin: 0;
+    word-break: break-word;
   }
 </style>

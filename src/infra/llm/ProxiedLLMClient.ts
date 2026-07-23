@@ -98,6 +98,197 @@ export async function proxyQueryLLM(
 }
 
 /**
+ * Proxy a chat completion to /api/llm/chat with streaming.
+ * Returns a ReadableStream of text deltas (raw strings).
+ *
+ * Each chunk is a string. The final chunk is the full veiled text
+ * from the 'veiled' frame, or null if no finalization occurred.
+ *
+ * AUDIT v1: added for WebUI LLM-dependence.
+ *
+ * Parser handles three frame kinds: { text }, { veiled }, { error }.
+ * For the BACKGROUND-AGENTIC-ARCHITECTURE agent surface, frames
+ * also include { probe: AgenticProbe } and { signal: ... } —
+ * these are *not* emitted from /api/llm/chat, so the parser
+ * silently ignores them at this endpoint. Consumers of the agent
+ * surface should use `parseAgentProbeStream()` from this module
+ * instead of `proxyQueryLLMStream`.
+ */
+export async function proxyQueryLLMStream(
+  systemPrompt: string,
+  userMessage: string,
+): Promise<ReadableStream<string>> {
+  const res = await fetchWithTimeout('/api/llm/chat', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Accept': 'text/event-stream',
+    },
+    body: JSON.stringify({
+      system: systemPrompt,
+      messages: [{ role: 'user', content: userMessage }],
+      temperature: 0.7,
+      maxTokens: 4096,
+    }),
+  });
+
+  if (!res.ok || !res.body) {
+    throw new Error(`BFF streaming failed: ${res.status}`);
+  }
+
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  return new ReadableStream({
+    async start(controller) {
+      try {
+        while (true) {
+          const { value, done } = await reader.read();
+          if (done) break;
+          buffer += decoder.decode(value, { stream: true });
+
+          const lines = buffer.split('\n');
+          buffer = lines.pop() ?? '';
+
+          for (const line of lines) {
+            const trimmed = line.trim();
+            if (!trimmed.startsWith('data:')) continue;
+            const raw = trimmed.slice(5).trim();
+            if (raw === '[DONE]') continue;
+
+            try {
+              const data = JSON.parse(raw);
+              if (data.text) {
+                controller.enqueue(data.text);
+              } else if (data.veiled) {
+                // The last data frame contains the finalized veiled text.
+                // We don't enqueue it here — the client can handle the
+                // stream completion as the signal to swap to the final.
+                // Or we can enqueue a special sentinel. For now, we
+                // just end.
+              } else if (data.error) {
+                controller.error(new Error(data.error));
+              }
+            } catch {
+              // ignore malformed
+            }
+          }
+        }
+        controller.close();
+      } catch (err) {
+        controller.error(err);
+      }
+    }
+  });
+}
+
+
+/**
+ * Read SSE frames from a `text/event-stream` Response body and yield
+ * one parsed JSON object per `data:` line. The Background-Agent
+ * runtime uses three frame shapes:
+ *
+ *   - { probe: AgenticProbe }              // an AgenticProbe frame
+ *   - { signal: { calibrationProgress } }  // state drift
+ *   - { done: true }                       // sentinel
+ *   - { error: "<message>" }               // failure
+ *
+ * This parser is the canonical client-side counterpart to the BFF
+ * `/api/agent/probe` and `/api/agent/observe` SSE writers. It throws
+ * AgentStreamParseError only on hard transport-level failures; the
+ * `error` *frame* is left as data for the caller to handle (because
+ * failure integrity routes the player to /setup, not a transport
+ * error page).
+ *
+ * The reader is yielded via an async iterable so callers can use
+ * `for await` and break on `done` or `error` without managing
+ * the underlying ReadableStream directly.
+ */
+
+export interface AgentProbeFrameProbe {
+  readonly probe: unknown;
+}
+export interface AgentProbeFrameSignal {
+  readonly signal: { readonly calibrationProgress?: number; readonly calibrationComplete?: boolean };
+}
+export interface AgentProbeFrameError {
+  readonly error: string;
+}
+export interface AgentProbeFrameDone {
+  readonly done: true;
+}
+export type AgentProbeFrame =
+  | AgentProbeFrameProbe
+  | AgentProbeFrameSignal
+  | AgentProbeFrameError
+  | AgentProbeFrameDone;
+
+export async function* parseAgentProbeStream(
+  response: Response,
+): AsyncGenerator<AgentProbeFrame, void, void> {
+  if (!response.body) {
+    throw new Error('Agent probe stream: response had no body');
+  }
+  const reader = response.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+
+  try {
+    while (true) {
+      const { value, done } = await reader.read();
+      if (done) break;
+      buffer += decoder.decode(value, { stream: true });
+
+      const pieces = buffer.split('\n\n');
+      buffer = pieces.pop() ?? '';
+      for (const piece of pieces) {
+        for (const lineRaw of piece.split('\n')) {
+          const line = lineRaw.trim();
+          if (!line.startsWith('data:')) continue;
+          const raw = line.slice(5).trim();
+          if (raw === '' || raw === '[DONE]') continue;
+          try {
+            const parsed = JSON.parse(raw) as Record<string, unknown>;
+            if (parsed['probe']) {
+              yield { probe: parsed['probe'] } as AgentProbeFrame;
+            } else if (parsed['signal'] && typeof parsed['signal'] === 'object') {
+              const sig = parsed['signal'] as Record<string, unknown>;
+              yield {
+                signal: {
+                  calibrationProgress:
+                    typeof sig['calibrationProgress'] === 'number'
+                      ? (sig['calibrationProgress'] as number)
+                      : undefined,
+                  calibrationComplete:
+                    typeof sig['calibrationComplete'] === 'boolean'
+                      ? (sig['calibrationComplete'] as boolean)
+                      : undefined,
+                },
+              };
+            } else if (typeof parsed['error'] === 'string') {
+              yield { error: parsed['error'] };
+            } else if (parsed['done'] === true) {
+              yield { done: true };
+              return;
+            }
+          } catch {
+            // Ignore malformed frames; agent surface should be retry-tolerant.
+          }
+        }
+      }
+    }
+  } finally {
+    try {
+      reader.releaseLock();
+    } catch {
+      // already released
+    }
+  }
+}
+
+
+/**
  * Proxy a tool-calling chat completion to /api/llm/tools.
  * Returns content + toolCalls.
  */

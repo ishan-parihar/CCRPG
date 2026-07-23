@@ -16,12 +16,21 @@
  *     "tools": [...]  // optional, for tool-calling
  *   }
  *
- * Response: the LLM provider's response (OpenAI or Anthropic format),
- * with Veil-filtered content.
+ * Response modes (audited v1):
+ *   - Without `Accept: text/event-stream`: JSON body, full buffered.
+ *     VeilFilter applied to the complete finalised output.
+ *     Used by the setup probe and any non-streaming caller.
+ *   - With `Accept: text/event-stream`: Server-Sent Events stream.
+ *     Frames are `data: {"text": "..."}` per delta + a final
+ *     `data: [DONE]` frame. VeilFilter runs once at end-of-stream on
+ *     the concatenated text; if any violations are detected the final
+ *     frame is `data: {"veiled": "...", "violations": [...]}`. Mid-stream
+ *     frames are raw provider deltas — they are NOT persisted, only the
+ *     final veiled concatenated text is.
  */
 
 import { error } from '@sveltejs/kit';
-import { proxyChatCompletion } from '../_lib.js';
+import { proxyChatCompletion, proxyChatCompletionStream } from '../_lib.js';
 import type { RequestHandler } from './$types';
 
 interface ChatRequestBody {
@@ -51,7 +60,16 @@ export const POST: RequestHandler = async ({ request }) => {
     }
   }
 
-  // After validation, messages is guaranteed non-empty. Cast to satisfy
-  // proxyChatCompletion's required-field type.
-  return proxyChatCompletion(body as { messages: readonly { role: string; content: string }[]; system?: string; temperature?: number; maxTokens?: number; tools?: readonly unknown[] });
+  // Mode-detect: streaming if the client asked for SSE.
+  const accept = request.headers.get('accept') ?? '';
+  if (accept.includes('text/event-stream')) {
+    return proxyChatCompletionStream(
+      body as Parameters<typeof proxyChatCompletionStream>[0]
+    );
+  }
+
+  // Default — buffered JSON.
+  return proxyChatCompletion(
+    body as Parameters<typeof proxyChatCompletion>[0]
+  );
 };

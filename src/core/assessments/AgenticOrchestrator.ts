@@ -9,8 +9,10 @@ import { stageOrdinal } from '../domain/Stage.js';
 import type { Drive } from '../domain/Drive.js';
 import type { DriveDirectionality, ShadowQuadrant, EnergeticDirection, Modality } from '../domain/enums.js';
 import { buildContext } from '../../infra/llm/ContextPipeline.js';
-import { queryLLMWithTools } from '../../infra/llm/LLMClient.js';
-import { getFallback } from '../../infra/llm/FallbackProvider.js';
+import { queryLLMWithTools, queryLLMStream } from '../../infra/llm/LLMClient.js';
+import { modalityOpenerTemplate, moduleSummaryTemplate, responseOptionsTemplate } from '../../infra/llm/templates.js';
+import { getFallback } from '../fallback/FallbackProvider.js';
+import { withFallbackVeil } from '../fallback/withFallbackVeil.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from '../engines/ConsequenceEngine.js';
 import { accumulateTension, tryTriggerMacroEvent, type PESTLETension } from '../engines/MacroCatalystEngine.js';
 import type { AgentMessage, AskUserQuestionParams, AskUserQuestionResult } from './agentTypes.js';
@@ -765,6 +767,20 @@ INSTRUCTIONS:
    * emotion identification, etc.) as narrative challenges and evaluates responses
    * using the module's drive probes. Also detects shadow patterns and computes
    * altitude shifts from consistent healthy patterns.
+   *
+   * AUDIT v1 — Step 4: When `noLlm` is false, this method now attempts
+   * an LLM call for each narrative element (opener, summary, options).
+   * If the LLM responds, its output wins. If the LLM errors or times out,
+   * the static FallbackProvider literal is used, wrapped in the Veil
+   * seam helper. This makes the WebUI's fallback path LLM-first even
+   * when the Agentic GM (run() loop) fails — we don't silently degrade
+   * to canned prose unless the LLM is genuinely unreachable.
+   *
+   * Halting conditions:
+   *   - `noLlm === true`: skip every LLM attempt below; use static
+   *     FallbackProvider literally (Veil-seamed).
+   *   - LLM call throws or returns an `{"error": ...}` shape: same.
+   *   - LLM call returns valid text in time: use it raw.
    */
   private async runFallback(line: Line, stage: Stage, now: number): Promise<OrchestratorResult> {
     // ponytail: Direct Questioning encounters use write-in path, bypass module MCQ
@@ -773,17 +789,53 @@ INSTRUCTIONS:
       return this.runModuleAssessment(line, stage, now);
     }
 
-    // Pass playerStage for altitude-conditional reframe (high-altitude players
-    // get meta-cognitive framing when encountering lower-stage content)
     const fallback = getFallback(this.encounter.modality, line, stage, this.significator.currentStage);
     const holon = this.world.holons.find(h => h.id === this.encounter.holonSource);
     const holonName = holon?.name ?? 'A presence';
     const holonRole = holon?.narrativeRole ?? 'guide';
     const encounterModality = this.encounter.modality;
 
+    /**
+     * Stream an LLM-generated opener/template output and return the
+     * concatenated text. Returns null on failure so the caller can
+     * fall back to the static literal.
+     *
+     * Important: this emits a 5-second timeout to keep the UI responsive.
+     * If the LLM is slow, we degrade gracefully to the static opener.
+     */
+    const tryLlmText = async (systemPrompt: string, userMessage: string): Promise<string | null> => {
+      if (this.noLlm) return null;
+      try {
+        const stream = await queryLLMStream(systemPrompt, userMessage);
+        return await collectStreamWithin(stream, 5000);
+      } catch {
+        return null;
+      }
+    };
+
     let narrativeIntro: string;
     let questionText: string;
     let options: { label: string; description: string }[] = [];
+
+    // AUDIT v1: pre-compute the LLM opener ONCE per runFallback call, in
+    // parallel with the static switch. The orchestrator awaits the LLM
+    // result; if it succeeds, that prose goes into narrativeIntro.
+    // Otherwise we fall back to the static opener (with Veil seam).
+    //
+    // For self-reflection / direct-questioning, no opener is needed;
+    // skip the LLM call entirely.
+    const llmOpener: string | null = isSelfReflection
+      ? null
+      : await tryLlmText(
+          modalityOpenerTemplate({
+            line,
+            stage,
+            modality: encounterModality,
+            holonName,
+            holonRole,
+          }),
+          `Compose the opening line for this encounter with ${holonName}.`,
+        );
 
     switch (encounterModality) {
       case 'LanguageReflective': {
@@ -792,29 +844,66 @@ INSTRUCTIONS:
           questionText = fallback.prompt ?? fallback.followUps?.[0] ?? 'What is present for you right now?';
           options = []; // Empty → write-in only
         } else {
-          narrativeIntro = `${holonName} sits across from you, their gaze steady. The firelight casts long shadows. They speak:`;
+          const staticOpener = `${holonName} sits across from you, their gaze steady. The firelight casts long shadows. They speak:`;
+          const seed = `${encounterModality}:${holonName}:${line}:${stage}`;
+          narrativeIntro = llmOpener ?? withFallbackVeil(staticOpener, seed);
           questionText = fallback.prompt ?? 'What moved you to act?';
-          options = [
+          // AUDIT v1 — Step 6: ask the LLM for 4 response-approach
+          // labels calibrated to (line, stage, modality, prompt). The
+          // 4-option shape is contractual — CLI --answer relies on
+          // a stable 4-index, and the WebUI components render a 4-card
+          // layout. We MUST validate: exactly 4 strings.
+          const canonicalFour = [
             { label: 'Reflect deeply', description: 'Consider the question from multiple angles' },
             { label: 'Respond instinctively', description: 'Trust your first impulse' },
             { label: 'Sit with it', description: 'Allow the question to remain open' },
             { label: 'Challenge the premise', description: 'Question the foundation of what was asked' },
           ];
+          const llmOptionsText = await tryLlmText(
+            responseOptionsTemplate({
+              line,
+              stage,
+              modality: encounterModality,
+              encounterPrompt: questionText,
+            }),
+            'Compose exactly 4 response-approach labels for this encounter.',
+          );
+          const parsedOptions = parseFourOptions(llmOptionsText);
+          if (parsedOptions) {
+            options = parsedOptions.map((label, idx) => ({
+              label,
+              description: canonicalFour[idx]?.description ?? '',
+            }));
+          } else {
+            // Fall through to the canonical 4 options. The encounter-level
+            // Veil seam (which sits in narrativeIntro above) has already
+            // disclosed that this is fallback content, so we don't
+            // per-option-seam each label.
+            options = canonicalFour;
+          }
         }
         break;
       }
-      case 'ScenarioChoice':
-        narrativeIntro = `${holonName} confronts you. The air is tense. A choice must be made.`;
+      case 'ScenarioChoice': {
+        const staticOpener = `${holonName} confronts you. The air is tense. A choice must be made.`;
+        const seed = `${encounterModality}:${holonName}:${line}:${stage}`;
+        narrativeIntro = llmOpener ?? withFallbackVeil(staticOpener, seed);
         questionText = fallback.scenario ?? 'A crossroads appears. Each path carries weight.';
         options = (fallback.options ?? []).map(o => ({ label: o.text, description: "" }));
         break;
-      case 'Strategic':
-        narrativeIntro = `The war-table is spread before you. ${holonName} surveys the terrain. Three routes. Limited forces.`;
+      }
+      case 'Strategic': {
+        const staticOpener = `The war-table is spread before you. ${holonName} surveys the terrain. Three routes. Limited forces.`;
+        const seed = `${encounterModality}:${holonName}:${line}:${stage}`;
+        narrativeIntro = llmOpener ?? withFallbackVeil(staticOpener, seed);
         questionText = fallback.scenario ?? fallback.prompt ?? 'Resources are limited. The map shows three routes to the objective.';
         options = (fallback.options ?? []).map(o => ({ label: o.text, description: "" }));
         break;
-      case 'Embodied':
-        narrativeIntro = `The war-drums begin. ${holonName} guides you. Your body knows this rhythm.`;
+      }
+      case 'Embodied': {
+        const staticOpener = `The war-drums begin. ${holonName} guides you. Your body knows this rhythm.`;
+        const seed = `${encounterModality}:${holonName}:${line}:${stage}`;
+        narrativeIntro = llmOpener ?? withFallbackVeil(staticOpener, seed);
         questionText = fallback.prompt ?? 'Close your eyes. Where do you feel tension in your body right now?';
         options = [
           { label: 'Follow the rhythm', description: 'Let the drum guide your body' },
@@ -823,13 +912,19 @@ INSTRUCTIONS:
           { label: 'Still yourself', description: 'Find the stillness within the movement' },
         ];
         break;
-      case 'SocialCooperative':
-        narrativeIntro = `${holonName} looks to you. Others wait for direction. The group needs your word.`;
+      }
+      case 'SocialCooperative': {
+        const staticOpener = `${holonName} looks to you. Others wait for direction. The group needs your word.`;
+        const seed = `${encounterModality}:${holonName}:${line}:${stage}`;
+        narrativeIntro = llmOpener ?? withFallbackVeil(staticOpener, seed);
         questionText = fallback.scenario ?? 'The scouts look to you. The path splits — one leads through danger, the other through uncertainty.';
         options = (fallback.options ?? []).map(o => ({ label: o.text, description: "" }));
         break;
-      case 'ImmersiveRPG':
-        narrativeIntro = `The world stretches before you. ${holonName} appears — ${holonRole} of this domain. What calls?`;
+      }
+      case 'ImmersiveRPG': {
+        const staticOpener = `The world stretches before you. ${holonName} appears — ${holonRole} of this domain. What calls?`;
+        const seed = `${encounterModality}:${holonName}:${line}:${stage}`;
+        narrativeIntro = llmOpener ?? withFallbackVeil(staticOpener, seed);
         // R6-P1-2 (UX-R6): Don't duplicate 'The world stretches before you' in
         // the question text — the narrativeIntro already sets the scene. Use
         // the fallback prompt only if it doesn't start with the same phrase.
@@ -843,8 +938,11 @@ INSTRUCTIONS:
           { label: 'Call out', description: 'Announce your presence' },
         ];
         break;
-      default:
-        narrativeIntro = `${holonName} presents a challenge. The moment demands clarity.`;
+      }
+      default: {
+        const staticOpener = `${holonName} presents a challenge. The moment demands clarity.`;
+        const seed = `${encounterModality}:${holonName}:${line}:${stage}`;
+        narrativeIntro = llmOpener ?? withFallbackVeil(staticOpener, seed);
         questionText = fallback.prompt ?? fallback.framing ?? 'Focus. The moment demands clarity.';
         options = [
           { label: 'Engage', description: 'Step into the challenge' },
@@ -853,6 +951,7 @@ INSTRUCTIONS:
           { label: 'Negotiate', description: 'Seek a middle path forward' },
         ];
         break;
+      }
     }
 
     const defaultOpts = [
@@ -1128,7 +1227,7 @@ INSTRUCTIONS:
 
     // 5. Build a rich narrative summary from the module context
     // Pass the actual presented task so narrative matches what the user saw
-    const narrativeSummary = this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName, task);
+    const narrativeSummary = await this.buildModuleNarrative(module, playerResponseText, evaluation.passed, currentModality, holonName, task);
 
     // 6. Check for altitude shift: only when ALL drives HealthyBalanced AND passed
     const altitudeShift = this.computeAltitudeShift(evaluation.driveSignals, module, stage, evaluation.passed);
@@ -1582,14 +1681,14 @@ INSTRUCTIONS:
   /**
    * Build a rich narrative summary from the module context and player choice.
    */
-  private buildModuleNarrative(
+  private async buildModuleNarrative(
     module: StageAssessment,
     _responseText: string,
     passed: boolean,
     modality: Modality,
     holonName: string,
     actualTask?: AssessmentTask,
-  ): string {
+  ): Promise<string> {
     const modalityDesc: Record<string, string> = {
       Deterministic: 'a focused mental trial',
       LanguageReflective: 'a moment of deep reflection',
@@ -1678,10 +1777,40 @@ INSTRUCTIONS:
 
     const pick = <T>(arr: readonly T[]): T => arr[Math.floor(Math.random() * arr.length)]!;
 
+    // AUDIT v1 — Step 5: try the LLM template first. If it returns
+    // anything coherent, use it (caller persists the prose directly
+    // into the journal). Fall back to the static pool with Veil seam
+    // when `--no-llm`, when the LLM errors, or when it times out.
+    const taskLabelForLlm = taskLabel;
+    const llmSummary = await tryLLMCall(
+      moduleSummaryTemplate({
+        line: module.line,
+        stage: module.stage,
+        modality,
+        passed,
+        taskLabel: taskLabelForLlm,
+        polarityDirection:
+          (passed ? 'sto' : 'neutral') as 'sto' | 'sts' | 'neutral',
+        integrationShift: passed
+          ? `integration in ${module.line.toLowerCase()}`
+          : null,
+      }),
+      'Compose the post-encounter summary.',
+      this.noLlm,
+      5000,
+    );
+
+    if (llmSummary && llmSummary.trim().length > 0) {
+      return llmSummary.trim();
+    }
+
+    const seed = `${module.line}:${module.stage}:${passed ? 'pass' : 'fail'}:${modality}`;
     if (passed) {
-      return `${pick(passedOpenings)} ${taskLabel} at the ${module.stage} stage of ${module.line} development. You demonstrated ${stageDesc[module.stage] ?? ''} expression of the ${module.line.toLowerCase()} capacity. ${pick(passedClosings)}`;
+      const fallback = `${pick(passedOpenings)} ${taskLabel} at the ${module.stage} stage of ${module.line} development. You demonstrated ${stageDesc[module.stage] ?? ''} expression of the ${module.line.toLowerCase()} capacity. ${pick(passedClosings)}`;
+      return withFallbackVeil(fallback, seed);
     } else {
-      return `${pick(failedOpenings)} ${taskLabel} at the ${module.stage} stage of ${module.line} development. ${pick(failedClosings)}`;
+      const fallback = `${pick(failedOpenings)} ${taskLabel} at the ${module.stage} stage of ${module.line} development. ${pick(failedClosings)}`;
+      return withFallbackVeil(fallback, seed);
     }
   }
 
@@ -2044,3 +2173,110 @@ ${probes}${rubric}
     };
   }
 }
+
+/**
+ * Collect a `ReadableStream<string>` into a single string. Stops early
+ * if `timeoutMs` elapses — the partial result is returned (we still
+ * got something useful). Returns null if no chunks arrived.
+ *
+ * Used by runFallback to time-bound LLM attempts so a slow model
+ * doesn't block the WebUI.
+ */
+async function collectStreamWithin(
+  stream: ReadableStream<string>,
+  timeoutMs: number,
+): Promise<string | null> {
+  const reader = stream.getReader();
+  let acc = '';
+  let gotAnything = false;
+  const start = Date.now();
+  try {
+    while (Date.now() - start < timeoutMs) {
+      const remaining = Math.max(1, timeoutMs - (Date.now() - start));
+      const timeoutPromise = new Promise<'timeout'>((resolve) =>
+        setTimeout(() => resolve('timeout'), remaining),
+      );
+      const next = reader.read();
+      const result = await Promise.race([next, timeoutPromise]);
+      if (result === 'timeout') {
+        try { reader.cancel(); } catch {}
+        break;
+      }
+      const { value, done } = result;
+      if (done) break;
+      if (value) {
+        acc += value;
+        gotAnything = true;
+      }
+    }
+    try { reader.cancel(); } catch {}
+    return gotAnything ? acc : null;
+  } catch {
+    try { reader.cancel(); } catch {}
+    return null;
+  }
+}
+
+/**
+ * Time-bounded single-shot LLM call helper used by both runFallback
+ * (synchronous-feeling lie about the LLM) and buildModuleNarrative
+ * (real async summary). Returns null on:
+ *   - `noLlm === true` (CLI --no-llm mode)
+ *   - any thrown error
+ *   - empty stream within the timeout
+ *
+ * AUDIT v1 — Step 5 helper.
+ */
+async function tryLLMCall(
+  systemPrompt: string,
+  userMessage: string,
+  noLlm: boolean,
+  timeoutMs = 5000,
+): Promise<string | null> {
+  if (noLlm) return null;
+  try {
+    const stream = await queryLLMStream(systemPrompt, userMessage);
+    return await collectStreamWithin(stream, timeoutMs);
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Parse a JSON array of exactly 4 non-empty strings from the LLM's
+ * streamed output. Returns null if the output is malformed, too short,
+ * contains anything non-string, or doesn't end up exactly 4 items.
+ *
+ * AUDIT v1 — Step 6 helper.
+ */
+function parseFourOptions(raw: string | null): string[] | null {
+  if (!raw) return null;
+  // Strip Markdown code fences if the LLM accidentally wrapped.
+  const stripped = raw
+    .replace(/^\s*```(?:json)?\s*/i, '')
+    .replace(/\s*```\s*$/, '')
+    .trim();
+
+  // Try a strict parse first.
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(stripped);
+  } catch {
+    // Try to recover: find the first '[' and last ']' in the response.
+    const open = stripped.indexOf('[');
+    const close = stripped.lastIndexOf(']');
+    if (open === -1 || close === -1 || close <= open) return null;
+    try {
+      parsed = JSON.parse(stripped.slice(open, close + 1));
+    } catch {
+      return null;
+    }
+  }
+
+  if (!Array.isArray(parsed) || parsed.length !== 4) return null;
+  if (!parsed.every((x): x is string => typeof x === 'string' && x.trim().length > 0)) {
+    return null;
+  }
+  return parsed.map((s) => s.trim());
+}
+

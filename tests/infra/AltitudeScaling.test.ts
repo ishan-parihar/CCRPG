@@ -3,7 +3,7 @@
  * altitude, not just the encounter's target stage.
  */
 import { describe, it, expect } from 'vitest';
-import { getFallback } from '../../src/infra/llm/FallbackProvider.js';
+import { getFallback } from '../../src/core/fallback/FallbackProvider.js';
 import { generateFrequencySpec } from '../../src/infra/llm/FrequencyConditioner.js';
 
 describe('Altitude-scaling: FallbackProvider reframe layers', () => {

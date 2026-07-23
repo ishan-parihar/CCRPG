@@ -6,6 +6,81 @@ root (or in `CHANGELOG.md`).
 
 ---
 
+## v3.0 -- WebUI LLM-Dependence v1 (2026-07-14)
+
+The WebUI is now **fully LLM-driven** for every narrative surface the player
+sees, with a graceful Veil-seam fallback when the LLM is genuinely
+unreachable. Audit doc: `docs/audits/HARDCODE-AUDIT.md`. Plan executed
+in eight steps.
+
+### What changed
+
+- **`src/core/fallback/FallbackProvider.ts`** moved from
+  `src/infra/llm/` to `src/core/fallback/`. The LLM-tier
+  infrastructure no longer owns pre-authored content — this is now a
+  domain concern (validated developmental exercises).
+- **`src/core/fallback/withFallbackVeil.ts`** added. Frozen corpus of
+  five Veil-register disclosure lines. Used to surface fallback content
+  politely to the player when the LLM is unavailable.
+- **`src/infra/llm/templates.ts`** added. Three pure-function prompt
+  templates: `modalityOpenerTemplate`, `moduleSummaryTemplate`,
+  `responseOptionsTemplate`. Each carries its own voice / length /
+  shape constraints.
+- **`src/infra/llm/LLMClient.ts` + `src/infra/llm/ProxiedLLMClient.ts`**
+  gained a streaming interface (`queryLLMStream`,
+  `proxyQueryLLMStream`). Returns `ReadableStream<string>` chunks.
+- **`src/routes/api/llm/_lib.ts`** gained `proxyChatCompletionStream`.
+  Wired at `/api/llm/chat` via `Accept: text/event-stream` mode-detect.
+  No `Accept` header (or non-SSE) → legacy buffered JSON path.
+  VeilFilter runs once at end-of-stream on the concatenated text.
+- **`src/core/assessments/AgenticOrchestrator.ts`:** the `runFallback`
+  path now also attempts the LLM (opener, summary, options) before
+  falling back to the static pool. `buildModuleNarrative` is now async
+  and LLM-first. Three top-level helpers added: `collectStreamWithin`,
+  `tryLLMCall`, `parseFourOptions`.
+- **`tests/audits/hardcodeAuditV1.test.ts`** added — 13 invariant
+  tests asserting post-audit contracts.
+- **`tests/core/assessments/AgenticOrchestrator.test.ts`** updated —
+  five test sites now mock multiple `fetch` calls because the WebUI
+  makes an opener + summary call after fallback.
+
+### What did NOT change
+
+- The CLI's `--no-llm` flag still works exactly as before; smoke
+  tests stay deterministic.
+- `src/core/data/calibrationPrompts.ts` and the 1,280 assessment items
+  in `src/core/data/` — unchanged. Assessment *inputs* must be
+  deterministic.
+- `src/core/presentation/veilDescriptors.ts` — unchanged. Veil-layer
+  performers must stay static.
+- `src/routes/diagnostic/`, `src/routes/telemetry/`, `src/routes/setup/`
+  — unchanged. Diagnostic / telemetry / setup surface must remain
+  exact and inspectable.
+- `scripts/cli-game.ts`, `tests/infra/*.test.ts` — only imports were
+  updated to the new `src/core/fallback/` path.
+
+### Behavior contract
+
+- **LLM-on path**: every encounter uses the LLM for the opener line,
+  for summary text, and for response options. Static content is the
+  fallback of last resort.
+- **LLM-off path (`--no-llm` or genuine network failure)**: each
+  encounter shows a Veil-seam disclosure line ("*The mirror is silent;
+  old reflections return to you.*") followed by the static fallback.
+  Static content is unchanged — the seam is added, not the prose.
+
+### Risk
+
+- Streaming wire is new. The setup probe is unchanged because its
+  caller doesn't send `Accept: text/event-stream`; we explicitly did
+  not alter its request.
+- VeilFilter is not run per-chunk during stream mode. It runs once at
+  end-of-stream on the concatenated text. Mid-stream chunks may show
+  un-veiled text transiently, but only the finalised veiled text is
+  persisted (or rendered as final response).
+
+---
+
 ## v2.0 -- Unified Architecture (2026-05-18)
 
 The architectural pivot: ATB combat is completely removed from the

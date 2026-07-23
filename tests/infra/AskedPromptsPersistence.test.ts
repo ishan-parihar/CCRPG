@@ -30,7 +30,7 @@ afterEach(() => {
 
 describe('NF-3: cross-session question de-duplication', () => {
   it('loadAskedPrompts loads from asked-prompts.json', async () => {
-    const { loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/infra/llm/FallbackProvider.js');
+    const { loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/core/fallback/FallbackProvider.js');
     fs.writeFileSync(path.join(profileDir, 'asked-prompts.json'),
       JSON.stringify({ prompts: ['Question A?', 'Question B?'] }, null, 2));
 
@@ -44,7 +44,7 @@ describe('NF-3: cross-session question de-duplication', () => {
   });
 
   it('saveAskedPrompts writes asked-prompts.json', async () => {
-    const { saveAskedPrompts, loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/infra/llm/FallbackProvider.js');
+    const { saveAskedPrompts, loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/core/fallback/FallbackProvider.js');
     _clearAskedPromptsForTest();
 
     // Load some prompts, then save — file should exist
@@ -60,27 +60,27 @@ describe('NF-3: cross-session question de-duplication', () => {
   });
 
   it('loadAskedPrompts is a no-op when profileDir is null', async () => {
-    const { loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/infra/llm/FallbackProvider.js');
+    const { loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/core/fallback/FallbackProvider.js');
     _clearAskedPromptsForTest();
     // Should not throw
     loadAskedPrompts(null);
   });
 
   it('saveAskedPrompts is a no-op when profileDir is null', async () => {
-    const { saveAskedPrompts } = await import('../../src/infra/llm/FallbackProvider.js');
+    const { saveAskedPrompts } = await import('../../src/core/fallback/FallbackProvider.js');
     // Should not throw
     saveAskedPrompts(null);
   });
 
   it('loadAskedPrompts handles missing file gracefully', async () => {
-    const { loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/infra/llm/FallbackProvider.js');
+    const { loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/core/fallback/FallbackProvider.js');
     _clearAskedPromptsForTest();
     // File doesn't exist — should not throw
     loadAskedPrompts(profileDir);
   });
 
   it('loadAskedPrompts handles corrupt file gracefully', async () => {
-    const { loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/infra/llm/FallbackProvider.js');
+    const { loadAskedPrompts, _clearAskedPromptsForTest } = await import('../../src/core/fallback/FallbackProvider.js');
     _clearAskedPromptsForTest();
     fs.writeFileSync(path.join(profileDir, 'asked-prompts.json'), 'NOT VALID JSON{[');
     // Should not throw — start with empty set
@@ -88,7 +88,7 @@ describe('NF-3: cross-session question de-duplication', () => {
   });
 
   it('saveAskedPrompts caps the set at 200 entries', async () => {
-    const { saveAskedPrompts, loadAskedPrompts } = await import('../../src/infra/llm/FallbackProvider.js');
+    const { saveAskedPrompts, loadAskedPrompts } = await import('../../src/core/fallback/FallbackProvider.js');
     // Write 250 prompts, load, save — file should have max 200
     const manyPrompts = Array.from({ length: 250 }, (_, i) => `Question ${i}?`);
     fs.writeFileSync(path.join(profileDir, 'asked-prompts.json'),

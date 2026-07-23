@@ -9,6 +9,8 @@
    *   - Desktop sidebar + mobile bottom nav
    *   - Toaster for notifications
    *   - Cloud sync on beforeunload
+   *   - <AgentRunner /> (BACKGROUND-AGENTIC-ARCHITECTURE, Decision 9)
+   *   - Failure Integrity route guard (Decision 10)
    */
 
   import { onMount, onDestroy } from 'svelte';
@@ -23,17 +25,21 @@
   import Sidebar from '$lib/components/Sidebar.svelte';
   import BottomNav from '$lib/components/BottomNav.svelte';
   import Toaster from '$lib/components/Toaster.svelte';
+  import AgentRunner from '$lib/components/AgentRunner.svelte';
   import { applyCapabilities, watchCapabilities } from '$lib/capabilities/CapabilityProbe.js';
   import { setSignificator } from '$lib/stores/gameStore.js';
   import { loadSignificatorFromStorage } from '$lib/stores/saveHydration.js';
   import { flushSync } from '$lib/stores/cloudSyncStore.js';
   import { get } from 'svelte/store';
   import { gameStore } from '$lib/stores/gameStore.js';
+  import { llmStatus } from '$lib/stores/llmStatus.js';
+  import { routeGuardAgentic } from '$lib/agents/routeGuard.js';
 
   let { children } = $props();
 
   let unwatch: (() => void) | null = null;
   let beforeUnloadHandler: (() => void) | null = null;
+  let prevPath = '';
 
   onMount(() => {
     if (!browser) return;
@@ -61,6 +67,17 @@
       window.removeEventListener('beforeunload', beforeUnloadHandler);
     }
   });
+
+  // Failure Integrity: if llmStatus flips offline while the user is on
+  // (or navigates to) an agentic route, redirect them to /setup. Reads
+  // the current path on each tick and applies the guard.
+  $effect(() => {
+    if (!browser) return;
+    const status = $llmStatus;
+    const path = window.location.pathname;
+    if (path !== prevPath) prevPath = path;
+    if (status.offline) routeGuardAgentic(path);
+  });
 </script>
 
 <StageTheme />
@@ -70,3 +87,4 @@
 {@render children()}
 <BottomNav />
 <Toaster />
+<AgentRunner />
