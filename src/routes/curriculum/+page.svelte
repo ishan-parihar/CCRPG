@@ -279,15 +279,18 @@
   {@const isSelected = selectedNode === node.id}
 
   <div class="tree-node" style="padding-left: {depth * 1.5}rem" role="treeitem" aria-expanded={children.length > 0 ? isExpanded : undefined}>
-    <button
+    <div
       class="tree-node-btn"
       class:expanded={isExpanded}
       class:selected={isSelected}
       class:studied={nodeDepth !== undefined}
+      role="button"
+      tabindex="0"
       onclick={() => selectNode(node.id)}
+      onkeydown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); selectNode(node.id); } }}
     >
       {#if children.length > 0}
-        <button class="expand-btn" onclick|stopPropagation={() => toggleExpand(node.id)} aria-label="{isExpanded ? 'Collapse' : 'Expand'} {node.name}">
+        <button class="expand-btn" onclick={(e) => { e.stopPropagation(); toggleExpand(node.id); }} aria-label="{isExpanded ? 'Collapse' : 'Expand'} {node.name}">
           <span class="expand-icon">{isExpanded ? '▾' : '▸'}</span>
         </button>
       {:else}
@@ -309,7 +312,7 @@
       {#if children.length > 0}
         <span class="node-count">{children.length}</span>
       {/if}
-    </button>
+    </div>
 
     {#if isExpanded && children.length > 0}
       <div class="tree-children" role="group">
