@@ -175,8 +175,7 @@ export function applyConsequences(
   // that has unresolved shadows, those shadows are considered integrated.
   // This is the core developmental principle: successful engagement with a
   // capacity naturally resolves the shadow patterns associated with it.
-  const allDrivesHealthy = Object.values(record.polarityTrace.driveDirectionality)
-    .every(d => d === 'HealthyBalanced');
+  const allDrivesHealthy = allDrivesHealthyFromRecord(record);
   if (allDrivesHealthy) {
     // G.19: Scope resolution to shadows at or below the encounter's stage
     const encounterStageOrd = stageOrdinal(encounter.stage);
@@ -259,8 +258,8 @@ export function applyConsequences(
       rayProfile: newRayProfile as Significator['rayProfile'],
       totalEncounters: sig.totalEncounters + 1,
     }),
-    // Curriculum expansion: update knowledge state on curriculum encounter completion.
-    knowledge: updateKnowledgeFromEncounter(sig, encounter, allDrivesHealthy, record.timestamp),
+  // Curriculum expansion: update knowledge state on curriculum encounter completion.
+  knowledge: updateKnowledgeFromEncounter(sig, encounter, record, allDrivesHealthy),
   };
 
   // 6. Update NPC Relationships and recentEncounterIds
@@ -441,6 +440,12 @@ function lookupCodexEntry(encounter: ScheduledEncounter): string | null {
   return null;
 }
 
+/** Check if all drive signals in a record are HealthyBalanced. */
+function allDrivesHealthyFromRecord(record: ConsequenceRecord): boolean {
+  return Object.values(record.polarityTrace.driveDirectionality)
+    .every(d => d === 'HealthyBalanced');
+}
+
 // ---------------------------------------------------------------------------
 // Curriculum knowledge state update
 // ---------------------------------------------------------------------------
@@ -454,8 +459,8 @@ function lookupCodexEntry(encounter: ScheduledEncounter): string | null {
 function updateKnowledgeFromEncounter(
   sig: Significator,
   encounter: ScheduledEncounter,
-  passed: boolean,
-  now: number,
+  record: ConsequenceRecord,
+  allDrivesHealthy: boolean,
 ): KnowledgeState | undefined {
   // Only update for curriculum encounters
   const conceptId = encounter.curriculumConceptId;
@@ -478,6 +483,32 @@ function updateKnowledgeFromEncounter(
   const action = encounter.curriculumAction ?? (existingConcept ? 'deepen' : 'new_material');
   const prevDepth = existingConcept?.depthLevel ?? 'absent';
   const prevRetention = existingConcept?.retention ?? 0;
+  const now = record.timestamp;
+  const passed = allDrivesHealthy;
+
+  // Derive drive/shadow signals from the ConsequenceRecord so the dual-depth
+  // assessment uses real developmental data instead of hardcoded empty objects.
+  const driveDirectionality = record.polarityTrace.driveDirectionality;
+  const driveScores: Record<string, number> = {};
+  const driveSignals: Record<string, string> = {};
+  const drives: Drive[] = ['Agency', 'Communion', 'Eros', 'Agape'];
+  for (const d of drives) {
+    const signal = driveDirectionality[d] ?? 'HealthyBalanced';
+    driveSignals[d] = signal;
+    // Calibrated defaults for DepthAssessment scoring:
+    // - HealthyBalanced (0.7): mature integration, the developmental ideal
+    // - Addicted (0.4): engagement present but one-sided fixation
+    // - Averted (0.3): avoidance, lowest developmental engagement
+    // These map DriveDirectionality → numeric scores for the knowledge-depth
+    // classification in DepthAssessment. Tunable based on empirical data.
+    switch (signal) {
+      case 'HealthyBalanced': driveScores[d] = 0.7; break;
+      case 'DarkAddicted':
+      case 'GoldenAddicted': driveScores[d] = 0.4; break;
+      case 'DarkAverted':
+      case 'GoldenAverted': driveScores[d] = 0.3; break;
+    }
+  }
 
   // Phase C: Dual-depth assessment — when a depthRubric is available on the
   // encounter, use the full DepthAssessment pipeline to classify response quality
@@ -487,10 +518,8 @@ function updateKnowledgeFromEncounter(
 
   if (encounter.depthRubric) {
     // Dual-depth path: use DepthAssessment to classify the response.
-    // We construct knowledgeScores from the binary outcome + action context,
-    // since the full assessment pipeline isn't wired into ConsequenceEngine yet.
-    // This is a bridge implementation that will be refined when the encounter
-    // execution pipeline provides detailed response scores.
+    // Knowledge scores derived from binary outcome + action context;
+    // drive/shadow signals now come from the real encounter record.
     const knowledgeScores: Record<string, number> = {
       accuracy: passed ? 0.8 : 0.2,
       depth: action === 'deepen' ? 0.7 : 0.5,
@@ -502,10 +531,12 @@ function updateKnowledgeFromEncounter(
       conceptId,
       knowledgeScores,
       depthRubric: encounter.depthRubric,
-      driveScores: {},
-      driveSignals: {},
-      shadowDetected: null,
-      shadowIntensity: 0,
+      driveScores,
+      driveSignals,
+      // TODO: replace fixed 0.5 with dynamic severity from the ShadowEntry
+      // already computed in applyConsequences (line ~135–145).
+      shadowDetected: record.shadowSurfaced ?? null,
+      shadowIntensity: record.shadowSurfaced ? 0.5 : 0,
       predictedDepth: prevDepth,
       confidenceInPrediction: 0.5,
       timestamp: now,
