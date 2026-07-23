@@ -306,6 +306,7 @@ import { toSnapshot } from '../src/core/domain/SignificatorSnapshot.js';
 import { computeCCI } from '../src/core/engines/CCIEngine.js';
 import { SessionAgent } from '../src/core/assessments/SessionAgent.js';
 import { getCurriculumRegistry } from '../src/core/curriculum/CurriculumRegistry.js';
+import { seedCurriculumRegistry } from '../src/core/curriculum/CurriculumSeed.js';
 
 /** P0-1: Resolve a curriculum concept ID to a display label. Returns empty string if not found. */
 function curriculumLabel(conceptId: string | undefined): string {
@@ -1681,6 +1682,7 @@ async function runDiagnostic(): Promise<void> {
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
   (globalThis as any).__moduleRegistry = moduleRegistry;
+  seedCurriculumRegistry();
   success(`${moduleRegistry.count()} assessment modules loaded`); // R11-Y4: 64 modules across 8 stages. Red has full visual theming; other stages use LLM-generated narratives with validated assessment tasks.
 
   console.log('\nHolons:');
@@ -1758,6 +1760,7 @@ async function runSingleEncounter(): Promise<void> {
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
   (globalThis as any).__moduleRegistry = moduleRegistry;
+  seedCurriculumRegistry();
   success(`${moduleRegistry.count()} modules loaded`);
 
   const sig = await createDefaultSignificator();
@@ -2781,6 +2784,7 @@ async function runFullSession(): Promise<void> {
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
   (globalThis as any).__moduleRegistry = moduleRegistry;
+  seedCurriculumRegistry();
   s1?.succeed(`${moduleRegistry.count()} assessment modules loaded`);
 
   // LLM availability check

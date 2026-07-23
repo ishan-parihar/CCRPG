@@ -11,25 +11,15 @@
  * - Loading reads from localStorage with backward-compat merge
  */
 
-import { describe, it, expect, beforeEach, vi } from 'vitest';
+import { describe, it, expect, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
+import { ensureLocalStorage } from '../helpers/localStorageMock.js';
 import { accessibilityStore, updateAccessibility, resetAccessibility } from '../../src/lib/stores/accessibilityStore.js';
 import { createDefaultSettings } from '../../src/core/accessibility/AccessibilitySettings.js';
 
 describe('accessibilityStore', () => {
   beforeEach(() => {
-    // jsdom may not provide localStorage in all vitest configurations
-    if (typeof localStorage === 'undefined') {
-      const store = new Map<string, string>();
-      vi.stubGlobal('localStorage', {
-        getItem: (k: string) => store.get(k) ?? null,
-        setItem: (k: string, v: string) => store.set(k, v),
-        removeItem: (k: string) => store.delete(k),
-        clear: () => store.clear(),
-        get length() { return store.size; },
-        key: (i: number) => [...store.keys()][i] ?? null,
-      });
-    }
+    ensureLocalStorage();
     localStorage.clear();
     resetAccessibility();
   });
