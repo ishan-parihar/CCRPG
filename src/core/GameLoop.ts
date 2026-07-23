@@ -568,6 +568,68 @@ function estimateResponseQuality(response: PlayerResponse): number {
 }
 
 // ---------------------------------------------------------------------------
+// Knowledge decay + forgetting curve persistence (shared by sync/async paths)
+// ---------------------------------------------------------------------------
+
+/**
+ * Apply retention decay and persist forgetting curves at session end.
+ * Shared helper used by both endSession (sync) and endSessionAsync (async)
+ * to avoid code duplication. The curve's lastRetrievedAt is set to `now`
+ * (session end time) because retention is already decayed to that point.
+ * This prevents double-decay when computeRetention runs at next session start.
+ */
+function persistKnowledgeDecay(
+  sig: Significator,
+  now: number,
+): Significator {
+  const knowledge = sig.knowledge;
+  if (!knowledge || knowledge.conceptStates.size === 0) return sig;
+
+  const decayedConcepts = new Map<string, ConceptState>();
+  for (const [key, concept] of knowledge.conceptStates) {
+    const elapsed = now - concept.lastReviewedAt;
+    const decayedRetention = elapsed > 0
+      ? Math.max(0, Math.min(1, concept.retention * Math.pow(2, -elapsed / DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs)))
+      : concept.retention;
+    decayedConcepts.set(key, { ...concept, retention: decayedRetention });
+  }
+
+  // Phase 5A: Persist forgetting curves — lastRetrievedAt = now (session end)
+  // to prevent double-decay across sessions.
+  const curves = new Map<string, ForgettingCurve>(
+    [...(knowledge.forgettingCurves ?? new Map())],
+  );
+  for (const [key, concept] of decayedConcepts) {
+    const existing = curves.get(key);
+    if (existing) {
+      curves.set(key, {
+        ...existing,
+        retention: concept.retention,
+        lastRetrievedAt: now,
+      });
+    } else if (concept.reviewCount > 0) {
+      curves.set(key, {
+        conceptId: key,
+        firstLearnedAt: concept.lastReviewedAt,
+        lastRetrievedAt: now,
+        retention: concept.retention,
+        retrievalCount: concept.reviewCount,
+        halfLifeMs: DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs,
+      });
+    }
+  }
+
+  return {
+    ...sig,
+    knowledge: {
+      ...knowledge,
+      conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState>,
+      forgettingCurves: curves as ReadonlyMap<string, ForgettingCurve>,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
 // Curriculum encounter scheduling
 // ---------------------------------------------------------------------------
 
@@ -783,29 +845,15 @@ export function endSession(
     }
   }
 
-  // Curriculum expansion: apply retention decay + update learning analytics at session end.
-  // ConceptState stores lastReviewedAt but not the forgetting curve parameters
-  // (halfLifeMs is on the separate ForgettingCurve). We compute basic decay using
-  // a default half-life (24h) elapsed since lastReviewedAt. This ensures the
-  // Significator's knowledge state reflects current retention when persisted,
-  // so CCI computes accurate knowledgeHealth at next session start.
+  // Phase 4C: Update learning profile with analytics data so the scheduler
+  // can use modality effectiveness data in future sessions.
   let finalSig = updatedSig;
   const knowledge = updatedSig.knowledge;
   if (knowledge && knowledge.conceptStates.size > 0) {
-    const decayedConcepts = new Map<string, ConceptState>();
-    for (const [key, concept] of knowledge.conceptStates) {
-      const elapsed = now - concept.lastReviewedAt;
-      const decayedRetention = elapsed > 0
-        ? Math.max(0, Math.min(1, concept.retention * Math.pow(2, -elapsed / DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs)))
-        : concept.retention;
-      decayedConcepts.set(key, { ...concept, retention: decayedRetention });
-    }
-
-    // Phase 4C: Update learning profile with analytics data so the scheduler
-    // can use modality effectiveness data in future sessions.
+    // Phase 4C: Update learning profile with analytics data.
     let updatedProfile = knowledge.learningProfile;
     if (knowledge.studyHistory.length >= 3) {
-      const analytics = computeLearningAnalytics({ ...knowledge, conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState> });
+      const analytics = computeLearningAnalytics({ ...knowledge, conceptStates: knowledge.conceptStates as ReadonlyMap<string, ConceptState> });
       const modalityEff: Record<string, number> = {};
       for (const me of analytics.modalityEffectiveness) {
         modalityEff[me.modality] = me.effectiveness;
@@ -816,54 +864,14 @@ export function endSession(
         learningVelocity: analytics.velocity.conceptsPerSession,
         lastAnalyticsAt: now,
       };
+      finalSig = {
+        ...finalSig,
+        knowledge: finalSig.knowledge ? { ...finalSig.knowledge, learningProfile: updatedProfile } : undefined,
+      };
     }
-
-    // Phase 5A: Persist forgetting curves into KnowledgeState.
-    // Build/update forgetting curves for all concepts so they survive
-    // cross-session. Each curve tracks halfLifeMs, retrieval count, and
-    // last retrieved timestamp — enabling precise spaced repetition at
-    // next session start.
-    let curves = new Map<string, ForgettingCurve>(
-      [...(knowledge.forgettingCurves ?? new Map())],
-    );
-    for (const [key, concept] of decayedConcepts) {
-      const existing = curves.get(key);
-      if (existing) {
-        // Update existing curve with current decay state.
-        // IMPORTANT: lastRetrievedAt = now (session end), not concept.lastReviewedAt,
-        // because retention is already decayed to session end. At next session start,
-        // computeRetention will decay from 'now' to the new session start — avoiding
-        // double-decay that would occur if lastRetrievedAt pointed to last review time.
-        curves.set(key, {
-          ...existing,
-          retention: concept.retention,
-          lastRetrievedAt: now,
-        });
-      } else if (concept.reviewCount > 0) {
-        // Create a new curve for concepts that have been reviewed at least once.
-        // Same principle: lastRetrievedAt = now (session end time) to prevent
-        // double-decay across sessions.
-        curves.set(key, {
-          conceptId: key,
-          firstLearnedAt: concept.lastReviewedAt,
-          lastRetrievedAt: now,
-          retention: concept.retention,
-          retrievalCount: concept.reviewCount,
-          halfLifeMs: DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs,
-        });
-      }
-    }
-
-    finalSig = {
-      ...updatedSig,
-      knowledge: {
-        ...knowledge,
-        conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState>,
-        learningProfile: updatedProfile,
-        forgettingCurves: curves as ReadonlyMap<string, ForgettingCurve>,
-      },
-    };
   }
+  // Apply retention decay + persist forgetting curves via shared helper.
+  finalSig = persistKnowledgeDecay(finalSig, now);
 
   // Hook 4: onSessionEnd — fire fire-and-forget for the sync path.
   // Callers that need to await the hook (e.g. CLI --agent before stopTDGBridge)
@@ -956,52 +964,8 @@ export async function endSessionAsync(
   // now has the same behavior as the sync endSession — no TDG hook to await.
 
   // Phase 5A parity: Apply retention decay + persist forgetting curves
-  // (mirrors the sync endSession path above).
-  let finalSig = updatedSig;
-  const knowledge = updatedSig.knowledge;
-  if (knowledge && knowledge.conceptStates.size > 0) {
-    const decayedConcepts = new Map<string, ConceptState>();
-    for (const [key, concept] of knowledge.conceptStates) {
-      const elapsed = now - concept.lastReviewedAt;
-      const decayedRetention = elapsed > 0
-        ? Math.max(0, Math.min(1, concept.retention * Math.pow(2, -elapsed / DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs)))
-        : concept.retention;
-      decayedConcepts.set(key, { ...concept, retention: decayedRetention });
-    }
-
-    // Build forgetting curves (same logic as sync endSession)
-    const curves = new Map<string, ForgettingCurve>(
-      [...(knowledge.forgettingCurves ?? new Map())],
-    );
-    for (const [key, concept] of decayedConcepts) {
-      const existing = curves.get(key);
-      if (existing) {
-        curves.set(key, {
-          ...existing,
-          retention: concept.retention,
-          lastRetrievedAt: now,
-        });
-      } else if (concept.reviewCount > 0) {
-        curves.set(key, {
-          conceptId: key,
-          firstLearnedAt: concept.lastReviewedAt,
-          lastRetrievedAt: now,
-          retention: concept.retention,
-          retrievalCount: concept.reviewCount,
-          halfLifeMs: DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs,
-        });
-      }
-    }
-
-    finalSig = {
-      ...updatedSig,
-      knowledge: {
-        ...knowledge,
-        conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState>,
-        forgettingCurves: curves as ReadonlyMap<string, ForgettingCurve>,
-      },
-    };
-  }
+  // via shared helper (same logic as sync endSession path).
+  const finalSig = persistKnowledgeDecay(updatedSig, now);
 
   return {
     sig: finalSig,
