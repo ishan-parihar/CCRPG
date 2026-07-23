@@ -105,7 +105,8 @@ program
   .description('Reset progress and start fresh');
 program
   .command('diagnostic')
-  .description('Show system diagnostics')
+  .description('Show system diagnostics');
+program
   .command('curriculum')
   .description('Curriculum management (lint, list)');
 program
