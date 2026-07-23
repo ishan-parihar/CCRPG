@@ -2,12 +2,14 @@
   /**
    * KnowledgeDashboard — curriculum knowledge state visualization.
    * Shows concept coverage, depth distribution, retention health,
-   * and study recommendations based on the player's KnowledgeState.
+   * study recommendations, and learning analytics based on the player's KnowledgeState.
    *
    * Veil-compliant: qualitative bands, no raw metrics exposed.
    */
   import type { KnowledgeState, ConceptState, DepthLevel } from '$core/curriculum/types.js';
   import { ALL_DEPTH_LEVELS, depthOrdinal } from '$core/curriculum/types.js';
+  import { computeLearningAnalytics } from '$core/curriculum/LearningAnalytics.js';
+  import type { LearningAnalyticsReport } from '$core/curriculum/LearningAnalytics.js';
 
   interface Props {
     knowledge: KnowledgeState | undefined;
@@ -15,6 +17,13 @@
   }
 
   let { knowledge, totalConceptsInCurriculum = 0 }: Props = $props();
+
+  // Compute learning analytics report
+  const analytics = $derived(
+    knowledge && knowledge.conceptStates.size > 0 && knowledge.studyHistory.length > 0
+      ? computeLearningAnalytics(knowledge)
+      : null
+  );
 
   // Compute derived metrics
   const conceptCount = $derived(knowledge?.conceptStates.size ?? 0);
@@ -85,6 +94,18 @@
     if (value > 0.6) return { label: 'broad', color: 'var(--ccrpg-success)' };
     if (value > 0.3) return { label: 'growing', color: 'var(--ccrpg-warning)' };
     return { label: 'emerging', color: 'var(--ccrpg-accent)' };
+  }
+
+  function velocityLabel(rate: number): string {
+    if (rate > 2) return 'rapid';
+    if (rate > 0.5) return 'steady';
+    return 'emerging';
+  }
+
+  function modalityLabel(eff: number): string {
+    if (eff > 0.7) return 'highly effective';
+    if (eff > 0.4) return 'moderately effective';
+    return 'developing';
   }
 
   const DEPTH_COLORS: Record<string, string> = {
@@ -174,6 +195,55 @@
             <span class="profile-tag">{mod}</span>
           {/each}
         </div>
+      </div>
+    {/if}
+
+    <!-- Learning Analytics -->
+    {#if analytics && analytics.confidence > 0.1}
+      <div class="section">
+        <h3 class="section-title">Learning Analytics</h3>
+        <div class="analytics-grid">
+          <!-- Velocity -->
+          {#if analytics.velocity.overallRate > 0}
+            <div class="analytics-card">
+              <span class="analytics-label">Learning Velocity</span>
+              <span class="analytics-value">{velocityLabel(analytics.velocity.conceptsPerSession)}</span>
+              <span class="analytics-sub">{analytics.velocity.conceptsPerSession.toFixed(1)} concepts/session</span>
+            </div>
+          {/if}
+
+          <!-- Modality Effectiveness -->
+          {#if analytics.modalityEffectiveness.length > 0}
+            <div class="analytics-card">
+              <span class="analytics-label">Best Modality</span>
+              <span class="analytics-value">{analytics.modalityEffectiveness[0]?.modality ?? '—'}</span>
+              <span class="analytics-sub">{modalityLabel(analytics.modalityEffectiveness[0]?.effectiveness ?? 0)}</span>
+            </div>
+          {/if}
+
+          <!-- Review Urgency -->
+          {#if analytics.reviewIntervals.length > 0}
+            <div class="analytics-card">
+              <span class="analytics-label">Needs Review</span>
+              <span class="analytics-value">{analytics.reviewIntervals.length}</span>
+              <span class="analytics-sub">concept{analytics.reviewIntervals.length !== 1 ? 's' : ''} overdue</span>
+            </div>
+          {/if}
+        </div>
+
+        <!-- Top review candidates -->
+        {#if analytics.reviewIntervals.length > 0}
+          <div class="review-list">
+            {#each analytics.reviewIntervals.slice(0, 3) as ri (ri.conceptId)}
+              <div class="review-item">
+                <span class="review-concept">{ri.conceptId.split('.').pop()}</span>
+                <span class="review-days" style="color: {ri.recommendedDays < 2 ? 'var(--ccrpg-danger)' : 'var(--ccrpg-warning)'}">
+                  review in {Math.round(ri.recommendedDays)}d
+                </span>
+              </div>
+            {/each}
+          </div>
+        {/if}
       </div>
     {/if}
   {/if}
@@ -343,5 +413,74 @@
     background: color-mix(in srgb, var(--ccrpg-accent) 15%, transparent);
     color: var(--ccrpg-accent);
     border: 1px solid color-mix(in srgb, var(--ccrpg-accent) 30%, transparent);
+  }
+
+  /* Analytics */
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--ccrpg-space-2);
+  }
+
+  .analytics-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--ccrpg-space-1);
+    padding: var(--ccrpg-space-3) var(--ccrpg-space-2);
+    border-radius: var(--ccrpg-radius-md);
+    background: color-mix(in srgb, var(--ccrpg-surface) 50%, transparent);
+    border: 1px solid color-mix(in srgb, var(--ccrpg-fg-muted) 10%, transparent);
+  }
+
+  .analytics-label {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg-muted);
+    text-transform: uppercase;
+    letter-spacing: var(--ccrpg-tracking-wide);
+  }
+
+  .analytics-value {
+    font-family: var(--ccrpg-font-display);
+    font-size: var(--ccrpg-text-sm);
+    font-weight: 700;
+    color: var(--ccrpg-fg);
+    text-transform: capitalize;
+  }
+
+  .analytics-sub {
+    font-family: var(--ccrpg-font-body);
+    font-size: 0.65rem;
+    color: var(--ccrpg-fg-muted);
+  }
+
+  .review-list {
+    display: flex;
+    flex-direction: column;
+    gap: var(--ccrpg-space-1);
+    margin-top: var(--ccrpg-space-2);
+  }
+
+  .review-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: var(--ccrpg-space-1) var(--ccrpg-space-2);
+    border-radius: var(--ccrpg-radius-sm);
+    background: color-mix(in srgb, var(--ccrpg-warning) 8%, transparent);
+  }
+
+  .review-concept {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-xs);
+    color: var(--ccrpg-fg);
+    text-transform: capitalize;
+  }
+
+  .review-days {
+    font-family: var(--ccrpg-font-body);
+    font-size: var(--ccrpg-text-xs);
+    font-weight: 500;
   }
 </style>

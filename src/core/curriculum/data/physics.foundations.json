@@ -1,0 +1,446 @@
+[
+  {
+    "id": "physics.foundations",
+    "name": "Physics Foundations",
+    "description": "The foundational concepts of physical reasoning: conservation laws, symmetry principles, and mathematical modeling — the bedrock upon which all physics is built.",
+    "level": "branch",
+    "parentId": null,
+    "childIds": ["physics.classical_mechanics", "physics.electromagnetism", "physics.thermodynamics", "physics.foundations.conservation", "physics.foundations.symmetry"],
+    "phases": {
+      "observation": { "question": "What patterns of cause and effect do you observe in the physical world?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify physical phenomena and describe them qualitatively" },
+      "principle": { "question": "What are the universal principles that govern all physical interactions?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain conservation laws and symmetry as foundational principles" },
+      "application": { "question": "How do these foundations apply to real-world physical systems?", "assessmentType": "application_problem", "completionEvidence": "Student can identify foundational concepts in physical artifacts and phenomena" },
+      "integration": { "question": "How do these foundations connect to each other and to other sciences?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map relationships between foundational physics concepts" },
+      "creation": { "question": "How can you combine these foundations to model novel physical systems?", "assessmentType": "project_based", "completionEvidence": "Student can integrate multiple foundational concepts in a physical model" }
+    },
+    "isomorphisms": [],
+    "prerequisites": [],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": [], "stageRange": { "min": "Amber", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 86400000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Physics foundations encompass the core principles that govern the physical universe. Conservation laws describe what remains unchanged during physical processes. Symmetry principles describe what transformations leave the laws of physics invariant. Mathematical modeling provides the language for precise physical reasoning.", "examples": ["Conservation of energy: energy transforms but is never created or destroyed", "Newton's third law: every action has an equal and opposite reaction", "Symmetry: the laws of physics are the same everywhere in the universe"], "nonExamples": ["Frictionless surfaces (idealizations, not foundations)", "Specific material properties (derived, not foundational)"], "analogies": ["Conservation laws are to physics what axioms are to mathematics"], "visuals": ["Map showing how conservation, symmetry, and modeling interconnect"], "practiceProblems": [{ "id": "physf.p1", "problemText": "Identify at least one example of each conservation law in a swinging pendulum.", "targetDepth": "comprehended" }] },
+    "misconceptions": [],
+    "depthRubric": {
+      "conceptId": "physics.foundations",
+      "levels": {
+        "memorized": { "evidence": "Can name the foundational areas", "canDo": ["Identify conservation, symmetry, modeling as foundations"], "cannotDo": ["Explain how they interconnect"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how each foundation contributes to physics", "canDo": ["Describe the role of each foundation"], "cannotDo": ["Map cross-foundational relationships"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can identify foundational concepts in real physical systems", "canDo": ["Locate conservation laws in physical scenarios"], "cannotDo": ["Analyze foundational choices in model design"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can decompose physical systems into foundational components", "canDo": ["Map physical phenomena to foundational abstractions"], "cannotDo": ["Evaluate foundational trade-offs"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can assess when foundational approaches are appropriate", "canDo": ["Choose foundational tools for modeling"], "cannotDo": ["Create novel foundational frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Foundational thinking is instinctive", "canDo": ["Teach foundations", "Create novel physical models"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "ScenarioChoice", "Deterministic"]
+  },
+  {
+    "id": "physics.classical_mechanics",
+    "name": "Classical Mechanics",
+    "description": "The study of motion and forces: Newton's laws, kinematics, dynamics, energy, momentum, and rotational mechanics.",
+    "level": "subject",
+    "parentId": "physics.foundations",
+    "childIds": ["physics.mechanics.kinematics", "physics.mechanics.dynamics"],
+    "phases": {
+      "observation": { "question": "How do objects move and interact in your everyday experience?", "assessmentType": "factual_recall", "completionEvidence": "Student can describe motion qualitatively using everyday language" },
+      "principle": { "question": "What are the fundamental laws that govern all motion?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain Newton's three laws and conservation principles" },
+      "application": { "question": "How do you predict the motion of objects using these laws?", "assessmentType": "application_problem", "completionEvidence": "Student can solve kinematics and dynamics problems quantitatively" },
+      "integration": { "question": "How does classical mechanics connect to engineering, astronomy, and biology?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map mechanical principles across domains" },
+      "creation": { "question": "How can you model a complex mechanical system from first principles?", "assessmentType": "project_based", "completionEvidence": "Student can build and analyze multi-body mechanical models" }
+    },
+    "isomorphisms": [],
+    "prerequisites": ["physics.foundations"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Somatic"], "stageRange": { "min": "Orange", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "memorized", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 129600000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Classical mechanics describes the motion of macroscopic objects under the influence of forces. Newton's three laws provide the foundation: inertia, F=ma, and action-reaction. Conservation of energy and momentum provide powerful problem-solving tools.", "examples": ["Projectile motion: parabolic trajectory under gravity", "Orbital mechanics: Kepler's laws from Newton's gravity", "Simple harmonic motion: springs and pendulums"], "nonExamples": ["Quantum tunneling (quantum regime)", "Relativistic speeds (need special relativity)"], "analogies": ["Newton's laws are to mechanics what axioms are to geometry"], "visuals": ["Free-body diagrams showing force decomposition"], "practiceProblems": [{ "id": "cm.p1", "problemText": "Calculate the trajectory of a ball thrown at 30° above horizontal with initial velocity 20 m/s.", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "cm.mc1", "statement": "Heavier objects fall faster", "whyItFeelsRight": "A bowling ball seems to fall faster than a feather", "structuralReason": "In vacuum, all objects fall at the same rate (g). Air resistance, not mass, causes the difference. Galileo's experiment at the Leaning Tower of Pisa demonstrated this.", "diagnosticTaskId": "cm.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.classical_mechanics",
+      "levels": {
+        "memorized": { "evidence": "Can recall Newton's laws and basic kinematic equations", "canDo": ["State Newton's three laws", "Write kinematic equations"], "cannotDo": ["Apply to complex multi-body problems"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how forces cause motion and energy transforms", "canDo": ["Explain F=ma conceptually", "Describe energy conservation"], "cannotDo": ["Solve quantitative dynamics problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can solve standard mechanics problems", "canDo": ["Solve projectile motion", "Apply conservation laws"], "cannotDo": ["Analyze complex coupled systems"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can analyze complex mechanical systems", "canDo": ["Decompose multi-body problems", "Compare solution methods"], "cannotDo": ["Design novel mechanical systems"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can judge which approach is best for a given mechanical problem", "canDo": ["Select appropriate principles", "Evaluate model limitations"], "cannotDo": ["Create new mechanical frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Mechanical thinking is instinctive — sees forces and motion everywhere", "canDo": ["Model novel systems", "Teach mechanics", "Create new analytical approaches"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ScenarioChoice"]
+  },
+  {
+    "id": "physics.electromagnetism",
+    "name": "Electromagnetism",
+    "description": "The study of electric and magnetic fields: Coulomb's law, Gauss's law, Faraday's law, and Maxwell's equations.",
+    "level": "subject",
+    "parentId": "physics.foundations",
+    "childIds": ["physics.em.electrostatics", "physics.em.electrodynamics"],
+    "phases": {
+      "observation": { "question": "What electric and magnetic phenomena do you encounter daily?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify everyday electromagnetic phenomena" },
+      "principle": { "question": "What are the fundamental laws governing electric and magnetic fields?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain Coulomb's law, Gauss's law, and Faraday's law" },
+      "application": { "question": "How do you calculate fields and forces in electromagnetic systems?", "assessmentType": "application_problem", "completionEvidence": "Student can solve electrostatics and electrodynamics problems" },
+      "integration": { "question": "How does electromagnetism connect to optics, electronics, and chemistry?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map electromagnetic principles across domains" },
+      "creation": { "question": "How can you design an electromagnetic system for a specific purpose?", "assessmentType": "project_based", "completionEvidence": "Student can design circuits, motors, or electromagnetic devices" }
+    },
+    "isomorphisms": [],
+    "prerequisites": ["physics.foundations"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Somatic"], "stageRange": { "min": "Orange", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "memorized", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 129600000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Electromagnetism is the unified theory of electric and magnetic fields. Electric charges produce electric fields; moving charges produce magnetic fields. Maxwell's equations unify electricity and magnetism and predict electromagnetic waves traveling at the speed of light.", "examples": ["Lightning: massive electrostatic discharge", "Electric motors: converting electrical energy to mechanical", "Radio waves: electromagnetic radiation for communication"], "nonExamples": ["Static cling (surface effects, not field theory)", "Gravity (different fundamental force)"], "analogies": ["Maxwell's equations unify electricity and magnetism like Newton unified terrestrial and celestial mechanics"], "visuals": ["Field line diagrams for electric and magnetic fields"], "practiceProblems": [{ "id": "em.p1", "problemText": "Calculate the electric field at a point 0.1m from a point charge of 1μC.", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "em.mc1", "statement": "Electricity flows through wires like water through pipes", "whyItFeelsRight": "The analogy is commonly taught and feels intuitive", "structuralReason": "Electromagnetic energy travels as fields outside the wire, not as current inside it. The Drude model of electron flow is a useful approximation but breaks down at high frequencies.", "diagnosticTaskId": "em.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.electromagnetism",
+      "levels": {
+        "memorized": { "evidence": "Can recall Coulomb's law, Gauss's law, Faraday's law", "canDo": ["State the fundamental laws"], "cannotDo": ["Apply to complex configurations"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how electric and magnetic fields interact", "canDo": ["Explain field superposition", "Describe electromagnetic induction"], "cannotDo": ["Solve complex boundary-value problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can solve standard electromagnetic problems", "canDo": ["Calculate fields from charge distributions", "Solve circuit problems"], "cannotDo": ["Analyze wave propagation in complex media"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can analyze complex electromagnetic systems", "canDo": ["Decompose systems into fields and sources", "Compare analytical and numerical methods"], "cannotDo": ["Design novel electromagnetic devices"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can judge which approach is best for a given EM problem", "canDo": ["Select appropriate boundary conditions", "Evaluate model limitations"], "cannotDo": ["Create new electromagnetic frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Electromagnetic thinking is instinctive — sees fields and waves everywhere", "canDo": ["Model novel EM systems", "Teach electromagnetism", "Create new analytical approaches"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ImmersiveRPG"]
+  },
+  {
+    "id": "physics.thermodynamics",
+    "name": "Thermodynamics",
+    "description": "The study of heat, energy, and entropy: the four laws of thermodynamics, heat engines, and statistical mechanics foundations.",
+    "level": "subject",
+    "parentId": "physics.foundations",
+    "childIds": ["physics.thermo.laws", "physics.thermo.statistics"],
+    "phases": {
+      "observation": { "question": "How does heat flow and energy transform in your daily life?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify heat transfer and energy conversion phenomena" },
+      "principle": { "question": "What are the fundamental laws that govern all thermal processes?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain the four laws of thermodynamics and entropy" },
+      "application": { "question": "How do you analyze the efficiency of heat engines and refrigerators?", "assessmentType": "application_problem", "completionEvidence": "Student can calculate efficiency and entropy changes" },
+      "integration": { "question": "How does thermodynamics connect to information theory, biology, and cosmology?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map thermodynamic principles across domains" },
+      "creation": { "question": "How can you design an energy-efficient system using thermodynamic principles?", "assessmentType": "project_based", "completionEvidence": "Student can optimize thermal systems for efficiency" }
+    },
+    "isomorphisms": [],
+    "prerequisites": ["physics.foundations"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Spiritual"], "stageRange": { "min": "Orange", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "memorized", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 129600000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Thermodynamics describes the behavior of energy, particularly heat and work. The zeroth law defines temperature. The first law conserves energy. The second law defines entropy and the arrow of time. The third law sets the entropy floor at absolute zero.", "examples": ["Refrigerator: work input moves heat from cold to hot", "Steam engine: heat to work conversion", "Entropy increase: ice melting in a warm room"], "nonExamples": ["Perpetual motion machines (violate first or second law)", "Isolated systems (no real system is perfectly isolated)"], "analogies": ["Entropy is to thermodynamics what uncertainty is to quantum mechanics — a fundamental limit"], "visuals": ["PV diagrams showing thermodynamic cycles"], "practiceProblems": [{ "id": "thermo.p1", "problemText": "Calculate the maximum efficiency of a Carnot engine operating between 600K and 300K.", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "thermo.mc1", "statement": "Entropy is disorder", "whyItFeelsRight": "This is the most common popular-science explanation", "structuralReason": "Entropy is more precisely the number of microstates compatible with a macrostate. A crystal has low entropy not because it's 'neat' but because few microstates match its macrostate. The disorder metaphor breaks down for information entropy.", "diagnosticTaskId": "thermo.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.thermodynamics",
+      "levels": {
+        "memorized": { "evidence": "Can recall the four laws and basic definitions", "canDo": ["State the four laws", "Define temperature, heat, entropy"], "cannotDo": ["Apply to complex thermal systems"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how energy transforms and entropy increases", "canDo": ["Explain each law's meaning", "Describe entropy qualitatively"], "cannotDo": ["Calculate entropy changes"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can solve standard thermodynamics problems", "canDo": ["Calculate heat transfer", "Analyze Carnot cycles"], "cannotDo": ["Analyze non-equilibrium systems"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can analyze complex thermal systems", "canDo": ["Decompose systems into subsystems", "Compare reversible and irreversible processes"], "cannotDo": ["Design novel thermodynamic cycles"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can judge which approach is best for a given thermal problem", "canDo": ["Select appropriate laws", "Evaluate model limitations"], "cannotDo": ["Create new thermodynamic frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Thermodynamic thinking is instinctive — sees energy and entropy everywhere", "canDo": ["Model novel thermal systems", "Teach thermodynamics", "Create new analytical approaches"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ScenarioChoice"]
+  },
+  {
+    "id": "physics.mechanics.kinematics",
+    "name": "Kinematics",
+    "description": "The description of motion without regard to forces: displacement, velocity, acceleration, and trajectory analysis.",
+    "level": "topic",
+    "parentId": "physics.classical_mechanics",
+    "childIds": [],
+    "phases": {
+      "observation": { "question": "How do you describe the motion of objects you see around you?", "assessmentType": "factual_recall", "completionEvidence": "Student can describe motion using position, velocity, and acceleration" },
+      "principle": { "question": "What mathematical framework describes motion precisely?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain the relationship between position, velocity, and acceleration" },
+      "application": { "question": "How do you predict where an object will be at a future time?", "assessmentType": "application_problem", "completionEvidence": "Student can solve projectile and trajectory problems" },
+      "integration": { "question": "How does kinematics connect to calculus, navigation, and sports science?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map kinematic concepts across domains" },
+      "creation": { "question": "How can you model complex motions by combining simple components?", "assessmentType": "project_based", "completionEvidence": "Student can decompose and reconstruct complex trajectories" }
+    },
+    "isomorphisms": [
+      { "pattern": "rate of change of a quantity", "targetConceptId": "physics.foundations.conservation", "targetDomain": "Physics", "mappingDescription": "Velocity is the rate of change of position; acceleration is the rate of change of velocity", "limitations": "Kinematics describes motion; conservation laws explain why motion changes" }
+    ],
+    "prerequisites": ["physics.classical_mechanics", "physics.foundations.conservation"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Somatic"], "stageRange": { "min": "Orange", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.0, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Kinematics is the branch of mechanics that describes motion. Position is a vector from a reference point. Velocity is the rate of change of position. Acceleration is the rate of change of velocity. Projectile motion combines horizontal and vertical components.", "examples": ["Free fall: a = g downward, independent of horizontal motion", "Projectile: parabolic trajectory from constant acceleration", "Circular motion: constant speed, changing velocity direction"], "nonExamples": ["Force analysis (dynamics, not kinematics)", "Energy calculations (related but distinct)"], "analogies": ["Velocity is to position what interest is to principal — the rate of accumulation"], "visuals": ["Position-time and velocity-time graphs"], "practiceProblems": [{ "id": "kin.p1", "problemText": "A ball is thrown horizontally from 20m height at 15 m/s. Where does it land?", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "kin.mc1", "statement": "An object in motion needs a force to keep moving", "whyItFeelsRight": "Things we push seem to stop when we stop pushing", "structuralReason": "Newton's first law says objects maintain constant velocity unless acted on by a force. Friction, not absence of force, causes slowing.", "diagnosticTaskId": "kin.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.mechanics.kinematics",
+      "levels": {
+        "memorized": { "evidence": "Can recall kinematic definitions and equations", "canDo": ["Define position, velocity, acceleration", "Write kinematic equations"], "cannotDo": ["Apply to multi-dimensional problems"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how motion quantities relate", "canDo": ["Explain v = dx/dt, a = dv/dt"], "cannotDo": ["Solve projectile problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can solve 1D and 2D kinematics problems", "canDo": ["Solve free fall and projectile motion"], "cannotDo": ["Analyze complex curved trajectories"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can decompose complex motions into components", "canDo": ["Analyze 2D and 3D trajectories", "Compare solution methods"], "cannotDo": ["Design novel kinematic systems"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can judge when approximations (e.g., flat Earth) are valid", "canDo": ["Evaluate model assumptions", "Select coordinate systems"], "cannotDo": ["Create new kinematic frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Kinematic thinking is instinctive", "canDo": ["Predict trajectories intuitively", "Teach kinematics"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ScenarioChoice"]
+  },
+  {
+    "id": "physics.mechanics.dynamics",
+    "name": "Dynamics",
+    "description": "The study of forces and their effects on motion: Newton's laws, friction, drag, and multi-body systems.",
+    "level": "topic",
+    "parentId": "physics.classical_mechanics",
+    "childIds": [],
+    "phases": {
+      "observation": { "question": "What forces do you observe acting on objects around you?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify forces (gravity, friction, tension) in everyday situations" },
+      "principle": { "question": "How do forces cause changes in motion?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain F=ma and free-body diagram analysis" },
+      "application": { "question": "How do you predict motion given a set of forces?", "assessmentType": "application_problem", "completionEvidence": "Student can solve dynamics problems using Newton's laws" },
+      "integration": { "question": "How does dynamics connect to engineering design, biology, and geology?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map force analysis across domains" },
+      "creation": { "question": "How can you design a system to achieve a desired motion?", "assessmentType": "project_based", "completionEvidence": "Student can engineer force-based solutions" }
+    },
+    "isomorphisms": [
+      { "pattern": "cause producing an effect through a fundamental law", "targetConceptId": "physics.foundations.symmetry", "targetDomain": "Physics", "mappingDescription": "Newton's third law (action-reaction) is a symmetry principle for forces", "limitations": "Dynamics is about forces; symmetry is about invariance" }
+    ],
+    "prerequisites": ["physics.classical_mechanics", "physics.foundations.symmetry"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Willpower"], "stageRange": { "min": "Orange", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.0, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Dynamics is the study of how forces produce motion. Newton's second law (F=ma) is the central equation. Free-body diagrams decompose forces into components. Friction opposes motion; drag opposes velocity. Multi-body problems require solving coupled equations.", "examples": ["Sliding block with friction: F_net = F_applied - μmg", "Atwood machine: coupled masses connected by a string", "Drag force: F_drag = ½ρv²CdA"], "nonExamples": ["Kinematics (describes motion, not forces)", "Energy methods (related but different approach)"], "analogies": ["Free-body diagrams are to dynamics what circuit diagrams are to electronics"], "visuals": ["Free-body diagram decomposition of forces"], "practiceProblems": [{ "id": "dyn.p1", "problemText": "A 5kg block on a 30° incline with μ=0.3. What force is needed to push it up at constant velocity?", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "dyn.mc1", "statement": "A heavier object requires more force to accelerate the same amount", "whyItFeelsRight": "It feels harder to push heavy things fast", "structuralReason": "F=ma shows that for the same force, heavier objects accelerate less — but the question of 'same acceleration' requires proportionally more force for more mass. This is exactly what F=ma captures.", "diagnosticTaskId": "dyn.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.mechanics.dynamics",
+      "levels": {
+        "memorized": { "evidence": "Can recall Newton's laws and force definitions", "canDo": ["State F=ma", "Identify common forces"], "cannotDo": ["Draw free-body diagrams for complex systems"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how forces cause acceleration", "canDo": ["Explain F=ma conceptually", "Describe friction types"], "cannotDo": ["Solve multi-force problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can solve standard dynamics problems", "canDo": ["Draw free-body diagrams", "Solve single-body problems"], "cannotDo": ["Solve coupled multi-body systems"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can analyze complex force systems", "canDo": ["Decompose multi-body problems", "Compare friction models"], "cannotDo": ["Design novel mechanical systems"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can judge when force models are appropriate", "canDo": ["Select force models", "Evaluate drag assumptions"], "cannotDo": ["Create new dynamical frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Force thinking is instinctive", "canDo": ["Predict motion from forces intuitively", "Teach dynamics"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ImmersiveRPG"]
+  },
+  {
+    "id": "physics.em.electrostatics",
+    "name": "Electrostatics",
+    "description": "The study of stationary electric charges: Coulomb's law, electric fields, potential, and capacitance.",
+    "level": "topic",
+    "parentId": "physics.electromagnetism",
+    "childIds": [],
+    "phases": {
+      "observation": { "question": "What static electric effects have you experienced?", "assessmentType": "factual_recall", "completionEvidence": "Student can describe static electricity phenomena" },
+      "principle": { "question": "What laws govern the interaction of stationary charges?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain Coulomb's law and Gauss's law" },
+      "application": { "question": "How do you calculate electric fields and potentials?", "assessmentType": "application_problem", "completionEvidence": "Student can solve electrostatic problems" },
+      "integration": { "question": "How does electrostatics connect to chemistry, biology, and materials science?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map electrostatic principles across domains" },
+      "creation": { "question": "How can you design electrostatic systems for specific applications?", "assessmentType": "project_based", "completionEvidence": "Student can design capacitors and electrostatic devices" }
+    },
+    "isomorphisms": [
+      { "pattern": "inverse-square law field from a source", "targetConceptId": "physics.foundations.conservation", "targetDomain": "Physics", "mappingDescription": "Gauss's law for electric fields mirrors Gauss's law for gravity", "limitations": "Electric charges come in two types; mass is always positive" }
+    ],
+    "prerequisites": ["physics.electromagnetism", "physics.foundations.conservation"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Somatic"], "stageRange": { "min": "Orange", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.0, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Electrostatics studies charges at rest. Coulomb's law gives the force between two point charges. Electric field describes force per unit charge. Electric potential is the potential energy per unit charge. Gauss's law relates field flux to enclosed charge.", "examples": ["Lightning rod: concentrated field at sharp points", "Van de Graaff generator: charge accumulation on a sphere", "Capacitor: energy storage in electric fields"], "nonExamples": ["Current flow (electrodynamics, not electrostatics)", "Magnetic fields from moving charges (dynamics)"], "analogies": ["Electric field lines are to charge what gravitational field lines are to mass"], "visuals": ["Field line diagrams for point charges and dipoles"], "practiceProblems": [{ "id": "es.p1", "problemText": "Find the electric field at the midpoint between two equal charges separated by 0.2m.", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "es.mc1", "statement": "Electric field lines start on positive charges and end on negative charges, passing through space in straight lines", "whyItFeelsRight": "Textbook diagrams often show straight lines between charges", "structuralReason": "Field lines are curved in general and never cross. They form closed loops in regions without charges. The straight-line depiction is only valid for idealized configurations.", "diagnosticTaskId": "es.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.em.electrostatics",
+      "levels": {
+        "memorized": { "evidence": "Can recall Coulomb's law and basic definitions", "canDo": ["State F = kq₁q₂/r²", "Define E, V, C"], "cannotDo": ["Apply to complex charge distributions"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how charges create fields and potentials", "canDo": ["Explain field superposition", "Describe capacitance"], "cannotDo": ["Solve boundary-value problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can solve standard electrostatic problems", "canDo": ["Calculate fields from charge distributions", "Solve capacitor circuits"], "cannotDo": ["Analyze dielectric breakdown"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can analyze complex charge configurations", "canDo": ["Use Gauss's law for symmetric problems", "Compare analytical and numerical methods"], "cannotDo": ["Design novel electrostatic devices"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can judge when approximations are valid", "canDo": ["Evaluate point-charge assumptions", "Select appropriate methods"], "cannotDo": ["Create new electrostatic frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Electrostatic thinking is instinctive", "canDo": ["Predict field configurations intuitively", "Teach electrostatics"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ScenarioChoice"]
+  },
+  {
+    "id": "physics.em.electrodynamics",
+    "name": "Electrodynamics",
+    "description": "The study of moving charges and time-varying fields: current, circuits, electromagnetic induction, and Maxwell's equations.",
+    "level": "topic",
+    "parentId": "physics.electromagnetism",
+    "childIds": [],
+    "phases": {
+      "observation": { "question": "What electromagnetic devices do you use every day?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify electrodynamical devices (motors, generators, antennas)" },
+      "principle": { "question": "How do moving charges and changing fields interact?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain Faraday's law and Lenz's law" },
+      "application": { "question": "How do you analyze circuits and electromagnetic devices?", "assessmentType": "application_problem", "completionEvidence": "Student can solve circuit and induction problems" },
+      "integration": { "question": "How does electrodynamics connect to communication, power systems, and computing?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map electromagnetic principles across domains" },
+      "creation": { "question": "How can you design electromagnetic devices for specific applications?", "assessmentType": "project_based", "completionEvidence": "Student can design circuits, antennas, and motors" }
+    },
+    "isomorphisms": [
+      { "pattern": "time-varying field creating an opposing effect", "targetConceptId": "physics.foundations.symmetry", "targetDomain": "Physics", "mappingDescription": "Lenz's law is a symmetry principle for electromagnetic induction", "limitations": "Lenz's law is a consequence of energy conservation, not a separate law" }
+    ],
+    "prerequisites": ["physics.electromagnetism", "physics.foundations.symmetry"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Somatic"], "stageRange": { "min": "Orange", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.0, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Electrodynamics studies time-varying electromagnetic fields. Faraday's law says changing magnetic flux induces EMF. Lenz's law says the induced EMF opposes the change. Maxwell's equations unify electricity, magnetism, and optics.", "examples": ["Generator: mechanical rotation induces EMF", "Transformer: changing current in one coil induces current in another", "Radio antenna: oscillating current produces electromagnetic waves"], "nonExamples": ["Static circuits (DC, not time-varying)", "Electrostatics (no current)"], "analogies": ["Faraday's law is to electromagnetism what Newton's third law is to mechanics — an action-reaction principle"], "visuals": ["Faraday's law demonstration with moving magnets and coils"], "practiceProblems": [{ "id": "ed.p1", "problemText": "A coil with 100 turns and area 0.01m² experiences a magnetic field changing at 2T/s. What is the induced EMF?", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "ed.mc1", "statement": "Induced current flows in the same direction as the changing magnetic field", "whyItFeelsRight": "The field is increasing, so it seems the current should follow", "structuralReason": "Lenz's law says the induced EMF opposes the change. If the field is increasing, the induced current creates a field in the opposite direction.", "diagnosticTaskId": "ed.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.em.electrodynamics",
+      "levels": {
+        "memorized": { "evidence": "Can recall Faraday's law, Lenz's law, and circuit rules", "canDo": ["State Faraday's law", "Apply Kirchhoff's rules"], "cannotDo": ["Solve transient circuit problems"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how changing fields induce currents", "canDo": ["Explain Faraday's law conceptually", "Describe Lenz's law direction"], "cannotDo": ["Solve coupled field-circuit problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can solve standard electrodynamics problems", "canDo": ["Calculate induced EMF", "Solve RC and RL circuits"], "cannotDo": ["Analyze electromagnetic wave propagation"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can analyze complex electromagnetic systems", "canDo": ["Decompose coupled systems", "Compare AC and DC analysis"], "cannotDo": ["Design novel electromagnetic devices"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can judge when approximations are valid", "canDo": ["Evaluate quasi-static assumptions", "Select circuit models"], "cannotDo": ["Create new electrodynamical frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Electromagnetic thinking is instinctive", "canDo": ["Predict induced effects intuitively", "Teach electrodynamics"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ImmersiveRPG"]
+  },
+  {
+    "id": "physics.thermo.laws",
+    "name": "Laws of Thermodynamics",
+    "description": "The four fundamental laws: thermal equilibrium, energy conservation, entropy increase, and absolute zero.",
+    "level": "topic",
+    "parentId": "physics.thermodynamics",
+    "childIds": [],
+    "phases": {
+      "observation": { "question": "What thermal processes do you observe in daily life?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify heat transfer and temperature phenomena" },
+      "principle": { "question": "What are the four laws and why are they fundamental?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain each law's meaning and implications" },
+      "application": { "question": "How do you apply the laws to analyze thermal systems?", "assessmentType": "application_problem", "completionEvidence": "Student can calculate entropy changes and efficiency limits" },
+      "integration": { "question": "How do the laws connect to information theory and cosmology?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map thermodynamic principles across domains" },
+      "creation": { "question": "How can you optimize a system within thermodynamic constraints?", "assessmentType": "project_based", "completionEvidence": "Student can design efficient thermal systems" }
+    },
+    "isomorphisms": [
+      { "pattern": "fundamental constraint on what is possible", "targetConceptId": "physics.foundations.conservation", "targetDomain": "Physics", "mappingDescription": "The second law constrains what the first law permits", "limitations": "Conservation laws are about what's preserved; the second law is about what's irreversible" }
+    ],
+    "prerequisites": ["physics.thermodynamics", "physics.foundations.conservation"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Spiritual"], "stageRange": { "min": "Orange", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "comprehended", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 172800000, "halfLifeMultiplier": 2.0, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "The four laws of thermodynamics form a complete framework. Zeroth: thermal equilibrium is transitive. First: energy is conserved. Second: entropy of an isolated system never decreases. Third: entropy approaches a minimum at absolute zero.", "examples": ["Zeroth law: if A and B are in equilibrium, and B and C are in equilibrium, then A and C are in equilibrium", "First law: ΔU = Q - W (internal energy change = heat added minus work done)", "Second law: heat flows spontaneously from hot to cold, never the reverse", "Third law: no process can reach absolute zero in finite steps"], "nonExamples": ["Perpetual motion machines (violate first or second law)", "Reversible processes (idealizations that approach but never reach true reversibility)"], "analogies": ["The second law is to thermodynamics what Gödel's theorem is to mathematics — a fundamental limit on what's achievable"], "visuals": ["Carnot cycle on PV and TS diagrams"], "practiceProblems": [{ "id": "laws.p1", "problemText": "A Carnot engine operates between 500K and 300K. If it absorbs 1000J of heat, how much work does it produce?", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "laws.mc1", "statement": "The second law says everything tends toward disorder", "whyItFeelsRight": "This is the most popular (mis)characterization", "structuralReason": "The second law says entropy (number of accessible microstates) tends to increase. A crystal forming from solution increases local order but increases total entropy more.", "diagnosticTaskId": "laws.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.thermo.laws",
+      "levels": {
+        "memorized": { "evidence": "Can state the four laws precisely", "canDo": ["Recall each law's statement"], "cannotDo": ["Explain their implications"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain what each law means physically", "canDo": ["Explain thermal equilibrium", "Describe entropy qualitatively"], "cannotDo": ["Calculate entropy changes"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can apply the laws to solve thermal problems", "canDo": ["Calculate efficiency limits", "Determine entropy changes"], "cannotDo": ["Analyze irreversible processes in detail"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can analyze the limits imposed by thermodynamic laws", "canDo": ["Identify Carnot limits", "Compare reversible and irreversible processes"], "cannotDo": ["Design novel thermodynamic cycles"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can assess when thermodynamic approximations are valid", "canDo": ["Evaluate idealizations", "Select appropriate models"], "cannotDo": ["Create new thermodynamic frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Thermodynamic reasoning is instinctive", "canDo": ["Predict thermodynamic behavior intuitively", "Teach the laws of thermodynamics"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ScenarioChoice"]
+  },
+  {
+    "id": "physics.thermo.statistics",
+    "name": "Statistical Mechanics",
+    "description": "The microscopic foundations of thermodynamics: statistical ensembles, partition functions, and the connection between micro and macro states.",
+    "level": "topic",
+    "parentId": "physics.thermodynamics",
+    "childIds": [],
+    "phases": {
+      "observation": { "question": "How do individual particles give rise to bulk properties like temperature?", "assessmentType": "factual_recall", "completionEvidence": "Student can describe the statistical origin of temperature and pressure" },
+      "principle": { "question": "How do microstates relate to macrostates?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain statistical ensembles and Boltzmann's entropy formula" },
+      "application": { "question": "How do you calculate macroscopic properties from microscopic models?", "assessmentType": "application_problem", "completionEvidence": "Student can compute partition functions and thermodynamic quantities" },
+      "integration": { "question": "How does statistical mechanics connect to information theory and biology?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map statistical principles across domains" },
+      "creation": { "question": "How can you model complex systems using statistical methods?", "assessmentType": "project_based", "completionEvidence": "Student can build statistical models of physical systems" }
+    },
+    "isomorphisms": [
+      { "pattern": "emergent behavior from many simple components", "targetConceptId": "physics.foundations.symmetry", "targetDomain": "Physics", "mappingDescription": "Thermodynamic behavior emerges from microscopic symmetries", "limitations": "Statistical mechanics requires ergodicity, which is not guaranteed" }
+    ],
+    "prerequisites": ["physics.thermodynamics", "physics.foundations.conservation", "physics.foundations.symmetry"],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Intrapersonal"], "stageRange": { "min": "Amber", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "applied", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 259200000, "halfLifeMultiplier": 2.0, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Statistical mechanics bridges microscopic particle behavior and macroscopic thermodynamic properties. A microstate specifies the complete state of every particle. A macrostate specifies bulk properties. Boltzmann's formula S = k·ln(W) connects entropy to the number of accessible microstates.", "examples": ["Ideal gas: pressure from molecular collisions", "Maxwell-Boltzmann distribution: speeds of gas molecules", "Phase transitions: emergence of order from microscopic interactions"], "nonExamples": ["Classical thermodynamics (macroscopic only)", "Quantum statistics (requires quantum mechanics)"], "analogies": ["Boltzmann's formula is to thermodynamics what Shannon's formula is to information theory"], "visuals": ["Phase space diagrams showing microstates"], "practiceProblems": [{ "id": "stat.p1", "problemText": "Calculate the average kinetic energy of gas molecules at 300K using the equipartition theorem.", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "stat.mc1", "statement": "Statistical mechanics only applies to ideal gases", "whyItFeelsRight": "Textbooks often focus on ideal gas examples", "structuralReason": "Statistical mechanics applies to any system with many degrees of freedom: solids, liquids, magnets, photons, and even black holes.", "diagnosticTaskId": "stat.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.thermo.statistics",
+      "levels": {
+        "memorized": { "evidence": "Can recall Boltzmann's formula and basic statistical concepts", "canDo": ["State S = k·ln(W)", "Define microstate and macrostate"], "cannotDo": ["Calculate partition functions"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how microscopic behavior gives rise to thermodynamics", "canDo": ["Explain Boltzmann distribution", "Describe equipartition"], "cannotDo": ["Compute statistical averages"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can calculate thermodynamic properties from microscopic models", "canDo": ["Compute partition functions", "Calculate heat capacity"], "cannotDo": ["Analyze phase transitions"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can analyze complex statistical systems", "canDo": ["Compare ensembles", "Identify ergodicity issues"], "cannotDo": ["Create new statistical frameworks"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can judge when statistical approximations are valid", "canDo": ["Evaluate thermodynamic limits", "Assess ergodic assumptions"], "cannotDo": ["Create new statistical mechanics frameworks"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Statistical thinking is instinctive", "canDo": ["Predict macroscopic behavior from micro models", "Teach statistical mechanics"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ImmersiveRPG"]
+  },
+  {
+    "id": "physics.foundations.conservation",
+    "name": "Conservation Laws",
+    "description": "The fundamental principles that certain quantities remain unchanged: conservation of energy, momentum, angular momentum, and charge.",
+    "level": "concept",
+    "parentId": "physics.foundations",
+    "childIds": [],
+    "phases": {
+      "observation": { "question": "What quantities seem to remain constant in physical processes you observe?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify examples of conserved quantities in everyday phenomena" },
+      "principle": { "question": "What makes a quantity conserved, and what does conservation tell us?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain Noether's theorem connecting symmetry and conservation" },
+      "application": { "question": "How do conservation laws simplify physical problem-solving?", "assessmentType": "application_problem", "completionEvidence": "Student can use conservation laws to solve problems without detailed force analysis" },
+      "integration": { "question": "How do conservation laws connect across all branches of physics?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can apply conservation principles in mechanics, E&M, and thermodynamics" },
+      "creation": { "question": "How can conservation principles guide the design of physical systems?", "assessmentType": "project_based", "completionEvidence": "Student can design systems that exploit conservation laws" }
+    },
+    "isomorphisms": [
+      { "pattern": "symmetry implying invariance", "targetConceptId": "physics.foundations.symmetry", "targetDomain": "Physics", "mappingDescription": "Every conservation law corresponds to a symmetry via Noether's theorem", "limitations": "Conservation laws are consequences of symmetries, not independent principles" }
+    ],
+    "prerequisites": [],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Spiritual"], "stageRange": { "min": "Amber", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 86400000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Conservation laws state that certain physical quantities remain constant in isolated systems. Energy, momentum, angular momentum, and electric charge are conserved. Noether's theorem proves that every conservation law corresponds to a symmetry of the laws of physics.", "examples": ["Pool ball collision: total momentum before = total momentum after", "Roller coaster: potential energy converts to kinetic and back, total conserved", "Nuclear reactions: charge and mass-energy conserved"], "nonExamples": ["Friction (energy not conserved in the object alone, but conserved when heat is included)", "Open systems (mass or energy can flow in/out)"], "analogies": ["Conservation laws are the 'accounting rules' of physics — nothing appears or disappears without explanation"], "visuals": ["Energy flow diagrams showing conservation"], "practiceProblems": [{ "id": "cons.p1", "problemText": "A 2kg ball moving at 3m/s collides with a stationary 1kg ball. If the collision is elastic, find the velocities after collision.", "targetDepth": "applied" }] },
+    "misconceptions": [
+      { "id": "cons.mc1", "statement": "Energy is conserved in all situations", "whyItFeelsRight": "The first law of thermodynamics says energy is conserved", "structuralReason": "Energy is conserved in isolated systems. In open systems, energy can enter or leave. Also, in general relativity, energy conservation becomes subtle for expanding universes.", "diagnosticTaskId": "cons.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.foundations.conservation",
+      "levels": {
+        "memorized": { "evidence": "Can recall the main conservation laws", "canDo": ["List energy, momentum, charge conservation"], "cannotDo": ["Explain why they hold"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain the connection between symmetry and conservation", "canDo": ["Describe Noether's theorem qualitatively"], "cannotDo": ["Apply conservation to complex problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can use conservation laws to solve problems", "canDo": ["Apply energy and momentum conservation"], "cannotDo": ["Identify when conservation applies"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can identify which conservation law applies to a given situation", "canDo": ["Choose appropriate conservation laws", "Detect when systems are not isolated"], "cannotDo": ["Create new conservation principles"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can assess the limits of conservation in non-ideal systems", "canDo": ["Evaluate approximations", "Identify hidden conserved quantities"], "cannotDo": ["Extend conservation to new domains"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Conservation thinking is instinctive", "canDo": ["Apply conservation principles universally", "Teach conservation laws"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ScenarioChoice"]
+  },
+  {
+    "id": "physics.foundations.symmetry",
+    "name": "Symmetry Principles",
+    "description": "The role of symmetry in physics: spatial, temporal, rotational, and gauge symmetries, and their connection to conservation laws and fundamental forces.",
+    "level": "concept",
+    "parentId": "physics.foundations",
+    "childIds": [],
+    "phases": {
+      "observation": { "question": "What symmetries do you notice in natural and artificial structures?", "assessmentType": "factual_recall", "completionEvidence": "Student can identify examples of symmetry in physical systems" },
+      "principle": { "question": "How does symmetry constrain the laws of physics?", "assessmentType": "concept_explanation", "completionEvidence": "Student can explain how symmetry requirements determine force laws" },
+      "application": { "question": "How do you use symmetry to simplify physical problems?", "assessmentType": "application_problem", "completionEvidence": "Student can use symmetry arguments to solve problems without detailed calculation" },
+      "integration": { "question": "How do symmetry principles connect across all of physics?", "assessmentType": "analogy_mapping", "completionEvidence": "Student can map symmetry arguments across mechanics, E&M, and particle physics" },
+      "creation": { "question": "How can symmetry principles guide the discovery of new physics?", "assessmentType": "research_question", "completionEvidence": "Student can propose new symmetries as explanations for unexplained phenomena" }
+    },
+    "isomorphisms": [],
+    "prerequisites": [],
+    "devMapping": { "primaryLine": "Cognitive", "secondaryLines": ["Spiritual"], "stageRange": { "min": "Amber", "max": "Green" } },
+    "depthMeta": { "requiredPrerequisiteDepth": "absent", "targetDepthRange": { "min": "memorized", "max": "transformed" }, "depthProgression": ["memorized", "comprehended", "applied", "analyzed", "evaluated", "transformed"] },
+    "forgettingParams": { "initialHalfLifeMs": 86400000, "halfLifeMultiplier": 2.5, "maxHalfLifeMs": 31536000000 },
+    "content": { "explanation": "Symmetry in physics means that the laws of physics remain unchanged under certain transformations. Spatial translation symmetry implies conservation of momentum. Temporal translation symmetry implies conservation of energy. Rotational symmetry implies conservation of angular momentum.", "examples": ["Spherical symmetry of gravity: Kepler's laws", "Gauge symmetry: determines the form of electromagnetic interactions", "Lorentz symmetry: the foundation of special relativity"], "nonExamples": ["Approximate symmetries (broken symmetries)", "Discrete symmetries (parity, charge conjugation)"], "analogies": ["Symmetry is to physics what grammar is to language — it constrains what is possible"], "visuals": ["Symmetry groups and their associated conservation laws"], "practiceProblems": [{ "id": "sym.p1", "problemText": "If the laws of physics were not invariant under time translation, what conservation law would fail?", "targetDepth": "comprehended" }] },
+    "misconceptions": [
+      { "id": "sym.mc1", "statement": "Symmetry means something looks the same from all angles", "whyItFeelsRight": "Visual symmetry is the most familiar form", "structuralReason": "Physical symmetry means the laws (not the objects) are invariant under transformations. A crystal has spatial symmetry but breaks translational symmetry of the lattice.", "diagnosticTaskId": "sym.mc1.diag" }
+    ],
+    "depthRubric": {
+      "conceptId": "physics.foundations.symmetry",
+      "levels": {
+        "memorized": { "evidence": "Can recall types of symmetry and their associated conservation laws", "canDo": ["List spatial, temporal, rotational symmetries"], "cannotDo": ["Explain Noether's theorem"], "appropriateTasks": ["factual_recall"], "threshold": 0.3 },
+        "comprehended": { "evidence": "Can explain how symmetry constrains physical laws", "canDo": ["Describe Noether's theorem", "Connect symmetry to conservation"], "cannotDo": ["Apply symmetry arguments to new problems"], "appropriateTasks": ["concept_explanation"], "threshold": 0.5 },
+        "applied": { "evidence": "Can use symmetry to simplify problem-solving", "canDo": ["Apply symmetry arguments", "Use parity and conservation"], "cannotDo": ["Analyze broken symmetries"], "appropriateTasks": ["application_problem"], "threshold": 0.65 },
+        "analyzed": { "evidence": "Can identify symmetry breaking in physical systems", "canDo": ["Detect approximate symmetries", "Analyze symmetry-breaking effects"], "cannotDo": ["Create new symmetry principles"], "appropriateTasks": ["case_study_analysis"], "threshold": 0.8 },
+        "evaluated": { "evidence": "Can assess when symmetry arguments are valid", "canDo": ["Evaluate symmetry approximations", "Identify hidden symmetries"], "cannotDo": ["Extend symmetry to new domains"], "appropriateTasks": ["peer_review"], "threshold": 0.9 },
+        "transformed": { "evidence": "Symmetry thinking is instinctive", "canDo": ["Apply symmetry reasoning universally", "Teach symmetry principles"], "cannotDo": [], "appropriateTasks": ["peer_teaching", "creative_synthesis"], "threshold": 0.95 }
+      }
+    },
+    "supportedModalities": ["LanguageReflective", "Deterministic", "ScenarioChoice"]
+  }
+]
