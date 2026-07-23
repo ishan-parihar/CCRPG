@@ -107,7 +107,7 @@ program
   .command('diagnostic')
   .description('Show system diagnostics');
 program
-  .command('curriculum')
+  .command('curriculum [action]')
   .description('Curriculum management (lint, list)');
 program
   .command('session')
@@ -4606,12 +4606,19 @@ function runGlossary(showFull = false): void {
 }
 
 // ── Curriculum management ─────────────────────────────────────────
-function runCurriculum(): void {
+function runCurriculum(action?: string): void {
   banner('Curriculum Manager');
   seedCurriculumRegistry();
   const registry = getCurriculumRegistry();
+
+  // Route based on action argument
+  if (action && !['lint', 'list'].includes(action)) {
+    console.log(`
+  ${chalk.red("Unknown action:")} ${action}. Use ${chalk.bold("lint")} or ${chalk.bold("list")}
+`);
+    return;
+  }
   const count = registry.count();
-  const ids = registry.conceptIds();
 
   console.log(`\n  ${chalk.bold('Holons loaded:')} ${chalk.cyan(String(count))}`);
   console.log(`  ${chalk.bold('Branches:')} ${chalk.green(String(registry.getByLevel('branch').length))}`);
@@ -4620,7 +4627,8 @@ function runCurriculum(): void {
   console.log(`  ${chalk.bold('Courses:')} ${chalk.yellow(String(registry.getByLevel('course').length))}`);
   console.log(`  ${chalk.bold('Lessons:')} ${chalk.cyan(String(registry.getByLevel('lesson').length))}`);
 
-  // Run linter
+  // Run linter (when action is 'lint' or no action specified)
+  if (!action || action === 'lint') {
   const result = lintRegistry(registry);
   if (result.overallPassed) {
     console.log(`\n  ${chalk.green('✓')} Lint passed (${result.totalErrors} errors, ${result.totalWarnings} warnings)`);
@@ -4637,7 +4645,10 @@ function runCurriculum(): void {
     }
   }
 
-  // List branches
+  }
+
+  // List branches (when action is 'list' or no action specified)
+  if (!action || action === 'list') {
   const branches = registry.getByLevel('branch');
   if (branches.length > 0) {
     console.log(`\n  ${chalk.bold('Branches:')}`);
@@ -4645,6 +4656,7 @@ function runCurriculum(): void {
       const childCount = b.childIds.length;
       console.log(`  ${chalk.cyan(b.id)} — ${chalk.dim(b.name)} (${childCount} child${childCount === 1 ? '' : 's'})`);
     }
+  }
   }
   console.log('');
 }
@@ -4701,7 +4713,7 @@ async function main(): Promise<void> {
   }
   if (subcommand === 'profile') { await runProfile(program.args[1], program.args[2]); return; }
   if (subcommand === 'setup-profile') { await runSetupProfile(); return; }
-  if (subcommand === 'curriculum') { await runCurriculum(); return; }
+  if (subcommand === 'curriculum') { runCurriculum(program.args[1]); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
   // game doesn't inherit the old player's developmental graph.
