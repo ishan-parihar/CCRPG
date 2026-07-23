@@ -106,6 +106,8 @@ program
 program
   .command('diagnostic')
   .description('Show system diagnostics');
+  .command('curriculum')
+  .description('Curriculum management (lint, list)');
 program
   .command('session')
   .description('Start an interactive session');
@@ -308,6 +310,7 @@ import { computeCCI } from '../src/core/engines/CCIEngine.js';
 import { SessionAgent } from '../src/core/assessments/SessionAgent.js';
 import { getCurriculumRegistry } from '../src/core/curriculum/CurriculumRegistry.js';
 import { seedCurriculumRegistry } from '../src/core/curriculum/CurriculumSeed.js';
+import { lintRegistry } from '../src/core/curriculum/CurriculumLinter.js';
 
 /**
  * --curriculum flag: force curriculum encounters by injecting slots.
@@ -4521,13 +4524,58 @@ function runGlossary(showFull = false): void {
   console.log('');
 }
 
+// ── Curriculum management ─────────────────────────────────────────
+function runCurriculum(): void {
+  banner('Curriculum Manager');
+  seedCurriculumRegistry();
+  const registry = getCurriculumRegistry();
+  const count = registry.count();
+  const ids = registry.conceptIds();
+
+  console.log(`\n  ${chalk.bold('Holons loaded:')} ${chalk.cyan(String(count))}`);
+  console.log(`  ${chalk.bold('Branches:')} ${chalk.green(String(registry.getByLevel('branch').length))}`);
+  console.log(`  ${chalk.bold('Concepts:')} ${chalk.blue(String(registry.getByLevel('concept').length))}`);
+  console.log(`  ${chalk.bold('Subjects:')} ${chalk.magenta(String(registry.getByLevel('subject').length))}`);
+  console.log(`  ${chalk.bold('Courses:')} ${chalk.yellow(String(registry.getByLevel('course').length))}`);
+  console.log(`  ${chalk.bold('Lessons:')} ${chalk.cyan(String(registry.getByLevel('lesson').length))}`);
+
+  // Run linter
+  const result = lintRegistry(registry);
+  if (result.overallPassed) {
+    console.log(`\n  ${chalk.green('✓')} Lint passed (${result.totalErrors} errors, ${result.totalWarnings} warnings)`);
+  } else {
+    console.log(`\n  ${chalk.red('✗')} Lint failed (${result.totalErrors} errors, ${result.totalWarnings} warnings)`);
+    for (const issue of result.graphIssues) {
+      const icon = issue.severity === 'error' ? chalk.red('✗') : chalk.yellow('⚠');
+      console.log(`  ${icon} [${issue.checkId}] ${issue.message}`);
+    }
+    for (const report of result.holonReports) {
+      for (const err of report.errors) {
+        console.log(`  ${chalk.red('✗')} [${err.checkId}] ${err.location}: ${err.message}`);
+      }
+    }
+  }
+
+  // List branches
+  const branches = registry.getByLevel('branch');
+  if (branches.length > 0) {
+    console.log(`\n  ${chalk.bold('Branches:')}`);
+    for (const b of branches) {
+      const childCount = b.childIds.length;
+      console.log(`  ${chalk.cyan(b.id)} — ${chalk.dim(b.name)} (${childCount} child${childCount === 1 ? '' : 's'})`);
+    }
+  }
+  console.log('');
+}
+
 // ── Usage help ──────────────────────────────────────────────────────
 function printHelp(): void {
   // R11-Y5 (Fresh-User UX Audit): removed --force-shadow=Q from the FORCED
   // ENCOUNTERS section. The flag is now hidden in commander's auto-help and
   // was a documented source of user confusion. The printHelp() banner should
   // not duplicate it.
-  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show essential + unlocked terms\n  ccrpg profile show           See what the game has noticed about you\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Developer mode (enables --verbose, shows metrics)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.ccrpg/config.json or MODEL env var\n  Saves:     ~/.ccrpg/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --encounters=5             # headless session\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg profile show                          # see your synthesized insights\n  ccrpg diagnostic                            # system diagnostics\n`);
+  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics
+  ccrpg curriculum             Lint and list curriculum holons\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show essential + unlocked terms\n  ccrpg profile show           See what the game has noticed about you\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Developer mode (enables --verbose, shows metrics)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.ccrpg/config.json or MODEL env var\n  Saves:     ~/.ccrpg/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --encounters=5             # headless session\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg profile show                          # see your synthesized insights\n  ccrpg diagnostic                            # system diagnostics\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────
@@ -4572,6 +4620,7 @@ async function main(): Promise<void> {
   }
   if (subcommand === 'profile') { await runProfile(program.args[1], program.args[2]); return; }
   if (subcommand === 'setup-profile') { await runSetupProfile(); return; }
+  if (subcommand === 'curriculum') { await runCurriculum(); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
   // game doesn't inherit the old player's developmental graph.
