@@ -105,7 +105,7 @@ program
   .description('Reset progress and start fresh');
 program
   .command('diagnostic')
-  .description('Show system diagnostics');
+  .description('Show system diagnostics')
   .command('curriculum')
   .description('Curriculum management (lint, list)');
 program
@@ -795,16 +795,16 @@ function generatePracticeHint(response: string, sig: Significator): string | nul
   // Map integration response keywords to practice assignments
   // These are lightweight heuristics — the LLM synthesis handles deeper work
   const practiceMap: [RegExp, string][] = [
-    [/surprise|unexpected|didn't expect/, 'Tomorrow, notice the moment you feel surprised. Pause for 3 breaths before responding. What does the surprise reveal about your assumptions?'],
-    [/stuck|stuck|can't move|paralyzed/, 'When you notice being stuck this week, try doing the opposite of your first impulse. If you usually push harder, pause. If you usually withdraw, reach out.'],
-    [/avoid|avoiding|run away|retreat/, 'One time this week, stay with an uncomfortable feeling for 60 seconds longer than you usually would. Notice what happens in your body, not your mind.'],
-    [/anger|furious|rage|mad/, 'The next time anger rises, name it aloud before acting: "I notice anger." Then take one breath before choosing your response.'],
-    [/honest|truth|lie|withhold/, 'Notice one moment today where you choose honesty over comfort. You don't have to act on it — just notice the choice point.'],
-    [/body|tension|breathe|physical/, 'Set a timer for 3 random points tomorrow. When it rings, check in with your body for 10 seconds: where is the tension? What is it holding?'],
-    [/relationship|connection|alone|lonely/, 'Reach out to one person this week with a question you normally wouldn't ask. Not about them — about what you notice between you.'],
-    [/pattern|repeat|again|same/, 'Notice when the pattern you named shows up this week. You don't have to change it — just see it happening in real time.'],
-    [/push|harder|force|will/, 'One time this week, when you notice yourself pushing, stop. Ask: what would happen if I didn't? Stay with the answer for 3 breaths.'],
-    [/meaning|purpose|why|point/, 'Spend 5 minutes this week sitting with the question you named, without trying to answer it. Let the question be the practice.'],
+    [/surprise|unexpected|didn't expect/, `Tomorrow, notice the moment you feel surprised. Pause for 3 breaths before responding. What does the surprise reveal about your assumptions?`],
+    [/stuck|stuck|can't move|paralyzed/, `When you notice being stuck this week, try doing the opposite of your first impulse. If you usually push harder, pause. If you usually withdraw, reach out.`],
+    [/avoid|avoiding|run away|retreat/, `One time this week, stay with an uncomfortable feeling for 60 seconds longer than you usually would. Notice what happens in your body, not your mind.`],
+    [/anger|furious|rage|mad/, `The next time anger rises, name it aloud before acting: "I notice anger." Then take one breath before choosing your response.`],
+    [/honest|truth|lie|withhold/, `Notice one moment today where you choose honesty over comfort. You don't have to act on it — just notice the choice point.`],
+    [/body|tension|breathe|physical/, `Set a timer for 3 random points tomorrow. When it rings, check in with your body for 10 seconds: where is the tension? What is it holding?`],
+    [/relationship|connection|alone|lonely/, `Reach out to one person this week with a question you normally wouldn't ask. Not about them — about what you notice between you.`],
+    [/pattern|repeat|again|same/, `Notice when the pattern you named shows up this week. You don't have to change it — just see it happening in real time.`],
+    [/push|harder|force|will/, `One time this week, when you notice yourself pushing, stop. Ask: what would happen if I didn't? Stay with the answer for 3 breaths.`],
+    [/meaning|purpose|why|point/, `Spend 5 minutes this week sitting with the question you named, without trying to answer it. Let the question be the practice.`],
   ];
 
   for (const [pattern, practice] of practiceMap) {
@@ -822,7 +822,7 @@ function generatePracticeHint(response: string, sig: Significator): string | nul
   }
 
   // Default practice for any response
-  return 'Tomorrow, notice one moment where you have a choice between comfort and growth. You don't have to choose differently — just see the choice.';
+  return `Tomorrow, notice one moment where you have a choice between comfort and growth. You don't have to choose differently — just see the choice.`;
 }
 
 // Interactive prompt helper — uses @clack/prompts for beautiful UI
