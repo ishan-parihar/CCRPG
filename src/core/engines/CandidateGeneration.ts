@@ -420,7 +420,7 @@ function computeAdaptiveTargetDepth(
   holon: CurriculumHolon | undefined,
 ): DepthLevel {
   const currentOrd = depthOrdinal(cs.depthLevel);
-  const maxOrd = holon ? depthOrdinal(holon.depthMeta.targetDepthRange.max) : 6;
+  const maxOrd = holon ? depthOrdinal(holon.depthMeta.targetDepthRange.max) : ALL_DEPTH_LEVELS.length - 1;
 
   // Can't go beyond the holon's target max
   if (currentOrd >= maxOrd) return cs.depthLevel;
@@ -438,14 +438,18 @@ function computeAdaptiveTargetDepth(
  * Phase 6B: Adaptive priority — adjust scheduling priority based on performance.
  * Concepts with high retention and good history get lower priority (less urgent).
  * Concepts with low retention or many reviews without mastery get higher priority.
- */function computeAdaptivePriority(
+ */
+function computeAdaptivePriority(
   cs: { readonly retention: number; readonly reviewCount: number },
 ): number {
   // Base priority inversely proportional to retention
   const retentionPriority = Math.max(0, 1 - cs.retention);
 
-  // High review count with low retention = struggling = boost priority
-  const struggleBoost = cs.reviewCount > 5 ? Math.min(0.2, (cs.reviewCount - 5) * 0.04) : 0;
+  // High review count with low retention = struggling = boost priority.
+  // Only apply when retention is actually low to avoid boosting nearly-mastered concepts.
+  const struggleBoost = (cs.reviewCount > 5 && cs.retention < 0.6)
+    ? Math.min(0.2, (cs.reviewCount - 5) * 0.04)
+    : 0;
 
   return Math.min(0.9, 0.5 + retentionPriority * 0.3 + struggleBoost);
 }
