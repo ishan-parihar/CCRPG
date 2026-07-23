@@ -309,21 +309,48 @@ const checkTargetRange: LinterCheck = (holon) => {
 
 /**
  * D-3: Prerequisite depth requirement — required prerequisite depth should be reachable.
+ * Phase 6A: When a holon has prerequisites, each prerequisite must specify a
+ * requiredPrerequisiteDepth that is strictly less than the holon's target min.
+ * This prevents scheduling advanced material before foundational mastery.
  */
-const checkPrerequisiteDepth: LinterCheck = (holon) => {
+const checkPrerequisiteDepth: LinterCheck = (holon, registry) => {
+  const issues: LinterIssue[] = [];
   const requiredOrd = depthOrdinal(holon.depthMeta.requiredPrerequisiteDepth);
   const minOrd = depthOrdinal(holon.depthMeta.targetDepthRange.min);
+  
+  // Check 1: Required prerequisite depth should be below target min
   if (requiredOrd >= minOrd) {
-    return [{
+    issues.push({
       checkId: 'D-3',
       category: 'developmental',
       severity: 'warning',
       message: `Required prerequisite depth ("${holon.depthMeta.requiredPrerequisiteDepth}") is at or above target min ("${holon.depthMeta.targetDepthRange.min}")`,
       suggestion: `The prerequisite depth should be below the minimum target depth`,
       location: `${holon.id}.depthMeta`,
-    }];
+    });
   }
-  return [];
+  
+  // Check 2: Cross-branch prerequisites must also satisfy depth requirements
+  if (holon.crossBranchPrerequisites) {
+    for (const cbPrereqId of holon.crossBranchPrerequisites) {
+      const cbPrereq = registry.get(cbPrereqId);
+      if (cbPrereq && cbPrereq.depthMeta.requiredPrerequisiteDepth !== 'absent') {
+        const cbRequiredOrd = depthOrdinal(cbPrereq.depthMeta.requiredPrerequisiteDepth);
+        if (cbRequiredOrd >= depthOrdinal(cbPrereq.depthMeta.targetDepthRange.min)) {
+          issues.push({
+            checkId: 'D-3',
+            category: 'developmental',
+            severity: 'warning',
+            message: `Cross-branch prerequisite "${cbPrereqId}" has requiredPrerequisiteDepth ("${cbPrereq.depthMeta.requiredPrerequisiteDepth}") at or above its target min ("${cbPrereq.depthMeta.targetDepthRange.min}")`,
+            suggestion: `Adjust the cross-branch prerequisite's depth requirements`,
+            location: `${holon.id}.crossBranchPrerequisites`,
+          });
+        }
+      }
+    }
+  }
+  
+  return issues;
 };
 
 /**

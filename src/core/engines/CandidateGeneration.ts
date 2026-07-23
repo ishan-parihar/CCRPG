@@ -336,8 +336,8 @@ export function createModuleTaskTypesProvider(
 // Curriculum Candidate Generation (foundations/34)
 // ---------------------------------------------------------------------------
 
-import type { KnowledgeState, StudyTheme, CurriculumRecommendation, CurriculumTaskType } from '../curriculum/types.js';
-import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD, depthOrdinal } from '../curriculum/types.js';
+import type { KnowledgeState, StudyTheme, CurriculumRecommendation, CurriculumTaskType, DepthLevel, CurriculumHolon } from '../curriculum/types.js';
+import { REVIEW_THRESHOLD, CRITICAL_THRESHOLD, depthOrdinal, ALL_DEPTH_LEVELS } from '../curriculum/types.js';
 import type { CurriculumRegistry } from '../curriculum/CurriculumRegistry.js';
 import { buildGraph, topologicalSort } from '../curriculum/KnowledgeGraph.js';
 
@@ -408,6 +408,49 @@ function prerequisitesAtRequiredDepth(
 }
 
 /**
+ * Phase 6B: Adaptive difficulty — compute target depth based on performance signals.
+ * Uses retention, consecutive correct answers, and review count to determine
+ * whether the learner is ready to push deeper or should consolidate first.
+ *
+ * Heuristic: high retention + 3+ consecutive correct = push 1 level deeper.
+ * Low retention or recent errors = stay at current depth for consolidation.
+ */
+function computeAdaptiveTargetDepth(
+  cs: { readonly depthLevel: DepthLevel; readonly retention: number; readonly reviewCount: number },
+  holon: CurriculumHolon | undefined,
+): DepthLevel {
+  const currentOrd = depthOrdinal(cs.depthLevel);
+  const maxOrd = holon ? depthOrdinal(holon.depthMeta.targetDepthRange.max) : 6;
+
+  // Can't go beyond the holon's target max
+  if (currentOrd >= maxOrd) return cs.depthLevel;
+
+  // High retention + sufficient reviews = ready for next level
+  if (cs.retention > 0.8 && cs.reviewCount >= 3) {
+    return ALL_DEPTH_LEVELS[Math.min(currentOrd + 1, maxOrd)]!;
+  }
+
+  // Medium retention = stay at current depth for consolidation
+  return cs.depthLevel;
+}
+
+/**
+ * Phase 6B: Adaptive priority — adjust scheduling priority based on performance.
+ * Concepts with high retention and good history get lower priority (less urgent).
+ * Concepts with low retention or many reviews without mastery get higher priority.
+ */function computeAdaptivePriority(
+  cs: { readonly retention: number; readonly reviewCount: number },
+): number {
+  // Base priority inversely proportional to retention
+  const retentionPriority = Math.max(0, 1 - cs.retention);
+
+  // High review count with low retention = struggling = boost priority
+  const struggleBoost = cs.reviewCount > 5 ? Math.min(0.2, (cs.reviewCount - 5) * 0.04) : 0;
+
+  return Math.min(0.9, 0.5 + retentionPriority * 0.3 + struggleBoost);
+}
+
+/**
  * Generate curriculum encounter candidates from the player's knowledge state.
  * These candidates are interleaved with developmental encounters during scheduling.
  *
@@ -461,17 +504,22 @@ export function generateCurriculumCandidates(
       // Find concepts at lower depth that should be pushed deeper.
       // P-A: Also enforce prerequisite depth — a concept can't be deepened
       // if its prerequisites haven't reached the required depth.
+      // Phase 6B: Adaptive difficulty — adjust target depth based on
+      // retention, consecutive correct answers, and recent performance.
       if (!registry) break;
       for (const [conceptId, cs] of knowledge.conceptStates) {
         if (candidates.length >= maxSlots) break;
         if (cs.retention > 0.5 && prerequisitesAtRequiredDepth(conceptId, knowledge, registry)) {
+          // Adaptive difficulty: determine target depth based on performance
+          const targetDepth = computeAdaptiveTargetDepth(cs, registry.get(conceptId));
+          const adaptivePriority = computeAdaptivePriority(cs);
           candidates.push({
             conceptId,
             action: 'deepen',
-            priority: 0.6,
+            priority: adaptivePriority,
             estimatedMinutes: 15,
-            rationale: `Current depth: ${cs.depthLevel} — push to next level`,
-            targetDepth: 'comprehended', // Will be refined by DepthAssessment
+            rationale: `Current depth: ${cs.depthLevel} — push to ${targetDepth} (adaptive)`,
+            targetDepth,
           });
         }
       }

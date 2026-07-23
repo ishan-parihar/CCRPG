@@ -22,6 +22,7 @@
       { href: '/profile', label: 'Profile', icon: 'user' },
       { href: '/profiles', label: 'Profiles', icon: 'user' },
       { href: '/curriculum', label: 'Curriculum', icon: 'book' },
+      { href: '/curriculum/progress', label: 'Progress', icon: 'bar-chart' },
       { href: '/journal', label: 'Journal', icon: 'book' },
       { href: '/codex', label: 'Codex', icon: 'book' },
       { href: '/settings', label: 'Settings', icon: 'settings' },
