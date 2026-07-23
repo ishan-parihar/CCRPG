@@ -43,6 +43,21 @@ const checkPrerequisiteOrphans: LinterCheck = (holon, registry) => {
       });
     }
   }
+  // Phase 6: Cross-branch prerequisite orphan detection
+  if (holon.crossBranchPrerequisites) {
+    for (const cbPrereqId of holon.crossBranchPrerequisites) {
+      if (!registry.has(cbPrereqId)) {
+        issues.push({
+          checkId: 'S-1',
+          category: 'structural',
+          severity: 'error',
+          message: `Cross-branch prerequisite "${cbPrereqId}" not found in registry`,
+          suggestion: `Add the missing prerequisite holon or remove the cross-branch reference`,
+          location: holon.id,
+        });
+      }
+    }
+  }
   return issues;
 };
 

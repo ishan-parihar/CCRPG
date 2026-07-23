@@ -617,6 +617,40 @@ export function generateCurriculumCandidates(
     candidates.sort((a, b) => b.priority - a.priority);
   }
 
+  // Phase 3B: Isomorphism enrichment — for concepts with structural isomorphisms
+  // to already-mastered concepts, boost their priority (cross-branch reinforcement).
+  // This surfaces transfer-learning opportunities: when a learner has mastered
+  // a concept with a known isomorphism, the structurally similar concept is
+  // scheduled sooner because the learner can leverage existing understanding.
+  if (registry) {
+    for (let i = 0; i < candidates.length; i++) {
+      const c = candidates[i]!;
+      const holon = registry.get(c.conceptId);
+      if (!holon || holon.isomorphisms.length === 0) continue;
+
+      // Check how many isomorphism targets the learner has mastered
+      let masteredIsomorphisms = 0;
+      for (const iso of holon.isomorphisms) {
+        const targetCs = knowledge.conceptStates.get(iso.targetConceptId);
+        if (targetCs && depthOrdinal(targetCs.depthLevel) >= depthOrdinal('comprehended')) {
+          masteredIsomorphisms++;
+        }
+      }
+
+      if (masteredIsomorphisms > 0) {
+        // Boost priority: more mastered isomorphisms = stronger boost
+        const isomorphismBoost = Math.min(0.15, masteredIsomorphisms * 0.05);
+        candidates[i] = {
+          ...c,
+          priority: Math.min(1, c.priority + isomorphismBoost),
+          rationale: `${c.rationale} [${masteredIsomorphisms} isomorphic concept(s) mastered]`,
+        };
+      }
+    }
+    // Re-sort after isomorphism enrichment
+    candidates.sort((a, b) => b.priority - a.priority);
+  }
+
   return candidates.slice(0, maxSlots);
 }
 

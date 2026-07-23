@@ -39,11 +39,12 @@ import type { Stage } from './domain/Stage.js';
 import type { Modality } from './domain/enums.js';
 // Curriculum expansion: session-end retention decay and curriculum scheduling.
 import { DEFAULT_FORGETTING_PARAMS } from './curriculum/types.js';
-import type { ConceptState, StudyTheme } from './curriculum/types.js';
+import type { ConceptState, StudyTheme, ForgettingCurve } from './curriculum/types.js';
 import { generateCurriculumCandidates, type CurriculumCandidate } from './engines/CandidateGeneration.js';
 import { getCurriculumRegistry } from './curriculum/CurriculumRegistry.js';
 import { seedCurriculumRegistry } from './curriculum/CurriculumSeed.js';
 import { computeLearningAnalytics } from './curriculum/LearningAnalytics.js';
+import { migrateKnowledgeState } from './curriculum/CurriculumMigration.js';
 
 
 export interface TickResult {
@@ -200,10 +201,16 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
   // This is idempotent — safe to call on every session start.
   seedCurriculumRegistry();
 
-  const snapshot = toSnapshot(sig);
+  // Phase 5B: Migrate knowledge state to current schema version if needed.
+  let migratedSig = sig;
+  if (sig.knowledge && migrateKnowledgeState(sig.knowledge) !== sig.knowledge) {
+    migratedSig = { ...sig, knowledge: migrateKnowledgeState(sig.knowledge) };
+  }
+
+  const snapshot = toSnapshot(migratedSig);
   // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
-  const cci = computeCCI(snapshot, sig);
-  const strategy = generateSessionStrategy(cci, session, null);
+  const cci = computeCCI(snapshot, migratedSig);
+  const strategy = generateSessionStrategy(cci, session, null, migratedSig.knowledge);
   return {
     strategy,
     cci,
@@ -811,12 +818,49 @@ export function endSession(
       };
     }
 
+    // Phase 5A: Persist forgetting curves into KnowledgeState.
+    // Build/update forgetting curves for all concepts so they survive
+    // cross-session. Each curve tracks halfLifeMs, retrieval count, and
+    // last retrieved timestamp — enabling precise spaced repetition at
+    // next session start.
+    let curves = new Map<string, ForgettingCurve>(
+      [...(knowledge.forgettingCurves ?? new Map())],
+    );
+    for (const [key, concept] of decayedConcepts) {
+      const existing = curves.get(key);
+      if (existing) {
+        // Update existing curve with current decay state.
+        // IMPORTANT: lastRetrievedAt = now (session end), not concept.lastReviewedAt,
+        // because retention is already decayed to session end. At next session start,
+        // computeRetention will decay from 'now' to the new session start — avoiding
+        // double-decay that would occur if lastRetrievedAt pointed to last review time.
+        curves.set(key, {
+          ...existing,
+          retention: concept.retention,
+          lastRetrievedAt: now,
+        });
+      } else if (concept.reviewCount > 0) {
+        // Create a new curve for concepts that have been reviewed at least once.
+        // Same principle: lastRetrievedAt = now (session end time) to prevent
+        // double-decay across sessions.
+        curves.set(key, {
+          conceptId: key,
+          firstLearnedAt: concept.lastReviewedAt,
+          lastRetrievedAt: now,
+          retention: concept.retention,
+          retrievalCount: concept.reviewCount,
+          halfLifeMs: DEFAULT_FORGETTING_PARAMS.initialHalfLifeMs,
+        });
+      }
+    }
+
     finalSig = {
       ...updatedSig,
       knowledge: {
         ...knowledge,
         conceptStates: decayedConcepts as ReadonlyMap<string, ConceptState>,
         learningProfile: updatedProfile,
+        forgettingCurves: curves as ReadonlyMap<string, ForgettingCurve>,
       },
     };
   }

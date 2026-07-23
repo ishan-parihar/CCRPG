@@ -14,6 +14,7 @@ import type {
   ConceptState,
   DepthHistoryEntry,
   CurriculumTaskType,
+  StudyEvent,
 } from './types.js';
 import { ALL_DEPTH_LEVELS, depthOrdinal } from './types.js';
 
@@ -142,6 +143,28 @@ function computeRubricMatchScore(
 }
 
 /**
+ * Phase 4B: Adaptive difficulty calibration.
+ * Adjusts rubric thresholds based on the player's observed performance history.
+ * When the player consistently scores well above thresholds, thresholds are
+ * raised slightly (raising the bar). When they consistently score below,
+ * thresholds are lowered (providing support). This prevents stale thresholds
+ * from either gating progress or allowing premature advancement.
+ *
+ * @param baseThreshold - The rubric's base threshold for this depth level
+ * @param calibrationBias - Observed calibration adjustment from study history
+ *                          (positive = player overperforms → raise bar; negative = underperform → lower)
+ * @returns Adjusted threshold clamped to [0.2, 0.95]
+ */
+function calibrateThreshold(
+  baseThreshold: number,
+  calibrationBias: number,
+): number {
+  // Scale the bias: each 0.1 of bias shifts threshold by 0.05
+  const shift = calibrationBias * 0.5;
+  return Math.max(0.2, Math.min(0.95, baseThreshold + shift));
+}
+
+/**
  * Classify a response into a depth level using multi-dimensional rubric scoring.
  *
  * Upgraded from flat average scoring to evidence-based classification:
@@ -150,12 +173,15 @@ function computeRubricMatchScore(
  * - Validates appropriateTasks alignment
  * - Integrates LLM rubric evaluation when available
  * - Falls back to numeric scores when evidence is sparse
+ * - Phase 4B: Calibrates thresholds based on observed performance history
  */
 export function classifyDepth(
   input: RubricEvaluationInput,
   rubric: DepthRubric,
+  calibrationBias?: number,
 ): { level: DepthLevel; confidence: number } {
   const levels = ALL_DEPTH_LEVELS.slice(1); // skip 'absent'
+  const bias = calibrationBias ?? 0;
 
   // Check from deepest to shallowest
   for (let i = levels.length - 1; i >= 0; i--) {
@@ -164,10 +190,11 @@ export function classifyDepth(
     if (!entry) continue;
 
     const { score, confidence } = computeRubricMatchScore(input, entry);
+    const adjustedThreshold = calibrateThreshold(entry.threshold, bias);
 
-    if (score >= entry.threshold) {
+    if (score >= adjustedThreshold) {
       // Confidence adjusted by margin above threshold
-      const margin = score - entry.threshold;
+      const margin = score - adjustedThreshold;
       const adjustedConfidence = Math.min(1, confidence + margin * 0.5);
 
       return {
@@ -189,6 +216,7 @@ export function classifyDepthFromScores(
   scores: Readonly<Record<string, number>>,
   rubric: DepthRubric,
   taskType: CurriculumTaskType = 'factual_recall',
+  calibrationBias?: number,
 ): { level: DepthLevel; confidence: number } {
   return classifyDepth(
     {
@@ -198,7 +226,50 @@ export function classifyDepthFromScores(
       scores,
     },
     rubric,
+    calibrationBias,
   );
+}
+
+// ---------------------------------------------------------------------------
+// Phase 4B: Difficulty Calibration
+// ---------------------------------------------------------------------------
+
+/**
+ * Compute a calibration bias from the player's study history for a concept.
+ * Positive bias means the player consistently outperforms expectations (raise bar).
+ * Negative bias means the player underperforms (lower bar to support progression).
+ *
+ * @param studyHistory - The full study history
+ * @param conceptId - The concept being assessed
+ * @param now - Current timestamp
+ * @returns Calibration bias in range [-0.3, 0.3]
+ */
+export function computeCalibrationBias(
+  studyHistory: readonly StudyEvent[],
+  conceptId: string,
+  now: number,
+): number {
+  const events = studyHistory.filter(e => e.conceptId === conceptId);
+  if (events.length < 2) return 0; // Not enough data
+
+  // Recent events have more weight (exponential decay over 7 days)
+  const halfLifeMs = 7 * 24 * 60 * 60 * 1000;
+  let weightedSum = 0;
+  let weightTotal = 0;
+
+  for (const event of events) {
+    const age = now - event.timestamp;
+    const weight = Math.pow(0.5, age / halfLifeMs);
+    // Retention gain = how much the player improved (positive = good)
+    const gain = event.retentionAfter - event.retentionBefore;
+    weightedSum += gain * weight;
+    weightTotal += weight;
+  }
+
+  if (weightTotal === 0) return 0;
+  const avgGain = weightedSum / weightTotal;
+  // Map gain to calibration bias: gain of 0.3+ → +0.2 bias, gain of -0.1 → -0.1 bias
+  return Math.max(-0.3, Math.min(0.3, avgGain * 0.6));
 }
 
 // ---------------------------------------------------------------------------
@@ -216,9 +287,13 @@ export function assessDualDepth(params: {
   readonly shadowIntensity: number;
   readonly predictedDepth: DepthLevel;
   readonly confidenceInPrediction: number;
+  readonly studyHistory?: readonly StudyEvent[];
   readonly timestamp?: number;
 }): DualDepthResult {
-  const { level, confidence } = classifyDepth(params.evaluationInput, params.depthRubric);
+  const bias = params.studyHistory
+    ? computeCalibrationBias(params.studyHistory, params.conceptId, params.timestamp ?? Date.now())
+    : 0;
+  const { level, confidence } = classifyDepth(params.evaluationInput, params.depthRubric, bias);
 
   const calibrationError = Math.abs(
     depthOrdinal(params.predictedDepth) - depthOrdinal(level),

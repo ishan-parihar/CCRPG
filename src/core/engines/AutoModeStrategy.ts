@@ -121,6 +121,7 @@ export function generateSessionStrategy(
   cci: CCIScore,
   session: SessionContext,
   _previousStrategy: SessionStrategy | null,
+  knowledge?: { readonly learningProfile?: { readonly modalityEffectiveness?: Readonly<Record<string, number>> } },
 ): SessionStrategy {
   const theme = cci.sessionSignals.recommendedTheme;
   const arc = parameteriseArc(theme, cci, session);
@@ -136,7 +137,7 @@ export function generateSessionStrategy(
   // Phase 4C: Apply modality effectiveness bias from LearningAnalytics.
   // When the player's learning profile has modality effectiveness data,
   // boost modalities that historically produce better learning outcomes.
-  const analyticsBias = computeAnalyticsModalityBias(cci);
+  const analyticsBias = computeAnalyticsModalityBias(cci, knowledge?.learningProfile);
   const mergedModalityBias = { ...modalityBias, ...analyticsBias };
 
   return {
@@ -723,18 +724,32 @@ function countConsecutiveShadowFailures(outcomes: RecentEncounter[]): number {
  * that historically produce better learning outcomes (higher depth gain per event).
  * Returns empty when no analytics data is available (backward compat).
  */
-function computeAnalyticsModalityBias(cci: CCIScore): Partial<Record<string, number>> {
+function computeAnalyticsModalityBias(
+  cci: CCIScore,
+  learningProfile?: { readonly modalityEffectiveness?: Readonly<Record<string, number>> },
+): Partial<Record<string, number>> {
+  // Use per-modality effectiveness data when available — this is the
+  // genuinely analytics-driven path.
+  if (learningProfile?.modalityEffectiveness) {
+    const entries = Object.entries(learningProfile.modalityEffectiveness);
+    if (entries.length === 0) return {};
+
+    const avg = entries.reduce((sum, [_, v]) => sum + v, 0) / entries.length;
+    const bias: Partial<Record<string, number>> = {};
+    for (const [modality, effectiveness] of entries) {
+      // Scale: effective modalities get boosted, ineffective ones get reduced.
+      // 1.0 = neutral; range [0.7, 1.4] to avoid extreme swings.
+      const ratio = effectiveness / Math.max(0.01, avg);
+      bias[modality] = Math.max(0.7, Math.min(1.4, ratio));
+    }
+    return bias;
+  }
+
+  // Fallback: infer from knowledge health composite.
   const kh = cci.knowledgeHealth;
   if (!kh) return {};
 
-  // The knowledgeHealth composite already incorporates learning velocity.
-  // When velocity is high (> 0.5), the player learns effectively and we
-  // should bias toward their most effective modalities.
-  // We don't have per-modality data in CCI directly — that lives in
-  // LearningProfile.modalityEffectiveness — but we can infer from the
-  // knowledge health signal that analytics-driven bias should activate.
   if (kh.composite > 0.5) {
-    // High knowledge health: the player is learning well; maintain current biases
     return {};
   }
 
