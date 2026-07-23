@@ -32,6 +32,18 @@ vi.stubGlobal('crypto', {
 
 describe('cloudSyncStore', () => {
   beforeEach(() => {
+    // jsdom may not provide localStorage in all vitest configurations
+    if (typeof localStorage === 'undefined') {
+      const store = new Map<string, string>();
+      vi.stubGlobal('localStorage', {
+        getItem: (k: string) => store.get(k) ?? null,
+        setItem: (k: string, v: string) => store.set(k, v),
+        removeItem: (k: string) => store.delete(k),
+        clear: () => store.clear(),
+        get length() { return store.size; },
+        key: (i: number) => [...store.keys()][i] ?? null,
+      });
+    }
     localStorage.clear();
     mockFetch.mockReset();
   });

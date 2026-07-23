@@ -271,7 +271,8 @@ describe('generateCurriculumCandidates', () => {
   });
 
   it('generates depth_push candidates for concepts with retention > 0.5', () => {
-    const candidates = generateCurriculumCandidates(makeKnowledgeState(), 'depth_push', 5);
+    const registry = makeRegistry([makeHolon('math.algebra', []), makeHolon('math.geometry', ['math.algebra'])]);
+    const candidates = generateCurriculumCandidates(makeKnowledgeState(), 'depth_push', 5, registry);
     expect(candidates.length).toBeGreaterThanOrEqual(1);
     expect(candidates[0].action).toBe('deepen');
   });
