@@ -15,6 +15,7 @@ import type {
   ReviewCandidate,
 } from './types.js';
 import { DEFAULT_FORGETTING_PARAMS, depthOrdinal, ALL_DEPTH_LEVELS, REVIEW_THRESHOLD, CRITICAL_THRESHOLD } from './types.js';
+import type { CurriculumRegistry } from './CurriculumRegistry.js';
 
 // ---------------------------------------------------------------------------
 // Retention Computation
@@ -89,6 +90,21 @@ export function createCurve(
     retention: 1.0,
     halfLifeMs: params.initialHalfLifeMs,
   };
+}
+
+/**
+ * Create a personalized forgetting curve for a concept using its
+ * CurriculumHolon forgettingParams. Falls back to DEFAULT_FORGETTING_PARAMS
+ * if the holon is not found in the registry.
+ */
+export function createPersonalizedCurve(
+  conceptId: string,
+  now: number,
+  registry: CurriculumRegistry,
+): ForgettingCurve {
+  const holon = registry.get(conceptId);
+  const params = holon?.forgettingParams ?? DEFAULT_FORGETTING_PARAMS;
+  return createCurve(conceptId, now, params);
 }
 
 // ---------------------------------------------------------------------------
