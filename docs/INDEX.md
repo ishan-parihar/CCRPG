@@ -1,25 +1,22 @@
-# `/docs/` -- Index
+# `/docs/` — Index
 
 > The research foundation of Mysterium. The binding build plan lives at
-> the repo root in `UNIFIED-IMPLEMENTATION-PLAN.md`. This tree is the *why* and the
-> *what*; the unified plan is the *how* and the *when*.
+> `superpowers/plans/`. This tree is the *why* and the
+> *what*; the architecture docs are the *how* and the *when*.
 
 ## Reading order for a new contributor
 
-1. `../UNIFIED-IMPLEMENTATION-PLAN.md` -- the binding build plan.
-2. `REQUIREMENTS.md` -- the document-of-documents (this tree's contract).
-3. `00-vision.md`
-4. `01-first-principles.md`
-5. `02-glossary.md`
-6. `03-research-methodology.md`
-7. `foundations/00-...34-...` (in order -- **00-09 substrate, 10-14 lesser cycle, 15-27 greater cycle, 28-34 curriculum expansion**)
-8. `lines/00-overview-multi-line.md` then `01-...08-...` (any order)
-9. `stages/00-overview-eight-stages.md` then `01-...08-...` (in order)
-10. `STAGE-ASSESSMENT-ARCHITECTURE.md`
-11. `progression/00-progression-overview.md`
-12. `narrative/00-narrative-architecture.md`
-13. `concept-drafts/README.md` then a sampled module to see the lesser-cycle design briefs in concrete form
-14. `CHANGELOG.md` -- what changed, and when.
+1. `00-vision.md` — what the system is, in one read.
+2. `01-first-principles.md` — the eight questions, expanded.
+3. `02-glossary.md` — every term used anywhere in /docs.
+4. `03-research-methodology.md` — DSR, OMDE, INFORM, citation policy.
+5. `foundations/00-...36-...` (in order — **00-09 substrate, 10-14 lesser cycle, 15-27 greater cycle, 28-34 curriculum expansion, 35-36 curriculum upgrade plan**)
+6. `lines/00-overview-multi-line.md` then `01-...08-...` (any order)
+7. `stages/00-overview-eight-stages.md` then `01-...08-...` (in order)
+8. `STAGE-ASSESSMENT-ARCHITECTURE.md`
+9. `architecture/00-overview.md` → `architecture/08-rendering-layer.md`
+10. `concept-drafts/README.md` then a sampled module to see the lesser-cycle design briefs in concrete form
+11. `CHANGELOG.md` — what changed, and when.
 
 > **For the impatient:** read `00-vision.md`, then `foundations/15` and `foundations/21`. That gives you the world's metaphysics and the master architectural synthesis. Everything else fills in detail.
 
@@ -27,13 +24,13 @@
 
 ### Meta layer (5)
 
-- `REQUIREMENTS.md` -- the contract for the whole tree
 - `00-vision.md`
 - `01-first-principles.md`
 - `02-glossary.md`
 - `03-research-methodology.md`
+- `REQUIREMENTS.md` — the contract for the whole tree
 
-### `foundations/` (34)
+### `foundations/` (37)
 
 #### Theoretical substrate (00–09)
 
@@ -57,7 +54,7 @@
 - `13-architecture-of-consciousness.md` — 5-layer topography, contact boundary, Matrix/Potentiator
 - `14-game-as-developmental-catalyst.md` — catalyst→experience→integration mechanics
 
-#### Greater-cycle game design (15–22)
+#### Greater-cycle game design (15–27)
 > Mechanises the **Significator → Transformation → Great Way → Choice** archetypes — the per-incarnation evolutionary engine. The Veil of Forgetting governs all of it. `21` is the master synthesis.
 
 - `15-macro-scale-archetypal-mind.md` — pure theoretical substrate (the Logos blueprint)
@@ -68,15 +65,15 @@
 - `20-veil-of-forgetting.md` — the implicit-operation principle
 - `21-incarnation-architecture.md` ← **master synthesis (Option C)**
 - `22-holon-context-engine.md` — LLM-driven world implementation
-- `23-polarity-ontology.md` -- per-line x stage polarity texture catalogue (64 cells)
-- `24-encounter-scheduler.md` -- encounter selection algorithm & macro-catalyst engine
-- `25-cumulative-consciousness-index.md` -- CCI composite metric
-- `26-unified-core-architecture.md` -- the unified core architecture spec
-- `27-auto-mode-strategy-engine.md` -- auto-mode session strategy generation
-- `28-holoos-open-joints-mapping.md` -- HoloOS open-joints tracking
+- `23-polarity-ontology.md` — per-line × stage polarity texture catalogue (64 cells)
+- `24-encounter-scheduler.md` — encounter selection algorithm & macro-catalyst engine
+- `25-cumulative-consciousness-index.md` — CCI composite metric
+- `26-unified-core-architecture.md` — the unified core architecture spec
+- `27-auto-mode-strategy-engine.md` — auto-mode session strategy generation
+- `28-holoos-open-joints-mapping.md` — HoloOS open-joints tracking
 
-#### Curriculum expansion (29–34)
-> The theoretical substrate and architectural contract for extending Mysterium with modular curriculum support — knowledge taxonomies, subject concepts, depth rubrics, and progression. These documents ground the curriculum plug system in meta-learning science and holonic architecture.
+#### Curriculum expansion (29–36)
+> The theoretical substrate and architectural contract for extending Mysterium with modular curriculum support — knowledge taxonomies, subject concepts, depth rubrics, and progression.
 
 - `29-meta-learning-science.md` — the neuroscience and cognitive science of how learning works
 - `30-holonic-curriculum-architecture.md` — holonic principles applied to knowledge organization
@@ -84,6 +81,8 @@
 - `32-agentic-curriculum-linter.md` — the three-agent validation workflow (Generator → Critic → Integrator)
 - `33-self-directed-dashboard.md` — the five dashboard views for learner self-direction
 - `34-curriculum-engine-bridge.md` — the integration contract between curriculum modules and the existing engine
+- `35-framework-complexity-curriculum-mapping.md` — mapping framework complexity to curriculum depth
+- `36-curriculum-upgrade-plan.md` — the phased curriculum upgrade plan
 
 ### `lines/` (9) — one per line of intelligence
 
@@ -109,12 +108,41 @@
 - `07-turquoise-integral.md`
 - `08-white-superintegral.md`
 
-### Architecture-philosophy (4)
+### Architecture (9)
 
-- `STAGE-ASSESSMENT-ARCHITECTURE.md` -- module contract, composition rules, 4 execution modes
-- `ONBOARDING-REDESIGN-PLAN.md` -- binary-search composite assessment for Significator seeding
-- `progression/00-progression-overview.md`
-- `narrative/00-narrative-architecture.md`
+- `STAGE-ASSESSMENT-ARCHITECTURE.md` — module contract, composition rules, 4 execution modes
+- `ONBOARDING-REDESIGN-PLAN.md` — binary-search composite assessment for Significator seeding
+- `architecture/00-overview.md` — the binding architectural contract
+- `architecture/01-core-engine.md` — Significator, CCI, AutoMode, Scheduler
+- `architecture/02-encounter-system.md` — 64 modules, 7 modalities, AgenticOrchestrator
+- `architecture/03-curriculum-system.md` — holonic curriculum, depth assessment, spaced repetition
+- `architecture/04-shadow-work.md` — 4-quadrant shadow model, detection→integration
+- `architecture/05-polarity-engine.md` — STO/STS crystallization, harvest mechanics
+- `architecture/06-llm-integration.md` — LLM as voice, not brain; ContextPipeline
+- `architecture/07-persistence.md` — Significator serialization, encryption, profiles
+- `architecture/08-rendering-layer.md` — SvelteKit WebUI, CLI, Capacitor
+
+### Supporting docs
+
+- `progression/00-progression-overview.md` — how the player ascends
+- `narrative/00-narrative-architecture.md` — story as scaffolding for development
+- `curriculum-authoring.md` — how to author curriculum holons
+
+### `concept-drafts/` (512)
+
+- `concept-drafts/README.md` — templates and requirements
+- `concept-drafts/ROADMAP.md` — development phases
+- `concept-drafts/SCORING-ARCHITECTURE.md` — scoring architecture
+- `{line}/{stage}/` — 64 modules × 8 files each
+
+### `audits/` (10)
+
+Active audit documents. See each file for its scope and date.
+
+### `superpowers/`
+
+- `specs/` — design specifications
+- `plans/` — implementation plans
 
 ## Mandatory document contract
 
@@ -129,25 +157,8 @@ Every document in this tree carries the **six required headings**:
 6. Principles served
 ```
 
-A document missing any of the six is incomplete and is flagged for
-review.
-
-## Deferred documents
-
-The deeper engineering layers (`progression/01-06`, `narrative/01-04`,
-`architecture/`, `ux/`, `validation/`, `roadmap/`) listed in
-`REQUIREMENTS.md` are **deferred to the implementation phase**. Each is
-referenced from its parent philosophy document with a one-line intent
-that AI agents can pick up using the philosophy as a binding contract.
-
-> **Note:** The `combat/` and `enemies/` directories have been archived
-> to `docs/archive/`. The combat philosophy is superseded by the
-> assessment-module architecture in `STAGE-ASSESSMENT-ARCHITECTURE.md`
-> and `UNIFIED-IMPLEMENTATION-PLAN.md`.
+A document missing any of the six is incomplete and is flagged for review.
 
 ## Canon
 
-As of v2.0 (2026-05-18) the architectural pivot is complete: ATB combat
-removed, assessment modules ARE the gameplay, Significator replaces
-PlayerProfile. See `CHANGELOG.md` and `REQUIREMENTS.md`. The
-binding build plan is `../UNIFIED-IMPLEMENTATION-PLAN.md`.
+As of v3.0 (2026-07-24) the system is a contemplative practice named Mysterium (renamed from CCRPG). The naming change reflects the evolution from "game" to "practice." See `CHANGELOG.md` for the full version history. The architecture docs (`architecture/00-overview.md`) describe the current system.

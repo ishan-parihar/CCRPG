@@ -235,22 +235,15 @@ After all lines are assessed, show the full radial chart with:
 
 | System | How it uses assessment data |
 |---|---|
-| **PlayerProfile.altitudes** | Set from the binary-search convergence point |
-| **PlayerProfile.taskStaircases** | Seeded from the assessment's difficulty parameters |
-| **PlayerProfile.rayProfile** | Computed from altitudes via RayProfileComputer |
-| **PlayerProfile.shadows** | Detected from assessment patterns (e.g., high Cognitive but low Intrapersonal = repression signal) |
+| **Significator.altitudes** | Set from the binary-search convergence point |
+| **Significator.taskStaircases** | Seeded from the assessment's difficulty parameters |
+| **Significator.rayProfile** | Computed from altitudes via RayProfileComputer |
+| **Significator.shadowLedger** | Detected from assessment patterns (e.g., high Cognitive but low Intrapersonal = repression signal) |
 | **EncounterScheduler** | Uses the horizon line (lowest altitude) to schedule encounters |
-| **Combat DDA** | Uses the staircase seed to start encounters at the right difficulty |
+| **Assessment DDA** | Uses the staircase seed to start encounters at the right difficulty |
 | **Narrative** | Uses the synthesised stage to determine which story arc the player enters |
 
-### 5.2 The `lineToTaskSlug` mapping must be updated
-
-Current (stale):
-```ts
-Intrapersonal: 'go_no_go',    // WRONG
-Spiritual: 'breath_rhythm',    // WRONG
-Interpersonal: 'simon',        // WRONG
-```
+### 5.2 The `lineToTaskSlug` mapping
 
 Correct (post-redesign):
 ```ts
