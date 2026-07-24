@@ -313,6 +313,7 @@ import { getCurriculumRegistry } from '../src/core/curriculum/CurriculumRegistry
 import { seedCurriculumRegistry } from '../src/core/curriculum/CurriculumSeed.js';
 import { seedInitialKnowledge } from '../src/core/curriculum/SeedInitialKnowledge.js';
 import { lintRegistry } from '../src/core/curriculum/CurriculumLinter.js';
+import { depthOrdinal, type DepthLevel } from '../src/core/curriculum/types.js';
 
 /**
  * --curriculum flag: force curriculum encounters by injecting slots.
@@ -815,16 +816,49 @@ function generatePracticeHint(response: string, sig: Significator): string | nul
     }
   }
 
-  // Fallback: use shadow state to generate a generic practice
+  // P1-R5 (Curriculum Audit): Enhanced shadow-state-aware practice hints.
+  // Instead of a single generic notice, tailor the practice to the shadow quadrant
+  // and include a line-specific somatic grounding element.
   const activeShadows = sig.shadows.entries.filter(e => !e.resolvedAt);
   if (activeShadows.length > 0) {
     const shadow = activeShadows[0]!;
     const movement = describeShadowMovement(shadow.quadrant ?? 'Unknown');
-    return `Notice when ${movement} shows up this week. You don't have to fix it — just see it clearly.`;
+    const quadrant = shadow.quadrant ?? 'Unknown';
+    // Each quadrant gets a different practice modality
+    switch (quadrant) {
+      case 'DarkAddiction':
+        return `This week, notice the pull toward ${movement}. When you feel it, place a hand on your chest for 3 breaths. You don't have to resist — just feel what it's like to hold the pull without following it.`;
+      case 'DarkAllergy':
+        return `Notice when ${movement} arises. This time, instead of pushing it away, breathe into the area of your body that tenses. Stay for 60 seconds. What is the aversion protecting?`;
+      case 'GoldenAddiction':
+        return `When ${movement} appears, pause. Ask: "What am I trying to reach toward before I'm ready?" Sit with the question for 3 breaths. Growth doesn't need to be forced.`;
+      case 'GoldenAllergy':
+        return `Notice ${movement} this week. Instead of ignoring it, ask: "What would it mean to let this in?" Stay with whatever answer arises for 3 breaths.`;
+      default:
+        return `Notice when ${movement} shows up this week. You don't have to fix it — just see it clearly.`;
+    }
   }
 
-  // Default practice for any response
+  // P1-R5: Default practice for any response
   return `Tomorrow, notice one moment where you have a choice between comfort and growth. You don't have to choose differently — just see the choice.`;
+}
+
+/**
+ * P2-R9 (Curriculum Audit): Display a somatic-body-specific practice after
+ * Somatic-line encounters. Returns a short, body-focused practice prompt
+ * when the last encounter was in the Somatic line.
+ */
+function somaticPracticeHint(history: ConsequenceRecord[]): string | null {
+  if (history.length === 0) return null;
+  const lastEncounter = history[history.length - 1]!;
+  if (lastEncounter.line !== 'Somatic') return null;
+  const practices = [
+    `Before bed tonight, scan your body from head to toe. Where are you holding tension? Breathe into that spot for 5 cycles. You don't need to release it — just acknowledge what your body is carrying.`,
+    `Tomorrow morning, before reaching for your phone, stand with both feet on the floor. Notice the ground beneath you for 30 seconds. What does your body know that your mind hasn't caught up with?`,
+    `Set a random alarm for some time today. When it sounds, stop everything and notice: posture, breath, jaw tension, shoulder position. Hold awareness for 10 seconds, then gently adjust one thing.`,
+    `This evening, place both hands on your lower belly. Breathe slowly for 60 seconds, letting your belly soften with each exhale. What emotion lives in this part of your body?`,
+  ];
+  return practices[Math.floor(Math.random() * practices.length)]!;
 }
 
 // Interactive prompt helper — uses @clack/prompts for beautiful UI
@@ -2681,7 +2715,15 @@ async function runDirectQuestioningSession(
         const profileDir = getActiveProfileDir();
         if (profileDir) {
           const alreadyUnlocked = loadUnlockedTerms(profileDir);
-          const newlyUnlocked = checkTermUnlocks(result.narrativeSummary, alreadyUnlocked);
+          // P0-R3 (Curriculum Audit): Unlock glossary terms sooner.
+          // Content-driven check plus encounter-count auto-unlock: after 3
+          // encounters, unlock core Tier 2 terms that appear in narrative.
+          let newlyUnlocked = checkTermUnlocks(result.narrativeSummary, alreadyUnlocked);
+          if (newlyUnlocked.length === 0 && currentSig.totalEncounters >= 3) {
+            const coreTerms = ['Shadow', 'Line', 'Drive'];
+            const coreUnlocked = coreTerms.filter(t => !alreadyUnlocked.includes(t));
+            if (coreUnlocked.length > 0) newlyUnlocked = coreUnlocked;
+          }
           if (newlyUnlocked.length > 0) {
             const trulyNew = addUnlockedTerms(profileDir, newlyUnlocked);
             if (trulyNew.length > 0) {
@@ -2828,8 +2870,38 @@ async function runDirectQuestioningSession(
     }
   }
 
+  // P0-R2 (Curriculum Audit): Wire integration response to next-session focus.
+  // When the player reflects, capture a distilled version as active_focus
+  // so the next session opens with their own words as a carry-forward.
+  if (integrationResponse) {
+    try {
+      const profileDir = getActiveProfileDir();
+      if (profileDir) {
+        const goalsRaw = agentReadProfileFile('goals.yaml');
+        if (goalsRaw) {
+          // Extract the most meaningful sentence (first 120 chars) as focus
+          const focusSnippet = integrationResponse.split(/[.!?]/)[0]?.trim().slice(0, 120);
+          if (focusSnippet && focusSnippet.length > 10) {
+            const updatedGoals = goalsRaw.replace(
+              /active_focus:.*$/m,
+              `active_focus: "${focusSnippet.replace(/"/g, "'")}"`,
+            );
+            agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
+          }
+        }
+      }
+    } catch { /* best-effort — never break the session for goals wiring */ }
+  }
+
   // NF-3: Persist the asked-prompts set so the next session avoids repeats.
   saveAskedPrompts(getActiveProfileDir());
+
+  // P2-R9 (Curriculum Audit): Somatic practice after Somatic-line encounters.
+  const somaticHint = somaticPracticeHint(history);
+  if (somaticHint && !JSON_MODE) {
+    console.log(`\n  ${chalk.dim('═══ Body Practice ═══')}`);
+    console.log(`  ${chalk.italic(somaticHint)}`);
+  }
 
   // P0-3 (Fresh-User UX Audit): Post-session summary.
   // Gives the player a sense of what happened, what emerged, and what to
@@ -3472,8 +3544,30 @@ async function runFullSession(): Promise<void> {
     }
   }
 
+  // P0-R2 (Curriculum Audit): Wire integration response to next-session focus.
+  if (integrationResponse2) {
+    try {
+      const profileDir = getActiveProfileDir();
+      if (profileDir) {
+        const goalsRaw = agentReadProfileFile('goals.yaml');
+        if (goalsRaw) {
+          const focusSnippet = integrationResponse2.split(/[.!?]/)[0]?.trim().slice(0, 120);
+          if (focusSnippet && focusSnippet.length > 10) {
+            const updatedGoals = goalsRaw.replace(
+              /active_focus:.*$/m,
+              `active_focus: "${focusSnippet.replace(/"/g, "'")}"`,
+            );
+            agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
+          }
+        }
+      }
+    } catch { /* best-effort */ }
+  }
+
   // NF-3: Persist the asked-prompts set for cross-session de-duplication.
   saveAskedPrompts(getActiveProfileDir());
+
+
 
   // P0-3 (Fresh-User UX Audit): Post-session summary.
   renderPostSessionSummary(currentSig, []);
@@ -4301,6 +4395,18 @@ async function runStatus(): Promise<void> {
           internalizedHolons: sig.internalizedHolons?.length ?? 0,
           greatWayDirection: sig.greatWayDirection ?? null,
         };
+        // P0-R1 follow-up: Include curriculum data in JSON status output.
+        try {
+          if (sig.knowledge && sig.knowledge.conceptStates.size > 0) {
+            const conceptCount = sig.knowledge.conceptStates.size;
+            const conceptStates = [...sig.knowledge.conceptStates.values()];
+            const avgRetention = conceptStates.reduce((sum, cs) => sum + cs.retention, 0) / conceptCount;
+            out.save!.curriculum = {
+              conceptsStudied: conceptCount,
+              avgRetention: Math.round(avgRetention * 100) / 100,
+            };
+          }
+        } catch { /* best-effort */ }
       }
       // R5-P2-2 (UX-R5): Add Transformation Readiness to status --json so
       // JSON consumers (scripts, CI, dashboards) can see the trajectory.
@@ -4520,6 +4626,21 @@ async function runStatus(): Promise<void> {
     console.log(`  ${chalk.dim('The work is still opening. Play a session to find your edge.')}`);
   }
 
+  // P0-R1 (Curriculum Architecture Audit): Surface curriculum progress in status.
+  {
+    const _sig = hasSave() ? loadSave() : null;
+    if (_sig && _sig.knowledge && _sig.knowledge.conceptStates.size > 0) {
+      const conceptCount = _sig.knowledge.conceptStates.size;
+      const avgRetention = [..._sig.knowledge.conceptStates.values()]
+        .reduce((sum, cs) => sum + cs.retention, 0) / conceptCount;
+      const retentionDesc = avgRetention > 0.7 ? 'well-held'
+        : avgRetention > 0.4 ? 'developing'
+        : 'fading';
+      console.log(`\n  ${chalk.bold('Knowledge')}`);
+      info('concepts', `${conceptCount} studied, ${retentionDesc}`);
+    }
+  }
+
   console.log(`\n  ${chalk.bold('System')}`);
   info('modules', `${moduleRegistry.count()} loaded`);
   info('config dir', CONFIG_DIR);
@@ -4612,9 +4733,9 @@ function runCurriculum(action?: string): void {
   const registry = getCurriculumRegistry();
 
   // Route based on action argument
-  if (action && !['lint', 'list'].includes(action)) {
+  if (action && !['lint', 'list', 'progress'].includes(action)) {
     console.log(`
-  ${chalk.red("Unknown action:")} ${action}. Use ${chalk.bold("lint")} or ${chalk.bold("list")}
+  ${chalk.red("Unknown action:")} ${action}. Use ${chalk.bold("lint")}, ${chalk.bold("list")}, or ${chalk.bold("progress")}
 `);
     return;
   }
@@ -4645,18 +4766,55 @@ function runCurriculum(action?: string): void {
     }
   }
 
-  }
-
-  // List branches (when action is 'list' or no action specified)
+  }  // List branches (when action is 'list' or no action specified)
   if (!action || action === 'list') {
-  const branches = registry.getByLevel('branch');
-  if (branches.length > 0) {
-    console.log(`\n  ${chalk.bold('Branches:')}`);
-    for (const b of branches) {
-      const childCount = b.childIds.length;
-      console.log(`  ${chalk.cyan(b.id)} — ${chalk.dim(b.name)} (${childCount} child${childCount === 1 ? '' : 's'})`);
+    const branches = registry.getByLevel('branch');
+    if (branches.length > 0) {
+      console.log(`\n  ${chalk.bold('Branches:')}`);
+      for (const b of branches) {
+        const childCount = b.childIds.length;
+        console.log(`  ${chalk.cyan(b.id)} — ${chalk.dim(b.name)} (${childCount} child${childCount === 1 ? '' : 's'})`);
+      }
     }
   }
+
+  // P1-R6 (Curriculum Audit): Show player's curriculum progress.
+  if (action === 'progress') {
+    const sig = hasSave() ? loadSave() : null;
+    if (!sig || !sig.knowledge || sig.knowledge.conceptStates.size === 0) {
+      console.log(`\n  ${chalk.dim('No curriculum progress yet. Play a session to begin studying.')}`);
+    } else {
+      const states = [...sig.knowledge.conceptStates.entries()];
+      const count = states.length;
+      const avgRetention = states.reduce((sum, [_, cs]) => sum + cs.retention, 0) / count;
+      const avgDepth = states.reduce((sum, [_, cs]) => sum + depthOrdinal(cs.depthLevel as DepthLevel), 0) / count;
+
+      const retentionDesc = avgRetention > 0.7 ? 'well-held'
+        : avgRetention > 0.4 ? 'developing'
+        : 'fading';
+
+      console.log(`\n  ${chalk.bold('Curriculum Progress')}`);
+      info('concepts studied', String(count));
+      info('avg retention', `${retentionDesc} (${Math.round(avgRetention * 100)}%)`);
+      info('avg depth', avgDepth.toFixed(1));
+
+      // Show top 3 strongest and weakest concepts
+      const sorted = [...states].sort((a, b) => b[1].retention - a[1].retention);
+      if (sorted.length > 0) {
+        console.log(`\n  ${chalk.bold('Strongest:')}`);
+        for (const [id, cs] of sorted.slice(0, 3)) {
+          const h = registry.get(id);
+          console.log(`    ${chalk.green('✓')} ${h?.name ?? id} — ${Math.round(cs.retention * 100)}%`);
+        }
+      }
+      if (sorted.length > 3) {
+        console.log(`\n  ${chalk.bold('Needs review:')}`);
+        for (const [id, cs] of sorted.slice(-3).reverse()) {
+          const h = registry.get(id);
+          console.log(`    ${chalk.yellow('↻')} ${h?.name ?? id} — ${Math.round(cs.retention * 100)}%`);
+        }
+      }
+    }
   }
   console.log('');
 }

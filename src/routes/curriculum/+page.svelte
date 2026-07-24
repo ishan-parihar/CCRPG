@@ -160,9 +160,9 @@
               <p class="detail-desc">{holon.description}</p>
 
               <!-- Depth status -->
-              {@const depth = getDepth(holon.id)}
-              {@const retention = getRetention(holon.id)}
-              {#if depth || retention !== undefined}
+              {#if getDepth(holon.id) || getRetention(holon.id) !== undefined}
+                {@const depth = getDepth(holon.id)}
+                {@const retention = getRetention(holon.id)}
                 <div class="detail-section">
                   <span class="detail-section-title">Learning Status</span>
                   <div class="detail-metrics">

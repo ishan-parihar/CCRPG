@@ -183,8 +183,8 @@
             <span class="stat-label">total concepts</span>
           </div>
           {#if healthMetrics}
+            {@const pct = Math.round(healthMetrics.conceptCoverage * 100)}
             <div class="stat-card">
-              {@const pct = Math.round(healthMetrics.conceptCoverage * 100)}
               <span class="stat-value" style="color: {pct > 50 ? 'var(--ccrpg-success)' : 'var(--ccrpg-warning)'}">{pct}%</span>
               <span class="stat-label">coverage</span>
             </div>

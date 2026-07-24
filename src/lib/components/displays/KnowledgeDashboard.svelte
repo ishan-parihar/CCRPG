@@ -61,6 +61,15 @@
     return total / knowledge.conceptStates.size;
   });
 
+  const coverageBandResult = $derived(coverageBand(coverage));
+  const retentionBandResult = $derived(retentionBand(avgRetention));
+
+  // Forgetting curve derived metrics (moved from @const to $derived)
+  const forgettingCurves = $derived(knowledge?.forgettingCurves ? [...knowledge.forgettingCurves.values()] : []);
+  const avgHalfLife = $derived(forgettingCurves.length > 0 ? forgettingCurves.reduce((s, c) => s + c.halfLifeMs, 0) / forgettingCurves.length : 0);
+  const strongCount = $derived(forgettingCurves.filter(c => c.retention > 0.7).length);
+  const fadingCount = $derived(forgettingCurves.filter(c => c.retention <= 0.5).length);
+
   // Concepts needing review (retention < 0.7)
   const needsReview = $derived.by(() => {
     if (!knowledge) return 0;
@@ -135,16 +144,14 @@
           <span class="metric-sub">of {totalConceptsInCurriculum}</span>
         {/if}
       </div>
-      <div class="metric">
-        {@const cb = coverageBand(coverage)}
-        <span class="metric-label">Coverage</span>
-        <span class="metric-value" style="color: {cb.color}">{cb.label}</span>
-      </div>
-      <div class="metric">
-        {@const rb = retentionBand(avgRetention)}
-        <span class="metric-label">Retention</span>
-        <span class="metric-value" style="color: {rb.color}">{rb.label}</span>
-      </div>
+          <div class="metric">
+            <span class="metric-label">Coverage</span>
+            <span class="metric-value" style="color: {coverageBandResult.color}">{coverageBandResult.label}</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Retention</span>
+            <span class="metric-value" style="color: {retentionBandResult.color}">{retentionBandResult.label}</span>
+          </div>
     </div>
 
     <!-- Depth distribution -->
@@ -271,13 +278,9 @@
       <div class="section">
         <h3 class="section-title">Retention Curves</h3>
         <div class="curve-summary">
-          {@const curves = [...knowledge.forgettingCurves.values()]}
-          {@const avgHalfLife = curves.reduce((s, c) => s + c.halfLifeMs, 0) / curves.length}
-          {@const strongCount = curves.filter(c => c.retention > 0.7).length}
-          {@const fadingCount = curves.filter(c => c.retention <= 0.5).length}
           <div class="curve-metrics">
             <div class="curve-metric">
-              <span class="curve-metric-value">{curves.length}</span>
+              <span class="curve-metric-value">{forgettingCurves.length}</span>
               <span class="curve-metric-label">tracked concepts</span>
             </div>
             <div class="curve-metric">
