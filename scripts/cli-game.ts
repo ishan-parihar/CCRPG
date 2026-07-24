@@ -491,7 +491,15 @@ const USER_ANSWERS: string[] = [];
     try {
       const content = fs.readFileSync(answersFile, 'utf8');
       // One answer per line; blank lines preserved as empty answers (user skipped)
-      USER_ANSWERS.push(...content.split('\n'));
+      const fileLines = content.split('\n');
+      USER_ANSWERS.push(...fileLines);
+      // UX-PHASE-3: Display loaded answer count for transparency.
+      if (!JSON_MODE && !HEADLESS) {
+        const answerCount = fileLines.filter(l => l.trim() !== '').length;
+        if (answerCount > 0) {
+          info('answers', `Loaded ${answerCount} answer${answerCount !== 1 ? 's' : ''} from file`);
+        }
+      }
     } catch (err: any) {
       console.error(`${chalk.red('✗')} Could not read --answers file: ${answersFile} (${err.message})`);
       process.exit(1);
