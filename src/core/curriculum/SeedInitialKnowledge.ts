@@ -185,5 +185,9 @@ function buildPrerequisiteChain(
     }
   }
 
+  // P2-R8 follow-up: Re-sort by priority so downstream code (scheduler,
+  // encounter selection) sees concepts in priority order, not DFS order.
+  selected.sort((a, b) => b.priority - a.priority);
+
   return selected;
 }
