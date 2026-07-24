@@ -2137,7 +2137,15 @@ ACTIVE: <one sentence>
 Encounter log:
 ${recentEncounters.slice(0, 1500)}`;
 
-    const result = await queryLLM('You are a developmental synthesis engine. Be concise and precise.', synthesisPrompt);
+    // UX-PHASE-1: Show spinner during LLM synthesis so the terminal
+      // doesn't appear frozen during the 20-60s LLM call.
+      const synthSpinner = JSON_MODE ? null : ora({ text: chalk.dim('Synthesizing session insights...'), color: 'cyan' }).start();
+      let result: string;
+      try {
+        result = await queryLLM('You are a developmental synthesis engine. Be concise and precise.', synthesisPrompt);
+      } finally {
+        if (synthSpinner) synthSpinner.stop();
+      }
     if (result && !result.startsWith('{"error"')) {
       // Parse the response — be flexible about format
       const lines = result.split('\n').filter(l => l.trim());
@@ -2518,13 +2526,21 @@ async function runDirectQuestioningSession(
     };
 
     try {
+      // UX-PHASE-1: Show spinner during LLM processing so the terminal
+      // doesn't appear frozen during the 20-60s LLM calls.
+      const encounterSpinner = JSON_MODE ? null : ora({ text: chalk.dim('The game is reflecting...'), color: 'cyan' }).start();
+      let result: Awaited<ReturnType<typeof executeEncounter>>;
+      try {
       // YAGNI-1 (UX-R3+R4): Route through the unified dispatch. DQ never
       // has a persistentAgent, so this always uses AgenticOrchestrator —
       // but the routing logic lives in ONE place now.
-      const result = await executeEncounter(encounter, currentSig, currentWorld, history, {
+      result = await executeEncounter(encounter, currentSig, currentWorld, history, {
         consecutivePasses,
         agentSynthesis: agent.buildSynthesis(),
       });
+      } finally {
+        if (encounterSpinner) encounterSpinner.stop();
+      }
 
       // Qualitative feedback — no pass/fail, no clinical labels
       const cr = result.outcome.consequenceRecord;
