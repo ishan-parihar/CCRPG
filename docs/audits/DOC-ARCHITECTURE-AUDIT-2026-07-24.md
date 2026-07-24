@@ -87,8 +87,8 @@ The project has evolved into **six distinct-but-fused functions**:
 | 7 game modalities | 7 modalities defined | ✅ Defined |
 | Multiplayer | Single-player | ❌ Deferred |
 | Phaser rendering | SvelteKit WebUI | ✅ Replaced |
-| 11 architecture docs | 0 architecture docs | ❌ Never written |
-| 5 UX docs | 0 UX docs | ❌ Never written |
+| 11 architecture docs | 1 architecture doc (STAGE-ASSESSMENT-ARCHITECTURE.md) | ⚠️ Partial — 10 missing |
+| 5 UX docs | 1 UX doc (FRONTEND-AUDIT-AND-REFACTOR-PLAN.md) | ⚠️ Partial — 4 missing |
 | 4 validation docs | 0 validation docs | ❌ Never written |
 | 4 roadmap docs | 0 roadmap docs | ❌ Never written |
 | Curriculum system | Full implementation | ✅ Built (not in original plan) |
@@ -119,8 +119,11 @@ These documents are from the ATB-combat era and will actively mislead successor 
 | `docs/root-archive/CCRPG-FRONTEND-ARCHITECTURE-PLAN.md` | References Phaser + PlayerProfile | Archive only |
 | `docs/root-archive/SVELTE-FRONTEND-AUDIT.md` | Historical, superseded | Archive only |
 | `docs/root-archive/FRONTEND-IMPLEMENTATION-WORKLOG.md` | Historical worklog | Archive only |
+| `docs/root-archive/MVP-BLUEPRINT.md` | Still referenced as binding build plan in REQUIREMENTS.md but in root-archive — confusing | Move to docs/ or update reference |
+| `docs/root-archive/UNIFIED-IMPLEMENTATION-PLAN.md` | Still referenced as binding build plan in INDEX.md but in root-archive — confusing | Move to docs/ or update reference |
+| `docs/root-archive/BUGS-AND-GAPS.md` | Likely redundant with audit reports | Archive only |
 
-**Total:** ~30 documents that are dead but still present.
+**Total:** ~33 documents that are dead but still present.
 
 ### 4.2 Redundant Documents (Overlapping Content)
 
@@ -234,6 +237,7 @@ docs/
 | FRONTEND-AUDIT-AND-REFACTOR-PLAN.md | → archive/ | Superseded by HARDCODE-AUDIT |
 | GAMEPLAY-MODES-AUDIT.md | → archive/ | Superseded by RED-TEAM-AUDIT-DEFINITIVE |
 | RED-TEAM-AUDIT-DEFINITIVE.md | → audits/ | Keep as definitive audit |
+| STAGE-ASSESSMENT-ARCHITECTURE.md | → architecture/ | Move to new architecture/ directory |
 
 ### 6.3 Documents to Rewrite
 
