@@ -1,6 +1,6 @@
 # Onboarding Redesign Plan
 
-> **Depends on:** `architecture/09-stage-assessment-architecture.md` (the 64-module system + shadow diagnostics + holonic return)
+> **Depends on:** `architecture/10-stage-assessment-architecture.md` (the 64-module system + shadow diagnostics + holonic return)
 > **Depends on:** `foundations/10-shadow-and-pathology.md` (the 128-shadow model)
 > **Purpose:** Define the UX flow and player experience of the composite onboarding. For the underlying architecture (module contracts, scoring rubrics, drive-health probes), see the architecture doc. This document focuses on *how it feels to play*.
 

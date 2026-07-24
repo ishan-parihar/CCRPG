@@ -1,7 +1,7 @@
 # Mysterium Research Requirements — The Document of Documents
 
 > **Status:** Active — Research + Implementation phases running concurrently.
-> See `architecture/00-overview.md` for the binding architectural contract.
+> See `architecture/01-overview.md` for the binding architectural contract.
 
 ---
 
@@ -59,7 +59,7 @@ docs/
 │   ├── 00-overview.md
 │   └── 01-...08-...
 │
-├── architecture/09-stage-assessment-architecture.md  ← module contract, composition rules
+├── architecture/10-stage-assessment-architecture.md  ← module contract, composition rules
 ├── ONBOARDING-REDESIGN-PLAN.md       ← binary-search composite assessment
 │
 ├── progression/                      ← how the player grows
@@ -68,7 +68,7 @@ docs/
 ├── narrative/                        ← story as developmental scaffolding
 │   └── 00-narrative-architecture.md
 │
-├── architecture/10-curriculum-authoring.md           ← how to author curriculum holons
+├── architecture/11-curriculum-authoring.md           ← how to author curriculum holons
 │
 ├── concept-drafts/                   ← 512 game concept documents
 │

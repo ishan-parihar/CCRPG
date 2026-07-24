@@ -46,8 +46,8 @@
 - ✅ Phase 4: Validate — 793 tests pass, build succeeds, workspace-lint clean
 
 ### Epistemological Refactor
-- ✅ Moved STAGE-ASSESSMENT-ARCHITECTURE.md → architecture/09-stage-assessment-architecture.md
-- ✅ Moved curriculum-authoring.md → architecture/10-curriculum-authoring.md
+- ✅ Moved STAGE-ASSESSMENT-ARCHITECTURE.md → architecture/10-stage-assessment-architecture.md
+- ✅ Moved curriculum-authoring.md → architecture/11-curriculum-authoring.md
 - ✅ Fixed cross-references across all docs (STAGE-ASSESSMENT-ARCHITECTURE, curriculum-authoring)
 - ✅ Created Mysterium Identity Document (architecture/00-mysterium-identity.md)
 - ✅ Updated PROGRESS.md with current state

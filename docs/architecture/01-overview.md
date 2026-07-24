@@ -9,7 +9,7 @@ The binding architectural contract for Mysterium. This document describes how th
 The architecture is grounded in:
 - Clean architecture (Martin 2017) — core/ has zero external dependencies
 - The AQAL framework — four quadrants, eight stages, eight lines
-- The assessment module contract (architecture/09-stage-assessment-architecture.md)
+- The assessment module contract (architecture/10-stage-assessment-architecture.md)
 - The holonic curriculum architecture (foundations/30)
 
 ## 3. Game-design mapping

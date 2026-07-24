@@ -103,7 +103,7 @@ shadow work).
 | `foundations/25-cumulative-consciousness-index.md` | CCI composite metric |
 | `foundations/26-unified-core-architecture.md` | The unified core architecture spec |
 | `foundations/27-auto-mode-strategy-engine.md` | Auto-mode session strategy generation |
-| `docs/architecture/09-stage-assessment-architecture.md` | Module contract, composition rules, 4 execution modes |
+| `docs/architecture/10-stage-assessment-architecture.md` | Module contract, composition rules, 4 execution modes |
 | `docs/ONBOARDING-REDESIGN-PLAN.md` | Binary-search composite assessment for Significator seeding |
 | `UNIFIED-IMPLEMENTATION-PLAN.md` | The binding build plan (supersedes IMPLEMENTATION-PLAN.md) |
 

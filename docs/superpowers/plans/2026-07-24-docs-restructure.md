@@ -531,11 +531,11 @@ Replace XP, levels, and ATB combat references with demonstration-based progressi
 mkdir -p docs/architecture
 ```
 
-- [ ] **Step 2: Write `docs/architecture/00-overview.md`**
+- [ ] **Step 2: Write `docs/architecture/01-overview.md`**
 
 The binding architectural contract. C4 context diagram. Module boundaries. How the 64-module system, curriculum, shadow work, polarity engine, and LLM integration compose into a working system.
 
-- [ ] **Step 3: Write `docs/architecture/01-core-engine.md`**
+- [ ] **Step 3: Write `docs/architecture/02-core-engine.md`**
 
 Significator as sole state vessel. CCI computation. Auto-mode strategy. Encounter scheduler. Theta-decay. The 10 core engines in `src/core/engines/` and how they're wired.
 

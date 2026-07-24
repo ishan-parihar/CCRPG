@@ -13,8 +13,8 @@
 5. `foundations/00-...36-...` (in order — **00-09 substrate, 10-14 lesser cycle, 15-27 greater cycle, 28-34 curriculum expansion, 35-36 curriculum upgrade plan**)
 6. `lines/00-overview-multi-line.md` then `01-...08-...` (any order)
 7. `stages/00-overview-eight-stages.md` then `01-...08-...` (in order)
-8. `architecture/09-stage-assessment-architecture.md`
-9. `architecture/00-overview.md` → `architecture/08-rendering-layer.md`
+8. `architecture/10-stage-assessment-architecture.md`
+9. `architecture/01-overview.md` → `architecture/08-rendering-layer.md`
 10. `concept-drafts/README.md` then a sampled module to see the lesser-cycle design briefs in concrete form
 11. `CHANGELOG.md` — what changed, and when.
 
@@ -110,10 +110,10 @@
 
 ### Architecture (9)
 
-- `architecture/09-stage-assessment-architecture.md` — module contract, composition rules, 4 execution modes
+- `architecture/10-stage-assessment-architecture.md` — module contract, composition rules, 4 execution modes
 - `ONBOARDING-REDESIGN-PLAN.md` — binary-search composite assessment for Significator seeding
-- `architecture/00-overview.md` — the binding architectural contract
-- `architecture/01-core-engine.md` — Significator, CCI, AutoMode, Scheduler
+- `architecture/01-overview.md` — the binding architectural contract
+- `architecture/02-core-engine.md` — Significator, CCI, AutoMode, Scheduler
 - `architecture/02-encounter-system.md` — 64 modules, 7 modalities, AgenticOrchestrator
 - `architecture/03-curriculum-system.md` — holonic curriculum, depth assessment, spaced repetition
 - `architecture/04-shadow-work.md` — 4-quadrant shadow model, detection→integration
@@ -126,7 +126,7 @@
 
 - `progression/00-progression-overview.md` — how the player ascends
 - `narrative/00-narrative-architecture.md` — story as scaffolding for development
-- `architecture/10-curriculum-authoring.md` — how to author curriculum holons
+- `architecture/11-curriculum-authoring.md` — how to author curriculum holons
 
 ### `concept-drafts/` (512)
 
@@ -161,4 +161,4 @@ A document missing any of the six is incomplete and is flagged for review.
 
 ## Canon
 
-As of v3.0 (2026-07-24) the system is a contemplative practice named Mysterium (renamed from CCRPG). The naming change reflects the evolution from "game" to "practice." See `CHANGELOG.md` for the full version history. The architecture docs (`architecture/00-overview.md`) describe the current system.
+As of v3.0 (2026-07-24) the system is a contemplative practice named Mysterium (renamed from CCRPG). The naming change reflects the evolution from "game" to "practice." See `CHANGELOG.md` for the full version history. The architecture docs (`architecture/01-overview.md`) describe the current system.

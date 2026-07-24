@@ -87,7 +87,7 @@ The project has evolved into **six distinct-but-fused functions**:
 | 7 game modalities | 7 modalities defined | ✅ Defined |
 | Multiplayer | Single-player | ❌ Deferred |
 | Phaser rendering | SvelteKit WebUI | ✅ Replaced |
-| 11 architecture docs | 1 architecture doc (architecture/09-stage-assessment-architecture.md) | ⚠️ Partial — 10 missing |
+| 11 architecture docs | 1 architecture doc (architecture/10-stage-assessment-architecture.md) | ⚠️ Partial — 10 missing |
 | 5 UX docs | 1 UX doc (FRONTEND-AUDIT-AND-REFACTOR-PLAN.md) | ⚠️ Partial — 4 missing |
 | 4 validation docs | 0 validation docs | ❌ Never written |
 | 4 roadmap docs | 0 roadmap docs | ❌ Never written |
@@ -163,7 +163,7 @@ The most confusing thing for a successor agent is the **identity crisis** across
 | AGENTS.md | "CCRPG is a Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment" |
 | package.json | "Mysterium — a contemplative practice for evolution across all dimensions of being" |
 | CLI banner | "Mysterium — A contemplative RPG that mirrors you back to yourself" |
-| docs/architecture/10-curriculum-authoring.md | "How to author, validate, and integrate curriculum holons into Mysterium" |
+| docs/architecture/11-curriculum-authoring.md | "How to author, validate, and integrate curriculum holons into Mysterium" |
 
 **A successor agent reading these would think the project is four different things:**
 1. A fighting game (docs/00-vision.md)
@@ -237,7 +237,7 @@ docs/
 | FRONTEND-AUDIT-AND-REFACTOR-PLAN.md | → archive/ | Superseded by HARDCODE-AUDIT |
 | GAMEPLAY-MODES-AUDIT.md | → archive/ | Superseded by RED-TEAM-AUDIT-DEFINITIVE |
 | RED-TEAM-AUDIT-DEFINITIVE.md | → audits/ | Keep as definitive audit |
-| architecture/09-stage-assessment-architecture.md | → architecture/ | Move to new architecture/ directory |
+| architecture/10-stage-assessment-architecture.md | → architecture/ | Move to new architecture/ directory |
 
 ### 6.3 Documents to Rewrite
 
