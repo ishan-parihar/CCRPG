@@ -2559,21 +2559,58 @@ async function runDirectQuestioningSession(
       // doesn't appear frozen during the 20-60s LLM calls.
       const encounterSpinner = JSON_MODE ? null : ora({ text: chalk.dim('The game is reflecting...'), color: 'cyan' }).start();
       let result: Awaited<ReturnType<typeof executeEncounter>>;
+      let encounterTimedOut = false;
+      // UX-PHASE-5A: Per-encounter timeout (60s) with deterministic fallback.
+      // When the reasoning model takes too long, fall back to a curated
+      // narrative so the session doesn't hang. The player still gets a
+      // meaningful response instead of a frozen terminal.
+      const ENCOUNTER_TIMEOUT_MS = 60_000;
       try {
-      // YAGNI-1 (UX-R3+R4): Route through the unified dispatch. DQ never
-      // has a persistentAgent, so this always uses AgenticOrchestrator —
-      // but the routing logic lives in ONE place now.
-      result = await executeEncounter(encounter, currentSig, currentWorld, history, {
+      const encounterPromise = executeEncounter(encounter, currentSig, currentWorld, history, {
         consecutivePasses,
         agentSynthesis: agent.buildSynthesis(),
       });
+      const timeoutPromise = new Promise<never>((_, reject) => {
+        setTimeout(() => reject(new Error('encounter_timeout')), ENCOUNTER_TIMEOUT_MS);
+      });
+      result = await Promise.race([encounterPromise, timeoutPromise]);
+      } catch (err: any) {
+        if (err?.message === 'encounter_timeout') {
+          // LLM timed out — use deterministic fallback so the session continues
+          encounterTimedOut = true;
+          const fallbackNarrative = pickFallbackNarrative();
+          result = {
+            outcome: {
+              passed: false,
+              confidence: 0.5,
+              dimensions: {},
+              modality: encounter.modality,
+              line: encounter.targetLines[0] ?? 'Cognitive',
+              stage: encounter.stage,
+            } as any,
+            response: {
+              narrativeSummary: fallbackNarrative,
+              driveDirectionality: {},
+              shadowSurfaced: null,
+              shadowResolvedId: null,
+            } as PlayerResponse,
+            narrativeSummary: fallbackNarrative,
+            effectiveEncounter: encounter,
+          };
+          if (!JSON_MODE) warn('The game took longer than expected — continuing with a gentle reflection.');
+        } else {
+          throw err;
+        }
       } finally {
         if (encounterSpinner) encounterSpinner.stop();
       }
 
       // Qualitative feedback — no pass/fail, no clinical labels
-      const cr = result.outcome.consequenceRecord;
-      if (!JSON_MODE) {
+      // UX-PHASE-5A: When the encounter timed out, result.outcome has a minimal
+      // fallback shape that lacks consequenceRecord. Guard all downstream code
+      // that accesses cr.* to prevent crashes on the fallback path.
+      const cr = encounterTimedOut ? null : (result.outcome as any).consequenceRecord ?? null;
+      if (!JSON_MODE && cr) {
         // P1-1 (UX-R3): word-boundary-aware truncation; was slice(0,120)+'...'
         // R5-BUG-5 (UX-R5): If the LLM returned an empty narrative, fall back
         // to the FallbackNarratives pool instead of showing an empty ✦ line.
