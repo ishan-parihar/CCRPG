@@ -861,6 +861,27 @@ function somaticPracticeHint(history: ConsequenceRecord[]): string | null {
   return practices[Math.floor(Math.random() * practices.length)]!;
 }
 
+/**
+ * P0-R2 helper: Update the active_focus field in goals.yaml with a new focus snippet.
+ * Extracted from duplicated code in DQ and Story session paths.
+ * Best-effort — never throws, never breaks the session.
+ */
+function updateGoalsActiveFocus(focusText: string): void {
+  try {
+    const profileDir = getActiveProfileDir();
+    if (!profileDir) return;
+    const goalsRaw = agentReadProfileFile('goals.yaml');
+    if (!goalsRaw) return;
+    const focusSnippet = focusText.split(/[.!?]/)[0]?.trim().slice(0, 120);
+    if (!focusSnippet || focusSnippet.length <= 10) return;
+    const updatedGoals = goalsRaw.replace(
+      /active_focus:.*$/m,
+      `active_focus: "${focusSnippet.replace(/"/g, "'")}"`,
+    );
+    agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
+  } catch { /* best-effort — never break the session */ }
+}
+
 // Interactive prompt helper — uses @clack/prompts for beautiful UI
 async function ask(q: string): Promise<string> {
   if (HEADLESS || JSON_MODE) return '';
@@ -2871,27 +2892,7 @@ async function runDirectQuestioningSession(
   }
 
   // P0-R2 (Curriculum Audit): Wire integration response to next-session focus.
-  // When the player reflects, capture a distilled version as active_focus
-  // so the next session opens with their own words as a carry-forward.
-  if (integrationResponse) {
-    try {
-      const profileDir = getActiveProfileDir();
-      if (profileDir) {
-        const goalsRaw = agentReadProfileFile('goals.yaml');
-        if (goalsRaw) {
-          // Extract the most meaningful sentence (first 120 chars) as focus
-          const focusSnippet = integrationResponse.split(/[.!?]/)[0]?.trim().slice(0, 120);
-          if (focusSnippet && focusSnippet.length > 10) {
-            const updatedGoals = goalsRaw.replace(
-              /active_focus:.*$/m,
-              `active_focus: "${focusSnippet.replace(/"/g, "'")}"`,
-            );
-            agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
-          }
-        }
-      }
-    } catch { /* best-effort — never break the session for goals wiring */ }
-  }
+  if (integrationResponse) updateGoalsActiveFocus(integrationResponse);
 
   // NF-3: Persist the asked-prompts set so the next session avoids repeats.
   saveAskedPrompts(getActiveProfileDir());
@@ -3545,24 +3546,7 @@ async function runFullSession(): Promise<void> {
   }
 
   // P0-R2 (Curriculum Audit): Wire integration response to next-session focus.
-  if (integrationResponse2) {
-    try {
-      const profileDir = getActiveProfileDir();
-      if (profileDir) {
-        const goalsRaw = agentReadProfileFile('goals.yaml');
-        if (goalsRaw) {
-          const focusSnippet = integrationResponse2.split(/[.!?]/)[0]?.trim().slice(0, 120);
-          if (focusSnippet && focusSnippet.length > 10) {
-            const updatedGoals = goalsRaw.replace(
-              /active_focus:.*$/m,
-              `active_focus: "${focusSnippet.replace(/"/g, "'")}"`,
-            );
-            agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
-          }
-        }
-      }
-    } catch { /* best-effort */ }
-  }
+  if (integrationResponse2) updateGoalsActiveFocus(integrationResponse2);
 
   // NF-3: Persist the asked-prompts set for cross-session de-duplication.
   saveAskedPrompts(getActiveProfileDir());
