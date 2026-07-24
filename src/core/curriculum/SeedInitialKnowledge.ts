@@ -61,9 +61,8 @@ export function seedInitialKnowledge(
     }
   }
 
-  // P2-R8: Sort by priority (introductory concepts first), then build
-  // a prerequisite chain of up to 5 concepts.
-  matchingConcepts.sort((a, b) => b.priority - a.priority);
+  // P2-R8: Build a prerequisite chain of up to 5 concepts.
+  // buildPrerequisiteChain() internally sorts by priority after DFS traversal.
   const selected = buildPrerequisiteChain(matchingConcepts, registry, 5);
 
   // If no concepts found for the dominant line, try any line at the player's stage
