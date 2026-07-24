@@ -11,7 +11,7 @@
 import { writable } from 'svelte/store';
 import { createDefaultSettings, type AccessibilitySettings } from '$core/accessibility/AccessibilitySettings.js';
 
-const STORAGE_KEY = 'ccrpg:accessibility';
+const STORAGE_KEY = 'mysterium:accessibility';
 
 // Use typeof window check instead of $app/environment for testability.
 // In SvelteKit, $app/environment.browser works, but in vitest with jsdom

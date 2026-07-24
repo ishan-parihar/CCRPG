@@ -7,7 +7,7 @@
 # MVP Blueprint — The Definitive Build Plan
 
 > **Status:** v1.0 — load-bearing. This document is the *binding plan*
-> for building CCRPG to MVP. Every PR, every module, every content
+> for building Mysterium to MVP. Every PR, every module, every content
 > drop traces back to a numbered section here. It supersedes anything
 > in `/docs/` it disagrees with; if it ever does, this document is
 > updated and the loser is corrected.
@@ -18,7 +18,7 @@
 
 ### 1. The vision in one paragraph
 
-CCRPG is a **role-playing fighting game** whose every gameplay verb is
+Mysterium is a **role-playing fighting game** whose every gameplay verb is
 the gamification of a validated developmental assessment, whose
 macro-progression is the eight stages of consciousness (Infrared →
 White), and whose endgame is the harvest into 4th-density unity
@@ -52,7 +52,7 @@ What this concretely means is enumerated in Part V.
 
 ## Part II — The modular architecture (the technical spine)
 
-The MVP's load-bearing engineering decision: **everything in CCRPG is
+The MVP's load-bearing engineering decision: **everything in Mysterium is
 a registered module**. New stages, new lines, new tasks, new
 encounters, new ray correspondences are *data files plus a small
 adapter*, never engine modifications.
@@ -228,7 +228,7 @@ real-game DDA tightens it as play continues.
 
 ### 12. Age and locale awareness without disclosure
 
-CCRPG **never asks the player's age or location**. Instead, signal
+Mysterium **never asks the player's age or location**. Instead, signal
 without disclosure:
 
 - **Vocabulary band** of opening narration is autodetected from the
@@ -860,7 +860,7 @@ The four major canon decisions are resolved. Remaining honest
 unknowns:
 
 1. **Compression of the developmental arc.** Real human stage
-   development takes decades; CCRPG compresses it. The *temporal
+   development takes decades; Mysterium compresses it. The *temporal
    honesty ratio* — how much in-game altitude truly maps to real-life
    capacity — must be communicated honestly in onboarding and codex.
    Best phrasing: "in-game altitude is a *practice indicator*, not a
@@ -889,7 +889,7 @@ unknowns:
    mode" that uses gentler animations and longer cognitive overlays
    (which are valid as a difficulty mode anyway).
 
-6. **The author-as-target-player.** The user has stated CCRPG is
+6. **The author-as-target-player.** The user has stated Mysterium is
    built personally and shipped globally. There is a real risk that
    the design over-fits the author's developmental profile. The
    adaptive onboarding is the primary defence; cultural diversity in

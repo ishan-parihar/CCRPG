@@ -7,7 +7,7 @@ For each module that has scoring.md + shadow-diagnostics.md but no module-spec.m
 import os
 import re
 
-BASE = "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/concept-drafts"
+BASE = "/home/ishanp/Documents/GitHub/MY-PROJECTS/Mysterium/docs/concept-drafts"
 
 def make_module_spec(module_dir):
     scoring_path = os.path.join(module_dir, "scoring.md")

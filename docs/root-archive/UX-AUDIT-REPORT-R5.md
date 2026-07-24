@@ -1,7 +1,7 @@
-# CCRPG Fresh-User UX Audit Report — Round 5
+# Mysterium Fresh-User UX Audit Report — Round 5
 
 > **Date:** 2026-07-06
-> **Method:** A subagent with zero knowledge of CCRPG internals role-played a fresh user discovering the game via the CLI only. It ran 36 distinct commands across all subcommands, flags, and modality combinations — the most thorough sweep in the audit history. The LLM was live (opencode.ai/zen + mimo-v2.5-free), the test suite was fully green (703 passing), and all R3+R4 fixes were in place.
+> **Method:** A subagent with zero knowledge of Mysterium internals role-played a fresh user discovering the game via the CLI only. It ran 36 distinct commands across all subcommands, flags, and modality combinations — the most thorough sweep in the audit history. The LLM was live (opencode.ai/zen + mimo-v2.5-free), the test suite was fully green (703 passing), and all R3+R4 fixes were in place.
 > **Objective:** Measure whether the game is now **experientially sound** and **efficacious in its stated purpose** — accelerating evolution and healing — with the LLM fully wired and all prior audit findings addressed.
 
 ---
@@ -119,7 +119,7 @@ This is the first time in the audit history a subagent reported being genuinely 
 - **What's needed to fully close:** An input mechanism for non-TTY users. Options:
   - `--answers file.txt` — one answer per line, consumed per encounter
   - `--answer "text"` — repeated flag, one per encounter
-  - stdin line-per-question parsing — `echo "answer1\nanswer2" | ccrpg --headless`
+  - stdin line-per-question parsing — `echo "answer1\nanswer2" | mysterium --headless`
   - An interactive mode that works in modern terminals (the `session` subcommand)
 
 ### 3.2 Loop 2: Encounter → Consequence → Next Encounter (Developmental)
@@ -172,8 +172,8 @@ The user said nothing. The LLM is asserting the protagonist "recognized" somethi
 **Fix (options):**
 1. `--answers file.txt` — read answers from a file, one per encounter
 2. `--answer "text"` — repeated flag, one per encounter
-3. stdin line-per-question parsing — `echo -e "answer1\nanswer2" | ccrpg --headless`
-4. A clear warning when headless mode is used without an input mechanism: "Headless mode cannot accept your answers. The LLM will generate narratives without your input. For a real reflective session, run `ccrpg session` in a real terminal."
+3. stdin line-per-question parsing — `echo -e "answer1\nanswer2" | mysterium --headless`
+4. A clear warning when headless mode is used without an input mechanism: "Headless mode cannot accept your answers. The LLM will generate narratives without your input. For a real reflective session, run `mysterium session` in a real terminal."
 
 **Blast radius:** Medium. Option 4 (warning) is ~10 lines. Options 1-3 are ~30-50 lines each. This is the single highest-leverage fix for efficacy.
 

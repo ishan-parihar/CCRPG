@@ -3,14 +3,14 @@
 ## 1. Purpose
 
 Specify the Interpersonal line — the capacity to *attune to and engage
-other selves*. CCRPG's co-op synergies, party-buffs, attunement reads,
+other selves*. Mysterium's co-op synergies, party-buffs, attunement reads,
 and conflict-resolution mechanics live here. Interpersonal is the line
 that lives in the **LL quadrant** (collective interior) — where
 "we-space" is generated.
 
 A single-player game can *practice* interpersonal capacity (NPC
 dialogues, ally party management) but only multiplayer can *test* it
-honestly. CCRPG's hardest interpersonal milestones are multiplayer-only
+honestly. Mysterium's hardest interpersonal milestones are multiplayer-only
 by design — a deliberate constraint, defended in `lines/00`.
 
 ## 2. Scientific basis
@@ -28,7 +28,7 @@ Synthesis:
 - **Theory of mind (Frith & Frith)** — the mental architecture of
   representing others' minds.
 
-CCRPG's working definition:
+Mysterium's working definition:
 
 > Interpersonal intelligence is the capacity to (a) accurately model
 > another mind, (b) attune to another's affect, (c) coordinate action
@@ -206,7 +206,7 @@ surfaces gracefully.
   pools may be cross-cultural. Honest UX: show the partner's stated
   cultural-affect-style preference as part of party setup.
 - **Toxicity.** Interpersonal play in multiplayer is *exactly* where
-  toxicity lives. CCRPG must build robust pro-social structures
+  toxicity lives. Mysterium must build robust pro-social structures
   (party-of-friends emphasis; voice-off default; report flows). See
   `validation/02`.
 

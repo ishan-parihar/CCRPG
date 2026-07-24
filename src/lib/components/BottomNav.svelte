@@ -50,13 +50,13 @@
     bottom: 0;
     left: 0;
     right: 0;
-    height: var(--ccrpg-nav-height);
-    background: var(--ccrpg-surface);
-    border-top: 1px solid var(--ccrpg-border);
+    height: var(--mysterium-nav-height);
+    background: var(--mysterium-surface);
+    border-top: 1px solid var(--mysterium-border);
     display: flex;
     align-items: stretch;
     justify-content: space-around;
-    z-index: var(--ccrpg-z-hud);
+    z-index: var(--mysterium-z-hud);
     padding-bottom: env(safe-area-inset-bottom, 0px);
   }
 
@@ -67,12 +67,12 @@
     align-items: center;
     justify-content: center;
     gap: 2px;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     text-decoration: none;
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    transition: color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                transform var(--ccrpg-duration-instant) var(--ccrpg-ease);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    transition: color var(--mysterium-duration-fast) var(--mysterium-ease),
+                transform var(--mysterium-duration-instant) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
@@ -81,16 +81,16 @@
   }
 
   .nav-item.active {
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
   }
 
   .nav-item:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: -2px;
   }
 
   .nav-label {
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   /* Desktop: hide bottom nav, show sidebar instead */

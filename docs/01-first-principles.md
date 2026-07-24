@@ -7,7 +7,7 @@ first-principles questions from `REQUIREMENTS.md §1` into stand-alone
 arguments, with citations, counter-examples, and acceptance criteria. Every
 later document is, in effect, a long-form answer to one of the seven.
 
-When a design decision is made anywhere in CCRPG, it must be possible to
+When a design decision is made anywhere in Mysterium, it must be possible to
 walk it back to one of these seven principles. If it cannot, either the
 decision is wrong or the principle list is incomplete.
 

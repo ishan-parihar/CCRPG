@@ -108,7 +108,7 @@
 
 <Seo
   title="Play"
-  description="Enter the CCRPG gameplay surface — encounter developmental assessments disguised as gameplay."
+  description="Enter the Mysterium gameplay surface — encounter developmental assessments disguised as gameplay."
   indexable={false}
 />
 
@@ -235,7 +235,7 @@
     position: fixed;
     inset: 0;
     overflow: hidden;
-    background: var(--ccrpg-bg);
+    background: var(--mysterium-bg);
     display: flex;
     flex-direction: column;
   }
@@ -245,16 +245,16 @@
     top: 0;
     left: 0;
     right: 0;
-    z-index: var(--ccrpg-z-hud);
+    z-index: var(--mysterium-z-hud);
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
-    padding-top: calc(var(--ccrpg-space-3) + env(safe-area-inset-top, 0px));
+    padding: var(--mysterium-space-3) var(--mysterium-space-4);
+    padding-top: calc(var(--mysterium-space-3) + env(safe-area-inset-top, 0px));
     background: linear-gradient(
       to bottom,
-      var(--ccrpg-bg) 0%,
-      color-mix(in srgb, var(--ccrpg-bg) 60%, transparent) 70%,
+      var(--mysterium-bg) 0%,
+      color-mix(in srgb, var(--mysterium-bg) 60%, transparent) 70%,
       transparent 100%
     );
     pointer-events: none;
@@ -265,10 +265,10 @@
   }
 
   .hud-stage {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    letter-spacing: var(--ccrpg-tracking-wide);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    letter-spacing: var(--mysterium-tracking-wide);
     font-style: italic;
     max-width: 50vw;
     text-align: right;
@@ -280,7 +280,7 @@
   .play-main {
     flex: 1;
     overflow-y: auto;
-    padding: calc(var(--ccrpg-space-5) + 60px) var(--ccrpg-space-4) var(--ccrpg-space-6);
+    padding: calc(var(--mysterium-space-5) + 60px) var(--mysterium-space-4) var(--mysterium-space-6);
     -webkit-overflow-scrolling: touch;
   }
 
@@ -291,59 +291,59 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--ccrpg-space-4);
-    color: var(--ccrpg-fg);
+    gap: var(--mysterium-space-4);
+    color: var(--mysterium-fg);
   }
 
   .loading-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
   }
 
   .error-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
-    color: var(--ccrpg-danger);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
+    color: var(--mysterium-danger);
   }
 
   .error-detail {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     text-align: center;
     max-width: 32rem;
   }
 
   .world-view {
-    max-width: var(--ccrpg-content-max-width);
+    max-width: var(--mysterium-content-max-width);
     margin: 0 auto;
   }
 
   .world-header {
     text-align: center;
-    margin-bottom: var(--ccrpg-space-2);
+    margin-bottom: var(--mysterium-space-2);
   }
 
   .world-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xl);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xl);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     margin: 0;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .world-subtitle {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     margin: 0;
   }
 
   .encounter-card {
-    animation: encounter-enter var(--ccrpg-duration-base) var(--ccrpg-ease-out) backwards;
+    animation: encounter-enter var(--mysterium-duration-base) var(--mysterium-ease-out) backwards;
   }
 
   @keyframes encounter-enter {
@@ -355,7 +355,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
 
   .encounter-info {
@@ -364,62 +364,62 @@
   }
 
   .encounter-holon {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 600;
-    color: var(--ccrpg-fg);
-    margin-top: var(--ccrpg-space-2);
+    color: var(--mysterium-fg);
+    margin-top: var(--mysterium-space-2);
   }
 
   .holon-name {
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
   }
 
   .holon-role {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     font-weight: 400;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     text-transform: capitalize;
   }
 
   .encounter-line {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    margin-top: var(--ccrpg-space-1);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    margin-top: var(--mysterium-space-1);
   }
 
   .encounter-actions {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
     flex-shrink: 0;
   }
 
   .encounter-arrow {
-    color: var(--ccrpg-fg-muted);
-    font-size: var(--ccrpg-text-lg);
+    color: var(--mysterium-fg-muted);
+    font-size: var(--mysterium-text-lg);
   }
 
   .empty-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    color: var(--mysterium-fg-muted);
     text-align: center;
     font-style: italic;
   }
 
   .encounter-view,
   .reflection-view {
-    max-width: var(--ccrpg-content-max-width);
+    max-width: var(--mysterium-content-max-width);
     margin: 0 auto;
   }
 
   .reflection-icon {
-    font-size: var(--ccrpg-text-3xl);
-    color: var(--ccrpg-accent);
-    animation: reflection-pulse 2s var(--ccrpg-ease) infinite;
+    font-size: var(--mysterium-text-3xl);
+    color: var(--mysterium-accent);
+    animation: reflection-pulse 2s var(--mysterium-ease) infinite;
   }
 
   @keyframes reflection-pulse {
@@ -428,9 +428,9 @@
   }
 
   .reflection-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xl);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xl);
+    color: var(--mysterium-fg);
     margin: 0;
     text-align: center;
   }
@@ -442,30 +442,30 @@
   .reflection-section {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
 
   .reflection-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-accent);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-accent);
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
+    letter-spacing: var(--mysterium-tracking-wider);
     margin: 0;
   }
 
   .reflection-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 
   /* Desktop: constrain width, center */
   @media (min-width: 1024px) {
     .play-main {
-      padding-top: calc(var(--ccrpg-space-6) + 60px);
+      padding-top: calc(var(--mysterium-space-6) + 60px);
     }
   }
 </style>

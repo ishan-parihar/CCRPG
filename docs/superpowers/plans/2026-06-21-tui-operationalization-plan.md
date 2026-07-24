@@ -1,4 +1,4 @@
-# CCRPG TUI Operationalization Plan
+# Mysterium TUI Operationalization Plan
 
 > **Goal:** Transform the CLI from raw readline/ANSI into a polished, interactive terminal experience with proper package installation, using industry-standard TUI libraries.
 
@@ -65,7 +65,7 @@ Hermes-agent uses a **three-layer TUI architecture**:
 1. **Modular command structure** — Each feature is a separate module
 2. **Prompt library** — Use `prompt_toolkit` equivalent (Clack for Node)
 3. **Formatted output** — Dedicated output formatting layer
-4. **First-run wizard** — `hermes setup` pattern → our `ccrpg setup`
+4. **First-run wizard** — `hermes setup` pattern → our `mysterium setup`
 5. **Global install** — Symlink pattern → our `npm link` / `npm install -g`
 
 ### Key Patterns We Skip (Too Heavy)
@@ -121,13 +121,13 @@ const C = {
   green: '\x1b[32m', yellow: '\x1b[33m', blue: '\x1b[34m',
   magenta: '\x1b[35m', cyan: '\x1b[36m', red: '\x1b[31m',
 };
-console.log(`${C.bold}${C.cyan}CCRPG${C.reset} v${VERSION}`);
+console.log(`${C.bold}${C.cyan}Mysterium${C.reset} v${VERSION}`);
 ```
 
 **After:**
 ```typescript
 import chalk from 'chalk';
-console.log(chalk.bold.cyan('CCRPG') + ` v${VERSION}`);
+console.log(chalk.bold.cyan('Mysterium') + ` v${VERSION}`);
 ```
 
 **Steps:**
@@ -135,7 +135,7 @@ console.log(chalk.bold.cyan('CCRPG') + ` v${VERSION}`);
 2. Remove the `C` helper object
 3. Replace all `${C.green}` → `chalk.green` etc.
 4. Replace all `${C.bold}${C.cyan}` → `chalk.bold.cyan`
-5. Test: `ccrpg --help`, `ccrpg diagnostic`, `ccrpg --headless --no-llm --encounters=3`
+5. Test: `mysterium --help`, `mysterium diagnostic`, `mysterium --headless --no-llm --encounters=3`
 
 ### Phase 2: Replace readline with Clack (Day 2)
 
@@ -247,9 +247,9 @@ const HEADLESS = flags.has('--headless');
 import { Command } from 'commander';
 
 const program = new Command()
-  .name('ccrpg')
+  .name('mysterium')
   .version(VERSION)
-  .description('Cognitive-Capacity-Driven RPG — Developmental Assessment Engine')
+  .description('Mysterium — Developmental Assessment Engine')
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
   .option('--verbose', 'Show full narrative and feedback')
@@ -273,7 +273,7 @@ program.command('diagnostic').description('Show system diagnostics').action(runD
 2. Define program with options and subcommands
 3. Extract options from `program.opts()` instead of manual parsing
 4. Auto-generate `--help` from Commander's schema
-5. Test: `ccrpg --help`, `ccrpg --version`, `ccrpg setup`, etc.
+5. Test: `mysterium --help`, `mysterium --version`, `mysterium setup`, etc.
 
 ### Phase 6: Add Real-Time Session Dashboard (Day 4-5)
 
@@ -318,16 +318,16 @@ function SessionDashboard({ encounters, cci, altitudes }) {
 **Steps:**
 1. Add `ora` spinner to `npm run build:cli` in prepublishOnly
 2. Verify `npm pack` output includes only `dist/cli/`, `src/core/data/`, `README.md`
-3. Test `npm link` → `ccrpg --help` → `ccrpg --headless --no-llm --encounters=3`
+3. Test `npm link` → `mysterium --help` → `mysterium --headless --no-llm --encounters=3`
 4. Test `npm publish --dry-run` to verify package contents
 5. Add CI/CD workflow for auto-publish on tag
 6. Update README with install instructions:
    ```markdown
    ## Quick Start
    ```bash
-   npm install -g ccrpg
-   ccrpg setup          # Configure your LLM API key
-   ccrpg                # Start your developmental journey
+   npm install -g mysterium
+   mysterium setup          # Configure your LLM API key
+   mysterium                # Start your developmental journey
    ```
    ```
 
@@ -397,7 +397,7 @@ After each phase, verify:
 - [ ] `node dist/cli/cli-game.js status` — shows game state
 - [ ] `node dist/cli/cli-game.js --headless --no-llm --encounters=5 --new-game` — runs session
 - [ ] `node dist/cli/cli-game.js --json --headless --no-llm --encounters=1` — clean JSON
-- [ ] `npm link` → `ccrpg --help` → `ccrpg --headless --no-llm --encounters=3` — global install works
+- [ ] `npm link` → `mysterium --help` → `mysterium --headless --no-llm --encounters=3` — global install works
 - [ ] Terminal width < 80 columns — no visual breakage
 - [ ] Terminal with no color support — graceful fallback
 
@@ -405,10 +405,10 @@ After each phase, verify:
 
 ## 9. Success Criteria
 
-- [ ] `npm install -g ccrpg` installs cleanly
-- [ ] `ccrpg --help` shows auto-generated, beautifully formatted help
-- [ ] `ccrpg setup` uses Clack prompts for interactive configuration
-- [ ] `ccrpg` starts an interactive session with Clack prompts
+- [ ] `npm install -g mysterium` installs cleanly
+- [ ] `mysterium --help` shows auto-generated, beautifully formatted help
+- [ ] `mysterium setup` uses Clack prompts for interactive configuration
+- [ ] `mysterium` starts an interactive session with Clack prompts
 - [ ] Spinners animate smoothly during loading states
 - [ ] Session output uses chalk colors with auto-detection
 - [ ] Section separators use boxen borders
@@ -431,31 +431,31 @@ When we need real-time streaming during LLM-powered encounters:
 ### 10.2 Plugin System
 Allow users to add custom developmental modules:
 ```
-ccrpg plugin add @ccrpg/custom-module
-ccrpg plugin list
+mysterium plugin add @mysterium/custom-module
+mysterium plugin list
 ```
 
 ### 10.3 Auto-Update Check
 ```typescript
 import { checkForUpdate } from './update.js';
 // On startup:
-const update = await checkForUpdate('ccrpg');
+const update = await checkForUpdate('mysterium');
 if (update) {
   console.log(chalk.yellow(`Update available: ${update.latest}`));
-  console.log(chalk.dim(`Run ${chalk.bold('npm update -g ccrpg')} to upgrade`));
+  console.log(chalk.dim(`Run ${chalk.bold('npm update -g mysterium')} to upgrade`));
 }
 ```
 
 ### 10.4 Docker Support
 ```dockerfile
 FROM node:20-slim
-RUN npm install -g ccrpg
-ENTRYPOINT ["ccrpg", "--headless", "--no-llm"]
+RUN npm install -g mysterium
+ENTRYPOINT ["mysterium", "--headless", "--no-llm"]
 ```
 
 ### 10.5 Homebrew Tap
 Following hermes-agent's pattern:
 ```bash
-brew tap ishanp/ccrpg
-brew install ccrpg
+brew tap ishanp/mysterium
+brew install mysterium
 ```

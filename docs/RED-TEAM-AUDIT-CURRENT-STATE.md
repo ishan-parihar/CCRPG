@@ -610,7 +610,7 @@ Despite the critical findings, the architecture has strong foundations:
 
 ## 9. CONCLUSION
 
-The CCRPG codebase has **world-class architectural bones** — the Significator, encounter scheduler, CCI, auto-mode strategy, and transformation detection systems are all well-designed and properly implemented. The recent Direct Questioning mode improvements (write-in evaluation, radar chart, line-specific content) are genuine steps forward.
+The Mysterium codebase has **world-class architectural bones** — the Significator, encounter scheduler, CCI, auto-mode strategy, and transformation detection systems are all well-designed and properly implemented. The recent Direct Questioning mode improvements (write-in evaluation, radar chart, line-specific content) are genuine steps forward.
 
 But the **player-facing layer** still doesn't leverage the engine's sophistication. The core problems are:
 

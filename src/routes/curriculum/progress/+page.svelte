@@ -136,16 +136,16 @@
 
   function depthColor(level: DepthLevel): string {
     const ord = depthOrdinal(level);
-    if (ord >= 5) return 'var(--ccrpg-success)';
-    if (ord >= 3) return 'var(--ccrpg-accent)';
-    if (ord >= 1) return 'var(--ccrpg-warning)';
-    return 'var(--ccrpg-fg-muted)';
+    if (ord >= 5) return 'var(--mysterium-success)';
+    if (ord >= 3) return 'var(--mysterium-accent)';
+    if (ord >= 1) return 'var(--mysterium-warning)';
+    return 'var(--mysterium-fg-muted)';
   }
 
   function retentionColor(r: number): string {
-    if (r > 0.7) return 'var(--ccrpg-success)';
-    if (r > 0.4) return 'var(--ccrpg-warning)';
-    return 'var(--ccrpg-danger)';
+    if (r > 0.7) return 'var(--mysterium-success)';
+    if (r > 0.4) return 'var(--mysterium-warning)';
+    return 'var(--mysterium-danger)';
   }
 
   function coveragePercent(studied: number, total: number): number {
@@ -175,7 +175,7 @@
             <span class="stat-label">concepts studied</span>
           </div>
           <div class="stat-card">
-            <span class="stat-value" style="color: var(--ccrpg-success)">{totalRetained}</span>
+            <span class="stat-value" style="color: var(--mysterium-success)">{totalRetained}</span>
             <span class="stat-label">strongly retained</span>
           </div>
           <div class="stat-card">
@@ -185,7 +185,7 @@
           {#if healthMetrics}
             {@const pct = Math.round(healthMetrics.conceptCoverage * 100)}
             <div class="stat-card">
-              <span class="stat-value" style="color: {pct > 50 ? 'var(--ccrpg-success)' : 'var(--ccrpg-warning)'}">{pct}%</span>
+              <span class="stat-value" style="color: {pct > 50 ? 'var(--mysterium-success)' : 'var(--mysterium-warning)'}">{pct}%</span>
               <span class="stat-label">coverage</span>
             </div>
           {/if}
@@ -204,11 +204,11 @@
                 <span class="branch-count">{branch.studied}/{branch.total}</span>
               </div>
               <div class="branch-bar">
-                <div class="branch-bar-fill" style="width: {pct}%; background: {pct > 70 ? 'var(--ccrpg-success)' : pct > 30 ? 'var(--ccrpg-warning)' : 'var(--ccrpg-accent)'}"></div>
+                <div class="branch-bar-fill" style="width: {pct}%; background: {pct > 70 ? 'var(--mysterium-success)' : pct > 30 ? 'var(--mysterium-warning)' : 'var(--mysterium-accent)'}"></div>
               </div>
               <div class="branch-metrics">
                 <span class="branch-metric">
-                  depth: <span style="color: {branch.avgDepth > 0.5 ? 'var(--ccrpg-success)' : 'var(--ccrpg-fg-muted)'}">{Math.round(branch.avgDepth * 100)}%</span>
+                  depth: <span style="color: {branch.avgDepth > 0.5 ? 'var(--mysterium-success)' : 'var(--mysterium-fg-muted)'}">{Math.round(branch.avgDepth * 100)}%</span>
                 </span>
                 <span class="branch-metric">
                   retention: <span style="color: {retentionColor(branch.avgRetention)}">{Math.round(branch.avgRetention * 100)}%</span>
@@ -263,35 +263,35 @@
             <div class="health-metric">
               <span class="health-label">Coverage</span>
               <div class="health-bar">
-                <div class="health-bar-fill" style="width: {healthMetrics.conceptCoverage * 100}%; background: var(--ccrpg-accent)"></div>
+                <div class="health-bar-fill" style="width: {healthMetrics.conceptCoverage * 100}%; background: var(--mysterium-accent)"></div>
               </div>
               <span class="health-value">{Math.round(healthMetrics.conceptCoverage * 100)}%</span>
             </div>
             <div class="health-metric">
               <span class="health-label">Average Depth</span>
               <div class="health-bar">
-                <div class="health-bar-fill" style="width: {healthMetrics.averageDepth * 100}%; background: var(--ccrpg-success)"></div>
+                <div class="health-bar-fill" style="width: {healthMetrics.averageDepth * 100}%; background: var(--mysterium-success)"></div>
               </div>
               <span class="health-value">{Math.round(healthMetrics.averageDepth * 100)}%</span>
             </div>
             <div class="health-metric">
               <span class="health-label">Retention</span>
               <div class="health-bar">
-                <div class="health-bar-fill" style="width: {healthMetrics.retentionHealth * 100}%; background: {healthMetrics.retentionHealth > 0.7 ? 'var(--ccrpg-success)' : 'var(--ccrpg-warning)'}"></div>
+                <div class="health-bar-fill" style="width: {healthMetrics.retentionHealth * 100}%; background: {healthMetrics.retentionHealth > 0.7 ? 'var(--mysterium-success)' : 'var(--mysterium-warning)'}"></div>
               </div>
               <span class="health-value">{Math.round(healthMetrics.retentionHealth * 100)}%</span>
             </div>
             <div class="health-metric">
               <span class="health-label">Integration</span>
               <div class="health-bar">
-                <div class="health-bar-fill" style="width: {healthMetrics.integrationDensity * 100}%; background: var(--ccrpg-accent)"></div>
+                <div class="health-bar-fill" style="width: {healthMetrics.integrationDensity * 100}%; background: var(--mysterium-accent)"></div>
               </div>
               <span class="health-value">{Math.round(healthMetrics.integrationDensity * 100)}%</span>
             </div>
             <div class="health-metric">
               <span class="health-label">Misconceptions</span>
               <div class="health-bar">
-                <div class="health-bar-fill" style="width: {healthMetrics.misconceptionLoad * 100}%; background: {healthMetrics.misconceptionLoad > 0.3 ? 'var(--ccrpg-danger)' : 'var(--ccrpg-success)'}"></div>
+                <div class="health-bar-fill" style="width: {healthMetrics.misconceptionLoad * 100}%; background: {healthMetrics.misconceptionLoad > 0.3 ? 'var(--mysterium-danger)' : 'var(--mysterium-success)'}"></div>
               </div>
               <span class="health-value">{Math.round(healthMetrics.misconceptionLoad * 100)}%</span>
             </div>
@@ -305,61 +305,61 @@
 <style>
   .empty-state {
     text-align: center;
-    padding: var(--ccrpg-space-7) var(--ccrpg-space-4);
+    padding: var(--mysterium-space-7) var(--mysterium-space-4);
   }
   .empty-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 600;
-    color: var(--ccrpg-fg-muted);
-    margin: 0 0 var(--ccrpg-space-1);
+    color: var(--mysterium-fg-muted);
+    margin: 0 0 var(--mysterium-space-1);
   }
   .empty-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     margin: 0;
   }
 
   .section-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xs);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
-    color: var(--ccrpg-accent);
-    margin: 0 0 var(--ccrpg-space-3);
+    letter-spacing: var(--mysterium-tracking-wider);
+    color: var(--mysterium-accent);
+    margin: 0 0 var(--mysterium-space-3);
   }
 
   /* Overall Stats */
   .overall-stats {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
   .stat-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ccrpg-space-1);
-    padding: var(--ccrpg-space-3);
-    border-radius: var(--ccrpg-radius-md);
-    background: color-mix(in srgb, var(--ccrpg-surface) 50%, transparent);
-    border: 1px solid color-mix(in srgb, var(--ccrpg-fg-muted) 10%, transparent);
+    gap: var(--mysterium-space-1);
+    padding: var(--mysterium-space-3);
+    border-radius: var(--mysterium-radius-md);
+    background: color-mix(in srgb, var(--mysterium-surface) 50%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mysterium-fg-muted) 10%, transparent);
   }
   .stat-value {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
   .stat-label {
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-size: 0.6rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
     text-align: center;
   }
 
@@ -367,12 +367,12 @@
   .branch-list {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
   .branch-row {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
   .branch-header {
     display: flex;
@@ -380,47 +380,47 @@
     align-items: center;
   }
   .branch-name {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
     font-weight: 600;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     text-transform: capitalize;
   }
   .branch-count {
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-size: 0.6rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
   }
   .branch-bar {
     height: 6px;
-    background: var(--ccrpg-surface);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-surface);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
   }
   .branch-bar-fill {
     height: 100%;
-    border-radius: var(--ccrpg-radius-full);
-    transition: width var(--ccrpg-duration-slow) var(--ccrpg-ease-out);
+    border-radius: var(--mysterium-radius-full);
+    transition: width var(--mysterium-duration-slow) var(--mysterium-ease-out);
   }
   .branch-metrics {
     display: flex;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
   .branch-metric {
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-size: 0.6rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
   }
   .mini-depth-bar {
     display: flex;
     height: 3px;
-    border-radius: var(--ccrpg-radius-full);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
     gap: 1px;
   }
   .mini-segment {
     height: 100%;
-    border-radius: var(--ccrpg-radius-full);
+    border-radius: var(--mysterium-radius-full);
     min-width: 2px;
   }
 
@@ -428,41 +428,41 @@
   .iso-list {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
   .iso-item {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
-    padding: var(--ccrpg-space-2);
-    border-radius: var(--ccrpg-radius-sm);
-    background: color-mix(in srgb, var(--ccrpg-surface) 30%, transparent);
+    gap: var(--mysterium-space-1);
+    padding: var(--mysterium-space-2);
+    border-radius: var(--mysterium-radius-sm);
+    background: color-mix(in srgb, var(--mysterium-surface) 30%, transparent);
   }
   .iso-concept {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
     font-weight: 600;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
   .iso-targets {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
   .iso-target {
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-size: 0.6rem;
     padding: 2px 6px;
-    border-radius: var(--ccrpg-radius-sm);
-    background: color-mix(in srgb, var(--ccrpg-fg-muted) 10%, transparent);
-    color: var(--ccrpg-fg-muted);
-    border: 1px solid color-mix(in srgb, var(--ccrpg-fg-muted) 20%, transparent);
+    border-radius: var(--mysterium-radius-sm);
+    background: color-mix(in srgb, var(--mysterium-fg-muted) 10%, transparent);
+    color: var(--mysterium-fg-muted);
+    border: 1px solid color-mix(in srgb, var(--mysterium-fg-muted) 20%, transparent);
     text-transform: capitalize;
   }
   .iso-target.mastered {
-    background: color-mix(in srgb, var(--ccrpg-success) 15%, transparent);
-    color: var(--ccrpg-success);
-    border-color: color-mix(in srgb, var(--ccrpg-success) 30%, transparent);
+    background: color-mix(in srgb, var(--mysterium-success) 15%, transparent);
+    color: var(--mysterium-success);
+    border-color: color-mix(in srgb, var(--mysterium-success) 30%, transparent);
   }
   .iso-depth {
     font-size: 0.55rem;
@@ -474,35 +474,35 @@
   .health-grid {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
   .health-metric {
     display: grid;
     grid-template-columns: 6rem 1fr 3rem;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
   .health-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
   }
   .health-bar {
     height: 6px;
-    background: var(--ccrpg-surface);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-surface);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
   }
   .health-bar-fill {
     height: 100%;
-    border-radius: var(--ccrpg-radius-full);
-    transition: width var(--ccrpg-duration-slow) var(--ccrpg-ease-out);
+    border-radius: var(--mysterium-radius-full);
+    transition: width var(--mysterium-duration-slow) var(--mysterium-ease-out);
   }
   .health-value {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
     font-weight: 600;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     text-align: right;
   }
 </style>

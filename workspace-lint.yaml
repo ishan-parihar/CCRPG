@@ -1,5 +1,5 @@
 project:
-  name: "CCRPG"
+  name: "Mysterium"
   type: "game-typescript-sveltekit"
 
 structure:

@@ -1,10 +1,10 @@
 {
-  "name": "ccrpg",
+  "name": "mysterium",
   "version": "0.1.0",
-  "description": "Cognitive-Capacity-Driven RPG — a gamified developmental assessment engine",
+  "description": "Mysterium — a gamified developmental assessment engine",
   "type": "module",
   "bin": {
-    "ccrpg": "./dist/cli/cli-game.js"
+    "mysterium": "./dist/cli/cli-game.js"
   },
   "files": [
     "dist/cli/",

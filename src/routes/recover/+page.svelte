@@ -112,7 +112,7 @@
         const sig = validateSignificator(JSON.parse(plaintext));
         if (!sig) throw new Error('Invalid save data');
         // Restore the deviceId so future syncs use the same key.
-        localStorage.setItem('ccrpg:device-id', deviceId);
+        localStorage.setItem('mysterium:device-id', deviceId);
         localStorage.setItem('profile:v1', JSON.stringify(sig));
         setSignificator(sig);
         showToast('Save restored', 'success', 3000);
@@ -130,7 +130,7 @@
 
 <Seo
   title="Recover Save"
-  description="Restore your CCRPG progress on a new device using your 12-word recovery phrase."
+  description="Restore your Mysterium progress on a new device using your 12-word recovery phrase."
   indexable={false}
 />
 
@@ -188,17 +188,17 @@
 
 <style>
   .recover-intro {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 
   .word-grid {
     display: grid;
     grid-template-columns: repeat(2, 1fr);
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
 
   @media (min-width: 640px) {
@@ -210,35 +210,35 @@
   .word-cell {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
 
   .word-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     font-weight: 600;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .word-input {
     width: 100%;
-    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    transition: border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                box-shadow var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    padding: var(--mysterium-space-2) var(--mysterium-space-3);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    transition: border-color var(--mysterium-duration-fast) var(--mysterium-ease),
+                box-shadow var(--mysterium-duration-fast) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .word-input:focus {
     outline: none;
-    border-color: var(--ccrpg-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ccrpg-accent) 20%, transparent);
+    border-color: var(--mysterium-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mysterium-accent) 20%, transparent);
   }
 
   .word-input:disabled {
@@ -247,21 +247,21 @@
   }
 
   .recover-error {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-danger);
-    background: var(--ccrpg-danger-soft);
-    border: 1px solid var(--ccrpg-danger);
-    border-radius: var(--ccrpg-radius);
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-danger);
+    background: var(--mysterium-danger-soft);
+    border: 1px solid var(--mysterium-danger);
+    border-radius: var(--mysterium-radius);
+    padding: var(--mysterium-space-3) var(--mysterium-space-4);
     margin: 0;
   }
 
   .recover-note {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    line-height: var(--mysterium-leading-relaxed);
     text-align: center;
     font-style: italic;
     margin: 0;

@@ -76,34 +76,34 @@
 
 <style>
   .probe-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 600;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
     margin: 0;
   }
 
   .probe-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     text-align: center;
-    line-height: var(--ccrpg-leading-relaxed);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 
   .hold-button {
-    padding: var(--ccrpg-space-4) var(--ccrpg-space-6);
-    background: var(--ccrpg-accent);
-    color: var(--ccrpg-accent-fg);
+    padding: var(--mysterium-space-4) var(--mysterium-space-6);
+    background: var(--mysterium-accent);
+    color: var(--mysterium-accent-fg);
     border: none;
-    border-radius: var(--ccrpg-radius);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
+    border-radius: var(--mysterium-radius);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
     cursor: pointer;
     user-select: none;
     -webkit-tap-highlight-color: transparent;
-    animation: hold-pulse 1s var(--ccrpg-ease) infinite;
+    animation: hold-pulse 1s var(--mysterium-ease) infinite;
   }
 
   @keyframes hold-pulse {
@@ -115,21 +115,21 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
 
   .result-time {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     margin: 0;
   }
 
   .result-accuracy {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     margin: 0;
   }
 </style>

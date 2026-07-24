@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Specify the *design intent* of CCRPG's combat layer — what every fight
+Specify the *design intent* of Mysterium's combat layer — what every fight
 must be doing, what every fight must not do, and the design contract
 that subsequent (engineering-level) combat documents must satisfy.
 
@@ -14,7 +14,7 @@ The slogan:
 > are you developmentally, right now?"
 
 If a combat encounter cannot be located in `(line × stage × quadrant)`
-space, it does not belong in CCRPG.
+space, it does not belong in Mysterium.
 
 ## 2. Scientific basis
 
@@ -31,7 +31,7 @@ The combat philosophy stands on the joint argument from:
   tagged to a line; every encounter to a `(line × stage)` cell.
 - `lines/01-…08-…` — the verbs and their cognitive task vehicles.
 
-CCRPG's combat is **Active Time Battle (ATB)** rather than pure
+Mysterium's combat is **Active Time Battle (ATB)** rather than pure
 real-time, deliberately. Pure real-time rewards twitch over thought; pure
 turn-based eliminates the felt-pressure that activates the right networks.
 ATB is the engineered compromise: each Battler has a hidden gauge
@@ -132,7 +132,7 @@ implementation must satisfy:
 
 ## 5. The forbidden patterns
 
-Combat patterns that CCRPG **will not** ship:
+Combat patterns that Mysterium **will not** ship:
 
 - **Random number generators determining cognitive outcomes.** RNG
   drives cosmetic / loot; never cognitive.

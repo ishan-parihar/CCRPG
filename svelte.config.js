@@ -4,13 +4,13 @@ import staticAdapter from '@sveltejs/adapter-static';
 import { readFileSync } from 'node:fs';
 
 /**
- * SvelteKit configuration for CCRPG.
+ * SvelteKit configuration for Mysterium.
  *
  * Adapter selection is driven by the BUILD_TARGET env var:
  *
  *   BUILD_TARGET=cloudflare  (default) → adapter-cloudflare
  *     - Full SSR + BFF endpoints (/api/*) + Cloudflare KV/Analytics
- *     - Used for the production web deploy (play.ccrpg.game)
+ *     - Used for the production web deploy (play.mysterium.game)
  *     - Requires wrangler.toml + LLM_API_KEY secret
  *
  *   BUILD_TARGET=static → adapter-static (SPA fallback mode)

@@ -1,6 +1,6 @@
 # 35 — Framework Complexity × Curriculum Mapping
 
-> **Status:** canonical-hypothesis (mapping KosmOS framework-complexity line to CCRPG curriculum architecture).
+> **Status:** canonical-hypothesis (mapping KosmOS framework-complexity line to Mysterium curriculum architecture).
 >
 > **Lateral:** How the structural complexity of conceptual frameworks (the framework-complexity line from the KosmOS ontology) maps to curriculum holon levels, depth rubrics, assessment modalities, and pedagogical strategies. No other document covers this: foundations/30 covers *how knowledge is organized* (the holonic structure); this document covers *how framework complexity determines what the curriculum must teach and how*. Foundations/29 covers *how learning happens* (the process); this document covers *what level of complexity the learner is navigating*.
 >
@@ -160,7 +160,7 @@ Per foundations/29 §2.8, the pedagogical approach must shift based on the learn
 
 ### 4.2 Modality Alignment by Tier
 
-The seven CCRPG modalities (foundations/11) map to framework-complexity tiers:
+The seven Mysterium modalities (foundations/11) map to framework-complexity tiers:
 
 | Modality | Tier 1 Strength | Tier 2 Strength | Tier 3 Strength | Tier 4 Strength |
 |---|---|---|---|---|
@@ -283,13 +283,13 @@ These bridges are *not* surface analogies — they are structural isomorphisms t
 
 ---
 
-## 7. Integration with CCRPG's Existing Architecture
+## 7. Integration with Mysterium's Existing Architecture
 
 ### 7.1 How Framework Complexity Maps to the 8 × 8 Matrix
 
-The framework-complexity line is NOT one of CCRPG's 8 canonical lines. Instead, it is a *meta-line* that determines the **depth** at which all 8 lines operate:
+The framework-complexity line is NOT one of Mysterium's 8 canonical lines. Instead, it is a *meta-line* that determines the **depth** at which all 8 lines operate:
 
-| CCRPG Line | Tier 1 Expression | Tier 2 Expression | Tier 3 Expression | Tier 4 Expression |
+| Mysterium Line | Tier 1 Expression | Tier 2 Expression | Tier 3 Expression | Tier 4 Expression |
 |---|---|---|---|---|
 | Cognitive | Recognize patterns | Apply logical operations | Compare reasoning frameworks | Create novel epistemologies |
 | Emotional | Identify emotions | Regulate emotional responses | Navigate emotional paradigms | Transcend emotional frameworks |
@@ -316,7 +316,7 @@ The CCI's `knowledgeHealth` dimension (foundations/25) currently tracks concept 
 
 2. **How do we assess framework complexity without circularity?** If the assessment itself requires a certain framework complexity to understand, how do we assess a learner who hasn't reached that tier? The answer: use *lower-tier assessment tasks* that probe the learner's *readiness* for the next tier, not the tier itself.
 
-3. **What is the relationship between framework complexity and developmental stage?** The framework-complexity line tracks *epistemic* complexity, while CCRPG's 8 lines track *developmental* capacity. A learner can be at Stage 5 (Green) developmentally but only Tier 2 (Systematic) in framework complexity for a new domain. The two are correlated but independent.
+3. **What is the relationship between framework complexity and developmental stage?** The framework-complexity line tracks *epistemic* complexity, while Mysterium's 8 lines track *developmental* capacity. A learner can be at Stage 5 (Green) developmentally but only Tier 2 (Systematic) in framework complexity for a new domain. The two are correlated but independent.
 
 4. **How does the curriculum handle genuinely novel frameworks?** When a learner reaches Tier 4 (trans-paradigmatic) in a domain, they may generate frameworks that don't exist in the seed data. The curriculum must have a mechanism for *accepting* novel frameworks as valid instances — this is the `research` holon level.
 

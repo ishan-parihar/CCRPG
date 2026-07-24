@@ -14,7 +14,7 @@ document.
 
 Each entry cites the originating literature where applicable. When a
 concept is contested between literatures (e.g., "stage" in Piaget vs.
-Wilber vs. Kohlberg), the glossary records the CCRPG-canonical reading and
+Wilber vs. Kohlberg), the glossary records the Mysterium-canonical reading and
 cross-references the alternatives.
 
 ## 3. Game-design mapping
@@ -50,7 +50,7 @@ These are the canonical strings. Using `'IndividualInterior'` instead of
 
 | Term | Slug | Definition |
 |---|---|---|
-| **AQAL** | `AQAL` | Wilber's "all quadrants, all levels" meta-framework. CCRPG uses the four-quadrant version (UL, UR, LL, LR) plus levels (= stages) and lines. |
+| **AQAL** | `AQAL` | Wilber's "all quadrants, all levels" meta-framework. Mysterium uses the four-quadrant version (UL, UR, LL, LR) plus levels (= stages) and lines. |
 | **Altitude** | `altitude` | The level a *single line* has reached, independent of other lines. A player has eight altitudes simultaneously. Distinguished from *stage*, which is a synthesis. |
 | **Battler** | `Battler` | The runtime entity (player or enemy) participating in combat. Defined in `core/domain/Battler.ts`. |
 | **Bestiary** | `bestiary` | The full catalogue of enemies, side-characters, mini-bosses, main bosses, and shadows. See `enemies/04-stage-bestiaries.md`. |
@@ -59,8 +59,8 @@ These are the canonical strings. Using `'IndividualInterior'` instead of
 | **Combat verb** | `combat_verb` | A discrete player action whose resolution requires a cognitive micro-task (e.g., *cast spell* → n-back; *parry* → Stroop). |
 | **Drive** | `Drive` | One of {Agency, Communion, Eros, Agape}. The polarity engine that motivates story-level conflict and gives each line a "tilt." |
 | **Encounter** | `encounter` | A single fight. Always typed by `(line, stage, role, drives_in_play)`. |
-| **Holon** | `holon` | Wilber's term for "a whole that is part of a larger whole." Used in CCRPG to describe sub-octaves and recursive level structures. |
-| **Line (of intelligence)** | `Line` | A relatively-independent developmental stream. CCRPG canonises eight: see table above. |
+| **Holon** | `holon` | Wilber's term for "a whole that is part of a larger whole." Used in Mysterium to describe sub-octaves and recursive level structures. |
+| **Line (of intelligence)** | `Line` | A relatively-independent developmental stream. Mysterium canonises eight: see table above. |
 | **Quadrant** | `Quadrant` | One of UL (individual interior), UR (individual exterior), LL (collective interior), LR (collective exterior). |
 | **Side-character** | `SideCharacter` | A standard enemy that encodes exactly one (line × stage × task) pair. |
 | **Stage (of consciousness)** | `Stage` | One of the eight macro-developmental levels Infrared → White. Stage is reached only when *every* line has cleared the threshold, not when one has. |

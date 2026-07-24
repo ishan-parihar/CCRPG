@@ -24,51 +24,51 @@
   .badge {
     display: inline-flex;
     align-items: center;
-    gap: var(--ccrpg-space-1);
-    padding: var(--ccrpg-space-1) var(--ccrpg-space-2);
-    border-radius: var(--ccrpg-radius-full);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    gap: var(--mysterium-space-1);
+    padding: var(--mysterium-space-1) var(--mysterium-space-2);
+    border-radius: var(--mysterium-radius-full);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
     font-weight: 600;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
     text-transform: uppercase;
     border: 1px solid transparent;
     white-space: nowrap;
   }
 
   .badge-default {
-    background: var(--ccrpg-surface);
-    color: var(--ccrpg-fg-muted);
-    border-color: var(--ccrpg-border);
+    background: var(--mysterium-surface);
+    color: var(--mysterium-fg-muted);
+    border-color: var(--mysterium-border);
   }
 
   .badge-success {
-    background: var(--ccrpg-success-soft);
-    color: var(--ccrpg-success-fg);
-    border-color: var(--ccrpg-success);
+    background: var(--mysterium-success-soft);
+    color: var(--mysterium-success-fg);
+    border-color: var(--mysterium-success);
   }
 
   .badge-warning {
-    background: var(--ccrpg-warning-soft);
-    color: var(--ccrpg-warning-fg);
-    border-color: var(--ccrpg-warning);
+    background: var(--mysterium-warning-soft);
+    color: var(--mysterium-warning-fg);
+    border-color: var(--mysterium-warning);
   }
 
   .badge-danger {
-    background: var(--ccrpg-danger-soft);
-    color: var(--ccrpg-danger-fg);
-    border-color: var(--ccrpg-danger);
+    background: var(--mysterium-danger-soft);
+    color: var(--mysterium-danger-fg);
+    border-color: var(--mysterium-danger);
   }
 
   .badge-info {
-    background: var(--ccrpg-info-soft);
-    color: var(--ccrpg-info-fg);
-    border-color: var(--ccrpg-info);
+    background: var(--mysterium-info-soft);
+    color: var(--mysterium-info-fg);
+    border-color: var(--mysterium-info);
   }
 
   .badge-accent {
-    background: var(--ccrpg-accent-soft);
-    color: var(--ccrpg-accent-fg);
-    border-color: var(--ccrpg-accent);
+    background: var(--mysterium-accent-soft);
+    color: var(--mysterium-accent-fg);
+    border-color: var(--mysterium-accent);
   }
 </style>

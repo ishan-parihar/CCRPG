@@ -1,8 +1,8 @@
 # 29 — Meta-Learning Science
 
-> **Status:** canonical-hypothesis (CCRPG-specific operationalization of established learning science for curriculum plug architecture).
+> **Status:** canonical-hypothesis (Mysterium-specific operationalization of established learning science for curriculum plug architecture).
 >
-> **Lateral:** The scientific substrate explaining HOW learning happens at the neurological, cognitive, and metacognitive levels — and how CCRPG's curriculum plug architecture must be designed to harness these mechanisms. No other document covers this: foundations/08 covers psychophysics of difficulty adaptation; foundations/09 covers flow theory; foundations/11 covers game modalities as assessment axes. This document covers the *learning process itself* — encoding, consolidation, retrieval, transfer, and the metacognitive layer that governs all of them.
+> **Lateral:** The scientific substrate explaining HOW learning happens at the neurological, cognitive, and metacognitive levels — and how Mysterium's curriculum plug architecture must be designed to harness these mechanisms. No other document covers this: foundations/08 covers psychophysics of difficulty adaptation; foundations/09 covers flow theory; foundations/11 covers game modalities as assessment axes. This document covers the *learning process itself* — encoding, consolidation, retrieval, transfer, and the metacognitive layer that governs all of them.
 >
 > **Depends on:** 07 (neuroscience of development), 08 (psychophysics), 09 (flow), 03 (lines of intelligence)
 > **Referenced by:** 30 (holonic curriculum architecture), 31 (depth assessment model), 34 (curriculum-engine bridge)
@@ -37,7 +37,7 @@ The initial registration of information into the nervous system. Encoding is hig
 
 - **Attention:** Only information that captures attention enters working memory. Working memory holds approximately 4±1 chunks (Cowan 2001). If the curriculum presents too much new information simultaneously, the excess is never encoded.
 - **Elaboration:** New information must be anchored to existing knowledge (semantic networks) to be encoded deeply. Rote repetition produces shallow encoding; explaining *why* something is true produces deep encoding (Craik & Lockhart 1972, Levels of Processing).
-- **Emotional tagging:** The amygdala tags emotionally significant experiences for stronger encoding. This is why CCRPG wraps assessments in narrative — the emotional engagement is not decoration; it is a neurochemical encoding aid.
+- **Emotional tagging:** The amygdala tags emotionally significant experiences for stronger encoding. This is why Mysterium wraps assessments in narrative — the emotional engagement is not decoration; it is a neurochemical encoding aid.
 
 **Neurological substrate:** The hippocampus serves as the initial indexing system, linking new information to existing cortical representations. The prefrontal cortex maintains working memory and directs attentional filtering.
 
@@ -156,7 +156,7 @@ Vygotsky's Zone of Proximal Development (ZPD) — the gap between what a learner
 
 **Scaffolding** — the temporary support provided by a more knowledgeable entity (teacher, AI, peer, or learning tool) — enables the learner to operate within their ZPD. As competence develops, the scaffolding is progressively removed (fading).
 
-**Architectural implication:** The curriculum system must continuously estimate the learner's ZPD for each concept and present material at the right level of challenge. This maps directly to CCRPG's existing staircase mechanism (foundations/08) — the same adaptive difficulty principle, extended from motor/cognitive tasks to knowledge comprehension.
+**Architectural implication:** The curriculum system must continuously estimate the learner's ZPD for each concept and present material at the right level of challenge. This maps directly to Mysterium's existing staircase mechanism (foundations/08) — the same adaptive difficulty principle, extended from motor/cognitive tasks to knowledge comprehension.
 
 ### 2.8 Constructivism vs. Direct Instruction: The Synthesis
 
@@ -170,7 +170,7 @@ The evidence-based synthesis (Kirschner, Sweller & Clark 2006; Hattie 2009):
 
 ### 2.9 The Role of Emotion, Embodiment, and Rest
 
-**Emotion:** Emotional states act as a "tag" for memory. High-arousal experiences create stronger encoding (though extreme anxiety can impair it). Moderate, positive engagement supports the neural flexibility required to construct broad schemas. CCRPG's narrative framing provides emotional context that enhances encoding.
+**Emotion:** Emotional states act as a "tag" for memory. High-arousal experiences create stronger encoding (though extreme anxiety can impair it). Moderate, positive engagement supports the neural flexibility required to construct broad schemas. Mysterium's narrative framing provides emotional context that enhances encoding.
 
 **Embodiment:** Physical body and sensory-motor interactions ground abstract concepts. Using gestures to describe a mathematical transformation aids understanding (Goldin-Meadow 2003). The Embodied/Somatic modality (foundations/11) is not just a "game type" — it is a neurologically grounded learning mechanism.
 
@@ -180,9 +180,9 @@ The evidence-based synthesis (Kirschner, Sweller & Clark 2006; Hattie 2009):
 
 ## 3. Game-design mapping
 
-### 3.1 How learning science maps to CCRPG's architecture
+### 3.1 How learning science maps to Mysterium's architecture
 
-| Learning science principle | CCRPG architectural component | How the mapping works |
+| Learning science principle | Mysterium architectural component | How the mapping works |
 |---|---|---|
 | Encoding → attention → elaboration | AgenticOrchestrator + LLM content generation | The LLM generates content that anchors new concepts to the learner's existing knowledge, using narrative and emotional framing to capture attention |
 | Consolidation → time + sleep | ForgettingCurve model + session scheduling | The system models consolidation time and does not over-assess before consolidation is plausible |

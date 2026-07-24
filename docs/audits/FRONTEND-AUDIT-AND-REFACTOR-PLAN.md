@@ -1,6 +1,6 @@
-# CCRPG Frontend Audit & Refactor Plan
+# Mysterium Frontend Audit & Refactor Plan
 
-> **Project:** Cognitive-Capacity-Driven RPG (CCRPG)
+> **Project:** Mysterium (Mysterium)
 > **Scope:** Establish a universal web-UI that works across desktop, tablet, and mobile, with a world-class visual layer relevant to the game.
 > **Status:** Audit complete; refactor plan ready for execution.
 > **Date:** 2026-07-09
@@ -10,9 +10,9 @@
 
 ## 0. TL;DR — Read This First
 
-CCRPG's frontend is split across **two parallel UI systems** that do not share a component library, do not share a state model, and barely share a design language:
+Mysterium's frontend is split across **two parallel UI systems** that do not share a component library, do not share a state model, and barely share a design language:
 
-1. **Phaser 3 in-canvas UI** (`src/game/`) — ~10,900 LOC, draws everything with `0x`-prefixed hex colors and inline `fontFamily` strings. **Zero** use of the `--ccrpg-*` CSS tokens. **252 hardcoded hex colors**, **186 inline `fontFamily` strings**, **0 `getComputedStyle()` calls**.
+1. **Phaser 3 in-canvas UI** (`src/game/`) — ~10,900 LOC, draws everything with `0x`-prefixed hex colors and inline `fontFamily` strings. **Zero** use of the `--mysterium-*` CSS tokens. **252 hardcoded hex colors**, **186 inline `fontFamily` strings**, **0 `getComputedStyle()` calls**.
 2. **SvelteKit routes** (`src/routes/`) — ~4,200 LOC, consumes the CSS tokens correctly, but has **no shared component library** (only 5 components, of which only 2 are real UI primitives: `BackButton`, `VeiledStat`), **no layout primitives** (every route re-implements the same ~28-line route shell CSS), and **no responsive breakpoint system** (only 3 media queries in the whole Svelte layer).
 
 The two systems are glued together by a **single Svelte component** (`PhaserGameClient.svelte`) that mounts Phaser into a fixed full-screen `<div>`, plus a **one-way event adapter** (`phaserEventAdapter.ts`) that pipes 2 of 7 EventBus events into the Svelte store. Phaser navigates back to Svelte routes via **`window.location.href`** — 5 sites, each triggering a full page reload and Phaser re-boot.
@@ -58,7 +58,7 @@ The two systems are glued together by a **single Svelte component** (`PhaserGame
 
 ### 1.3 Method
 
-1. **Static analysis** — read every file in scope, extract: hardcoded colors, hardcoded fonts, `window.location.href` calls, `getComputedStyle` calls, `var(--ccrpg-*)` references, scene registrations, import graphs.
+1. **Static analysis** — read every file in scope, extract: hardcoded colors, hardcoded fonts, `window.location.href` calls, `getComputedStyle` calls, `var(--mysterium-*)` references, scene registrations, import graphs.
 2. **Dead-code detection** — for each file, grep the entire codebase for importers. Files with zero external importers (and not in `config.ts` scene list for scenes) are flagged dead.
 3. **Cross-layer coupling analysis** — enumerate every site where Phaser reaches into the DOM, where Svelte reaches into Phaser, and where one navigates to the other.
 4. **Design-token audit** — verify whether `tokens.css` is actually the single source of truth, or whether the truth is fragmented across `tokens.css` + hardcoded Phaser hex values + hardcoded CSS fallbacks.
@@ -102,7 +102,7 @@ The two systems are glued together by a **single Svelte component** (`PhaserGame
 │  │   cloudSyncStore (svc),          │    │   ScreenReaderOverlay (cond.)     │  │
 │  │   saveHydration (svc)            │    │   DOMOverlay, FocusManager,       │  │
 │  │                                  │    │   HighContrastTheme,              │  │
-│  │  CSS tokens: --ccrpg-* (8 stages)│    │   ReducedMotionGuard (4 dead)     │  │
+│  │  CSS tokens: --mysterium-* (8 stages)│    │   ReducedMotionGuard (4 dead)     │  │
 │  │  NO component library            │    │                                   │  │
 │  │  NO layout primitives            │    │  Hardcoded: 252 hex colors,        │  │
 │  │  NO breakpoints                  │    │   186 fontFamily strings           │  │
@@ -134,11 +134,11 @@ The two systems are glued together by a **single Svelte component** (`PhaserGame
 
 | Concern | Svelte layer | Phaser layer | Shared? |
 |---|---|---|---|
-| Color palette | `var(--ccrpg-*)` from `tokens.css` | 252 hardcoded `0x` hex values | ❌ No |
-| Font family | `var(--ccrpg-font-display)`, `var(--ccrpg-font-body)` | 186 inline `fontFamily` strings (`'system-ui, sans-serif'`, `'monospace'`, `'"Segoe UI", system-ui, sans-serif'`) | ❌ No |
+| Color palette | `var(--mysterium-*)` from `tokens.css` | 252 hardcoded `0x` hex values | ❌ No |
+| Font family | `var(--mysterium-font-display)`, `var(--mysterium-font-body)` | 186 inline `fontFamily` strings (`'system-ui, sans-serif'`, `'monospace'`, `'"Segoe UI", system-ui, sans-serif'`) | ❌ No |
 | Spacing | ad-hoc `padding: 1rem`, `gap: 0.75rem` (no scale) | ad-hoc `0, 0` Phaser coords | ❌ No |
-| Motion | `stageMotion.ts` + `--ccrpg-motion` token | `this.tweens.add(...)` ad-hoc | ❌ No |
-| Radius | `--ccrpg-radius-{sm,lg}` | hardcoded `0` (Phaser rectangles) or `setCornerRadius` calls | ❌ No |
+| Motion | `stageMotion.ts` + `--mysterium-motion` token | `this.tweens.add(...)` ad-hoc | ❌ No |
+| Radius | `--mysterium-radius-{sm,lg}` | hardcoded `0` (Phaser rectangles) or `setCornerRadius` calls | ❌ No |
 | Z-index | hardcoded `100`, `1000`, `9999` | `setDepth(100)` hardcoded | ❌ No |
 | Breakpoints | 3 ad-hoc media queries | n/a (Phaser uses FIT scale mode) | ❌ No |
 
@@ -185,8 +185,8 @@ The dead renderers were built before the architecture pivoted to "the only live 
 
 | Layer | File | State location | Side effects |
 |---|---|---|---|
-| Svelte | `src/lib/stores/accessibilityStore.ts` | Svelte `writable` + `localStorage['ccrpg:accessibility']` | **None** — toggling `reducedMotion`/`highContrast` writes to localStorage but never writes `data-motion` / `data-contrast` / `.a11y-high-contrast` to the DOM |
-| Phaser | `src/game/accessibility/AccessibilityManager.ts` + `src/infra/persistence/AccessibilityStore.ts` | Class instance + same `localStorage['ccrpg:accessibility']` key | Only `AccessibilityManager` is live; `HighContrastTheme.ts` palette is never consumed by any scene |
+| Svelte | `src/lib/stores/accessibilityStore.ts` | Svelte `writable` + `localStorage['mysterium:accessibility']` | **None** — toggling `reducedMotion`/`highContrast` writes to localStorage but never writes `data-motion` / `data-contrast` / `.a11y-high-contrast` to the DOM |
+| Phaser | `src/game/accessibility/AccessibilityManager.ts` + `src/infra/persistence/AccessibilityStore.ts` | Class instance + same `localStorage['mysterium:accessibility']` key | Only `AccessibilityManager` is live; `HighContrastTheme.ts` palette is never consumed by any scene |
 
 Both layers share the localStorage key but have **no runtime synchronization**. If the user toggles "Reduced Motion" in `/settings`, the Svelte store updates and persists — but the running Phaser `AccessibilityManager` instance (held by `Services.a11yManager` in `main.ts:54`) never re-reads. Phaser'scene-level code that checks `acc.isReducedMotion()` will return stale data until the next page reload.
 
@@ -286,7 +286,7 @@ Each triggers a full page reload → SvelteKit re-boot → `PhaserGameClient.sve
 
 #### 3.1.5 `ReflectionScene.ts`, `DilemmaScene.ts`, `EncounterSelectionScene.ts` (478 LOC combined, LIVE)
 
-All three reimplement button creation inline with hardcoded `monospace` font and stage-drift colors (`0xaaccff`, `0xffcc88`, `0xffeeaa`, etc.). None use `Button.ts`. None use `var(--ccrpg-*)`.
+All three reimplement button creation inline with hardcoded `monospace` font and stage-drift colors (`0xaaccff`, `0xffcc88`, `0xffeeaa`, etc.). None use `Button.ts`. None use `var(--mysterium-*)`.
 
 #### 3.1.6 Dead scenes (636 LOC, deletable)
 
@@ -390,7 +390,7 @@ The only shared Phaser UI primitive that's actually used. Hardcodes `0x05070b` f
 
 - **Two service locators**: `Services` global object (L26-33, populated L69-74) and `game.registry` (L117-122). Both point at the same instances. Scenes use them inconsistently — some read `Services.saveRepo`, others read `this.registry.get(RegistryKeys.SaveRepo)`.
 - **`window.addEventListener('beforeunload', ...)` at L101-111** — persists Significator + WorldState + flushes telemetry. The only cloud-sync safety net. If Phaser crashes before this fires, data is lost.
-- **`window.__ccrpg = { game, saveRepo, native }` at L155** — debug hook leaked into production global scope.
+- **`window.__mysterium = { game, saveRepo, native }` at L155** — debug hook leaked into production global scope.
 - **Android back button** (L131-152): three branches, two of which `window.location.href = '/'`.
 
 ### 3.6 Svelte routes — line-by-line issues
@@ -402,9 +402,9 @@ Each of the 7 menu/info routes (`/`, `/profile`, `/journal`, `/codex`, `/setting
 ```css
 .X-route {
   min-height: 100vh;
-  background: var(--ccrpg-bg, #05070b);
-  color: var(--ccrpg-fg, #e7eaf2);
-  font-family: var(--ccrpg-font-body, system-ui);
+  background: var(--mysterium-bg, #05070b);
+  color: var(--mysterium-fg, #e7eaf2);
+  font-family: var(--mysterium-font-body, system-ui);
   padding: 1rem;
   padding-top: calc(1rem + env(safe-area-inset-top, 0px));
   overflow-y: auto;
@@ -430,11 +430,11 @@ Plus ~12 lines of identical `.route-header`:
 
 #### 3.6.2 Hardcoded fallback colors drift from actual tokens
 
-Every `var(--ccrpg-bg, #05070b)` fallback uses `#05070b` — but the Red stage's actual `--ccrpg-bg` is `#0d0a0a`. Same for `--ccrpg-fg` (`#e7eaf2` fallback vs Red `#e8d4cc`). If the CSS tokens ever fail to load (e.g. the route's `<style>` runs before `tokens.css`), the UI shows a blueish `#05070b` background instead of the warm Red palette.
+Every `var(--mysterium-bg, #05070b)` fallback uses `#05070b` — but the Red stage's actual `--mysterium-bg` is `#0d0a0a`. Same for `--mysterium-fg` (`#e7eaf2` fallback vs Red `#e8d4cc`). If the CSS tokens ever fail to load (e.g. the route's `<style>` runs before `tokens.css`), the UI shows a blueish `#05070b` background instead of the warm Red palette.
 
 #### 3.6.3 `/settings` — the danger palette is hardcoded
 
-Lines 244, 332-345, 360-415 use `#ff6b6b`, `#ff4444`, `#ff8888`, `rgba(255,102,102,*)`, `#0c1322` (modal bg). No `--ccrpg-danger` token exists. Same for `/telemetry` line 223 `#4cc9f0` (info cyan) and `/recover` `rgba(255,77,109,*)`.
+Lines 244, 332-345, 360-415 use `#ff6b6b`, `#ff4444`, `#ff8888`, `rgba(255,102,102,*)`, `#0c1322` (modal bg). No `--mysterium-danger` token exists. Same for `/telemetry` line 223 `#4cc9f0` (info cyan) and `/recover` `rgba(255,77,109,*)`.
 
 #### 3.6.4 `/settings` modal — critical a11y bugs
 
@@ -516,7 +516,7 @@ The only "light theme" is the White stage (`[data-stage="white"]` in `tokens.css
 #### 3.8.2 `accessibilityStore.ts` (60 LOC)
 
 - Duplicates `src/infra/persistence/AccessibilityStore.ts` (Phaser-side).
-- Same localStorage key `ccrpg:accessibility`.
+- Same localStorage key `mysterium:accessibility`.
 - **No runtime sync** between the two. Toggling in `/settings` updates the Svelte store but not the Phaser `AccessibilityManager` instance until next page reload.
 - **Toggles are visually inert** in Svelte layer (see §2.4).
 
@@ -536,15 +536,15 @@ The only "light theme" is the White stage (`[data-stage="white"]` in `tokens.css
 
 | Scale | Status | Impact |
 |---|---|---|
-| Spacing (`--ccrpg-space-1..8`) | ❌ Missing | Every route hardcodes `padding: 1rem`, `gap: 0.75rem` ad-hoc |
-| Typography (`--ccrpg-text-xs..3xl`) | ❌ Missing | Routes hardcode `font-size: 0.875rem`, `1rem`, `1.25rem` ad-hoc |
-| Z-index (`--ccrpg-z-{base,hud,overlay,modal,toast,sr}`) | ❌ Missing | Hardcoded `100` (play HUD), `1000` (modal), `9999` (noscript) |
-| Shadow (`--ccrpg-shadow-{sm,md,lg}`) | ❌ Missing | Zero `box-shadow` declarations in entire Svelte layer |
-| Breakpoint (`--ccrpg-bp-{sm,md,lg,xl,2xl}`) | ❌ Missing | Only 3 ad-hoc media queries (480, 640, 1025) |
-| Semantic colors (`--ccrpg-{danger,warning,success,info}`) | ❌ Missing | `/settings` and `/recover` hardcode reds; `/telemetry` hardcodes cyan |
-| Layout (`--ccrpg-content-max-width`, `--ccrpg-route-padding`) | ❌ Missing | Routes hardcode `500px`, `600px`, `700px` |
-| Line-height (`--ccrpg-leading-*`) | ❌ Missing | Routes hardcode `1.4`, `1.5`, `1.6` |
-| Letter-spacing (`--ccrpg-tracking-*`) | ❌ Missing | Routes hardcode `0.03em`, `0.1em`, `0.15em` |
+| Spacing (`--mysterium-space-1..8`) | ❌ Missing | Every route hardcodes `padding: 1rem`, `gap: 0.75rem` ad-hoc |
+| Typography (`--mysterium-text-xs..3xl`) | ❌ Missing | Routes hardcode `font-size: 0.875rem`, `1rem`, `1.25rem` ad-hoc |
+| Z-index (`--mysterium-z-{base,hud,overlay,modal,toast,sr}`) | ❌ Missing | Hardcoded `100` (play HUD), `1000` (modal), `9999` (noscript) |
+| Shadow (`--mysterium-shadow-{sm,md,lg}`) | ❌ Missing | Zero `box-shadow` declarations in entire Svelte layer |
+| Breakpoint (`--mysterium-bp-{sm,md,lg,xl,2xl}`) | ❌ Missing | Only 3 ad-hoc media queries (480, 640, 1025) |
+| Semantic colors (`--mysterium-{danger,warning,success,info}`) | ❌ Missing | `/settings` and `/recover` hardcode reds; `/telemetry` hardcodes cyan |
+| Layout (`--mysterium-content-max-width`, `--mysterium-route-padding`) | ❌ Missing | Routes hardcode `500px`, `600px`, `700px` |
+| Line-height (`--mysterium-leading-*`) | ❌ Missing | Routes hardcode `1.4`, `1.5`, `1.6` |
+| Letter-spacing (`--mysterium-tracking-*`) | ❌ Missing | Routes hardcode `0.03em`, `0.1em`, `0.15em` |
 
 ### 3.10 Fonts — performance issues
 
@@ -656,7 +656,7 @@ Create `src/game/ui/themeBridge.ts`:
 
 ```typescript
 // src/game/ui/themeBridge.ts
-// Reads --ccrpg-* CSS tokens from :root at boot and on stage change,
+// Reads --mysterium-* CSS tokens from :root at boot and on stage change,
 // exposes them as Phaser 0x-prefixed numbers + fontFamily strings.
 
 export interface PhaserTheme {
@@ -695,25 +695,25 @@ function readToken(name: string): string {
 
 export function readThemeFromDOM(): PhaserTheme {
   return {
-    bg: hexToNumber(readToken('--ccrpg-bg')),
-    surface: hexToNumber(readToken('--ccrpg-surface')),
-    surfaceElevated: hexToNumber(readToken('--ccrpg-surface-elevated')),
-    fg: readToken('--ccrpg-fg'),
-    fgMuted: readToken('--ccrpg-fg-muted'),
-    accent: hexToNumber(readToken('--ccrpg-accent')),
-    accentSoft: hexToNumber(readToken('--ccrpg-accent-soft')),
-    accentFg: readToken('--ccrpg-accent-fg'),
-    border: hexToNumber(readToken('--ccrpg-border').replace(/rgba?\(([^)]+)\)/, (_, vals) => {
+    bg: hexToNumber(readToken('--mysterium-bg')),
+    surface: hexToNumber(readToken('--mysterium-surface')),
+    surfaceElevated: hexToNumber(readToken('--mysterium-surface-elevated')),
+    fg: readToken('--mysterium-fg'),
+    fgMuted: readToken('--mysterium-fg-muted'),
+    accent: hexToNumber(readToken('--mysterium-accent')),
+    accentSoft: hexToNumber(readToken('--mysterium-accent-soft')),
+    accentFg: readToken('--mysterium-accent-fg'),
+    border: hexToNumber(readToken('--mysterium-border').replace(/rgba?\(([^)]+)\)/, (_, vals) => {
       const [r, g, b] = vals.split(',').map((v: string) => parseInt(v.trim()));
       return '#' + [r, g, b].map(n => n.toString(16).padStart(2, '0')).join('');
     })),
-    fontDisplay: readToken('--ccrpg-font-display'),
-    fontBody: readToken('--ccrpg-font-body'),
-    motion: readToken('--ccrpg-motion') as PhaserTheme['motion'],
-    danger: hexToNumber(readToken('--ccrpg-danger')),
-    warning: hexToNumber(readToken('--ccrpg-warning')),
-    success: hexToNumber(readToken('--ccrpg-success')),
-    info: hexToNumber(readToken('--ccrpg-info')),
+    fontDisplay: readToken('--mysterium-font-display'),
+    fontBody: readToken('--mysterium-font-body'),
+    motion: readToken('--mysterium-motion') as PhaserTheme['motion'],
+    danger: hexToNumber(readToken('--mysterium-danger')),
+    warning: hexToNumber(readToken('--mysterium-warning')),
+    success: hexToNumber(readToken('--mysterium-success')),
+    info: hexToNumber(readToken('--mysterium-info')),
   };
 }
 
@@ -903,87 +903,87 @@ Append to `src/styles/tokens.css`:
 ```css
 /* ─── Spacing scale (8-step, 4px base) ─── */
 :root {
-  --ccrpg-space-0: 0;
-  --ccrpg-space-1: 0.25rem;   /* 4px */
-  --ccrpg-space-2: 0.5rem;    /* 8px */
-  --ccrpg-space-3: 0.75rem;   /* 12px */
-  --ccrpg-space-4: 1rem;      /* 16px */
-  --ccrpg-space-5: 1.5rem;    /* 24px */
-  --ccrpg-space-6: 2rem;      /* 32px */
-  --ccrpg-space-7: 3rem;      /* 48px */
-  --ccrpg-space-8: 4rem;      /* 64px */
+  --mysterium-space-0: 0;
+  --mysterium-space-1: 0.25rem;   /* 4px */
+  --mysterium-space-2: 0.5rem;    /* 8px */
+  --mysterium-space-3: 0.75rem;   /* 12px */
+  --mysterium-space-4: 1rem;      /* 16px */
+  --mysterium-space-5: 1.5rem;    /* 24px */
+  --mysterium-space-6: 2rem;      /* 32px */
+  --mysterium-space-7: 3rem;      /* 48px */
+  --mysterium-space-8: 4rem;      /* 64px */
 }
 
 /* ─── Typography scale (modular, 1.125 ratio) ─── */
 :root {
-  --ccrpg-text-xs: 0.75rem;     /* 12px */
-  --ccrpg-text-sm: 0.875rem;    /* 14px */
-  --ccrpg-text-base: 1rem;      /* 16px */
-  --ccrpg-text-md: 1.125rem;    /* 18px */
-  --ccrpg-text-lg: 1.25rem;     /* 20px */
-  --ccrpg-text-xl: 1.5rem;      /* 24px */
-  --ccrpg-text-2xl: 2rem;       /* 32px */
-  --ccrpg-text-3xl: clamp(2.5rem, 6vw, 4rem); /* display */
-  --ccrpg-leading-tight: 1.2;
-  --ccrpg-leading-normal: 1.5;
-  --ccrpg-leading-relaxed: 1.7;
-  --ccrpg-tracking-tight: -0.01em;
-  --ccrpg-tracking-normal: 0;
-  --ccrpg-tracking-wide: 0.05em;
-  --ccrpg-tracking-wider: 0.1em;
+  --mysterium-text-xs: 0.75rem;     /* 12px */
+  --mysterium-text-sm: 0.875rem;    /* 14px */
+  --mysterium-text-base: 1rem;      /* 16px */
+  --mysterium-text-md: 1.125rem;    /* 18px */
+  --mysterium-text-lg: 1.25rem;     /* 20px */
+  --mysterium-text-xl: 1.5rem;      /* 24px */
+  --mysterium-text-2xl: 2rem;       /* 32px */
+  --mysterium-text-3xl: clamp(2.5rem, 6vw, 4rem); /* display */
+  --mysterium-leading-tight: 1.2;
+  --mysterium-leading-normal: 1.5;
+  --mysterium-leading-relaxed: 1.7;
+  --mysterium-tracking-tight: -0.01em;
+  --mysterium-tracking-normal: 0;
+  --mysterium-tracking-wide: 0.05em;
+  --mysterium-tracking-wider: 0.1em;
 }
 
 /* ─── Z-index scale ─── */
 :root {
-  --ccrpg-z-base: 0;
-  --ccrpg-z-hud: 100;
-  --ccrpg-z-overlay: 500;
-  --ccrpg-z-modal: 1000;
-  --ccrpg-z-toast: 1500;
-  --ccrpg-z-sr: 9999;
+  --mysterium-z-base: 0;
+  --mysterium-z-hud: 100;
+  --mysterium-z-overlay: 500;
+  --mysterium-z-modal: 1000;
+  --mysterium-z-toast: 1500;
+  --mysterium-z-sr: 9999;
 }
 
 /* ─── Shadow scale ─── */
 :root {
-  --ccrpg-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --ccrpg-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --ccrpg-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-  --ccrpg-shadow-glow: 0 0 24px var(--ccrpg-accent-soft);
+  --mysterium-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --mysterium-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --mysterium-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --mysterium-shadow-glow: 0 0 24px var(--mysterium-accent-soft);
 }
 
 /* ─── Breakpoints (as CSS custom properties for JS consumption) ─── */
 :root {
-  --ccrpg-bp-sm: 480px;
-  --ccrpg-bp-md: 768px;
-  --ccrpg-bp-lg: 1024px;
-  --ccrpg-bp-xl: 1280px;
-  --ccrpg-bp-2xl: 1536px;
+  --mysterium-bp-sm: 480px;
+  --mysterium-bp-md: 768px;
+  --mysterium-bp-lg: 1024px;
+  --mysterium-bp-xl: 1280px;
+  --mysterium-bp-2xl: 1536px;
 }
 
 /* ─── Semantic colors ─── */
 :root {
-  --ccrpg-danger: #b8252a;
-  --ccrpg-danger-soft: #5a1318;
-  --ccrpg-danger-fg: #ffffff;
-  --ccrpg-warning: #d4a425;
-  --ccrpg-warning-soft: #6a5215;
-  --ccrpg-success: #5aa425;
-  --ccrpg-success-soft: #2a5215;
-  --ccrpg-info: #2590c4;
-  --ccrpg-info-soft: #155068;
+  --mysterium-danger: #b8252a;
+  --mysterium-danger-soft: #5a1318;
+  --mysterium-danger-fg: #ffffff;
+  --mysterium-warning: #d4a425;
+  --mysterium-warning-soft: #6a5215;
+  --mysterium-success: #5aa425;
+  --mysterium-success-soft: #2a5215;
+  --mysterium-info: #2590c4;
+  --mysterium-info-soft: #155068;
 }
 
 /* ─── Layout tokens ─── */
 :root {
-  --ccrpg-content-max-width: 640px;
-  --ccrpg-route-padding: 1rem;
-  --ccrpg-route-padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+  --mysterium-content-max-width: 640px;
+  --mysterium-route-padding: 1rem;
+  --mysterium-route-padding-top: calc(1rem + env(safe-area-inset-top, 0px));
 }
 
 /* ─── Stage-specific semantic overrides (optional) ─── */
 [data-stage="white"] {
-  --ccrpg-danger: #8a0000;
-  --ccrpg-danger-fg: #ffffff;
+  --mysterium-danger: #8a0000;
+  --mysterium-danger-fg: #ffffff;
 }
 ```
 
@@ -1020,7 +1020,7 @@ This requires manual measurement per font pair. Budget 2 hours.
 Create `src/styles/breakpoints.css`:
 
 ```css
-/* Mobile-first breakpoints — use as @media (min-width: var(--ccrpg-bp-md)) */
+/* Mobile-first breakpoints — use as @media (min-width: var(--mysterium-bp-md)) */
 /* Note: CSS custom properties don't work directly in @media queries yet.
    Use the @custom-media approach or hardcode the values. */
 
@@ -1039,11 +1039,11 @@ Create `src/styles/breakpoints.css`:
 #### 4.3.5 Phase 1 acceptance criteria
 
 - [ ] `tokens.css` defines all 9 token scales listed in §3.9.
-- [ ] All routes replace hardcoded `padding`/`gap`/`margin` with `var(--ccrpg-space-*)`.
-- [ ] All routes replace hardcoded `font-size` with `var(--ccrpg-text-*)`.
-- [ ] All routes replace hardcoded `z-index` with `var(--ccrpg-z-*)`.
-- [ ] `/settings` danger palette uses `var(--ccrpg-danger*)`.
-- [ ] `/telemetry` info color uses `var(--ccrpg-info)`.
+- [ ] All routes replace hardcoded `padding`/`gap`/`margin` with `var(--mysterium-space-*)`.
+- [ ] All routes replace hardcoded `font-size` with `var(--mysterium-text-*)`.
+- [ ] All routes replace hardcoded `z-index` with `var(--mysterium-z-*)`.
+- [ ] `/settings` danger palette uses `var(--mysterium-danger*)`.
+- [ ] `/telemetry` info color uses `var(--mysterium-info)`.
 - [ ] `static/fonts/` contains only 16 `.woff2` files (no TTF).
 - [ ] `fonts.css` references only `.woff2`.
 - [ ] Total font payload < 1.5 MB.
@@ -1061,7 +1061,7 @@ Create `src/styles/breakpoints.css`:
 
 | Component | Props | Slots | Notes |
 |---|---|---|---|
-| `Container.svelte` | `maxWidth?='content'`, `as='div'` | default | Wraps content in a max-width constrained flex column. Uses `--ccrpg-content-max-width`. |
+| `Container.svelte` | `maxWidth?='content'`, `as='div'` | default | Wraps content in a max-width constrained flex column. Uses `--mysterium-content-max-width`. |
 | `Stack.svelte` | `gap?='space-4'`, `align?`, `justify?` | default | Vertical flex. |
 | `Cluster.svelte` | `gap?='space-2'`, `align?`, `justify?` | default | Horizontal flex with wrap. |
 | `Grid.svelte` | `cols?={mobile:1, tablet:2, desktop:3}`, `gap?='space-4'` | default | Responsive CSS grid. |
@@ -1548,7 +1548,7 @@ Wire the `transformation_triggered` event (already added in Phase 0) to set `tra
 
 #### 4.7.1 Motion language
 
-The `--ccrpg-motion` token defines a motion language per stage (`pulse`, `drift`, `snap`, `chime`, `tick`, `grow`, `refract`, `dissolve`). Currently `stageMotion.ts` implements 3 transitions (`stageFade`, `stageScale`, `stageFly`). Expand to 8 motion registers, one per stage:
+The `--mysterium-motion` token defines a motion language per stage (`pulse`, `drift`, `snap`, `chime`, `tick`, `grow`, `refract`, `dissolve`). Currently `stageMotion.ts` implements 3 transitions (`stageFade`, `stageScale`, `stageFly`). Expand to 8 motion registers, one per stage:
 
 | Stage | Motion | Implementation |
 |---|---|---|
@@ -1581,9 +1581,9 @@ Add ambient particle effects to the Svelte layer (currently only Phaser has them
 #### 4.7.4 Depth & elevation
 
 Currently the Svelte layer has zero `box-shadow` declarations. Add the shadow scale (Phase 1) and apply it:
-- Cards: `var(--ccrpg-shadow-sm)` at rest, `var(--ccrpg-shadow-md)` on hover.
-- Modals: `var(--ccrpg-shadow-lg)`.
-- Active nav items: `var(--ccrpg-shadow-glow)` using `--ccrpg-accent-soft`.
+- Cards: `var(--mysterium-shadow-sm)` at rest, `var(--mysterium-shadow-md)` on hover.
+- Modals: `var(--mysterium-shadow-lg)`.
+- Active nav items: `var(--mysterium-shadow-glow)` using `--mysterium-accent-soft`.
 
 #### 4.7.5 Micro-interactions
 
@@ -1676,10 +1676,10 @@ static/fonts/*.ttf                             (38 unreferenced files)
 src/game/ui/themeBridge.ts                              # CSS token → Phaser bridge
 
 # Phase 1
-src/styles/spacing.css                                  # --ccrpg-space-* scale
-src/styles/typography.css                               # --ccrpg-text-*, leading, tracking
-src/styles/elevation.css                                # --ccrpg-shadow-*, --ccrpg-z-*
-src/styles/semantic-colors.css                          # --ccrpg-danger/warning/success/info
+src/styles/spacing.css                                  # --mysterium-space-* scale
+src/styles/typography.css                               # --mysterium-text-*, leading, tracking
+src/styles/elevation.css                                # --mysterium-shadow-*, --mysterium-z-*
+src/styles/semantic-colors.css                          # --mysterium-danger/warning/success/info
 src/styles/breakpoints.css                              # @custom-media declarations
 
 # Phase 2 — Layout primitives
@@ -1885,7 +1885,7 @@ How to know the refactor worked:
 
 - **Phaser audit report** (sub-agent): full per-file breakdown of all 15 scenes, 8 renderers, 4 UI primitives, 6 accessibility modules, config/keys/textures/events/main.
 - **Svelte audit report** (sub-agent): full per-route breakdown of all 8 routes, 5 components, 4 stores, 4 CSS files, CapabilityProbe, Capacitor config, PWA manifest.
-- **Static analysis grep results**: 252 hex colors, 186 fontFamily strings, 5 `window.location.href` calls, 0 `getComputedStyle` calls, 0 `var(--ccrpg-*)` references in `src/game/`.
+- **Static analysis grep results**: 252 hex colors, 186 fontFamily strings, 5 `window.location.href` calls, 0 `getComputedStyle` calls, 0 `var(--mysterium-*)` references in `src/game/`.
 
 ### 10.2 Glossary
 

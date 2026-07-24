@@ -2,7 +2,7 @@
 
 > **Status:** draft (awaiting user ratification).
 >
-> **Lateral:** The formal implementation plan for upgrading CCRPG's curriculum system from its current 8-holon prototype to a full graduation-level architecture that scales from foundational concepts through Ph.D.-level research. No other document covers this: foundations/35 maps framework-complexity stages to curriculum tiers; this document specifies *what to build, in what order, and why*.
+> **Lateral:** The formal implementation plan for upgrading Mysterium's curriculum system from its current 8-holon prototype to a full graduation-level architecture that scales from foundational concepts through Ph.D.-level research. No other document covers this: foundations/35 maps framework-complexity stages to curriculum tiers; this document specifies *what to build, in what order, and why*.
 >
 > **Depends on:** 29 (meta-learning science), 30 (holonic curriculum architecture), 31 (depth assessment model), 35 (framework-complexity mapping)
 > **Referenced by:** Implementation tickets

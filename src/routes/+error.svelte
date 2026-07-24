@@ -57,42 +57,42 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    background: var(--ccrpg-bg);
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    padding: var(--ccrpg-space-6);
+    background: var(--mysterium-bg);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    padding: var(--mysterium-space-6);
     overflow-y: auto;
   }
 
   .error-content {
     text-align: center;
-    max-width: var(--ccrpg-content-max-width-narrow);
+    max-width: var(--mysterium-content-max-width-narrow);
   }
 
   .error-code {
-    font-family: var(--ccrpg-font-display);
+    font-family: var(--mysterium-font-display);
     font-size: clamp(4rem, 15vw, 8rem);
     font-weight: bold;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
     line-height: 1;
-    margin-bottom: var(--ccrpg-space-4);
+    margin-bottom: var(--mysterium-space-4);
     opacity: 0.8;
   }
 
   .error-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xl);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xl);
     font-weight: 600;
-    color: var(--ccrpg-fg);
-    margin: 0 0 var(--ccrpg-space-4) 0;
+    color: var(--mysterium-fg);
+    margin: 0 0 var(--mysterium-space-4) 0;
   }
 
   .error-message {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    line-height: var(--ccrpg-leading-relaxed);
-    margin: 0 0 var(--ccrpg-space-6) 0;
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    line-height: var(--mysterium-leading-relaxed);
+    margin: 0 0 var(--mysterium-space-6) 0;
   }
 
   .error-actions {

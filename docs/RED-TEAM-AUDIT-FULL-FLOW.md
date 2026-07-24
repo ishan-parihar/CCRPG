@@ -586,7 +586,7 @@ The problem is not the architecture — it's that the architecture hasn't been f
 
 ## 14. CONCLUSION
 
-The CCRPG codebase has **world-class architectural bones** — the Significator, encounter scheduler, CCI, auto-mode strategy, and transformation detection systems are all well-designed and properly implemented. But the **player-facing layer is a thin MCQ wrapper** that doesn't leverage any of this sophistication.
+The Mysterium codebase has **world-class architectural bones** — the Significator, encounter scheduler, CCI, auto-mode strategy, and transformation detection systems are all well-designed and properly implemented. But the **player-facing layer is a thin MCQ wrapper** that doesn't leverage any of this sophistication.
 
 The core problem is a **mismatch between the engine layer and the presentation layer**:
 - The engine knows the player's shadow patterns, drive balance, theta-decay state, and transformation readiness

@@ -1,4 +1,4 @@
-# CCRPG Longitudinal Pilot Study — Report
+# Mysterium Longitudinal Pilot Study — Report
 
 > **Date:** 2026-07-07
 > **Method:** 5 persona subagents played 3 sessions each (15 sessions, 45 encounters total). Personas spanned the human spectrum: a teenager, an ER doctor, a NASA engineer, a contemplative practitioner, and a recovering addict. Each played as their character with real reflective answers, then reported their experience.

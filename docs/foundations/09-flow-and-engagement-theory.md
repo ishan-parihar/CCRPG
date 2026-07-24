@@ -31,7 +31,7 @@ challenge-skill balance.
 The other seven conditions are *engineering targets* for the rest of
 the design:
 
-| Flow condition | CCRPG design target |
+| Flow condition | Mysterium design target |
 |---|---|
 | Clear goals | Encounter narrator: "Defeat this enemy / answer the dilemma / open the gate." |
 | Immediate feedback | Damage numbers, parry-perfect tints, screen-shake on miss. |
@@ -46,7 +46,7 @@ the design:
 
 Deci & Ryan (1985, 2000) — three innate psychological needs:
 
-| Need | Definition | CCRPG mechanism |
+| Need | Definition | Mysterium mechanism |
 |---|---|---|
 | **Autonomy** | Sense of self-authorship of one's actions | Drive selection, optional content, no forced "best" build. |
 | **Competence** | Sense of growing capability | Staircase + radial chart — visible mastery curve. |
@@ -65,7 +65,7 @@ Csikszentmihalyi's flow channel diagram shows two failure modes:
 
 Either edge is a churn risk. The staircase keeps the player in the
 channel; flow theory adds the warning that *staying static at the
-edge* itself becomes anxiety after long sessions. CCRPG must therefore
+edge* itself becomes anxiety after long sessions. Mysterium must therefore
 periodically *give* — easy fights, narrative beats, reflection moments —
 to allow the flow channel to widen briefly, even if the staircase's
 asymptote is the same.
@@ -74,7 +74,7 @@ asymptote is the same.
 
 Variable-ratio reward schedules (Skinner, slot machines, loot boxes)
 produce the strongest engagement *but also the strongest pathology*.
-CCRPG **does not** use variable-ratio rewards for stage progression —
+Mysterium **does not** use variable-ratio rewards for stage progression —
 progression is deterministic on demonstrated skill. Variable rewards
 appear *only* in cosmetic loot drops (no gameplay impact) and in
 narrative beats (which are scripted, not rolled).
@@ -85,7 +85,7 @@ The ethics here is non-negotiable. See `validation/02-ethics-and-data-privacy.md
 
 ### 3.1 The session-arc
 
-A typical CCRPG session, designed against flow theory:
+A typical Mysterium session, designed against flow theory:
 
 | Beat | Duration | Purpose |
 |---|---|---|
@@ -97,7 +97,7 @@ A typical CCRPG session, designed against flow theory:
 | Optional skill-edge or shadow | up to 10 min | Player-driven |
 | End-session ritual (save, XP recap) | 30 s | Closure, anticipation |
 
-Total: 15–25 minutes minimum, 45 minutes typical. CCRPG is **not**
+Total: 15–25 minutes minimum, 45 minutes typical. Mysterium is **not**
 designed for 4-hour binges. The design is **5–6 sessions per week, 30
 minutes each** — closer to a meditation app's cadence than a typical RPG.
 
@@ -142,7 +142,7 @@ These are NFRs; they appear in `architecture/07` and `architecture/10`.
 
 - **Cross-cultural flow.** Csikszentmihalyi's flow research is largely
   Western. Cross-cultural data is sparser. Whether the 70.7% is
-  universal or culture-conditioned is debated. CCRPG defaults to 70.7%
+  universal or culture-conditioned is debated. Mysterium defaults to 70.7%
   but allows per-locale tuning data in `combat/02`.
 - **Flow vs. attainment.** Flow is hedonic; stage advancement is
   developmental. They coincide most of the time, but a serious

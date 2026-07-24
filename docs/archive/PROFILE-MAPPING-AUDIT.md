@@ -168,7 +168,7 @@ The deeper issue: the `TaskSlug` type doesn't include slugs for the new probe ta
 
 Per `foundations/06 §7.5`:
 
-> CCRPG models this via a `rayProfile: Record<Ray, number>` on the
+> Mysterium models this via a `rayProfile: Record<Ray, number>` on the
 > PlayerProfile. The violet-ray *integration quality* is computed as a
 > function of how *distinct* (low-variance, well-developed,
 > non-collapsed) the player's prior rays are.

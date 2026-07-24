@@ -4,7 +4,7 @@
 
 Specify the Cognitive line — the depth-of-perspective-taking,
 executive-function, reasoning capacity. Cognitive is the *substrate*
-for several other lines (`lines/00`); CCRPG's combat verbs that target
+for several other lines (`lines/00`); Mysterium's combat verbs that target
 spellcasting, planning, and combo sequencing all live here.
 
 ## 2. Scientific basis
@@ -23,7 +23,7 @@ Synthesis of:
 - **Wilber** — cognitive *altitude* as the capacity to take
   perspectives (1st → 2nd → 3rd → 4th → 5th-person and beyond).
 
-CCRPG's working definition:
+Mysterium's working definition:
 
 > Cognitive intelligence is the capacity to (a) hold information in
 > mind, (b) inhibit prepotent responses, (c) shift mental sets, and
@@ -42,7 +42,7 @@ CCRPG's working definition:
 | Sustained attention | Continuous Performance Test | DAN + cingulo-opercular |
 | Processing speed | Choice RT, digit-symbol substitution | white-matter integrity, basal-ganglia |
 
-Every CCRPG cognitive combat verb has a 1:1 mapping into one of these
+Every Mysterium cognitive combat verb has a 1:1 mapping into one of these
 laboratory tasks (`combat/02-cognitive-task-library.md`).
 
 ### 2.3 Brain regions
@@ -198,7 +198,7 @@ is computed as a weighted aggregate over the staircases.
 
 ## 7. Open questions
 
-- **Crystallised vs. fluid.** CCRPG primarily probes Gf (fluid). Gc
+- **Crystallised vs. fluid.** Mysterium primarily probes Gf (fluid). Gc
   (crystallised — vocabulary, world knowledge) is unaddressed. Should
   there be a "lore mastery" sub-line? It would let older players show
   developmental gains the FPCN tasks miss.
@@ -208,7 +208,7 @@ is computed as a weighted aggregate over the staircases.
   backstop must catch this.
 - **Cross-task transfer claims.** Even if the player's in-game n-back
   scores climb, claiming "Gf has improved" requires offline validation.
-  CCRPG's UI must avoid this overreach. `validation/00`.
+  Mysterium's UI must avoid this overreach. `validation/00`.
 
 ## 8. Principles served
 

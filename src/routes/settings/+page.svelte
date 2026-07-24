@@ -294,46 +294,46 @@
 
 <style>
   .section-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 600;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     margin: 0;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .section-title.danger {
-    color: var(--ccrpg-danger);
+    color: var(--mysterium-danger);
   }
 
   .setting-row {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-4);
-    padding: var(--ccrpg-space-4) var(--ccrpg-space-5);
+    gap: var(--mysterium-space-4);
+    padding: var(--mysterium-space-4) var(--mysterium-space-5);
   }
 
   .setting-link {
     text-decoration: none;
     color: inherit;
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .setting-link:hover {
-    background: var(--ccrpg-surface-elevated);
+    background: var(--mysterium-surface-elevated);
   }
 
   .setting-link:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: -2px;
   }
 
   .setting-divider {
     height: 1px;
-    background: var(--ccrpg-border);
-    margin: 0 var(--ccrpg-space-5);
+    background: var(--mysterium-border);
+    margin: 0 var(--mysterium-space-5);
   }
 
   .setting-label {
@@ -345,21 +345,21 @@
   }
 
   .setting-name {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
     font-weight: 500;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
 
   .setting-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    line-height: var(--ccrpg-leading-normal);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    line-height: var(--mysterium-leading-normal);
   }
 
   .link-arrow {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     flex-shrink: 0;
     display: flex;
     align-items: center;
@@ -367,23 +367,23 @@
 
   .number-input,
   .select-input {
-    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    padding: var(--mysterium-space-2) var(--mysterium-space-3);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     min-width: 8rem;
-    transition: border-color var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: border-color var(--mysterium-duration-fast) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .number-input:focus,
   .select-input:focus {
     outline: none;
-    border-color: var(--ccrpg-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ccrpg-accent) 20%, transparent);
+    border-color: var(--mysterium-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mysterium-accent) 20%, transparent);
   }
 
   .number-input {
@@ -392,17 +392,17 @@
   }
 
   .modal-warning {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 
   /* Desktop: 2-column layout */
   @media (min-width: 1024px) {
     :global(.route-shell) {
-      max-width: var(--ccrpg-content-max-width-wide);
+      max-width: var(--mysterium-content-max-width-wide);
     }
   }
 </style>

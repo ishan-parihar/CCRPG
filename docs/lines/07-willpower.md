@@ -8,7 +8,7 @@ A high-cognitive, high-emotional, high-moral player who cannot finish
 anything still operates at a low integrated stage. Willpower is the
 *delivery mechanism* of every other line.
 
-CCRPG's verbs that involve sustained effort, vow-keeping, fatigue
+Mysterium's verbs that involve sustained effort, vow-keeping, fatigue
 resistance, and goal-locking all live here.
 
 ## 2. Scientific basis
@@ -28,7 +28,7 @@ Synthesis:
 - **Wilber** — willpower as a *line* of development, often neglected in
   modern psychology curricula.
 
-CCRPG's working definition:
+Mysterium's working definition:
 
 > Willpower is the capacity to (a) set an intentional goal, (b) sustain
 > attention to it under competing demands, (c) resist short-term
@@ -46,7 +46,7 @@ CCRPG's working definition:
 | Sustained-effort task (handgrip dynamometer; vigilance under fatigue) | Endurance |
 
 Willpower partially overlaps with inhibitory control (cognitive line) but
-*adds* time-extended commitment. CCRPG models this overlap by giving
+*adds* time-extended commitment. Mysterium models this overlap by giving
 willpower a +1 cognitive ceiling slack vs. other lines (`lines/00`).
 
 ### 2.3 Brain regions
@@ -192,13 +192,13 @@ under-reaching]; suggested goal scaling: …"
 ## 7. Open questions
 
 - **Ego-depletion debate.** The empirical status of "willpower as
-  finite resource" is contested. CCRPG models it as a *budget* that
+  finite resource" is contested. Mysterium models it as a *budget* that
   recovers between encounters but does not claim physiological truth.
 - **Goal forgiveness.** A locked goal that breaks due to outside factors
   (network drop, real-life interrupt) should not penalise. Default:
   pause-during-interrupt with grace period.
 - **Willpower vs. addiction.** Variable-ratio rewards that exploit
-  willpower lapses are exactly what we said we wouldn't do. CCRPG
+  willpower lapses are exactly what we said we wouldn't do. Mysterium
   *measures* willpower; it does not *exploit* its lapses.
 
 ## 8. Principles served

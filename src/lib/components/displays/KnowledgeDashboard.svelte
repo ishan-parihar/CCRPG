@@ -94,15 +94,15 @@
   const profile = $derived(knowledge?.learningProfile);
 
   function retentionBand(value: number): { label: string; color: string } {
-    if (value > 0.8) return { label: 'strong', color: 'var(--ccrpg-success)' };
-    if (value > 0.5) return { label: 'developing', color: 'var(--ccrpg-warning)' };
-    return { label: 'fading', color: 'var(--ccrpg-danger)' };
+    if (value > 0.8) return { label: 'strong', color: 'var(--mysterium-success)' };
+    if (value > 0.5) return { label: 'developing', color: 'var(--mysterium-warning)' };
+    return { label: 'fading', color: 'var(--mysterium-danger)' };
   }
 
   function coverageBand(value: number): { label: string; color: string } {
-    if (value > 0.6) return { label: 'broad', color: 'var(--ccrpg-success)' };
-    if (value > 0.3) return { label: 'growing', color: 'var(--ccrpg-warning)' };
-    return { label: 'emerging', color: 'var(--ccrpg-accent)' };
+    if (value > 0.6) return { label: 'broad', color: 'var(--mysterium-success)' };
+    if (value > 0.3) return { label: 'growing', color: 'var(--mysterium-warning)' };
+    return { label: 'emerging', color: 'var(--mysterium-accent)' };
   }
 
   function velocityLabel(rate: number): string {
@@ -118,13 +118,13 @@
   }
 
   const DEPTH_COLORS: Record<string, string> = {
-    absent: 'var(--ccrpg-fg-muted)',
-    memorized: 'var(--ccrpg-danger)',
-    comprehended: 'var(--ccrpg-warning)',
-    applied: 'var(--ccrpg-accent)',
-    analyzed: 'var(--ccrpg-success)',
-    evaluated: 'var(--ccrpg-success)',
-    transformed: 'var(--ccrpg-accent)',
+    absent: 'var(--mysterium-fg-muted)',
+    memorized: 'var(--mysterium-danger)',
+    comprehended: 'var(--mysterium-warning)',
+    applied: 'var(--mysterium-accent)',
+    analyzed: 'var(--mysterium-success)',
+    evaluated: 'var(--mysterium-success)',
+    transformed: 'var(--mysterium-accent)',
   };
 </script>
 
@@ -165,7 +165,7 @@
               <div class="depth-bar">
                 <div
                   class="depth-bar-fill"
-                  style="width: {d.percentage}%; background: {DEPTH_COLORS[d.level] ?? 'var(--ccrpg-accent)'}"
+                  style="width: {d.percentage}%; background: {DEPTH_COLORS[d.level] ?? 'var(--mysterium-accent)'}"
                 ></div>
               </div>
               <span class="depth-count">{d.count}</span>
@@ -248,7 +248,7 @@
                 <div class="modality-bar">
                   <div
                     class="modality-bar-fill"
-                    style="width: {me.effectiveness * 100}%; background: {me.effectiveness > 0.7 ? 'var(--ccrpg-success)' : me.effectiveness > 0.4 ? 'var(--ccrpg-warning)' : 'var(--ccrpg-danger)'}"
+                    style="width: {me.effectiveness * 100}%; background: {me.effectiveness > 0.7 ? 'var(--mysterium-success)' : me.effectiveness > 0.4 ? 'var(--mysterium-warning)' : 'var(--mysterium-danger)'}"
                   ></div>
                 </div>
                 <span class="modality-stat">{me.eventCount} sessions</span>
@@ -263,7 +263,7 @@
             {#each analytics.reviewIntervals.slice(0, 3) as ri (ri.conceptId)}
               <div class="review-item">
                 <span class="review-concept">{ri.conceptId.split('.').pop()}</span>
-                <span class="review-days" style="color: {ri.recommendedDays < 2 ? 'var(--ccrpg-danger)' : 'var(--ccrpg-warning)'}">
+                <span class="review-days" style="color: {ri.recommendedDays < 2 ? 'var(--mysterium-danger)' : 'var(--mysterium-warning)'}">
                   review in {Math.round(ri.recommendedDays)}d
                 </span>
               </div>
@@ -284,11 +284,11 @@
               <span class="curve-metric-label">tracked concepts</span>
             </div>
             <div class="curve-metric">
-              <span class="curve-metric-value" style="color: var(--ccrpg-success)">{strongCount}</span>
+              <span class="curve-metric-value" style="color: var(--mysterium-success)">{strongCount}</span>
               <span class="curve-metric-label">strong retention</span>
             </div>
             <div class="curve-metric">
-              <span class="curve-metric-value" style="color: {fadingCount > 0 ? 'var(--ccrpg-danger)' : 'var(--ccrpg-fg-muted)'}">{fadingCount}</span>
+              <span class="curve-metric-value" style="color: {fadingCount > 0 ? 'var(--mysterium-danger)' : 'var(--mysterium-fg-muted)'}">{fadingCount}</span>
               <span class="curve-metric-label">fading</span>
             </div>
             <div class="curve-metric">
@@ -306,26 +306,26 @@
   .knowledge-dashboard {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-4);
+    gap: var(--mysterium-space-4);
   }
 
   .empty-state {
     text-align: center;
-    padding: var(--ccrpg-space-5) var(--ccrpg-space-4);
+    padding: var(--mysterium-space-5) var(--mysterium-space-4);
   }
 
   .empty-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 600;
-    color: var(--ccrpg-fg-muted);
-    margin: 0 0 var(--ccrpg-space-1);
+    color: var(--mysterium-fg-muted);
+    margin: 0 0 var(--mysterium-space-1);
   }
 
   .empty-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     margin: 0;
   }
@@ -333,207 +333,207 @@
   .metric-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
 
   .metric {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
 
   .metric-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .metric-value {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
 
   .metric-sub {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
   }
 
   .section {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .section-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xs);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
-    color: var(--ccrpg-accent);
+    letter-spacing: var(--mysterium-tracking-wider);
+    color: var(--mysterium-accent);
     margin: 0;
   }
 
   .depth-bars {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
 
   .depth-row {
     display: grid;
     grid-template-columns: 7rem 1fr 2rem;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .depth-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-transform: capitalize;
   }
 
   .depth-bar {
     height: 6px;
-    background: var(--ccrpg-surface);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-surface);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
   }
 
   .depth-bar-fill {
     height: 100%;
-    border-radius: var(--ccrpg-radius-full);
-    transition: width var(--ccrpg-duration-slow) var(--ccrpg-ease-out);
+    border-radius: var(--mysterium-radius-full);
+    transition: width var(--mysterium-duration-slow) var(--mysterium-ease-out);
   }
 
   .depth-count {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-align: right;
   }
 
   .alerts {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .alert {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-2);
-    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
-    border-radius: var(--ccrpg-radius-md);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    gap: var(--mysterium-space-2);
+    padding: var(--mysterium-space-2) var(--mysterium-space-3);
+    border-radius: var(--mysterium-radius-md);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
   }
 
   .alert-review {
-    background: color-mix(in srgb, var(--ccrpg-warning) 15%, transparent);
-    color: var(--ccrpg-warning);
-    border: 1px solid color-mix(in srgb, var(--ccrpg-warning) 30%, transparent);
+    background: color-mix(in srgb, var(--mysterium-warning) 15%, transparent);
+    color: var(--mysterium-warning);
+    border: 1px solid color-mix(in srgb, var(--mysterium-warning) 30%, transparent);
   }
 
   .alert-misconception {
-    background: color-mix(in srgb, var(--ccrpg-danger) 15%, transparent);
-    color: var(--ccrpg-danger);
-    border: 1px solid color-mix(in srgb, var(--ccrpg-danger) 30%, transparent);
+    background: color-mix(in srgb, var(--mysterium-danger) 15%, transparent);
+    color: var(--mysterium-danger);
+    border: 1px solid color-mix(in srgb, var(--mysterium-danger) 30%, transparent);
   }
 
   .alert-icon {
-    font-size: var(--ccrpg-text-sm);
+    font-size: var(--mysterium-text-sm);
   }
 
   .profile-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
 
   .profile-tag {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    padding: var(--ccrpg-space-1) var(--ccrpg-space-2);
-    border-radius: var(--ccrpg-radius-full);
-    background: color-mix(in srgb, var(--ccrpg-accent) 15%, transparent);
-    color: var(--ccrpg-accent);
-    border: 1px solid color-mix(in srgb, var(--ccrpg-accent) 30%, transparent);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    padding: var(--mysterium-space-1) var(--mysterium-space-2);
+    border-radius: var(--mysterium-radius-full);
+    background: color-mix(in srgb, var(--mysterium-accent) 15%, transparent);
+    color: var(--mysterium-accent);
+    border: 1px solid color-mix(in srgb, var(--mysterium-accent) 30%, transparent);
   }
 
   /* Analytics */
   .analytics-grid {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .analytics-card {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ccrpg-space-1);
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-2);
-    border-radius: var(--ccrpg-radius-md);
-    background: color-mix(in srgb, var(--ccrpg-surface) 50%, transparent);
-    border: 1px solid color-mix(in srgb, var(--ccrpg-fg-muted) 10%, transparent);
+    gap: var(--mysterium-space-1);
+    padding: var(--mysterium-space-3) var(--mysterium-space-2);
+    border-radius: var(--mysterium-radius-md);
+    background: color-mix(in srgb, var(--mysterium-surface) 50%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mysterium-fg-muted) 10%, transparent);
   }
 
   .analytics-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .analytics-value {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     text-transform: capitalize;
   }
 
   .analytics-sub {
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-size: 0.65rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
   }
 
   .review-list {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
-    margin-top: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-1);
+    margin-top: var(--mysterium-space-2);
   }
 
   .review-item {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: var(--ccrpg-space-1) var(--ccrpg-space-2);
-    border-radius: var(--ccrpg-radius-sm);
-    background: color-mix(in srgb, var(--ccrpg-warning) 8%, transparent);
+    padding: var(--mysterium-space-1) var(--mysterium-space-2);
+    border-radius: var(--mysterium-radius-sm);
+    background: color-mix(in srgb, var(--mysterium-warning) 8%, transparent);
   }
 
   .review-concept {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg);
     text-transform: capitalize;
   }
 
     .review-days {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
     font-weight: 500;
   }
 
@@ -541,51 +541,51 @@
   .modality-chart {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
-    margin-top: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-1);
+    margin-top: var(--mysterium-space-2);
   }
 
   .sub-title {
-    font-family: var(--ccrpg-font-display);
+    font-family: var(--mysterium-font-display);
     font-size: 0.65rem;
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
-    color: var(--ccrpg-fg-muted);
-    margin: 0 0 var(--ccrpg-space-1);
+    letter-spacing: var(--mysterium-tracking-wider);
+    color: var(--mysterium-fg-muted);
+    margin: 0 0 var(--mysterium-space-1);
   }
 
   .modality-row {
     display: grid;
     grid-template-columns: 8rem 1fr 5rem;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .modality-name {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-transform: capitalize;
   }
 
   .modality-bar {
     height: 6px;
-    background: var(--ccrpg-surface);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-surface);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
   }
 
   .modality-bar-fill {
     height: 100%;
-    border-radius: var(--ccrpg-radius-full);
-    transition: width var(--ccrpg-duration-slow) var(--ccrpg-ease-out);
+    border-radius: var(--mysterium-radius-full);
+    transition: width var(--mysterium-duration-slow) var(--mysterium-ease-out);
   }
 
   .modality-stat {
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-size: 0.65rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     text-align: right;
   }
 
@@ -593,39 +593,39 @@
   .curve-summary {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .curve-metrics {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .curve-metric {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ccrpg-space-1);
-    padding: var(--ccrpg-space-2);
-    border-radius: var(--ccrpg-radius-md);
-    background: color-mix(in srgb, var(--ccrpg-surface) 50%, transparent);
-    border: 1px solid color-mix(in srgb, var(--ccrpg-fg-muted) 10%, transparent);
+    gap: var(--mysterium-space-1);
+    padding: var(--mysterium-space-2);
+    border-radius: var(--mysterium-radius-md);
+    background: color-mix(in srgb, var(--mysterium-surface) 50%, transparent);
+    border: 1px solid color-mix(in srgb, var(--mysterium-fg-muted) 10%, transparent);
   }
 
   .curve-metric-value {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
 
   .curve-metric-label {
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-size: 0.6rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     text-align: center;
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 </style>

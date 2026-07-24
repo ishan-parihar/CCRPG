@@ -1,7 +1,7 @@
 <script lang="ts">
   /**
    * /profiles route — multi-profile management.
-   * Parity with CLI 'ccrpg profile list/create/switch/delete'.
+   * Parity with CLI 'mysterium profile list/create/switch/delete'.
    */
   import Seo from '$lib/components/Seo.svelte';
   import RouteShell from '$lib/components/RouteShell.svelte';
@@ -65,7 +65,7 @@
 
 <Seo
   title="Profiles"
-  description="Manage your CCRPG profiles — multiple players on one device."
+  description="Manage your Mysterium profiles — multiple players on one device."
   indexable={false}
 />
 
@@ -142,16 +142,16 @@
 
 <style>
   .profile-count {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     margin: 0;
   }
 
   .empty {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     text-align: center;
     margin: 0;
@@ -161,7 +161,7 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
 
   .profile-info {
@@ -170,25 +170,25 @@
   }
 
   .profile-name {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 600;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     margin: 0;
   }
 
   .profile-meta {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
-    margin: var(--ccrpg-space-1) 0 0 0;
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
+    margin: var(--mysterium-space-1) 0 0 0;
   }
 
   .delete-warning {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 </style>

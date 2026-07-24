@@ -1,4 +1,4 @@
-# CCRPG Post-Fix System-Level Audit — Round 2
+# Mysterium Post-Fix System-Level Audit — Round 2
 
 > **Date:** 2026-07-05
 > **Scope:** Re-audit of the agentic-operation-flow architecture AFTER the 20 fixes (8 P0 + 12 P1) from the first audit.
@@ -30,7 +30,7 @@ The P0/P1 fixes successfully repaired **flow correctness** (double-count, phanto
 
 **Status:** Completely missing. No `quadrantsTested` field on `Encounter`. No AQAL gate in `TransformationDetector.computeReadiness()`. No engine enforces "all 4 quadrants shift" at transformation commit.
 
-**Impact:** CCRPG cannot honor the integral-theory commitment that distinguishes it from single-quadrant cognitive trainers. Transformation can fire on cognitive-only evidence — exactly the "integral fallacy" foundations/01 §2 warns against.
+**Impact:** Mysterium cannot honor the integral-theory commitment that distinguishes it from single-quadrant cognitive trainers. Transformation can fire on cognitive-only evidence — exactly the "integral fallacy" foundations/01 §2 warns against.
 
 **Fix:** Add `quadrantsTested` to Encounter; add AQAL coverage gate in TransformationDetector (require ≥1 crystallized cell in each of UL/UR/LL/LR before threshold); record 4-quadrant shift manifest at commit.
 
@@ -40,24 +40,24 @@ The P0/P1 fixes successfully repaired **flow correctness** (double-count, phanto
 
 **Status:** Zero matches for "Atman" or "Jonah" in the entire codebase. No tool, no engine, no detection heuristic, no LLM prompt suffix. The 4 defenses have no telemetry surface.
 
-**Impact:** CCRPG cannot distinguish genuine developmental arrest from genuine integration. The agent has no way to know if a "healthy" player is actually exhibiting substitute-gratification behavior (chasing scores instead of growth, refusing cooperative modalities, rushing narrative, engaging only psychometric tasks). This is the single biggest theoretical gap in the runtime.
+**Impact:** Mysterium cannot distinguish genuine developmental arrest from genuine integration. The agent has no way to know if a "healthy" player is actually exhibiting substitute-gratification behavior (chasing scores instead of growth, refusing cooperative modalities, rushing narrative, engaging only psychometric tasks). This is the single biggest theoretical gap in the runtime.
 
-**Fix:** Add defense-signal computation to ShadowDetector (infer 4 Atman defenses from behavior patterns); add Jonah-Complex detector (high golden-allergy + low aspirational expression + avoidance of next-stage encounters); expose via new `ccrpg_assess_atman_project` tool; wire into scheduler (increase golden-shadow catalyst frequency when defenses active).
+**Fix:** Add defense-signal computation to ShadowDetector (infer 4 Atman defenses from behavior patterns); add Jonah-Complex detector (high golden-allergy + low aspirational expression + avoidance of next-stage encounters); expose via new `mysterium_assess_atman_project` tool; wire into scheduler (increase golden-shadow catalyst frequency when defenses active).
 
 ### GAP-3. 17 Missing Agent Tools — ❌ NONE ADDED
 
 **Source:** Prior audit §2.2 enumerated 17 ontology-required tools that don't exist.
 
-**Status:** P0/P1 added zero new tools to the 8-tool CCRPG surface. P1 deepened existing tools (get_player_state, select_encounter, complete_encounter) but did not add:
-- `ccrpg_commit_transformation` (agent can detect readiness but cannot commit/decline/abort)
-- `ccrpg_holonic_return` (scan earlier stages, surface return encounter)
-- `ccrpg_query_npc` / `ccrpg_cultivate_npc` (NPC relationship detail + deepening)
-- `ccrpg_query_narrative_beats` / `ccrpg_advance_beat` / `ccrpg_author_beat`
-- `ccrpg_get_pestle` / `ccrpg_nudge_pestle` / `ccrpg_resolve_macro_event`
-- `ccrpg_query_user_matrix_cell` (per-cell loads)
-- `ccrpg_assess_contact_boundary` (Gestalt boundary state)
-- `ccrpg_assess_atman_project` (substitution/translation defenses)
-- `ccrpg_query_vows` / `ccrpg_author_vow`
+**Status:** P0/P1 added zero new tools to the 8-tool Mysterium surface. P1 deepened existing tools (get_player_state, select_encounter, complete_encounter) but did not add:
+- `mysterium_commit_transformation` (agent can detect readiness but cannot commit/decline/abort)
+- `mysterium_holonic_return` (scan earlier stages, surface return encounter)
+- `mysterium_query_npc` / `mysterium_cultivate_npc` (NPC relationship detail + deepening)
+- `mysterium_query_narrative_beats` / `mysterium_advance_beat` / `mysterium_author_beat`
+- `mysterium_get_pestle` / `mysterium_nudge_pestle` / `mysterium_resolve_macro_event`
+- `mysterium_query_user_matrix_cell` (per-cell loads)
+- `mysterium_assess_contact_boundary` (Gestalt boundary state)
+- `mysterium_assess_atman_project` (substitution/translation defenses)
+- `mysterium_query_vows` / `mysterium_author_vow`
 - `tdg_load_mind_state` (rollback counterpart to save)
 - `tdg_list_nodes` (bootstrap for fetch_context)
 
@@ -105,7 +105,7 @@ The P0/P1 fixes successfully repaired **flow correctness** (double-count, phanto
 
 **Source:** foundations/04 (entire document — Gross/Subtle/Causal/Witness/NonDual)
 
-**Status:** `sig.states` is initialized at `createInitialSignificator` but **never read by any engine, scheduler, agent tool, or assessment pipeline**. `StatePractice.ts` (spec'd in §4) does not exist. The contemplative half of human development is absent. CCRPG is currently a "capacity only" game, which foundations/04 §3.4 explicitly calls out as the failure mode of every cognitive-training app.
+**Status:** `sig.states` is initialized at `createInitialSignificator` but **never read by any engine, scheduler, agent tool, or assessment pipeline**. `StatePractice.ts` (spec'd in §4) does not exist. The contemplative half of human development is absent. Mysterium is currently a "capacity only" game, which foundations/04 §3.4 explicitly calls out as the failure mode of every cognitive-training app.
 
 ### GAP-10. Contact Boundary (Gestalt) — ❌ MISSING
 
@@ -141,20 +141,20 @@ No code checks "is player at White && not harvestable → enter Samsara loop". `
 
 The prior audit called SessionAgent dead code; the truth is "alive but Flow-C-only" (Direct Questioning). Flows A (CLI default), B (CLI --agent), D (Phaser) do NOT instantiate it. `PersistentAgent` uses a static system prompt, not `SessionAgent.buildSynthesis()`. Cross-encounter synthesis is unavailable in 3 of 4 flows.
 
-### GAP-17. `ccrpg_get_world_state` Still Shallow — ❌ UNCHANGED
+### GAP-17. `mysterium_get_world_state` Still Shallow — ❌ UNCHANGED
 
-Returns counts only: `holonCount`, `npcCount`, `activeRelationships` (count), `activeMacroEvents` (count), `pestleTensions` (string list), `narrativeBeats` (count). Cannot identify any specific NPC, report per-dimension PESTLE values, report macro-event lifecycle phase, or report narrative beat IDs. The most underdeepened CCRPG tool.
+Returns counts only: `holonCount`, `npcCount`, `activeRelationships` (count), `activeMacroEvents` (count), `pestleTensions` (string list), `narrativeBeats` (count). Cannot identify any specific NPC, report per-dimension PESTLE values, report macro-event lifecycle phase, or report narrative beat IDs. The most underdeepened Mysterium tool.
 
-### GAP-18. `ccrpg_complete_encounter` Scores + Feedback Are Dead Telemetry — ⚠️ WIRED WRONG
+### GAP-18. `mysterium_complete_encounter` Scores + Feedback Are Dead Telemetry — ⚠️ WIRED WRONG
 
 P1-19 added `feedback` and `scores` fields to the tool, but:
 - `PlayerResponse` interface has no `scores` field — `processOutcome` ignores them
 - `feedback` is stored on `EncounterResult` but never written to `ConsequenceRecord` or `history`
 - The 10-dim psychometric depth is accepted by the tool but dropped on the floor
 
-### GAP-19. Veil Leak in `ccrpg_get_player_state` — ⚠️ NEW BUG (P1-18 regression)
+### GAP-19. Veil Leak in `mysterium_get_player_state` — ⚠️ NEW BUG (P1-18 regression)
 
-P1-18 added raw `driveWeights`, `driveFixationRisk`, `rayProfileValues`, `perLineAltitudes` to the tool return. The system prompt's Veil claim ("The player never sees: scores … percentages") is now partially FALSE — these raw numbers are in the agent's message history and could leak into `ccrpg_ask_player` narratives.
+P1-18 added raw `driveWeights`, `driveFixationRisk`, `rayProfileValues`, `perLineAltitudes` to the tool return. The system prompt's Veil claim ("The player never sees: scores … percentages") is now partially FALSE — these raw numbers are in the agent's message history and could leak into `mysterium_ask_player` narratives.
 
 ### GAP-20. `downstreamEffects.willResolveShadow` Heuristic Is Wrong — ⚠️ WIRED WRONG
 
@@ -194,7 +194,7 @@ The system prompt covers all 10 TDG tools but has these gaps:
 7. No `behavioralShadows` (P1-16) mention — agent doesn't know a second shadow channel exists
 8. No `shadowResolvedId` flow reinforcement
 9. No `downstreamEffects` interpretation guide (and the heuristic is wrong)
-10. No `ccrpg_get_world_state` shallowness warning — agent will waste turns querying for detail that isn't there
+10. No `mysterium_get_world_state` shallowness warning — agent will waste turns querying for detail that isn't there
 
 ---
 
@@ -203,7 +203,7 @@ The system prompt covers all 10 TDG tools but has these gaps:
 ### P2-Critical (ontological contract)
 
 1. **Implement AQAL 4-quadrant gate** in TransformationDetector (GAP-1)
-2. **Implement Atman Project + Jonah Complex detection** in ShadowDetector + expose via `ccrpg_assess_atman_project` tool (GAP-2, GAP-3)
+2. **Implement Atman Project + Jonah Complex detection** in ShadowDetector + expose via `mysterium_assess_atman_project` tool (GAP-2, GAP-3)
 3. **Wire `checkHarvest` into runtime** — call from endSession at White; trigger Samsara loop if not harvestable (GAP-8, GAP-15)
 
 ### P2-High (action-layer depth)
@@ -215,17 +215,17 @@ The system prompt covers all 10 TDG tools but has these gaps:
 8. **Wire `filterInput`** into LLMClient + ContextPipeline + PersistentAgent (GAP-14)
 9. **Fix per-line theta half-lives in GCE + CCI inline path** (GAP-13)
 10. **Implement Contact Boundary state** + distortion detection (GAP-10)
-11. **Pass `patterns` to `detectShadows`** in ccrpg_get_player_state — agent should see behavioral shadows (GAP-7 partial)
+11. **Pass `patterns` to `detectShadows`** in mysterium_get_player_state — agent should see behavioral shadows (GAP-7 partial)
 12. **Implement 5 states of consciousness** — at minimum read `sig.states`; create `StatePractice.ts` (GAP-9)
 
 ### P2-Medium (completeness + correctness)
 
-13. **Deepen `ccrpg_get_world_state`** — NPC identities, per-dimension PESTLE, macro-event lifecycle, narrative beat IDs (GAP-17)
+13. **Deepen `mysterium_get_world_state`** — NPC identities, per-dimension PESTLE, macro-event lifecycle, narrative beat IDs (GAP-17)
 14. **Wire `feedback` + `scores` into ConsequenceRecord** — or remove the dead fields (GAP-18)
 15. **Fix `downstreamEffects.willResolveShadow` heuristic** to match ConsequenceEngine (GAP-20)
-16. **Fix Veil leak in `ccrpg_get_player_state`** — re-veil numerics or update prompt (GAP-19)
-17. **Add `ccrpg_commit_transformation`** tool (GAP-3)
-18. **Add `ccrpg_holonic_return`** tool (GAP-3, GAP-4)
+16. **Fix Veil leak in `mysterium_get_player_state`** — re-veil numerics or update prompt (GAP-19)
+17. **Add `mysterium_commit_transformation`** tool (GAP-3)
+18. **Add `mysterium_holonic_return`** tool (GAP-3, GAP-4)
 19. **Add NPC cultivation tools** (GAP-3)
 20. **Add PESTLE manipulation tools** (GAP-3)
 21. **Add per-cell UserMatrixModel query** (GAP-3)
@@ -240,13 +240,13 @@ The system prompt covers all 10 TDG tools but has these gaps:
 30. **Add `tdg_load_mind_state`** + `tdg_list_nodes` (GAP-3)
 31. **Update system prompt** with 10 governance gaps (§5)
 32. **Add `tdg_health` retry wrapper** in TDGToolAdapter
-33. **Fix `ccrpg_complete_encounter` scores/feedback dead telemetry** — wire into ConsequenceRecord or remove
+33. **Fix `mysterium_complete_encounter` scores/feedback dead telemetry** — wire into ConsequenceRecord or remove
 
 ---
 
 ## 7. The Core Insight (Updated)
 
-The prior audit concluded: **CCRPG was built measurement-first, action-last.** The P0/P1 fixes confirmed this — they repaired the measurement *plumbing* (state reconstruction, save atomicity, TDG wiring, CCI→GCE delegation) and the agent *I/O* (deeper player_state, restored psychometric scores, full ScheduledEncounter preservation). They did not touch the action *ontology*.
+The prior audit concluded: **Mysterium was built measurement-first, action-last.** The P0/P1 fixes confirmed this — they repaired the measurement *plumbing* (state reconstruction, save atomicity, TDG wiring, CCI→GCE delegation) and the agent *I/O* (deeper player_state, restored psychometric scores, full ScheduledEncounter preservation). They did not touch the action *ontology*.
 
 The agent is no longer a "blind presenter" — it has deep glasses. It can see per-line altitudes, per-shadow detail, per-drive directionality, polarity trajectory, transformation state. But it still cannot *drive* the ontological machinery the foundations docs require:
 
@@ -263,6 +263,6 @@ The agent is no longer a "blind presenter" — it has deep glasses. It can see p
 - It cannot practice states of consciousness
 - It cannot resolve shadows via the drive-health formula
 
-The 28-system architecture remains ~60% implemented. The 40% that's missing is the half that makes CCRPG *developmentally honest* rather than just *developmentally observant*. The next wave must build the action layer — the Atman/Jonah/Contact-Boundary/Holonic-Return/knot-pair/256-shadow/Samsara/states machinery that the foundations docs specify but the runtime doesn't implement.
+The 28-system architecture remains ~60% implemented. The 40% that's missing is the half that makes Mysterium *developmentally honest* rather than just *developmentally observant*. The next wave must build the action layer — the Atman/Jonah/Contact-Boundary/Holonic-Return/knot-pair/256-shadow/Samsara/states machinery that the foundations docs specify but the runtime doesn't implement.
 
 **The measurement layer is done. The action layer is the remaining 40%.**

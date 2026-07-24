@@ -2,9 +2,9 @@
  * profileStore — WebUI multi-profile system.
  * Parity with CLI ProfileManager (adapted for browser localStorage).
  *
- * CLI uses YAML files in ~/.ccrpg/profiles/<name>/.
- * WebUI uses localStorage keys: ccrpg:profiles, ccrpg:active-profile,
- * ccrpg:profile:<name>:encounter-log, ccrpg:profile:<name>:narrative-memory.
+ * CLI uses YAML files in ~/.mysterium/profiles/<name>/.
+ * WebUI uses localStorage keys: mysterium:profiles, mysterium:active-profile,
+ * mysterium:profile:<name>:encounter-log, mysterium:profile:<name>:narrative-memory.
  *
  * Both: identity, encounter log, narrative memory, session synthesis.
  * ponytail: the CLI's YAML parser is 200 LOC — the WebUI uses JSON (native).
@@ -25,8 +25,8 @@ export interface ProfileSummary {
   readonly totalEncounters: number;
 }
 
-const PROFILES_KEY = 'ccrpg:profiles';
-const ACTIVE_KEY = 'ccrpg:active-profile';
+const PROFILES_KEY = 'mysterium:profiles';
+const ACTIVE_KEY = 'mysterium:active-profile';
 
 const isBrowser = typeof window !== 'undefined';
 
@@ -84,8 +84,8 @@ export function deleteProfile(name: string): void {
     return next;
   });
   if (isBrowser) {
-    localStorage.removeItem(`ccrpg:profile:${name}:encounter-log`);
-    localStorage.removeItem(`ccrpg:profile:${name}:narrative-memory`);
+    localStorage.removeItem(`mysterium:profile:${name}:encounter-log`);
+    localStorage.removeItem(`mysterium:profile:${name}:narrative-memory`);
   }
   activeProfileStore.update((active) => (active === name ? null : active));
 }
@@ -113,7 +113,7 @@ export function updateProfileAfterSession(name: string, encountersCompleted: num
 
 export function appendEncounterLog(profileName: string, entry: string): void {
   if (!isBrowser) return;
-  const key = `ccrpg:profile:${profileName}:encounter-log`;
+  const key = `mysterium:profile:${profileName}:encounter-log`;
   const existing = localStorage.getItem(key) ?? '';
   const updated = existing + entry;
   try {
@@ -125,19 +125,19 @@ export function appendEncounterLog(profileName: string, entry: string): void {
 
 export function readEncounterLog(profileName: string): string {
   if (!isBrowser) return '';
-  return localStorage.getItem(`ccrpg:profile:${profileName}:encounter-log`) ?? '';
+  return localStorage.getItem(`mysterium:profile:${profileName}:encounter-log`) ?? '';
 }
 
 // ─── Narrative memory (parity with CLI agentReadProfileFile/agentWriteProfileFile) ────
 
 export function readNarrativeMemory(profileName: string): string {
   if (!isBrowser) return '';
-  return localStorage.getItem(`ccrpg:profile:${profileName}:narrative-memory`) ?? '';
+  return localStorage.getItem(`mysterium:profile:${profileName}:narrative-memory`) ?? '';
 }
 
 export function appendNarrativeMemory(profileName: string, section: 'insights' | 'patterns' | 'active', text: string): void {
   if (!isBrowser) return;
-  const key = `ccrpg:profile:${profileName}:narrative-memory`;
+  const key = `mysterium:profile:${profileName}:narrative-memory`;
   const existing = localStorage.getItem(key) ?? '';
   const header = section === 'insights' ? '## Key Insights' : section === 'patterns' ? '## Patterns' : '## Active Work';
   const lines = existing.split('\n');

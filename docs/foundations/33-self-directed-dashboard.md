@@ -1,6 +1,6 @@
 # 33 — Self-Directed Dashboard
 
-> **Status:** canonical-hypothesis (CCRPG-specific learner-facing dashboard architecture for self-directed study).
+> **Status:** canonical-hypothesis (Mysterium-specific learner-facing dashboard architecture for self-directed study).
 >
 > **Lateral:** The learner's mirror — the interface through which individuals study, understand, and project their own developmental trajectories across all lines of development and all curriculum subjects. No other document covers this: foundations/29 covers learning science; foundations/30 covers knowledge structure; foundations/31 covers depth measurement; foundations/32 covers validation. This document covers *what the learner sees and how they navigate their own growth*.
 >

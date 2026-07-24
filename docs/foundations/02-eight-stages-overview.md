@@ -8,16 +8,16 @@
 > - **D3 (Orange/Green/Turquoise) ≈ Light** (Third Distortion, established by Octave N-1). Self-reflective choice within archetypal form; manifestation.
 > - **D4+ (White) ≈ our octave's contributions** — the Light-Law fully operative across all substrate-layers.
 >
-> This Law-correspondence is the metaphysical grounding for CCRPG's Stage semantics. Each Stage's content should express its corresponding Law's phenomenology.
+> This Law-correspondence is the metaphysical grounding for Mysterium's Stage semantics. Each Stage's content should express its corresponding Law's phenomenology.
 
 ## 1. Purpose
 
-Establish the eight-stage macro-progression as CCRPG's vertical axis. The
+Establish the eight-stage macro-progression as Mysterium's vertical axis. The
 stages are **canonical** — the names, ordering, and core capacities are
 fixed across all docs. Per-stage detail is in `stages/01-…08-…`; this
 document gives the *whole arc* in one read.
 
-Every level / world / dungeon in CCRPG corresponds to a stage. The player
+Every level / world / dungeon in Mysterium corresponds to a stage. The player
 ascends through them in sequence (with optional regression for shadow
 work). Stage advancement is the game's primary long-term loop.
 
@@ -35,7 +35,7 @@ The eight stages synthesise:
 - Loevinger's ego stages (Loevinger 1976)
 
 All eight scholars converge on a sequence with the same shape, even
-where they disagree on details. CCRPG uses the union; details are
+where they disagree on details. Mysterium uses the union; details are
 disambiguated in per-stage docs.
 
 ### The summary table
@@ -66,7 +66,7 @@ Three macro-arcs are nested in the eight stages:
 - **Trans-personal (7–8)** — post-egoic; egoic self transcended-and-included
   into larger holons.
 
-This 3-arc structure is reflected in CCRPG's narrative architecture
+This 3-arc structure is reflected in Mysterium's narrative architecture
 (`narrative/00`): the protagonist goes through three world-arcs, each
 covering ~3 stages.
 
@@ -120,7 +120,7 @@ stages over seven rays. This is documented as canon, not invented.
 ### 3.4 Backward access — the regression mechanic
 
 A player at Orange may *deliberately* regress to Amber to clear a shadow
-encounter rooted there. Regression in CCRPG is **a feature**, not a
+encounter rooted there. Regression in Mysterium is **a feature**, not a
 penalty: it represents transcend-and-include. The progression UI
 visualises the *current stage* and the *deepest visited stage*; the gap
 between them is where shadow work lives. See
@@ -159,7 +159,7 @@ Adjustable; see open questions.
   a per-task threshold; this is a per-line aggregation threshold; they
   must compose without producing a system that takes 2,000 hours of play
   to reach Orange.
-- **Compression.** Real human stage development takes decades. CCRPG
+- **Compression.** Real human stage development takes decades. Mysterium
   must compress without lying. Targets: each stage in MVP playable in
   10–20 hours of focused play, with an explicit on-screen disclaimer
   that *in-game* stage progress is a *practice*, not a clinical

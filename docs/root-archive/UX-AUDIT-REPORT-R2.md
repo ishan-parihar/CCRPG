@@ -1,7 +1,7 @@
-# CCRPG Fresh-User UX Audit Report — Round 2
+# Mysterium Fresh-User UX Audit Report — Round 2
 
 > **Date:** 2026-07-05
-> **Method:** A subagent with zero knowledge of CCRPG internals simulated a new user discovering the game via 10 CLI commands. This is the second pass — the first round's P0 fixes have been applied.
+> **Method:** A subagent with zero knowledge of Mysterium internals simulated a new user discovering the game via 10 CLI commands. This is the second pass — the first round's P0 fixes have been applied.
 > **Objective:** Identify remaining UX gaps after the first round of fixes, and find the next tier of improvements.
 
 ---
@@ -40,10 +40,10 @@ The user's verdict: "The bones are excellent; the flesh is incomplete. The produ
 | No LLM warning in JSON | ✅ Fixed | User saw the warning event |
 | Diagnostic holon count mismatch | ✅ Fixed | "36 total: 16 NPCs, 4 factions, 7 locations, 9 others" — math adds up |
 | No intro text in --help | ✅ Fixed | User read the description and understood it's a developmental RPG |
-| First-run onboarding | ✅ Fixed | User saw "Welcome to CCRPG..." message |
+| First-run onboarding | ✅ Fixed | User saw "Welcome to Mysterium..." message |
 | Status uninformative | ✅ Partially fixed | "Most polished screen so far — the character-sheet feel is satisfying" |
 | Hollow narrative ("completed without LLM") | ✅ Partially fixed | Atmospheric templates exist but have bugs (see below) |
-| `new-game` hint wrong command | ✅ Fixed | "Run ccrpg session to start a new game" |
+| `new-game` hint wrong command | ✅ Fixed | "Run mysterium session to start a new game" |
 
 ---
 
@@ -88,7 +88,7 @@ The user's verdict: "The bones are excellent; the flesh is incomplete. The produ
 ### UX-R2-7: No glossary command
 - **What the user saw**: Terms like "holon", "significator", "CCI", "resonance", "modality", "shadow quadrant" appear in output with no definitions.
 - **Severity**: MEDIUM — vocabulary wall persists
-- **Fix**: Add `ccrpg glossary` command that defines all key terms in plain English.
+- **Fix**: Add `mysterium glossary` command that defines all key terms in plain English.
 
 ### UX-R2-8: NPCs/factions/locations exist in diagnostic but never appear in encounters (module-only mode)
 - **What the user saw**: Diagnostic shows 16 NPCs, 4 factions, 7 locations — but DQ mode questions have no NPC, no setting, no story.
@@ -113,7 +113,7 @@ The user's verdict: "The bones are excellent; the flesh is incomplete. The produ
 | # | Issue | Effort | Impact |
 |---|---|---|---|
 | 4 | Add `--verbose` JSON events (module, archetype, NPC, modality) | 1 hr | Medium — flag feels broken |
-| 5 | Add `ccrpg glossary` command | 30 min | Medium — vocabulary wall |
+| 5 | Add `mysterium glossary` command | 30 min | Medium — vocabulary wall |
 | 6 | Add `new-game` confirmation prompt | 15 min | Medium — destructive without warning |
 | 7 | Show 8-line table even when no save exists | 10 min | Low — orientation |
 | 8 | Prepend DQ questions with NPC scene-setting | 1 hr | High — transforms survey → RPG |
@@ -123,7 +123,7 @@ The user's verdict: "The bones are excellent; the flesh is incomplete. The produ
 | # | Issue | Effort | Impact |
 |---|---|---|---|
 | 9 | Add "next milestone" hint per line in status | 30 min | Medium — progression visibility |
-| 10 | Add `ccrpg preview --stage=Amber` command | 1 hr | Medium — curiosity satisfier |
+| 10 | Add `mysterium preview --stage=Amber` command | 1 hr | Medium — curiosity satisfier |
 | 11 | Add reflection journal (re-read past answers) | 2-3 hrs | High — retention |
 | 12 | Add "what the game learned about you" summary | 1-2 hrs | High — feedback loop |
 

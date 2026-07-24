@@ -39,7 +39,7 @@
 
 <Seo
   title="Journal"
-  description="Your CCRPG journal — codex entries discovered and vows made."
+  description="Your Mysterium journal — codex entries discovered and vows made."
   indexable={false}
 />
 
@@ -102,39 +102,39 @@
 
 <style>
   .empty-state {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     text-align: center;
-    padding: var(--ccrpg-space-7) var(--ccrpg-space-4);
+    padding: var(--mysterium-space-7) var(--mysterium-space-4);
   }
 
   .summary-line {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    color: var(--mysterium-fg);
     margin: 0;
   }
 
   .summary-line.muted {
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
   }
 
   .section-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
-    color: var(--ccrpg-accent);
+    letter-spacing: var(--mysterium-tracking-wider);
+    color: var(--mysterium-accent);
     margin: 0;
   }
 
   .empty-section {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     text-align: center;
     margin: 0;
@@ -147,21 +147,21 @@
   }
 
   .item {
-    padding: var(--ccrpg-space-4) var(--ccrpg-space-5);
+    padding: var(--mysterium-space-4) var(--mysterium-space-5);
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .item.divider {
-    border-top: 1px solid var(--ccrpg-border);
+    border-top: 1px solid var(--mysterium-border);
   }
 
   .item-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-normal);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-normal);
     margin: 0;
   }
 
@@ -169,13 +169,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
 
   .item-date {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
   }
 
   .vow-item.fulfilled {
@@ -183,18 +183,18 @@
   }
 
   .item-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 600;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     margin: 0;
   }
 
   .item-body {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 </style>

@@ -1,5 +1,5 @@
 /**
- * TDG integration probe — used by install.sh to verify CCRPG ↔ TDG-Rust wiring.
+ * TDG integration probe — used by install.sh to verify Mysterium ↔ TDG-Rust wiring.
  * Spawns the real TDG-Rust binary, performs the MCP handshake, lists tools,
  * and confirms the agent's 7 expected TDG tools are present.
  *
@@ -47,7 +47,7 @@ async function main(): Promise<void> {
   client.stop();
   console.log('✓ TDG-Rust process stopped cleanly');
   console.log('');
-  console.log('CCRPG ↔ TDG-Rust integration verified.');
+  console.log('Mysterium ↔ TDG-Rust integration verified.');
 }
 
 main().catch(err => {

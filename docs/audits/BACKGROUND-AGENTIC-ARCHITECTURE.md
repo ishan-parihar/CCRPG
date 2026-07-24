@@ -5,7 +5,7 @@
 **Date:** 2026-07-14
 
 ## TL;DR
-CCRPG is evolving from a deterministic RPG with LLM fallbacks into a fully context-dependent **Agentic Diagnostic Engine**. All player interactions (including onboarding) will be driven by a background orchestrator that evolves the assessment trajectory in real-time.
+Mysterium is evolving from a deterministic RPG with LLM fallbacks into a fully context-dependent **Agentic Diagnostic Engine**. All player interactions (including onboarding) will be driven by a background orchestrator that evolves the assessment trajectory in real-time.
 
 ## User Requirements
 1.  **Context-Dependent Trajectory:** No two assessments are the same. Each response must change the context of the next question.
@@ -39,7 +39,7 @@ The Agent runtime subscribes to the engine's `EventBus`. It is **reactive**, not
 
 ## 2. The "4+1" Questionnaire Contract
 
-Every dialogue surface in CCRPG must adhere to the following contract.
+Every dialogue surface in Mysterium must adhere to the following contract.
 
 ### Decision 4: MCQ Taxonomy
 To ensure MCQs are diagnostic, the 4 options are not random. They must represent a **quadrant of orientation**:

@@ -1,7 +1,7 @@
 # curriculum-linter
 
 > Agentic workflow for validating curriculum modules against meta-learning principles,
-> holonic structure, depth assessment requirements, and CCRPG engine integration.
+> holonic structure, depth assessment requirements, and Mysterium engine integration.
 
 ## Purpose
 
@@ -30,7 +30,7 @@ Validate that curriculum content is:
   - **Epistemic (D-checks):** Evidence-based claims, uncertainty acknowledged, frontier distinction, source attribution
 
 ### Agent 3: Curriculum Integrator
-- **Role:** Wires validated module into the CCRPG engine
+- **Role:** Wires validated module into the Mysterium engine
 - **Input:** Validated module + existing registry state
 - **Output:** Final module with engine hooks wired
 - **Validates:** Developmental mapping authenticity, Significator update paths, scheduler compatibility

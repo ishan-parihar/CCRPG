@@ -71,13 +71,13 @@
   .shadows-display {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .none-active {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     margin: 0;
   }
@@ -85,32 +85,32 @@
   .shadows-summary {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .count {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-warning);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-warning);
     font-weight: 500;
   }
 
   .shadows-groups {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .shadow-group {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .severity {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
   }
 </style>

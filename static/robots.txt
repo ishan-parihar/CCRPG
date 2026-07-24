@@ -1,4 +1,4 @@
-# CCRPG robots.txt
+# Mysterium robots.txt
 #
 # Static routes (settings, telemetry, recover) are indexable.
 # /play and / are blocked — they're the game canvas (JS-rendered, no
@@ -12,4 +12,4 @@ Disallow: /play
 Disallow: /api/
 
 # Sitemap (when deployed)
-# Sitemap: https://play.ccrpg.game/sitemap.xml
+# Sitemap: https://play.mysterium.game/sitemap.xml

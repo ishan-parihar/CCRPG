@@ -2,14 +2,14 @@
 
 ## 1. Purpose
 
-Specify the four AQAL quadrants — UL, UR, LL, LR — in CCRPG-canonical
+Specify the four AQAL quadrants — UL, UR, LL, LR — in Mysterium-canonical
 form, and prove that the game *must* touch all four to be honest about
 what it claims to train. A cognitive-training app that lives only in UR
 (behaviour, brain) is not training a whole person; a contemplative app
 that lives only in UL (interior) cannot demonstrate transfer; a social
 game that lives only in LL/LR is engagement without growth.
 
-CCRPG's design constraint: **every stage advancement gate touches all
+Mysterium's design constraint: **every stage advancement gate touches all
 four quadrants.**
 
 ## 2. Scientific basis
@@ -41,7 +41,7 @@ simultaneously a UL felt sense, a UR neuro-endocrine pattern, a LL
 cultural meaning of "family," and an LR economic / legal arrangement.
 Reducing it to any one is the integral fallacy.
 
-### Per-quadrant lines (CCRPG's mapping)
+### Per-quadrant lines (Mysterium's mapping)
 
 Following the Knowledge-Base mapping:
 
@@ -54,7 +54,7 @@ Following the Knowledge-Base mapping:
 
 A single line often *primarily* lives in one quadrant but *expresses* in
 adjacent ones — e.g., Moral starts UL (private conscience) and matures
-into LL (lived ethics). CCRPG's `lines/*` documents specify the home
+into LL (lived ethics). Mysterium's `lines/*` documents specify the home
 quadrant and the expression-quadrants for each line.
 
 ## 3. Game-design mapping

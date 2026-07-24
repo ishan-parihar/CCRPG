@@ -21,7 +21,7 @@ We extract and reorganize into:
 import os
 import re
 
-BASE = "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/concept-drafts"
+BASE = "/home/ishanp/Documents/GitHub/MY-PROJECTS/Mysterium/docs/concept-drafts"
 
 def extract_section(content, heading_pattern):
     """Extract content of a section matching heading_pattern until next ## heading."""

@@ -39,7 +39,7 @@
 
 <aside class="sidebar" aria-label="Primary">
   <div class="sidebar-brand">
-    <span class="brand-mark">CCRPG</span>
+    <span class="brand-mark">Mysterium</span>
   </div>
   <nav class="sidebar-nav">
     {#each items as item (item.href)}
@@ -63,63 +63,63 @@
     left: 0;
     bottom: 0;
     width: 240px;
-    background: var(--ccrpg-surface);
-    border-right: 1px solid var(--ccrpg-border);
+    background: var(--mysterium-surface);
+    border-right: 1px solid var(--mysterium-border);
     display: flex;
     flex-direction: column;
-    padding: var(--ccrpg-space-5) var(--ccrpg-space-3);
-    z-index: var(--ccrpg-z-hud);
+    padding: var(--mysterium-space-5) var(--mysterium-space-3);
+    z-index: var(--mysterium-z-hud);
   }
 
   .sidebar-brand {
-    padding: 0 var(--ccrpg-space-3) var(--ccrpg-space-5);
-    border-bottom: 1px solid var(--ccrpg-border);
-    margin-bottom: var(--ccrpg-space-4);
+    padding: 0 var(--mysterium-space-3) var(--mysterium-space-5);
+    border-bottom: 1px solid var(--mysterium-border);
+    margin-bottom: var(--mysterium-space-4);
   }
 
   .brand-mark {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
     font-weight: 700;
-    color: var(--ccrpg-fg);
-    letter-spacing: var(--ccrpg-tracking-wider);
+    color: var(--mysterium-fg);
+    letter-spacing: var(--mysterium-tracking-wider);
   }
 
   .sidebar-nav {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
     flex: 1;
   }
 
   .nav-item {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-3);
-    padding: var(--ccrpg-space-3);
-    color: var(--ccrpg-fg-muted);
+    gap: var(--mysterium-space-3);
+    padding: var(--mysterium-space-3);
+    color: var(--mysterium-fg-muted);
     text-decoration: none;
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     font-weight: 500;
-    border-radius: var(--ccrpg-radius);
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                color var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    border-radius: var(--mysterium-radius);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease),
+                color var(--mysterium-duration-fast) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .nav-item:hover {
-    background: var(--ccrpg-surface-elevated);
-    color: var(--ccrpg-fg);
+    background: var(--mysterium-surface-elevated);
+    color: var(--mysterium-fg);
   }
 
   .nav-item.active {
-    background: var(--ccrpg-accent-soft);
-    color: var(--ccrpg-accent-fg);
+    background: var(--mysterium-accent-soft);
+    color: var(--mysterium-accent-fg);
   }
 
   .nav-item:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: 2px;
   }
 

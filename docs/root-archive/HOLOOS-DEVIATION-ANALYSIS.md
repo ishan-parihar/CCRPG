@@ -1,15 +1,15 @@
-# CCRPG × HoloOS Ontological Deviation Analysis
+# Mysterium × HoloOS Ontological Deviation Analysis
 
 > **Date:** 2026-07-05
-> **Scope:** Contrast CCRPG's current implementation against the LATEST HoloOS `_THEORY/02_Ontology` (pulled 2026-07-05, post-08.8.44).
-> **Objective:** Identify where CCRPG deviates from holonic-science level application, so the P2 implementation wave can correct these deviations.
+> **Scope:** Contrast Mysterium's current implementation against the LATEST HoloOS `_THEORY/02_Ontology` (pulled 2026-07-05, post-08.8.44).
+> **Objective:** Identify where Mysterium deviates from holonic-science level application, so the P2 implementation wave can correct these deviations.
 > **Source of truth:** HoloOS `_THEORY/02_Ontology/00.md` (the master map) + 08.8.44 (dimension redundancy correction) + 08.8.43 (expanded archetypal-class typology) + 08.8.42 (lens validation).
 
 ---
 
 ## 0. Executive Summary
 
-The HoloOS ontology has evolved significantly since CCRPG's `docs/foundations/28` was written. The latest HoloOS introduces:
+The HoloOS ontology has evolved significantly since Mysterium's `docs/foundations/28` was written. The latest HoloOS introduces:
 
 1. **A precise mathematical articulation of G_z/P_z** (00.md §6) — geometric mean of 4 factors, NOT a weighted sum
 2. **A dimension redundancy correction** (08.8.44) — the "4 dimensions" (Mental/Biological/Social/Collective) are REDUNDANT with V/C/R/N; the corrected matrix is 168 classes (8×3×7), not 224 (8×4×7)
@@ -18,7 +18,7 @@ The HoloOS ontology has evolved significantly since CCRPG's `docs/foundations/28
 5. **The doc-holon schema v2** (08.8.34) — each _THEORY doc IS a holon with M·P·C·E·S·T·G·Ch
 6. **The polarity asymmetry audit** (08.8.4) — the Great Way is under-articulated; this is the root cause of most asymmetries
 
-CCRPG deviates from the latest HoloOS in **7 significant ways**. These deviations are not bugs — they are ontological misalignments that affect the game's ability to deliver on "accelerating healing and evolution."
+Mysterium deviates from the latest HoloOS in **7 significant ways**. These deviations are not bugs — they are ontological misalignments that affect the game's ability to deliver on "accelerating healing and evolution."
 
 ---
 
@@ -44,7 +44,7 @@ Where:
 
 **Key property:** G_z is a **geometric mean** of 4 factors. Any single factor near 0 collapses G_z. This is the whole point — you cannot have healthy metabolism with one drive at 0. The geometric mean enforces the "Goldilocks Zone" requirement.
 
-### CCRPG (GreaterCycleEngine.ts — current)
+### Mysterium (GreaterCycleEngine.ts — current)
 
 ```typescript
 // G_z (weighted sum — NOT geometric mean)
@@ -66,15 +66,15 @@ pz = clamp(
 
 ### The Deviation
 
-| Aspect | HoloOS (canonical) | CCRPG (current) | Impact |
+| Aspect | HoloOS (canonical) | Mysterium (current) | Impact |
 |---|---|---|---|
-| G_z formula | Geometric mean of 4 factors | Weighted sum of 4 factors | CCRPG allows one drive to compensate for another. HoloOS requires ALL drives to be non-zero. |
-| P_z formula | Gradient × alignment | Weighted sum of proxies | CCRPG's P_z doesn't measure actual polarization tension. |
-| A_z computation | exp(-\|ln(Ω_A)\|) — optimal at Ω_A=1 | driveBalance (spread of drive weights) | CCRPG's A_z doesn't measure boundary resistance. |
-| C_z computation | exp(-\|ln(σ_C)\|) — optimal at σ_C=1 | (not separately computed) | CCRPG has no Connection Coefficient. |
-| B_H, B_V | Balance ratios (min/max) | (not computed) | CCRPG has no horizontal/vertical balance terms. |
-| ∇Ψ | \|P - M\| / (P + M + ε) — Matrix vs Potentiator distance | (not computed) | CCRPG has no structural potential gradient. |
-| cos(θ_alignment) | Behavioral output aligned with core choice | (not computed) | CCRPG has no polar alignment measure. |
+| G_z formula | Geometric mean of 4 factors | Weighted sum of 4 factors | Mysterium allows one drive to compensate for another. HoloOS requires ALL drives to be non-zero. |
+| P_z formula | Gradient × alignment | Weighted sum of proxies | Mysterium's P_z doesn't measure actual polarization tension. |
+| A_z computation | exp(-\|ln(Ω_A)\|) — optimal at Ω_A=1 | driveBalance (spread of drive weights) | Mysterium's A_z doesn't measure boundary resistance. |
+| C_z computation | exp(-\|ln(σ_C)\|) — optimal at σ_C=1 | (not separately computed) | Mysterium has no Connection Coefficient. |
+| B_H, B_V | Balance ratios (min/max) | (not computed) | Mysterium has no horizontal/vertical balance terms. |
+| ∇Ψ | \|P - M\| / (P + M + ε) — Matrix vs Potentiator distance | (not computed) | Mysterium has no structural potential gradient. |
+| cos(θ_alignment) | Behavioral output aligned with core choice | (not computed) | Mysterium has no polar alignment measure. |
 
 ### Fix
 
@@ -104,13 +104,13 @@ The "4 dimensions" (Mental/Biological/Social/Collective) introduced in 08.8.26 a
 
 **Corrected matrix:** 8 roles × 3 realms × 7 densities = **168 classes** (not 224).
 
-### CCRPG (current)
+### Mysterium (current)
 
-CCRPG's `ArchetypalClass.ts` defines `Dimension = 'Mental' | 'Biological' | 'Social' | 'Collective'` and `UserMatrixModel` uses 4D cells (8 lines × 8 stages × 4 dimensions = 256 cells). CCRPG's `foundations/28` claims J-SEC-1 is resolved via the 32 archetypal-class matrix (8 × 4).
+Mysterium's `ArchetypalClass.ts` defines `Dimension = 'Mental' | 'Biological' | 'Social' | 'Collective'` and `UserMatrixModel` uses 4D cells (8 lines × 8 stages × 4 dimensions = 256 cells). Mysterium's `foundations/28` claims J-SEC-1 is resolved via the 32 archetypal-class matrix (8 × 4).
 
 ### The Deviation
 
-CCRPG uses the SUPERSEDED 4-dimension model. The corrected model uses 3 realms (Gross/Subtle/Causal) instead of 4 dimensions. CCRPG's UserMatrixModel has 256 cells (8×8×4) but should have 192 (8×8×3) per the corrected matrix.
+Mysterium uses the SUPERSEDED 4-dimension model. The corrected model uses 3 realms (Gross/Subtle/Causal) instead of 4 dimensions. Mysterium's UserMatrixModel has 256 cells (8×8×4) but should have 192 (8×8×3) per the corrected matrix.
 
 ### Fix
 
@@ -131,9 +131,9 @@ HoloOS's polarity asymmetry audit identified the **extra-holonic gap** (Great Wa
 - The **accumulated Potentiator** — the larger context that the holon's choices shape and that shapes the holon
 - NOT just "the world" — it's the **field of pressure** that the holon's identity-pattern navigates
 
-### CCRPG (current)
+### Mysterium (current)
 
-CCRPG's `GreaterCycleEngine` has `greatWayAlignment` computed as:
+Mysterium's `GreaterCycleEngine` has `greatWayAlignment` computed as:
 ```typescript
 // Self-referential proxy — NOT a Great Way measure
 greatWayAlignment = polarityCrystallization > 0.5
@@ -145,7 +145,7 @@ This is a **piecewise transform of the polarity score** — it doesn't measure t
 
 ### The Deviation
 
-CCRPG conflates the Great Way with polarity. The Great Way should be modeled as the PESTLE/world-state pressure system — the field of catalyst that the player's Significator navigates. PESTLE tension IS Great Way pressure; macro events ARE Great Way transformations; NPC relationships ARE Great Way co-creation.
+Mysterium conflates the Great Way with polarity. The Great Way should be modeled as the PESTLE/world-state pressure system — the field of catalyst that the player's Significator navigates. PESTLE tension IS Great Way pressure; macro events ARE Great Way transformations; NPC relationships ARE Great Way co-creation.
 
 ### Fix
 
@@ -164,13 +164,13 @@ CCRPG conflates the Great Way with polarity. The Great Way should be modeled as 
 
 Transformation is not a discrete event — it's a **semi-permeable membrane** that continuously regulates the flow of Catalyst and Experience between Matrix↔Potentiator (lesser) and Significator↔Great Way (greater). The "transformation event" (stage transition) is when the membrane's permeability shifts dramatically — but the membrane is ALWAYS there, ALWAYS regulating.
 
-### CCRPG (current)
+### Mysterium (current)
 
-CCRPG's `TransformationDetector` treats transformation as a **discrete state machine**: `idle → threshold → unravelling → crucible → emergence → complete`. The membrane metaphor is absent. There's no continuous permeability regulation — only a binary "at threshold / not at threshold" + a 5-phase state machine.
+Mysterium's `TransformationDetector` treats transformation as a **discrete state machine**: `idle → threshold → unravelling → crucible → emergence → complete`. The membrane metaphor is absent. There's no continuous permeability regulation — only a binary "at threshold / not at threshold" + a 5-phase state machine.
 
 ### The Deviation
 
-CCRPG misses the continuous membrane regulation that HoloOS requires. The contact boundary should:
+Mysterium misses the continuous membrane regulation that HoloOS requires. The contact boundary should:
 - Regulate Catalyst flow (how much perturbation the player can metabolize)
 - Regulate Experience flow (how much integrated state-update the player can send back)
 - Shift permeability during transformation (more open during crucible, more closed during consolidation)
@@ -193,9 +193,9 @@ CCRPG misses the continuous membrane regulation that HoloOS requires. The contac
 
 The lesser cycle is an **open system** — it continuously draws Catalyst from the Great Way and accumulates Experience into the Significator. The accumulation IS the pressure that drives the greater cycle's transformation events.
 
-### CCRPG (current)
+### Mysterium (current)
 
-CCRPG's ConsequenceEngine processes each encounter's outcome independently. `totalEncounters` is a counter, not an accumulation measure. There's no concept of "Experience accumulation pressurizing the Significator" — transformation readiness is computed from line convergence + shadow clearance + catalyst saturation, not from accumulated Experience mass.
+Mysterium's ConsequenceEngine processes each encounter's outcome independently. `totalEncounters` is a counter, not an accumulation measure. There's no concept of "Experience accumulation pressurizing the Significator" — transformation readiness is computed from line convergence + shadow clearance + catalyst saturation, not from accumulated Experience mass.
 
 ### Fix
 
@@ -211,9 +211,9 @@ CCRPG's ConsequenceEngine processes each encounter's outcome independently. `tot
 
 > **Disambiguation:** The eight terms (M, P, C, E, S, T, G, Ch) are the **eight functional roles** — the abstract skeleton that repeats at every scale. They are NOT the same as the **22 named archetypes**, which are the domain-specific elaborations of these roles across three complexes (Mind, Body, Spirit) plus the Choice pivot. Specifically: 7 roles × 3 complexes = 21 numbered archetypes, plus Choice (the 22nd, the meta-pivot). The functional roles are the **operators**; the named archetypes are the **operands**.
 
-### CCRPG (current)
+### Mysterium (current)
 
-CCRPG's `foundations/15` describes the 4 macro archetypes (Significator, Transformation, Great Way, Choice) but doesn't distinguish between functional roles and named archetypes. The `GreaterCycleEngine` tracks S·T·G·Ch but doesn't track the 22 named archetypes or the 3 complexes (Mind/Body/Spirit). The `LINE_COMPLEX` mapping exists but is not used for archetype differentiation.
+Mysterium's `foundations/15` describes the 4 macro archetypes (Significator, Transformation, Great Way, Choice) but doesn't distinguish between functional roles and named archetypes. The `GreaterCycleEngine` tracks S·T·G·Ch but doesn't track the 22 named archetypes or the 3 complexes (Mind/Body/Spirit). The `LINE_COMPLEX` mapping exists but is not used for archetype differentiation.
 
 ### Fix
 
@@ -230,9 +230,9 @@ CCRPG's `foundations/15` describes the 4 macro archetypes (Significator, Transfo
 
 The Veil is the **involution→evolution membrane** — it's not just a UX convenience or a game mechanic. It's the cosmological mechanism that ensures the holon's choices are authentic (not reverse-engineered from system knowledge). The Veil is part of the membrane architecture (Transformation is the contact-boundary; the Veil is the amnestic filter on that boundary).
 
-### CCRPG (current)
+### Mysterium (current)
 
-CCRPG's `foundations/20` treats the Veil as a mechanical commitment (no scores, no stage labels, etc.) enforced by `VeilFilter` (regex). The cosmological dimension — that the Veil is the amnestic filter on the contact-boundary that ensures authentic choice — is mentioned but not implemented. `VeilFilter.filterInput` is still dead code (P0/P1 didn't fix it).
+Mysterium's `foundations/20` treats the Veil as a mechanical commitment (no scores, no stage labels, etc.) enforced by `VeilFilter` (regex). The cosmological dimension — that the Veil is the amnestic filter on the contact-boundary that ensures authentic choice — is mentioned but not implemented. `VeilFilter.filterInput` is still dead code (P0/P1 didn't fix it).
 
 ### Fix
 
@@ -258,12 +258,12 @@ CCRPG's `foundations/20` treats the Veil as a mechanical commitment (no scores, 
 
 ## The Core Insight
 
-CCRPG's foundations were written against an EARLIER version of HoloOS. The HoloOS ontology has since:
+Mysterium's foundations were written against an EARLIER version of HoloOS. The HoloOS ontology has since:
 1. **Deepened the G_z/P_z math** (geometric mean, not weighted sum)
 2. **Corrected the dimension redundancy** (3 realms, not 4 dimensions)
 3. **Validated the framework** (lens validation against 4 known transitions)
 4. **Articulated the Great Way** (08.8.4 + 08.8.5)
 
-CCRPG must align with these updates BEFORE building the action layer (P2 from Round 2 audit). Building action-layer systems on top of a misaligned measurement layer would compound the deviation.
+Mysterium must align with these updates BEFORE building the action layer (P2 from Round 2 audit). Building action-layer systems on top of a misaligned measurement layer would compound the deviation.
 
 **The measurement layer must be re-aligned first. Then the action layer can be built on the corrected foundation.**

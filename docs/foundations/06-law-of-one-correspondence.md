@@ -2,7 +2,7 @@
 
 > **Canon status:** v1.0 — As of the MVP-BLUEPRINT canon decision,
 > the Law-of-One / Ra-material cosmology is the **canonical
-> metaphysics** of CCRPG's world. It is not aesthetic, not optional,
+> metaphysics** of Mysterium's world. It is not aesthetic, not optional,
 > not firewalled. The seven energy rays are first-class types
 > alongside `Stage`, `Line`, `Quadrant`, `State`, `Drive`. The
 > harvest into 4th density is the canonical post-White endgame.
@@ -10,7 +10,7 @@
 ## 1. Purpose
 
 Specify how the **seven-ray energy-centre system** (the Law-of-One /
-Ra material; chakra correspondence) maps onto CCRPG's eight-stage
+Ra material; chakra correspondence) maps onto Mysterium's eight-stage
 progression as the **load-bearing metaphysics of the game world**.
 
 The world the player inhabits is **3rd density** — the density of
@@ -27,7 +27,7 @@ metaphysics. The codex elaborates it. The gameplay enacts it.
 
 ## 2. Methodological honesty (the firewall, refined)
 
-CCRPG continues to maintain a methodological distinction between
+Mysterium continues to maintain a methodological distinction between
 **empirical claims** (which are sourced to peer-reviewed psychology
 and neuroscience — see `foundations/07`, `foundations/08`) and
 **metaphysical / cosmological claims** (which are sourced to the
@@ -35,7 +35,7 @@ contemplative-channelled Ra material).
 
 The lifted firewall means: **the world's metaphysics is canonically
 the Ra material's cosmology.** This is a *world-building* decision,
-not a *scientific* one. CCRPG's claims about cognitive training
+not a *scientific* one. Mysterium's claims about cognitive training
 remain tied to validated assessments (Principle 2). The world's
 *meaning* — why the player is ascending, what the harvest is, why
 each stage carries its colour — is canonically Ra.
@@ -97,7 +97,7 @@ This is the canonical 8 × 7 mapping.
 
 ## 5. The canonical 8-stage / 7-ray correspondence
 
-| CCRPG stage | Energy ray | Sub-octave note | Body / vehicle |
+| Mysterium stage | Energy ray | Sub-octave note | Body / vehicle |
 |---|---|---|---|
 | Infrared | Red | Foundation — "basic strengthening ray" | Chemical body |
 | Magenta | Orange | Sacral — emotional / fantasy / magic emergence | Physical body complex |
@@ -122,7 +122,7 @@ power), and so on. This recursion is *real* in the game world — it
 is the holographic structure manifesting at the resolution of human
 consciousness.
 
-This is what makes CCRPG's bestiary feel *thematically coherent*
+This is what makes Mysterium's bestiary feel *thematically coherent*
 rather than arbitrary. The variety inside a single stage is *the
 holographic pattern showing up*.
 
@@ -210,7 +210,7 @@ complex, tinged with the *quality of integration of all prior rays*:
 Each ray is **distinct** — meaning each sub-octave has been genuinely
 activated and differentiated, not bypassed.
 
-CCRPG models this via a `rayProfile: Record<Ray, number>` on the
+Mysterium models this via a `rayProfile: Record<Ray, number>` on the
 Significator. Per the activation/decay model (GAP-D2-1), each encounter
 activates the ray-center corresponding to the encounter's stage (via
 STAGE_RAY_MAP) by +0.15, while all other ray-centers decay by -0.02.
@@ -236,7 +236,7 @@ The world is explicitly framed as:
 - Whose **two polarities** — service-to-others (positive) and
   service-to-self (negative) — produce different harvest paths
 
-CCRPG's MVP models only **positive-polarity progression**. Whether
+Mysterium's MVP models only **positive-polarity progression**. Whether
 to ever model service-to-self path is open and ethically weighty;
 default is no.
 
@@ -323,7 +323,7 @@ canonically committed rather than aesthetically optional.
   during the post-MVP content drops. Cultural consultants
   encouraged.
 - **Service-to-self / negative-polarity path.** The Ra material
-  models both positive (STO) and negative (STS) harvest paths. CCRPG
+  models both positive (STO) and negative (STS) harvest paths. Mysterium
   models only STO. Whether to ever add STS is open; default is no.
   Ethical weight is significant.
 - **Inter-tradition naming.** The 7-ray colour names (Ra), the

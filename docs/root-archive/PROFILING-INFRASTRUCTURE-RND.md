@@ -1,4 +1,4 @@
-# CCRPG Profiling Infrastructure — R&D Design Document
+# Mysterium Profiling Infrastructure — R&D Design Document
 
 ## Hermes-Agent Architecture Study — Key Insights
 
@@ -10,7 +10,7 @@ Hermes uses a **frozen snapshot** pattern for memory injection:
 - Mid-session writes update files on disk immediately (durable) but do NOT change the system prompt
 - The snapshot refreshes on the NEXT session start
 
-**Why this matters for CCRPG:** We currently inject profile context via `process.env.CCRPG_PROFILE_CONTEXT` — this IS the frozen snapshot pattern. But we don't have the mid-session write capability (the agent can't update `narrative-memory.md` during a session). The agent r/w tools I built (`agentReadProfileFile` / `agentWriteProfileFile`) need to be wired as actual CCRPG tools.
+**Why this matters for Mysterium:** We currently inject profile context via `process.env.Mysterium_PROFILE_CONTEXT` — this IS the frozen snapshot pattern. But we don't have the mid-session write capability (the agent can't update `narrative-memory.md` during a session). The agent r/w tools I built (`agentReadProfileFile` / `agentWriteProfileFile`) need to be wired as actual Mysterium tools.
 
 ### 2. Session Search (session_search_tool.py)
 
@@ -19,7 +19,7 @@ Hermes stores all sessions in SQLite with FTS5 full-text search. The agent can:
 - **SCROLL**: drill into a specific session, scroll forward/backward
 - **BROWSE**: list recent sessions chronologically
 
-**Why this matters for CCRPG:** Our `encounter-log.md` is the equivalent — but it's a flat file, not searchable. For the current scale (single user, ~20 encounters/session), a flat file is sufficient. For future scale (longitudinal use, hundreds of sessions), SQLite + FTS5 would be needed.
+**Why this matters for Mysterium:** Our `encounter-log.md` is the equivalent — but it's a flat file, not searchable. For the current scale (single user, ~20 encounters/session), a flat file is sufficient. For future scale (longitudinal use, hundreds of sessions), SQLite + FTS5 would be needed.
 
 ### 3. Skill Management (skill_manager_tool.py)
 
@@ -32,15 +32,15 @@ Hermes has **procedural memory** — skills the agent creates/edits/deletes:
 
 Skills are the agent's **procedural memory** — "how to do a specific type of task." This is different from declarative memory (MEMORY.md = facts, USER.md = user knowledge).
 
-**Why this matters for CCRPG:** The CCRPG agent doesn't have procedural memory yet. It can't learn "this user responds better to somatic prompts than cognitive ones" and adjust its approach. This is a future enhancement — for now, the preferences.yaml captures static preferences, but the agent can't evolve its strategy.
+**Why this matters for Mysterium:** The Mysterium agent doesn't have procedural memory yet. It can't learn "this user responds better to somatic prompts than cognitive ones" and adjust its approach. This is a future enhancement — for now, the preferences.yaml captures static preferences, but the agent can't evolve its strategy.
 
 ### 4. Self-Evolution (background_review)
 
 Hermes has a **background review** fork that can autonomously evolve skills — but only skills it has actually read (provenance tracking). This prevents the agent from rewriting content it only inferred from the transcript.
 
-**Why this matters for CCRPG:** Post-session synthesis is our equivalent — the system updates the profile after each session. But we could go further: an autonomous "profile review" that reads the encounter log and updates narrative-memory.md with patterns it noticed.
+**Why this matters for Mysterium:** Post-session synthesis is our equivalent — the system updates the profile after each session. But we could go further: an autonomous "profile review" that reads the encounter log and updates narrative-memory.md with patterns it noticed.
 
-## CCRPG Profiling Infrastructure Design
+## Mysterium Profiling Infrastructure Design
 
 ### Design Principle: YAML-Canonical, JSON-Transmuted
 
@@ -61,7 +61,7 @@ This eliminates the dual-storage problem: YAML is the single source of truth. Th
 ### The Canonical Profile Directory
 
 ```
-~/.ccrpg/profiles/<name>/
+~/.mysterium/profiles/<name>/
 ├── identity.yaml              # System-managed: name, pronouns, lifecycle, totals
 ├── preferences.yaml           # User-managed: metaphor, intensity, pacing
 ├── developmental-state.yaml   # System-managed: altitudes, drives, ray profile, CCI
@@ -80,7 +80,7 @@ This eliminates the dual-storage problem: YAML is the single source of truth. Th
 
 #### Phase 1: Cold Start (Onboarding)
 ```
-ccrpg setup-profile
+mysterium setup-profile
   → User provides: name, pronouns, metaphor preference, intensity, goals
   → Creates profile directory with 10 files
   → All developmental state seeded at Red
@@ -90,7 +90,7 @@ ccrpg setup-profile
 
 #### Phase 2: Session Start (Context Injection)
 ```
-ccrpg --headless --encounters=3 --answer "..."
+mysterium --headless --encounters=3 --answer "..."
   1. Load active profile (10 YAML/MD files)
   2. Parse sig.yaml → Significator object (in-memory)
   3. Parse world.yaml → WorldState object (in-memory)
@@ -104,9 +104,9 @@ ccrpg --headless --encounters=3 --answer "..."
 After each encounter:
   1. Update in-memory Significator (applyConsequences)
   2. Append to encounter-log.md (user words + LLM response)
-  3. [Future] Agent can read narrative-memory.md via ccrpg_read_profile_file
-  4. [Future] Agent can append insights to narrative-memory.md via ccrpg_write_profile_file
-  5. [Future] Agent can update goals.yaml via ccrpg_write_profile_file
+  3. [Future] Agent can read narrative-memory.md via mysterium_read_profile_file
+  4. [Future] Agent can append insights to narrative-memory.md via mysterium_write_profile_file
+  5. [Future] Agent can update goals.yaml via mysterium_write_profile_file
 ```
 
 #### Phase 4: Session End (Synthesis)
@@ -149,7 +149,7 @@ These are currently JSON-serialized. Converting to YAML requires a deep serializ
 
 ### Implementation Priority
 
-1. **NOW: Wire agent r/w tools into the CCRPG tool registry** — the functions exist but aren't accessible to the LLM during a session
+1. **NOW: Wire agent r/w tools into the Mysterium tool registry** — the functions exist but aren't accessible to the LLM during a session
 2. **NOW: Post-session synthesis** — after saving, use the LLM to read the encounter log and extract insights for narrative-memory.md
 3. **NEXT: sig.yaml** — replace live-state.json with YAML (requires deep serializer)
 4. **NEXT: Session search** — for longitudinal use, add a search tool over encounter-log.md

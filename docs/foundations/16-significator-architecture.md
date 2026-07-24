@@ -1,6 +1,6 @@
 # 16 — Significator Architecture
 
-> **Lateral:** The player as Significator — the persistent self-pattern that survives session transitions, accumulates distortions, holds the entire developmental story, and exercises true free will. The game-design translation of the Hierophant archetype into CCRPG's data architecture and encounter-scheduling logic.
+> **Lateral:** The player as Significator — the persistent self-pattern that survives session transitions, accumulates distortions, holds the entire developmental story, and exercises true free will. The game-design translation of the Hierophant archetype into Mysterium's data architecture and encounter-scheduling logic.
 >
 > **Status:** Canonical design document.
 > **Depends on:** 15 (macro-cycle theory), 13 (lesser-cycle topography), 10 (shadow model), 05 (drives and polarities)
@@ -109,7 +109,7 @@ The Significator's defining capacity is articulated in foundations/15: *"What sh
 
 ### 4.2 The mechanic of genuine choice
 
-Every encounter in CCRPG offers **genuine multi-path response**. This is not cosmetic branching (where all paths converge). The paths differ in:
+Every encounter in Mysterium offers **genuine multi-path response**. This is not cosmetic branching (where all paths converge). The paths differ in:
 
 - **Drive expression** — each path exercises a different drive or drive-combination
 - **Shadow engagement** — some paths confront the shadow directly; others avoid it
@@ -127,7 +127,7 @@ The game observes which path the Significator chooses. The choice is recorded in
 
 ### 4.4 Distinguishing the Significator from an automaton
 
-An NPC in CCRPG follows deterministic drive-fixation logic (see foundations/05 §3.3). The player-as-Significator is distinguished by:
+An NPC in Mysterium follows deterministic drive-fixation logic (see foundations/05 §3.3). The player-as-Significator is distinguished by:
 
 1. **Unpredictability** — the game cannot predict the player's choice; it can only observe it after the fact
 2. **Self-authorship** — the player's `primaryValue` and `vows` are self-declared, not system-assigned
@@ -176,7 +176,7 @@ Per AGENTS.md §5.6: lower stages must remain healthy. The Significator at Orang
 
 ### 6.1 The wings of the Hierophant
 
-Foundations/15 describes the "outstretched wings above the Hierophant" — a protective promise that draws the veiled mind toward transformation. In CCRPG, this covenant is implemented through three mechanisms:
+Foundations/15 describes the "outstretched wings above the Hierophant" — a protective promise that draws the veiled mind toward transformation. In Mysterium, this covenant is implemented through three mechanisms:
 
 ### 6.2 Theta-decay nudges
 
@@ -223,7 +223,7 @@ The Significator occupies the **Upper-Left (UL)** quadrant — the domain of sub
 
 ### 7.3 The epistemic non-claim
 
-CCRPG **never claims direct access to the player's inner state**. All inferences from UR behaviour to UL state are:
+Mysterium **never claims direct access to the player's inner state**. All inferences from UR behaviour to UL state are:
 
 - Probabilistic, not deterministic
 - Revisable — new behaviour can override prior inferences

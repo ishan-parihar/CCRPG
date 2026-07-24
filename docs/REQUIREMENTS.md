@@ -1,4 +1,4 @@
-# CCRPG Research Requirements — The Document of Documents
+# Mysterium Research Requirements — The Document of Documents
 
 > **Status:** Draft v0.1 — Research phase, no code is to be modified until this entire
 > document tree is complete and the user signs off on the system-architecture

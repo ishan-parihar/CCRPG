@@ -1,4 +1,4 @@
-# CCRPG TUI/CLI Comprehensive Gap Audit — v2
+# Mysterium TUI/CLI Comprehensive Gap Audit — v2
 
 **Date:** June 20, 2026
 **Scope:** Exhaustive end-to-end testing of CLI/TUI across all modes, modalities, and edge cases

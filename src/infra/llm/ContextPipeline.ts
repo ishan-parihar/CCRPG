@@ -271,7 +271,7 @@ function assembleSystemPrompt(
     ? `\n[SESSION SYNTHESIS] ${agentSynthesis}`
     : '';
 
-  return `[ROLE] You are the manifestation layer of CCRPG.
+  return `[ROLE] You are the manifestation layer of Mysterium.
 [COSMOLOGY] Third Density constraints. Veil enforced. Free will absolute.
 [FREQUENCY] tone=${frequencySpec.toneDirective}; vocabulary=${frequencySpec.vocabularyBand}; values=${frequencySpec.valueLens}; taboos=${frequencySpec.taboos.join(',')}; complexity=${frequencySpec.complexityRegister}
 ${frequencySpec.crossAltitudeDirective}

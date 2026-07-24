@@ -1,4 +1,4 @@
-# CCRPG Post-Action-Layer System-Level Audit — Round 3
+# Mysterium Post-Action-Layer System-Level Audit — Round 3
 
 > **Date:** 2026-07-05
 > **Scope:** Re-audit after 38 fixes (8 P0 + 12 P1 + 7 HoloOS-deviation + 6 P2 + 5 action-layer)
@@ -17,7 +17,7 @@ Of the 5 action-layer systems:
 - **ACTION-4** (consciousness states) is surfaced to the agent but **no engine reads `sig.states`** — the fields are never updated
 - **ACTION-5** (32 archetype names) is wired into `generateShadowContent`, but that function is **only called from the legacy AgenticOrchestrator path**, not the canonical PersistentAgent path
 
-The 18-tool surface is **unchanged in size** — still exactly 8 CCRPG + 10 TDG = 18 tools. Zero new tools were added across all 38 fixes. The system prompt was not updated to mention any action-layer capability.
+The 18-tool surface is **unchanged in size** — still exactly 8 Mysterium + 10 TDG = 18 tools. Zero new tools were added across all 38 fixes. The system prompt was not updated to mention any action-layer capability.
 
 **Numbers:**
 - 9 gaps ✅ actually fixed (verified in code)
@@ -37,7 +37,7 @@ The project is accumulating "scaffold-only" code at an accelerating rate:
 | `shouldSurfaceReturn` | ShadowDetector.ts | **ZERO** | ❌ Dead code |
 | `isShadowResolved` | ShadowDetector.ts | **ZERO** | ❌ Dead code |
 | `detectKnotPairs` | EncounterScheduler.ts | **ZERO** | ❌ Dead code |
-| `diagnoseShadows` | ShadowDetector.ts | `ccrpg_get_player_state` | ✅ Wired |
+| `diagnoseShadows` | ShadowDetector.ts | `mysterium_get_player_state` | ✅ Wired |
 | `computeContactBoundaryPermeability` | GreaterCycleEngine.ts | **ZERO** | ❌ Dead code |
 | `computeGreatWayAlignment` | GreaterCycleEngine.ts | `computeMetabolicHealth` only (always falls back — world never passed) | ⚠️ Half-wired |
 | `getShadowArchetypeName` | ShadowContentGenerator.ts | `generateShadowContent` only (legacy path) | ⚠️ Legacy-only |
@@ -55,10 +55,10 @@ The project is accumulating "scaffold-only" code at an accelerating rate:
 Transformation can fire on cognitive-only evidence. No `quadrantsTested` field on Encounter. No AQAL gate in TransformationDetector. Zero progress across all 38 fixes.
 
 ### GAP-B2. Atman Project / Jonah Complex — ❌ STILL MISSING
-Zero matches for "Atman" or "Jonah" in the codebase. CCRPG cannot distinguish genuine developmental arrest from genuine integration. Zero progress.
+Zero matches for "Atman" or "Jonah" in the codebase. Mysterium cannot distinguish genuine developmental arrest from genuine integration. Zero progress.
 
 ### GAP-B3. 17 Missing Agent Tools — ❌ NONE ADDED
-The 8-tool CCRPG surface is unchanged since before Round 1. Still missing: `ccrpg_commit_transformation`, `ccrpg_holonic_return`, `ccrpg_query_npc`/`ccrpg_cultivate_npc`, `ccrpg_query_narrative_beats`/`ccrpg_author_beat`, `ccrpg_get_pestle`/`ccrpg_nudge_pestle`, `ccrpg_query_user_matrix_cell`, `ccrpg_assess_contact_boundary`, `ccrpg_assess_atman_project`, `ccrpg_query_vows`, `tdg_load_mind_state`, `tdg_list_nodes`.
+The 8-tool Mysterium surface is unchanged since before Round 1. Still missing: `mysterium_commit_transformation`, `mysterium_holonic_return`, `mysterium_query_npc`/`mysterium_cultivate_npc`, `mysterium_query_narrative_beats`/`mysterium_author_beat`, `mysterium_get_pestle`/`mysterium_nudge_pestle`, `mysterium_query_user_matrix_cell`, `mysterium_assess_contact_boundary`, `mysterium_assess_atman_project`, `mysterium_query_vows`, `tdg_load_mind_state`, `tdg_list_nodes`.
 
 ### GAP-A6. Samsara Loop — ⚠️ PARTIAL (wrong inputs + no loop mode)
 `checkHarvest` is wired into `endSession` at White stage, BUT:
@@ -79,7 +79,7 @@ The 8-tool CCRPG surface is unchanged since before Round 1. Still missing: `ccrp
 `computeContactBoundaryPermeability` exists but: (a) the 4 Gestalt distortions are missing, (b) the function is never called, (c) the `contactBoundaryPermeability` field on Significator is never updated (static 0.5 forever).
 
 ### GAP-A9. World-State Write-Side — ⚠️ READ-ONLY
-`ccrpg_get_world_state` is deepened (NPC identities, PESTLE values, beat IDs) but no cultivation/manipulation tools exist. The agent can see the world but cannot act on it.
+`mysterium_get_world_state` is deepened (NPC identities, PESTLE values, beat IDs) but no cultivation/manipulation tools exist. The agent can see the world but cannot act on it.
 
 ### GAP-B4. Co-Creation Ripple — ❌ STILL MISSING
 No `rippleDistance` or `pestleShift` on ConsequenceRecord. `holonDeltas` always empty. Player choices don't propagate through holon hierarchy.
@@ -104,7 +104,7 @@ The project keeps repeating "implement the function, skip the integration." Roun
 | P0-3: endSessionAsync awaits TDG hook | Async wrapper exists |
 | P0-5: Atomic save | `saveAll`/`loadAll`/`deleteAllSaves` with temp-file + rename |
 | P0-7: startSession reconstructs transformationState | `reconstructTransformationState(sig)` |
-| P0-8: ccrpg_select_encounter uses pool + executionMode override | Pool cached, override applied |
+| P0-8: mysterium_select_encounter uses pool + executionMode override | Pool cached, override applied |
 | P1-15: CCI delegates G_z/P_z to GCE | `computeMetabolicHealth(sig)` called from CCI |
 | P2-High: Dual-shadow window uses AND | Full boost requires both shadows |
 | DEV-5: VeilFilter.filterInput wired | LLMClient applies filterInput to system prompt |
@@ -126,7 +126,7 @@ The project keeps repeating "implement the function, skip the integration." Roun
 
 ## 6. The Core Insight (Round 3)
 
-**Round 1:** "CCRPG was built measurement-first, action-last. The agent is a blind presenter."
+**Round 1:** "Mysterium was built measurement-first, action-last. The agent is a blind presenter."
 
 **Round 2:** "The P0/P1 fixes repaired measurement plumbing and agent I/O. The action ontology is untouched."
 
@@ -151,7 +151,7 @@ The project keeps repeating "implement the function, skip the integration." Roun
 
 7. **Implement AQAL 4-quadrant gate** in TransformationDetector
 8. **Implement Atman Project + Jonah Complex detection** in ShadowDetector
-9. **Add `ccrpg_commit_transformation` + `ccrpg_get_holonic_return` + `ccrpg_get_knot_pairs` + `ccrpg_get_shadow_content` + `ccrpg_get_metabolic_health`** tools
+9. **Add `mysterium_commit_transformation` + `mysterium_get_holonic_return` + `mysterium_get_knot_pairs` + `mysterium_get_shadow_content` + `mysterium_get_metabolic_health`** tools
 
 ### P3-High: Fix HoloOS deviations + system prompt
 

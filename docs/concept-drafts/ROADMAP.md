@@ -10,7 +10,7 @@
 
 ### 1.1 The Catalyst→Experience Flow
 
-Every game in the CCRPG ecosystem follows the Law-of-One catalyst→experience architecture:
+Every game in the Mysterium ecosystem follows the Law-of-One catalyst→experience architecture:
 
 ```
 CATALYST (the game presents a developmental challenge at the contact boundary)

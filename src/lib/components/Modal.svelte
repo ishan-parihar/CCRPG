@@ -108,7 +108,7 @@
     position: fixed;
     inset: 0;
     background: rgba(0, 0, 0, 0.7);
-    z-index: var(--ccrpg-z-modal);
+    z-index: var(--mysterium-z-modal);
     backdrop-filter: blur(2px);
   }
 
@@ -117,13 +117,13 @@
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    z-index: calc(var(--ccrpg-z-modal) + 1);
-    background: var(--ccrpg-surface-elevated);
-    border: 1px solid var(--ccrpg-border);
-    border-top: 2px solid var(--ccrpg-accent);
-    border-radius: var(--ccrpg-radius-lg);
-    box-shadow: var(--ccrpg-shadow-lg);
-    padding: var(--ccrpg-space-6);
+    z-index: calc(var(--mysterium-z-modal) + 1);
+    background: var(--mysterium-surface-elevated);
+    border: 1px solid var(--mysterium-border);
+    border-top: 2px solid var(--mysterium-accent);
+    border-radius: var(--mysterium-radius-lg);
+    box-shadow: var(--mysterium-shadow-lg);
+    padding: var(--mysterium-space-6);
     max-width: 90vw;
     max-height: 85vh;
     overflow-y: auto;
@@ -135,15 +135,15 @@
   .modal-lg { width: min(800px, 90vw); }
 
   .modal-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
     font-weight: 700;
-    color: var(--ccrpg-fg);
-    margin: 0 0 var(--ccrpg-space-4) 0;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    color: var(--mysterium-fg);
+    margin: 0 0 var(--mysterium-space-4) 0;
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .modal-body {
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
 </style>

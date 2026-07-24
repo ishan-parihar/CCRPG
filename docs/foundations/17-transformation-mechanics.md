@@ -1,6 +1,6 @@
 # 17 — Transformation Mechanics
 
-> **Lateral:** Transformation as a discrete game event — the violent frame-change of the Significator at stage thresholds. The GAME-DESIGN translation of the Lovers archetype (Card Six) into CCRPG architecture. NOT the lesser-cycle integration within encounters (that is foundations/14); this is the *qualitative leap* between stages that requires ego-dissolution.
+> **Lateral:** Transformation as a discrete game event — the violent frame-change of the Significator at stage thresholds. The GAME-DESIGN translation of the Lovers archetype (Card Six) into Mysterium architecture. NOT the lesser-cycle integration within encounters (that is foundations/14); this is the *qualitative leap* between stages that requires ego-dissolution.
 >
 > **Depends on:** 15, 14, 13, 10, 02
 > **Forward-references:** 18, 19, 21, 24
@@ -11,7 +11,7 @@
 
 ### 1.1 The distinction
 
-Two fundamentally different kinds of change occur in CCRPG:
+Two fundamentally different kinds of change occur in Mysterium:
 
 | | Lesser-cycle integration | Transformation |
 |---|---|---|

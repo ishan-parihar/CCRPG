@@ -3,7 +3,7 @@
 ## 1. Purpose
 
 Define what a *line* is, distinguish *altitude* from *stage*, and specify
-the eight canonical lines CCRPG trains. Per-line detail is in
+the eight canonical lines Mysterium trains. Per-line detail is in
 `lines/01-…08-…`; this is the unifier.
 
 ## 2. Scientific basis
@@ -32,7 +32,7 @@ reach Stage-5 moral without formal-operational cognitive capacity, but
 formal-operational cognition does not *cause* Stage-5 moral. Cognition is
 the substrate; the other lines must develop on top.
 
-CCRPG honours this asymmetry: cognitive-line altitude is a soft *cap* on
+Mysterium honours this asymmetry: cognitive-line altitude is a soft *cap* on
 some other lines (Moral, Spiritual cannot exceed cognitive altitude by
 more than one stage). This is documented in
 `progression/04-line-balancing-and-altitude.md`.
@@ -47,7 +47,7 @@ A player is *always* a vector of eight altitudes. The single "stage"
 number is a useful abstraction for narrative pacing, but the real
 psychograph is the eight-spoke radial chart.
 
-### 2.3 The eight lines CCRPG canonises
+### 2.3 The eight lines Mysterium canonises
 
 | # | Line | Source theorist(s) | Quadrant home | Source assessments |
 |:-:|---|---|---|---|
@@ -76,7 +76,7 @@ The eight are chosen because:
 
 ### 3.1 The 8 × 8 matrix
 
-CCRPG is structurally a {8 lines × 8 stages} matrix = 64 cells. Each cell
+Mysterium is structurally a {8 lines × 8 stages} matrix = 64 cells. Each cell
 is a (line, stage) pair with:
 
 - A combat verb at that stage's altitude
@@ -155,7 +155,7 @@ These caps are conservative defaults; tuneable in
 - **Are eight lines too many for UX?** A radial chart with eight spokes
   is readable; with twelve it is not. Eight feels like the limit.
 - **Are eight enough?** Aesthetic intelligence, financial intelligence,
-  ecological intelligence are each defensible additional lines. CCRPG's
+  ecological intelligence are each defensible additional lines. Mysterium's
   decision: hold to eight in MVP; revisit in `roadmap/02`.
 - **The cognitive-substrate cap.** Is +1 the right slack? +2 would let
   emotional / moral / spiritual genuinely outpace cognition, which is

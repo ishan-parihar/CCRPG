@@ -1,4 +1,4 @@
-# CCRPG Ponytail Audit — Over-Engineering Scan
+# Mysterium Ponytail Audit — Over-Engineering Scan
 
 > **Status:** canonical (audit artifact; per `docs/03-research-methodology.md` §0.5 active-refactor-methodology).
 >

@@ -1,6 +1,6 @@
 # Concept Drafts — 64 Modules × 7 Game Modalities
 
-> **Purpose:** First-principles game designs for every game in the CCRPG assessment ecosystem. Each game is a self-contained developmental catalyst that implicitly diagnoses AND progressively heals/evolves the player across all drives and shadow-polarities for its line×stage module.
+> **Purpose:** First-principles game designs for every game in the Mysterium assessment ecosystem. Each game is a self-contained developmental catalyst that implicitly diagnoses AND progressively heals/evolves the player across all drives and shadow-polarities for its line×stage module.
 > **Structure:** `{line}/{stage}/` — one directory per module (64 total).
 > **Each module contains:** 1 module-spec file + 7 game concept files (one per modality).
 

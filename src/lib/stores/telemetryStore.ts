@@ -29,10 +29,10 @@ const isBrowser = typeof window !== 'undefined';
 
 function getDeviceId(): string {
   if (!isBrowser) return 'unknown';
-  let id = localStorage.getItem('ccrpg:device-id');
+  let id = localStorage.getItem('mysterium:device-id');
   if (!id) {
     id = crypto.randomUUID();
-    localStorage.setItem('ccrpg:device-id', id);
+    localStorage.setItem('mysterium:device-id', id);
   }
   return id;
 }

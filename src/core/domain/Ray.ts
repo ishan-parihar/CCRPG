@@ -3,7 +3,7 @@
  * Canonical string literal union per docs/02-glossary.md.
  *
  * HoloOS alignment (per 08.8.22 Vibrational-Frequency vs Energy-Ray-Centers):
- * CCRPG's `Ray` type serves DOUBLE DUTY:
+ * Mysterium's `Ray` type serves DOUBLE DUTY:
  * 1. As the DENSITY-COORDINATE (V-axis) — the holon's POSITION in the octave's
  *    developmental arc. Single value per stage (see STAGE_RAY_MAP).
  * 2. As the ENERGY-RAY-CENTER PROFILE — 7 structural energy centers that EXIST

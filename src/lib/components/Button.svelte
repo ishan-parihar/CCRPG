@@ -74,17 +74,17 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
     border: 1px solid transparent;
-    border-radius: var(--ccrpg-radius);
+    border-radius: var(--mysterium-radius);
     cursor: pointer;
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-weight: 500;
     text-decoration: none;
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                transform var(--ccrpg-duration-instant) var(--ccrpg-ease),
-                box-shadow var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease),
+                border-color var(--mysterium-duration-fast) var(--mysterium-ease),
+                transform var(--mysterium-duration-instant) var(--mysterium-ease),
+                box-shadow var(--mysterium-duration-fast) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
     user-select: none;
   }
@@ -94,7 +94,7 @@
   }
 
   .btn:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: 2px;
   }
 
@@ -104,59 +104,59 @@
   }
 
   /* Sizes */
-  .btn-sm { padding: var(--ccrpg-space-1) var(--ccrpg-space-3); font-size: var(--ccrpg-text-sm); }
-  .btn-md { padding: var(--ccrpg-space-2) var(--ccrpg-space-4); font-size: var(--ccrpg-text-base); }
-  .btn-lg { padding: var(--ccrpg-space-3) var(--ccrpg-space-5); font-size: var(--ccrpg-text-md); }
+  .btn-sm { padding: var(--mysterium-space-1) var(--mysterium-space-3); font-size: var(--mysterium-text-sm); }
+  .btn-md { padding: var(--mysterium-space-2) var(--mysterium-space-4); font-size: var(--mysterium-text-base); }
+  .btn-lg { padding: var(--mysterium-space-3) var(--mysterium-space-5); font-size: var(--mysterium-text-md); }
 
   /* Variants */
   .btn-primary {
-    background: var(--ccrpg-accent);
-    border-color: var(--ccrpg-accent);
-    color: var(--ccrpg-accent-fg);
+    background: var(--mysterium-accent);
+    border-color: var(--mysterium-accent);
+    color: var(--mysterium-accent-fg);
   }
   .btn-primary:hover:not(:disabled) {
-    background: var(--ccrpg-accent-soft);
-    box-shadow: var(--ccrpg-shadow-glow);
+    background: var(--mysterium-accent-soft);
+    box-shadow: var(--mysterium-shadow-glow);
   }
 
   .btn-default {
-    background: var(--ccrpg-surface);
-    border-color: var(--ccrpg-border);
-    color: var(--ccrpg-fg);
+    background: var(--mysterium-surface);
+    border-color: var(--mysterium-border);
+    color: var(--mysterium-fg);
   }
   .btn-default:hover:not(:disabled) {
-    background: var(--ccrpg-surface-elevated);
-    border-color: var(--ccrpg-accent);
+    background: var(--mysterium-surface-elevated);
+    border-color: var(--mysterium-accent);
   }
 
   .btn-muted {
     background: transparent;
     border-color: transparent;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
   }
   .btn-muted:hover:not(:disabled) {
-    background: var(--ccrpg-surface);
-    border-color: var(--ccrpg-border);
+    background: var(--mysterium-surface);
+    border-color: var(--mysterium-border);
   }
 
   .btn-danger {
-    background: var(--ccrpg-danger);
-    border-color: var(--ccrpg-danger);
-    color: var(--ccrpg-danger-fg);
+    background: var(--mysterium-danger);
+    border-color: var(--mysterium-danger);
+    color: var(--mysterium-danger-fg);
   }
   .btn-danger:hover:not(:disabled) {
-    background: var(--ccrpg-danger-soft);
-    border-color: var(--ccrpg-danger);
-    box-shadow: 0 0 24px var(--ccrpg-danger-soft);
+    background: var(--mysterium-danger-soft);
+    border-color: var(--mysterium-danger);
+    box-shadow: 0 0 24px var(--mysterium-danger-soft);
   }
 
   .btn-ghost {
     background: transparent;
     border-color: transparent;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
   .btn-ghost:hover:not(:disabled) {
-    background: color-mix(in srgb, var(--ccrpg-surface) 50%, transparent);
+    background: color-mix(in srgb, var(--mysterium-surface) 50%, transparent);
   }
 
   /* Spinner */

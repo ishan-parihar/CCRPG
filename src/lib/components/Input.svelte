@@ -75,42 +75,42 @@
 <style>
   .input-label {
     display: block;
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     font-weight: 500;
-    color: var(--ccrpg-fg);
-    margin-bottom: var(--ccrpg-space-2);
-    letter-spacing: var(--ccrpg-tracking-wide);
+    color: var(--mysterium-fg);
+    margin-bottom: var(--mysterium-space-2);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .required {
-    color: var(--ccrpg-danger);
-    margin-left: var(--ccrpg-space-1);
+    color: var(--mysterium-danger);
+    margin-left: var(--mysterium-space-1);
   }
 
   .input {
     width: 100%;
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    transition: border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                box-shadow var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    padding: var(--mysterium-space-3) var(--mysterium-space-4);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    transition: border-color var(--mysterium-duration-fast) var(--mysterium-ease),
+                box-shadow var(--mysterium-duration-fast) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .input::placeholder {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     opacity: 0.7;
   }
 
   .input:focus {
     outline: none;
-    border-color: var(--ccrpg-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ccrpg-accent) 20%, transparent);
+    border-color: var(--mysterium-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mysterium-accent) 20%, transparent);
   }
 
   .input:disabled {
@@ -119,19 +119,19 @@
   }
 
   .input[aria-invalid='true'] {
-    border-color: var(--ccrpg-danger);
+    border-color: var(--mysterium-danger);
   }
 
   textarea.input {
     min-height: 6rem;
     resize: vertical;
-    line-height: var(--ccrpg-leading-normal);
+    line-height: var(--mysterium-leading-normal);
   }
 
   .input-error {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-danger);
-    margin-top: var(--ccrpg-space-1);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-danger);
+    margin-top: var(--mysterium-space-1);
   }
 </style>

@@ -13,7 +13,7 @@
  *   - Generic LLM_* env vars (LLM_PROVIDER, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL)
  *   - Legacy VITE_LLM_* env vars (backwards compat)
  *   - The MODEL env var (per the user's spec)
- *   - Saved config file (~/.ccrpg/config.json)
+ *   - Saved config file (~/.mysterium/config.json)
  * No hardcoded model names anywhere — models come from /models or models.dev.
  */
 
@@ -30,13 +30,13 @@ import {
 } from './ProxiedLLMClient.js';
 
 /** T-3.6: Log Veil violations for telemetry. */
-/** R8-BUG-3 (UX-R8): Gate VeilFilter logs behind CCRPG_DEV env var so they
+/** R8-BUG-3 (UX-R8): Gate VeilFilter logs behind Mysterium_DEV env var so they
  * don't leak into normal user output. Previously these appeared in --agent
  * mode, violating the Veil design principle. */
 function logVeilViolation(source: string, violations: readonly string[]): void {
   if (violations.length === 0) return;
-  // Only log when CCRPG_DEV=1 (set by the CLI when --dev is active).
-  if (typeof process !== 'undefined' && process.env?.CCRPG_DEV === '1') {
+  // Only log when Mysterium_DEV=1 (set by the CLI when --dev is active).
+  if (typeof process !== 'undefined' && process.env?.Mysterium_DEV === '1') {
     console.warn(`[VeilFilter] ${source}: ${violations.length} violation(s): ${violations.join(', ')}`);
   }
 }
@@ -112,7 +112,7 @@ async function fetchWithRetry(url: string, init: RequestInit, timeoutMs = LLM_TI
  * those directly. New code should call this function instead.
  *
  * The savedConfig parameter is optional — when omitted, only env vars are
- * consulted. The CLI passes the loaded ~/.ccrpg/config.json here.
+ * consulted. The CLI passes the loaded ~/.mysterium/config.json here.
  */
 let cachedConfig: LLMConfig | null = null;
 export function getActiveConfig(savedConfig?: Parameters<typeof resolveConfig>[1]): LLMConfig {

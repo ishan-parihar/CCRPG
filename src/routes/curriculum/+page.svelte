@@ -78,16 +78,16 @@
 
   function depthColor(level: DepthLevel): string {
     const ord = depthOrdinal(level);
-    if (ord >= 5) return 'var(--ccrpg-success)';
-    if (ord >= 3) return 'var(--ccrpg-accent)';
-    if (ord >= 1) return 'var(--ccrpg-warning)';
-    return 'var(--ccrpg-fg-muted)';
+    if (ord >= 5) return 'var(--mysterium-success)';
+    if (ord >= 3) return 'var(--mysterium-accent)';
+    if (ord >= 1) return 'var(--mysterium-warning)';
+    return 'var(--mysterium-fg-muted)';
   }
 
   function retentionColor(retention: number): string {
-    if (retention > 0.7) return 'var(--ccrpg-success)';
-    if (retention > 0.4) return 'var(--ccrpg-warning)';
-    return 'var(--ccrpg-danger)';
+    if (retention > 0.7) return 'var(--mysterium-success)';
+    if (retention > 0.4) return 'var(--mysterium-warning)';
+    return 'var(--mysterium-danger)';
   }
 
   function depthLabel(level: DepthLevel | undefined): string {
@@ -327,19 +327,19 @@
 <style>
   .empty-state {
     text-align: center;
-    padding: var(--ccrpg-space-7) var(--ccrpg-space-4);
+    padding: var(--mysterium-space-7) var(--mysterium-space-4);
   }
   .empty-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 600;
-    color: var(--ccrpg-fg-muted);
-    margin: 0 0 var(--ccrpg-space-1);
+    color: var(--mysterium-fg-muted);
+    margin: 0 0 var(--mysterium-space-1);
   }
   .empty-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     margin: 0;
   }
@@ -348,10 +348,10 @@
   .stats-bar {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-2);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    gap: var(--mysterium-space-2);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
   }
   .stat-sep { opacity: 0.3; }
 
@@ -368,35 +368,35 @@
   .tree-node-btn {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-2);
-    padding: var(--ccrpg-space-1) var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
+    padding: var(--mysterium-space-1) var(--mysterium-space-2);
     background: none;
     border: 1px solid transparent;
-    border-radius: var(--ccrpg-radius-sm);
+    border-radius: var(--mysterium-radius-sm);
     cursor: pointer;
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg);
     text-align: left;
     width: 100%;
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease);
   }
   .tree-node-btn:hover {
-    background: color-mix(in srgb, var(--ccrpg-accent) 8%, transparent);
+    background: color-mix(in srgb, var(--mysterium-accent) 8%, transparent);
   }
   .tree-node-btn.selected {
-    background: color-mix(in srgb, var(--ccrpg-accent) 15%, transparent);
-    border-color: color-mix(in srgb, var(--ccrpg-accent) 30%, transparent);
+    background: color-mix(in srgb, var(--mysterium-accent) 15%, transparent);
+    border-color: color-mix(in srgb, var(--mysterium-accent) 30%, transparent);
   }
   .tree-node-btn.studied .node-name {
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
   }
   .expand-btn {
     background: none;
     border: none;
     padding: 0;
     cursor: pointer;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     line-height: 1;
     width: 1rem;
     height: 1rem;
@@ -410,7 +410,7 @@
   .node-icon { flex-shrink: 0; }
   .node-name { flex: 1; font-weight: 500; }
   .node-level {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     font-size: 0.6rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
@@ -420,11 +420,11 @@
     font-weight: 600;
   }
   .node-count {
-    background: var(--ccrpg-surface);
+    background: var(--mysterium-surface);
     padding: 0.1rem 0.4rem;
-    border-radius: var(--ccrpg-radius-full);
+    border-radius: var(--mysterium-radius-full);
     font-size: 0.55rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
   }
   .tree-children {
     display: flex;
@@ -436,52 +436,52 @@
   .detail-panel {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
   .detail-header {
     display: flex;
     align-items: flex-start;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
   .detail-icon { font-size: 1.5rem; }
   .detail-meta { display: flex; flex-direction: column; gap: 2px; }
   .detail-name {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     margin: 0;
   }
   .detail-level {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
   .detail-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     line-height: 1.5;
     margin: 0;
   }
   .detail-section {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
   .detail-section-title {
-    font-family: var(--ccrpg-font-display);
+    font-family: var(--mysterium-font-display);
     font-size: 0.6rem;
     font-weight: 600;
     text-transform: uppercase;
     letter-spacing: 0.08em;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
   }
   .detail-metrics {
     display: flex;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
   .detail-metric {
     display: flex;
@@ -490,34 +490,34 @@
   }
   .detail-metric-label {
     font-size: 0.55rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     text-transform: uppercase;
     letter-spacing: 0.05em;
   }
   .detail-metric-value {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xs);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
   .detail-tags {
     display: flex;
     flex-wrap: wrap;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
   .detail-tag {
-    font-family: var(--ccrpg-font-body);
+    font-family: var(--mysterium-font-body);
     font-size: 0.6rem;
     padding: 2px 6px;
-    border-radius: var(--ccrpg-radius-sm);
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    color: var(--ccrpg-fg-muted);
+    border-radius: var(--mysterium-radius-sm);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    color: var(--mysterium-fg-muted);
     cursor: pointer;
-    transition: all var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: all var(--mysterium-duration-fast) var(--mysterium-ease);
   }
-  .detail-tag:hover { background: var(--ccrpg-surface-elevated); color: var(--ccrpg-fg); }
-  .detail-tag.studied { border-color: var(--ccrpg-accent); color: var(--ccrpg-accent); }
+  .detail-tag:hover { background: var(--mysterium-surface-elevated); color: var(--mysterium-fg); }
+  .detail-tag.studied { border-color: var(--mysterium-accent); color: var(--mysterium-accent); }
   .detail-tag.cross-branch { border-style: dashed; }
   .tag-check { font-size: 0.5rem; margin-left: 2px; }
 
@@ -525,12 +525,12 @@
   .iso-item {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
     font-size: 0.6rem;
   }
-  .iso-pattern { color: var(--ccrpg-fg-muted); font-style: italic; }
-  .iso-arrow { color: var(--ccrpg-fg-muted); }
-  .iso-domain { color: var(--ccrpg-fg-muted); font-size: 0.55rem; }
+  .iso-pattern { color: var(--mysterium-fg-muted); font-style: italic; }
+  .iso-arrow { color: var(--mysterium-fg-muted); }
+  .iso-domain { color: var(--mysterium-fg-muted); font-size: 0.55rem; }
 
   /* Rubric */
   .rubric-grid {
@@ -542,7 +542,7 @@
     display: grid;
     grid-template-columns: 6rem 1fr 2.5rem;
     align-items: center;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
   .rubric-level {
     font-size: 0.6rem;
@@ -551,18 +551,18 @@
   }
   .rubric-bar {
     height: 4px;
-    background: var(--ccrpg-surface);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-surface);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
   }
   .rubric-bar-fill {
     height: 100%;
-    background: var(--ccrpg-accent);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-accent);
+    border-radius: var(--mysterium-radius-full);
   }
   .rubric-threshold {
     font-size: 0.55rem;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     text-align: right;
   }
 </style>

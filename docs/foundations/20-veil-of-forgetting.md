@@ -1,16 +1,16 @@
 # 20 — The Veil of Forgetting
 
-> **Status:** canonical (CCRPG design decision; alignment with HoloOS now exact, not rhyming — see §1.1 below).
+> **Status:** canonical (Mysterium design decision; alignment with HoloOS now exact, not rhyming — see §1.1 below).
 >
-> **HoloOS anchor:** `_THEORY/02_Ontology/08.8.7_Primal_Distortion_Genesis_Theorem.md` §6.5 (canonical-hypothesis). Under the Primal Distortion Genesis Theorem, HoloOS's Veil is the within-octave membrane gating access to cross-octave established Laws (Free Will, Love, Light). CCRPG's Veil gates exactly this: it hides the Law-structure (stage labels, drive labels, shadow quadrant names, numerical scores, polarity data) from the player, making choices authentic rather than compliant.
+> **HoloOS anchor:** `_THEORY/02_Ontology/08.8.7_Primal_Distortion_Genesis_Theorem.md` §6.5 (canonical-hypothesis). Under the Primal Distortion Genesis Theorem, HoloOS's Veil is the within-octave membrane gating access to cross-octave established Laws (Free Will, Love, Light). Mysterium's Veil gates exactly this: it hides the Law-structure (stage labels, drive labels, shadow quadrant names, numerical scores, polarity data) from the player, making choices authentic rather than compliant.
 >
-> **Note on terminology (per HoloOS `_THEORY/02_Ontology/08.8.6_Ontological_Foundations_Audit.md`):** HoloOS distinguishes the **Veil of Forgetting** (within-octave, gates established-Law access) from the **Involution Membrane** (cross-octave, gates prior-octave harvest access). CCRPG enforces only the Veil; the Involution Membrane is out of scope for a single-octave game.
+> **Note on terminology (per HoloOS `_THEORY/02_Ontology/08.8.6_Ontological_Foundations_Audit.md`):** HoloOS distinguishes the **Veil of Forgetting** (within-octave, gates established-Law access) from the **Involution Membrane** (cross-octave, gates prior-octave harvest access). Mysterium enforces only the Veil; the Involution Membrane is out of scope for a single-octave game.
 >
-> **Alignment verdict upgrade:** Prior audit (`AUDIT-HOLOOS-ALIGNMENT.md` §2.5.10) said CCRPG's Veil and HoloOS's Veil "rhyme but are not the same construct." Under the Primal Distortion Genesis Theorem, they ARE the same construct. The divergence is in *enforcement* (HS-05: `VeilFilter` not wired), not in *concept*.
+> **Alignment verdict upgrade:** Prior audit (`AUDIT-HOLOOS-ALIGNMENT.md` §2.5.10) said Mysterium's Veil and HoloOS's Veil "rhyme but are not the same construct." Under the Primal Distortion Genesis Theorem, they ARE the same construct. The divergence is in *enforcement* (HS-05: `VeilFilter` not wired), not in *concept*.
 >
 > **Design principle — the "weirdness signature" (per HoloOS `08.8.8_Quantum_Realm_Backtrace.md`):** VeilFilter should not make the game feel normal. Veiled aspects should feel weird/ungraspable, exactly as Quantum Mechanics feels weird to D3 consciousness. The Veil's enforcement is necessary but insufficient; the *content* of Veil-filtered outputs should preserve weirdness. Infrared-stage content should feel quantum (superpositional, entanglement-heavy), not deterministic.
 >
-> **Lateral:** The Veil of Forgetting as a foundational *design principle* governing the entire CCRPG architecture — what the game reveals to the player, what it withholds, and why. Elevates the "never diagnostic" constraint from an interaction guideline into a metaphysical commitment.
+> **Lateral:** The Veil of Forgetting as a foundational *design principle* governing the entire Mysterium architecture — what the game reveals to the player, what it withholds, and why. Elevates the "never diagnostic" constraint from an interaction guideline into a metaphysical commitment.
 >
 > **Depends on:** 15 (macro-scale archetypal mind — the cosmological theory of the Veil)
 > **Forward-references:** 14 (catalyst→experience→integration flow), 16 (Significator architecture), 17 (Transformation mechanics), 19 (polarity engine), 21 (Incarnation Architecture — encounter surfacing), 22 (Holon Context Engine — LLM translation layer)
@@ -19,11 +19,11 @@
 
 ## 1. The Veil as design principle
 
-The Veil of Forgetting is not a UX convenience. It is the single architectural commitment that separates CCRPG from every self-improvement app, gamified assessment, and "brain-training" product on the market.
+The Veil of Forgetting is not a UX convenience. It is the single architectural commitment that separates Mysterium from every self-improvement app, gamified assessment, and "brain-training" product on the market.
 
 The cosmological argument (per foundations/15): the Logos embedded the Veil to ensure that the entity's choices are *authentic*. Without the Veil, a choice to serve others would be "an act of mere compliance to cosmic law… a logical calculation to avoid negative karma." The leap of faith — choosing love, growth, or service without empirical proof that it matters — is what validates and solidifies the polarity.
 
-CCRPG inherits this principle wholesale. If the player knows they are being measured, their behaviour shifts from authentic expression to performance optimisation. The game ceases to be a developmental crucible and becomes a self-improvement quiz. The Veil is what makes the difference:
+Mysterium inherits this principle wholesale. If the player knows they are being measured, their behaviour shifts from authentic expression to performance optimisation. The game ceases to be a developmental crucible and becomes a self-improvement quiz. The Veil is what makes the difference:
 
 | With the Veil | Without the Veil |
 |---|---|
@@ -33,7 +33,7 @@ CCRPG inherits this principle wholesale. If the player knows they are being meas
 | Growth is felt, not performed | Growth is performed, not felt |
 | The game is a practice | The game is a test |
 
-The Veil is therefore the **central mechanic** of CCRPG — not in the sense that the player interacts with it directly, but in the sense that every other system is designed to preserve it.
+The Veil is therefore the **central mechanic** of Mysterium — not in the sense that the player interacts with it directly, but in the sense that every other system is designed to preserve it.
 
 ---
 
@@ -147,9 +147,9 @@ The translation layer is the responsibility of the Holon Context Engine (forward
 
 ## 6. Anti-gamification commitments
 
-CCRPG explicitly rejects the following conventional gamification patterns:
+Mysterium explicitly rejects the following conventional gamification patterns:
 
-### 6.1 What CCRPG does NOT do
+### 6.1 What Mysterium does NOT do
 
 | Pattern | Why it's rejected |
 |---|---|
@@ -162,7 +162,7 @@ CCRPG explicitly rejects the following conventional gamification patterns:
 | "X% to next stage" progress indicators | Exposes the developmental measurement; invites gaming the metric |
 | Analytics dashboards | Turns the player into an object of their own measurement; destroys the Veil |
 
-### 6.2 What CCRPG does instead
+### 6.2 What Mysterium does instead
 
 The player feels growth through:
 - **Capability shifts** — "I can do things I couldn't before"
@@ -179,7 +179,7 @@ These are intrinsic, felt rewards. They do not require external validation to be
 
 ### 7.1 The principle
 
-The only legitimate feedback mechanism in CCRPG is **felt-sense**. The player should *feel* themselves growing, changing, integrating — not be *told* they are growing, changing, integrating.
+The only legitimate feedback mechanism in Mysterium is **felt-sense**. The player should *feel* themselves growing, changing, integrating — not be *told* they are growing, changing, integrating.
 
 Felt-sense operates through:
 - Proprioceptive shifts in gameplay (timing feels different, rhythm changes)

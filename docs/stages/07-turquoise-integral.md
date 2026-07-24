@@ -214,7 +214,7 @@ To pass Turquoise and unlock White:
   "in-game Turquoise is a *practice indicator*, not a clinical
   attainment."
 - **Multiplayer demand.** Turquoise's interpersonal-line demands
-  multiplayer. Single-player runs of CCRPG cap at high-Green by
+  multiplayer. Single-player runs of Mysterium cap at high-Green by
   design, with a clear narrative that the *we-space* lives elsewhere.
 
 ## 9. Principles served

@@ -1,6 +1,6 @@
-# CCRPG WebUI Hardcode Audit — Toward Full LLM-Dependence
+# Mysterium WebUI Hardcode Audit — Toward Full LLM-Dependence
 
-> **Project:** Cognitive-Capacity-Driven RPG (CCRPG)
+> **Project:** Mysterium (Mysterium)
 > **Scope:** Identify every place the WebUI substitutes or augments LLM-driven narrative with hardcoded / canned / deterministic output, and recommend a treatment per class.
 > **Status:** Audit complete; plan ready for review. No code changes yet.
 > **Date:** 2026-07-14
@@ -48,7 +48,7 @@ These are the *contents of the assessment*. They define what the player is being
 | `src/core/data/calibrationPrompts.ts` | `1–86` | `CALIBRATION_PROMPTS` for 8 lines × binary-search options | Binary-search composite assessment depends on fixed probes; reproducing them with an LLM would defeat the binary-search contract. |
 | `src/core/data/glossary.ts` | `1–end` | 5 Tier-1 + ~25 Tier-2 definitions | A glossary is a reference, not a task. Player-facing terms must be stable; clinical terms are gated behind dev mode. |
 | `src/core/data/*.ts` | many | 1,280 assessment items across 64 modules (8 lines × 8 stages × 20 items) | Validated developmental exercises (n-back, dilemmas, etc.). README: "Every assessment module is a validated developmental exercise." |
-| `src/core/data/holons.ts` etc. | many | The 36 holons (16 NPCs / 4 factions / 7 locations / 9 others; verified by `ccrpg diagnostic`) | Cast of characters, archetype names. Stable across runs by design. |
+| `src/core/data/holons.ts` etc. | many | The 36 holons (16 NPCs / 4 factions / 7 locations / 9 others; verified by `mysterium diagnostic`) | Cast of characters, archetype names. Stable across runs by design. |
 | `src/core/presentation/veilDescriptors.ts` | `1–161` | Veil labels, stage descriptors, "fortress-sharp, weapon-walls," etc. | Continuity-of-voice; the Veil layer's whole purpose is poetic stubbornness in the face of LLM drift. |
 | `static/`,`public/` | many | Bundled assets (icons, sprites, fonts) | Static by definition. |
 
@@ -58,7 +58,7 @@ These are the *contents of the assessment*. They define what the player is being
 
 ### Class B — Failure fallbacks (REPLACE story, not the literals)
 
-When the LLM is **not available** (`noLlm: true` or no API key), the engine degrades to a pre-authored content pool. This is by design — the diagnostic command demonstrating `ccrpg diagnostic` survives in this mode. But the literals are *large* (10 KB+) and live alongside the LLM path, which creates two UX problems:
+When the LLM is **not available** (`noLlm: true` or no API key), the engine degrades to a pre-authored content pool. This is by design — the diagnostic command demonstrating `mysterium diagnostic` survives in this mode. But the literals are *large* (10 KB+) and live alongside the LLM path, which creates two UX problems:
 
 1. **If the LLM ever flakes mid-session**, the player gets the pre-authored substitute. There's no visible seam. That's *good*, but the user should know it exists.
 2. **If a developer enables `noLlm` for debugging and forgets**, they ship canned prose. As of `cd17aac`, `noLlm` is only set by the CLI's `--no-llm` flag; the WebUI is fine. But the surface exists.
@@ -132,7 +132,7 @@ These are dev / observability text. They live in `/diagnostic`, `/telemetry`, `/
 
 | File | Line | What's there |
 |---|---|---|
-| `src/routes/diagnostic/+page.svelte` | many | Engine state inspector; renders `ccrpg diagnostic` output |
+| `src/routes/diagnostic/+page.svelte` | many | Engine state inspector; renders `mysterium diagnostic` output |
 | `src/routes/telemetry/+page.svelte` | many | Telemetry transparency / opt-in |
 | `src/routes/setup/+page.svelte` | `30–55` | LLM config probe via `/api/llm/chat` — sends a single `ping` message |
 | `src/infra/llm/LLMClient.ts` | `125–135` | `getEnabledConfig()`, `isLLMDisabled` — internal config helpers |
@@ -238,8 +238,8 @@ The right move is *replace in the LLM-on path; preserve in the LLM-off path; sur
 The audit started from this CI observation, which transitively exercised the same engine:
 
 ```
-$ ccrpg diagnostic
-═══ CCRPG Diagnostic ═══
+$ mysterium diagnostic
+═══ Mysterium Diagnostic ═══
 Registries:
   ✓ 64 assessment modules loaded
 Holons:

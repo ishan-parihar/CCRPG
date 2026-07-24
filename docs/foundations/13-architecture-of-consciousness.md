@@ -258,18 +258,18 @@ In healthy development, the holon resonates fully with its current attractor fie
 
 ## Appendix: Holonic-Dynamics Grounding (per HoloOS 08.8.25)
 
-> **Status:** canonical-hypothesis (CCRPG-specific extension referencing HoloOS 08.8.25).
+> **Status:** canonical-hypothesis (Mysterium-specific extension referencing HoloOS 08.8.25).
 
 The four-quadrant shadow model above (Dark-Addiction, Dark-Allergy, Golden-Addiction, Golden-Allergy) is grounded in the biological hierarchy of evolutionary development per HoloOS `_THEORY/02_Ontology/08.8.25_Holonic_Dynamics_Grounded_in_Reality.md`.
 
 The biological hierarchy (atoms → molecules → organelles → cells → tissues → organs → organisms → populations → communities → ecosystems → biosphere) validates the holonic framework's core mechanism: at every level, a system encounters catalyst-classes it cannot process → catalytic interference → membrane formation → sub-holon formation → parent integration → increased complexity.
 
-**Three corrections from 08.8.25 that apply to CCRPG:**
+**Three corrections from 08.8.25 that apply to Mysterium:**
 
-1. **Endosymbiosis** is a second compartmentalization mechanism (alongside specialization). CCRPG models this via `Significator.internalizedHolons` — when an NPC's relationship strength exceeds 0.9 and the player passes a threshold encounter, the NPC is internalized as a sub-holon.
+1. **Endosymbiosis** is a second compartmentalization mechanism (alongside specialization). Mysterium models this via `Significator.internalizedHolons` — when an NPC's relationship strength exceeds 0.9 and the player passes a threshold encounter, the NPC is internalized as a sub-holon.
 
-2. **Parallel co-evolution** — the Body/Mind/Spirit complexes co-evolve with feedback loops, not strictly sequential coupling. CCRPG models this via `LINE_COMPLEX` (each Line belongs to a Complex) and `computeComplexAltitudes` (per-Complex altitude synthesis).
+2. **Parallel co-evolution** — the Body/Mind/Spirit complexes co-evolve with feedback loops, not strictly sequential coupling. Mysterium models this via `LINE_COMPLEX` (each Line belongs to a Complex) and `computeComplexAltitudes` (per-Complex altitude synthesis).
 
-3. **Substrate-transformation dynamic** — compartmentalization TRANSFORMS the parent's substrate. CCRPG models this via `commitTransformation` which advances `sig.currentStage` (the substrate reorganizes at the new density).
+3. **Substrate-transformation dynamic** — compartmentalization TRANSFORMS the parent's substrate. Mysterium models this via `commitTransformation` which advances `sig.currentStage` (the substrate reorganizes at the new density).
 
 See also: `docs/foundations/03-lines-of-intelligence-overview.md` (Complex differentiation), `docs/foundations/17-transformation-mechanics.md` (substrate transformation at stage transitions).

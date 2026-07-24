@@ -1,4 +1,4 @@
-# CCRPG Longitudinal Pilot Study — Round 2 Report
+# Mysterium Longitudinal Pilot Study — Round 2 Report
 
 > **Date:** 2026-07-07
 > **Method:** 5 persona subagents played 3 sessions each (15 sessions, 45 encounters total). This is the first pilot run after all efficacy fixes: LLM-required mode, rubric-based scoring, Green/Turquoise/White content, binary-search onboarding, question de-dup, config protection.
@@ -115,7 +115,7 @@ Sarah was referred to as "he/him" in S1. The LLM defaults to masculine pronouns 
 
 ### 3.3 Chinese character corruption (LOW)
 
-Tenzin's S3Q1 had a Chinese character ("断裂") embedded mid-English-sentence. This is a mimo-v2.5-free model artifact, not a CCRPG bug.
+Tenzin's S3Q1 had a Chinese character ("断裂") embedded mid-English-sentence. This is a mimo-v2.5-free model artifact, not a Mysterium bug.
 
 **Fix:** Post-generation filter that retries on non-ASCII characters, or a different model for higher-stage content.
 

@@ -1,7 +1,7 @@
-# CCRPG Fresh-User UX Audit Report — Round 7
+# Mysterium Fresh-User UX Audit Report — Round 7
 
 > **Date:** 2026-07-06
-> **Method:** A subagent with zero knowledge of CCRPG internals role-played a fresh user discovering the game via the CLI only. It ran 30 distinct commands with special focus on verifying that the R6-BUG-1 fix (inline `--answer` variadic syntax) holds and that the efficacy is now reliable across both input mechanisms.
+> **Method:** A subagent with zero knowledge of Mysterium internals role-played a fresh user discovering the game via the CLI only. It ran 30 distinct commands with special focus on verifying that the R6-BUG-1 fix (inline `--answer` variadic syntax) holds and that the efficacy is now reliable across both input mechanisms.
 > **Objective:** Confirm that the efficacy is RELIABLY deliverable — not just via `--answers` file (verified in R6) but also via inline `--answer` (fixed in R6-impl). This is the confirmation round.
 
 ---

@@ -1,4 +1,4 @@
-# Design Specification — CCRPG Backend & CLI Upgrades
+# Design Specification — Mysterium Backend & CLI Upgrades
 
 **Date:** June 18, 2026  
 **Status:** Approved  
@@ -8,7 +8,7 @@
 
 ## 1. Context & Objectives
 
-A runtime audit of the CCRPG CLI and backend engines revealed several critical issues that prevent the game from being truly evolutionarily catalytic:
+A runtime audit of the Mysterium CLI and backend engines revealed several critical issues that prevent the game from being truly evolutionarily catalytic:
 1. The local LLM proxy's responses containing the word `"error"` in their markdown/narrative text trigger a false-positive check in the orchestrator, causing every encounter to fall back to the deterministic path.
 2. The fallback path always completes with a generic pass and neutral polarity, causing degenerate state evolution (all drives healthy, no shadow integration, identical choices).
 3. CLI forcing flags (`--line`, `--stage`, `--modality`) are applied after scheduling is finished, leading to display inconsistencies and scheduling bugs.

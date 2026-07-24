@@ -8,7 +8,7 @@
 
 ## 1. Context & Objectives
 
-Currently, CCRPG uses a placeholder `CryptoStore` that performs a simple XOR + Base64 obfuscation. While this hides data from casual inspection in localStorage, it does not provide true cryptographic confidentiality. To achieve 100% actualization of the vision of a private, secure developmental tool, we must upgrade the storage layers to use industry-standard AES-GCM 256-bit encryption.
+Currently, Mysterium uses a placeholder `CryptoStore` that performs a simple XOR + Base64 obfuscation. While this hides data from casual inspection in localStorage, it does not provide true cryptographic confidentiality. To achieve 100% actualization of the vision of a private, secure developmental tool, we must upgrade the storage layers to use industry-standard AES-GCM 256-bit encryption.
 
 ---
 

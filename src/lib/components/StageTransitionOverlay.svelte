@@ -51,11 +51,11 @@
   .stage-transition-overlay {
     position: fixed;
     inset: 0;
-    z-index: var(--ccrpg-z-overlay);
+    z-index: var(--mysterium-z-overlay);
     display: flex;
     align-items: center;
     justify-content: center;
-    background: color-mix(in srgb, var(--ccrpg-bg) 90%, transparent);
+    background: color-mix(in srgb, var(--mysterium-bg) 90%, transparent);
     backdrop-filter: blur(8px);
     cursor: pointer;
   }
@@ -64,15 +64,15 @@
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
     text-align: center;
-    padding: var(--ccrpg-space-8);
+    padding: var(--mysterium-space-8);
   }
 
   .transition-icon {
-    font-size: var(--ccrpg-text-3xl);
-    color: var(--ccrpg-accent);
-    animation: transition-pulse 1.5s var(--ccrpg-ease) infinite;
+    font-size: var(--mysterium-text-3xl);
+    color: var(--mysterium-accent);
+    animation: transition-pulse 1.5s var(--mysterium-ease) infinite;
   }
 
   @keyframes transition-pulse {
@@ -81,28 +81,28 @@
   }
 
   .transition-label {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xl);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xl);
     font-weight: 700;
-    color: var(--ccrpg-accent);
-    letter-spacing: var(--ccrpg-tracking-wider);
+    color: var(--mysterium-accent);
+    letter-spacing: var(--mysterium-tracking-wider);
     text-transform: uppercase;
     margin: 0;
   }
 
   .transition-from {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-md);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-md);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     margin: 0;
     opacity: 0.6;
   }
 
   .transition-arrow {
-    font-size: var(--ccrpg-text-xl);
-    color: var(--ccrpg-accent);
-    animation: arrow-pulse 1s var(--ccrpg-ease) infinite;
+    font-size: var(--mysterium-text-xl);
+    color: var(--mysterium-accent);
+    animation: arrow-pulse 1s var(--mysterium-ease) infinite;
   }
 
   @keyframes arrow-pulse {
@@ -111,9 +111,9 @@
   }
 
   .transition-to {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-lg);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-lg);
+    color: var(--mysterium-fg);
     font-style: italic;
     margin: 0;
   }

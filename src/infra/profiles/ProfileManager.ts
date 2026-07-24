@@ -2,7 +2,7 @@
  * ProfileManager — multi-user profiling system with YAML-based persistent memory.
  *
  * Architecture:
- *   ~/.ccrpg/profiles/<name>/
+ *   ~/.mysterium/profiles/<name>/
  *     ├── identity.yaml
  *     ├── developmental-state.yaml
  *     ├── session-history.yaml
@@ -10,7 +10,7 @@
  *     ├── shadow-ledger.yaml
  *     ├── goals.yaml
  *     └── preferences.yaml
- *   ~/.ccrpg/profiles/_active → symlink to active profile
+ *   ~/.mysterium/profiles/_active → symlink to active profile
  *
  * Design: human-readable YAML/MD (LLM-native, versionable, sandboxable).
  * No external YAML deps — lightweight parser handles our schema subset.
@@ -20,10 +20,10 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 
-const CCRPG_DIR = path.join(os.homedir(), '.ccrpg');
-const PROFILES_DIR = path.join(CCRPG_DIR, 'profiles');
+const Mysterium_DIR = path.join(os.homedir(), '.mysterium');
+const PROFILES_DIR = path.join(Mysterium_DIR, 'profiles');
 const ACTIVE_SYMLINK = path.join(PROFILES_DIR, '_active');
-const SAVES_DIR = path.join(CCRPG_DIR, 'saves');
+const SAVES_DIR = path.join(Mysterium_DIR, 'saves');
 
 // ── Types ────────────────────────────────────────────────────────────
 
@@ -426,7 +426,7 @@ export function appendEncounterLog(profileName: string, entry: {
 
 /**
  * Get the path for the live-state.json (Significator) inside the profile directory.
- * Replaces the old ~/.ccrpg/save-all.json with a per-profile save.
+ * Replaces the old ~/.mysterium/save-all.json with a per-profile save.
  */
 export function getLiveStatePath(profileName: string): string {
   const dir = path.join(PROFILES_DIR, profileName);
@@ -508,12 +508,12 @@ export function migrateLegacySave(): string | null {
   //   3. world.json     (WorldState, for loadWorldState() fallback)
   // Then DELETE the legacy file so a future re-migration can't pick up
   // stale data and overwrite the profile's now-live progress.
-  const legacy = path.join(CCRPG_DIR, 'save-all.json');
+  const legacy = path.join(Mysterium_DIR, 'save-all.json');
   if (!fs.existsSync(legacy)) return null;
 
   // Also check for the legacy world.json + save.json (pre-profile format).
-  const legacyWorld = path.join(CCRPG_DIR, 'world.json');
-  const legacySave = path.join(CCRPG_DIR, 'save.json');
+  const legacyWorld = path.join(Mysterium_DIR, 'world.json');
+  const legacySave = path.join(Mysterium_DIR, 'save.json');
 
   try {
     const raw = fs.readFileSync(legacy, 'utf8');

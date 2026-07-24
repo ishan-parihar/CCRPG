@@ -224,7 +224,7 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
 }
 
 /**
- * M4 (TDG→CCRPG feedback): Async session start that augments the baseline CCI
+ * M4 (TDG→Mysterium feedback): Async session start that augments the baseline CCI
  * with TDG-Rust graph-level health (G_z/P_z) when TDG is running.
  *
  * When TDG-Rust is NOT running, this returns the exact same SessionState as
@@ -247,7 +247,7 @@ export async function startSessionWithTDG(
 
 /**
  * ponytail: TDG-Rust integration removed. Always returns null — no
- * graph-level transformation pressure without TDG. CCRPG's own
+ * graph-level transformation pressure without TDG. Mysterium's own
  * detectThreshold remains the authoritative signal.
  */
 export async function getTDGTransformationPressure(_sig: Significator): Promise<number | null> {

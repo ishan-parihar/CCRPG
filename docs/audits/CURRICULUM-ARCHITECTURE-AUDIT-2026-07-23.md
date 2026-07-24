@@ -1,4 +1,4 @@
-# CCRPG Curriculum Architecture Audit & Fresh-User UX Report
+# Mysterium Curriculum Architecture Audit & Fresh-User UX Report
 
 **Date:** July 23, 2026
 **Auditor:** Buffy (AI agent) via Freebuff
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-The CCRPG curriculum system is **architecturally sophisticated and well-tested** at the engine level — 793 tests pass, the type system is comprehensive, and the integration pipeline (CurriculumRegistry → CurriculumLinter → CandidateGeneration → GameLoop → ConsequenceEngine) is fully wired. However, the system has **two critical blockers** that prevent it from being experienced by users:
+The Mysterium curriculum system is **architecturally sophisticated and well-tested** at the engine level — 793 tests pass, the type system is comprehensive, and the integration pipeline (CurriculumRegistry → CurriculumLinter → CandidateGeneration → GameLoop → ConsequenceEngine) is fully wired. However, the system has **two critical blockers** that prevent it from being experienced by users:
 
 1. **The CLI is broken** — syntax errors in `scripts/cli-game.ts` (stray semicolon + unescaped apostrophes) prevent the entire CLI from launching.
 2. **Curriculum encounters are invisible to new players** — the `generateCurriculumCandidates()` function requires existing knowledge state, which fresh players don't have, creating a cold-start problem.
@@ -134,7 +134,7 @@ The prior audit (same date) ran successfully with LLM enabled and found:
 
 Based on code analysis of the CLI flow:
 
-1. **Banner:** "CCRPG — A contemplative RPG that mirrors you back to yourself..." ✅ Good
+1. **Banner:** "Mysterium — A contemplative RPG that mirrors you back to yourself..." ✅ Good
 2. **Onboarding:** Altitude inference from `--answer` content (or calibration if interactive) ✅ Good
 3. **Encounters:** Developmental assessment questions via AgenticOrchestrator ✅ Good
 4. **Curriculum encounters:** ❌ NEVER APPEAR — `generateCurriculumEncounters()` returns empty when `sig.knowledge` is undefined or has zero concept states
@@ -308,7 +308,7 @@ Catalyst (provocative situation) → Player response →
 |---|---|---|---|
 | **R9** | **Wire DepthAssessment into encounter scoring** (Phase C of foundations/36). Replace binary pass/fail with dual-depth assessment during gameplay. | 5-7 days | Enables real depth measurement |
 | **R10** | **Build onboarding curriculum path.** Create a "first 5 concepts" curriculum sequence that introduces the game's developmental framework through structured learning, not just reflection. | 3-5 days | Onboards players into curriculum system |
-| **R11** | **Add `ccrpg curriculum browse` CLI command.** Show the curriculum tree, progress, and study recommendations in the terminal (CLI parity with WebUI). | 2-3 days | CLI users can discover curriculum |
+| **R11** | **Add `mysterium curriculum browse` CLI command.** Show the curriculum tree, progress, and study recommendations in the terminal (CLI parity with WebUI). | 2-3 days | CLI users can discover curriculum |
 | **R12** | **Progressive narrative complexity.** As stages advance, encounters should become more challenging and nuanced. Currently all encounters feel similar regardless of stage. | 5-7 days | Matches developmental edge |
 
 ### ⚪ YAGNI — Don't Build Yet
@@ -368,7 +368,7 @@ Catalyst (provocative situation) → Player response →
 
 ## 10. Conclusion
 
-The CCRPG curriculum system is a **remarkably complete engine** hiding behind a **broken door**. The type system, linter, seed data, forgetting curves, adaptive difficulty, learning analytics, and cross-branch prerequisite enforcement are all implemented and tested. The architectural vision in foundations/35-36 is being faithfully realized at the code level.
+The Mysterium curriculum system is a **remarkably complete engine** hiding behind a **broken door**. The type system, linter, seed data, forgetting curves, adaptive difficulty, learning analytics, and cross-branch prerequisite enforcement are all implemented and tested. The architectural vision in foundations/35-36 is being faithfully realized at the code level.
 
 But the system fails its most basic test: **can a new user experience it?** The answer today is no — the CLI can't launch, and even if it could, fresh players would never see a curriculum encounter because of the cold-start problem.
 

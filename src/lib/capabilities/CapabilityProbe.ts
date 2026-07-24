@@ -2,7 +2,7 @@
  * CapabilityProbe — detects device capabilities at boot and sets
  * data-capability / data-input attributes on <html>.
  *
- * This is the spine of CCRPG's universality layer (plan §11). It enables:
+ * This is the spine of Mysterium's universality layer (plan §11). It enables:
  * - 10-foot TV mode (large touch targets, 4-dir nav, high-contrast)
  * - Reduced-motion handling (disable stage motion transitions)
  * - Coarse-pointer enlargement (bigger touch targets on touch devices)

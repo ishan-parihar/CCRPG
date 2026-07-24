@@ -18,7 +18,7 @@ export interface SessionControl {
   readonly devMode: boolean;
 }
 
-const STORAGE_KEY = 'ccrpg:session-control';
+const STORAGE_KEY = 'mysterium:session-control';
 
 const DEFAULT: SessionControl = {
   encounterCount: 5,

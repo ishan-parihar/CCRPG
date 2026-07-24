@@ -147,7 +147,7 @@ const driveScores = {
 ### 4.1 JSON file persistence (NEW: src/infra/persistence/SaveRepository.ts)
 
 **Problem:** `createDefaultSignificator()` hardcodes all Red every run.  
-**Fix:** Save/load Significator to `~/.ccrpg/save.json`.
+**Fix:** Save/load Significator to `~/.mysterium/save.json`.
 
 **Implementation:**
 ```typescript
@@ -155,7 +155,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as os from 'os';
 
-const SAVE_DIR = path.join(os.homedir(), '.ccrpg');
+const SAVE_DIR = path.join(os.homedir(), '.mysterium');
 const SAVE_FILE = path.join(SAVE_DIR, 'save.json');
 
 export function loadSave(): Significator | null {

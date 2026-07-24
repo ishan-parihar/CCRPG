@@ -1,6 +1,6 @@
 # Curriculum Authoring Guide
 
-> How to author, validate, and integrate curriculum holons into CCRPG.
+> How to author, validate, and integrate curriculum holons into Mysterium.
 
 ---
 

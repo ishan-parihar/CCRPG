@@ -1,6 +1,6 @@
-# CCRPG Multi-Agent Worklog
+# Mysterium Multi-Agent Worklog
 
-This file is the shared work log for all agents working on the CCRPG
+This file is the shared work log for all agents working on the Mysterium
 frontend-online-deployment project. Append-only. Newest entries at the
 bottom.
 
@@ -11,7 +11,7 @@ Agent: Super Z (orchestrator)
 Task: Establish baseline before SvelteKit refactor
 
 Work Log:
-- Cloned CCRPG repo to /home/z/my-project/CCRPG/
+- Cloned Mysterium repo to /home/z/my-project/Mysterium/
 - Restored clean working tree (mode-only diffs from clone)
 - Installed dependencies via `npm install` (263 packages)
 - Ran baseline test suite: 703 tests pass, 10 skipped, 0 failing (67 files)
@@ -32,7 +32,7 @@ Agent: Super Z (orchestrator)
 Task: Update plan doc with SvelteKit revision (v2)
 
 Work Log:
-- Revised CCRPG-FRONTEND-ARCHITECTURE-PLAN.md to v2
+- Revised Mysterium-FRONTEND-ARCHITECTURE-PLAN.md to v2
 - §0 TL;DR updated: SvelteKit replaces Vite+React
 - §6 Recommended composite rewritten: Phase 1 framework = SvelteKit, BFF collapses into SvelteKit +server.ts
 - §7 Phase 0 rewritten for SvelteKit migration + BFF endpoints
@@ -191,7 +191,7 @@ Work Log:
 - Committed and pushed (6dfb375)
 
 Stage Summary:
-- CCRPG now adapts to: $40 Android phone on 2G, 4K TV with gamepad, screen-reader laptop, researcher desktop
+- Mysterium now adapts to: $40 Android phone on 2G, 4K TV with gamepad, screen-reader laptop, researcher desktop
 - 10-foot TV mode, reduced-motion, coarse-pointer enlargement all handled via data-* attributes
 - This is the universality spine from plan §11
 
@@ -214,7 +214,7 @@ Work Log:
 - Committed and pushed (d09660a)
 
 Stage Summary:
-- CCRPG is now an installable PWA with offline support
+- Mysterium is now an installable PWA with offline support
 - 'Add to Home Screen' works on Chrome/Safari/Edge
 - Offline play after first visit (Phaser bundle cached)
 - Ready for deployment to Cloudflare Pages / Vercel / Netlify
@@ -246,4 +246,4 @@ Stage Summary:
 - Phase 4 (Multi-platform iOS + Tauri): DEFERRED — needs Apple Developer account + Mac
 - Phase 5 (Interactive visuals): DEFERRED — per user direction, after foundational verification
 
-The CCRPG frontend is now architected for online-game deployment with universal reach.
+The Mysterium frontend is now architected for online-game deployment with universal reach.

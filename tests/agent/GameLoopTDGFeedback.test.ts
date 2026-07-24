@@ -1,12 +1,12 @@
 /**
- * Tests for M4: TDG→CCRPG feedback hooks wired into GameLoop.
+ * Tests for M4: TDG→Mysterium feedback hooks wired into GameLoop.
  *
  * These tests verify the non-regression contract:
  * - startSessionWithTDG returns the same SessionState as startSession when TDG is not running
  * - getTDGTransformationPressure returns null when TDG is not running
  * - Neither function throws when TDG is unavailable
  *
- * When TDG IS running (CCRPG_E2E_TDG=1), the E2E suite in
+ * When TDG IS running (Mysterium_E2E_TDG=1), the E2E suite in
  * tests/integration/TDGRustE2E.test.ts covers the active path.
  */
 import { describe, it, expect } from 'vitest';

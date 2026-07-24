@@ -1,7 +1,7 @@
 /**
  * AgenticProbe — the 4+1 questionnaire contract.
  *
- * Every questionnaire surface in CCRPG must produce an AgenticProbe:
+ * Every questionnaire surface in Mysterium must produce an AgenticProbe:
  *   4 mcq options, each labelled and tagged with a polarity, plus 1 free-input.
  *
  * The four polarities represent a *quadrant of orientation* the agent uses to

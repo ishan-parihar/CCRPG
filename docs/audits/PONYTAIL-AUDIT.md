@@ -1,4 +1,4 @@
-# CCRPG Ponytail Audit — YAGNI Cuts + Implementation Gaps
+# Mysterium Ponytail Audit — YAGNI Cuts + Implementation Gaps
 
 > Lazy senior dev audit. Over-engineering only, not correctness. Whole tree scanned.
 > Format: `<tag> <what to cut>. <replacement>. [path]`
@@ -10,7 +10,7 @@
 
 1. **delete** entire `src/infra/tdg/` (TDGClient, TDGHooks, TDGBridge, TDGToolAdapter — 1,454 LOC). `maybeFireHook` is a no-op when TDG isn't started; `startTDGBridge()` is called only by `scripts/cli-game.ts`, never by the WebUI; there is no TDG-Rust binary, no Cargo.toml, no integration. The whole subsystem is speculative. [src/infra/tdg/]
 
-2. **delete** entire `src/core/agent/` (PersistentAgent, PersistentAgentBridge, ToolRegistry, CCRPGTools, FallbackNarratives — 1,272 LOC). Only consumer is `src/infra/tdg/TDGBridge.ts` and `src/infra/tdg/TDGToolAdapter.ts` — which are themselves dead (cut #1). No WebUI or live CLI path uses PersistentAgent. [src/core/agent/]
+2. **delete** entire `src/core/agent/` (PersistentAgent, PersistentAgentBridge, ToolRegistry, MysteriumTools, FallbackNarratives — 1,272 LOC). Only consumer is `src/infra/tdg/TDGBridge.ts` and `src/infra/tdg/TDGToolAdapter.ts` — which are themselves dead (cut #1). No WebUI or live CLI path uses PersistentAgent. [src/core/agent/]
 
 3. **delete** 9 usecase files (NBackTask, StroopTask, GoNoGoTask, ReactionTimeTask, SimonTask, BreathRhythmTask, HeldInputTask, DilemmaTask, AffectRecognitionTask — ~1,475 LOC). Each is imported only by `src/core/index.ts` barrel re-export, which itself has **zero importers**. The Phaser renderers that consumed them were purged. Only 4 have unit tests; the tests can stay (they test pure functions) but the usecase files themselves are dead in the runtime path. [src/core/usecases/]
 
@@ -72,7 +72,7 @@
 
 32. **shrink** `scripts/check-invariants.ts` (317 LOC) — runs at every build. Some checks may be stale post-Phaser-purge (e.g. registry counts that included dead registries). Audit which checks still matter. [scripts/check-invariants.ts]
 
-33. **delete** `src/infra/llm/ProviderRegistry.ts` lines that handle "models.dev" + "~/.ccrpg/config.json" file discovery (if present). The README says LLM config is env-var driven; the 5-source resolution is over-engineered for a solo project. `process.env.LLM_API_KEY ?? process.env.OPENAI_API_KEY` is 2 lines. [src/infra/llm/ProviderRegistry.ts]
+33. **delete** `src/infra/llm/ProviderRegistry.ts` lines that handle "models.dev" + "~/.mysterium/config.json" file discovery (if present). The README says LLM config is env-var driven; the 5-source resolution is over-engineered for a solo project. `process.env.LLM_API_KEY ?? process.env.OPENAI_API_KEY` is 2 lines. [src/infra/llm/ProviderRegistry.ts]
 
 ---
 

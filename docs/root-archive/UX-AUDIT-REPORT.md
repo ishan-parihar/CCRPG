@@ -1,8 +1,8 @@
-# CCRPG Fresh-User UX Audit Report
+# Mysterium Fresh-User UX Audit Report
 
 > **Date:** 2026-07-05
-> **Method:** A subagent with zero knowledge of CCRPG internals simulated a new user discovering the game via CLI commands only. No source code, docs, or architecture files were read. The agent ran 9 commands across session modes, reported observations, feelings, and frustrations.
-> **Objective:** Identify UX-level gaps, onboarding failures, broken CLI flags, and experience-deficit issues that would prevent a real user from engaging with CCRPG's "healing and evolution" objective.
+> **Method:** A subagent with zero knowledge of Mysterium internals simulated a new user discovering the game via CLI commands only. No source code, docs, or architecture files were read. The agent ran 9 commands across session modes, reported observations, feelings, and frustrations.
+> **Objective:** Identify UX-level gaps, onboarding failures, broken CLI flags, and experience-deficit issues that would prevent a real user from engaging with Mysterium's "healing and evolution" objective.
 
 ---
 
@@ -61,22 +61,22 @@ The reflective prompts themselves are **excellent** — piercing, specific, genu
 
 ### UX-ONBOARD-1: No "what is this game?" anywhere
 - **Impact**: User opens `--help` and sees flags for "encounters," "lines," "stages," "modalities," "shadow quadrants," "G_z/P_z," "rayProfile" — none defined.
-- **Fix**: Add a one-paragraph intro to `--help` output: "CCRPG is a developmental RPG where every encounter is a validated assessment that simultaneously diagnoses and evolves your cognitive, emotional, moral, and spiritual capacities across 8 lines of intelligence and 8 stages of consciousness."
+- **Fix**: Add a one-paragraph intro to `--help` output: "Mysterium is a developmental RPG where every encounter is a validated assessment that simultaneously diagnoses and evolves your cognitive, emotional, moral, and spiritual capacities across 8 lines of intelligence and 8 stages of consciousness."
 - **Effort**: 5 minutes
 
 ### UX-ONBOARD-2: No glossary command
 - **Impact**: Terms like "holon," "significator," "resonance," "CCI," "polarity," "Veil" are meaningless to a new user.
-- **Fix**: Add `ccrpg glossary` command that prints definitions of all key terms.
+- **Fix**: Add `mysterium glossary` command that prints definitions of all key terms.
 - **Effort**: 30 minutes
 
 ### UX-ONBOARD-3: No first-run onboarding flow
 - **Impact**: User's first session dumps them into 8 reflective questions with no context about what's happening or why.
-- **Fix**: On first run (no save file), show a brief intro: "Welcome to CCRPG. You'll be asked questions across 8 lines of intelligence. Your answers shape your developmental profile. There are no wrong answers. Take your time." Then start the session.
+- **Fix**: On first run (no save file), show a brief intro: "Welcome to Mysterium. You'll be asked questions across 8 lines of intelligence. Your answers shape your developmental profile. There are no wrong answers. Take your time." Then start the session.
 - **Effort**: 15 minutes
 
 ### UX-ONBOARD-4: No example session in help
 - **Impact**: User doesn't know what to expect from a session.
-- **Fix**: Add to `--help`: "Example: `ccrpg session --encounters=5` runs 5 developmental encounters. `ccrpg diagnostic` shows system status."
+- **Fix**: Add to `--help`: "Example: `mysterium session --encounters=5` runs 5 developmental encounters. `mysterium diagnostic` shows system status."
 - **Effort**: 5 minutes
 
 ---
@@ -131,13 +131,13 @@ The reflective prompts themselves are **excellent** — piercing, specific, genu
 - **Effort**: 10 minutes
 
 ### UX-POLISH-2: `new-game` hint references wrong command
-- **Impact**: Says "Run `ccrpg` to start" but the actual command is `npx tsx scripts/cli-game.ts session` (or `ccrpg session` if installed).
-- **Fix**: Say "Run `ccrpg session` to start a new game."
+- **Impact**: Says "Run `mysterium` to start" but the actual command is `npx tsx scripts/cli-game.ts session` (or `mysterium session` if installed).
+- **Fix**: Say "Run `mysterium session` to start a new game."
 - **Effort**: 2 minutes
 
 ### UX-POLISH-3: `status` loses flavor text after `new-game`
 - **Impact**: After reset, status shows "no saved game" with no resonance/journey text — a colder experience than pre-reset.
-- **Fix**: Show "No journey begun yet. Run `ccrpg session` to start." with a hint of what's to come.
+- **Fix**: Show "No journey begun yet. Run `mysterium session` to start." with a hint of what's to come.
 - **Effort**: 5 minutes
 
 ### UX-POLISH-4: No `--verbose` example in help
@@ -161,7 +161,7 @@ The reflective prompts themselves are **excellent** — piercing, specific, genu
 
 ### UX-ARCH-3: No tutorial or first-encounter walkthrough
 - **Impact**: The user's first encounter is a bare question with no context about how to answer, what the options mean, or what happens after.
-- **Fix**: Add a `ccrpg tutorial` command that runs a single guided encounter with extra annotations: "This is a [modality] encounter on the [line] line. You'll be asked a question. Your answer shapes your developmental profile. There are no wrong answers."
+- **Fix**: Add a `mysterium tutorial` command that runs a single guided encounter with extra annotations: "This is a [modality] encounter on the [line] line. You'll be asked a question. Your answer shapes your developmental profile. There are no wrong answers."
 - **Effort**: 1-2 hours
 
 ---
@@ -207,7 +207,7 @@ The reflective prompts themselves are **excellent** — piercing, specific, genu
 | 12 | Emit qualitative consequence after each encounter | 1 hr | High — feedback loop |
 | 13 | Wrap DQ questions in narrative framing | 2-3 hrs | High — feels like a game |
 | 14 | Default to Story-Driven mode (not DQ) | 1 hr | High — RPG not questionnaire |
-| 15 | Add `ccrpg tutorial` command | 1-2 hrs | Medium — guided first encounter |
+| 15 | Add `mysterium tutorial` command | 1-2 hrs | Medium — guided first encounter |
 
 ### P3 — Polish
 
@@ -254,6 +254,6 @@ The reflective prompts themselves are **excellent** — piercing, specific, genu
 
 ## 10. The Core UX Insight
 
-CCRPG has a **deep engine** (38+ fixes, HoloOS-aligned G_z/P_z, AQAL gates, Atman Project detection, knot pairs, Holonic Return) sitting behind a **shallow user experience** (broken flags, no onboarding, hollow narrative, uninformative status). The engine can detect Atman Project defenses and schedule knot-pair encounters — but the user sees `"The encounter was completed without LLM interaction."`
+Mysterium has a **deep engine** (38+ fixes, HoloOS-aligned G_z/P_z, AQAL gates, Atman Project detection, knot pairs, Holonic Return) sitting behind a **shallow user experience** (broken flags, no onboarding, hollow narrative, uninformative status). The engine can detect Atman Project defenses and schedule knot-pair encounters — but the user sees `"The encounter was completed without LLM interaction."`
 
 The next investment should be **not in engine depth, but in experience depth** — fallback narratives, onboarding, progress visibility, and fixing the broken CLI flags that erode trust on first contact. The engine is ready; the experience is not.

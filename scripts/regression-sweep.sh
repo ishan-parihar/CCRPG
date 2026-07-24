@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-# CCRPG UX-R3 Full Regression Test Sweep
+# Mysterium UX-R3 Full Regression Test Sweep
 # Runs typecheck + unit tests + a comprehensive smoke-test matrix across
 # every flag combination the fresh-user audit exercised.
 # Exits non-zero on any failure.
 
 set -uo pipefail
-cd /home/z/my-project/CCRPG
+cd /home/z/my-project/Mysterium
 
 PASS=0
 FAIL=0
@@ -16,7 +16,7 @@ check() {
   local cmd="$2"
   local expected_exit="${3:-0}"
   echo "─── $label ───"
-  eval "$cmd" > /tmp/ccrpg-test-out 2>&1
+  eval "$cmd" > /tmp/mysterium-test-out 2>&1
   local actual_exit=$?
   if [ "$actual_exit" -eq "$expected_exit" ]; then
     echo "  ✓ exit $actual_exit (expected $expected_exit)"
@@ -24,14 +24,14 @@ check() {
   else
     echo "  ✗ exit $actual_exit (expected $expected_exit)"
     echo "  --- output (first 20 lines) ---"
-    head -20 /tmp/ccrpg-test-out | sed 's/^/  /'
+    head -20 /tmp/mysterium-test-out | sed 's/^/  /'
     FAIL=$((FAIL + 1))
     FAILURES+=("$label")
   fi
 }
 
 echo "══════════════════════════════════════════════════════════════════"
-echo "  CCRPG UX-R3 Regression Test Sweep"
+echo "  Mysterium UX-R3 Regression Test Sweep"
 echo "══════════════════════════════════════════════════════════════════"
 echo ""
 

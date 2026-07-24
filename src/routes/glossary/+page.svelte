@@ -1,7 +1,7 @@
 <script lang="ts">
   /**
-   * /glossary route — definitions for CCRPG terminology.
-   * Parity with CLI `ccrpg glossary` command.
+   * /glossary route — definitions for Mysterium terminology.
+   * Parity with CLI `mysterium glossary` command.
    * ponytail: consumes shared GLOSSARY_TERMS from src/core/data/glossary.ts.
    */
   import Seo from '$lib/components/Seo.svelte';
@@ -23,7 +23,7 @@
 
 <Seo
   title="Glossary"
-  description="Definitions for CCRPG terminology — Holon, Significator, Line, Stage, Module, Modality, CCI, and more."
+  description="Definitions for Mysterium terminology — Holon, Significator, Line, Stage, Module, Modality, CCI, and more."
 />
 
 <RouteShell title="Glossary" back="/">
@@ -63,64 +63,64 @@
 <style>
   .search-input {
     width: 100%;
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    transition: border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                box-shadow var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    padding: var(--mysterium-space-3) var(--mysterium-space-4);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    transition: border-color var(--mysterium-duration-fast) var(--mysterium-ease),
+                box-shadow var(--mysterium-duration-fast) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .search-input:focus {
     outline: none;
-    border-color: var(--ccrpg-accent);
-    box-shadow: 0 0 0 3px color-mix(in srgb, var(--ccrpg-accent) 20%, transparent);
+    border-color: var(--mysterium-accent);
+    box-shadow: 0 0 0 3px color-mix(in srgb, var(--mysterium-accent) 20%, transparent);
   }
 
   .search-input::placeholder {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
   }
 
   .term-entry {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .term-name {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 600;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
     margin: 0;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .term-def {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    line-height: var(--ccrpg-leading-relaxed);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    line-height: var(--mysterium-leading-relaxed);
+    color: var(--mysterium-fg);
     margin: 0;
   }
 
   .empty {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     text-align: center;
     margin: 0;
   }
 
   .footer-note {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-align: center;
     font-style: italic;
     margin: 0;

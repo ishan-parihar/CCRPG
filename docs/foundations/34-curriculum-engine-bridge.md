@@ -1,8 +1,8 @@
 # 34 — Curriculum-Engine Bridge
 
-> **Status:** canonical-hypothesis (CCRPG-specific integration contract between curriculum modules and the existing developmental engine).
+> **Status:** canonical-hypothesis (Mysterium-specific integration contract between curriculum modules and the existing developmental engine).
 >
-> **Lateral:** The integration contract that specifies exactly how curriculum content plugs into CCRPG's existing hooks — Significator, ModuleRegistry, EncounterScheduler, AgenticOrchestrator, CCI Engine, and Auto-Mode Strategy. No other document covers this: foundations/29-33 cover the curriculum subsystem in isolation; this document covers the *bridge* between curriculum and the existing engine.
+> **Lateral:** The integration contract that specifies exactly how curriculum content plugs into Mysterium's existing hooks — Significator, ModuleRegistry, EncounterScheduler, AgenticOrchestrator, CCI Engine, and Auto-Mode Strategy. No other document covers this: foundations/29-33 cover the curriculum subsystem in isolation; this document covers the *bridge* between curriculum and the existing engine.
 >
 > **Depends on:** 29 (meta-learning), 30 (holonic architecture), 31 (depth model), 32 (linter), 33 (dashboard), 16 (Significator), 24 (scheduler), 25 (CCI), 26 (unified architecture), 27 (auto-mode)
 > **Referenced by:** All implementation work for the curriculum expansion
@@ -11,9 +11,9 @@
 
 ## 1. Purpose
 
-This document answers: **How does a curriculum module compose with the existing CCRPG engine so that knowledge acquisition and developmental growth are tracked in the same state vessel, scheduled by the same engine, and displayed on the same dashboard?**
+This document answers: **How does a curriculum module compose with the existing Mysterium engine so that knowledge acquisition and developmental growth are tracked in the same state vessel, scheduled by the same engine, and displayed on the same dashboard?**
 
-The curriculum expansion does NOT replace the existing engine. It EXTENDS it. Every existing component — the Significator, the ModuleRegistry, the EncounterScheduler, the AgenticOrchestrator, the CCI Engine, the Auto-Mode Strategy — gains new capabilities, but their existing capabilities remain intact. A learner who never touches a curriculum module experiences CCRPG exactly as before. A learner who engages with curriculum content experiences an enriched version where knowledge and development are interleaved.
+The curriculum expansion does NOT replace the existing engine. It EXTENDS it. Every existing component — the Significator, the ModuleRegistry, the EncounterScheduler, the AgenticOrchestrator, the CCI Engine, the Auto-Mode Strategy — gains new capabilities, but their existing capabilities remain intact. A learner who never touches a curriculum module experiences Mysterium exactly as before. A learner who engages with curriculum content experiences an enriched version where knowledge and development are interleaved.
 
 ---
 
@@ -347,7 +347,7 @@ The bridge is designed for backward compatibility:
 
 1. **Empty knowledge state = unchanged behavior.** If a learner has no curriculum data, every component behaves exactly as before. The `knowledge` field defaults to empty; the curriculum registry is empty; the scheduler generates zero curriculum candidates; the CCI uses the original 5-dimension weights.
 
-2. **Optional engagement.** Curriculum encounters are offered alongside developmental encounters. The learner can ignore them entirely and experience pure CCRPG.
+2. **Optional engagement.** Curriculum encounters are offered alongside developmental encounters. The learner can ignore them entirely and experience pure Mysterium.
 
 3. **Graceful degradation.** If the curriculum system fails (registry corruption, LLM unavailable for curriculum scoring), the system falls back to purely developmental encounters. The learner's experience degrades gracefully, not catastrophically.
 

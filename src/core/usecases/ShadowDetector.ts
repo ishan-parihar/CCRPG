@@ -299,18 +299,18 @@ export interface AtmanProjectAssessment {
  *
  * Per foundations/13 §"The Atman Project and the Defenses Against Transcendence":
  * - Rationalization: dismisses transcendence as impossible (blocks Eros)
- *   CCRPG signal: player only engages Deterministic/Strategic modalities, never
+ *   Mysterium signal: player only engages Deterministic/Strategic modalities, never
  *   LanguageReflective or ImmersiveRPG (refuses open-ended reflection)
  * - Isolation: maintains rigid self-boundary (blocks Communion)
- *   CCRPG signal: player avoids Interpersonal/SocialCooperative encounters
+ *   Mysterium signal: player avoids Interpersonal/SocialCooperative encounters
  * - Desacralizing: strips meaning from experience (blocks Agape)
- *   CCRPG signal: player rushes through encounters (low narrativeSummary length)
+ *   Mysterium signal: player rushes through encounters (low narrativeSummary length)
  * - Substitution: chases finite gratification instead of growth (Eros dark-addiction of Agency)
- *   CCRPG signal: high Agency fixation + low Spiritual/Intrapersonal altitude
+ *   Mysterium signal: high Agency fixation + low Spiritual/Intrapersonal altitude
  *
  * Jonah Complex (foundations/13 §"The Emergent Domain"):
  * - Fear of one's own greatness — refusing the call to the next stage
- *   CCRPG signal: high golden-allergy rate + low aspirational drive expression
+ *   Mysterium signal: high golden-allergy rate + low aspirational drive expression
  *   + avoidance of next-stage encounters
  *
  * @param sig The player's Significator

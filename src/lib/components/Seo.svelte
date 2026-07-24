@@ -10,7 +10,7 @@
    */
 
   type Props = {
-    /** Page title (will be suffixed with "— CCRPG"). */
+    /** Page title (will be suffixed with "— Mysterium"). */
     title: string;
     /** Meta description (≤160 chars recommended). */
     description: string;
@@ -22,7 +22,7 @@
 
   let { title, description, ogImage = '/icons/icon-512.png', indexable = true }: Props = $props();
 
-  const fullTitle = $derived(`${title} — CCRPG`);
+  const fullTitle = $derived(`${title} — Mysterium`);
 </script>
 
 <svelte:head>
@@ -37,7 +37,7 @@
   <meta property="og:title" content={fullTitle} />
   <meta property="og:description" content={description} />
   <meta property="og:image" content={ogImage} />
-  <meta property="og:site_name" content="CCRPG" />
+  <meta property="og:site_name" content="Mysterium" />
 
   <!-- Twitter Card -->
   <meta name="twitter:card" content="summary_large_image" />

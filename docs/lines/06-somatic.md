@@ -3,12 +3,12 @@
 ## 1. Purpose
 
 Specify the Somatic line — the capacity to *inhabit and skilfully use the
-body*. CCRPG's dodge, posture, breath-gate, and rhythm verbs live here.
+body*. Mysterium's dodge, posture, breath-gate, and rhythm verbs live here.
 Somatic is one of the two lines (with Willpower) that develops
 *relatively independently* of cognitive altitude — a skilled dancer or
 martial artist may sit at Amber cognitive but Turquoise somatic.
 
-The somatic line is the line that prevents CCRPG from collapsing into a
+The somatic line is the line that prevents Mysterium from collapsing into a
 *head game*. Every cognitive task is grounded in a body that breathes,
 postures, dodges, and times.
 
@@ -29,7 +29,7 @@ Synthesis:
 - **Gardner** — bodily-kinaesthetic as one of the multiple
   intelligences.
 
-CCRPG's working definition:
+Mysterium's working definition:
 
 > Somatic intelligence is the capacity to (a) sense the body
 > proprioceptively, (b) coordinate movement under load, (c) regulate
@@ -191,7 +191,7 @@ performance.
 
 - **Hardware affordances.** Breath rate, heart rate, and gyroscope are
   available on most modern phones but require permissions and battery
-  budget. CCRPG's MVP assumes touch-only; sensor integration is a
+  budget. Mysterium's MVP assumes touch-only; sensor integration is a
   stretch goal.
 - **Accessibility.** Somatic mechanics must have alternatives for
   players with motor differences. Default: any timing-critical mechanic

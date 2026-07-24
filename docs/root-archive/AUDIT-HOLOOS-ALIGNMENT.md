@@ -1,13 +1,13 @@
-# CCRPG × HoloOS Alignment Audit, Refactor & Plan
+# Mysterium × HoloOS Alignment Audit, Refactor & Plan
 
 | | |
 |---|---|
-| **Branch** | `audit/holoos-alignment` (off CCRPG `main` HEAD) |
+| **Branch** | `audit/holoos-alignment` (off Mysterium `main` HEAD) |
 | **Date** | 2026-07-03 |
 | **Auditor** | Z.ai audit agent (read-only investigation; surgical fixes applied on branch) |
-| **Scope** | CCRPG `main` HEAD vs HoloOS `_THEORY/02_Ontology` HEAD |
+| **Scope** | Mysterium `main` HEAD vs HoloOS `_THEORY/02_Ontology` HEAD |
 | **Source truth** | HoloOS ontology — canonical anchor: `02.1_Microcosmic_Metabolic_Architecture` (the Lesser Cycle M·P·C·E) |
-| **Method** | Three parallel deep-read agents (HoloOS ontology catalog, CCRPG ontology + prior-audit catalog, CCRPG source code audit) plus first-person verification of top hotspots |
+| **Method** | Three parallel deep-read agents (HoloOS ontology catalog, Mysterium ontology + prior-audit catalog, Mysterium source code audit) plus first-person verification of top hotspots |
 | **Deliverables on this branch** | This report; surgical fixes for the 4 highest-leverage hotspots (see §5) |
 | **Format** | Single non-fancy Markdown file. No styling, no emoji, no cover page. Plain headings, tables, and code blocks. |
 
@@ -17,18 +17,18 @@
 
 ### 0.1 Top 5 findings
 
-1. **CCRPG's ontology is not stratified.** HoloOS separates `ai-draft → canonical-hypothesis → canonical → superseded` and labels every claim. CCRPG's `docs/foundations/` mix Ra-material cosmology (metaphysical, unfalsifiable), Wilber AQAL (theoretical synthesis), validated psychophysics (empirical), and game-design choices in the same files with no status ladder. The `foundations/06` firewall tries to separate empirical from metaphysical, but foundations 10–27 freely cite Ra as canon. This is the **meta-finding** that subsumes most of the per-gap findings below: it is impossible to decide which CCRPG ontological claims are load-bearing for the game architecture versus which are decorative.
+1. **Mysterium's ontology is not stratified.** HoloOS separates `ai-draft → canonical-hypothesis → canonical → superseded` and labels every claim. Mysterium's `docs/foundations/` mix Ra-material cosmology (metaphysical, unfalsifiable), Wilber AQAL (theoretical synthesis), validated psychophysics (empirical), and game-design choices in the same files with no status ladder. The `foundations/06` firewall tries to separate empirical from metaphysical, but foundations 10–27 freely cite Ra as canon. This is the **meta-finding** that subsumes most of the per-gap findings below: it is impossible to decide which Mysterium ontological claims are load-bearing for the game architecture versus which are decorative.
 
-2. **Three newly-introduced critical bugs in the CCRPG engine undermine the post-June-2026 refactoring.** Despite significant rework since the June 21–23 audit snapshot (7 of 16 architectural issues are now resolved), the new wiring introduced regressions:
+2. **Three newly-introduced critical bugs in the Mysterium engine undermine the post-June-2026 refactoring.** Despite significant rework since the June 21–23 audit snapshot (7 of 16 architectural issues are now resolved), the new wiring introduced regressions:
    - **HS-01 / HS-02**: `sessionsSinceLastTransformation` math at `SignificatorSnapshot.ts:149-151` subtracts an hour-of-epoch count from a session count — always produces 0 after clamping — locks `selectSessionTheme` into `'post-transformation'` permanently for any transformed player, bypassing the entire AutoMode strategy system.
    - **HS-05**: `VeilFilter.filterInput` and `filterOutput` (92 LOC of regex patterns) are **never called anywhere**. The Veil is enforced ad-hoc in the renderer layer, not at the LLM I/O boundary where the spec (`foundations/20 §4`, `foundations/22 §13`) requires.
    - **HS-13**: `getEligibleModalities()` accepts a `moduleTaskTypes` parameter to filter modalities by what the module actually supports — but no caller passes it (line 167 omits the arg). The filter is dead. This is the **root cause of the modality collapse** that every prior audit flagged (C3).
 
 3. **The catalyst trajectory is still structurally absent.** The recursive loop specified in `foundations/24 §3` (Detect edge → Generate catalyst AT edge → Observe response → SYNTHESIZE → Adapt next question → Integrate patterns → Shape next encounter → Detect readiness) is not implemented. The current loop is linear (Schedule → Present MCQ → Score → Update Sig → Next). `AgenticOrchestrator` resets `messages = []` per encounter (still — confirmed at `cliAgentLoop.ts`), so there is no cross-encounter synthesis, no pattern recognition, no adaptive question generation.
 
-4. **HoloOS's `G_z / P_z` dual-metric is the single most important ontological import CCRPG is missing.** HoloOS requires **both** `G_z` (Lesser-Cycle health, rewards balance/integration) **and** `P_z` (Greater-Cycle health, rewards polarization/transcendence) for total metabolic health. CCRPG has the **Catalyst → Experience** half (Lesser Cycle) but no formal **Significator → Transformation → Great Way → Choice** half (Greater Cycle). The "Lovers Crucible" threshold event is the closest analog but is implemented as a session counter, not as a Choice-driven ratchet. This means CCRPG cannot model **polarization-healthy** play (e.g., a player deepening into STO without balancing) versus **balance-healthy** play (e.g., a player integrating shadow). The two are conflated in CCI.
+4. **HoloOS's `G_z / P_z` dual-metric is the single most important ontological import Mysterium is missing.** HoloOS requires **both** `G_z` (Lesser-Cycle health, rewards balance/integration) **and** `P_z` (Greater-Cycle health, rewards polarization/transcendence) for total metabolic health. Mysterium has the **Catalyst → Experience** half (Lesser Cycle) but no formal **Significator → Transformation → Great Way → Choice** half (Greater Cycle). The "Lovers Crucible" threshold event is the closest analog but is implemented as a session counter, not as a Choice-driven ratchet. This means Mysterium cannot model **polarization-healthy** play (e.g., a player deepening into STO without balancing) versus **balance-healthy** play (e.g., a player integrating shadow). The two are conflated in CCI.
 
-5. **~30 of CCRPG's primitives have no HoloOS analog — and that is correct.** Encounter Scheduler, AutoMode Strategy, MacroCatalystEngine, PESTLE state, Perceptual Layer System, Veil of Forgetting (as mechanic), Infinite Checkpoint Model, Harvest endgame, Violet-ray expression, Codex, Onboarding binary search, the 8 Registries, Three-layer architecture, Two-mode gameplay, ModuleGamePool, Staircase, Theta-decay, etc. are **game-architecture contributions**, not defects. The refactor plan must protect these. The contrast report should not be read as "CCRPG should become HoloOS"; it should be read as "CCRPG should adopt HoloOS's *foundational primitives and stratification discipline* while keeping its *game-specific extensions*."
+5. **~30 of Mysterium's primitives have no HoloOS analog — and that is correct.** Encounter Scheduler, AutoMode Strategy, MacroCatalystEngine, PESTLE state, Perceptual Layer System, Veil of Forgetting (as mechanic), Infinite Checkpoint Model, Harvest endgame, Violet-ray expression, Codex, Onboarding binary search, the 8 Registries, Three-layer architecture, Two-mode gameplay, ModuleGamePool, Staircase, Theta-decay, etc. are **game-architecture contributions**, not defects. The refactor plan must protect these. The contrast report should not be read as "Mysterium should become HoloOS"; it should be read as "Mysterium should adopt HoloOS's *foundational primitives and stratification discipline* while keeping its *game-specific extensions*."
 
 ### 0.2 Top 5 actions (highest leverage, in order)
 
@@ -53,10 +53,10 @@
 ### 1.1 What was audited
 
 - **HoloOS `_THEORY/`**: All 33 substantive files in `02_Ontology/` (00.md, README, 01.1–01.5, 02.1–02.4, 03.1–03.2, 04.1, 04.2, 04.2.1–3, 05.1–05.5, 06.1–06.3, 08.1–08.8), plus `01_Epistemology/0_Method_of_Holonic_Inquiry.md`, `01_Epistemology/4_Type_Validation_Protocol.md`, `08_System_Architecture/Ontology_Structural_Audit_and_Reorganization_Plan.md`, `08_System_Architecture/CLI_MCP_Ontology_Alignment_Audit.md`, `08_System_Architecture/Holonic_ID_Taxonomy.md`, `08_System_Architecture/Multi_Axis_Holonic_Coordinate_System.md`, and root `HOLOOS.md` / `_MANIFEST.md`.
-- **CCRPG `docs/`**: All 28 foundational docs (00-integral-theory through 27-auto-mode-strategy-engine), `00-vision.md`, `01-first-principles.md`, `02-glossary.md`, `INDEX.md`, `REQUIREMENTS.md`, `03-research-methodology.md`.
-- **CCRPG root meta-docs**: `README.md`, `AGENTS.md`, `MVP-BLUEPRINT.md`, `ROADMAP.md`, `UNIFIED-IMPLEMENTATION-PLAN.md`, `AUDIT-REPORT.md`.
-- **CCRPG prior audits**: All 10 prior audit docs (`AUDIT-REPORT.md`, `docs/RED-TEAM-AUDIT*.md` ×6, `docs/GAMEPLAY-MODES-AUDIT.md`, `docs/STAGE-ASSESSMENT-ARCHITECTURE.md`, `docs/ONBOARDING-REDESIGN-PLAN.md`).
-- **CCRPG source code**: 80+ files across 5 tiers (core engines, domain, persistence, LLM layer, game layer, CLI). See §3.1 for the full module map.
+- **Mysterium `docs/`**: All 28 foundational docs (00-integral-theory through 27-auto-mode-strategy-engine), `00-vision.md`, `01-first-principles.md`, `02-glossary.md`, `INDEX.md`, `REQUIREMENTS.md`, `03-research-methodology.md`.
+- **Mysterium root meta-docs**: `README.md`, `AGENTS.md`, `MVP-BLUEPRINT.md`, `ROADMAP.md`, `UNIFIED-IMPLEMENTATION-PLAN.md`, `AUDIT-REPORT.md`.
+- **Mysterium prior audits**: All 10 prior audit docs (`AUDIT-REPORT.md`, `docs/RED-TEAM-AUDIT*.md` ×6, `docs/GAMEPLAY-MODES-AUDIT.md`, `docs/STAGE-ASSESSMENT-ARCHITECTURE.md`, `docs/ONBOARDING-REDESIGN-PLAN.md`).
+- **Mysterium source code**: 80+ files across 5 tiers (core engines, domain, persistence, LLM layer, game layer, CLI). See §3.1 for the full module map.
 
 ### 1.2 What was NOT audited (out of scope)
 
@@ -68,7 +68,7 @@
 
 ### 1.3 Source-of-truth hierarchy
 
-When the CCRPG docs and HoloOS docs conflict, **HoloOS `_THEORY/02_Ontology` is the source of truth** for ontological primitives (Holon, Significator, Tetra-Axes, Realms, Complexes, G_z/P_z, Type Validation). **CCRPG `docs/foundations/` is the source of truth** for game-specific extensions (Encounter, Modality, Module, Scheduler, AutoMode, Veil-as-mechanic). The contrast in §2 is from this perspective.
+When the Mysterium docs and HoloOS docs conflict, **HoloOS `_THEORY/02_Ontology` is the source of truth** for ontological primitives (Holon, Significator, Tetra-Axes, Realms, Complexes, G_z/P_z, Type Validation). **Mysterium `docs/foundations/` is the source of truth** for game-specific extensions (Encounter, Modality, Module, Scheduler, AutoMode, Veil-as-mechanic). The contrast in §2 is from this perspective.
 
 ### 1.4 Note on the `01_Ontology` vs `02_Ontology` discrepancy
 
@@ -82,9 +82,9 @@ The user's request referenced `HoloOS/_THEORY/01_Ontology`. The actual path in t
 
 HoloOS models reality as a fractal stack of **holons**, each running the same invariant **Metabolic Architecture** (`02.1`, canonical anchor). Every holon has two coupled cycles: a **Lesser Cycle** (Matrix → Potentiator → Catalyst → Experience) that continuously metabolizes catalyst into experience within a stage, and a **Greater Cycle** (Significator → Transformation → Great Way → Choice) that ratchets the holon to the next density/density-stage. Lesser-Cycle health is `G_z` (Agape, rewards balance/integration); Greater-Cycle health is `P_z` (Eros, rewards polarization/transcendence). Both are required (`G_z · P_z = Total Metabolic Health`). The holon's position is given by a 4-axis coordinate `⟨V=⟨O,D,S⟩, C, R, N⟩` (Verticality=Octave/Density/Scale, Collectivity, Realm, Nesting-direction). Holons differentiate into Mind/Body/Spirit **complexes** (`04.2.x`) running the same metabolic architecture on different substrate faces. Realms (`05.x`) are Causal/Subtle/Gross. The whole system evolves through an 8-step **Universal Evolutionary Protocol** (`06.3`) and is grounded by an involution chain of 3-4 prior octaves (`06.1`). Type (valence signature) is **orthogonal to Stage** (Type⊥Stage) and is validated by three tests: behavioral match (T1), excitation-invariance (T2), fixed-point persistence (T3). Every claim is tagged on a status ladder: `ai-draft → canonical-hypothesis → canonical → superseded`.
 
-### 2.2 The CCRPG ontology in one paragraph
+### 2.2 The Mysterium ontology in one paragraph
 
-CCRPG models a player as a **Significator** (the player's holon) that progresses through 8 discrete **Stages** (Infrared → White) on 8 independent **Lines** (Cognitive, Emotional, Moral, Intrapersonal, Spiritual, Somatic, Willpower, Interpersonal). Stage is synthesized from per-line Altitudes via a hysteresis rule (`Stage = max S such that all lines ≥ S and at least one line reaches S+1`). Players are motivated by 4 **Drives** (Agency, Communion, Eros, Agape) and develop a **Polarity** (STO/STS) over time. Encounters (the atomic gameplay unit) are scheduled by a 7-criteria priority formula and delivered through 7 **Modalities** (Deterministic, Strategic, Embodied, ScenarioChoice, LanguageReflective, SocialCooperative, ImmersiveRPG). A composite **CCI** (Cumulative Consciousness Index) measures developmental state across 5 dimensions (altitude, drive-health, polarity, shadow-topology, transformation-readiness) and feeds an **AutoMode Strategy** that picks one of 9 session themes. A **Veil of Forgetting** hides all metrics from the player. **Theta-decay** (7-day half-life per line) erodes unused stages; **Holonic Return** surfaces unresolved shadows from earlier stages; the **Lovers Crucible** is a 3-phase transformation event (Unravelling → Crucible → Emergence). The whole thing is grounded in AQAL integral theory + Law of One Ra material + validated psychophysics.
+Mysterium models a player as a **Significator** (the player's holon) that progresses through 8 discrete **Stages** (Infrared → White) on 8 independent **Lines** (Cognitive, Emotional, Moral, Intrapersonal, Spiritual, Somatic, Willpower, Interpersonal). Stage is synthesized from per-line Altitudes via a hysteresis rule (`Stage = max S such that all lines ≥ S and at least one line reaches S+1`). Players are motivated by 4 **Drives** (Agency, Communion, Eros, Agape) and develop a **Polarity** (STO/STS) over time. Encounters (the atomic gameplay unit) are scheduled by a 7-criteria priority formula and delivered through 7 **Modalities** (Deterministic, Strategic, Embodied, ScenarioChoice, LanguageReflective, SocialCooperative, ImmersiveRPG). A composite **CCI** (Cumulative Consciousness Index) measures developmental state across 5 dimensions (altitude, drive-health, polarity, shadow-topology, transformation-readiness) and feeds an **AutoMode Strategy** that picks one of 9 session themes. A **Veil of Forgetting** hides all metrics from the player. **Theta-decay** (7-day half-life per line) erodes unused stages; **Holonic Return** surfaces unresolved shadows from earlier stages; the **Lovers Crucible** is a 3-phase transformation event (Unravelling → Crucible → Emergence). The whole thing is grounded in AQAL integral theory + Law of One Ra material + validated psychophysics.
 
 ### 2.3 Stratification discipline gap (the meta-finding)
 
@@ -97,7 +97,7 @@ HoloOS labels every ontological claim with a status. As of the 2026-07-03 audit:
 | `ai-draft` | ~12 | 22 Named Archetypes, prior-octave count, Veil identity |
 | `superseded` | 0 explicit (the 2026-07-03 reorganization retired several) | — |
 
-CCRPG has **no status ladder at all**. The `docs/foundations/00-integral-theory.md` through `27-auto-mode-strategy-engine.md` series treats all of the following as equally canonical:
+Mysterium has **no status ladder at all**. The `docs/foundations/00-integral-theory.md` through `27-auto-mode-strategy-engine.md` series treats all of the following as equally canonical:
 
 - **Empirical psychophysics** (Staircase convergence at 70.7%, N-back validity, Stroop effect, NetworkClaim brain-region citations) — these are falsifiable and largely validated.
 - **AQAL integral theory** (8 stages, 8 lines, 4 quadrants, states, types) — this is Wilber's theoretical synthesis; widely cited but not empirically validated as a single system.
@@ -111,42 +111,42 @@ CCRPG has **no status ladder at all**. The `docs/foundations/00-integral-theory.
 
 Without status stratification, every refactor becomes an argument about metaphysics. The fix is mechanical (add `**Status:** canonical-hypothesis` lines to every foundations doc) but high-leverage.
 
-### 2.4 Primitive mapping table (HoloOS → CCRPG)
+### 2.4 Primitive mapping table (HoloOS → Mysterium)
 
-| HoloOS primitive | HoloOS status | CCRPG analog | CCRPG status | Alignment verdict |
+| HoloOS primitive | HoloOS status | Mysterium analog | Mysterium status | Alignment verdict |
 |---|---|---|---|---|
 | **Holon** (whole that is part of a larger whole) | canonical | `Holon` (`docs/02-glossary.md`) | canon (code) | **Aligned.** Same term, same concept. |
-| **Significator** (persistent self-pattern; the greater-cycle accumulator) | canonical-hypothesis | `Significator` (`foundations/16`) | canon (code) | **Aligned in name; weakened in implementation.** CCRPG Significator is the player's holon specifically. HoloOS Significator is *every* holon's greater-cycle accumulator. The CCRPG term is a special case. |
-| **Lesser Cycle** (Matrix → Potentiator → Catalyst → Experience) | canonical | **Catalyst** (`foundations/14`) + **Encounter** (`foundations/21`) | canon-spec | **Partial.** CCRPG has Catalyst→Experience but no Matrix/Potentiator. The "potentiator" (the reservoir that fills from catalyst) is implicit in `drive.fixationRisk` but not named. |
-| **Greater Cycle** (Significator → Transformation → Great Way → Choice) | canonical-hypothesis | **Lovers Crucible** (`foundations/17`) + **Polarity** (`foundations/19`) | canon-spec | **Missing.** CCRPG has the Crucible (transformation) and Polarity (choice-direction) but no **Great Way** — the teleological attractor that pulls the holon forward. Without Great Way, the Greater Cycle has no ratchet. |
-| **Tetra-Axes Coordinate System** (V=⟨O,D,S⟩, C, R, N) | canonical-hypothesis | **AQAL** (quadrant, stage, line, state, type) + Ray + Polarity = 7-tuple | canon (code) | **Divergent.** HoloOS redesigned to 4 axes; CCRPG inherits Wilber's 5-tuple and adds 2 more. The two systems overlap on Verticality/Collectivity/Realm but CCRPG has Line (no HoloOS analog) and HoloOS has Nesting-direction (no CCRPG analog). |
-| **Type⊥Stage** (valence signature is orthogonal to vertical position) | canonical-hypothesis | **PolarityTexture** (`foundations/23`) — 64-cell catalogue per (line×stage) | canon-spec | **Partial.** CCRPG's PolarityTexture is per-(line×stage), not Type-perpendicular-to-Stage. HoloOS's Type⊥Stage means a holon can have the same Type at different Stages; CCRPG doesn't model this. |
-| **G_z** (Lesser-Cycle health, Agape, balance) | canonical-hypothesis | **Drive Health Tensor** (CCI dim 2) + **Shadow Topology** (CCI dim 4) | canon-spec | **Partial.** CCRPG measures drive balance and shadow integration, which rhyme with G_z, but doesn't name or formalize the construct. |
-| **P_z** (Greater-Cycle health, Eros, polarization) | canonical-hypothesis | **Polarity Vector** (CCI dim 3) — crystallization index | canon-spec | **Partial.** CCRPG's crystallization index is the closest analog but is treated as one of 5 CCI dimensions, not as a co-equal health metric. **No P_z = no way to distinguish polarization-healthy from balance-healthy play.** |
-| **Realms** (Causal / Subtle / Gross) | canonical-hypothesis | **States** (Gross, Subtle, Causal, Witness, Non-Dual) | canon (code) | **CCRPG extends.** CCRPG adds Witness + Non-Dual (Wilber's full state taxonomy). Reasonable extension. |
-| **Complexes** (Mind / Body / Spirit) | canonical-hypothesis | **Implicit only.** CCRPG's "quadrant" axis (UL/UR/LL/LR) maps roughly but Mind/Body/Spirit are not first-class. | — | **Missing.** HoloOS's complexes are the substrate-faces on which the metabolic architecture runs. CCRPG has no Mind/Body/Spirit differentiation; all Lines run on the same substrate. |
-| **Involution** (chain of 3-4 prior octaves forming source-field) | canonical-hypothesis | **None.** | — | **Missing.** CCRPG has no concept of prior-octave inheritance. The "Harvest endgame" (post-White content) is the closest analog but is one-shot, not a chain. |
-| **Evolution** (8-step Universal Evolutionary Protocol) | canonical-hypothesis | **8 Stages** (Infrared → White) + **Lovers Crucible** transitions | canon (code) | **Aligned in count, divergent in mechanism.** CCRPG has 8 stages like HoloOS's 8 densities, but HoloOS's 8-step protocol is per-scale (each step contains a complete 9-stage cycle); CCRPG's 8 stages ARE the cycle. Conflation risk. |
-| **Veil of Forgetting** (structural feature at v=1, Space/Time↔Time/Space spectrum) | canonical-hypothesis | **Veil of Forgetting** (`foundations/20`) — game mechanic that hides all metrics | canon (code) | **Aligned in name; divergent in scope.** HoloOS Veil is a cosmological feature (consciousness cannot see its own substrate pre-3rd-density). CCRPG Veil is a UX choice (don't show scores to player). The two rhyme but are not the same construct. **CCRPG's Veil is correctly game-architecture-appropriate**; the divergence is fine. |
-| **Attractor Field** (always-existent backdrop patterns consciousness resonates with) | canonical-hypothesis | **AttractorField** (`foundations/13 §Attractor Fields`) — 8 fields per stage | canon-spec | **Aligned.** CCRPG's 8 attractor fields map to HoloOS's attractor field per-density. |
-| **22 Named Archetypes** (7 Mind + 7 Body + 7 Spirit + Choice) | ai-draft | **None directly.** Holon `narrativeRole` strings (e.g., "main-boss", "rage-warrior", "lone-wolf") are an ad-hoc archetype layer. | — | **Missing.** CCRPG has no formal archetype taxonomy. The `narrativeRole` strings in `red-layer-holons.json` are an emergent archetype layer but undocumented. |
-| **Type Validation Protocol** (T1 behavioral, T2 excitation-invariance, T3 fixed-point persistence) | canonical-hypothesis | **None.** | — | **Missing.** CCRPG has no type-validation protocol. The Staircase converges on a difficulty parameter, not on a Type signature. |
-| **Method of Holonic Inquiry** (3 Acts + 7 Obligations + status ladder) | canonical | **`docs/03-research-methodology.md`** | canon-spec | **Partial.** CCRPG has a research methodology doc but no status ladder and no provenance retention requirement. |
-| **Drives** (Agency, Communion, Eros, Agape as 2 orthogonal boundary axes) | canonical-hypothesis (under-covered per `08.4`) | **Drives** (`foundations/05`) — same 4 drives, with weights + fixationRisk | canon (code) | **Aligned.** CCRPG inherits Bakan + Wilber + Aurobindo. Drive-pair axes (vertical Eros/Agape, horizontal Agency/Communion) match. |
-| **Shadows** (4 shadows: dark/golden × addiction/allergy + 4 macro-shadows) | canonical-hypothesis | **ShadowSignal** + **ShadowQuadrant** (`foundations/10`) — same 4 quadrants | canon (code) | **Aligned.** CCRPG's shadow quadrants (DA/DAll/GA/GAll) match HoloOS's dark/golden × addiction/allergy exactly. The 4 macro-shadows (sinkhole of indifference = Great-Way Choice-starvation) are not implemented. |
-| **Density** (macro octave: 1st–8th density) | canonical-hypothesis | **Ray** (`foundations/06 §8`) — 7 rays within a single 3rd-density octave | canon (code) | **Scale-mismatched.** HoloOS Density is macro (8 densities total); CCRPG Ray is micro (7 rays within 3rd density). The two are not equivalent. CCRPG's Stage is closer to HoloOS Density than CCRPG's Ray is. |
-| **Octave** (8-density span) | canonical-hypothesis | **Octave** (`foundations/02 §3`) — three macro-arcs nested in 8 stages | canon-spec | **Conflated.** HoloOS Octave = 8 densities. CCRPG Octave = 3 macro-arcs within one density. Same word, different scope. |
-| **Scalar Metric** S(Ω,δ,λ) | canonical-hypothesis | **CCI** (5-dim composite, never player-facing) | canon-spec | **Divergent.** HoloOS S is a 3-parameter scalar; CCRPG CCI is a 5-dim composite. CCRPG's is richer but loses the closed-form scalar property. |
-| **Holonic ID Taxonomy** (`08_System_Architecture/Holonic_ID_Taxonomy.md`) | canonical-hypothesis | **HolonKind** (`foundations/22 §2.1`) — 8 kinds: individual/dyadic/group/organisational/cultural/geopolitical/ecological/cosmic | canon-spec | **Partial.** CCRPG has 8 HolonKinds; HoloOS has 19 scale levels. CCRPG's 8 is coarser. |
-| **Logos Hierarchy** (Primary/Sub/Sub-Sub-Logos) | canonical-hypothesis | **None.** | — | **Missing.** CCRPG has no Logos hierarchy. Reasonable omission for a game — this is cosmological scaffolding, not game-architecture-relevant. |
+| **Significator** (persistent self-pattern; the greater-cycle accumulator) | canonical-hypothesis | `Significator` (`foundations/16`) | canon (code) | **Aligned in name; weakened in implementation.** Mysterium Significator is the player's holon specifically. HoloOS Significator is *every* holon's greater-cycle accumulator. The Mysterium term is a special case. |
+| **Lesser Cycle** (Matrix → Potentiator → Catalyst → Experience) | canonical | **Catalyst** (`foundations/14`) + **Encounter** (`foundations/21`) | canon-spec | **Partial.** Mysterium has Catalyst→Experience but no Matrix/Potentiator. The "potentiator" (the reservoir that fills from catalyst) is implicit in `drive.fixationRisk` but not named. |
+| **Greater Cycle** (Significator → Transformation → Great Way → Choice) | canonical-hypothesis | **Lovers Crucible** (`foundations/17`) + **Polarity** (`foundations/19`) | canon-spec | **Missing.** Mysterium has the Crucible (transformation) and Polarity (choice-direction) but no **Great Way** — the teleological attractor that pulls the holon forward. Without Great Way, the Greater Cycle has no ratchet. |
+| **Tetra-Axes Coordinate System** (V=⟨O,D,S⟩, C, R, N) | canonical-hypothesis | **AQAL** (quadrant, stage, line, state, type) + Ray + Polarity = 7-tuple | canon (code) | **Divergent.** HoloOS redesigned to 4 axes; Mysterium inherits Wilber's 5-tuple and adds 2 more. The two systems overlap on Verticality/Collectivity/Realm but Mysterium has Line (no HoloOS analog) and HoloOS has Nesting-direction (no Mysterium analog). |
+| **Type⊥Stage** (valence signature is orthogonal to vertical position) | canonical-hypothesis | **PolarityTexture** (`foundations/23`) — 64-cell catalogue per (line×stage) | canon-spec | **Partial.** Mysterium's PolarityTexture is per-(line×stage), not Type-perpendicular-to-Stage. HoloOS's Type⊥Stage means a holon can have the same Type at different Stages; Mysterium doesn't model this. |
+| **G_z** (Lesser-Cycle health, Agape, balance) | canonical-hypothesis | **Drive Health Tensor** (CCI dim 2) + **Shadow Topology** (CCI dim 4) | canon-spec | **Partial.** Mysterium measures drive balance and shadow integration, which rhyme with G_z, but doesn't name or formalize the construct. |
+| **P_z** (Greater-Cycle health, Eros, polarization) | canonical-hypothesis | **Polarity Vector** (CCI dim 3) — crystallization index | canon-spec | **Partial.** Mysterium's crystallization index is the closest analog but is treated as one of 5 CCI dimensions, not as a co-equal health metric. **No P_z = no way to distinguish polarization-healthy from balance-healthy play.** |
+| **Realms** (Causal / Subtle / Gross) | canonical-hypothesis | **States** (Gross, Subtle, Causal, Witness, Non-Dual) | canon (code) | **Mysterium extends.** Mysterium adds Witness + Non-Dual (Wilber's full state taxonomy). Reasonable extension. |
+| **Complexes** (Mind / Body / Spirit) | canonical-hypothesis | **Implicit only.** Mysterium's "quadrant" axis (UL/UR/LL/LR) maps roughly but Mind/Body/Spirit are not first-class. | — | **Missing.** HoloOS's complexes are the substrate-faces on which the metabolic architecture runs. Mysterium has no Mind/Body/Spirit differentiation; all Lines run on the same substrate. |
+| **Involution** (chain of 3-4 prior octaves forming source-field) | canonical-hypothesis | **None.** | — | **Missing.** Mysterium has no concept of prior-octave inheritance. The "Harvest endgame" (post-White content) is the closest analog but is one-shot, not a chain. |
+| **Evolution** (8-step Universal Evolutionary Protocol) | canonical-hypothesis | **8 Stages** (Infrared → White) + **Lovers Crucible** transitions | canon (code) | **Aligned in count, divergent in mechanism.** Mysterium has 8 stages like HoloOS's 8 densities, but HoloOS's 8-step protocol is per-scale (each step contains a complete 9-stage cycle); Mysterium's 8 stages ARE the cycle. Conflation risk. |
+| **Veil of Forgetting** (structural feature at v=1, Space/Time↔Time/Space spectrum) | canonical-hypothesis | **Veil of Forgetting** (`foundations/20`) — game mechanic that hides all metrics | canon (code) | **Aligned in name; divergent in scope.** HoloOS Veil is a cosmological feature (consciousness cannot see its own substrate pre-3rd-density). Mysterium Veil is a UX choice (don't show scores to player). The two rhyme but are not the same construct. **Mysterium's Veil is correctly game-architecture-appropriate**; the divergence is fine. |
+| **Attractor Field** (always-existent backdrop patterns consciousness resonates with) | canonical-hypothesis | **AttractorField** (`foundations/13 §Attractor Fields`) — 8 fields per stage | canon-spec | **Aligned.** Mysterium's 8 attractor fields map to HoloOS's attractor field per-density. |
+| **22 Named Archetypes** (7 Mind + 7 Body + 7 Spirit + Choice) | ai-draft | **None directly.** Holon `narrativeRole` strings (e.g., "main-boss", "rage-warrior", "lone-wolf") are an ad-hoc archetype layer. | — | **Missing.** Mysterium has no formal archetype taxonomy. The `narrativeRole` strings in `red-layer-holons.json` are an emergent archetype layer but undocumented. |
+| **Type Validation Protocol** (T1 behavioral, T2 excitation-invariance, T3 fixed-point persistence) | canonical-hypothesis | **None.** | — | **Missing.** Mysterium has no type-validation protocol. The Staircase converges on a difficulty parameter, not on a Type signature. |
+| **Method of Holonic Inquiry** (3 Acts + 7 Obligations + status ladder) | canonical | **`docs/03-research-methodology.md`** | canon-spec | **Partial.** Mysterium has a research methodology doc but no status ladder and no provenance retention requirement. |
+| **Drives** (Agency, Communion, Eros, Agape as 2 orthogonal boundary axes) | canonical-hypothesis (under-covered per `08.4`) | **Drives** (`foundations/05`) — same 4 drives, with weights + fixationRisk | canon (code) | **Aligned.** Mysterium inherits Bakan + Wilber + Aurobindo. Drive-pair axes (vertical Eros/Agape, horizontal Agency/Communion) match. |
+| **Shadows** (4 shadows: dark/golden × addiction/allergy + 4 macro-shadows) | canonical-hypothesis | **ShadowSignal** + **ShadowQuadrant** (`foundations/10`) — same 4 quadrants | canon (code) | **Aligned.** Mysterium's shadow quadrants (DA/DAll/GA/GAll) match HoloOS's dark/golden × addiction/allergy exactly. The 4 macro-shadows (sinkhole of indifference = Great-Way Choice-starvation) are not implemented. |
+| **Density** (macro octave: 1st–8th density) | canonical-hypothesis | **Ray** (`foundations/06 §8`) — 7 rays within a single 3rd-density octave | canon (code) | **Scale-mismatched.** HoloOS Density is macro (8 densities total); Mysterium Ray is micro (7 rays within 3rd density). The two are not equivalent. Mysterium's Stage is closer to HoloOS Density than Mysterium's Ray is. |
+| **Octave** (8-density span) | canonical-hypothesis | **Octave** (`foundations/02 §3`) — three macro-arcs nested in 8 stages | canon-spec | **Conflated.** HoloOS Octave = 8 densities. Mysterium Octave = 3 macro-arcs within one density. Same word, different scope. |
+| **Scalar Metric** S(Ω,δ,λ) | canonical-hypothesis | **CCI** (5-dim composite, never player-facing) | canon-spec | **Divergent.** HoloOS S is a 3-parameter scalar; Mysterium CCI is a 5-dim composite. Mysterium's is richer but loses the closed-form scalar property. |
+| **Holonic ID Taxonomy** (`08_System_Architecture/Holonic_ID_Taxonomy.md`) | canonical-hypothesis | **HolonKind** (`foundations/22 §2.1`) — 8 kinds: individual/dyadic/group/organisational/cultural/geopolitical/ecological/cosmic | canon-spec | **Partial.** Mysterium has 8 HolonKinds; HoloOS has 19 scale levels. Mysterium's 8 is coarser. |
+| **Logos Hierarchy** (Primary/Sub/Sub-Sub-Logos) | canonical-hypothesis | **None.** | — | **Missing.** Mysterium has no Logos hierarchy. Reasonable omission for a game — this is cosmological scaffolding, not game-architecture-relevant. |
 
 ### 2.5 Per-gap rationale + rewrite spec
 
-This section gives a paragraph per gap explaining whether the divergence is game-architecture-appropriate or a defect, plus paste-ready replacement text for the flawed CCRPG docs.
+This section gives a paragraph per gap explaining whether the divergence is game-architecture-appropriate or a defect, plus paste-ready replacement text for the flawed Mysterium docs.
 
 #### 2.5.1 Holon / Significator
 
-**Rationale.** CCRPG's collapse of "Holon" and "Significator" into a single player-only concept loses HoloOS's key insight: **every entity in the world is a holon with its own greater-cycle accumulator**. NPCs, factions, locations, even the world itself should have Significators (developmental state) — not just the player. The current code (`Holon.ts`) has `stateHistory` and `narrativeRole` but no `transformations` field; NPCs cannot transform. This blocks the "Harvest endgame" mechanic where retired player characters become mentor-NPCs in other players' worlds (`MVP-BLUEPRINT §16`).
+**Rationale.** Mysterium's collapse of "Holon" and "Significator" into a single player-only concept loses HoloOS's key insight: **every entity in the world is a holon with its own greater-cycle accumulator**. NPCs, factions, locations, even the world itself should have Significators (developmental state) — not just the player. The current code (`Holon.ts`) has `stateHistory` and `narrativeRole` but no `transformations` field; NPCs cannot transform. This blocks the "Harvest endgame" mechanic where retired player characters become mentor-NPCs in other players' worlds (`MVP-BLUEPRINT §16`).
 
 **Verdict.** Defect (game-architecture-relevant). NPC transformation is a Harvest prerequisite.
 
@@ -174,12 +174,12 @@ that nevertheless carry a developmental state into other players' worlds.
 
 **HoloOS anchor**: `02_Ontology/02.1_Microcosmic_Metabolic_Architecture.md`
 (canonical). HoloOS specifies that every holon runs ONE invariant architecture;
-CCRPG extends this to "every holon has ONE Significator."
+Mysterium extends this to "every holon has ONE Significator."
 ```
 
 #### 2.5.2 Lesser Cycle (M·P·C·E)
 
-**Rationale.** CCRPG implements Catalyst → Experience (the right half of the Lesser Cycle) but omits Matrix → Potentiator (the left half — the reservoir and the input boundary). In HoloOS, the Matrix is the reservoir of unprocessed catalyst and the Potentiator is the membrane that selects which catalyst to ingest. Without these, CCRPG's "encounter" is a context-free event: it doesn't draw from a reservoir, and it doesn't filter input.
+**Rationale.** Mysterium implements Catalyst → Experience (the right half of the Lesser Cycle) but omits Matrix → Potentiator (the left half — the reservoir and the input boundary). In HoloOS, the Matrix is the reservoir of unprocessed catalyst and the Potentiator is the membrane that selects which catalyst to ingest. Without these, Mysterium's "encounter" is a context-free event: it doesn't draw from a reservoir, and it doesn't filter input.
 
 **Verdict.** Partial defect. The Matrix concept is partially implemented as `EncounterScheduler.recentEncounters` (a queue of past encounters) but is not named or formalized. The Potentiator concept is missing entirely — there's no "input filter" that decides which catalyst reaches the player.
 
@@ -188,7 +188,7 @@ CCRPG extends this to "every holon has ONE Significator."
 ```markdown
 ### 2.1 Lesser Cycle mapping (revised 2026-07-03)
 
-CCRPG's encounter pipeline implements the right half of the HoloOS Lesser
+Mysterium's encounter pipeline implements the right half of the HoloOS Lesser
 Cycle (Catalyst → Experience). The left half (Matrix → Potentiator) is
 implemented but unnamed. This section names them.
 
@@ -213,13 +213,13 @@ The four-stage cycle is therefore:
 is to the Potentiator" maps to: "What the Encounter is to the Scheduler
 reservoir, applyConsequences is to the CandidateGeneration filter."
 
-**Status**: canonical-hypothesis (the mapping is CCRPG-specific; the underlying
+**Status**: canonical-hypothesis (the mapping is Mysterium-specific; the underlying
 HoloOS primitive is canonical).
 ```
 
 #### 2.5.3 Greater Cycle (S·T·G·Ch)
 
-**Rationale.** This is the **most critical missing primitive**. CCRPG has the Lovers Crucible (transformation event) and Polarity (choice-direction), but no Great Way — the teleological attractor that pulls the holon forward. Without Great Way, the Greater Cycle has no ratchet: transformations happen when a counter says so, not when the player's polarity trajectory says so. This is why HS-06 (transformation state machine deadlocks) is so damaging — there's no Choice-driven mechanism to push the state machine forward.
+**Rationale.** This is the **most critical missing primitive**. Mysterium has the Lovers Crucible (transformation event) and Polarity (choice-direction), but no Great Way — the teleological attractor that pulls the holon forward. Without Great Way, the Greater Cycle has no ratchet: transformations happen when a counter says so, not when the player's polarity trajectory says so. This is why HS-06 (transformation state machine deadlocks) is so damaging — there's no Choice-driven mechanism to push the state machine forward.
 
 **Verdict.** Defect (high-priority). Blocks correct transformation mechanics.
 
@@ -228,7 +228,7 @@ HoloOS primitive is canonical).
 ```markdown
 ### 1.1 Greater Cycle mapping (revised 2026-07-03)
 
-CCRPG's transformation system implements the middle two stages of the HoloOS
+Mysterium's transformation system implements the middle two stages of the HoloOS
 Greater Cycle (Significator → **Transformation** → **Great Way** → Choice).
 The first stage (Significator as accumulator) and the last stage (Choice as
 ratchet) are partially implemented.
@@ -239,7 +239,7 @@ ratchet) are partially implemented.
 - **Transformation** (ratchet event) = the Lovers Crucible (§2 of this doc).
   Discontinuous ascent; ego-dissolution + frame-change.
 - **Great Way** (teleological attractor) = **MISSING**. The Great Way is the
-  polarity-destination that pulls the holon forward. CCRPG has Polarity
+  polarity-destination that pulls the holon forward. Mysterium has Polarity
   (current state) but no Polarity-Destination (where the holon is being pulled).
   Without Great Way, the Crucible fires on session counters, not on
   polarity-readiness.
@@ -254,24 +254,24 @@ shadow-clearance is satisfied. The current implementation fires when
 `session.transformationState.phase === 'crucible'` AND a session counter
 expires — this is a Lesser-Cycle mechanism misapplied to a Greater-Cycle event.
 
-**Status**: canonical-hypothesis (the mapping is CCRPG-specific; the underlying
+**Status**: canonical-hypothesis (the mapping is Mysterium-specific; the underlying
 HoloOS Greater Cycle is canonical-hypothesis per `02_Ontology/02.1`).
 ```
 
 #### 2.5.4 Tetra-Axes Coordinate System
 
-**Rationale.** HoloOS redesigned its coordinate system to 4 axes after a 2026-07-03 self-audit (`08.8_Redesigned_Coordinate_System.md`): `⟨V=⟨O,D,S⟩, C, R, N⟩` (Verticality=Octave/Density/Scale, Collectivity, Realm, Nesting-direction). CCRPG uses AQAL's 5-tuple (quadrant, stage, line, state, type) plus Ray and Polarity = a 7-tuple. The two overlap on Verticality (Stage ≈ V) and Realm (State ≈ R) but diverge elsewhere.
+**Rationale.** HoloOS redesigned its coordinate system to 4 axes after a 2026-07-03 self-audit (`08.8_Redesigned_Coordinate_System.md`): `⟨V=⟨O,D,S⟩, C, R, N⟩` (Verticality=Octave/Density/Scale, Collectivity, Realm, Nesting-direction). Mysterium uses AQAL's 5-tuple (quadrant, stage, line, state, type) plus Ray and Polarity = a 7-tuple. The two overlap on Verticality (Stage ≈ V) and Realm (State ≈ R) but diverge elsewhere.
 
-**Verdict.** Partial defect. CCRPG's Line axis (a Wilber-specific construct) has no HoloOS analog and arguably shouldn't — HoloOS's Type⊥Stage replaces the need for separate Lines. But CCRPG has 64 modules built around the 8×8 Line×Stage grid; removing Lines would require re-architecting the entire content layer. The pragmatic call: keep Lines as a CCRPG-specific extension, but explicitly tag them as such.
+**Verdict.** Partial defect. Mysterium's Line axis (a Wilber-specific construct) has no HoloOS analog and arguably shouldn't — HoloOS's Type⊥Stage replaces the need for separate Lines. But Mysterium has 64 modules built around the 8×8 Line×Stage grid; removing Lines would require re-architecting the entire content layer. The pragmatic call: keep Lines as a Mysterium-specific extension, but explicitly tag them as such.
 
 **Rewrite spec for `docs/foundations/01-aqal-quadrants.md` (paste-ready preface):**
 
 ```markdown
-> **Status**: canonical-hypothesis (CCRPG-specific extension of HoloOS
+> **Status**: canonical-hypothesis (Mysterium-specific extension of HoloOS
 > coordinate system).
 >
 > HoloOS uses a 4-axis coordinate `⟨V=⟨O,D,S⟩, C, R, N⟩` (Verticality,
-> Collectivity, Realm, Nesting-direction). CCRPG uses a 7-tuple
+> Collectivity, Realm, Nesting-direction). Mysterium uses a 7-tuple
 > `(quadrant, stage, line, state, type, ray, polarity)` inherited from
 > Wilber's AQAL plus Law-of-One Ray and Polarity extensions.
 >
@@ -280,9 +280,9 @@ HoloOS Greater Cycle is canonical-hypothesis per `02_Ontology/02.1`).
 > - State ≈ Realm (R — Causal/Subtle/Gross + Witness/Non-Dual extension)
 > - Quadrant ≈ Collectivity × Realm-interior-exterior (C × R.interior)
 >
-> CCRPG's Line axis has no HoloOS analog. It is retained as a CCRPG-specific
+> Mysterium's Line axis has no HoloOS analog. It is retained as a Mysterium-specific
 > extension because the 64-module content grid depends on it. HoloOS's
-> Nesting-direction (N) axis has no CCRPG analog and is omitted because CCRPG
+> Nesting-direction (N) axis has no Mysterium analog and is omitted because Mysterium
 > does not model cross-octave involution.
 >
 > See `docs/foundations/26-unified-core-architecture.md` for the full
@@ -292,7 +292,7 @@ HoloOS Greater Cycle is canonical-hypothesis per `02_Ontology/02.1`).
 
 #### 2.5.5 Type⊥Stage orthogonality
 
-**Rationale.** HoloOS's Type⊥Stage is a **robustness claim**: a holon's Type (valence signature) is orthogonal to its Stage (vertical position), so the same Type can appear at different Stages. This is what makes the typology scalable — it doesn't break at complex scales. CCRPG's `PolarityTexture` is per-(Line×Stage) — a 64-cell catalogue where each cell has a fixed texture name. This is Type-BOUND-to-Stage, not Type-PERP-to-Stage. The difference matters: a player at Cognitive×Red has texture "Tactical Service" or "Cognitive Dominion" — but if they advance to Cognitive×Amber, they get a different texture. In HoloOS, the same Type would persist across Stages (with different surface expressions).
+**Rationale.** HoloOS's Type⊥Stage is a **robustness claim**: a holon's Type (valence signature) is orthogonal to its Stage (vertical position), so the same Type can appear at different Stages. This is what makes the typology scalable — it doesn't break at complex scales. Mysterium's `PolarityTexture` is per-(Line×Stage) — a 64-cell catalogue where each cell has a fixed texture name. This is Type-BOUND-to-Stage, not Type-PERP-to-Stage. The difference matters: a player at Cognitive×Red has texture "Tactical Service" or "Cognitive Dominion" — but if they advance to Cognitive×Amber, they get a different texture. In HoloOS, the same Type would persist across Stages (with different surface expressions).
 
 **Verdict.** Defect (medium-priority). The 64-cell texture catalogue is useful as a content index but should not be confused with a Type system.
 
@@ -301,7 +301,7 @@ HoloOS Greater Cycle is canonical-hypothesis per `02_Ontology/02.1`).
 ```markdown
 ### 3.1 Type vs PolarityTexture (revised 2026-07-03)
 
-CCRPG's `PolarityTexture` (per-Line×Stage texture names like "Tactical Service",
+Mysterium's `PolarityTexture` (per-Line×Stage texture names like "Tactical Service",
 "Cognitive Dominion") is **not** a Type system in the HoloOS sense. It is a
 content-index — a 64-cell catalogue of texture names used to label encounter
 content.
@@ -317,7 +317,7 @@ expressions varying by Stage but the underlying Type remaining fixed.
   per-Stage texture system loses this continuity.
 - **Type-validation testing (T1/T2/T3)**: HoloOS's T2 test
   (excitation-invariance) requires that Type stays fixed as Stage changes;
-  CCRPG cannot run this test because Type is Stage-bound.
+  Mysterium cannot run this test because Type is Stage-bound.
 
 **Status**: ai-draft. The PolarityTexture catalogue is retained as a content
 index. A separate Type system (orthogonal to Stage) is a Phase-2 deliverable.
@@ -325,7 +325,7 @@ index. A separate Type system (orthogonal to Stage) is a Phase-2 deliverable.
 
 #### 2.5.6 G_z / P_z dual health metric
 
-**Rationale.** This is the **second most critical missing primitive** (after Great Way). HoloOS requires both `G_z` (Lesser-Cycle health, Agape, rewards balance/integration) AND `P_z` (Greater-Cycle health, Eros, rewards polarization/transcendence) for total metabolic health. CCRPG's CCI has 5 dimensions but treats them as a flat composite — there's no recognition that drive-balance (G_z-like) and polarity-crystallization (P_z-like) are **co-equal health metrics that can conflict**. A player deepening into STO without balancing (high P_z, low G_z) and a player integrating shadow without polarizing (high G_z, low P_z) should be scored differently; currently they're conflated.
+**Rationale.** This is the **second most critical missing primitive** (after Great Way). HoloOS requires both `G_z` (Lesser-Cycle health, Agape, rewards balance/integration) AND `P_z` (Greater-Cycle health, Eros, rewards polarization/transcendence) for total metabolic health. Mysterium's CCI has 5 dimensions but treats them as a flat composite — there's no recognition that drive-balance (G_z-like) and polarity-crystallization (P_z-like) are **co-equal health metrics that can conflict**. A player deepening into STO without balancing (high P_z, low G_z) and a player integrating shadow without polarizing (high G_z, low P_z) should be scored differently; currently they're conflated.
 
 **Verdict.** Defect (high-priority). Blocks correct CCI semantics.
 
@@ -357,18 +357,18 @@ The 5 existing CCI dimensions map as follows:
 - Transformation Readiness → P_z (primary)
 
 **Status**: canonical-hypothesis. The G_z/P_z framework is HoloOS
-canonical-hypothesis; the CCRPG mapping is CCRPG-specific.
+canonical-hypothesis; the Mysterium mapping is Mysterium-specific.
 ```
 
 #### 2.5.7 Realms (Causal / Subtle / Gross)
 
-**Rationale.** CCRPG's State enum (Gross, Subtle, Causal, Witness, Non-Dual) is a **superset** of HoloOS's Realm (Causal, Subtle, Gross). The Wilber extensions (Witness, Non-Dual) are reasonable for a game that includes meditative mini-games. No defect.
+**Rationale.** Mysterium's State enum (Gross, Subtle, Causal, Witness, Non-Dual) is a **superset** of HoloOS's Realm (Causal, Subtle, Gross). The Wilber extensions (Witness, Non-Dual) are reasonable for a game that includes meditative mini-games. No defect.
 
-**Verdict.** Aligned (CCRPG extends).
+**Verdict.** Aligned (Mysterium extends).
 
 #### 2.5.8 Complexes (Mind / Body / Spirit)
 
-**Rationale.** HoloOS's Mind/Body/Spirit complexes are the substrate-faces on which the metabolic architecture runs. CCRPG has no Mind/Body/Spirit differentiation — all Lines run on the same substrate. This is a real loss: it means CCRPG cannot model, e.g., a player whose Cognitive Line (Mind-complex) is at Amber but whose Somatic Line (Body-complex) is at Red. The Lines track *content* (cognitive vs somatic) but not *substrate* (mental vs physical vs spiritual).
+**Rationale.** HoloOS's Mind/Body/Spirit complexes are the substrate-faces on which the metabolic architecture runs. Mysterium has no Mind/Body/Spirit differentiation — all Lines run on the same substrate. This is a real loss: it means Mysterium cannot model, e.g., a player whose Cognitive Line (Mind-complex) is at Amber but whose Somatic Line (Body-complex) is at Red. The Lines track *content* (cognitive vs somatic) but not *substrate* (mental vs physical vs spiritual).
 
 **Verdict.** Defect (medium-priority). The fix is to tag each Line with a Complex affinity:
 - Cognitive, Moral, Intrapersonal → Mind
@@ -411,46 +411,46 @@ belonging to that Complex. Complex altitude is used for:
 
 #### 2.5.9 Involution / Evolution
 
-**Rationale.** HoloOS's Involution (chain of 3-4 prior octaves forming source-field) has no CCRPG analog. This is a reasonable omission for a single-octave game — CCRPG is set entirely within 3rd density. The "Harvest endgame" (post-White content = harvest into 4th density) is the closest analog but is one-shot, not a chain.
+**Rationale.** HoloOS's Involution (chain of 3-4 prior octaves forming source-field) has no Mysterium analog. This is a reasonable omission for a single-octave game — Mysterium is set entirely within 3rd density. The "Harvest endgame" (post-White content = harvest into 4th density) is the closest analog but is one-shot, not a chain.
 
 **Verdict.** Acceptable omission (game-architecture-appropriate). Flag as a known scope-limitation in docs.
 
 **Rewrite spec for `docs/foundations/06-law-of-one-correspondence.md` (paste-ready footnote):**
 
 ```markdown
-> **Scope limitation**: CCRPG models a single octave (3rd density, stages
+> **Scope limitation**: Mysterium models a single octave (3rd density, stages
 > Infrared → White). HoloOS's Involution (chain of 3-4 prior octaves forming
 > the source-field) is out of scope. The Harvest endgame (§7.4) is the
 > octave-boundary transition into 4th density; it is a one-shot event, not an
 > involution chain. This is a game-architecture-appropriate divergence from
 > HoloOS — Involution is cosmological scaffolding, not game-mechanic-relevant.
 >
-> **Status**: canonical-hypothesis (the scope-decision is canonical for CCRPG;
+> **Status**: canonical-hypothesis (the scope-decision is canonical for Mysterium;
 > the underlying HoloOS Involution is canonical-hypothesis per
 > `02_Ontology/06.1_Involution_Sequence.md`).
 ```
 
 #### 2.5.10 Veil of Forgetting
 
-**Rationale.** CCRPG's Veil (UX choice: don't show scores to player) and HoloOS's Veil (cosmological feature: consciousness cannot see its own substrate pre-3rd-density) rhyme but are not the same construct. CCRPG's Veil is correctly game-architecture-appropriate — the divergence is fine. The defect is in **enforcement**: HS-05 shows the VeilFilter regex filter is never wired at the LLM I/O boundary.
+**Rationale.** Mysterium's Veil (UX choice: don't show scores to player) and HoloOS's Veil (cosmological feature: consciousness cannot see its own substrate pre-3rd-density) rhyme but are not the same construct. Mysterium's Veil is correctly game-architecture-appropriate — the divergence is fine. The defect is in **enforcement**: HS-05 shows the VeilFilter regex filter is never wired at the LLM I/O boundary.
 
 **Verdict.** Aligned in concept; defective in enforcement (see HS-05, §3.2).
 
 #### 2.5.11 Attractor Field
 
-**Rationale.** CCRPG's 8 AttractorFields (Survival/Red, Growth/Orange, Cognition/Yellow, Order/Green, Systems/Blue, Integration/Indigo, Convergence/Violet, Source) map to HoloOS's attractor field per-density. Aligned.
+**Rationale.** Mysterium's 8 AttractorFields (Survival/Red, Growth/Orange, Cognition/Yellow, Order/Green, Systems/Blue, Integration/Indigo, Convergence/Violet, Source) map to HoloOS's attractor field per-density. Aligned.
 
 **Verdict.** Aligned.
 
 #### 2.5.12 22 Named Archetypes
 
-**Rationale.** HoloOS's 22 Named Archetypes (7 Mind + 7 Body + 7 Spirit + Choice) are an `ai-draft` navigational index. CCRPG has no formal archetype taxonomy; the `narrativeRole` strings in `red-layer-holons.json` (e.g., "main-boss", "rage-warrior", "lone-wolf", "gladiator-champion", "deceiver", "vendetta-hunter") are an emergent ad-hoc archetype layer. This is a content gap, not an architecture gap — the architecture supports archetypes via the Holon interface, but the content isn't formalized.
+**Rationale.** HoloOS's 22 Named Archetypes (7 Mind + 7 Body + 7 Spirit + Choice) are an `ai-draft` navigational index. Mysterium has no formal archetype taxonomy; the `narrativeRole` strings in `red-layer-holons.json` (e.g., "main-boss", "rage-warrior", "lone-wolf", "gladiator-champion", "deceiver", "vendetta-hunter") are an emergent ad-hoc archetype layer. This is a content gap, not an architecture gap — the architecture supports archetypes via the Holon interface, but the content isn't formalized.
 
 **Verdict.** Acceptable gap (content, not architecture). Flag for content-team attention.
 
 #### 2.5.13 Type Validation Protocol (T1 / T2 / T3)
 
-**Rationale.** HoloOS's Type Validation Protocol is **methodological** — it's how you test whether a Type claim is real. CCRPG has no equivalent. The Staircase converges on a difficulty parameter (a scalar), not on a Type signature. Without T1/T2/T3, CCRPG cannot validate that its PolarityTexture assignments are real (i.e., that a player assigned "Cognitive Dominion" at Red actually behaves cognitively-dominantly across stages).
+**Rationale.** HoloOS's Type Validation Protocol is **methodological** — it's how you test whether a Type claim is real. Mysterium has no equivalent. The Staircase converges on a difficulty parameter (a scalar), not on a Type signature. Without T1/T2/T3, Mysterium cannot validate that its PolarityTexture assignments are real (i.e., that a player assigned "Cognitive Dominion" at Red actually behaves cognitively-dominantly across stages).
 
 **Verdict.** Defect (medium-priority). Blocks empirical validation of typology claims.
 
@@ -459,30 +459,30 @@ belonging to that Complex. Complex altitude is used for:
 ```markdown
 ## 4. Type Validation Protocol (revised 2026-07-03)
 
-CCRPG adopts HoloOS's three-test Type Validation Protocol
+Mysterium adopts HoloOS's three-test Type Validation Protocol
 (`_THEORY/01_Epistemology/4_Type_Validation_Protocol.md`):
 
 - **T1 Behavioral match**: observed bonding patterns match the Type signature's
-  predictions. For CCRPG: a player assigned PolarityTexture X should show
+  predictions. For Mysterium: a player assigned PolarityTexture X should show
   drive-choice patterns consistent with X across ≥3 encounters.
 - **T2 Excitation-invariance**: the Type signature stays fixed as Stage changes.
-  For CCRPG: a player's underlying Type (once we have one — see foundations/23
+  For Mysterium: a player's underlying Type (once we have one — see foundations/23
   §3.1) should persist across Stage transitions, with only surface expressions
   varying.
 - **T3 Fixed-point persistence**: the Type signature persists across metabolic
-  cycles without immediately firing Transformation. For CCRPG: a player's Type
+  cycles without immediately firing Transformation. For Mysterium: a player's Type
   should be stable across ≥10 encounters before a Transformation event.
 
 A Type claim that fails any test is demoted from `canonical-hypothesis` to
 `ai-draft`. A Type claim that passes all three is promoted to `canonical`.
 
 **Status**: canonical-hypothesis. The protocol itself is HoloOS canonical; the
-CCRPG operationalization is canonical-hypothesis.
+Mysterium operationalization is canonical-hypothesis.
 ```
 
 #### 2.5.14 Method of Holonic Inquiry
 
-**Rationale.** HoloOS's Method of Holonic Inquiry (3 Acts: Grounding → Construction → Validation; 7 Obligations; status ladder) is the **epistemic discipline** that keeps the ontology honest. CCRPG's `docs/03-research-methodology.md` is a research methodology doc but has no status ladder and no provenance retention requirement. The fix is to adopt HoloOS's ladder and obligations verbatim.
+**Rationale.** HoloOS's Method of Holonic Inquiry (3 Acts: Grounding → Construction → Validation; 7 Obligations; status ladder) is the **epistemic discipline** that keeps the ontology honest. Mysterium's `docs/03-research-methodology.md` is a research methodology doc but has no status ladder and no provenance retention requirement. The fix is to adopt HoloOS's ladder and obligations verbatim.
 
 **Verdict.** Defect (high-leverage, low-effort). This is the meta-fix that unblocks everything else.
 
@@ -491,15 +491,15 @@ CCRPG operationalization is canonical-hypothesis.
 ```markdown
 ## 0. Epistemic discipline (revised 2026-07-03)
 
-CCRPG adopts the HoloOS Method of Holonic Inquiry
+Mysterium adopts the HoloOS Method of Holonic Inquiry
 (`_THEORY/01_Epistemology/0_Method_of_Holonic_Inquiry.md`) with the following
 three Acts and seven Obligations.
 
 ### Three Acts
 
 1. **Grounding**: reduce every claim to a trusted anchor. The trusted anchor
-   for CCRPG ontology is HoloOS `02.1_Microcosmic_Metabolic_Architecture.md`
-   (canonical). The trusted anchor for CCRPG game-mechanics is the running
+   for Mysterium ontology is HoloOS `02.1_Microcosmic_Metabolic_Architecture.md`
+   (canonical). The trusted anchor for Mysterium game-mechanics is the running
    code in `src/core/`.
 2. **Construction**: build new claims via fractal recursion (every element is
    itself a holon) and structural mirroring (separate invariant from
@@ -529,22 +529,22 @@ Every claim in `docs/foundations/` is tagged with one of:
 
 A claim without a status tag is treated as `ai-draft`.
 
-**Status**: canonical (the discipline itself is HoloOS canonical; CCRPG
-adoption is canonical for CCRPG).
+**Status**: canonical (the discipline itself is HoloOS canonical; Mysterium
+adoption is canonical for Mysterium).
 ```
 
-### 2.6 CCRPG-only primitives that should be RETAINED
+### 2.6 Mysterium-only primitives that should be RETAINED
 
-The following CCRPG primitives have no HoloOS analog and should be **retained as game-architecture contributions**, not deleted in the alignment refactor:
+The following Mysterium primitives have no HoloOS analog and should be **retained as game-architecture contributions**, not deleted in the alignment refactor:
 
 | Primitive | Why retain |
 |---|---|
 | **Encounter Scheduler** | The 7-criteria priority formula is a novel game-AI contribution. HoloOS has no scheduler. |
 | **AutoMode Strategy Engine** | Session-level strategy consuming CCI is a game-specific layer. |
-| **MacroCatalystEngine** | PESTLE-mapped macro-events are a CCRPG invention. |
-| **PESTLE state** | 6 collective dimensions are a CCRPG invention. |
-| **Perceptual Layer System** | 8 perceptual layers on one geography is a CCRPG invention. |
-| **Veil of Forgetting (as mechanic)** | UX-enforcement of "no scores visible" is CCRPG-specific. |
+| **MacroCatalystEngine** | PESTLE-mapped macro-events are a Mysterium invention. |
+| **PESTLE state** | 6 collective dimensions are a Mysterium invention. |
+| **Perceptual Layer System** | 8 perceptual layers on one geography is a Mysterium invention. |
+| **Veil of Forgetting (as mechanic)** | UX-enforcement of "no scores visible" is Mysterium-specific. |
 | **Infinite Checkpoint Model** | Game-flow choice. |
 | **Harvest endgame** | Post-White content. |
 | **Violet-ray expression** | Harvest criterion. |
@@ -559,7 +559,7 @@ The following CCRPG primitives have no HoloOS analog and should be **retained as
 | **Bleed-through** | Stale-cell priority boost. |
 | **Holonic return** | Every-3-encounters shadow surfacing. |
 | **CompoundShadow / Knot** | Cross-line shadow patterns. |
-| **ShadowSignal / ShadowQuadrant** | 4-quadrant shadow taxonomy (matches HoloOS but CCRPG-specific operationalization). |
+| **ShadowSignal / ShadowQuadrant** | 4-quadrant shadow taxonomy (matches HoloOS but Mysterium-specific operationalization). |
 | **Heal/Evolve + Evolve/Heal vectors** | Bottom-up vs top-down shadow resolution. |
 | **Atman Project defenses** | 4 ego-defenses against transcendence. |
 | **Disintegrative loop / Stagnation path** | 8-step pathology cycles. |
@@ -575,7 +575,7 @@ The following CCRPG primitives have no HoloOS analog and should be **retained as
 | **8 task-type renderers** | NBack, ReactionTime, Dilemma, Scenario, Hold, Pattern, Emotion, LLMDialogue. |
 | **SessionAgent** (prescribed, not implemented) | Persistent cross-encounter agent. |
 
-### 2.7 CCRPG docs that need full rewrite — paste-ready replacement text
+### 2.7 Mysterium docs that need full rewrite — paste-ready replacement text
 
 The following docs need **full rewrite** (not just the section patches above). The replacement text is provided in §2.5 per-gap; this section lists which docs and why.
 
@@ -612,13 +612,13 @@ The remaining 18 foundations docs (02, 04, 05, 07, 08, 09, 10, 11, 12, 13, 15, 1
 | `core/engines/AutoModeStrategy.ts` | ~300 | Consumes CCI; produces session plan | Not consumed by EncounterScheduler in current path (orphan?) — needs verification | 0 / 0 | Game-only; aligned |
 | `core/engines/MacroCatalystEngine.ts` | ~250 | PESTLE tension accumulation; macro-event triggering | Wired (was A7, now resolved); tension thresholds magic numbers | 0 / 0 | Game-only; aligned |
 | `core/engines/ShadowContentGenerator.ts` | ~200 | Generates shadow-mode encounter content | Hardcoded narrative frames per quadrant; no LLM integration | 0 / 0 | Aligned with HoloOS 4-quadrant shadow taxonomy |
-| `core/engines/ThetaDecay.ts` | ~100 | Computes per-cell staleness | Per-line half-life config exists but **ignored in PriorityComputation** (HS-03) | 0 / 1 (HS-03) | Implements CCRPG theta-decay; aligned |
+| `core/engines/ThetaDecay.ts` | ~100 | Computes per-cell staleness | Per-line half-life config exists but **ignored in PriorityComputation** (HS-03) | 0 / 1 (HS-03) | Implements Mysterium theta-decay; aligned |
 | `core/engines/TransformationDetector.ts` | ~200 | Detects transformation readiness; manages phase machine | Phase transitions session-count-based (A6, open); **counters not persisted on Significator** (HS-06) | 1 / 1 (HS-06) | **Missing Great Way** (§2.5.3) — ratchet is counter-based, not Choice-driven |
 | `core/engines/PriorityComputation.ts` | 263 | 7-criteria weighted priority formula | `now % 2000` tie-breaker is non-deterministic across runs; `computeSessionFit` uses `'Strategic'` but enum is `'Strategic'` (ok); diversity/weakness/novelty bonuses undocumented in spec | 0 / 0 | Aligned with foundations/24 §3.2 spec |
 | `core/GameLoop.ts` | ~300 | Main game loop; orchestrates engines | `estimateResponseQuality()` naive heuristic (C19, open); `tickWithStrategy()` 1-encounter-behind lag (C24, open) | 2 / 0 | Implements linear catalyst loop; **missing recursive loop** (§0.1 #3) |
 | `core/usecases/RegistryEngine.ts` | ~150 | Loads/caches registries | None significant | 0 / 0 | Aligned |
 | `core/usecases/ProfileUpdater.ts` | 14 | (Was 150 LOC; shrank to 14 — A13 resolved) | Dead code; legacy `EncounterResult` interface | 1 (A13) / 0 | Cleanup needed |
-| `core/usecases/StageSynthesizer.ts` | ~80 | Hysteresis synthesis of Stage from altitudes | **Both if/else branches set the same value** (HS-04) — hysteresis rule is dead code | 0 / 1 (HS-04) | Implements CCRPG-specific hysteresis; aligned in concept |
+| `core/usecases/StageSynthesizer.ts` | ~80 | Hysteresis synthesis of Stage from altitudes | **Both if/else branches set the same value** (HS-04) — hysteresis rule is dead code | 0 / 1 (HS-04) | Implements Mysterium-specific hysteresis; aligned in concept |
 | `core/usecases/ShadowDetector.ts` | ~150 | Detects shadows from behavioral patterns | Wired (was A1, now resolved) but **starved of data** — `applyConsequences` doesn't update `sig.recentEncounters` (HS-07) | 0 / 1 (HS-07 consumer) | Aligned with HoloOS shadow taxonomy |
 | `core/usecases/OnboardingCalibrator.ts` | ~200 | Binary-search calibration | Architecture in place; per-probe content not redesigned (O2-O9, open) | 0 / 0 | Aligned |
 | `core/usecases/Staircase.ts` | ~120 | 1-up/2-down DDA | **Docstring claims 70.7% convergence but actual math is 61.8%** (HS-19) | 0 / 1 (HS-19) | Aligned in concept; math bug |
@@ -825,7 +825,7 @@ export function synthesizeStage(altitudes: Record<Line, Stage>): Stage {
 
 **Severity:** Critical.
 
-**HoloOS link:** Direct violation of `foundations/20 §4` and `foundations/22 §13` (the Veil spec). HoloOS's Veil is cosmological; CCRPG's Veil is a UX-enforcement contract — and the contract is unenforced.
+**HoloOS link:** Direct violation of `foundations/20 §4` and `foundations/22 §13` (the Veil spec). HoloOS's Veil is cosmological; Mysterium's Veil is a UX-enforcement contract — and the contract is unenforced.
 
 **Suggested fix:** Wire `filterInput` and `filterOutput` at the LLM I/O boundary in `LLMClient.ts`:
 ```typescript
@@ -990,7 +990,7 @@ This is a content change, not just a code change — needs review by the design 
 
 **Severity:** Medium.
 
-**HoloOS link:** HoloOS's 4 drives are co-equal boundary axes (§2.5.6, §2.5.8). CCRPG's `driveForLine` collapses them to 3.
+**HoloOS link:** HoloOS's 4 drives are co-equal boundary axes (§2.5.6, §2.5.8). Mysterium's `driveForLine` collapses them to 3.
 
 **Suggested fix:** Audit `driveForLine` and add Agape mappings (e.g., `Spiritual → Agape`, `Interpersonal → Communion/Agape`).
 
@@ -1062,7 +1062,7 @@ if (gatedByBeat) continue;
 
 **Severity:** Medium.
 
-**HoloOS link:** No direct HoloOS analog (CCRPG-specific narrative system), but violates the design intent.
+**HoloOS link:** No direct HoloOS analog (Mysterium-specific narrative system), but violates the design intent.
 
 **Suggested fix:** Populate `gatedEncounterIds` in narrative beat seed data; OR remove Filter 7 if narrative gating is not a Phase-0/1 priority.
 
@@ -1076,7 +1076,7 @@ if (gatedByBeat) continue;
 
 **Severity:** Medium.
 
-**HoloOS link:** CCRPG-specific (no HoloOS analog), but blocks the story-driven mode differentiation (C2/C23, open).
+**HoloOS link:** Mysterium-specific (no HoloOS analog), but blocks the story-driven mode differentiation (C2/C23, open).
 
 **Suggested fix:** Populate `holonDeltas` in encounter consequence output; OR remove the dead block if NPC relationship evolution is not a Phase-0/1 priority.
 
@@ -1090,7 +1090,7 @@ if (gatedByBeat) continue;
 
 **Severity:** High.
 
-**HoloOS link:** No direct HoloOS analog (CCRPG-specific persistence), but violates the Method of Holonic Inquiry's "expose joints" obligation — the schema boundary is not exposed.
+**HoloOS link:** No direct HoloOS analog (Mysterium-specific persistence), but violates the Method of Holonic Inquiry's "expose joints" obligation — the schema boundary is not exposed.
 
 **Suggested fix:** Add a `validateSignificator(obj: unknown): Significator` function that checks all required fields, with backward-compat shims for old saves (default missing fields to safe values). Call it in `loadSave` before returning.
 
@@ -1118,7 +1118,7 @@ if (gatedByBeat) continue;
 
 **Severity:** High.
 
-**HoloOS link:** No direct HoloOS analog (CCRPG-specific DDA), but the spec/code mismatch violates the Method of Holonic Inquiry's "show derivation" obligation.
+**HoloOS link:** No direct HoloOS analog (Mysterium-specific DDA), but the spec/code mismatch violates the Method of Holonic Inquiry's "show derivation" obligation.
 
 **Suggested fix:** Decide which target is correct (61.8% for 1-up/2-down, 70.7% for 1-up/1-down). Update the docstring AND the spec to match. If 70.7% is the design target, switch to 1-up/1-down; if 61.8% is acceptable, update the docs.
 
@@ -1142,7 +1142,7 @@ if (gatedByBeat) continue;
 
 **Severity:** Low.
 
-**HoloOS link:** No direct HoloOS analog, but violates CCRPG's own stated three-layer architecture principle (`core/` is pure, no mutation across layers).
+**HoloOS link:** No direct HoloOS analog, but violates Mysterium's own stated three-layer architecture principle (`core/` is pure, no mutation across layers).
 
 **Suggested fix:** Replace direct mutation with a `withUpdates(partial)` method that returns a new Significator. Update all callers to use the new signature.
 
@@ -1170,7 +1170,7 @@ The source-code audit agent verified the highest-priority items from the 77-issu
 **CONFIRMED STILL OPEN (15):**
 - A6, A8, A9, A10, A11, A15, A16, C1, C3, C4, C7, C8, C11, V1, P11.
 
-See the CCRPG Ontology & Prior Audit Catalog (in `/home/z/my-project/worklog.md` under Task `1-ccrpg-ontology`) for the full 77-issue list with first-raised tags.
+See the Mysterium Ontology & Prior Audit Catalog (in `/home/z/my-project/worklog.md` under Task `1-mysterium-ontology`) for the full 77-issue list with first-raised tags.
 
 ### 3.4 HoloOS-alignment issues in code (not just docs)
 
@@ -1187,7 +1187,7 @@ Beyond the per-gap findings in §2.5, the following code-level issues are HoloOS
 | No NPC Significators — only player has Significator; NPCs cannot transform | §2.5.1 | Medium |
 | `TransformationRecord` missing `triggeredAtSession` field — Greater-Cycle ratchet counter broken | §2.5.3, HS-01 | Critical (bug) |
 | `Holon` interface missing `transformations` field — NPCs cannot have transformation history | §2.5.1 | Medium |
-| `core/index.ts` barrel export gap — only 3 of 10 engines exported; violates three-layer architecture | (CCRPG-internal) | Low |
+| `core/index.ts` barrel export gap — only 3 of 10 engines exported; violates three-layer architecture | (Mysterium-internal) | Low |
 
 ---
 
@@ -1430,7 +1430,7 @@ See the individual commit messages on the branch for full diff context.
 
 ### 5.2 What was NOT changed (and why)
 
-The following Phase 0 tickets were **not** applied on this branch because they require larger refactors or design decisions that should be made by the CCRPG team:
+The following Phase 0 tickets were **not** applied on this branch because they require larger refactors or design decisions that should be made by the Mysterium team:
 
 | Ticket | Why not applied |
 |---|---|
@@ -1447,7 +1447,7 @@ The following Phase 0 tickets were **not** applied on this branch because they r
 After checking out the `audit/holoos-alignment` branch:
 
 ```bash
-cd /home/z/my-project/repos/CCRPG
+cd /home/z/my-project/repos/Mysterium
 bun install          # or npm install
 bun test             # run existing test suite (448 tests; all should pass)
 bun run dev          # start dev server; playtest
@@ -1469,42 +1469,42 @@ Fix 3 uses `allDrivesHealthy` as the proxy for `passed` in the appended `Encount
 
 ## 6. Appendix
 
-### A. Glossary mapping HoloOS ↔ CCRPG
+### A. Glossary mapping HoloOS ↔ Mysterium
 
-| HoloOS term | CCRPG term | Notes |
+| HoloOS term | Mysterium term | Notes |
 |---|---|---|
 | Holon | Holon | Same term, same concept |
-| Significator | Significator | CCRPG = player-only; HoloOS = every holon |
-| Matrix | (implicit: EncounterScheduler.recentEncounters + WorldState.cooldowns + MacroCatalystEngine.tension) | CCRPG needs to name this |
-| Potentiator | (implicit: CandidateGeneration filters) | CCRPG needs to name this |
+| Significator | Significator | Mysterium = player-only; HoloOS = every holon |
+| Matrix | (implicit: EncounterScheduler.recentEncounters + WorldState.cooldowns + MacroCatalystEngine.tension) | Mysterium needs to name this |
+| Potentiator | (implicit: CandidateGeneration filters) | Mysterium needs to name this |
 | Catalyst | Encounter / Catalyst | Aligned |
 | Experience | applyConsequences | Aligned |
 | Transformation | Lovers Crucible | Aligned in concept; missing Choice-driven ratchet |
-| Great Way | (MISSING) | CCRPG has no teleological attractor |
+| Great Way | (MISSING) | Mysterium has no teleological attractor |
 | Choice | Polarity (STO/STS) | Partial — Choice is the ratchet action, Polarity is the direction |
 | Lesser Cycle | Encounter pipeline | Right half only (Catalyst→Experience) |
 | Greater Cycle | (MISSING as first-class engine) | Lovers Crucible + Polarity are pieces, not a cycle |
-| G_z | (partial: Drive Health + Shadow Topology) | CCRPG needs to formalize as co-equal health metric |
-| P_z | (partial: Polarity Vector) | CCRPG needs to formalize as co-equal health metric |
+| G_z | (partial: Drive Health + Shadow Topology) | Mysterium needs to formalize as co-equal health metric |
+| P_z | (partial: Polarity Vector) | Mysterium needs to formalize as co-equal health metric |
 | Tetra-Axes ⟨V,C,R,N⟩ | AQAL 7-tuple | Divergent — see §2.5.4 |
 | Type (valence signature) | PolarityTexture | Divergent — see §2.5.5 |
-| Stage | Stage | Aligned (CCRPG = 8 stages within one octave; HoloOS = 8 densities) |
+| Stage | Stage | Aligned (Mysterium = 8 stages within one octave; HoloOS = 8 densities) |
 | Density | (closest: Stage) | Scale-mismatched — see §2.5.4 |
-| Octave | (CCRPG Octave = 3 macro-arcs within one density) | Conflated — same word, different scope |
-| Realm | State | CCRPG extends (adds Witness, Non-Dual) |
-| Mind/Body/Spirit Complex | (MISSING) | CCRPG has no Complex differentiation — see §2.5.8 |
-| Line | (CCRPG-specific) | No HoloOS analog; retained as extension |
-| Quadrant | (CCRPG-specific, from AQAL) | Maps to Collectivity × Realm.interior |
+| Octave | (Mysterium Octave = 3 macro-arcs within one density) | Conflated — same word, different scope |
+| Realm | State | Mysterium extends (adds Witness, Non-Dual) |
+| Mind/Body/Spirit Complex | (MISSING) | Mysterium has no Complex differentiation — see §2.5.8 |
+| Line | (Mysterium-specific) | No HoloOS analog; retained as extension |
+| Quadrant | (Mysterium-specific, from AQAL) | Maps to Collectivity × Realm.interior |
 | Drive | Drive | Aligned (same 4 drives) |
 | Shadow | ShadowSignal / ShadowQuadrant | Aligned (4 quadrants match) |
 | Attractor Field | AttractorField | Aligned |
 | 22 Named Archetypes | (none formal) | `narrativeRole` strings are ad-hoc |
 | Veil of Forgetting | Veil of Forgetting | Aligned in concept; defective in enforcement (HS-05) |
-| Involution | (out of scope) | CCRPG is single-octave |
+| Involution | (out of scope) | Mysterium is single-octave |
 | Evolution | 8 Stages + Lovers Crucible | Aligned in count, divergent in mechanism |
-| Type Validation Protocol | (MISSING) | CCRPG has no T1/T2/T3 |
+| Type Validation Protocol | (MISSING) | Mysterium has no T1/T2/T3 |
 | Method of Holonic Inquiry | docs/03-research-methodology.md | Partial — no status ladder |
-| Status ladder | (MISSING) | CCRPG needs to adopt |
+| Status ladder | (MISSING) | Mysterium needs to adopt |
 | Scalar Metric S(Ω,δ,λ) | CCI (5-dim composite) | Divergent |
 | Logos Hierarchy | (out of scope) | Cosmological scaffolding |
 
@@ -1519,14 +1519,14 @@ Adopt HoloOS's 4-status ladder verbatim:
 | `canonical` | Validated | Empirically validated (for game-mechanics) or cross-scale homological (for metaphysics) |
 | `superseded` | Replaced by a later claim; retained for provenance | Old claims that have been replaced |
 
-**Recommended initial tagging for CCRPG `docs/foundations/`:**
+**Recommended initial tagging for Mysterium `docs/foundations/`:**
 
 | Doc | Recommended initial status |
 |---|---|
 | 00-integral-theory | canonical-hypothesis (Wilber synthesis) |
-| 01-aqal-quadrants | canonical-hypothesis (CCRPG extension of HoloOS) |
+| 01-aqal-quadrants | canonical-hypothesis (Mysterium extension of HoloOS) |
 | 02-eight-stages-overview | canonical-hypothesis (Wilber + Ra) |
-| 03-lines-of-intelligence-overview | canonical-hypothesis (CCRPG extension) |
+| 03-lines-of-intelligence-overview | canonical-hypothesis (Mysterium extension) |
 | 04-states-of-consciousness | canonical-hypothesis (Wilber) |
 | 05-drives-and-polarities | canonical-hypothesis (Bakan + Wilber + Aurobindo) |
 | 06-law-of-one-correspondence | canonical-hypothesis (Ra material — metaphysical, unfalsifiable) |
@@ -1534,27 +1534,27 @@ Adopt HoloOS's 4-status ladder verbatim:
 | 08-psychophysics-and-staircase | canonical (empirical) — but see HS-19 (math bug) |
 | 09-flow-and-engagement-theory | canonical (empirical, Csikszentmihalyi) |
 | 10-shadow-and-pathology | canonical-hypothesis (Wilber + Jung) |
-| 11-game-modalities | canonical (CCRPG design decision) |
-| 12-drive-assessment-mechanics | canonical-hypothesis (CCRPG-specific operationalization) |
+| 11-game-modalities | canonical (Mysterium design decision) |
+| 12-drive-assessment-mechanics | canonical-hypothesis (Mysterium-specific operationalization) |
 | 13-architecture-of-consciousness | canonical-hypothesis (Wilber) |
-| 14-game-as-developmental-catalyst | canonical-hypothesis (CCRPG-specific) |
+| 14-game-as-developmental-catalyst | canonical-hypothesis (Mysterium-specific) |
 | 15-macro-scale-archetypal-mind | canonical-hypothesis (Wilber) |
-| 16-significator-architecture | canonical-hypothesis (CCRPG-specific; needs NPC scope expansion) |
-| 17-transformation-mechanics | canonical-hypothesis (CCRPG-specific; needs Great Way) |
-| 18-great-way-world-architecture | canonical-hypothesis (CCRPG-specific; PESTLE) |
-| 19-choice-and-polarity-engine | canonical-hypothesis (CCRPG-specific; STO/STS) |
-| 20-veil-of-forgetting | canonical (CCRPG design decision) |
-| 21-incarnation-architecture | canonical-hypothesis (CCRPG-specific; perceptual layers) |
-| 22-holon-context-engine | canonical-hypothesis (CCRPG-specific; LLM pipeline) |
-| 23-polarity-ontology | canonical-hypothesis (CCRPG-specific; needs Type⊥Stage) |
-| 24-encounter-scheduler | canonical (CCRPG design decision) |
-| 25-cumulative-consciousness-index | canonical-hypothesis (CCRPG-specific; needs G_z/P_z) |
-| 26-unified-core-architecture | canonical (CCRPG design decision) |
-| 27-auto-mode-strategy-engine | canonical-hypothesis (CCRPG-specific) |
+| 16-significator-architecture | canonical-hypothesis (Mysterium-specific; needs NPC scope expansion) |
+| 17-transformation-mechanics | canonical-hypothesis (Mysterium-specific; needs Great Way) |
+| 18-great-way-world-architecture | canonical-hypothesis (Mysterium-specific; PESTLE) |
+| 19-choice-and-polarity-engine | canonical-hypothesis (Mysterium-specific; STO/STS) |
+| 20-veil-of-forgetting | canonical (Mysterium design decision) |
+| 21-incarnation-architecture | canonical-hypothesis (Mysterium-specific; perceptual layers) |
+| 22-holon-context-engine | canonical-hypothesis (Mysterium-specific; LLM pipeline) |
+| 23-polarity-ontology | canonical-hypothesis (Mysterium-specific; needs Type⊥Stage) |
+| 24-encounter-scheduler | canonical (Mysterium design decision) |
+| 25-cumulative-consciousness-index | canonical-hypothesis (Mysterium-specific; needs G_z/P_z) |
+| 26-unified-core-architecture | canonical (Mysterium design decision) |
+| 27-auto-mode-strategy-engine | canonical-hypothesis (Mysterium-specific) |
 
 ### C. Open research questions
 
-These are questions the audit raised but did not resolve. They need CCRPG team input.
+These are questions the audit raised but did not resolve. They need Mysterium team input.
 
 1. **Is the Staircase target 61.8% or 70.7%?** (HS-19) — design decision
 2. **Should NPC Significators be persisted in `WorldState` or in a separate `NpcSignificatorStore`?** (§2.5.1) — architecture decision
@@ -1563,8 +1563,8 @@ These are questions the audit raised but did not resolve. They need CCRPG team i
 5. **Is the Veil a hard filter (strip violations) or a soft filter (log violations, pass through)?** (HS-05) — design decision
 6. **Should `FallbackProvider` content be reachable in Direct Questioning mode even when LLM is up?** (C6) — design decision
 7. **Should the Harvest endgame be one-shot or repeatable across octaves?** (§2.5.9) — scope decision
-8. **Should CCRPG adopt HoloOS's `Holonic ID Taxonomy` (19 scale levels) or keep its 8 HolonKinds?** — scope decision
-9. **Should the 22 Named Archetypes be formalized in CCRPG, or is the ad-hoc `narrativeRole` layer sufficient?** (§2.5.12) — content decision
+8. **Should Mysterium adopt HoloOS's `Holonic ID Taxonomy` (19 scale levels) or keep its 8 HolonKinds?** — scope decision
+9. **Should the 22 Named Archetypes be formalized in Mysterium, or is the ad-hoc `narrativeRole` layer sufficient?** (§2.5.12) — content decision
 10. **Should Type⊥Stage be a Phase-1 or Phase-2 deliverable?** (§2.5.5) — sequencing decision
 
 ---

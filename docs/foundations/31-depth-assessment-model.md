@@ -1,6 +1,6 @@
 # 31 — Depth Assessment Model
 
-> **Status:** canonical-hypothesis (CCRPG-specific operationalization of Bloom's taxonomy, depth-of-knowledge frameworks, and dual-depth assessment for curriculum modules).
+> **Status:** canonical-hypothesis (Mysterium-specific operationalization of Bloom's taxonomy, depth-of-knowledge frameworks, and dual-depth assessment for curriculum modules).
 >
 > **Lateral:** The model that answers HOW DEEPLY a learner understands a concept — not just whether they know it. No other document covers this: foundations/29 covers the learning process; foundations/30 covers knowledge organization; this document covers the *measurement of understanding depth* and the dual-depth model that simultaneously assesses knowledge depth and developmental capacity.
 >
@@ -78,7 +78,7 @@ Whitehead (1929) identified "inert ideas" — ideas that are "merely received in
 
 ### 2.5 The Dual-Depth Problem
 
-CCRPG's unique contribution is the recognition that knowledge depth and developmental capacity are orthogonal dimensions that must be assessed simultaneously:
+Mysterium's unique contribution is the recognition that knowledge depth and developmental capacity are orthogonal dimensions that must be assessed simultaneously:
 
 - A learner might have HIGH knowledge depth (understands physics deeply) but LOW developmental capacity (approaches physics with ego-driven competitiveness, intellectual bypass, or rigid perfectionism)
 - A learner might have LOW knowledge depth (memorized physics facts) but HIGH developmental capacity (approaches physics with genuine curiosity, humble uncertainty, and willingness to be wrong)
@@ -95,7 +95,7 @@ The bridge between them: when a learner reaches "transformed" depth on a concept
 
 ### 3.1 The seven depth levels as assessment tiers
 
-| Depth Level | What the learner can do | Assessment method | CCRPG MeasureDimensions |
+| Depth Level | What the learner can do | Assessment method | Mysterium MeasureDimensions |
 |---|---|---|---|
 | **Absent** | Cannot recall or recognize | Cannot answer any question about the concept | N/A |
 | **Memorized** | Can recall facts verbatim | Factual recall: "What is X?" | accuracy only |

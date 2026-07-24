@@ -20,10 +20,10 @@ const ORIGINAL_HOME = process.env.HOME;
 let tempHome: string;
 
 beforeEach(() => {
-  tempHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ccrpg-test-'));
+  tempHome = fs.mkdtempSync(path.join(os.tmpdir(), 'mysterium-test-'));
   process.env.HOME = tempHome;
-  // ProfileManager resolves CCRPG_DIR at module-load time via os.homedir().
-  // We must reset the module cache so each test gets a fresh CCRPG_DIR bound
+  // ProfileManager resolves Mysterium_DIR at module-load time via os.homedir().
+  // We must reset the module cache so each test gets a fresh Mysterium_DIR bound
   // to the temp HOME. SaveRepository resolves lazily (via a function call),
   // but we reset it too for consistency.
   vi.resetModules();
@@ -51,12 +51,12 @@ describe('migrateLegacySave (P0-F4)', () => {
     const { migrateLegacySave, loadProfile, getActiveProfileName } = await import('../../src/infra/profiles/ProfileManager.js');
     const { loadSave, loadAll } = await import('../../src/infra/persistence/SaveRepository.js');
 
-    const ccrpgDir = path.join(tempHome, '.ccrpg');
-    fs.mkdirSync(ccrpgDir, { recursive: true });
+    const mysteriumDir = path.join(tempHome, '.mysterium');
+    fs.mkdirSync(mysteriumDir, { recursive: true });
     const sig = await makeSig(7, 1);
     const world = { holons: [], lastTick: 0 };
     const envelope = { version: 2, savedAt: Date.now(), sig, world };
-    fs.writeFileSync(path.join(ccrpgDir, 'save-all.json'), JSON.stringify(envelope, null, 2));
+    fs.writeFileSync(path.join(mysteriumDir, 'save-all.json'), JSON.stringify(envelope, null, 2));
 
     const migratedName = migrateLegacySave();
 
@@ -79,7 +79,7 @@ describe('migrateLegacySave (P0-F4)', () => {
     expect(loadedAll?.world).toBeDefined();
 
     // Legacy file must be deleted.
-    expect(fs.existsSync(path.join(ccrpgDir, 'save-all.json'))).toBe(false);
+    expect(fs.existsSync(path.join(mysteriumDir, 'save-all.json'))).toBe(false);
   });
 
   it('returns null when no legacy save exists', async () => {
@@ -90,15 +90,15 @@ describe('migrateLegacySave (P0-F4)', () => {
 
   it('preserves counts across a migration + reload cycle (the regression scenario)', async () => {
     // The exact scenario the fresh-user audit caught:
-    // Session 1 runs without a profile → saves to legacy ~/.ccrpg/save-all.json
+    // Session 1 runs without a profile → saves to legacy ~/.mysterium/save-all.json
     // Session 2 triggers migration → Session 1's counts must survive.
     const { migrateLegacySave } = await import('../../src/infra/profiles/ProfileManager.js');
     const { loadSave, saveAll } = await import('../../src/infra/persistence/SaveRepository.js');
 
-    const ccrpgDir = path.join(tempHome, '.ccrpg');
-    fs.mkdirSync(ccrpgDir, { recursive: true });
+    const mysteriumDir = path.join(tempHome, '.mysterium');
+    fs.mkdirSync(mysteriumDir, { recursive: true });
     const session1Sig = await makeSig(5, 1);
-    fs.writeFileSync(path.join(ccrpgDir, 'save-all.json'),
+    fs.writeFileSync(path.join(mysteriumDir, 'save-all.json'),
       JSON.stringify({ version: 2, savedAt: Date.now(), sig: session1Sig, world: { holons: [] } }, null, 2));
 
     // Session 2: migrate, then load — must see 5 encounters, not 0.

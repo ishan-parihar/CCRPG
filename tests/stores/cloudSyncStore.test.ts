@@ -46,7 +46,7 @@ describe('cloudSyncStore', () => {
     it('generates a UUID on first call and persists it', () => {
       const id1 = getDeviceId();
       expect(id1).toBe('test-uuid-1234');
-      expect(localStorage.getItem('ccrpg:device-id')).toBe('test-uuid-1234');
+      expect(localStorage.getItem('mysterium:device-id')).toBe('test-uuid-1234');
 
       // Second call returns the same ID (not a new UUID)
       const id2 = getDeviceId();
@@ -54,7 +54,7 @@ describe('cloudSyncStore', () => {
     });
 
     it('returns existing ID from localStorage if present', () => {
-      localStorage.setItem('ccrpg:device-id', 'existing-id');
+      localStorage.setItem('mysterium:device-id', 'existing-id');
       const id = getDeviceId();
       expect(id).toBe('existing-id');
     });

@@ -894,7 +894,7 @@ function clamp(value: number, min = 0.0, max = 1.0): number {
  * This is the Phase 4 progressive-integration path: the Significator remains the
  * source of truth, but TDG provides an additional graph-level metabolic signal
  * when available. The blending is conservative (TDG contributes at most 20% of
- * the metabolic dimension) to preserve CCRPG's existing behavioural baseline.
+ * the metabolic dimension) to preserve Mysterium's existing behavioural baseline.
  *
  * Async because TDG calls are async (MCP over stdio). Callers that don't need
  * TDG augmentation should use the sync computeCCI() instead.

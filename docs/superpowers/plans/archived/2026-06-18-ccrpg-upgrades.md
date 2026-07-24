@@ -1,8 +1,8 @@
-# CCRPG Backend & CLI Upgrades Implementation Plan
+# Mysterium Backend & CLI Upgrades Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Fix critical bugs in the CCRPG CLI and backend engines, including false-positive LLM error handling, fallback path stagnation, CLI forcing constraints, scheduling priority collapse, and recency tracking.
+**Goal:** Fix critical bugs in the Mysterium CLI and backend engines, including false-positive LLM error handling, fallback path stagnation, CLI forcing constraints, scheduling priority collapse, and recency tracking.
 
 **Architecture:** Extend the core candidate generation and scheduling engines to support custom session forcing flags, add semantic fallback response mapping to drive scoring/polarity, fix slicing bugs, and implement modality-specific CLI rendering.
 

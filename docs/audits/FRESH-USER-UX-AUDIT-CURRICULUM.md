@@ -1,4 +1,4 @@
-# Fresh-User UX Audit Report — CCRPG Curriculum Architecture
+# Fresh-User UX Audit Report — Mysterium Curriculum Architecture
 
 **Date:** July 23, 2026  
 **Methodology:** Headless simulation of 5 encounters with 10 reflective answers, followed by post-session state inspection  
@@ -9,7 +9,7 @@
 
 ## 1. Executive Summary
 
-The CCRPG CLI is **technically operational** and delivers a coherent reflective experience. The LLM generates genuinely insightful narrative responses that reference the player's actual answers across encounters. The shadow-surfacing mechanism works (4 patterns surfaced in 5 encounters). The adaptive narrative memory and cross-encounter pattern recognition are functional.
+The Mysterium CLI is **technically operational** and delivers a coherent reflective experience. The LLM generates genuinely insightful narrative responses that reference the player's actual answers across encounters. The shadow-surfacing mechanism works (4 patterns surfaced in 5 encounters). The adaptive narrative memory and cross-encounter pattern recognition are functional.
 
 **However, the experience has significant gaps** between its stated mission ("accelerate evolution and healing in the individual") and its actual delivery. The system currently operates primarily as a **reflective assessment tool** rather than a **developmental practice**. The curriculum system (the latest upgrade) is present in the codebase but **not surfaced to the player** during session play — there is no visible curriculum integration in the CLI output.
 
@@ -140,8 +140,8 @@ The entire curriculum system upgrade (knowledge taxonomies, depth rubrics, forge
 
 | # | Recommendation | Effort | Impact |
 |---|---|---|---|
-| **P2-1** | **Add `ccrpg curriculum` CLI command.** Show curriculum tree, progress, and study recommendations in the terminal. | Medium | CLI parity with WebUI |
-| **P2-2** | **Add `ccrpg journal` CLI command.** Display shadow entries, integration notes, and practice history. | Medium | Player can review between sessions |
+| **P2-1** | **Add `mysterium curriculum` CLI command.** Show curriculum tree, progress, and study recommendations in the terminal. | Medium | CLI parity with WebUI |
+| **P2-2** | **Add `mysterium journal` CLI command.** Display shadow entries, integration notes, and practice history. | Medium | Player can review between sessions |
 | **P2-3** | **Progressive narrative complexity.** As stages advance, the LLM's questions should become more challenging and nuanced. Currently all encounters feel similar regardless of stage. | High | Matches developmental edge |
 
 ### ⚪ YAGNI — Don't Build Yet
@@ -207,7 +207,7 @@ The entire curriculum system upgrade (knowledge taxonomies, depth rubrics, forge
 
 ## 8. Conclusion
 
-The CCRPG is a **technically sophisticated reflective assessment engine** with strong LLM integration and narrative quality. The curriculum system upgrade is architecturally sound and well-tested.
+The Mysterium is a **technically sophisticated reflective assessment engine** with strong LLM integration and narrative quality. The curriculum system upgrade is architecturally sound and well-tested.
 
 However, the system is **not yet delivering on its core promise** of accelerating evolution and healing. The gap is between **assessment** (identifying patterns) and **practice** (provoking behavioral change). The curriculum system — with its depth rubrics, forgetting curves, and adaptive difficulty — is the missing bridge, but it needs to be **surfaced to the player**.
 

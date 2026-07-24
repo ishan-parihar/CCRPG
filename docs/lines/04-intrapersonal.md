@@ -5,7 +5,7 @@
 Specify the Intrapersonal line — the capacity to *introspect and report
 clearly and accurately on what one sees, feels, and thinks*. The
 gateway to wisdom. Without it, the other UL lines (Emotional, Moral,
-Spiritual) cannot be honestly self-known. CCRPG's witness-pause,
+Spiritual) cannot be honestly self-known. Mysterium's witness-pause,
 self-tag, and integrate verbs live here.
 
 ## 2. Scientific basis
@@ -23,7 +23,7 @@ Synthesis:
 - **Wilber** — intrapersonal as the *meta-line*: it is intelligence
   *about* the other lines.
 
-CCRPG's working definition:
+Mysterium's working definition:
 
 > Intrapersonal intelligence is the capacity to (a) attend to one's own
 > interior, (b) accurately label what one finds, (c) hold internal
@@ -170,7 +170,7 @@ Pure functions:
 ## 7. Open questions
 
 - **Self-report fidelity.** All intrapersonal data is self-report,
-  inherently noisy. CCRPG mitigates with *behavioural* corroborates
+  inherently noisy. Mysterium mitigates with *behavioural* corroborates
   (does the player's reported "calm" predict their next fight's
   performance?), but this is imperfect.
 - **Withholding and false report.** A player may consistently

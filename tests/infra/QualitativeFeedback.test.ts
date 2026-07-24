@@ -1,6 +1,6 @@
 /**
  * Tests for QualitativeFeedback — Veil-compliant qualitative feedback mapper.
- * Per UX-01 (Task 4-ccrpg-ux-audit) and foundations/20 §3.5.
+ * Per UX-01 (Task 4-mysterium-ux-audit) and foundations/20 §3.5.
  */
 import { describe, it, expect } from 'vitest';
 import { toQualitativeFeedback, formatQualitativeFeedback } from '../../src/infra/llm/QualitativeFeedback.js';

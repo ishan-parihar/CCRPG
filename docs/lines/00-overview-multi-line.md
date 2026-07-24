@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Specify how the eight lines *interact* in CCRPG. The per-line documents
+Specify how the eight lines *interact* in Mysterium. The per-line documents
 (`lines/01-…08-…`) define each line in isolation; this document
 specifies their composition: line caps, cross-line tasks, line balance,
 the radial chart, and the algorithms that prevent the whole system from

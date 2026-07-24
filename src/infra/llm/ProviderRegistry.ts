@@ -233,7 +233,7 @@ function env(name: string): string | undefined {
  *   2. Provider-specific env vars (e.g. OPENCODE_API_KEY for opencode)
  *   3. Generic LLM_* env vars (LLM_PROVIDER, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL)
  *   4. Legacy VITE_LLM_* env vars (backwards compat with existing config)
- *   5. The saved config file (~/.ccrpg/config.json)
+ *   5. The saved config file (~/.mysterium/config.json)
  *
  * Env var name resolution:
  *   - For a known provider (e.g. 'opencode'), the API key is read from
@@ -392,7 +392,7 @@ export async function fetchModelsFromProvider(config: LLMConfig): Promise<readon
  * or returns an empty list. Mirrors opencode's OPENCODE_MODELS_URL convention.
  */
 export async function fetchModelsFromCatalog(providerId: string): Promise<readonly DiscoveredModel[]> {
-  const url = env('CCRPG_MODELS_URL') || 'https://models.dev/api.json';
+  const url = env('Mysterium_MODELS_URL') || 'https://models.dev/api.json';
   try {
     const res = await fetchWithTimeout(url, { method: 'GET' });
     if (!res.ok) return [];
@@ -442,7 +442,7 @@ export async function getModels(config: LLMConfig): Promise<readonly DiscoveredM
   return models;
 }
 
-/** Clear the model cache (used by `ccrpg setup --refresh`). */
+/** Clear the model cache (used by `mysterium setup --refresh`). */
 export function clearModelCache(): void {
   modelCache.clear();
 }

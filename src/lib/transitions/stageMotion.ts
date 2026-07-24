@@ -1,7 +1,7 @@
 /**
  * Stage motion language — Svelte transitions per stage aesthetic.
  *
- * Each stage has a distinct motion register (from tokens.css --ccrpg-motion):
+ * Each stage has a distinct motion register (from tokens.css --mysterium-motion):
  *   infrared: pulse    — slow sine yoyo
  *   magenta:  drift     — fade + slight vertical drift
  *   red:      snap      — fast linear (80ms)
@@ -12,7 +12,7 @@
  *   white:    dissolve  — slow fade, no movement
  *
  * These are Svelte transition functions compatible with `transition:` and
- * `in:` / `out:` directives. They read duration from --ccrpg-duration-* tokens.
+ * `in:` / `out:` directives. They read duration from --mysterium-duration-* tokens.
  */
 
 import { cubicOut, sineInOut } from 'svelte/easing';
@@ -26,16 +26,16 @@ interface MotionParams {
   readonly easing?: EasingFunction;
 }
 
-/** Resolve the current stage's motion name from the DOM (data-stage attr → --ccrpg-motion). */
+/** Resolve the current stage's motion name from the DOM (data-stage attr → --mysterium-motion). */
 function getMotionName(): MotionName {
   if (typeof document === 'undefined') return 'snap';
-  const cssMotion = getComputedStyle(document.documentElement).getPropertyValue('--ccrpg-motion').trim();
+  const cssMotion = getComputedStyle(document.documentElement).getPropertyValue('--mysterium-motion').trim();
   const valid: MotionName[] = ['pulse', 'drift', 'snap', 'chime', 'tick', 'grow', 'refract', 'dissolve'];
   return (valid as readonly string[]).includes(cssMotion) ? (cssMotion as MotionName) : 'snap';
 }
 
 /** Resolve a duration token (ms) from the DOM. */
-function getDuration(token: '--ccrpg-duration-fast' | '--ccrpg-duration-base' | '--ccrpg-duration-slow'): number {
+function getDuration(token: '--mysterium-duration-fast' | '--mysterium-duration-base' | '--mysterium-duration-slow'): number {
   if (typeof document === 'undefined') return 320;
   const raw = getComputedStyle(document.documentElement).getPropertyValue(token).trim();
   const ms = parseInt(raw, 10);
@@ -45,7 +45,7 @@ function getDuration(token: '--ccrpg-duration-fast' | '--ccrpg-duration-base' | 
 /** Build a fade transition. */
 function fade(params: MotionParams = {}): TransitionConfig {
   return {
-    duration: params.duration ?? getDuration('--ccrpg-duration-base'),
+    duration: params.duration ?? getDuration('--mysterium-duration-base'),
     delay: params.delay ?? 0,
     easing: params.easing ?? cubicOut,
     css: (t: number) => `opacity: ${t}`,
@@ -57,7 +57,7 @@ function scale(params: MotionParams & { from?: number; to?: number } = {}): Tran
   const from = params.from ?? 0.9;
   const to = params.to ?? 1;
   return {
-    duration: params.duration ?? getDuration('--ccrpg-duration-base'),
+    duration: params.duration ?? getDuration('--mysterium-duration-base'),
     delay: params.delay ?? 0,
     easing: params.easing ?? cubicOut,
     css: (t: number) => {
@@ -72,7 +72,7 @@ function fly(params: MotionParams & { x?: number; y?: number } = {}): Transition
   const x = params.x ?? 0;
   const y = params.y ?? 0;
   return {
-    duration: params.duration ?? getDuration('--ccrpg-duration-base'),
+    duration: params.duration ?? getDuration('--mysterium-duration-base'),
     delay: params.delay ?? 0,
     easing: params.easing ?? cubicOut,
     css: (t: number) => `opacity: ${t}; transform: translate(${x * (1 - t)}px, ${y * (1 - t)}px)`,
@@ -87,21 +87,21 @@ export function stageFade(_node: Element, params: MotionParams = {}): Transition
   const motion = getMotionName();
   switch (motion) {
     case 'pulse':
-      return { ...fade(params), easing: sineInOut, duration: params.duration ?? getDuration('--ccrpg-duration-slow') };
+      return { ...fade(params), easing: sineInOut, duration: params.duration ?? getDuration('--mysterium-duration-slow') };
     case 'drift':
       return fly({ ...params, y: 12 });
     case 'snap':
-      return fade({ ...params, duration: params.duration ?? getDuration('--ccrpg-duration-fast') });
+      return fade({ ...params, duration: params.duration ?? getDuration('--mysterium-duration-fast') });
     case 'chime':
       return scale({ ...params, from: 0.96 });
     case 'tick':
-      return fly({ ...params, x: -16, duration: params.duration ?? getDuration('--ccrpg-duration-fast') });
+      return fly({ ...params, x: -16, duration: params.duration ?? getDuration('--mysterium-duration-fast') });
     case 'grow':
       return scale({ ...params, from: 0.9 });
     case 'refract':
       return fly({ ...params, x: 8 });
     case 'dissolve':
-      return fade({ ...params, easing: sineInOut, duration: params.duration ?? getDuration('--ccrpg-duration-slow') });
+      return fade({ ...params, easing: sineInOut, duration: params.duration ?? getDuration('--mysterium-duration-slow') });
     default:
       return fade(params);
   }
@@ -114,7 +114,7 @@ export function stageScale(_node: Element, params: MotionParams = {}): Transitio
   const motion = getMotionName();
   switch (motion) {
     case 'snap':
-      return scale({ ...params, from: 0.95, duration: params.duration ?? getDuration('--ccrpg-duration-fast') });
+      return scale({ ...params, from: 0.95, duration: params.duration ?? getDuration('--mysterium-duration-fast') });
     case 'chime':
       return scale({ ...params, from: 0.92 });
     case 'grow':
@@ -137,7 +137,7 @@ export function stageFly(_node: Element, params: MotionParams & { x?: number; y?
     case 'drift':
       return fly({ ...params, y: y || 16 });
     case 'tick':
-      return fly({ ...params, x: x || -20, duration: params.duration ?? getDuration('--ccrpg-duration-fast') });
+      return fly({ ...params, x: x || -20, duration: params.duration ?? getDuration('--mysterium-duration-fast') });
     case 'refract':
       return fly({ ...params, x: x || 10 });
     case 'dissolve':

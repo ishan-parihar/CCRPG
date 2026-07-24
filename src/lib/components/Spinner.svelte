@@ -16,8 +16,8 @@
 
 <style>
   .spinner {
-    border: 2px solid var(--ccrpg-border);
-    border-top-color: var(--ccrpg-accent);
+    border: 2px solid var(--mysterium-border);
+    border-top-color: var(--mysterium-accent);
     border-radius: 50%;
     animation: spin 0.7s linear infinite;
   }

@@ -389,7 +389,7 @@ export class AgenticOrchestrator {
       shadowContext = buildShadowPromptSuffix(shadowContent, shadowLine, shadowStage, unresolvedShadows);
     }
 
-    const systemPrompt = `${process.env.CCRPG_PROFILE_CONTEXT || ''}\n${context.systemPrompt}${assessmentContext}${continuityContext}${shadowContext}
+    const systemPrompt = `${process.env.Mysterium_PROFILE_CONTEXT || ''}\n${context.systemPrompt}${assessmentContext}${continuityContext}${shadowContext}
 [AGENT RULES]
 1. You are the Agentic Game Master driving this developmental encounter.
 2. Present the encounter situationally and narratively. If you need to present stimuli, choices, or ask questions, ALWAYS call the 'ask_user_question' tool. Do not ask questions in raw text responses.

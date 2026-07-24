@@ -1,7 +1,7 @@
 <script lang="ts">
   /**
    * /setup route — LLM configuration status + connection test.
-   * Parity with CLI 'ccrpg setup' (adapted for BFF architecture).
+   * Parity with CLI 'mysterium setup' (adapted for BFF architecture).
    *
    * The WebUI uses a BFF (server-side LLM proxy) — the API key is held server-side
    * in env vars. This route shows the BFF's LLM config status and lets the user
@@ -131,7 +131,7 @@ LLM_BASE_URL=https://api.openai.com/v1</code></pre>
         </p>
         <p class="setup-note">
           For client-side LLM configuration (CLI-style), use the CLI:
-          <code>ccrpg setup</code>
+          <code>mysterium setup</code>
         </p>
       </Stack>
     </Card>
@@ -140,37 +140,37 @@ LLM_BASE_URL=https://api.openai.com/v1</code></pre>
 
 <style>
   .section-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 600;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
     margin: 0;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .setup-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 
   .setup-text code,
   .setup-note code {
-    background: var(--ccrpg-surface);
+    background: var(--mysterium-surface);
     padding: 2px 6px;
-    border-radius: var(--ccrpg-radius-sm);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-accent);
+    border-radius: var(--mysterium-radius-sm);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-accent);
   }
 
   .setup-note {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
-    line-height: var(--ccrpg-leading-relaxed);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 
@@ -178,50 +178,50 @@ LLM_BASE_URL=https://api.openai.com/v1</code></pre>
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
 
   .status-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
   }
 
   .status-value {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
     font-weight: 500;
   }
 
   .env-list {
-    background: var(--ccrpg-bg);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
-    padding: var(--ccrpg-space-3);
+    background: var(--mysterium-bg);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
+    padding: var(--mysterium-space-3);
     margin: 0;
     overflow-x: auto;
   }
 
   .env-list code {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-relaxed);
   }
 
   .error-box {
-    background: var(--ccrpg-danger-soft);
-    border: 1px solid var(--ccrpg-danger);
-    border-radius: var(--ccrpg-radius);
-    padding: var(--ccrpg-space-3);
+    background: var(--mysterium-danger-soft);
+    border: 1px solid var(--mysterium-danger);
+    border-radius: var(--mysterium-radius);
+    padding: var(--mysterium-space-3);
   }
 
   .error-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-danger-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-danger-fg);
     margin: 0;
-    line-height: var(--ccrpg-leading-relaxed);
+    line-height: var(--mysterium-leading-relaxed);
   }
 </style>

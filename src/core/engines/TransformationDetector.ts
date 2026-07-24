@@ -144,7 +144,7 @@ export function computeReadiness(sig: Significator, targetStage: Stage): Readine
   // Per foundations/01 §4, all 4 quadrants (UL/UR/LL/LR) must have at least
   // one line at or above the current stage for transformation to fire.
   // This prevents "integral fallacy" — transformation on cognitive-only evidence.
-  // Note: CCRPG's LINE_QUADRANT maps 6 lines to UL/UR/LL but none to LR.
+  // Note: Mysterium's LINE_QUADRANT maps 6 lines to UL/UR/LL but none to LR.
   // LR (exterior-collective) is covered by the world-state PESTLE system.
   // We treat LR as "covered" if any macro-event or PESTLE tension is active
   // (the world is exerting systemic pressure). For now, LR coverage is assumed

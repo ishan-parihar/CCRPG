@@ -1,22 +1,22 @@
 # foundations/00 — Integral Theory
 
-> **Status:** canonical-hypothesis (CCRPG-specific extension of HoloOS coordinate system).
+> **Status:** canonical-hypothesis (Mysterium-specific extension of HoloOS coordinate system).
 >
-> HoloOS uses a 4-axis coordinate `⟨V=⟨O,D,S⟩, C, R⟩` (Verticality, Collectivity, Realm-placement) with `N` as a query parameter — see HoloOS `_THEORY/02_Ontology/08.8_Redesigned_Coordinate_System.md` (rev 2, canonical-hypothesis). CCRPG uses a 7-tuple `(quadrant, stage, line, state, type, ray, polarity)` inherited from Wilber's AQAL plus Law-of-One Ray and Polarity extensions.
+> HoloOS uses a 4-axis coordinate `⟨V=⟨O,D,S⟩, C, R⟩` (Verticality, Collectivity, Realm-placement) with `N` as a query parameter — see HoloOS `_THEORY/02_Ontology/08.8_Redesigned_Coordinate_System.md` (rev 2, canonical-hypothesis). Mysterium uses a 7-tuple `(quadrant, stage, line, state, type, ray, polarity)` inherited from Wilber's AQAL plus Law-of-One Ray and Polarity extensions.
 >
 > The two systems overlap on:
 > - Stage ≈ Verticality `V.D` (discrete density within an octave)
-> - State ≈ Realm-placement `R` (Gross/Subtle/Causal; CCRPG extends with Witness + Non-Dual)
+> - State ≈ Realm-placement `R` (Gross/Subtle/Causal; Mysterium extends with Witness + Non-Dual)
 > - Quadrant ≈ Collectivity `C` × Realm-interior-exterior
 >
-> CCRPG's **Line** axis has no HoloOS analog. It is retained as a CCRPG-specific extension because the 64-module content grid depends on it. HoloOS's **Nesting-direction** `N` axis has no CCRPG analog and is omitted because CCRPG does not model cross-octave involution.
+> Mysterium's **Line** axis has no HoloOS analog. It is retained as a Mysterium-specific extension because the 64-module content grid depends on it. HoloOS's **Nesting-direction** `N` axis has no Mysterium analog and is omitted because Mysterium does not model cross-octave involution.
 >
 > See `docs/foundations/26-unified-core-architecture.md` for the full coordinate tuple. See HoloOS `_THEORY/02_Ontology/08.8_Redesigned_Coordinate_System.md` for the source-of-truth 4-axis system.
 
 ## 1. Purpose
 
 Establish Wilber's Integral / AQAL framework as the **master organising
-lens** of CCRPG. Every other framework the game uses (Piaget's cognitive
+lens** of Mysterium. Every other framework the game uses (Piaget's cognitive
 stages, Kohlberg's moral stages, Diamond's executive functions, Goleman's
 emotional intelligence, Fowler's faith development, Spiral Dynamics
 colour-coding, the Law-of-One ray system) is plugged into AQAL as a
@@ -42,16 +42,16 @@ AQAL = "All Quadrants, All Levels, All Lines, All States, All Types"
   - **LL** Collective Interior — "We" — culture, shared values, mutual understanding.
   - **LR** Collective Exterior — "Its" — systems, institutions, infrastructure.
 - **Levels (= stages)** — developmental altitudes any phenomenon can
-  occupy. CCRPG canonises eight (Infrared → White).
+  occupy. Mysterium canonises eight (Infrared → White).
 - **Lines** — the relatively-independent developmental streams running
-  through every level. CCRPG canonises eight: Cognitive, Emotional,
+  through every level. Mysterium canonises eight: Cognitive, Emotional,
   Moral, Intrapersonal, Spiritual, Somatic, Willpower, Interpersonal.
 - **States** — temporary, accessible conditions of consciousness (Gross,
   Subtle, Causal, Witness, Non-Dual). Orthogonal to stage; you can have a
   Non-Dual state experience at Amber stage and a stage-bound experience
   at Turquoise.
 - **Types** — horizontal categories that do not develop (e.g., Myers-Briggs,
-  enneagram). CCRPG mostly ignores types except as character-creation
+  enneagram). Mysterium mostly ignores types except as character-creation
   flavour.
 
 ### 2.2 What AQAL claims
@@ -75,7 +75,7 @@ Each level integrates and adds to all previous levels. Orange does not
 groups need it; a regressed Orange is brittle when group cohesion demands
 it.
 
-This shapes CCRPG's progression UI: levels are *rings*, not check-marks. A
+This shapes Mysterium's progression UI: levels are *rings*, not check-marks. A
 player at Orange retains all Amber and lower abilities; the question is
 how cleanly they are integrated.
 
@@ -83,7 +83,7 @@ how cleanly they are integrated.
 
 ### 3.1 Five organising axes
 
-Every CCRPG entity carries (or is decorated by) five tags:
+Every Mysterium entity carries (or is decorated by) five tags:
 
 | Axis | Where it lives in code | In-game expression |
 |---|---|---|
@@ -139,12 +139,12 @@ never sets `stage`; it reads it.
 ## 5. Open questions
 
 - **Whether "Interpersonal" deserves to be a line or a quadrant.** AQAL
-  purists would say interpersonal IS LL — collective interior. CCRPG
+  purists would say interpersonal IS LL — collective interior. Mysterium
   treats it as a line for design symmetry (8 spokes), but documents the
   category-pragmatism here.
 - **State training as parallel progression.** Wilber distinguishes "growing
   up" (stages) from "waking up" (states). Most cognitive-training games
-  ignore states entirely. CCRPG's stretch goal in `progression/06` is to
+  ignore states entirely. Mysterium's stretch goal in `progression/06` is to
   include them; whether MVP does is undecided.
 - **How many types matter.** Currently zero. Some character-creation flavour
   could be added without polluting the model — but the temptation to let

@@ -4,7 +4,7 @@
 
 The current architecture has a **dual-storage problem**: user state lives in BOTH `save-all.json` (the Significator, used during sessions) AND the YAML profile files (used for context injection). These two stores are **not synchronized** — the YAML is a stale snapshot updated only post-session, and critical data (shadows, session history, narrative memory) is **never populated** in the YAML at all.
 
-The agent has **no read/write access** to the profile files during a session. It can only see what was injected via `process.env.CCRPG_PROFILE_CONTEXT` at startup, and it can only write via `updateProfileAfterSession()` after the session ends.
+The agent has **no read/write access** to the profile files during a session. It can only see what was injected via `process.env.Mysterium_PROFILE_CONTEXT` at startup, and it can only write via `updateProfileAfterSession()` after the session ends.
 
 This is inadequate for the user's vision: an agent that can read and modulate the user's profile files in real-time, within a sandboxed directory, so the profile evolves WITH the game.
 
@@ -15,7 +15,7 @@ This is inadequate for the user's vision: an agent that can read and modulate th
 ### 1.1 The Significator (save-all.json) — LIVE game state
 
 ```
-~/.ccrpg/save-all.json
+~/.mysterium/save-all.json
 └── { sig: Significator, world: WorldState }
 ```
 
@@ -43,10 +43,10 @@ This is inadequate for the user's vision: an agent that can read and modulate th
 
 **The problem:** This is a **single-user monolithic blob**. It's not profile-aware, not multi-user, and not readable by the agent during a session.
 
-### 1.2 The YAML Profile (~/.ccrpg/profiles/<name>/) — CONTEXT INJECTION
+### 1.2 The YAML Profile (~/.mysterium/profiles/<name>/) — CONTEXT INJECTION
 
 ```
-~/.ccrpg/profiles/default/
+~/.mysterium/profiles/default/
 ├── identity.yaml          # name, totals, stage (DUPLICATES sig)
 ├── developmental-state.yaml  # altitudes, drives (DUPLICATES sig, STALE)
 ├── session-history.yaml   # sessions: [] (NEVER POPULATED)
@@ -94,7 +94,7 @@ This is inadequate for the user's vision: an agent that can read and modulate th
 ### 2.2 The unified profile directory
 
 ```
-~/.ccrpg/profiles/<name>/
+~/.mysterium/profiles/<name>/
 ├── identity.yaml              # UNIQUE: name, pronouns, lifecycle (not in sig)
 ├── preferences.yaml           # UNIQUE: metaphor, intensity, pacing (not in sig)
 ├── goals.yaml                 # UNIQUE: self-declared + inferred goals
@@ -110,7 +110,7 @@ This is inadequate for the user's vision: an agent that can read and modulate th
 ```
 
 **Key changes from current:**
-- `live-state.json` + `world-state.json` move INTO the profile directory — no more `~/.ccrpg/save-all.json`
+- `live-state.json` + `world-state.json` move INTO the profile directory — no more `~/.mysterium/save-all.json`
 - `encounter-log.md` is NEW — captures the user's words and LLM responses (the therapeutic conversation)
 - `developmental-snapshot.yaml` and `shadow-ledger.yaml` are MIRRORS — synced from the sig, not independent
 - `identity.yaml`, `preferences.yaml`, `goals.yaml`, `narrative-memory.md` are UNIQUE — not in the sig
@@ -120,14 +120,14 @@ This is inadequate for the user's vision: an agent that can read and modulate th
 The agent gets two new tools:
 
 ```
-ccrpg_read_profile_file(filename)
+mysterium_read_profile_file(filename)
   → Returns the contents of a profile file (narrative-memory.md, goals.yaml, etc.)
   → Sandboxed: can only read files in the active profile directory
   → Valid filenames: identity.yaml, preferences.yaml, goals.yaml,
      narrative-memory.md, shadow-ledger.yaml, session-log.yaml,
      developmental-snapshot.yaml, encounter-log.md
 
-ccrpg_write_profile_file(filename, content, mode)
+mysterium_write_profile_file(filename, content, mode)
   → Writes/appends to a profile file
   → Sandboxed: can only write to the active profile directory
   → mode: 'overwrite' | 'append'
@@ -166,8 +166,8 @@ This eliminates the dual-storage problem: there's one source of truth for game s
 
 ### 3.1 Move save files into the profile directory
 
-**Current:** `~/.ccrpg/save-all.json`
-**Ideal:** `~/.ccrpg/profiles/<name>/live-state.json` + `world-state.json`
+**Current:** `~/.mysterium/save-all.json`
+**Ideal:** `~/.mysterium/profiles/<name>/live-state.json` + `world-state.json`
 
 This makes the save per-profile and eliminates the `getSaveFilePath()` indirection.
 
@@ -192,7 +192,7 @@ Currently `updateProfileAfterSession()` runs once at session end. It should run 
 
 ### 3.4 Add agent tools for profile r/w
 
-Add `ccrpg_read_profile_file` and `ccrpg_write_profile_file` to the CCRPGTools registry. These give the agent real-time access to the user's narrative memory and goals during a session.
+Add `mysterium_read_profile_file` and `mysterium_write_profile_file` to the MysteriumTools registry. These give the agent real-time access to the user's narrative memory and goals during a session.
 
 ### 3.5 Populate session-log.yaml with real entries
 

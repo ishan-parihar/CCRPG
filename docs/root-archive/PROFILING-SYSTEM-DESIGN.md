@@ -4,7 +4,7 @@
 
 ### 1.1 Storage: Single-user filesystem (JSON)
 
-The current system uses `~/.ccrpg/save-all.json` — a single JSON file containing:
+The current system uses `~/.mysterium/save-all.json` — a single JSON file containing:
 - `sig` (Significator): the player's developmental state (altitudes, drives, shadows, polarity cells, ray profile, recent encounters, codex entries, transformation state)
 - `world` (WorldState): the game world (holons, macro events, PESTLE tension)
 - `version` + `savedAt`: envelope metadata
@@ -41,14 +41,14 @@ The Significator carries:
 1. **Human-readable** — the user can inspect their own profile. This aligns with the Veil principle (qualitative, not clinical) while giving the user agency over their data.
 2. **LLM-native** — YAML + markdown is the format the LLM reads/writes best. Context injection is trivial (just concatenate the files).
 3. **Versionable** — profiles can be diffed, backed up, and version-controlled.
-4. **Sandboxed** — the CCRPG agent can have access to a specific directory and nothing else.
+4. **Sandboxed** — the Mysterium agent can have access to a specific directory and nothing else.
 5. **No binary dependencies** — no SQLite, no ORM, no migrations. Just files.
 6. **Schema-validatable** — YAML schemas can be validated at load time.
 
 ## 3. Directory Architecture
 
 ```
-~/.ccrpg/
+~/.mysterium/
 ├── config.json                    # LLM config (global, not per-user)
 ├── profiles/
 │   ├── _active                    # symlink → active profile dir
@@ -210,7 +210,7 @@ pacing: reflective  # rapid | reflective | slow
 ### 5.1 Cold-start onboarding (new user)
 
 ```
-ccrpg setup-profile
+mysterium setup-profile
 
 → "What should I call you?" → name
 → "What pronouns should I use?" → pronouns
@@ -218,7 +218,7 @@ ccrpg setup-profile
 → "What are you working on?" → open-ended (feeds goals.yaml)
 → "How do you want me to talk to you?" → metaphor_preference + intensity + pacing
 
-→ Creates ~/.ccrpg/profiles/<name>/
+→ Creates ~/.mysterium/profiles/<name>/
 → Writes all 7 YAML/MD files
 → Sets _active symlink
 → Runs the binary-search onboarding (inferAltitudesFromAnswers)
@@ -228,10 +228,10 @@ ccrpg setup-profile
 ### 5.2 Profile switching
 
 ```
-ccrpg profile list      → lists all profiles
-ccrpg profile switch <name>  → changes _active symlink
-ccrpg profile create <name>  → new onboarding
-ccrpg profile delete <name>  → removes profile (with confirmation)
+mysterium profile list      → lists all profiles
+mysterium profile switch <name>  → changes _active symlink
+mysterium profile create <name>  → new onboarding
+mysterium profile delete <name>  → removes profile (with confirmation)
 ```
 
 ## 6. Context Injection

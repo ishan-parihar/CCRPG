@@ -8,7 +8,7 @@ import type { KeyValueStore } from './KeyValueStore.js';
 export class LocalStorageStore implements KeyValueStore {
   private readonly prefix: string;
 
-  constructor(prefix: string = 'ccrpg:') {
+  constructor(prefix: string = 'mysterium:') {
     this.prefix = prefix;
   }
 

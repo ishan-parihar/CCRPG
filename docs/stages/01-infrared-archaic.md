@@ -3,7 +3,7 @@
 ## 1. Purpose
 
 The world bible for the first stage — survival, sensori-motor, raw
-embodiment. CCRPG's tutorial and prologue live here. Mechanically
+embodiment. Mysterium's tutorial and prologue live here. Mechanically
 *minimal*; emotionally *primal*. The player's first 30–60 minutes of
 play.
 
@@ -16,13 +16,13 @@ differentiated* — the player's body and the world are one continuous
 felt-pressure.
 
 In real human development this corresponds roughly to the first 1–2
-years; in CCRPG's compressed arc, it is the prologue / tutorial. The
+years; in Mysterium's compressed arc, it is the prologue / tutorial. The
 defining capacities are **sensorimotor intelligence**, **basic
 fight-or-flight**, and the rudimentary **five-sense awareness**.
 
 Energetic correspondence (optional layer): the **Red-Ray** energy
 centre — root, foundation, the "basic strengthening ray for each
-density." Blockages here destabilise everything above. In CCRPG this
+density." Blockages here destabilise everything above. In Mysterium this
 means the prologue must *land* — players must feel grounded by the end
 of it, or they will struggle in every later stage.
 

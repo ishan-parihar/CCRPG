@@ -6,7 +6,7 @@
  * old saves were missing new fields. This validator ensures every required
  * field is present, defaulting missing fields to safe values.
  *
- * Status: canonical (CCRPG-specific persistence contract).
+ * Status: canonical (Mysterium-specific persistence contract).
  */
 import type { Significator, TransformationRecord, EncounterRecord, DriveState } from '../../core/domain/Significator.js';
 import type { Stage } from '../../core/domain/Stage.js';

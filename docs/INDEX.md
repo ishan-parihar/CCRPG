@@ -1,6 +1,6 @@
 # `/docs/` -- Index
 
-> The research foundation of CCRPG. The binding build plan lives at
+> The research foundation of Mysterium. The binding build plan lives at
 > the repo root in `UNIFIED-IMPLEMENTATION-PLAN.md`. This tree is the *why* and the
 > *what*; the unified plan is the *how* and the *when*.
 
@@ -76,7 +76,7 @@
 - `28-holoos-open-joints-mapping.md` -- HoloOS open-joints tracking
 
 #### Curriculum expansion (29–34)
-> The theoretical substrate and architectural contract for extending CCRPG with modular curriculum support — knowledge taxonomies, subject concepts, depth rubrics, and progression. These documents ground the curriculum plug system in meta-learning science and holonic architecture.
+> The theoretical substrate and architectural contract for extending Mysterium with modular curriculum support — knowledge taxonomies, subject concepts, depth rubrics, and progression. These documents ground the curriculum plug system in meta-learning science and holonic architecture.
 
 - `29-meta-learning-science.md` — the neuroscience and cognitive science of how learning works
 - `30-holonic-curriculum-architecture.md` — holonic principles applied to knowledge organization

@@ -1,6 +1,6 @@
 /**
  * CurriculumBridge — integration functions between curriculum modules and
- * the existing CCRPG engine.
+ * the existing Mysterium engine.
  * Spec: docs/foundations/34-curriculum-engine-bridge.md
  *
  * Bridges curriculum outcomes to developmental Significator updates,

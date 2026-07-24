@@ -1,5 +1,5 @@
 /**
- * CCRPG Capability-Adaptive Styles.
+ * Mysterium Capability-Adaptive Styles.
  *
  * Reads data-* attributes set by CapabilityProbe and adjusts the UI:
  * - data-input="tv" → 64px+ touch targets, larger typography
@@ -25,8 +25,8 @@
 [data-input="tv"],
 [data-input="gamepad"] {
   /* Larger touch targets for 10-foot UI */
-  --ccrpg-radius: 8px;
-  --ccrpg-radius-lg: 16px;
+  --mysterium-radius: 8px;
+  --mysterium-radius-lg: 16px;
 }
 
 [data-input="tv"] button,
@@ -43,9 +43,9 @@
 /* Visible focus rings for gamepad/keyboard nav */
 [data-input="gamepad"] *:focus-visible,
 [data-input="tv"] *:focus-visible {
-  outline: 3px solid var(--ccrpg-accent, #b8252a);
+  outline: 3px solid var(--mysterium-accent, #b8252a);
   outline-offset: 3px;
-  border-radius: var(--ccrpg-radius, 6px);
+  border-radius: var(--mysterium-radius, 6px);
 }
 
 /* Larger typography on TV */
@@ -65,7 +65,7 @@
 
 /* ─── Contrast: more ─── */
 [data-contrast="more"] {
-  --ccrpg-border: currentColor;
+  --mysterium-border: currentColor;
 }
 
 [data-contrast="more"] button,
@@ -77,7 +77,7 @@
 /* ─── Capability: low (disable non-essential visuals) ─── */
 [data-capability="low"] {
   /* Disable backdrop filters (expensive on weak GPUs) */
-  --ccrpg-backdrop-filter: none;
+  --mysterium-backdrop-filter: none;
 }
 
 [data-capability="low"] * {

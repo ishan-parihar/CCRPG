@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Specify the *kinds of enemy* CCRPG ships, the *role* each kind plays
+Specify the *kinds of enemy* Mysterium ships, the *role* each kind plays
 in the developmental architecture, and the *design contract* every
 enemy must satisfy. Detailed bestiary stat blocks are deferred to
 implementation; this document is the *taxonomy*.
@@ -99,7 +99,7 @@ not by raw damage. A Red × Agency-fixation Conqueror is defeated by
 the player demonstrating Communion in some load-bearing way during
 the fight (saving an ally, choosing mercy, accepting help).
 
-This is what makes CCRPG's combat *narratively resonant* — the enemy
+This is what makes Mysterium's combat *narratively resonant* — the enemy
 is *cured*, mechanically speaking, not just defeated.
 
 ## 5. The sub-octave layer

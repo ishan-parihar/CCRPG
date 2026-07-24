@@ -1,6 +1,6 @@
 # 32 — Agentic Curriculum Linter
 
-> **Status:** canonical-hypothesis (CCRPG-specific agentic workflow for curriculum validation).
+> **Status:** canonical-hypothesis (Mysterium-specific agentic workflow for curriculum validation).
 >
 > **Lateral:** The validation workflow that ensures curriculum content is pedagogically sound, holonically coherent, and developmentally integrated. No other document covers this: foundations/29 covers learning science; foundations/30 covers holonic structure; foundations/31 covers depth assessment. This document covers the *agent-based validation process* that ensures all three are satisfied before content reaches the learner.
 >
@@ -13,7 +13,7 @@
 
 This document answers: **How do we validate that curriculum content is pedagogically effective, structurally coherent, and developmentally integrated — before it reaches the learner?**
 
-The curriculum linter is NOT a static analysis tool or a code linter. It is an **agentic workflow** — a multi-step AI-agent process that validates curriculum content based on meta-learning principles, subject topology, ontology, and epistemics. It is analogous to a skill-creator workflow: it allows AI agents to create, validate, and refine curriculum modules that align with the core meta-learning and surface-to-depth transformation model, and that effectively plug into the CCRPG system's hooks.
+The curriculum linter is NOT a static analysis tool or a code linter. It is an **agentic workflow** — a multi-step AI-agent process that validates curriculum content based on meta-learning principles, subject topology, ontology, and epistemics. It is analogous to a skill-creator workflow: it allows AI agents to create, validate, and refine curriculum modules that align with the core meta-learning and surface-to-depth transformation model, and that effectively plug into the Mysterium system's hooks.
 
 The linter answers three questions:
 1. **Is this curriculum structurally sound?** (prerequisites, depth progression, metadata completeness)
@@ -53,7 +53,7 @@ The linter uses a **Generator → Critic → Integrator** pipeline:
 - Uses: meta-learning principles checklist (§3.2), holonic continuity checks (§3.3), epistemic integrity checks (§3.4)
 
 **Agent 3: The Curriculum Integrator**
-- Wires the validated module into the CCRPG engine
+- Wires the validated module into the Mysterium engine
 - Input: validated module + existing registry state
 - Output: final module with engine hooks wired
 - Uses: developmental mapping validation, Significator update paths, scheduler compatibility checks
@@ -213,7 +213,7 @@ After the Critic passes, the Integrator agent:
 
 ## Purpose
 Validate curriculum modules against meta-learning principles, holonic structure, 
-depth assessment requirements, and CCRPG engine integration.
+depth assessment requirements, and Mysterium engine integration.
 
 ## Agents
 1. Generator: Creates curriculum content following holonic template

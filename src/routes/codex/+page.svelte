@@ -89,87 +89,87 @@
 
 <style>
   .empty-state {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     text-align: center;
-    padding: var(--ccrpg-space-7) var(--ccrpg-space-4);
-    line-height: var(--ccrpg-leading-relaxed);
+    padding: var(--mysterium-space-7) var(--mysterium-space-4);
+    line-height: var(--mysterium-leading-relaxed);
   }
 
   .entry-trigger {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
     width: 100%;
-    padding: var(--ccrpg-space-4) var(--ccrpg-space-5);
+    padding: var(--mysterium-space-4) var(--mysterium-space-5);
     background: transparent;
     border: none;
     cursor: pointer;
     text-align: left;
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
     -webkit-tap-highlight-color: transparent;
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease);
   }
 
   .entry-trigger:hover {
-    background: var(--ccrpg-surface-elevated);
+    background: var(--mysterium-surface-elevated);
   }
 
   .entry-trigger:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: -2px;
   }
 
   .entry-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-base);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-base);
     font-weight: 600;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
   }
 
   .entry-icon {
-    color: var(--ccrpg-fg-muted);
-    transition: transform var(--ccrpg-duration-base) var(--ccrpg-ease);
+    color: var(--mysterium-fg-muted);
+    transition: transform var(--mysterium-duration-base) var(--mysterium-ease);
     display: flex;
     align-items: center;
   }
 
   .entry-icon.expanded {
     transform: rotate(180deg);
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
   }
 
   .entry-panel {
-    padding: 0 var(--ccrpg-space-5) var(--ccrpg-space-4);
+    padding: 0 var(--mysterium-space-5) var(--mysterium-space-4);
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .entry-body {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    line-height: var(--ccrpg-leading-relaxed);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    line-height: var(--mysterium-leading-relaxed);
+    color: var(--mysterium-fg);
     margin: 0;
   }
 
   .entry-date {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
   }
 
   .entry-preview {
-    padding: 0 var(--ccrpg-space-5) var(--ccrpg-space-3);
+    padding: 0 var(--mysterium-space-5) var(--mysterium-space-3);
   }
 
   .preview-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    line-height: var(--ccrpg-leading-normal);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    line-height: var(--mysterium-leading-normal);
   }
 </style>

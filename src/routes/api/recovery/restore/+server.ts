@@ -26,9 +26,9 @@ async function hashMnemonic(mnemonic: string): Promise<string> {
 interface DevRecoveryStore {
   readonly store: Map<string, string>;
 }
-const g = globalThis as unknown as { __ccrpgDevRecovery?: DevRecoveryStore };
-if (!g.__ccrpgDevRecovery) g.__ccrpgDevRecovery = { store: new Map() };
-const devRecoveryStore = g.__ccrpgDevRecovery.store;
+const g = globalThis as unknown as { __mysteriumDevRecovery?: DevRecoveryStore };
+if (!g.__mysteriumDevRecovery) g.__mysteriumDevRecovery = { store: new Map() };
+const devRecoveryStore = g.__mysteriumDevRecovery.store;
 
 export const POST: RequestHandler = async ({ request, platform }) => {
   let body: { mnemonic?: string };

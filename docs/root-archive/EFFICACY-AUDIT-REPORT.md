@@ -1,4 +1,4 @@
-# CCRPG Comprehensive Efficacy Audit
+# Mysterium Comprehensive Efficacy Audit
 
 > **Date:** 2026-07-07
 > **Question:** Does the game actually help individuals in their healing/evolution? Is it efficacious for individuals of ALL stages of development, intelligence, IQ/EQ, and so on — from a child to a NASA scientist to a world-class therapist?
@@ -29,13 +29,13 @@
 ### 1.1 The full-spectrum claim
 
 From `AGENTS.md` §1:
-> *"CCRPG is a Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness... The game is designed for psychological, neurological, sociological, and biological healing and evolution."*
+> *"Mysterium is a Mysterium where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness... The game is designed for psychological, neurological, sociological, and biological healing and evolution."*
 
 From `README.md`:
 > *"Adaptive to any age, any developmental altitude."*
 
 From `foundations/07` (Neuroscience):
-> *"CCRPG is honest about these windows: a 35-year-old playing the game is not going to acquire 0–2y plasticity. The claim is practice-driven plasticity within the adult range."*
+> *"Mysterium is honest about these windows: a 35-year-old playing the game is not going to acquire 0–2y plasticity. The claim is practice-driven plasticity within the adult range."*
 
 ### 1.2 The validated-assessment claim
 

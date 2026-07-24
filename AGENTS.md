@@ -1,12 +1,12 @@
 # AGENTS.md — R&D Process and Development Protocol
 
-> This document defines how the CCRPG project is researched, documented, and developed. It is the operating manual for any AI agent (or human collaborator) working on this project.
+> This document defines how the Mysterium project is researched, documented, and developed. It is the operating manual for any AI agent (or human collaborator) working on this project.
 
 ---
 
 ## 1. Project Overview
 
-CCRPG is a Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness, with Law-of-One cosmology as canon. The game is designed for psychological, neurological, sociological, and biological healing and evolution.
+Mysterium is a Mysterium where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness, with Law-of-One cosmology as canon. The game is designed for psychological, neurological, sociological, and biological healing and evolution.
 
 **The game is two things at once:**
 1. A real action RPG with combat, narrative, and immersive gameplay
@@ -349,5 +349,5 @@ Every development iteration — no exceptions — must follow this sequence:
 **Workspace-lint config:** `workspace-lint.yaml` at project root. The validator script is at `skills/workspace-lint/scripts/workspace_lint.py`. It uses `.gitignore` as the source of truth for exclusions — config only adds project-specific overrides.
 
 **Remotes:**
-- GitHub: `origin` → `https://github.com/ishan-parihar/CCRPG.git`
-- GitLab: `gitlab` → `https://gitlab.com/ishan-parihar/CCRPG.git`
+- GitHub: `origin` → `https://github.com/ishan-parihar/Mysterium.git`
+- GitLab: `gitlab` → `https://gitlab.com/ishan-parihar/Mysterium.git`

@@ -1,15 +1,15 @@
-# Cloudflare Workers/Pages configuration for CCRPG.
+# Cloudflare Workers/Pages configuration for Mysterium.
 #
 # This file declares the KV namespaces and Analytics Engine binding
 # that the BFF endpoints (/api/save, /api/recovery, /api/telemetry)
 # use via platform.env in SvelteKit +server.ts handlers.
 #
-# Deploy: npx wrangler pages deploy .svelte-kit/cloudflare --project-name ccrpg
+# Deploy: npx wrangler pages deploy .svelte-kit/cloudflare --project-name mysterium
 # Secrets: npx wrangler secret put LLM_API_KEY
 #
 # See: https://developers.cloudflare.com/workers/wrangler/configuration/
 
-name = "ccrpg"
+name = "mysterium"
 compatibility_date = "2024-11-01"
 pages_build_output_dir = ".svelte-kit/cloudflare"
 
@@ -31,12 +31,12 @@ preview_id = "REPLACE_WITH_RECOVERY_KV_PREVIEW_ID"
 
 # ─── Analytics Engine (telemetry) ──────────────────────────────────
 # Create before first deploy:
-#   npx wrangler analytics-engine dataset create ccrpg_telemetry
+#   npx wrangler analytics-engine dataset create mysterium_telemetry
 # The dataset name becomes the binding's dataset.
 
 [[analytics_engine_datasets]]
 binding = "ANALYTICS"
-dataset = "ccrpg_telemetry"
+dataset = "mysterium_telemetry"
 
 # ─── Secrets (set via CLI, NOT in this file) ───────────────────────
 # LLM_API_KEY — the OpenAI/Anthropic API key. Set via:

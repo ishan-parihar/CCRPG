@@ -1,7 +1,7 @@
 <script lang="ts">
   /**
    * /diagnostic route — system status.
-   * Parity with CLI 'ccrpg diagnostic'.
+   * Parity with CLI 'mysterium diagnostic'.
    * Shows: registries, holons, significator, session, LLM config, scheduler test.
    */
   import { onMount } from 'svelte';
@@ -150,7 +150,7 @@
             </div>
             <p class="diag-note">
               The WebUI proxies LLM calls through the BFF. The API key is held server-side.
-              Run `ccrpg diagnostic` in the CLI for client-side LLM config details.
+              Run `mysterium diagnostic` in the CLI for client-side LLM config details.
             </p>
           </Stack>
         </Card>
@@ -161,26 +161,26 @@
 
 <style>
   .loading-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
   }
 
   .error-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-danger);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-danger);
     margin: 0;
   }
 
   .section-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
-    color: var(--ccrpg-accent);
+    letter-spacing: var(--mysterium-tracking-wider);
+    color: var(--mysterium-accent);
     margin: 0;
   }
 
@@ -188,28 +188,28 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
 
   .diag-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
   }
 
   .diag-value {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
     font-weight: 500;
   }
 
   .diag-note {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
-    line-height: var(--ccrpg-leading-relaxed);
-    margin: var(--ccrpg-space-2) 0 0 0;
+    line-height: var(--mysterium-leading-relaxed);
+    margin: var(--mysterium-space-2) 0 0 0;
   }
 </style>

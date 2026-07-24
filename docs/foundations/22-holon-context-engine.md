@@ -10,7 +10,7 @@
 
 ## 1. The LLM as manifest layer (design philosophy)
 
-The LLM is not the author of CCRPG. It is the **manifestation layer** — a translator from structural game-state into narrative surface. The architecture is hand-authored (registries, modality contracts, scoring rubrics, scheduler, polarity engine). The LLM fills moment-to-moment flesh on this skeleton within tight rubrics.
+The LLM is not the author of Mysterium. It is the **manifestation layer** — a translator from structural game-state into narrative surface. The architecture is hand-authored (registries, modality contracts, scoring rubrics, scheduler, polarity engine). The LLM fills moment-to-moment flesh on this skeleton within tight rubrics.
 
 The canon principle (per AGENTS.md §5.8, foundations/21 §10.5):
 
@@ -195,7 +195,7 @@ Loaded from the relevant `ModalityContract` (§6).
 All outputs from 4.1–4.6 composed into a fixed template:
 
 ```
-[ROLE] You are the manifestation layer of CCRPG.
+[ROLE] You are the manifestation layer of Mysterium.
 [COSMOLOGY] Third Density constraints, Veil enforcement.
 [FREQUENCY] {FrequencySpec}
 [HOLONS] {Selected holons — names, signatures, voice anchors}

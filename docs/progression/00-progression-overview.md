@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Specify how the player *grows* in CCRPG — the long-loop architecture
+Specify how the player *grows* in Mysterium — the long-loop architecture
 that turns individual encounters into a developmental arc. Detailed
 algorithms (staircase tuning, threshold values, regression triggers)
 are deferred to implementation; this document is the *philosophy*.
@@ -15,7 +15,7 @@ The slogan:
 
 ## 2. The five progression timescales
 
-CCRPG's progression operates at five interlocking timescales:
+Mysterium's progression operates at five interlocking timescales:
 
 | Timescale | Loop | What changes |
 |---|---|---|
@@ -31,7 +31,7 @@ cadence — produces poor UX.
 
 ## 3. The progression "shape"
 
-CCRPG's progression is **not** a single XP bar. It is, in order of
+Mysterium's progression is **not** a single XP bar. It is, in order of
 importance:
 
 ### 3.1 The radial chart (psychograph)
@@ -104,7 +104,7 @@ shadow encounters to the player as *invitations*.
 ## 5. The line-balance problem and the gentle pull
 
 Without a counter-mechanism, players will pump their strongest line.
-CCRPG counters via *gentle pull*, never *hard wall*:
+Mysterium counters via *gentle pull*, never *hard wall*:
 
 - The **stage gate** requires *every* line to clear (the floor) — so
   ignoring a line eventually blocks stage advancement.
@@ -116,7 +116,7 @@ CCRPG counters via *gentle pull*, never *hard wall*:
   more than +1 or +2 stages ahead of cognitive — keeping the
   development *integrated*.
 
-What CCRPG **never** does: penalise or reduce a strong-line altitude
+What Mysterium **never** does: penalise or reduce a strong-line altitude
 because a weak line is behind. Strength is honoured; weakness is
 *invited*, not *punished*.
 
@@ -134,7 +134,7 @@ A typical session:
 | Optional skill-edge or shadow | up to 10 min | Player-driven |
 | End-session ritual (save, codex) | 30 s | Closure, anticipation |
 
-CCRPG is designed for **5–6 sessions per week, 30 minutes each** —
+Mysterium is designed for **5–6 sessions per week, 30 minutes each** —
 closer to a meditation app's cadence than a typical RPG. Long binges
 are not supported by the progression model; the per-session staircase
 warm-up actively undermines them.
@@ -157,7 +157,7 @@ self-authored*. The game does not say "you have ascended"; the player
 
 ## 8. Regression as a feature
 
-Regression in CCRPG is **not** a punishment. It is a *capacity*.
+Regression in Mysterium is **not** a punishment. It is a *capacity*.
 
 A player at Orange may *deliberately* regress to Amber to clear a
 shadow encounter rooted there. Visited stages remain accessible
@@ -170,14 +170,14 @@ visited stage*; the gap between them is where shadow work lives.
 
 ## 9. The "no end-game grind" rule
 
-CCRPG does **not** ship endless-grind end-game content of the
+Mysterium does **not** ship endless-grind end-game content of the
 loot-treadmill kind. The end-game (`stages/08-white-superintegral.md`)
 is *contemplative* — the player returns to mentor others (multiplayer),
 to clear remaining shadow encounters, or to start a new character with
 different drive weights.
 
 This is commercially unusual but ethically necessary. Variable-ratio
-reward grinds are *exactly* the design pattern CCRPG cannot use
+reward grinds are *exactly* the design pattern Mysterium cannot use
 without contradicting Principle 6 (honest engagement).
 
 ## 10. The downstream documents (deferred)

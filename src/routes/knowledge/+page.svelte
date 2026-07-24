@@ -54,9 +54,9 @@
 
 <style>
   .empty-state {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     text-align: center;
-    padding: var(--ccrpg-space-7) var(--ccrpg-space-4);
+    padding: var(--mysterium-space-7) var(--mysterium-space-4);
   }
 </style>

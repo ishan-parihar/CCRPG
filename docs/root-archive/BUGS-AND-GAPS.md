@@ -1,10 +1,10 @@
-# CCRPG ↔ TDG-Rust Integration — Bugs & Gaps Audit
+# Mysterium ↔ TDG-Rust Integration — Bugs & Gaps Audit
 
 > **Date:** 2026-07-04 (updated)
 > **Status:** Living document. Update as bugs are fixed and new gaps are found.
 
 This document tracks bugs and implementation gaps discovered during end-to-end
-testing of the CCRPG ↔ TDG-Rust integration. Each entry includes: severity,
+testing of the Mysterium ↔ TDG-Rust integration. Each entry includes: severity,
 status (fixed / open / wontfix), file:line references, and a fix description.
 
 ---
@@ -19,7 +19,7 @@ status (fixed / open / wontfix), file:line references, and a fix description.
 | Low | 5 | 4 | 1 |
 
 **Test counts:** 662 pass + 7 pre-existing environmental failures + 11 E2E
-integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
+integration tests (run with `Mysterium_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
 
 ---
 
@@ -83,7 +83,7 @@ integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
   `JSON.parse(array)` coerces to `JSON.parse("[object Object]")` → SyntaxError
   → caught + swallowed → returned null every time.
 - **Fix:** Added `parseContent()` helper that extracts the text from the
-  content array and parses it. Used by all 4 TDG→CCRPG hooks.
+  content array and parses it. Used by all 4 TDG→Mysterium hooks.
 - **Status:** ✅ Fixed
 
 ### H3. getHealth didn't handle computed=false
@@ -125,7 +125,7 @@ integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
 
 ### M2. effectiveEncounter mismatch in applyResponseOnly
 - **File:** `scripts/cli-game.ts:1565-1591`
-- **Symptom:** When the PersistentAgent calls `ccrpg_select_encounter` with a
+- **Symptom:** When the PersistentAgent calls `mysterium_select_encounter` with a
   different moduleRef, the bridge uses the agent's pick for
   `processOutcome`/`applyConsequences` (correct), but cli-game.ts passed
   the original scheduler pick to `applyResponseOnly`. This updated the wrong
@@ -143,12 +143,12 @@ integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
 - **Fix:** Now explicitly passes `tick: false` to query without advancing.
 - **Status:** ✅ Fixed
 
-### M4. TDG→CCRPG feedback hooks never invoked from production
+### M4. TDG→Mysterium feedback hooks never invoked from production
 - **Files:** `src/core/engines/CCIEngine.ts:822`, `src/core/GameLoop.ts`
 - **Symptom:** `runReflection`, `getNewEdges`, `getTransformationPressure`
   are defined but never called from the live game loop. `computeCCIWithTDG`
   exists but `GameLoop.startSession` still uses sync `computeCCI`. The entire
-  TDG→CCRPG feedback direction is dead code in the current runtime.
+  TDG→Mysterium feedback direction is dead code in the current runtime.
 - **Fix:** Added `startSessionWithTDG()` (async) that augments baseline CCI
   with TDG G_z/P_z + runs graph-level reflection to annotate the session
   strategy. Added `getTDGTransformationPressure()` helper. Wired both into
@@ -161,10 +161,10 @@ integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
 
 ### M5. PersistentAgent re-registers all 15 tools as source='tdg'
 - **File:** `src/core/agent/PersistentAgent.ts:72-92`
-- **Symptom:** `config.tdgToolRegistry` is the unified registry (8 CCRPG + 7
+- **Symptom:** `config.tdgToolRegistry` is the unified registry (8 Mysterium + 7
   TDG). The loop re-registers all 15 with `source: 'tdg'`, overwriting the 8
-  CCRPG tools' source label. `getDefinitionsBySource('ccrpg')` returns 0.
-- **Fix:** Constructor now skips any tool name the CCRPG registry already has
+  Mysterium tools' source label. `getDefinitionsBySource('mysterium')` returns 0.
+- **Fix:** Constructor now skips any tool name the Mysterium registry already has
   (`if (this.registry.has(name)) continue;`). Only genuinely-new TDG tools
   get registered with `source: 'tdg'`, preserving correct source attribution.
 - **Regression tests:** `tests/agent/AgenticArchitecture.test.ts` →
@@ -196,16 +196,16 @@ integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
 - **Symptom:** `void data;` — TDG-Rust crash diagnostics, libonnxruntime
   load errors, and MCP protocol warnings are invisible. Makes debugging
   impossible when hooks silently fail.
-- **Fix:** stderr now routes to `console.debug` when `CCRPG_VERBOSE_TDG=1`
-  or `CCRPG_VERBOSE=1` is set. Otherwise discarded (to avoid spamming the
-  player's console with TDG internals). Use `CCRPG_VERBOSE_TDG=1 ccrpg ...`
+- **Fix:** stderr now routes to `console.debug` when `Mysterium_VERBOSE_TDG=1`
+  or `Mysterium_VERBOSE=1` is set. Otherwise discarded (to avoid spamming the
+  player's console with TDG internals). Use `Mysterium_VERBOSE_TDG=1 mysterium ...`
   to debug hook failures.
 - **Status:** ✅ Fixed
 
 ### L4. PersistentAgent ctx.sessionState frozen at creation
 - **File:** `src/core/agent/PersistentAgent.ts:68,130-132` + `scripts/cli-game.ts:1602-1616`
 - **Symptom:** `sessionState.encountersSoFar` is set to 0 at agent creation
-  and never updated between encounters. `ccrpg_get_encounter_pool` always
+  and never updated between encounters. `mysterium_get_encounter_pool` always
   sees `encountersSoFar: 0` and `recentLines: []`, which can skew scheduler
   ranking.
 - **Fix:** `sessionState` is now mutable (not `readonly`). Added
@@ -215,40 +215,40 @@ integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
   "PersistentAgent.updateSessionState (regression for L4)" (1 test)
 - **Status:** ✅ Fixed
 
-### L5. ccrpg_get_encounter_pool ignores session-strategy weights
-- **File:** `src/core/agent/tools/CCRPGTools.ts:22-23,213-218,328-354`
+### L5. mysterium_get_encounter_pool ignores session-strategy weights
+- **File:** `src/core/agent/tools/MysteriumTools.ts:22-23,213-218,328-354`
 - **Symptom:** Uses `DEFAULT_WEIGHTS` instead of the session strategy's
   biased weights. The agent sees a different ranking than the scheduler
   used to pick the original encounter.
 - **Fix:** `ToolContext.sessionState` now has an optional `weightBias` field.
-  When provided, `ccrpg_get_encounter_pool` applies it via
+  When provided, `mysterium_get_encounter_pool` applies it via
   `applyWeightBias(DEFAULT_WEIGHTS, weightBias)`. CLI passes the session
   strategy's `weightBias` through `updateSessionState()`. Falls back to
   `DEFAULT_WEIGHTS` when absent (legacy behaviour).
 - **Regression tests:** `tests/agent/AgenticArchitecture.test.ts` →
-  "ccrpg_get_encounter_pool weightBias (regression for L5)" (1 test)
+  "mysterium_get_encounter_pool weightBias (regression for L5)" (1 test)
 - **Status:** ✅ Fixed
 
 ---
 
-## Install-script bugs (in TDG-Rust's own install.sh, not CCRPG)
+## Install-script bugs (in TDG-Rust's own install.sh, not Mysterium)
 
 ### I1. TDG-Rust install.sh requires Hermes Agent pre-installed
 - **Symptom:** `err "HERMES_HOME not found"`, `err "Install Hermes Agent
   first"`. The install script aborts if `~/.hermes` doesn't exist.
-- **Workaround:** CCRPG's `install.sh` creates `~/.hermes` before running
-  the TDG installer. CCRPG only needs the binary + DB, not the full Hermes
+- **Workaround:** Mysterium's `install.sh` creates `~/.hermes` before running
+  the TDG installer. Mysterium only needs the binary + DB, not the full Hermes
   gateway.
-- **Status:** ✅ Worked around in CCRPG install.sh
+- **Status:** ✅ Worked around in Mysterium install.sh
 
 ### I2. TDG-Rust install.sh init_database fails on LD_LIBRARY_PATH
 - **Symptom:** The install script's `init_database()` calls
   `"$tdg_dir/tdg-rust" init` without setting LD_LIBRARY_PATH, so the binary
   fails to load libonnxruntime. The install script still exits 0 (its
   `set -e` doesn't catch the failure inside the pipe).
-- **Workaround:** CCRPG's `install.sh` initializes the DB itself with the
+- **Workaround:** Mysterium's `install.sh` initializes the DB itself with the
   correct env, after running the TDG installer.
-- **Status:** ✅ Worked around in CCRPG install.sh (upstream bug — should
+- **Status:** ✅ Worked around in Mysterium install.sh (upstream bug — should
   be filed against tdg-rust)
 
 ---
@@ -256,19 +256,19 @@ integration tests (run with `CCRPG_E2E_TDG=1`) + 8 GameLoop TDG feedback tests.
 ## How to run the E2E integration test
 
 ```bash
-# Install everything (CCRPG + TDG-Rust)
+# Install everything (Mysterium + TDG-Rust)
 bash install.sh
 
 # Run the E2E suite (spawns the real TDG-Rust binary)
-LD_LIBRARY_PATH=~/.hermes/tdg-rust/lib CCRPG_E2E_TDG=1 \
+LD_LIBRARY_PATH=~/.hermes/tdg-rust/lib Mysterium_E2E_TDG=1 \
   npx vitest run tests/integration/TDGRustE2E.test.ts
 
 # Or via bun (faster):
-LD_LIBRARY_PATH=~/.hermes/tdg-rust/lib CCRPG_E2E_TDG=1 \
+LD_LIBRARY_PATH=~/.hermes/tdg-rust/lib Mysterium_E2E_TDG=1 \
   bun test tests/integration/TDGRustE2E.test.ts
 ```
 
-Without `CCRPG_E2E_TDG=1`, the E2E suite skips (1 always-on metadata test
+Without `Mysterium_E2E_TDG=1`, the E2E suite skips (1 always-on metadata test
 reports install status). This keeps the default `bun test` run fast and
 hermetic.
 

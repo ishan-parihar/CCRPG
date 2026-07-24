@@ -3,7 +3,7 @@
 ## 1. Purpose
 
 Specify the *state* axis of AQAL — the temporary, accessible conditions
-of consciousness — and distinguish it sharply from *stage*. CCRPG's
+of consciousness — and distinguish it sharply from *stage*. Mysterium's
 optional state-training mini-game (in `progression/06`) lives here.
 
 The slogan: **stages are slow vertical growth; states are fast horizontal
@@ -49,7 +49,7 @@ state is interpreted.** A Non-Dual peak experience interpreted at:
 - **Green** — "All paths lead to the same truth."
 - **Turquoise** — "The non-dual is a feature of consciousness as such."
 
-The same state, eight different interpretive frames. CCRPG's narrative
+The same state, eight different interpretive frames. Mysterium's narrative
 honours this: a state-experience cutscene is *interpreted* by the
 player's current stage's NPC commentary.
 
@@ -100,7 +100,7 @@ State access translates to assessment options:
 
 ### 3.4 Why this matters
 
-Without states, CCRPG is a game about *capacity*. With states, it is
+Without states, Mysterium is a game about *capacity*. With states, it is
 also a game about *access* — and therefore about practice, about
 discipline, about what one *does* between fights. The state mini-game
 represents the contemplative half of human development that

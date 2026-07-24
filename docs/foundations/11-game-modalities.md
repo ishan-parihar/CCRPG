@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Define the **complete palette of game types** available to the CCRPG engine, how each modality maps to specific assessment dimensions, and how multiple games per module create a robust, non-gameable, multi-dimensional assessment of each capacity. No single game type can assess the full depth of a developmental capacity — therefore each of the 64 modules must support **multiple game modalities** that triangulate the truth.
+Define the **complete palette of game types** available to the Mysterium engine, how each modality maps to specific assessment dimensions, and how multiple games per module create a robust, non-gameable, multi-dimensional assessment of each capacity. No single game type can assess the full depth of a developmental capacity — therefore each of the 64 modules must support **multiple game modalities** that triangulate the truth.
 
 This document answers: *What kinds of games can we build, what does each kind measure, and how do they compose into a complete assessment ecosystem?*
 

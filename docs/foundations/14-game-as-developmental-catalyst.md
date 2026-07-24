@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Define how each game in the CCRPG ecosystem functions as a **developmental catalyst** — not merely an assessment instrument but a living practice that moves the player through the catalyst→experience→integration cycle mapped directly onto the Law-of-One Archetypal Mind and the 5-layer topography of the unconscious.
+Define how each game in the Mysterium ecosystem functions as a **developmental catalyst** — not merely an assessment instrument but a living practice that moves the player through the catalyst→experience→integration cycle mapped directly onto the Law-of-One Archetypal Mind and the 5-layer topography of the unconscious.
 
 **What this document covers that no other does:**
 - foundations/10 covers WHAT shadows are and how they're detected
@@ -27,7 +27,7 @@ Matrix (the structure of the mind as it IS)
         → Significator (the integrated self that emerges)
 ```
 
-In CCRPG, each game IS a catalyst. The game's design determines:
+In Mysterium, each game IS a catalyst. The game's design determines:
 - What aspect of the Potentiator it activates (which unconscious material it surfaces)
 - How the Matrix responds (which drives activate, which shadows surface)
 - How Experience is processed (the player's engagement pattern)
@@ -279,13 +279,13 @@ Shadow mode is triggered by the EncounterScheduler when it detects dark shadows 
 
 ### 9.1 What happens at Step 8
 
-At Step 8 (Return), the holon does **NOT** dissolve. This is the most critical design principle in CCRPG, and the one most easily misunderstood.
+At Step 8 (Return), the holon does **NOT** dissolve. This is the most critical design principle in Mysterium, and the one most easily misunderstood.
 
 When consciousness reaches the final attractor field — the Source, Intelligent Infinity, the undifferentiated ground of all being — the holon does not vanish into undifferentiated oneness. It **TRANSCENDS AND INCLUDES**. It becomes MORE, not less. It encompasses everything that came before while retaining its individual coherence. The holon becomes the sub-octave of the next scale level — a new foundation for a new octave of development.
 
 ### 9.2 Transcend and include as operational principle
 
-The "transcend and include" principle (from Wilber's integral theory) is not merely a philosophical abstraction — it is the **operational rule** governing all stage transitions in CCRPG:
+The "transcend and include" principle (from Wilber's integral theory) is not merely a philosophical abstraction — it is the **operational rule** governing all stage transitions in Mysterium:
 
 ```
 When a holon transcends:
@@ -298,7 +298,7 @@ When a holon transcends:
 
 ### 9.3 Game design implications
 
-In CCRPG, transformation at a stage threshold does NOT erase lower-stage capacities. It integrates them into a larger frame:
+In Mysterium, transformation at a stage threshold does NOT erase lower-stage capacities. It integrates them into a larger frame:
 
 | What transformation IS | What transformation is NOT |
 |---|---|
@@ -314,11 +314,11 @@ This principle guards against the two primary pathologies of transformation:
 
 **Guardrail 1: Spiritual bypassing (Eros without Agape)**
 
-If transcendence dissolved the lower, then "ascending" would mean leaving behind the messy, embodied, relational reality of earlier stages. This is precisely what spiritual bypassing looks like — the individual claims to have "transcended" anger, grief, desire, or need, but what they have actually done is repressed these capacities. In CCRPG, a player who "advances" to a higher stage but loses access to lower-stage capacities has NOT transcended — they have bypassed. The game must detect this (through shadow encounters at earlier stages) and require genuine integration before the advancement is locked in.
+If transcendence dissolved the lower, then "ascending" would mean leaving behind the messy, embodied, relational reality of earlier stages. This is precisely what spiritual bypassing looks like — the individual claims to have "transcended" anger, grief, desire, or need, but what they have actually done is repressed these capacities. In Mysterium, a player who "advances" to a higher stage but loses access to lower-stage capacities has NOT transcended — they have bypassed. The game must detect this (through shadow encounters at earlier stages) and require genuine integration before the advancement is locked in.
 
 **Guardrail 2: Regression (Agape without Eros)**
 
-If inclusion without transcendence were the whole story, then "integrating" earlier stages would mean staying at their level. This is regression disguised as integration. In CCRPG, a player who returns to earlier stages but never reaches for the next has NOT integrated — they have regressed. The game must detect this (through drive-health scores showing Eros at zero) and present catalyst that invites genuine forward movement.
+If inclusion without transcendence were the whole story, then "integrating" earlier stages would mean staying at their level. This is regression disguised as integration. In Mysterium, a player who returns to earlier stages but never reaches for the next has NOT integrated — they have regressed. The game must detect this (through drive-health scores showing Eros at zero) and present catalyst that invites genuine forward movement.
 
 ### 9.5 The sub-octave principle
 

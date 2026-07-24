@@ -1,14 +1,14 @@
 # 03 — Research Methodology
 
-> **Status:** canonical (the discipline itself is HoloOS canonical; CCRPG adoption is canonical for CCRPG).
+> **Status:** canonical (the discipline itself is HoloOS canonical; Mysterium adoption is canonical for Mysterium).
 
 ## 0. Epistemic discipline (adopted from HoloOS Method of Holonic Inquiry)
 
-CCRPG adopts the HoloOS Method of Holonic Inquiry (`_THEORY/01_Epistemology/0_Method_of_Holonic_Inquiry.md`, canonical) with the following three Acts, seven Obligations, and status ladder.
+Mysterium adopts the HoloOS Method of Holonic Inquiry (`_THEORY/01_Epistemology/0_Method_of_Holonic_Inquiry.md`, canonical) with the following three Acts, seven Obligations, and status ladder.
 
 ### 0.1 Three Acts
 
-1. **Grounding** — reduce every claim to a trusted anchor. The trusted anchor for CCRPG ontology is HoloOS `02.1_Microcosmic_Metabolic_Architecture.md` (canonical). The trusted anchor for CCRPG game-mechanics is the running code in `src/core/`.
+1. **Grounding** — reduce every claim to a trusted anchor. The trusted anchor for Mysterium ontology is HoloOS `02.1_Microcosmic_Metabolic_Architecture.md` (canonical). The trusted anchor for Mysterium game-mechanics is the running code in `src/core/`.
 2. **Construction** — build new claims via fractal recursion (every element is itself a holon) and structural mirroring (separate invariant from decoration).
 3. **Validation** — red-team every claim; run Type Validation (T1/T2/T3, §0.3 below); retain provenance.
 
@@ -24,11 +24,11 @@ CCRPG adopts the HoloOS Method of Holonic Inquiry (`_THEORY/01_Epistemology/0_Me
 
 ### 0.3 Type Validation Protocol (T1 / T2 / T3)
 
-CCRPG adopts HoloOS's three-test Type Validation Protocol (`_THEORY/01_Epistemology/4_Type_Validation_Protocol.md`, canonical-hypothesis):
+Mysterium adopts HoloOS's three-test Type Validation Protocol (`_THEORY/01_Epistemology/4_Type_Validation_Protocol.md`, canonical-hypothesis):
 
-- **T1 Behavioral match** — observed bonding patterns match the Type signature's predictions. For CCRPG: a player assigned PolarityTexture X should show drive-choice patterns consistent with X across ≥3 encounters.
-- **T2 Excitation-invariance** — the Type signature stays fixed as Stage changes. For CCRPG: a player's underlying Type (once we have one — see `foundations/23` §3.1) should persist across Stage transitions, with only surface expressions varying.
-- **T3 Fixed-point persistence** — the Type signature persists across metabolic cycles without immediately firing Transformation. For CCRPG: a player's Type should be stable across ≥10 encounters before a Transformation event.
+- **T1 Behavioral match** — observed bonding patterns match the Type signature's predictions. For Mysterium: a player assigned PolarityTexture X should show drive-choice patterns consistent with X across ≥3 encounters.
+- **T2 Excitation-invariance** — the Type signature stays fixed as Stage changes. For Mysterium: a player's underlying Type (once we have one — see `foundations/23` §3.1) should persist across Stage transitions, with only surface expressions varying.
+- **T3 Fixed-point persistence** — the Type signature persists across metabolic cycles without immediately firing Transformation. For Mysterium: a player's Type should be stable across ≥10 encounters before a Transformation event.
 
 A Type claim that fails any test is demoted from `canonical-hypothesis` to `ai-draft`. A Type claim that passes all three is promoted to `canonical`.
 
@@ -47,7 +47,7 @@ A claim without a status tag is treated as `ai-draft`.
 
 ### 0.5 Active refactor methodology
 
-Per HoloOS `_THEORY/02_Ontology/08.8.9_Depth_Asymmetry_and_Epistemology_Audit.md` Part II, when CCRPG performs an active refactor (audit → reconcile → validate → document), the refactor must:
+Per HoloOS `_THEORY/02_Ontology/08.8.9_Depth_Asymmetry_and_Epistemology_Audit.md` Part II, when Mysterium performs an active refactor (audit → reconcile → validate → document), the refactor must:
 
 1. **Audit** — produce or update `AUDIT-HOLOOS-ALIGNMENT.md` (or equivalent) identifying what changed and why.
 2. **Reconcile** — update all stale references in the docs tree (file-number references, cross-doc citations, glossary entries).
@@ -74,7 +74,7 @@ Three methodological frameworks structure this work:
 
 Hevner et al.'s seven-phase pattern, adapted for a cognitive-game context:
 
-| Phase | Activity in CCRPG |
+| Phase | Activity in Mysterium |
 |---|---|
 | 1. Problem identification | "Cognitive-training apps fail at retention." `00-vision.md`. |
 | 2. Define objectives | The seven first-principles. `01-first-principles.md`. |
@@ -109,7 +109,7 @@ considered complete.
 
 Provides 12 micro-elements that link *representation* (how info is
 displayed) and *interaction* (what the player does with it) to *cognitive
-demand*. CCRPG uses INFORM to specify each cognitive overlay UI in `ux/01`.
+demand*. Mysterium uses INFORM to specify each cognitive overlay UI in `ux/01`.
 The 12 micro-elements are the checklist for "is this overlay unambiguously
 soliciting the cognitive demand we want?"
 
@@ -148,7 +148,7 @@ When sources conflict, this is the order of priority:
 1. **Replicated empirical findings** in peer-reviewed literature with
    pre-registration or large meta-analyses (e.g., the n-back transfer
    debate — Au et al. 2015 vs. Melby-Lervåg 2016 — both cited; the
-   *uncertainty* is documented; CCRPG does not claim transfer it cannot
+   *uncertainty* is documented; Mysterium does not claim transfer it cannot
    defend).
 2. **Theoretical syntheses** by recognised integrators (Wilber, Diamond,
    Bavelier) — used as scaffolding, but never as a substitute for primary

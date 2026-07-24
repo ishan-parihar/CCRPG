@@ -1,7 +1,7 @@
 /**
- * CCRPG Global Base Styles.
+ * Mysterium Global Base Styles.
  *
- * Pure-Svelte frontend. Loads after tokens.css so --ccrpg-* variables exist.
+ * Pure-Svelte frontend. Loads after tokens.css so --mysterium-* variables exist.
  * No Phaser, no #game-root canvas container — just a clean Svelte app shell.
  */
 
@@ -18,20 +18,20 @@ html,
 body {
   height: 100%;
   width: 100%;
-  background: var(--ccrpg-bg);
-  color: var(--ccrpg-fg);
-  font-family: var(--ccrpg-font-body);
-  font-size: var(--ccrpg-text-base);
-  line-height: var(--ccrpg-leading-normal);
+  background: var(--mysterium-bg);
+  color: var(--mysterium-fg);
+  font-family: var(--mysterium-font-body);
+  font-size: var(--mysterium-text-base);
+  line-height: var(--mysterium-leading-normal);
   overflow: hidden;
   overscroll-behavior: none;
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none;
   user-select: none;
   touch-action: none;
-  transition: background var(--ccrpg-duration-slow) var(--ccrpg-ease),
-              color var(--ccrpg-duration-slow) var(--ccrpg-ease),
-              font-family var(--ccrpg-duration-slow) var(--ccrpg-ease);
+  transition: background var(--mysterium-duration-slow) var(--mysterium-ease),
+              color var(--mysterium-duration-slow) var(--mysterium-ease),
+              font-family var(--mysterium-duration-slow) var(--mysterium-ease);
 }
 
 /* Re-enable text selection + touch scrolling for content elements.
@@ -77,20 +77,20 @@ pre, code, kbd, samp {
 
 /* ─── High Contrast Mode (data-contrast="more" OR .a11y-high-contrast) ─── */
 .a11y-high-contrast {
-  --ccrpg-bg: #000000;
-  --ccrpg-surface: #000000;
-  --ccrpg-surface-elevated: #111111;
-  --ccrpg-fg: #ffffff;
-  --ccrpg-fg-muted: #cccccc;
-  --ccrpg-accent: #00ddff;
-  --ccrpg-border: #666666;
+  --mysterium-bg: #000000;
+  --mysterium-surface: #000000;
+  --mysterium-surface-elevated: #111111;
+  --mysterium-fg: #ffffff;
+  --mysterium-fg-muted: #cccccc;
+  --mysterium-accent: #00ddff;
+  --mysterium-border: #666666;
 }
 
 /* ─── Focus-visible (keyboard nav on any input method) ──────────── */
 *:focus-visible {
-  outline: 2px solid var(--ccrpg-accent);
+  outline: 2px solid var(--mysterium-accent);
   outline-offset: 2px;
-  border-radius: var(--ccrpg-radius);
+  border-radius: var(--mysterium-radius);
 }
 
 /* ─── Noscript Fallback ─────────────────────────────────────────── */
@@ -99,12 +99,12 @@ noscript {
   inset: 0;
   display: grid;
   place-items: center;
-  background: var(--ccrpg-bg);
-  color: var(--ccrpg-fg);
-  z-index: var(--ccrpg-z-sr);
-  padding: var(--ccrpg-space-6);
+  background: var(--mysterium-bg);
+  color: var(--mysterium-fg);
+  z-index: var(--mysterium-z-sr);
+  padding: var(--mysterium-space-6);
   text-align: center;
-  font-size: var(--ccrpg-text-lg);
+  font-size: var(--mysterium-text-lg);
 }
 
 /* ─── Safe area helper ─────────────────────────────────────────── */

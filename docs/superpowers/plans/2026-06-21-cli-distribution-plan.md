@@ -1,6 +1,6 @@
-# CCRPG CLI Distribution Plan
+# Mysterium CLI Distribution Plan
 
-> **Goal:** Make CCRPG installable as `npm install -g ccrpg` with a `ccrpg` command that works out of the box.
+> **Goal:** Make Mysterium installable as `npm install -g mysterium` with a `mysterium` command that works out of the box.
 
 ---
 
@@ -15,7 +15,7 @@
 | Phaser in `dependencies` | ❌ | CLI doesn't use Phaser — adds ~2MB for nothing |
 | No `"files"` field | ❌ | Would publish everything (tests, docs, etc.) |
 | `.env` for LLM config | ⚠️ | Won't find `.env` on user machines |
-| No first-run setup | ❌ | No `~/.ccrpg/` directory, no config wizard |
+| No first-run setup | ❌ | No `~/.mysterium/` directory, no config wizard |
 | README has no install instructions | ❌ | Users can't discover the CLI |
 
 ---
@@ -43,13 +43,13 @@ Key patterns we adopt:
 ## 3. What We're Building
 
 ```
-npm install -g ccrpg            # or npx ccrpg
-ccrpg                           # interactive session
-ccrpg --help                    # usage info
-ccrpg --headless --no-llm       # automated test
-ccrpg setup                     # configure LLM API key
-ccrpg diagnostic                # system diagnostics
-ccrpg new-game                  # start fresh
+npm install -g mysterium            # or npx mysterium
+mysterium                           # interactive session
+mysterium --help                    # usage info
+mysterium --headless --no-llm       # automated test
+mysterium setup                     # configure LLM API key
+mysterium diagnostic                # system diagnostics
+mysterium new-game                  # start fresh
 ```
 
 ---
@@ -143,12 +143,12 @@ dist/cli/
 
 ```json
 {
-  "name": "ccrpg",
+  "name": "mysterium",
   "version": "0.1.0",
-  "description": "Cognitive-Capacity-Driven RPG — a gamified developmental assessment engine",
+  "description": "Mysterium — a gamified developmental assessment engine",
   "type": "module",
   "bin": {
-    "ccrpg": "./dist/cli/cli-game.js"
+    "mysterium": "./dist/cli/cli-game.js"
   },
   "files": [
     "dist/cli/",
@@ -181,7 +181,7 @@ dist/cli/
 
 Key changes:
 - **Remove `"private": true`** — allows npm publish
-- **Add `"bin"` field** — registers `ccrpg` command
+- **Add `"bin"` field** — registers `mysterium` command
 - **Add `"files"` field** — only publish CLI bundle + data + README
 - **Add `"engines"` field** — specify Node.js >= 18
 - **Add `"prepublishOnly"`** — auto-build CLI before publish
@@ -211,12 +211,12 @@ dist/web/
 
 ### Phase 3: First-Run Experience (Sprint 3)
 
-#### 4.10 Config Directory: `~/.ccrpg/`
+#### 4.10 Config Directory: `~/.mysterium/`
 
 Following hermes-agent's pattern, create a config directory on first run:
 
 ```
-~/.ccrpg/
+~/.mysterium/
   config.json      # LLM settings, preferences
   saves/            # Game saves
     significator.json
@@ -224,7 +224,7 @@ Following hermes-agent's pattern, create a config directory on first run:
   sessions/         # Session history (optional)
 ```
 
-#### 4.11 `ccrpg setup` Subcommand
+#### 4.11 `mysterium setup` Subcommand
 
 ```typescript
 // In cli-game.ts, add a 'setup' mode:
@@ -233,10 +233,10 @@ case 'setup':
   break;
 
 async function runSetup(): Promise<void> {
-  banner('CCRPG Setup Wizard');
+  banner('Mysterium Setup Wizard');
   
   // 1. Create config directory
-  const configDir = path.join(os.homedir(), '.ccrpg');
+  const configDir = path.join(os.homedir(), '.mysterium');
   fs.mkdirSync(configDir, { recursive: true });
   
   // 2. Check for existing config
@@ -246,7 +246,7 @@ async function runSetup(): Promise<void> {
     : {};
   
   // 3. Interactive prompts (or use LLM to guide)
-  console.log('\n  This wizard will configure CCRPG for your system.\n');
+  console.log('\n  This wizard will configure Mysterium for your system.\n');
   
   // LLM API Key
   const apiKey = await ask('  Enter your LLM API key (or press Enter to skip): ');
@@ -279,15 +279,15 @@ async function runSetup(): Promise<void> {
   fs.mkdirSync(path.join(configDir, 'saves'), { recursive: true });
   
   success(`Configuration saved to ${configPath}`);
-  console.log(`\n  Run ${C.bold}ccrpg${C.reset} to start your developmental journey.\n`);
+  console.log(`\n  Run ${C.bold}mysterium${C.reset} to start your developmental journey.\n`);
 }
 ```
 
 #### 4.12 Config Loading Priority
 
 ```
-1. Environment variables (CCRPG_API_KEY, CCRPG_MODEL, etc.)
-2. ~/.ccrpg/config.json (setup wizard output)
+1. Environment variables (Mysterium_API_KEY, Mysterium_MODEL, etc.)
+2. ~/.mysterium/config.json (setup wizard output)
 3. .env file in current directory (development mode)
 4. Built-in defaults (placeholder key, fallback model)
 ```
@@ -296,11 +296,11 @@ async function runSetup(): Promise<void> {
 
 Currently saves to current working directory. Change to:
 ```
-~/.ccrpg/saves/significator.json
-~/.ccrpg/saves/world-state.json
+~/.mysterium/saves/significator.json
+~/.mysterium/saves/world-state.json
 ```
 
-This ensures saves persist regardless of where `ccrpg` is run from.
+This ensures saves persist regardless of where `mysterium` is run from.
 
 ---
 
@@ -311,30 +311,30 @@ This ensures saves persist regardless of where `ccrpg` is run from.
 Transform from flag-based to subcommand-based CLI:
 
 ```
-ccrpg                        # interactive session (default)
-ccrpg session                # same as above
-ccrpg session --encounters=10 --headless
-ccrpg setup                  # first-run wizard
-ccrpg diagnostic             # system diagnostics
-ccrpg new-game               # reset progress
-ccrpg status                 # show current state (stage, CCI, encounters)
-ccrpg help                   # usage info
+mysterium                        # interactive session (default)
+mysterium session                # same as above
+mysterium session --encounters=10 --headless
+mysterium setup                  # first-run wizard
+mysterium diagnostic             # system diagnostics
+mysterium new-game               # reset progress
+mysterium status                 # show current state (stage, CCI, encounters)
+mysterium help                   # usage info
 ```
 
 #### 4.15 Help Text Enhancement
 
 ```
-$ ccrpg --help
+$ mysterium --help
 
-  CCRPG — Cognitive-Capacity-Driven RPG
+  Mysterium — Mysterium
   Developmental Assessment Engine v0.1.0
 
   USAGE
-    ccrpg                    Start an interactive session
-    ccrpg setup              Configure LLM and preferences
-    ccrpg diagnostic         Show system diagnostics
-    ccrpg new-game           Reset progress and start fresh
-    ccrpg status             Show current developmental state
+    mysterium                    Start an interactive session
+    mysterium setup              Configure LLM and preferences
+    mysterium diagnostic         Show system diagnostics
+    mysterium new-game           Reset progress and start fresh
+    mysterium status             Show current developmental state
 
   SESSION OPTIONS
     --encounters=N           Number of encounters (default: 20)
@@ -351,16 +351,16 @@ $ ccrpg --help
     --force-shadow=Q         Force a shadow quadrant
 
   CONFIGURATION
-    API key:   ~/.ccrpg/config.json or CCRPG_API_KEY env var
-    Model:     ~/.ccrpg/config.json or CCRPG_MODEL env var
-    Saves:     ~/.ccrpg/saves/
+    API key:   ~/.mysterium/config.json or Mysterium_API_KEY env var
+    Model:     ~/.mysterium/config.json or Mysterium_MODEL env var
+    Saves:     ~/.mysterium/saves/
 
   EXAMPLES
-    ccrpg                                    # interactive session
-    ccrpg --headless --no-llm                # quick automated test
-    ccrpg setup                              # configure API key
-    ccrpg session --encounters=5 --json      # JSON event stream
-    ccrpg diagnostic                         # system diagnostics
+    mysterium                                    # interactive session
+    mysterium --headless --no-llm                # quick automated test
+    mysterium setup                              # configure API key
+    mysterium session --encounters=5 --json      # JSON event stream
+    mysterium diagnostic                         # system diagnostics
 
   DEVELOPMENTAL SYSTEM
     8 lines × 8 stages = 64 developmental modules
@@ -374,7 +374,7 @@ Add `--version` flag:
 ```typescript
 const VERSION = '0.1.0';
 if (flags.has('--version')) {
-  console.log(`ccrpg ${VERSION}`);
+  console.log(`mysterium ${VERSION}`);
   return;
 }
 ```
@@ -389,16 +389,16 @@ if (flags.has('--version')) {
 # Build the CLI
 npm run build:cli
 
-# Link globally (creates symlink: ~/.nvm/.../bin/ccrpg → dist/cli/cli-game.js)
+# Link globally (creates symlink: ~/.nvm/.../bin/mysterium → dist/cli/cli-game.js)
 npm link
 
 # Test from any directory
-ccrpg --help
-ccrpg --headless --no-llm --encounters=3
-ccrpg diagnostic
+mysterium --help
+mysterium --headless --no-llm --encounters=3
+mysterium diagnostic
 
 # Unlink when done
-npm unlink -g ccrpg
+npm unlink -g mysterium
 ```
 
 #### 4.18 Integration Tests
@@ -415,9 +415,9 @@ describe('CLI distribution', () => {
       encoding: 'utf8',
       timeout: 10000,
     });
-    expect(out).toContain('CCRPG');
+    expect(out).toContain('Mysterium');
     expect(out).toContain('USAGE');
-    expect(out).toContain('ccrpg');
+    expect(out).toContain('mysterium');
   });
 
   it('runs diagnostic mode', () => {
@@ -484,7 +484,7 @@ jobs:
 | `tsup.config.ts` | **Create** | tsup bundler configuration |
 | `package.json` | **Modify** | Add bin, files, engines, scripts; remove private |
 | `scripts/cli-game.ts` | **Modify** | Add setup mode, subcommands, config loading |
-| `src/infra/persistence/SaveRepository.ts` | **Modify** | Support `~/.ccrpg/saves/` path |
+| `src/infra/persistence/SaveRepository.ts` | **Modify** | Support `~/.mysterium/saves/` path |
 | `.github/workflows/deploy.yml` | **Modify** | Add npm publish job |
 | `tests/cli.test.ts` | **Create** | Integration tests for CLI |
 
@@ -515,12 +515,12 @@ Phase 2: Package for npm (Day 1-2)
   ├── Update package.json (bin, files, engines, scripts)
   ├── Remove "private": true
   ├── Test with `npm link`
-  └── Verify `ccrpg --help` works globally
+  └── Verify `mysterium --help` works globally
 
 Phase 3: First-Run Experience (Day 2-3)
-  ├── Add config directory support (~/.ccrpg/)
+  ├── Add config directory support (~/.mysterium/)
   ├── Add `setup` subcommand
-  ├── Update SaveRepository for ~/.ccrpg/saves/
+  ├── Update SaveRepository for ~/.mysterium/saves/
   └── Add config loading priority chain
 
 Phase 4: CLI Polish (Day 3)
@@ -540,13 +540,13 @@ Phase 5: Testing & Validation (Day 4)
 
 ## 8. Success Criteria
 
-- [ ] `npm install -g ccrpg` installs successfully
-- [ ] `ccrpg --help` shows comprehensive usage
-- [ ] `ccrpg` starts an interactive session
-- [ ] `ccrpg --headless --no-llm --encounters=5` runs 5 automated encounters
-- [ ] `ccrpg setup` configures LLM API key
-- [ ] Saves persist in `~/.ccrpg/saves/` across sessions
-- [ ] `ccrpg diagnostic` shows 64 modules, 36 holons, CCI
+- [ ] `npm install -g mysterium` installs successfully
+- [ ] `mysterium --help` shows comprehensive usage
+- [ ] `mysterium` starts an interactive session
+- [ ] `mysterium --headless --no-llm --encounters=5` runs 5 automated encounters
+- [ ] `mysterium setup` configures LLM API key
+- [ ] Saves persist in `~/.mysterium/saves/` across sessions
+- [ ] `mysterium diagnostic` shows 64 modules, 36 holons, CCI
 - [ ] JSON mode produces clean, parseable output
 - [ ] All 448+ tests pass
 - [ ] Bundle size is reasonable (< 500KB)
@@ -559,25 +559,25 @@ Phase 5: Testing & Validation (Day 4)
 ### 9.1 Homebrew Tap
 Following hermes-agent's pattern, create a Homebrew formula:
 ```bash
-brew tap ishanp/ccrpg
-brew install ccrpg
+brew tap ishanp/mysterium
+brew install mysterium
 ```
 
 ### 9.2 Docker Support
 ```dockerfile
 FROM node:20-slim
-RUN npm install -g ccrpg
-ENTRYPOINT ["ccrpg", "--headless", "--no-llm"]
+RUN npm install -g mysterium
+ENTRYPOINT ["mysterium", "--headless", "--no-llm"]
 ```
 
 ### 9.3 Auto-Update Check
 Check for new versions on startup (like hermes does):
 ```typescript
 // In main(), before session start:
-const latestVersion = await checkNpmVersion('ccrpg');
+const latestVersion = await checkNpmVersion('mysterium');
 if (latestVersion !== VERSION) {
   info('update', `New version available: ${latestVersion} (current: ${VERSION})`);
-  info('update', `Run ${C.bold}npm update -g ccrpg${C.reset} to upgrade`);
+  info('update', `Run ${C.bold}npm update -g mysterium${C.reset} to upgrade`);
 }
 ```
 
@@ -591,5 +591,5 @@ For a richer interactive experience, consider migrating from readline to Ink (Re
 ### 9.5 Plugin System
 Allow users to add custom developmental modules:
 ```
-ccrpg plugin add @ccrpg/custom-module
+mysterium plugin add @mysterium/custom-module
 ```

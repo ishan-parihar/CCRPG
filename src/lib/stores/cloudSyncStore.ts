@@ -20,7 +20,7 @@
 import type { Significator } from '$core/domain/Significator.js';
 import { CryptoStore } from '$infra/crypto/CryptoStore.js';
 
-const DEVICE_ID_KEY = 'ccrpg:device-id';
+const DEVICE_ID_KEY = 'mysterium:device-id';
 const SYNC_DEBOUNCE_MS = 500;
 
 let debounceTimer: ReturnType<typeof setTimeout> | null = null;

@@ -1,6 +1,6 @@
-# ROADMAP.md - CCRPG Development Roadmap
+# ROADMAP.md - Mysterium Development Roadmap
 
-> Cognitive-Capacity-Driven RPG: every gameplay verb is a gamified developmental assessment across 8 lines of intelligence x 8 stages of consciousness.
+> Mysterium: every gameplay verb is a gamified developmental assessment across 8 lines of intelligence x 8 stages of consciousness.
 
 ---
 

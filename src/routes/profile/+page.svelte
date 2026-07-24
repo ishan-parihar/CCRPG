@@ -112,7 +112,7 @@
                 return `${p.x},${p.y}`;
               }).join(' ')}
               fill="none"
-              stroke="var(--ccrpg-border)"
+              stroke="var(--mysterium-border)"
               stroke-width={ringIdx === ringCount - 1 ? 1.5 : 0.75}
               opacity={0.3 + ringIdx * 0.05}
             />
@@ -124,19 +124,19 @@
               y1={cy}
               x2={point(lineIdx, ringCount - 1).x}
               y2={point(lineIdx, ringCount - 1).y}
-              stroke="var(--ccrpg-border)"
+              stroke="var(--mysterium-border)"
               stroke-width="0.5"
               opacity="0.3"
             />
           {/each}
 
-          <path d={profilePath} fill="var(--ccrpg-accent)" fill-opacity="0.15" stroke="var(--ccrpg-accent)" stroke-width="2" />
+          <path d={profilePath} fill="var(--mysterium-accent)" fill-opacity="0.15" stroke="var(--mysterium-accent)" stroke-width="2" />
 
           {#each ALL_LINES as line, lineIdx}
             {@const stage = sig.altitudes[line as Line] ?? 'Infrared'}
             {@const ord = stageOrdinal(stage as Stage)}
             {@const p = point(lineIdx, ord)}
-            <circle cx={p.x} cy={p.y} r="4" fill="var(--ccrpg-accent)" stroke="var(--ccrpg-bg)" stroke-width="1.5" />
+            <circle cx={p.x} cy={p.y} r="4" fill="var(--mysterium-accent)" stroke="var(--mysterium-bg)" stroke-width="1.5" />
           {/each}
 
           {#each ALL_LINES as line, lineIdx}
@@ -152,9 +152,9 @@
               y={lp.y}
               text-anchor="middle"
               dominant-baseline="middle"
-              fill="var(--ccrpg-fg-muted)"
+              fill="var(--mysterium-fg-muted)"
               font-size="9"
-              font-family="var(--ccrpg-font-body)"
+              font-family="var(--mysterium-font-body)"
             >
               {line.slice(0, 4)}
             </text>
@@ -229,10 +229,10 @@
 
 <style>
   .empty-state {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     text-align: center;
-    padding: var(--ccrpg-space-7) var(--ccrpg-space-4);
+    padding: var(--mysterium-space-7) var(--mysterium-space-4);
   }
 
   .chart-container {
@@ -247,12 +247,12 @@
   }
 
   .section-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
-    color: var(--ccrpg-accent);
+    letter-spacing: var(--mysterium-tracking-wider);
+    color: var(--mysterium-accent);
     margin: 0;
   }
 
@@ -266,25 +266,25 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-3);
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-5);
+    gap: var(--mysterium-space-3);
+    padding: var(--mysterium-space-3) var(--mysterium-space-5);
   }
 
   .line-row.divider {
-    border-top: 1px solid var(--ccrpg-border);
+    border-top: 1px solid var(--mysterium-border);
   }
 
   .line-name {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     font-weight: 500;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
   }
 
   .line-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     text-align: right;
   }
@@ -300,13 +300,13 @@
   }
 
   .knowledge-link:hover :global(.card) {
-    box-shadow: 0 4px 12px var(--ccrpg-shadow-md);
+    box-shadow: 0 4px 12px var(--mysterium-shadow-md);
   }
 
   .link-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-accent);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-accent);
     font-weight: 500;
   }
 </style>

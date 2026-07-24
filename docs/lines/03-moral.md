@@ -6,7 +6,7 @@ Specify the Moral line — the capacity to discern *right action* in a
 given circumstance. Moral development moves from **egocentric** ("what
 is good for me") through **ethnocentric** ("what is good for my group")
 to **worldcentric** ("what is good for all humans") and ultimately
-**kosmocentric** ("what is good for all sentient beings"). CCRPG's
+**kosmocentric** ("what is good for all sentient beings"). Mysterium's
 choice-based combat verbs and dilemma encounters live here.
 
 ## 2. Scientific basis
@@ -27,7 +27,7 @@ Synthesis:
 - **Wilber** — moral altitude as a *line*, distinguishable from
   cognitive altitude.
 
-CCRPG's working definition:
+Mysterium's working definition:
 
 > Moral intelligence is the capacity to (a) recognise that a situation
 > has moral content, (b) reason from one's principles to a chosen
@@ -181,7 +181,7 @@ last ~50 choices, gated by `consistency >= 0.7`.
 ## 7. Open questions
 
 - **Cultural moral variance.** Haidt's foundations vary across cultures.
-  CCRPG must avoid imposing one moral grammar. Default: Foundation
+  Mysterium must avoid imposing one moral grammar. Default: Foundation
   *weighting* is configurable per player, with a balanced default.
 - **Real moral content vs. game moral content.** A trolley-problem
   dilemma in a fantasy RPG is morally lighter than a real one. We must

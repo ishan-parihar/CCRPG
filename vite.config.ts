@@ -11,7 +11,7 @@ import { fileURLToPath, URL } from 'node:url';
  * The CLI build (tsup) is unaffected — it has its own config.
  */
 export default defineConfig(({ mode }) => ({
-  // Base path: GitHub Pages serves at /CCRPG/, Cloudflare serves at /.
+  // Base path: GitHub Pages serves at /Mysterium/, Cloudflare serves at /.
   // The BUILD_TARGET env drives both the adapter (svelte.config.js) and
   // the base path here. For Capacitor (static), base is './' so assets
   // resolve from the file:// origin.
@@ -25,9 +25,9 @@ export default defineConfig(({ mode }) => ({
       strategies: 'generateSW',
       registerType: 'autoUpdate',
       manifest: {
-        name: 'CCRPG — Cognitive Combat RPG',
-        short_name: 'CCRPG',
-        description: 'A Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness.',
+        name: 'Mysterium — Mysterium',
+        short_name: 'Mysterium',
+        description: 'A Mysterium where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness.',
         start_url: '/',
         scope: '/',
         display: 'standalone',
@@ -85,7 +85,7 @@ export default defineConfig(({ mode }) => ({
             urlPattern: /\/fonts\/.*\.woff2$/,
             handler: 'CacheFirst',
             options: {
-              cacheName: 'ccrpg-fonts',
+              cacheName: 'mysterium-fonts',
               expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
             },
           },

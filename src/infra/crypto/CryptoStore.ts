@@ -2,7 +2,7 @@
  * CryptoStore - AES-GCM 256-bit encryption for at-rest data.
  */
 
-const DEFAULT_KEY = 'ccrpg-telemetry-key';
+const DEFAULT_KEY = 'mysterium-telemetry-key';
 
 const subtleCrypto = globalThis.crypto;
 

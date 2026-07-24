@@ -4,7 +4,7 @@
 
 Specify the Emotional line — the capacity to (a) register one's own
 feelings, (b) register others' feelings, (c) regulate own affect under
-load, and (d) interact between own and other affect adaptively. CCRPG's
+load, and (d) interact between own and other affect adaptively. Mysterium's
 empath-read, mood-parry, and affect-channel verbs live here; emotional
 shadow encounters dramatise repressed affect.
 
@@ -24,7 +24,7 @@ Synthesis:
   modification, attentional deployment, cognitive change, response
   modulation.
 
-CCRPG's working definition:
+Mysterium's working definition:
 
 > Emotional intelligence is the joint capacity for (a) accurate
 > recognition of affect (own and other), (b) regulation of affect
@@ -169,10 +169,10 @@ Affect-recognition tasks ship with culturally-balanced face stimuli
 ## 7. Open questions
 
 - **Cultural validity of affect-recognition.** Most face stimuli are
-  Western; cross-cultural recognition rates differ. CCRPG must use a
+  Western; cross-cultural recognition rates differ. Mysterium must use a
   multi-cultural stimulus set (e.g., NimStim + JACFEE + RaFD).
 - **Affect-labelling vocabulary.** Six basic emotions (Ekman) are
-  contested; alternative is constructed-emotion (Barrett). CCRPG can
+  contested; alternative is constructed-emotion (Barrett). Mysterium can
   carry both labelling models; default to Ekman in MVP for tractability.
 - **Triggering content.** Trauma-adjacent affect (deep grief, shame) is
   legitimate gameplay material but must be handled with content

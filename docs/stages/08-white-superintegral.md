@@ -201,11 +201,11 @@ The game ends with the player's own words.
 
 - **Representing non-dual consciousness.** Any representation of
   the non-dual is by definition a form of duality (the
-  representation is *not* the thing). CCRPG's solution: minimise
+  representation is *not* the thing). Mysterium's solution: minimise
   representation; trust silence and absence; let the player project
   their own meaning.
 - **End-game retention.** Most games keep players engaged with
-  loops. CCRPG's White stage has *no loop*. This is honest but
+  loops. Mysterium's White stage has *no loop*. This is honest but
   commercially unusual. The implicit return path is to mentor others
   (multiplayer) or to start a new character with different drive
   weights.

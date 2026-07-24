@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-CCRPG (Cognitive-Capacity-Driven RPG) is a single-player and multiplayer
+Mysterium (Mysterium) is a single-player and multiplayer
 role-playing fighting game whose mechanics are *literally* validated cognitive,
 emotional, moral, somatic, intrapersonal, spiritual, willpower, and
 interpersonal assessments — embedded inside a real-time combat engine that
@@ -23,7 +23,7 @@ other.
 
 ## 2. Scientific basis
 
-CCRPG sits at the intersection of three mature research traditions:
+Mysterium sits at the intersection of three mature research traditions:
 
 - **Cognitive psychology of executive function** — Miyake & Friedman's three
   core EFs (inhibitory control, working memory, cognitive flexibility),
@@ -43,7 +43,7 @@ CCRPG sits at the intersection of three mature research traditions:
 
 Optional metaphysical / aesthetic layer: the Law-of-One energy-ray
 correspondence (Red→Violet) which the user has indicated maps cleanly onto
-the integral stages as a sub-octave pattern. Used in CCRPG **only as a
+the integral stages as a sub-octave pattern. Used in Mysterium **only as a
 visual/sonic/narrative scaffold** — never as a load-bearing claim about
 empirical psychology. Kept separable in `foundations/06-law-of-one-correspondence.md`
 so it can be removed without breaking the science.

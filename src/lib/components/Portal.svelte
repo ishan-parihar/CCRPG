@@ -19,7 +19,7 @@
     if (!browser) return;
     host = document.createElement('div');
     host.dataset.portal = 'true';
-    host.style.cssText = 'position: fixed; inset: 0; pointer-events: none; z-index: var(--ccrpg-z-modal);';
+    host.style.cssText = 'position: fixed; inset: 0; pointer-events: none; z-index: var(--mysterium-z-modal);';
     document.body.appendChild(host);
   });
 

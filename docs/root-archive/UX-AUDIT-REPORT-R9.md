@@ -1,7 +1,7 @@
-# CCRPG Fresh-User UX Audit Report — Round 9
+# Mysterium Fresh-User UX Audit Report — Round 9
 
 > **Date:** 2026-07-07
-> **Method:** A subagent with zero knowledge of CCRPG internals role-played a fresh user discovering the game via the CLI only. It ran 27 commands across all test groups. The parent agent verified all key findings and fixed the critical process-exit hang before writing this report.
+> **Method:** A subagent with zero knowledge of Mysterium internals role-played a fresh user discovering the game via the CLI only. It ran 27 commands across all test groups. The parent agent verified all key findings and fixed the critical process-exit hang before writing this report.
 > **Objective:** Verify that all R3-R8 fixes hold and determine whether the game has reached 10/10.
 
 ---
@@ -12,7 +12,7 @@
 
 1. **R9-BUG-2 (process-exit hang):** `--agent` sessions completed but the Node process never exited — hanging indefinitely in scripted/CI contexts. **FIXED** by the parent agent via `process.exit(0)` in the `finally` block of `main()`. Verified: `--agent --no-llm` now exits in 0.675s (was: indefinite hang).
 
-2. **R9-BUG-3 (LLM config lost):** The `~/.ccrpg/config.json` was deleted by a prior `--new-game` run, causing the subagent to see "LLM: fallback (placeholder key)" — making the LLM efficacy untestable. **FIXED** by restoring the config file. (Note: `--new-game` deleting the config is a separate bug — `deleteAllSaves()` should not remove the config file. To be addressed in a future round.)
+2. **R9-BUG-3 (LLM config lost):** The `~/.mysterium/config.json` was deleted by a prior `--new-game` run, causing the subagent to see "LLM: fallback (placeholder key)" — making the LLM efficacy untestable. **FIXED** by restoring the config file. (Note: `--new-game` deleting the config is a separate bug — `deleteAllSaves()` should not remove the config file. To be addressed in a future round.)
 
 3. **R9-BUG-1 (glossary typo):** The subagent reported `armony]=Green` still present. Parent-agent verification via `od -c` confirmed the file actually contains `[harmony]=Green` — the subagent saw a stale tsx cache. **Already fixed** (R8-impl).
 
@@ -49,7 +49,7 @@ A general-purpose subagent ran 27 commands across 8 test groups. The subagent en
 ### 1.2 Parent-agent verification + fixes
 
 - **R9-BUG-2:** Reproduced the process-exit hang. Fixed via `process.exit(0)` in `main()`'s `finally` block. Verified: `--agent --no-llm` exits in 0.675s.
-- **R9-BUG-3:** Confirmed `~/.ccrpg/config.json` was missing. Restored it. (Root cause: `deleteAllSaves()` removes the entire `~/.ccrpg/` directory, including the config. This is a separate bug to address.)
+- **R9-BUG-3:** Confirmed `~/.mysterium/config.json` was missing. Restored it. (Root cause: `deleteAllSaves()` removes the entire `~/.mysterium/` directory, including the config. This is a separate bug to address.)
 - **R9-BUG-1:** Verified via `od -c` that the glossary output contains `[harmony]=Green` (the fix is in place; the subagent saw stale cache).
 
 ---
@@ -98,9 +98,9 @@ real    0m0.675s    ← clean exit
 
 ### 3.1 R9-BUG-3 (P1): `--new-game` deletes the config file
 
-**Symptom:** Running `--new-game` deletes `~/.ccrpg/config.json`, wiping the LLM configuration. The next session shows "LLM: fallback (placeholder key)" with no explanation.
+**Symptom:** Running `--new-game` deletes `~/.mysterium/config.json`, wiping the LLM configuration. The next session shows "LLM: fallback (placeholder key)" with no explanation.
 
-**Root cause:** `deleteAllSaves()` in `SaveRepository.ts` removes the entire `~/.ccrpg/` directory (or at least the config file along with the saves).
+**Root cause:** `deleteAllSaves()` in `SaveRepository.ts` removes the entire `~/.mysterium/` directory (or at least the config file along with the saves).
 
 **Fix:** `deleteAllSaves()` should only delete save files (`save.json`, `save-all.json`, `world.json`), NOT `config.json`. The config file is user configuration, not game state.
 
@@ -126,7 +126,7 @@ real    0m0.675s    ← clean exit
 
 **Symptom:** In non-TTY mode, `setup` auto-enables `--headless` then refuses: "setup requires interactive mode (remove --headless and --json)". The user didn't add `--headless` — the system did, then scolded the user.
 
-**Fix:** Either (a) skip the auto-degrade for `setup` (let it hang naturally in non-TTY, which is honest), or (b) change the message to: "setup requires a real terminal (TTY). Please run `ccrpg setup` in an interactive terminal."
+**Fix:** Either (a) skip the auto-degrade for `setup` (let it hang naturally in non-TTY, which is honest), or (b) change the message to: "setup requires a real terminal (TTY). Please run `mysterium setup` in an interactive terminal."
 
 **Blast radius:** 3 lines.
 
@@ -217,5 +217,5 @@ Fix those two and the game reaches 10/10 experiential. The efficacy gap (Loop 3)
 ## 8. Appendix — R9-impl Commits
 
 1. `fix(ux): R9-BUG-2 — force process.exit(0) after session completion` — fixes the agent process-exit hang
-2. Restored `~/.ccrpg/config.json` (not committed — it's a local config file, not source code)
+2. Restored `~/.mysterium/config.json` (not committed — it's a local config file, not source code)
 3. `docs(ux): add UX-AUDIT-REPORT-R9` — this report

@@ -87,16 +87,16 @@
 <style>
   .agent-runner {
     position: fixed;
-    right: var(--ccrpg-space-4);
-    bottom: calc(var(--ccrpg-nav-height) + var(--ccrpg-space-4));
+    right: var(--mysterium-space-4);
+    bottom: calc(var(--mysterium-nav-height) + var(--mysterium-space-4));
     width: 28px;
     height: 28px;
     display: flex;
     align-items: center;
     justify-content: center;
     border-radius: 999px;
-    background: var(--ccrpg-surface-elevated);
-    border: 1px solid var(--ccrpg-border);
+    background: var(--mysterium-surface-elevated);
+    border: 1px solid var(--mysterium-border);
     pointer-events: none;
     opacity: 0.85;
     z-index: 1;
@@ -105,27 +105,27 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--ccrpg-accent);
+    background: var(--mysterium-accent);
     opacity: 0.6;
   }
   .pulse-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: var(--ccrpg-accent);
-    animation: agent-pulse 1.2s var(--ccrpg-ease, ease-in-out) infinite;
+    background: var(--mysterium-accent);
+    animation: agent-pulse 1.2s var(--mysterium-ease, ease-in-out) infinite;
   }
   .dim-line {
     width: 12px;
     height: 1px;
-    background: var(--ccrpg-fg-muted);
+    background: var(--mysterium-fg-muted);
     opacity: 0.5;
   }
   @keyframes agent-pulse {
     0%, 100% {
       transform: scale(1);
       opacity: 0.5;
-      box-shadow: 0 0 0 0 var(--ccrpg-accent);
+      box-shadow: 0 0 0 0 var(--mysterium-accent);
     }
     50% {
       transform: scale(1.6);

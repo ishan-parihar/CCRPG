@@ -15,7 +15,7 @@
  * A holon at D3 (Light) needs both Free-Will-choice (P_z) and Love-
  * integration (G_z) to be metabolically complete.
  *
- * Status: canonical-hypothesis (CCRPG-specific operationalization; the
+ * Status: canonical-hypothesis (Mysterium-specific operationalization; the
  * underlying HoloOS framework is canonical-hypothesis per 02.1 + 08.8.7).
  *
  * This is a SCAFFOLD — Phase 1 deliverable. The CCIEngine will consume
@@ -92,7 +92,7 @@ export interface MetabolicHealth {
  * Key property: geometric mean means ANY factor near 0 collapses G_z.
  * This enforces the "Goldilocks Zone" — all drives must be non-zero.
  *
- * CCRPG mapping:
+ * Mysterium mapping:
  *   Ω_A = (M × η_M) / (|C| + ε) — M = avg drive weight, η_M = 1 - avg fixationRisk, |C| = totalEncounters
  *   σ_C = (P × η_P) / (|E| + ε) — P = avg rayProfile, η_P = 1 - avg shadow severity, |E| = totalEncounters
  */
@@ -241,7 +241,7 @@ export function computePz(sig: Significator): PzMetric {
 
   // cos(θ_alignment) = polar alignment — how committed the polarity direction is.
   // In HoloOS, this measures behavioral output aligned with core choice.
-  // CCRPG mapping: polarity crystallization progress is the commitment measure.
+  // Mysterium mapping: polarity crystallization progress is the commitment measure.
   // Neutrality (crystallizationProgress = 0) is the pathology (sinkhole of indifference).
   // cos(θ_alignment) = crystallizationProgress (0 = depolarized, 1 = fully committed)
   const polarAlignment = polarityCrystallization;

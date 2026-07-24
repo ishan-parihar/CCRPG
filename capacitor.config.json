@@ -1,6 +1,6 @@
 {
   "appId": "com.cognitiverpg.game",
-  "appName": "CCRPG",
+  "appName": "Mysterium",
   "webDir": "dist",
   "server": {
     "androidScheme": "https",

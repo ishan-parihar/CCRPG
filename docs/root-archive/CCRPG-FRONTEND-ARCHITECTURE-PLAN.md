@@ -1,4 +1,4 @@
-# CCRPG — Frontend Architecture Plan for Online-Game Deployment
+# Mysterium — Frontend Architecture Plan for Online-Game Deployment
 
 > **Document status:** Brainstorm + plan, **REVISED v2** (SvelteKit substitution
 > + universality layer + far-future visuals phase).
@@ -11,7 +11,7 @@
 > (`ui-ux-pro-max`, `design-taste-frontend`, `ui-styling`).
 >
 > **Purpose of this document:** enumerate every credible way to architect the
-> CCRPG frontend for "deploy like an online game," then recommend a composite
+> Mysterium frontend for "deploy like an online game," then recommend a composite
 > trajectory with a phased roadmap. The user picks the trajectory; we then
 > write code.
 >
@@ -30,7 +30,7 @@
 
 ## 0. TL;DR — The One-Paragraph Verdict (v2 — SvelteKit revision)
 
-CCRPG today is a **single-player, local-only, Phaser 3.80 + TypeScript + Vite
+Mysterium today is a **single-player, local-only, Phaser 3.80 + TypeScript + Vite
 + Capacitor** game with a clean 3-layer core/infra/game architecture, 14
 Phaser scenes drawn entirely from vector primitives, and a critical security
 hole: the LLM API key is resolved from browser-env vars and called directly
@@ -298,7 +298,7 @@ honour them or you will dislike the output.
 - Section 0: "Read these signals first" — page kind, vibe words, reference
   signals, audience, existing brand assets
 - Section 11: redesigns treat existing brand assets as starting material
-- **Implication:** The visual direction must be **inferred from CCRPG's
+- **Implication:** The visual direction must be **inferred from Mysterium's
   canon**, not picked from a template. The 8-stage aesthetic system
   (cave-dark → luminous-silence) is the brand asset to start from. Each
   stage gets its own palette, type pairing, and motion language.
@@ -474,7 +474,7 @@ Tailwind v4. No Phaser.
 
 **Best fit for.** A multi-year project where the team is committed to
 React-only stacks and Phaser's quirks are causing ongoing pain. **Not
-recommended for CCRPG right now** — Phaser works fine for the gameplay
+recommended for Mysterium right now** — Phaser works fine for the gameplay
 surface, and the rewrite cost buys no player-visible improvement over
 Trajectory 2.
 
@@ -566,12 +566,12 @@ encounter scheduling, telemetry. Client renders and forwards input.
 - **Latency.** Every action is a round-trip. Single-player becomes
   laggy on poor connections.
 - **Operational burden.** Logs, alerts, on-call, security patches.
-- **Overkill for current scope.** CCRPG is single-player. The
+- **Overkill for current scope.** Mysterium is single-player. The
   "authoritative server" pattern is for multiplayer games.
 
 **Effort.** 12–20 weeks (server + client refactor + ops setup).
 
-**Best fit for.** A future phase when CCRPG adds co-op encounters or a
+**Best fit for.** A future phase when Mysterium adds co-op encounters or a
 shared world. **Not now.** The hybrid Trajectory 2 + BFF covers 95% of
 the value at 10% of the cost.
 
@@ -637,16 +637,16 @@ preserves the "infinite checkpoint" feel.
 ### Trajectory 7 — "Game Portal + Game" (decoupled marketing + play)
 
 **Concept.** Two separate apps: a **portal** (Next.js or Astro) at
-`ccrpg.game` for marketing, docs, community, journal export, account
+`mysterium.game` for marketing, docs, community, journal export, account
 management, donations; and the **game** (Vite + Phaser + React shell) at
-`play.ccrpg.game` for gameplay only. Portal links to game. Game posts
+`play.mysterium.game` for gameplay only. Portal links to game. Game posts
   telemetry to portal's API.
 
 **Stack.**
 - **Portal:** Next.js 16 (or Astro 5) + shadcn/ui + Tailwind v4 + MDX
   for docs
 - **Game:** Trajectory 2's hybrid React shell + Phaser
-- **Shared:** A small `@ccrpg/ui` package (design tokens, fonts, button
+- **Shared:** A small `@mysterium/ui` package (design tokens, fonts, button
   component) shared via npm workspace or git submodule
 - **Deploy:** Portal on Vercel, game on Cloudflare Pages (or both on
   Cloudflare)
@@ -672,7 +672,7 @@ management, donations; and the **game** (Vite + Phaser + React shell) at
 **Effort.** 4–6 weeks for portal + integration (game side assumed to be
 Trajectory 2).
 
-**Best fit for.** When you're ready to market CCRPG publicly and want a
+**Best fit for.** When you're ready to market Mysterium publicly and want a
 professional web presence separate from the game. **Defer until after
 Trajectory 2 + 6 ship.** A single landing page inside the game's React
 shell is sufficient for MVP.
@@ -715,7 +715,7 @@ shell from Trajectory 2.
 **Effort.** 3–5 weeks on top of Trajectory 2 (iOS add + Tauri add + store
 submissions).
 
-**Best fit for.** A mature CCRPG ready for broad consumer distribution.
+**Best fit for.** A mature Mysterium ready for broad consumer distribution.
 **Defer until after web + Android are stable on Trajectory 2 + 6.**
 
 **Canon-fit.** ✅ Canon-compliant.
@@ -730,7 +730,7 @@ includes a DOM surface (Trajectories 2, 3, 4, 7, 8). Trajectory 1
 
 ### 5.1 The Stage Aesthetic System (the canon-derived brand asset)
 
-CCRPG's canon already encodes 8 stages, each with a distinct aesthetic
+Mysterium's canon already encodes 8 stages, each with a distinct aesthetic
 register. This is the brand asset — the design system must express it.
 
 | # | Stage | Aesthetic register (from `MainMenuScene`) | Palette direction | Type pairing (from `ui-styling/canvas-fonts/`) | Motion language |
@@ -754,35 +754,35 @@ produce 8 theme presets, switchable via a `data-stage` attribute on `<html>`.
 /* src/styles/tokens.css — generated from a single source of truth */
 :root {
   /* Stage-agnostic baseline */
-  --ccrpg-radius: 6px;
-  --ccrpg-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --ccrpg-duration-fast: 180ms;
-  --ccrpg-duration-base: 320ms;
-  --ccrpg-duration-slow: 540ms;
+  --mysterium-radius: 6px;
+  --mysterium-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --mysterium-duration-fast: 180ms;
+  --mysterium-duration-base: 320ms;
+  --mysterium-duration-slow: 540ms;
 }
 
 [data-stage="infrared"] {
-  --ccrpg-bg: #0a0707;
-  --ccrpg-surface: #140d0d;
-  --ccrpg-fg: #d8c8b4;
-  --ccrpg-muted: #6a5040;
-  --ccrpg-accent: #c44525;
-  --ccrpg-accent-soft: #6b2415;
-  --ccrpg-font-display: "Boldonse", system-ui;
-  --ccrpg-font-body: "DMMono", monospace;
-  --ccrpg-motion: pulse;
+  --mysterium-bg: #0a0707;
+  --mysterium-surface: #140d0d;
+  --mysterium-fg: #d8c8b4;
+  --mysterium-muted: #6a5040;
+  --mysterium-accent: #c44525;
+  --mysterium-accent-soft: #6b2415;
+  --mysterium-font-display: "Boldonse", system-ui;
+  --mysterium-font-body: "DMMono", monospace;
+  --mysterium-motion: pulse;
 }
 
 [data-stage="red"] {
-  --ccrpg-bg: #0d0a0a;
-  --ccrpg-surface: #1a0f0f;
-  --ccrpg-fg: #e8d4cc;
-  --ccrpg-muted: #8a5040;
-  --ccrpg-accent: #b8252a;
-  --ccrpg-accent-soft: #5a1318;
-  --ccrpg-font-display: "Big Shoulders", "Arial Narrow", sans-serif;
-  --ccrpg-font-body: "IBM Plex Mono", monospace;
-  --ccrpg-motion: snap;
+  --mysterium-bg: #0d0a0a;
+  --mysterium-surface: #1a0f0f;
+  --mysterium-fg: #e8d4cc;
+  --mysterium-muted: #8a5040;
+  --mysterium-accent: #b8252a;
+  --mysterium-accent-soft: #5a1318;
+  --mysterium-font-display: "Big Shoulders", "Arial Narrow", sans-serif;
+  --mysterium-font-body: "IBM Plex Mono", monospace;
+  --mysterium-motion: snap;
 }
 /* ... 6 more stages ... */
 ```
@@ -795,7 +795,7 @@ at scene boot — single source of truth, two renderers.
 **DOM shell (shadcn/ui + Tailwind):**
 - Install via the included `scripts/shadcn_add.py`: `python shadcn_add.py
   button card dialog tabs form tooltip sonner`
-- Custom CCRPG components layered on top: `<StageTheme>`, `<VeiledStat>`
+- Custom Mysterium components layered on top: `<StageTheme>`, `<VeiledStat>`
   (renders qualitative descriptors only — never raw numbers), `<EncounterCard>`,
   `<JournalEntry>`, `<CodexEntry>`, `<RadialChart>` (replaces the Phaser
   `RadialChartScene` with a D3 or visx implementation), `<SettingsPanel>`.
@@ -804,11 +804,11 @@ at scene boot — single source of truth, two renderers.
 
 **Phaser canvas:**
 - Boot scene reads tokens from `:root` at startup.
-- `Button.ts` factory already exists — extend to read `--ccrpg-accent` etc.
+- `Button.ts` factory already exists — extend to read `--mysterium-accent` etc.
   instead of hardcoded hex.
-- Text objects read `--ccrpg-font-display` / `--ccrpg-font-body` from the
+- Text objects read `--mysterium-font-display` / `--mysterium-font-body` from the
   same source.
-- Motion language per stage: a `MotionLibrary` maps `--ccrpg-motion` token
+- Motion language per stage: a `MotionLibrary` maps `--mysterium-motion` token
   to Phaser tween configs (`pulse` = sine yoyo, `snap` = 80ms linear, etc.).
 
 ### 5.4 The Veil compliance layer (critical)
@@ -1028,7 +1028,7 @@ LLM key server-side. (c) Add telemetry ingest + save proxy endpoints.
 11. Secret management: `wrangler secret put LLM_API_KEY` for Cloudflare;
     `.env` for local dev (gitignored).
 
-**Code changes in CCRPG.**
+**Code changes in Mysterium.**
 - New file: `src/infra/llm/ProxiedLLMClient.ts` — same interface as
   `LLMClient.ts` but posts to `/api/llm/*` instead of provider directly.
 - `src/infra/llm/LLMClient.ts` becomes dev-only / CLI-only path (still
@@ -1141,7 +1141,7 @@ Everything menu-shaped moves to Svelte.
 ### Phase 2 — Design System Implementation (2 weeks)
 
 **Goal.** Apply the three uploaded design-taste skills. Produce the 8-stage
-aesthetic system. Make CCRPG look like nothing else on the web.
+aesthetic system. Make Mysterium look like nothing else on the web.
 
 **Week 1 — Tokens + fonts.**
 1. Write `src/styles/tokens.css` with all 8 `[data-stage="…"]` blocks
@@ -1159,9 +1159,9 @@ aesthetic system. Make CCRPG look like nothing else on the web.
    `src/lib/transitions/stageMotion.ts` — `pulse`, `drift`, `snap`,
    `chime`, `tick`, `grow`, `refract`, `dissolve`. Each is a Svelte
    transition function (`(node, params) => {...}`) using the
-   `--ccrpg-duration-*` and `--ccrpg-ease` tokens.
+   `--mysterium-duration-*` and `--mysterium-ease` tokens.
 
-**Week 2 — Custom CCRPG components + asset pipeline.**
+**Week 2 — Custom Mysterium components + asset pipeline.**
 1. Build `<VeiledStat>` — takes a raw value + a descriptor function from
    `core/presentation/veilDescriptors.ts`, renders only the descriptor.
 2. Build `<EncounterCard>`, `<JournalEntry>`, `<CodexEntry>`,
@@ -1189,7 +1189,7 @@ aesthetic system. Make CCRPG look like nothing else on the web.
 
 ### Phase 2.5 — Universality Layer (1 week) — NEW in v2
 
-**Goal.** Make CCRPG genuinely universal — work on a $40 Android phone on
+**Goal.** Make Mysterium genuinely universal — work on a $40 Android phone on
 2G, a 4K TV with a gamepad, a screen-reader user's laptop, a researcher's
 desktop. This is the spine of "deployed like an online game" with maximum
 reach.
@@ -1265,7 +1265,7 @@ sync.
    Android. Same codebase, same bundle.
 
 **Acceptance criteria.**
-- [ ] `play.ccrpg.game` (or chosen URL) loads in <3s on 4G.
+- [ ] `play.mysterium.game` (or chosen URL) loads in <3s on 4G.
 - [ ] Installable as PWA on Chrome / Safari / Edge.
 - [ ] Save data syncs to cloud within 30s of any change.
 - [ ] Recovery code restores save on a fresh device.
@@ -1329,7 +1329,7 @@ sync.
 These are decisions only the project owner can make. Lock them in writing
 before code is written.
 
-1. **Domain.** `ccrpg.game`? `play.ccrpg.dev`? Something else? Affects
+1. **Domain.** `mysterium.game`? `play.mysterium.dev`? Something else? Affects
    CORS, PWA manifest, recovery-code branding.
 2. **Cloudflare vs Vercel vs Netlify.** All three work. Cloudflare has
    the most generous free tier + KV + Workers + Pages in one platform.
@@ -1395,7 +1395,7 @@ Open decisions still pending (will lock during implementation as needed):
    adapter-cloudflare, generous free tier).
 2. **Production LLM provider?** Default: OpenRouter (multi-provider
    gateway, single API key, easy swap).
-3. **Domain name?** Default: `ccrpg.game` (pending availability).
+3. **Domain name?** Default: `mysterium.game` (pending availability).
 4. **Recovery code format?** Default: 12-word BIP-39 mnemonic.
 5. **Save encryption?** Default: E2E (server never sees plaintext).
 
@@ -1405,11 +1405,11 @@ Open decisions still pending (will lock during implementation as needed):
 
 Framework choice buys ~20% of universality. The other 80% is in design
 decisions that are framework-independent. This section enumerates the
-seven dimensions and where CCRPG needs work in each.
+seven dimensions and where Mysterium needs work in each.
 
 ### The 7 dimensions
 
-| # | Dimension | What it means for CCRPG | Current state | Levers |
+| # | Dimension | What it means for Mysterium | Current state | Levers |
 |---|---|---|---|---|
 | 1 | **Screen-size universal** | Plays on 320px phone, 1080p desktop, 4K TV, foldable | 🟡 Phaser FIT portrait handles canvas; DOM shell needs responsive work | Tailwind breakpoints + container queries; TV-specific 10ft UI mode |
 | 2 | **Input-method universal** | Touch (finger/stylus), mouse, keyboard, gamepad, switch, voice | 🟡 Touch + mouse only | Gamepad API for TV/desktop; full keyboard nav for menus; switch-device support via AccessibilityManager extension |
@@ -1421,7 +1421,7 @@ seven dimensions and where CCRPG needs work in each.
 
 ### The 4 high-leverage universality moves (framework-independent)
 
-These are the moves that actually make CCRPG feel universal, regardless of
+These are the moves that actually make Mysterium feel universal, regardless of
 SvelteKit vs React vs Next.js:
 
 **Move A — Capability detection layer.** `src/lib/capabilities/CapabilityProbe.ts`

@@ -30,7 +30,7 @@
   }: Props = $props();
 
   const style = $derived(
-    `gap: var(--ccrpg-${gap}); align-items: ${align}; justify-content: ${justify}; flex-wrap: ${wrap ? 'wrap' : 'nowrap'};`
+    `gap: var(--mysterium-${gap}); align-items: ${align}; justify-content: ${justify}; flex-wrap: ${wrap ? 'wrap' : 'nowrap'};`
   );
 </script>
 

@@ -550,7 +550,7 @@ Despite the critical findings, the architecture has strong foundations:
 
 ## 12. CONCLUSION
 
-The CCRPG codebase has **world-class architectural bones**. The problem is a **mismatch between the engine layer and the presentation layer**:
+The Mysterium codebase has **world-class architectural bones**. The problem is a **mismatch between the engine layer and the presentation layer**:
 
 - The engine knows the player's shadow patterns, drive balance, theta-decay state, and transformation readiness
 - The player sees "PASSED/FAILED" and 4 generic MCQ options

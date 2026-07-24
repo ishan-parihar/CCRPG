@@ -25,7 +25,7 @@
     ? globalThis.crypto
     : (webcrypto as any);
 
-  const DEFAULT_KEY = 'ccrpg-telemetry-key';
+  const DEFAULT_KEY = 'mysterium-telemetry-key';
 
   export interface ICryptoStore {
     encrypt(plaintext: string): Promise<string>;

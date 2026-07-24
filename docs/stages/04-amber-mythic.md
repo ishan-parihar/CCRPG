@@ -195,7 +195,7 @@ To pass Amber and unlock Orange:
   legitimate developmental move. The game must not punish it; later
   shadow content invites the player to mature *through* it.
 - **In-group / out-group framing.** A game with us-vs-them mechanics
-  risks reinforcing real-world tribalism. CCRPG counters by ensuring
+  risks reinforcing real-world tribalism. Mysterium counters by ensuring
   every "out-group" NPC is rendered as a fully realised person with
   their own Amber-rich tradition, not as a caricature.
 

@@ -138,22 +138,22 @@ function migrate(input: Partial<SaveData>): SaveData {
 
 // ═══════════════════════════════════════════════════════════════════════
 // CLI File-Based Persistence (synchronous, for cli-game.ts)
-// Saves to ~/.ccrpg/profiles/<active>/save.json so player progress persists
-// per-profile. Falls back to ~/.ccrpg/ for legacy saves.
+// Saves to ~/.mysterium/profiles/<active>/save.json so player progress persists
+// per-profile. Falls back to ~/.mysterium/ for legacy saves.
 // ═══════════════════════════════════════════════════════════════════════
 
 function getCliLegacyDir(): string {
   type OsLike = { homedir?: () => string };
   const osMod = os as unknown as OsLike;
   const home =
-    typeof osMod.homedir === 'function' ? osMod.homedir() : '/tmp/.ccrpg';
-  return path.join(home, '.ccrpg');
+    typeof osMod.homedir === 'function' ? osMod.homedir() : '/tmp/.mysterium';
+  return path.join(home, '.mysterium');
 }
 
 /**
  * QA-FIX-1: Resolve save directory based on active profile.
- * If a profile is active, saves go to ~/.ccrpg/profiles/<name>/
- * If no profile, falls back to ~/.ccrpg/ (legacy).
+ * If a profile is active, saves go to ~/.mysterium/profiles/<name>/
+ * If no profile, falls back to ~/.mysterium/ (legacy).
  */
 function getSaveDir(): string {
   try {
@@ -239,7 +239,7 @@ export function deleteSave(): void {
 
 // ═══════════════════════════════════════════════════════════════════════
 // WorldState Persistence (CLI file-based, synchronous)
-// Saves to ~/.ccrpg/world.json so world state persists across CLI runs.
+// Saves to ~/.mysterium/world.json so world state persists across CLI runs.
 // ═══════════════════════════════════════════════════════════════════════
 
 // const CLI_WORLD_FILE — replaced by getWorldFile()

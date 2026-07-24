@@ -2,7 +2,7 @@ import type { KeyValueStore } from '../persistence/KeyValueStore.js';
 import type { ICryptoStore } from '../crypto/CryptoStore.js';
 import type { TelemetryEvent } from '../../core/telemetry/TelemetryEvent.js';
 
-const TELEMETRY_KEY = 'ccrpg:telemetry';
+const TELEMETRY_KEY = 'mysterium:telemetry';
 
 export class TelemetryStore {
   constructor(private readonly kv: KeyValueStore, private readonly crypto: ICryptoStore) {}

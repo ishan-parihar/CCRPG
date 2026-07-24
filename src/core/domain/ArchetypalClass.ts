@@ -6,7 +6,7 @@
  * archetypal classes. This is the canonical typology for catalyst-class
  * identification, user-Matrix modelling, and encounter targeting.
  *
- * Status: canonical-hypothesis (CCRPG-specific operationalization of HoloOS
+ * Status: canonical-hypothesis (Mysterium-specific operationalization of HoloOS
  * 08.8.26, which is canonical-hypothesis).
  */
 

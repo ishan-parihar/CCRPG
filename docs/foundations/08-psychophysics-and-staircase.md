@@ -10,7 +10,7 @@ game is either too easy (no plasticity, no engagement) or too hard
 (burnout, drop-off).
 
 The staircase is the *single most important non-narrative
-mechanic* in CCRPG — it is what makes the game a training tool rather
+mechanic* in Mysterium — it is what makes the game a training tool rather
 than a curiosity.
 
 ## 2. Scientific basis
@@ -45,7 +45,7 @@ Transforming it to 1-up/2-down moves the convergence to a higher (and
 more pleasant) accuracy band without changing the simplicity of the
 rule.
 
-CCRPG uses **1-up/2-down** as default. It is overridable per-task and
+Mysterium uses **1-up/2-down** as default. It is overridable per-task and
 per-line in the design data (e.g., a high-stakes moral dilemma might
 use 1-up/3-down to avoid converging on too many failures).
 
@@ -62,7 +62,7 @@ with `stepUp ≈ stepDown` initially, *narrowed* after the first few
 reversals (e.g., halve step size after the third reversal) to reduce
 variance once the threshold band is found.
 
-CCRPG uses a small `stepUp = stepDown = 1.05–1.15` depending on task
+Mysterium uses a small `stepUp = stepDown = 1.05–1.15` depending on task
 sensitivity, with halving every third reversal.
 
 ### 2.4 What "difficulty" means per task
@@ -82,7 +82,7 @@ Each task has its own difficulty parameter:
 | Task-switching | Switch frequency, cue-task interval |
 
 For continuous parameters the staircase is straightforward. For discrete
-(n-back's `n`), CCRPG uses a *continuous proxy* (`n* = n + secondary
+(n-back's `n`), Mysterium uses a *continuous proxy* (`n* = n + secondary
 load`) so the staircase has a smooth surface; rounding to integer-`n`
 happens only at scoring time.
 
@@ -171,7 +171,7 @@ In practice the empirically observed convergence with this rule is
 ≈70.7% (≈ √0.5) — the discrepancy is due to the *block* structure (two
 consecutive corrects are required, not just two corrects) and the
 inter-trial dependence. The 70.7% number is what the literature reports
-and what CCRPG targets, but the document records both the textbook
+and what Mysterium targets, but the document records both the textbook
 formula and the empirically observed value to keep the
 implementation-team honest.
 

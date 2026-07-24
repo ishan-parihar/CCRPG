@@ -1,8 +1,8 @@
-# CCRPG Re-aligned Plan — CLI is the spec, WebUI is the spec + visual layer
+# Mysterium Re-aligned Plan — CLI is the spec, WebUI is the spec + visual layer
 
 > **Architectural principle:** The CLI (`scripts/cli-game.ts`) is the canonical feature implementation — it was how the game was developed. The WebUI must implement **every feature the CLI has**, with a visual layer on top. No WebUI feature exists without a CLI counterpart. No CLI feature is "CLI-only" unless it's structurally terminal-specific (stdin prompts, ANSI colors, process exit).
 >
-> This document supersedes `CCRPG-ponytail-audit-v2.md`. The cuts are the same (dead code is dead in both UIs). The plan is re-aligned around CLI-as-spec.
+> This document supersedes `Mysterium-ponytail-audit-v2.md`. The cuts are the same (dead code is dead in both UIs). The plan is re-aligned around CLI-as-spec.
 
 ---
 
@@ -14,16 +14,16 @@ Every feature below exists in `scripts/cli-game.ts` and must have a WebUI equiva
 
 | CLI subcommand | CLI function | WebUI equivalent | Status |
 |---|---|---|---|
-| `ccrpg` (bare) | `runFullSession()` | `/play` | ✅ exists but incomplete |
-| `ccrpg session` | `runFullSession()` | `/play` | ✅ exists but incomplete |
-| `ccrpg encounter` | `runSingleEncounter()` | (none — single-encounter picker) | ❌ missing |
-| `ccrpg diagnostic` | `runDiagnostic()` | (none — system status page) | ❌ missing |
-| `ccrpg status` | `runStatus()` | `/profile` (partial) | ⚠️ partial |
-| `ccrpg setup` | `runSetup()` | `/settings` (partial — no LLM config) | ⚠️ partial |
-| `ccrpg setup-profile` | `runSetupProfile()` | (none — profile creation wizard) | ❌ missing |
-| `ccrpg profile <action> [name]` | `runProfile()` | (none — multi-profile management) | ❌ missing |
-| `ccrpg glossary` | `runGlossary()` | (none — glossary page) | ❌ missing |
-| `ccrpg new-game` | `deleteAllSaves()` + confirm | `/settings` reset button | ✅ exists |
+| `mysterium` (bare) | `runFullSession()` | `/play` | ✅ exists but incomplete |
+| `mysterium session` | `runFullSession()` | `/play` | ✅ exists but incomplete |
+| `mysterium encounter` | `runSingleEncounter()` | (none — single-encounter picker) | ❌ missing |
+| `mysterium diagnostic` | `runDiagnostic()` | (none — system status page) | ❌ missing |
+| `mysterium status` | `runStatus()` | `/profile` (partial) | ⚠️ partial |
+| `mysterium setup` | `runSetup()` | `/settings` (partial — no LLM config) | ⚠️ partial |
+| `mysterium setup-profile` | `runSetupProfile()` | (none — profile creation wizard) | ❌ missing |
+| `mysterium profile <action> [name]` | `runProfile()` | (none — multi-profile management) | ❌ missing |
+| `mysterium glossary` | `runGlossary()` | (none — glossary page) | ❌ missing |
+| `mysterium new-game` | `deleteAllSaves()` + confirm | `/settings` reset button | ✅ exists |
 
 ### 0.2 Session flow features
 
@@ -106,7 +106,7 @@ Every feature below exists in `scripts/cli-game.ts` and must have a WebUI equiva
 | Ollama auto-detect | ❌ missing |
 | `verifyProviderConnection()` | ❌ missing |
 | `validateModelIfFresh()` | ❌ missing |
-| Config file (`~/.ccrpg/config.json`) | ❌ WebUI uses server-side BFF env vars |
+| Config file (`~/.mysterium/config.json`) | ❌ WebUI uses server-side BFF env vars |
 | `checkLLMAvailability()` | ❌ WebUI has no availability check |
 
 ### 0.8 Glossary
@@ -171,8 +171,8 @@ This is the roadmap to make the WebUI match the CLI feature-for-feature. Each it
 
 #### C.2 Profile system (parity with CLI multi-profile + long-term memory)
 - Build a WebUI profile system using `ProfileManager` (currently CLI-only via file I/O). For the WebUI, profiles live in localStorage + cloud sync.
-- Build `/profiles` route — list, create, switch, delete profiles (parity with `ccrpg profile`).
-- Build profile context injection — the LLM system prompt gets the active profile's context, same as CLI's `process.env.CCRPG_PROFILE_CONTEXT`.
+- Build `/profiles` route — list, create, switch, delete profiles (parity with `mysterium profile`).
+- Build profile context injection — the LLM system prompt gets the active profile's context, same as CLI's `process.env.Mysterium_PROFILE_CONTEXT`.
 - Build encounter log persistence — every encounter appends to `encounter-log.md` in the profile (parity with `appendEncounterLog`).
 - Build narrative memory — `narrative-memory.md` with Key Insights / Patterns / Active Work sections (parity with `agentReadProfileFile`/`agentWriteProfileFile`).
 - Build session synthesis — after each session, LLM synthesizes INSIGHT/PATTERN/ACTIVE and writes to narrative memory (parity with `synthesizeSessionInsights`).
@@ -250,7 +250,7 @@ This is the roadmap to make the WebUI match the CLI feature-for-feature. Each it
 - Or: if telemetry isn't a real feature, delete the `/api/telemetry` endpoint + the `/telemetry` transparency page's claims. **Decision:** the CLI emits events, so the WebUI should too — wire it.
 
 #### C.12 Save encryption (parity with CLI's secure file-based saves)
-- The CLI saves to `~/.ccrpg/saves/` (file-system, owner-only). The WebUI POSTs plaintext JSON to `/api/save`. `CryptoStore` exists but is unused.
+- The CLI saves to `~/.mysterium/saves/` (file-system, owner-only). The WebUI POSTs plaintext JSON to `/api/save`. `CryptoStore` exists but is unused.
 - Wire `CryptoStore` into `cloudSyncStore.ts` — encrypt before POST, decrypt in `/api/save` server-side OR encrypt client-side and store encrypted blobs (server can't read).
 - This is a real gap — the server comments claim "END-TO-END ENCRYPTED" but it's a lie.
 

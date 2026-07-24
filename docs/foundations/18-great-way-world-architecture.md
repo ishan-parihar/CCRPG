@@ -1,6 +1,6 @@
 # 18 — The Great Way: World Architecture
 
-> **Lateral:** The WORLD as a co-created macro-environment composed of collective holons mapped to PESTLE dimensions, that both triggers the Significator's transformations and is shaped by them. The game-design translation of the Chariot archetype (Card Seven) into CCRPG architecture. This document answers: *what is the structure of the world the player inhabits?*
+> **Lateral:** The WORLD as a co-created macro-environment composed of collective holons mapped to PESTLE dimensions, that both triggers the Significator's transformations and is shaped by them. The game-design translation of the Chariot archetype (Card Seven) into Mysterium architecture. This document answers: *what is the structure of the world the player inhabits?*
 >
 > **Depends on:** foundations/15 (macro-scale archetypal theory), foundations/06 (Law-of-One correspondence), foundations/01 (AQAL quadrants)
 >
@@ -14,7 +14,7 @@ The Great Way — Card Seven, the Chariot — is not a backdrop. It is not a con
 
 ### 1.1 The Chariot insight
 
-In the archetypal tarot, the Chariot depicts the transformed mind moving through the material illusion, drawn by dualistic forces (time/space, positive/negative polarity) harnessed by sovereign will. The crucial design insight for CCRPG: the world the player inhabits is not scenery — it is the *substance* of the developmental journey. Every NPC, every crowd, every institution, every weather system, every economic pressure is a **piece of the Great Way** delivering catalyst to the Significator.
+In the archetypal tarot, the Chariot depicts the transformed mind moving through the material illusion, drawn by dualistic forces (time/space, positive/negative polarity) harnessed by sovereign will. The crucial design insight for Mysterium: the world the player inhabits is not scenery — it is the *substance* of the developmental journey. Every NPC, every crowd, every institution, every weather system, every economic pressure is a **piece of the Great Way** delivering catalyst to the Significator.
 
 The world is:
 - **The path** — the developmental trajectory made spatial and temporal
@@ -23,7 +23,7 @@ The world is:
 
 ### 1.2 Architectural commitment
 
-CCRPG's world is not a static level-design with scripted triggers. It is a **living holonic system** where every entity — from a single NPC to an entire civilisation — possesses its own developmental signature, its own shadow dynamics, and its own evolutionary trajectory. The world evolves. The world regresses. The world mirrors.
+Mysterium's world is not a static level-design with scripted triggers. It is a **living holonic system** where every entity — from a single NPC to an entire civilisation — possesses its own developmental signature, its own shadow dynamics, and its own evolutionary trajectory. The world evolves. The world regresses. The world mirrors.
 
 This is the fundamental departure from conventional game-world design: the world is not *about* the player. The world is a co-created field in which the player is one Significator among many, and the field's structure is the aggregate expression of all Significators inhabiting it.
 
@@ -356,7 +356,7 @@ Each stage-layer's PESTLE expressions are drawn from real human developmental ep
 
 ### 9.2 The design commitment: archetype, not pastiche
 
-CCRPG commits to the following principles regarding cultural representation:
+Mysterium commits to the following principles regarding cultural representation:
 
 1. **Archetypal, not historical:** Each stage-layer draws from the *structural archetype* of its developmental altitude, not from any specific historical culture. Red-layer is not "medieval Europe" or "feudal Japan" — it is the *archetype of power-governance* that manifests differently across all cultures.
 2. **Multi-traditional sourcing:** Each stage-layer's aesthetic, narrative, and PESTLE expressions draw from *multiple* real-world traditions that operated at that altitude, preventing identification with any single culture.

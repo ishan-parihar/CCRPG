@@ -1,7 +1,7 @@
-# CCRPG Fresh-User UX Audit Report — Round 8
+# Mysterium Fresh-User UX Audit Report — Round 8
 
 > **Date:** 2026-07-06
-> **Method:** A subagent with zero knowledge of CCRPG internals role-played a fresh user discovering the game via the CLI only. It ran 30 distinct commands with focus on edge cases (empty inputs, mismatched counts, long answers, rapid sessions) and verifying the `--agent` path. The parent agent verified all key findings.
+> **Method:** A subagent with zero knowledge of Mysterium internals role-played a fresh user discovering the game via the CLI only. It ran 30 distinct commands with focus on edge cases (empty inputs, mismatched counts, long answers, rapid sessions) and verifying the `--agent` path. The parent agent verified all key findings.
 > **Objective:** Determine whether the game has reached 10/10, or whether remaining paper cuts and edge-case failures prevent it.
 
 ---

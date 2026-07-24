@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * CCRPG CLI Game Runner — Phase 1
+ * Mysterium CLI Game Runner — Phase 1
  * Comprehensive headless debugger that runs the full game loop without Phaser.
  * Routes ALL modalities through the AgenticOrchestrator for consistent behaviour.
  *
@@ -31,7 +31,7 @@ const VERSION = '0.1.0';
 // ── Commander program definition (before any arg-dependent code) ─────
 // ponytail: commander handles help generation, manual printHelp() removed
 const program = new Command()
-  .name('ccrpg')
+  .name('mysterium')
   .version(VERSION)
   // P2-F14 (Fresh-User UX Audit): The old description was a syllabus —
   // "A developmental RPG where every encounter is a validated assessment
@@ -41,7 +41,7 @@ const program = new Command()
   // they were entering a research instrument, not a game. The new line is
   // a hook: it tells you what the game FEELS like, not what it measures.
   // The theory unfolds through play.
-  .description('CCRPG — A contemplative RPG that mirrors you back to yourself. Answer honest questions; the game reflects your inner landscape in mythopoetic prose. No wrong answers.')
+  .description('Mysterium — A contemplative RPG that mirrors you back to yourself. Answer honest questions; the game reflects your inner landscape in mythopoetic prose. No wrong answers.')
   .option('--headless', 'Run without user interaction')
   .option('--json', 'Machine-readable JSON output')
   // P0-R4 (Fresh-User UX Audit): --verbose hidden from default --help.
@@ -121,7 +121,7 @@ program
   .command('glossary')
   // P1-F9: counts are dynamic so they never drift from the actual data.
   // P2-U5: --full now requires --dev. Default shows Tier 1 + unlocked Tier 2.
-  .description(`Show definitions for CCRPG terminology (${PLAYER_GLOSSARY_TERMS.length} essentials + unlocked terms; --full requires --dev)`)
+  .description(`Show definitions for Mysterium terminology (${PLAYER_GLOSSARY_TERMS.length} essentials + unlocked terms; --full requires --dev)`)
   .option('--full', `Show all ${GLOSSARY_TERMS.length} terms (requires --dev — clinical definitions)`);
 // Profiling system: multi-user support
 // P0-F3 (Fresh-User UX Audit): Added 'show' action — the synthesis engine
@@ -151,11 +151,11 @@ let earlyModelOverride: string | undefined;
   earlyModelOverride = earlyOpts.model as string | undefined;
 }
 
-const CONFIG_DIR = path.join(os.homedir(), '.ccrpg');
+const CONFIG_DIR = path.join(os.homedir(), '.mysterium');
 const CONFIG_FILE = path.join(CONFIG_DIR, 'config.json');
 
 // ── Config file loading ──────────────────────────────────────────────
-interface CCRPGConfig {
+interface MysteriumConfig {
   llm?: {
     provider?: 'ollama' | 'openai' | 'anthropic' | 'gemini' | 'custom';
     apiKey?: string;
@@ -164,13 +164,13 @@ interface CCRPGConfig {
   };
   session?: { defaultEncounters?: number; defaultMode?: string; };
 }
-function loadConfig(): CCRPGConfig {
+function loadConfig(): MysteriumConfig {
   try {
-    if (fs.existsSync(CONFIG_FILE)) return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')) as CCRPGConfig;
+    if (fs.existsSync(CONFIG_FILE)) return JSON.parse(fs.readFileSync(CONFIG_FILE, 'utf8')) as MysteriumConfig;
   } catch { /* ignore */ }
   return {};
 }
-function saveConfig(config: CCRPGConfig): void {
+function saveConfig(config: MysteriumConfig): void {
   fs.mkdirSync(CONFIG_DIR, { recursive: true });
   fs.writeFileSync(CONFIG_FILE, JSON.stringify(config, null, 2));
 }
@@ -203,7 +203,7 @@ try {
 //   3. Generic LLM_* env vars (LLM_PROVIDER, LLM_BASE_URL, LLM_API_KEY, LLM_MODEL)
 //   4. The MODEL env var (per the user's spec)
 //   5. Legacy VITE_LLM_* env vars (backwards compat)
-//   6. Saved config file (~/.ccrpg/config.json)
+//   6. Saved config file (~/.mysterium/config.json)
 // No hardcoded model names anywhere. The default provider is 'opencode'
 // (opencode.ai/zen) — the project's primary gateway — but only fires if
 // OPENCODE_API_KEY / OPENCODE_API is set; otherwise the user must configure.
@@ -267,7 +267,7 @@ import { runPersistentAgentEncounter } from '../src/core/agent/PersistentAgentBr
 // no longer starts, stops, or references TDG. This eliminates the bug
 // surface that caused R8-BUG-1 (hang), R9-BUG-2 (process-exit), and
 // R8-BUG-3 (VeilFilter leak). TDG was always a no-op in default mode.
-import { createCCRPGToolRegistry } from '../src/core/agent/ToolRegistry.js';
+import { createMysteriumToolRegistry } from '../src/core/agent/ToolRegistry.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
@@ -412,7 +412,7 @@ let HEADLESS = opts.headless ?? false;
 // R5-BUG-1 (UX-R5): Propagate headless state to the PersistentAgent so it
 // can lower its maxLoops budget. Without this, --agent + LLM hangs because
 // the agent makes up to 30 sequential LLM calls (30×20s = 600s).
-if (HEADLESS) process.env.CCRPG_HEADLESS = '1';
+if (HEADLESS) process.env.Mysterium_HEADLESS = '1';
 // P0-R4 (Fresh-User UX Audit): --verbose requires --dev. The audit found
 // that --verbose exposes the entire machinery (XP bars, drive distortion
 // mappings, line×stage coordinates, arc counters) which breaks the Veil
@@ -450,7 +450,7 @@ if (DEV_MODE && !JSON_MODE) {
 }
 // R8-BUG-3 (UX-R8): Propagate DEV_MODE to LLMClient so VeilFilter logs
 // are gated behind --dev and don't leak into normal output.
-if (DEV_MODE) process.env.CCRPG_DEV = '1';
+if (DEV_MODE) process.env.Mysterium_DEV = '1';
 // Commander treats `--no-llm` as a negation of `--llm`: it creates
 // opts.llm (default true) and sets it to false when --no-llm is passed.
 // So we read opts.llm (not opts.noLlm, which is always undefined).
@@ -1828,7 +1828,7 @@ async function runAgenticEncounter(
 
 // ── Diagnostic mode ───────────────────────────────────────────────────
 async function runDiagnostic(): Promise<void> {
-  banner('CCRPG Diagnostic');
+  banner('Mysterium Diagnostic');
 
   console.log('\nRegistries:');
   bootRegistries();
@@ -1908,7 +1908,7 @@ async function runDiagnostic(): Promise<void> {
 
 // ── Single encounter mode ─────────────────────────────────────────────
 async function runSingleEncounter(): Promise<void> {
-  banner('CCRPG Single Encounter');
+  banner('Mysterium Single Encounter');
 
   bootRegistries();
   const moduleRegistry = bootModuleRegistry();
@@ -2108,7 +2108,7 @@ async function synthesizeSessionInsights(profileName: string, encounterCount: nu
             agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
             if (!JSON_MODE) {
               info('synthesis', `${chalk.dim('LLM unavailable — using the session\'s last narrative as a placeholder focus')}`);
-              console.log(`  ${chalk.dim('Run `ccrpg profile show` to see it. Full synthesis will run when the LLM is reachable.')}`);
+              console.log(`  ${chalk.dim('Run `mysterium profile show` to see it. Full synthesis will run when the LLM is reachable.')}`);
             }
           }
         } catch { /* best-effort */ }
@@ -2128,7 +2128,7 @@ async function synthesizeSessionInsights(profileName: string, encounterCount: nu
     // was likely causing timeouts or rate-limit failures on the free-tier
     // model. 1500 chars is still enough context for the LLM to extract
     // insight/pattern/active from the last 1-2 encounters.
-    const synthesisPrompt = `You are a developmental synthesis engine. Read the following encounter log from a CCRPG session and extract:
+    const synthesisPrompt = `You are a developmental synthesis engine. Read the following encounter log from a Mysterium session and extract:
 
 1. KEY INSIGHT: One sentence capturing the most important therapeutic insight from this session (what the user discovered or what the LLM named that landed).
 2. PATTERN: If a recurring pattern is visible (something that appeared in multiple encounters), name it in one sentence.
@@ -2224,7 +2224,7 @@ ${recentEncounters.slice(0, 1500)}`;
         // P0-F3: Tell the player how to SEE what was synthesized. Before this
         // hint, the game said "profile updated" but gave no way to view the
         // update — the #1 frustration in the fresh-user audit.
-        console.log(`  ${chalk.dim('Run `ccrpg profile show` to see what the game has noticed.')}`);
+        console.log(`  ${chalk.dim('Run `mysterium profile show` to see what the game has noticed.')}`);
       } else if (!JSON_MODE) {
         info('synthesis', `${chalk.dim('No extractable insights from this session')}`);
       }
@@ -2260,7 +2260,7 @@ ${recentEncounters.slice(0, 1500)}`;
               agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
               if (!JSON_MODE) {
                 info('synthesis', `${chalk.dim('the reflection engine could not be reached — using the session\'s last narrative as a placeholder focus')}`);
-                console.log(`  ${chalk.dim('Run `ccrpg profile show` to see it. Full synthesis will run next session.')}`);
+                console.log(`  ${chalk.dim('Run `mysterium profile show` to see it. Full synthesis will run next session.')}`);
               }
             } else {
               if (!JSON_MODE) info('synthesis', `${chalk.dim('the reflection engine could not be reached this session')}`);
@@ -2750,7 +2750,7 @@ async function runDirectQuestioningSession(
             if (trulyNew.length > 0) {
               if (!JSON_MODE) {
                 for (const term of trulyNew) {
-                  console.log(`  ${chalk.dim('✦ New term unlocked:')} ${chalk.cyan(term)} ${chalk.dim('— run `ccrpg glossary` to see its definition')}`);
+                  console.log(`  ${chalk.dim('✦ New term unlocked:')} ${chalk.cyan(term)} ${chalk.dim('— run `mysterium glossary` to see its definition')}`);
                 }
               }
               emitEvent('terms_unlocked', { terms: trulyNew });
@@ -2921,7 +2921,7 @@ async function runDirectQuestioningSession(
 
 // ── Full session mode ─────────────────────────────────────────────────
 async function runFullSession(): Promise<void> {
-  banner('CCRPG Session Runner');
+  banner('Mysterium Session Runner');
 
   // Profiling system: load active profile and inject context into LLM.
   // This gives the LLM long-term memory of the user across sessions.
@@ -2931,7 +2931,7 @@ async function runFullSession(): Promise<void> {
     if (profile) {
       const contextInjection = buildContextInjection(profile);
       // Set as env var so AgenticOrchestrator can prepend it to the system prompt
-      process.env.CCRPG_PROFILE_CONTEXT = contextInjection;
+      process.env.Mysterium_PROFILE_CONTEXT = contextInjection;
       if (!JSON_MODE) info('profile', `${chalk.cyan(profile.identity?.name || activeProfileName)} loaded — ${profile.identity?.total_sessions || 0} sessions, ${profile.identity?.total_encounters || 0} encounters`);
     }
   } else {
@@ -3002,29 +3002,29 @@ async function runFullSession(): Promise<void> {
     if (subcommand === 'session' || subcommand === undefined || subcommand === 'full') {
       if (NO_LLM) {
         if (!JSON_MODE) {
-          error('CCRPG requires an active LLM to run reflective sessions.');
+          error('Mysterium requires an active LLM to run reflective sessions.');
           console.log(`\n  ${chalk.dim('The LLM is the game\'s therapeutic engine. Without it, encounters become')}`);
           console.log(`  ${chalk.dim('echo-only — your words returned with no reflection. This is worse than silence.')}`);
           console.log(`\n  ${chalk.bold('To configure the LLM:')}`);
-          console.log(`  ${chalk.dim('  1. Run `ccrpg setup` in a real terminal, OR')}`);
+          console.log(`  ${chalk.dim('  1. Run `mysterium setup` in a real terminal, OR')}`);
           console.log(`  ${chalk.dim('  2. Set env vars: OPENCODE_API_KEY=<key> MODEL=<model>, OR')}`);
-          console.log(`  ${chalk.dim('  3. Edit ~/.ccrpg/config.json directly')}`);
+          console.log(`  ${chalk.dim('  3. Edit ~/.mysterium/config.json directly')}`);
           console.log(`\n  ${chalk.dim('Non-reflective commands (status, diagnostic, glossary, new-game) still work without LLM.')}\n`);
         } else {
-          emitEvent('fatal', { code: 'llm_required', message: 'CCRPG requires an active LLM for reflective sessions. Configure via `ccrpg setup` or set OPENCODE_API_KEY + MODEL env vars.' });
+          emitEvent('fatal', { code: 'llm_required', message: 'Mysterium requires an active LLM for reflective sessions. Configure via `mysterium setup` or set OPENCODE_API_KEY + MODEL env vars.' });
         }
         process.exit(1);
       }
       if (!llmComplete) {
         if (!JSON_MODE) {
-          error('LLM not configured. CCRPG requires an active LLM to run sessions.');
+          error('LLM not configured. Mysterium requires an active LLM to run sessions.');
           console.log(`\n  ${chalk.dim('No API key found. The game cannot run without the LLM.')}`);
           console.log(`\n  ${chalk.bold('To configure:')}`);
-          console.log(`  ${chalk.dim('  1. Run `ccrpg setup` in a real terminal, OR')}`);
+          console.log(`  ${chalk.dim('  1. Run `mysterium setup` in a real terminal, OR')}`);
           console.log(`  ${chalk.dim('  2. Set OPENCODE_API_KEY=<key> and MODEL=<model> env vars, OR')}`);
-          console.log(`  ${chalk.dim('  3. Edit ~/.ccrpg/config.json: {"llm":{"provider":"opencode","apiKey":"<key>","model":"mimo-v2.5-free","baseUrl":"https://opencode.ai/zen/v1"}}')}\n`);
+          console.log(`  ${chalk.dim('  3. Edit ~/.mysterium/config.json: {"llm":{"provider":"opencode","apiKey":"<key>","model":"mimo-v2.5-free","baseUrl":"https://opencode.ai/zen/v1"}}')}\n`);
         } else {
-          emitEvent('fatal', { code: 'llm_not_configured', message: 'No LLM API key configured. Run `ccrpg setup` or set env vars.' });
+          emitEvent('fatal', { code: 'llm_not_configured', message: 'No LLM API key configured. Run `mysterium setup` or set env vars.' });
         }
         process.exit(1);
       }
@@ -3149,7 +3149,7 @@ async function runFullSession(): Promise<void> {
   // This instance is reused across all encounters in the session — its message
   // history accumulates, giving the agent cross-encounter memory. The TDG-Rust
   // bridge is started best-effort (no-op if the binary isn't installed); when
-  // TDG is running, the 7 TDG-Mind tools are registered alongside the 8 CCRPG
+  // TDG is running, the 7 TDG-Mind tools are registered alongside the 8 Mysterium
   // tools, giving the agent the full 15-tool surface.
   let persistentAgent: PersistentAgent | null = null;
   if (USE_PERSISTENT_AGENT) {
@@ -3167,8 +3167,8 @@ async function runFullSession(): Promise<void> {
     if (tdgStatus.running && !JSON_MODE) {
       info('tdg', `${chalk.green('TDG-Rust active')} — graph memory online`);
     }
-    // Build the tool registry with CCRPG + TDG tools (TDG tools added only if running)
-    const toolRegistry = createCCRPGToolRegistry();
+    // Build the tool registry with Mysterium + TDG tools (TDG tools added only if running)
+    const toolRegistry = createMysteriumToolRegistry();
     if (tdgStatus.running) {
       // ponytail: registerTDGTools removed with TDG integration.
     }
@@ -3200,7 +3200,7 @@ async function runFullSession(): Promise<void> {
       },
       tdgToolRegistry: tdgStatus.running ? toolRegistry : undefined,
     });
-    if (!JSON_MODE) info('tools', `${toolRegistry.count} tools registered (${toolRegistry.getDefinitionsBySource('ccrpg').length} CCRPG + ${toolRegistry.getDefinitionsBySource('tdg').length} TDG)`);
+    if (!JSON_MODE) info('tools', `${toolRegistry.count} tools registered (${toolRegistry.getDefinitionsBySource('mysterium').length} Mysterium + ${toolRegistry.getDefinitionsBySource('tdg').length} TDG)`);
   }
 
   for (let i = 0; i < encounterCount; i++) {
@@ -3341,7 +3341,7 @@ async function runFullSession(): Promise<void> {
       //
       // Phase 3 bugfix: when the PersistentAgent path is active, use the agent's
       // effectiveEncounter (which may differ from the scheduler's pick if the
-      // agent called ccrpg_select_encounter with a different moduleRef). Using
+      // agent called mysterium_select_encounter with a different moduleRef). Using
       // the wrong encounter here would update the wrong (line, stage) cell in
       // UserMatrixModel and fire shadow knot resolution on the wrong executionMode.
       const encounterForApply = (USE_PERSISTENT_AGENT && persistentAgent && 'effectiveEncounter' in result)
@@ -3364,7 +3364,7 @@ async function runFullSession(): Promise<void> {
 
       // Phase 3 + L4 + L5: Keep the PersistentAgent's sig/world/sessionState fresh
       // across encounters so its tool queries reflect the latest state. Without
-      // the sessionState refresh, ccrpg_get_encounter_pool always saw
+      // the sessionState refresh, mysterium_get_encounter_pool always saw
       // encountersSoFar:0 + recentLines:[], skewing scheduler ranking. Without
       // the weightBias, the agent saw a different ranking than the scheduler.
       if (persistentAgent) {
@@ -3467,13 +3467,13 @@ async function runFullSession(): Promise<void> {
     }
 
     // M4: When --agent is active, query TDG's graph-level transformation pressure
-    // to supplement CCRPG's detectThreshold signal. This is best-effort + async —
+    // to supplement Mysterium's detectThreshold signal. This is best-effort + async —
     // no-op when TDG is not running. We emit a tdg_pressure telemetry event so
-    // the session can track graph-level readiness alongside the CCRPG signal.
+    // the session can track graph-level readiness alongside the Mysterium signal.
     if (USE_PERSISTENT_AGENT) {
       const tdgPressure = await getTDGTransformationPressure(currentSig);
       if (tdgPressure !== null) {
-        emitEvent('tdg_pressure', { pressure: tdgPressure, ccrpgReadiness: tickResult.transformation?.readiness ?? 0 });
+        emitEvent('tdg_pressure', { pressure: tdgPressure, mysteriumReadiness: tickResult.transformation?.readiness ?? 0 });
         if (VERBOSE && !JSON_MODE) {
           verbose('tdg_pressure', tdgPressure.toFixed(3));
         }
@@ -3667,7 +3667,7 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
     const profiles = listProfiles();
     const active = getActiveProfileName();
     if (profiles.length === 0) {
-      console.log(`\n  ${chalk.dim('No profiles found. Run `ccrpg setup-profile` to create one.')}`);
+      console.log(`\n  ${chalk.dim('No profiles found. Run `mysterium setup-profile` to create one.')}`);
       // Try migration
       const migrated = migrateLegacySave();
       if (migrated) {
@@ -3685,7 +3685,7 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
   }
 
   if (action === 'switch') {
-    if (!profileName) { error('Usage: ccrpg profile switch <name>'); return; }
+    if (!profileName) { error('Usage: mysterium profile switch <name>'); return; }
     try {
       setActiveProfile(profileName);
       console.log(`\n  ${chalk.green('✓')} Switched to profile "${profileName}".\n`);
@@ -3696,7 +3696,7 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
   }
 
   if (action === 'create') {
-    if (!profileName) { error('Usage: ccrpg profile create <name>'); return; }
+    if (!profileName) { error('Usage: mysterium profile create <name>'); return; }
     try {
       createProfile(profileName);
       console.log(`\n  ${chalk.green('✓')} Created profile "${profileName}" and set as active.\n`);
@@ -3707,7 +3707,7 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
   }
 
   if (action === 'delete') {
-    if (!profileName) { error('Usage: ccrpg profile delete <name>'); return; }
+    if (!profileName) { error('Usage: mysterium profile delete <name>'); return; }
     try {
       deleteProfile(profileName);
       console.log(`\n  ${chalk.yellow('↻')} Deleted profile "${profileName}".\n`);
@@ -3732,15 +3732,15 @@ async function runProfile(action?: string, profileName?: string): Promise<void> 
     const targetName = profileName ?? getActiveProfileName();
     if (!targetName) {
       // NF-7 (Fresh-User Re-Audit): The old message told users to run
-      // `ccrpg setup-profile`, but that command requires interactive mode
+      // `mysterium setup-profile`, but that command requires interactive mode
       // and fails in headless. The game auto-creates a profile on the first
       // session anyway. The honest message: play a session first.
-      error('No active profile yet. Play a session (ccrpg session) and one will be created automatically. To customize your profile name and pronouns interactively, run `ccrpg setup-profile` in a real terminal.');
+      error('No active profile yet. Play a session (mysterium session) and one will be created automatically. To customize your profile name and pronouns interactively, run `mysterium setup-profile` in a real terminal.');
       return;
     }
     const profile = loadProfile(targetName);
     if (!profile) {
-      error(`Profile "${targetName}" not found. Run \`ccrpg profile list\` to see options.`);
+      error(`Profile "${targetName}" not found. Run \`mysterium profile list\` to see options.`);
       return;
     }
 
@@ -4020,7 +4020,7 @@ async function runSetupProfile(): Promise<void> {
     return;
   }
 
-  banner('CCRPG Profile Setup');
+  banner('Mysterium Profile Setup');
 
   // Step 1: Name
   const nameInput = await clackText({ message: 'What should I call you?', defaultValue: '' });
@@ -4091,7 +4091,7 @@ async function runSetupProfile(): Promise<void> {
 
     console.log(`\n  ${chalk.green('✓')} Profile "${name}" created and set as active.`);
     console.log(`  ${chalk.dim('Profile directory: ' + profileDir)}`);
-    console.log(`\n  ${chalk.dim('Run `ccrpg` to start your first session.')}\n`);
+    console.log(`\n  ${chalk.dim('Run `mysterium` to start your first session.')}\n`);
   } catch (err: any) {
     error(err.message);
   }
@@ -4105,13 +4105,13 @@ async function runSetup(): Promise<void> {
   // New message is honest about what happened and what to do.
   if (HEADLESS || JSON_MODE) {
     if (!process.stdin.isTTY) {
-      error('setup requires a real terminal (TTY). Please run `ccrpg setup` in an interactive terminal. For non-interactive configuration, edit ~/.ccrpg/config.json directly or set env vars (OPENCODE_API_KEY, LLM_MODEL, etc.).');
+      error('setup requires a real terminal (TTY). Please run `mysterium setup` in an interactive terminal. For non-interactive configuration, edit ~/.mysterium/config.json directly or set env vars (OPENCODE_API_KEY, LLM_MODEL, etc.).');
     } else {
       error('setup requires interactive mode (remove --headless and --json flags)');
     }
     return;
   }
-  banner('CCRPG Setup Wizard');
+  banner('Mysterium Setup Wizard');
   console.log(`\n  ${chalk.dim('Configure your LLM provider for the developmental engine.')}\n`);
   console.log(`  ${chalk.dim('Models are fetched live from each provider — no stale lists.')}\n`);
 
@@ -4248,7 +4248,7 @@ async function saveAndVerify(
   apiKeyVal: string,
   baseUrlVal: string,
   modelVal: string,
-  existing: CCRPGConfig,
+  existing: MysteriumConfig,
 ): Promise<void> {
   // Step 5: Verify connection
   console.log(`\n  ${chalk.bold('Step 5: Verify Connection')}`);
@@ -4263,7 +4263,7 @@ async function saveAndVerify(
   }
 
   // Step 6: Save config
-  const config: CCRPGConfig = {
+  const config: MysteriumConfig = {
     llm: {
       provider: profile.id as any,
       apiKey: apiKeyVal || existing.llm?.apiKey,
@@ -4285,7 +4285,7 @@ async function saveAndVerify(
   console.log(`  ${chalk.green('✓')} model:       ${modelVal}`);
   console.log(`  ${chalk.green('✓')} endpoint:    ${baseUrlVal}`);
   console.log(`  ${chalk.green('✓')} api key:     ${apiKeyVal ? `${apiKeyVal.slice(0, 8)}...` : '(none)'}`);
-  console.log(`\n  Run ${chalk.bold('ccrpg')} to start your developmental journey.\n`);
+  console.log(`\n  Run ${chalk.bold('mysterium')} to start your developmental journey.\n`);
 }
 
 // ── Status command ────────────────────────────────────────────────────
@@ -4429,7 +4429,7 @@ async function runStatus(): Promise<void> {
     return;
   }
 
-  banner('CCRPG Status');
+  banner('Mysterium Status');
   console.log(`\n  ${chalk.bold('Configuration')}`);
   info('config', fs.existsSync(CONFIG_FILE) ? CONFIG_FILE : '(no config file — using env vars)');
   // P1-F5 (Fresh-User UX Audit): Show the RESOLVED runtime LLM config, not
@@ -4610,7 +4610,7 @@ async function runStatus(): Promise<void> {
       }
     }
   } else {
-    info('save', `${chalk.yellow('no saved game')} — run ${chalk.bold('ccrpg session')} to start`);
+    info('save', `${chalk.yellow('no saved game')} — run ${chalk.bold('mysterium session')} to start`);
     // P2-Y5 (Fresh-User UX Audit v2): The pre-play status previously showed
     // the full 8-line table with stage bars and '0 encounters' counts — an
     // RPG character-sheet frame that violates the Veil. Replaced with a
@@ -4659,13 +4659,13 @@ async function runStatus(): Promise<void> {
 function runGlossary(showFull = false): void {
   // P2-U5: --full requires --dev (clinical definitions are engineering vocabulary)
   if (showFull && !DEV_MODE) {
-    banner('CCRPG Glossary');
+    banner('Mysterium Glossary');
     console.log(`\n  ${chalk.yellow('⚠ --full requires --dev')}: the full glossary contains clinical definitions (CCI bands, G_z/P_z, shadow quadrants) that break the contemplative frame. Use --dev --full for engineering access.`);
     console.log(`\n  ${chalk.dim('Showing player-facing terms instead:')}\n`);
     showFull = false;
   }
 
-  banner(showFull ? 'CCRPG Glossary (full — dev mode)' : 'CCRPG Glossary');
+  banner(showFull ? 'Mysterium Glossary (full — dev mode)' : 'Mysterium Glossary');
 
   // P2-U5: Load unlocked terms from profile
   const profileDir = getActiveProfileDir();
@@ -4818,8 +4818,8 @@ function printHelp(): void {
   // ENCOUNTERS section. The flag is now hidden in commander's auto-help and
   // was a documented source of user confusion. The printHelp() banner should
   // not duplicate it.
-  console.log(`\n${chalk.bold}${chalk.cyan}CCRPG${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  ccrpg                        Start an interactive session\n  ccrpg session                Same as above\n  ccrpg setup                  Configure LLM and preferences\n  ccrpg diagnostic             Show system diagnostics
-  ccrpg curriculum             Lint and list curriculum holons\n  ccrpg status                 Show current save state\n  ccrpg glossary               Show essential + unlocked terms\n  ccrpg profile show           See what the game has noticed about you\n  ccrpg new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Developer mode (enables --verbose, shows metrics)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.ccrpg/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.ccrpg/config.json or MODEL env var\n  Saves:     ~/.ccrpg/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  ccrpg                                       # interactive session\n  ccrpg --headless --encounters=5             # headless session\n  ccrpg setup                                 # configure API key\n  ccrpg session --encounters=5 --json         # JSON event stream\n  ccrpg glossary                              # learn the terminology\n  ccrpg profile show                          # see your synthesized insights\n  ccrpg diagnostic                            # system diagnostics\n`);
+  console.log(`\n${chalk.bold}${chalk.cyan}Mysterium${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  mysterium                        Start an interactive session\n  mysterium session                Same as above\n  mysterium setup                  Configure LLM and preferences\n  mysterium diagnostic             Show system diagnostics
+  mysterium curriculum             Lint and list curriculum holons\n  mysterium status                 Show current save state\n  mysterium glossary               Show essential + unlocked terms\n  mysterium profile show           See what the game has noticed about you\n  mysterium new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Developer mode (enables --verbose, shows metrics)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.mysterium/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.mysterium/config.json or MODEL env var\n  Saves:     ~/.mysterium/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  mysterium                                       # interactive session\n  mysterium --headless --encounters=5             # headless session\n  mysterium setup                                 # configure API key\n  mysterium session --encounters=5 --json         # JSON event stream\n  mysterium glossary                              # learn the terminology\n  mysterium profile show                          # see your synthesized insights\n  mysterium diagnostic                            # system diagnostics\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────
@@ -4843,7 +4843,7 @@ async function main(): Promise<void> {
   const needsInteractive = !NON_INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE;
   if (needsInteractive && !process.stdin.isTTY) {
     HEADLESS = true;
-    process.env.CCRPG_HEADLESS = '1'; // R5-BUG-1: propagate to PersistentAgent
+    process.env.Mysterium_HEADLESS = '1'; // R5-BUG-1: propagate to PersistentAgent
     if (!JSON_MODE) {
       console.error(`${chalk.yellow('⚠')} Non-interactive terminal detected (stdin is not a TTY).`);
       console.error(`  Auto-enabling --headless mode. To run interactively, use a real terminal.`);
@@ -4856,7 +4856,7 @@ async function main(): Promise<void> {
   if (subcommand === 'setup') { await runSetup(); return; }
   if (subcommand === 'status') { await runStatus(); return; }
   if (subcommand === 'glossary') {
-    // R11-Y3 / P1-F9: `ccrpg glossary --full` shows all terms; bare `ccrpg glossary`
+    // R11-Y3 / P1-F9: `mysterium glossary --full` shows all terms; bare `mysterium glossary`
     // shows only the 5 player-facing essentials.
     const wantsFull = program.args.includes('--full') || program.args.includes('-f');
     runGlossary(wantsFull);
@@ -4880,18 +4880,18 @@ async function main(): Promise<void> {
         initialValue: 'no',
       });
       if (confirm !== 'yes') {
-        console.log(`${chalk.green('✓')} Progress kept. Run ${chalk.bold('ccrpg session')} to continue.`);
+        console.log(`${chalk.green('✓')} Progress kept. Run ${chalk.bold('mysterium session')} to continue.`);
         return;
       }
     }
     deleteAllSaves();
     // YAGNI-EFF-2: TDG graph clear removed — TDG is no longer used by the CLI.
-    console.log(`${chalk.yellow('↻')} Progress reset. Run ${chalk.bold('ccrpg session')} to start a new game.`);
+    console.log(`${chalk.yellow('↻')} Progress reset. Run ${chalk.bold('mysterium session')} to start a new game.`);
     return;
   }
 
   if (!JSON_MODE) {
-    console.log(`\n${chalk.bold.cyan('CCRPG')} v${VERSION}`);
+    console.log(`\n${chalk.bold.cyan('Mysterium')} v${VERSION}`);
     // UX-P1-1 / P2-F13+F15 (Fresh-User UX Audit): First-run onboarding.
     // The old welcome dumped 5 glossary terms in one breath before the
     // player had seen a single question — high cognitive load, felt like
@@ -4899,13 +4899,13 @@ async function main(): Promise<void> {
     // softer: one orienting sentence, a theory disclosure (so the player
     // knows they're being measured against a specific developmental model,
     // not objective truth), and a single command hint. Terms are introduced
-    // contextually via `ccrpg glossary` when the player hits one they don't
+    // contextually via `mysterium glossary` when the player hits one they don't
     // know, not dumped up front.
     if (!hasSave()) {
       console.log(`\n${chalk.dim('Welcome. This is a contemplative game — it will ask you honest questions')}`);
       console.log(`${chalk.dim('and reflect your answers back as mythopoetic prose. There are no wrong answers.')}`);
       console.log(`${chalk.dim('Take your time. Say as much or as little as you want.')}`);
-      // P2-F15 (Fresh-User UX Audit): Theory disclosure. CCRPG is grounded
+      // P2-F15 (Fresh-User UX Audit): Theory disclosure. Mysterium is grounded
       // in Integral Theory (Ken Wilber), Spiral Dynamics, and the Law of One
       // cosmology. A player deserves to know they're being measured against
       // one specific developmental model, not objective truth. This is a
@@ -4914,11 +4914,11 @@ async function main(): Promise<void> {
       // want it.
       console.log(`\n${chalk.dim('The game draws on Integral Theory and Spiral Dynamics for its')}`);
       console.log(`${chalk.dim('developmental model. You can see what it has noticed about you at any')}`);
-      console.log(`${chalk.dim('time with')} ${chalk.bold('ccrpg profile show')}${chalk.dim('.')}`);
+      console.log(`${chalk.dim('time with')} ${chalk.bold('mysterium profile show')}${chalk.dim('.')}`);
       console.log(`\n${chalk.dim('Useful commands:')}`);
-      console.log(`  ${chalk.dim('ccrpg glossary      — definitions for unfamiliar terms')}`);
-      console.log(`  ${chalk.dim('ccrpg status         — your progress')}`);
-      console.log(`  ${chalk.dim('ccrpg new-game       — start over')}\n`);
+      console.log(`  ${chalk.dim('mysterium glossary      — definitions for unfamiliar terms')}`);
+      console.log(`  ${chalk.dim('mysterium status         — your progress')}`);
+      console.log(`  ${chalk.dim('mysterium new-game       — start over')}\n`);
     }
   }
 

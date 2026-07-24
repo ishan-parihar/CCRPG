@@ -1,14 +1,14 @@
 /**
  * QualitativeFeedback — Veil-compliant qualitative feedback mapper.
  *
- * UX-01 fix (per Task 4-ccrpg-ux-audit). Currently the player sees identical
+ * UX-01 fix (per Task 4-mysterium-ux-audit). Currently the player sees identical
  * feedback regardless of choice ("Your response reveals: Healthy balanced").
  * This mapper converts drive-directionality + shadow-quadrant + pass/fail
  * signals into foundations/20 §3.5 qualitative bands ("clean/tight/loose/
  * fumbled") WITHOUT leaking Veil-protected taxonomy (stage labels, drive
  * labels, shadow quadrant names, numerical scores).
  *
- * Status: canonical-hypothesis (CCRPG-specific; bands derived from
+ * Status: canonical-hypothesis (Mysterium-specific; bands derived from
  * foundations/20 §3.5 design principle).
  *
  * HoloOS anchor: _THEORY/02_Ontology/08.8.8_Quantum_Realm_Backtrace.md

@@ -1,6 +1,6 @@
-# CCRPG Gold-Standard Plan: Fixing All 31 Remaining Implementation Gaps
+# Mysterium Gold-Standard Plan: Fixing All 31 Remaining Implementation Gaps
 
-> **Objective:** Make CCRPG the gold-standard for "accelerating holonic healing and evolution" — every engine wired, every flow functional, every ontological concept operationalized, zero stale-state bugs, zero dead code, full altitude-scaling across all modalities and stages.
+> **Objective:** Make Mysterium the gold-standard for "accelerating holonic healing and evolution" — every engine wired, every flow functional, every ontological concept operationalized, zero stale-state bugs, zero dead code, full altitude-scaling across all modalities and stages.
 
 ---
 
@@ -67,12 +67,12 @@
 
 | # | Gap | Fix | LOC | Files |
 |---|---|---|---|---|
-| 3.1 | GAP-V3-12: No --dev flag for status/diagnostic | Add `--dev` CLI flag. When active, `ccrpg status` shows G_z/P_z, rayProfile, 6-phase position, UserMatrixModel phase, liminality signature. `ccrpg diagnostic` shows the same + CCI dimensions + metabolic health breakdown. | ~80 | cli-game.ts |
+| 3.1 | GAP-V3-12: No --dev flag for status/diagnostic | Add `--dev` CLI flag. When active, `mysterium status` shows G_z/P_z, rayProfile, 6-phase position, UserMatrixModel phase, liminality signature. `mysterium diagnostic` shows the same + CCI dimensions + metabolic health breakdown. | ~80 | cli-game.ts |
 | 3.2 | GAP-V3-20: MacroCatalystEngine has 5 dead exports (lifecycle dead) | Wire `advanceMacroEvent` + `recordMacroChoice` + `resolveMacroEvent` into GameLoop.endSession and AgenticOrchestrator's choice-handler. Macro-events now progress through onset → active → resolution. | ~80 | GameLoop.ts, AgenticOrchestrator.ts |
 | 3.3 | GAP-V3-26: WorldScene doesn't emit transformation_triggered on phase change | Add `eventBus.emit('transformation_triggered', ...)` when phase changes in WorldScene. | ~3 | WorldScene.ts |
 | 3.4 | GAP-V3-27: GameLoop.endSession uses approximate sessionStartMs | Track `sessionStartMs` explicitly in SessionState (set at startSession, used at endSession). | ~10 | GameLoop.ts |
 | 3.5 | GAP-V3-24: summarizeUserMatrix never called from runtime | Wire into TelemetryCollector — call `summarizeUserMatrix(sessionState.userMatrixModel)` at session end, emit as telemetry event. | ~10 | TelemetryCollector.ts |
-| 3.6 | GAP-V3-33: ccrpg status/diagnostic don't expose holistic primitives | Covered by 3.1 (--dev flag). | — | — |
+| 3.6 | GAP-V3-33: mysterium status/diagnostic don't expose holistic primitives | Covered by 3.1 (--dev flag). | — | — |
 | 3.7 | GAP-V3-9: Tests for ShadowContentGenerator, MacroCatalystEngine, scheduleThresholdMode | New test files for each engine. Target: every engine has ≥5 tests. | ~200 | 3 new test files |
 | 3.8 | GAP-V3-37: ConceptDraftIndex is a placeholder | Document FallbackProvider as the sole content source in a code comment. Leave ConceptDraftIndex as a structural index (line×stage→title lookup) — don't delete, just document the separation. | ~10 | ConceptDraftIndex.ts |
 
@@ -93,13 +93,13 @@
 |---|---|---|---|---|
 | 4.1 | GAP-V3-4: docs/foundations/ has no reference to 08.8.25 (endosymbiosis, biological grounding) | Add "Holonic-Dynamics Grounding" section to foundations/13-architecture-of-consciousness.md referencing 08.8.25's biological hierarchy (atoms→molecules→cells→tissues→organs→organisms→civilizations). | ~100 | docs/foundations/13 |
 | 4.2 | GAP-V3-9: docs/foundations/ has no reference to 08.8.26 (archetypal-class typology) | Add "Archetypal-Class Typology" section to foundations/15-macro-scale-archetypal-mind.md referencing 08.8.26's 8×4=32 class matrix and 4 dimensions. | ~100 | docs/foundations/15 |
-| 4.3 | GAP-V3-11: No tracking of which OPEN_JOINTS resolutions are reflected in CCRPG | Create `docs/foundations/28-holoos-open-joints-mapping.md` — a table mapping each resolved HoloOS open joint to its CCRPG implementation status. | ~100 | new doc |
+| 4.3 | GAP-V3-11: No tracking of which OPEN_JOINTS resolutions are reflected in Mysterium | Create `docs/foundations/28-holoos-open-joints-mapping.md` — a table mapping each resolved HoloOS open joint to its Mysterium implementation status. | ~100 | new doc |
 | 4.4 | GAP-V3-2: Substrate-transformation dynamic not documented | Add substrate-transformation note to foundations/17-transformation-mechanics.md (the stage transition IS a substrate transformation — D3 substrate transforms from Red-configured to Amber-configured). | ~30 | docs/foundations/17 |
 | 4.5 | GAP-V3-3: Parallel co-evolution not documented | Add parallel co-evolution note to foundations/03-lines-of-intelligence-overview.md (Body/Mind/Spirit complexes co-evolve with feedback loops, not strictly sequential). | ~30 | docs/foundations/03 |
 | 4.6 | GAP-V3-30+31+32: substrate_layer_law, involution_ground, indigoRayAccessibility fields | Add these as documented-but-optional fields in foundations/16. The code can add them later as static/derived fields. | ~50 | docs/foundations/16 |
 
 **Wave 4 exit criteria:**
-- Every HoloOS 08.8.x concept is referenced in CCRPG docs
+- Every HoloOS 08.8.x concept is referenced in Mysterium docs
 - OPEN_JOINTS mapping exists
 - No stale doc descriptions remain
 - All 28 foundations docs have status tags
@@ -163,7 +163,7 @@ Wave 5 (Cleanup) ───────────── 5.1-5.5 (all independen
 
 ## Gold-Standard Definition
 
-When all 5 waves are complete, CCRPG will be "gold-standard" for holonic healing and evolution:
+When all 5 waves are complete, Mysterium will be "gold-standard" for holonic healing and evolution:
 
 1. **Every play-mode path** (CLI Direct, CLI Story, Phaser World, Phaser Encounter) correctly advances the full engine pipeline — UserMatrixModel updated, transformation state persisted, consequences applied, CCI refreshed.
 
@@ -181,7 +181,7 @@ When all 5 waves are complete, CCRPG will be "gold-standard" for holonic healing
 
 8. **Developer mode** (`--dev`) exposes all holistic primitives (G_z/P_z, rayProfile, 6-phase position, UserMatrixModel phase, liminality signature, metabolic health breakdown) for debugging and playtesting.
 
-9. **Every ontological concept** from HoloOS 02_Ontology (through 08.8.26) has a CCRPG implementation or documented mapping. The OPEN_JOINTS register is tracked.
+9. **Every ontological concept** from HoloOS 02_Ontology (through 08.8.26) has a Mysterium implementation or documented mapping. The OPEN_JOINTS register is tracked.
 
 10. **~730 tests** cover every engine, every flow, every altitude-scaling scenario, and every transformation phase.
 

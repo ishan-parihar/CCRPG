@@ -273,7 +273,7 @@
     {#if phase === 'welcome'}
       <div in:stageFly={{ y: 20, duration: 500 }}>
         <Stack gap="space-6" align="center">
-          <div class="welcome-mark" aria-hidden="true">CCRPG</div>
+          <div class="welcome-mark" aria-hidden="true">Mysterium</div>
           <h1 class="welcome-title">A journey of healing and evolution</h1>
           <p class="welcome-text">
             Every encounter here is a developmental practice — a way to see yourself
@@ -370,127 +370,127 @@
   .onboarding-route {
     min-height: 100vh;
     min-height: 100dvh;
-    background: var(--ccrpg-bg);
-    color: var(--ccrpg-fg);
+    background: var(--mysterium-bg);
+    color: var(--mysterium-fg);
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: var(--ccrpg-space-5) var(--ccrpg-space-4);
-    padding-top: calc(var(--ccrpg-space-5) + env(safe-area-inset-top, 0px));
-    padding-bottom: calc(var(--ccrpg-space-5) + env(safe-area-inset-bottom, 0px) + var(--ccrpg-nav-height));
+    padding: var(--mysterium-space-5) var(--mysterium-space-4);
+    padding-top: calc(var(--mysterium-space-5) + env(safe-area-inset-top, 0px));
+    padding-bottom: calc(var(--mysterium-space-5) + env(safe-area-inset-bottom, 0px) + var(--mysterium-nav-height));
     overflow-y: auto;
   }
 
   .onboarding-content {
     width: 100%;
-    max-width: var(--ccrpg-content-max-width-narrow);
+    max-width: var(--mysterium-content-max-width-narrow);
   }
 
   .welcome-mark {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-3xl);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-3xl);
     font-weight: 700;
-    color: var(--ccrpg-accent);
-    letter-spacing: var(--ccrpg-tracking-wider);
+    color: var(--mysterium-accent);
+    letter-spacing: var(--mysterium-tracking-wider);
     line-height: 1;
   }
 
   .welcome-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-2xl);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-2xl);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     text-align: center;
     margin: 0;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .welcome-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    line-height: var(--ccrpg-leading-relaxed);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    line-height: var(--mysterium-leading-relaxed);
+    color: var(--mysterium-fg-muted);
     text-align: center;
     max-width: 32rem;
     margin: 0;
   }
 
   .welcome-sub {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     text-align: center;
     font-style: italic;
     margin: 0;
   }
 
   .calibration-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xl);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xl);
     font-weight: 700;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
     margin: 0;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .prompt-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-md);
-    line-height: var(--ccrpg-leading-relaxed);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-md);
+    line-height: var(--mysterium-leading-relaxed);
+    color: var(--mysterium-fg);
     margin: 0;
   }
 
   .option {
     display: flex;
     align-items: flex-start;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
     width: 100%;
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
+    padding: var(--mysterium-space-3) var(--mysterium-space-4);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
     cursor: pointer;
     text-align: left;
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     -webkit-tap-highlight-color: transparent;
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                border-color var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease),
+                border-color var(--mysterium-duration-fast) var(--mysterium-ease);
   }
 
   .option:hover {
-    background: var(--ccrpg-surface-elevated);
-    border-color: var(--ccrpg-accent);
+    background: var(--mysterium-surface-elevated);
+    border-color: var(--mysterium-accent);
   }
 
   .option.selected {
-    background: var(--ccrpg-accent-soft);
-    border-color: var(--ccrpg-accent);
-    color: var(--ccrpg-accent-fg);
+    background: var(--mysterium-accent-soft);
+    border-color: var(--mysterium-accent);
+    color: var(--mysterium-accent-fg);
   }
 
   .option-marker {
     flex-shrink: 0;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
   }
 
   .option.selected .option-marker {
-    color: var(--ccrpg-accent-fg);
+    color: var(--mysterium-accent-fg);
   }
 
   .creating-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
   }
 
   .done-mark {
-    font-size: var(--ccrpg-text-3xl);
-    color: var(--ccrpg-accent);
-    animation: done-pulse 1.5s var(--ccrpg-ease) infinite;
+    font-size: var(--mysterium-text-3xl);
+    color: var(--mysterium-accent);
+    animation: done-pulse 1.5s var(--mysterium-ease) infinite;
   }
 
   @keyframes done-pulse {
@@ -499,30 +499,30 @@
   }
 
   .done-text {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
+    color: var(--mysterium-fg);
   }
 
   .option-polarity {
     margin-left: auto;
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-transform: lowercase;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .free-input-label {
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
+    letter-spacing: var(--mysterium-tracking-wider);
   }
 
   .error-detail {
-    font-family: var(--ccrpg-font-mono, monospace);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-mono, monospace);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-align: center;
     max-width: 28rem;
     margin: 0;

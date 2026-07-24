@@ -1,4 +1,4 @@
-# CCRPG CLI Gap Analysis — v7
+# Mysterium CLI Gap Analysis — v7
 
 **Date:** June 20, 2026
 **Scope:** Exhaustive end-to-end audit of CLI/TUI — runtime testing across all 7 modalities, 8 lines, scoring verification, modality routing, persistence, onboarding, UX polish

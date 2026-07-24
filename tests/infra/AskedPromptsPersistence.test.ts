@@ -16,9 +16,9 @@ let tempHome: string;
 let profileDir: string;
 
 beforeEach(() => {
-  tempHome = fs.mkdtempSync(path.join(os.tmpdir(), 'ccrpg-nf3-'));
+  tempHome = fs.mkdtempSync(path.join(os.tmpdir(), 'mysterium-nf3-'));
   process.env.HOME = tempHome;
-  profileDir = path.join(tempHome, '.ccrpg', 'profiles', 'default');
+  profileDir = path.join(tempHome, '.mysterium', 'profiles', 'default');
   fs.mkdirSync(profileDir, { recursive: true });
   vi.resetModules();
 });

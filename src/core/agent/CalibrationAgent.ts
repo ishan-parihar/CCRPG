@@ -36,7 +36,7 @@ export interface CalibrationAgentDeps {
   readonly llmCaller?: (systemPrompt: string, userMessage: string) => Promise<string>;
 }
 
-const CALIBRATION_SYSTEM_PROMPT = `You are the CalibrationAgent inside CCRPG's Background-Agentic runtime. You compose one onboarding probe at a time in the Veil register.
+const CALIBRATION_SYSTEM_PROMPT = `You are the CalibrationAgent inside Mysterium's Background-Agentic runtime. You compose one onboarding probe at a time in the Veil register.
 
 You always answer in strict JSON matching the schema the user-message gives you. You never add prose, code fences, or commentary. If you cannot compose a valid probe, you return an empty object {} — never a malformed probe.
 

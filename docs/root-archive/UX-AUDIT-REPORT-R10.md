@@ -1,4 +1,4 @@
-# CCRPG Fresh-User UX Audit Report — Round 10
+# Mysterium Fresh-User UX Audit Report — Round 10
 
 > **Date:** 2026-07-07
 > **Method:** The parent agent ran the R10 audit directly (subagent deployment was unavailable due to rate limits). 14 verification commands were executed across all test groups — help, glossary, status, core efficacy, deep reflective, agent multi-encounter, agent+answer warning, answer count, bare-headless warning, setup messaging, validation, cap warning, long answer truncation, and unit tests.

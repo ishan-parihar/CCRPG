@@ -1,7 +1,7 @@
 <script lang="ts">
   /**
    * RouteShell — the standard route wrapper. Replaces ~28 lines of duplicated
-   * `.X-route { min-height:100vh; background:var(--ccrpg-bg); padding:...; }`
+   * `.X-route { min-height:100vh; background:var(--mysterium-bg); padding:...; }`
    * CSS in every route.
    *
    * Provides: full-height scrollable container, safe-area padding, stage-aware
@@ -52,18 +52,18 @@
   .route-shell {
     min-height: 100vh;
     min-height: 100dvh;
-    background: var(--ccrpg-bg);
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    padding: var(--ccrpg-route-padding);
-    padding-top: var(--ccrpg-route-padding-top);
-    padding-bottom: var(--ccrpg-route-padding-bottom);
+    background: var(--mysterium-bg);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    padding: var(--mysterium-route-padding);
+    padding-top: var(--mysterium-route-padding-top);
+    padding-bottom: var(--mysterium-route-padding-bottom);
     overflow-y: auto;
     touch-action: pan-y;
     -webkit-overflow-scrolling: touch;
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-5);
+    gap: var(--mysterium-space-5);
   }
 
   .route-shell.centered {
@@ -74,31 +74,31 @@
   .route-header {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
     flex-shrink: 0;
   }
 
   .route-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-xl);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-xl);
     font-weight: 700;
-    color: var(--ccrpg-fg);
+    color: var(--mysterium-fg);
     margin: 0;
-    letter-spacing: var(--ccrpg-tracking-wide);
-    line-height: var(--ccrpg-leading-tight);
+    letter-spacing: var(--mysterium-tracking-wide);
+    line-height: var(--mysterium-leading-tight);
   }
 
   .route-main {
     flex: 1;
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-5);
+    gap: var(--mysterium-space-5);
   }
 
   /* Desktop: constrain content width and center */
   @media (min-width: 1024px) {
     .route-shell {
-      max-width: var(--ccrpg-content-max-width-wide);
+      max-width: var(--mysterium-content-max-width-wide);
       margin-inline: auto;
     }
   }

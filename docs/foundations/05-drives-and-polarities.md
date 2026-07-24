@@ -3,7 +3,7 @@
 ## 1. Purpose
 
 Specify the four drives — Agency, Communion, Eros, Agape — that
-constitute CCRPG's *motivational engine*. Stages and lines tell us *what*
+constitute Mysterium's *motivational engine*. Stages and lines tell us *what*
 develops; drives tell us *what makes a character (player or NPC) move*.
 Conflict — and therefore narrative, and therefore replay — emerges from
 the polarities between drives.
@@ -59,7 +59,7 @@ Drives *colour* lines. A Cognitive line under heavy Agency motivation
 looks like the lone scientist; under Communion, like the collaborator;
 under Eros, like the visionary; under Agape, like the popular educator.
 Every line has four "flavours" — same altitude, different drive
-profile. CCRPG uses this for character variety without inflating the
+profile. Mysterium uses this for character variety without inflating the
 matrix.
 
 ## 3. Game-design mapping
@@ -106,7 +106,7 @@ The bestiary in `enemies/04-stage-bestiaries.md` enumerates these.
 
 ### 3.4 Drive as redemption arc
 
-A boss fight in CCRPG is not "kill the baddie." It is "demonstrate the
+A boss fight in Mysterium is not "kill the baddie." It is "demonstrate the
 *absent* drive in the boss." A Warlord (Red × Agency-fixation) is
 defeated when the player demonstrates Communion at sufficient intensity
 during the fight (a co-op gesture, a saved ally, a chosen mercy). The

@@ -1,5 +1,5 @@
 /**
- * CCRPG Glossary — shared data consumed by both CLI (runGlossary) and WebUI (/glossary route).
+ * Mysterium Glossary — shared data consumed by both CLI (runGlossary) and WebUI (/glossary route).
  * ponytail: extracted from scripts/cli-game.ts to avoid duplication.
  *
  * R11-Y3 (Fresh-User UX Audit): glossary split into player-facing essentials
@@ -66,7 +66,7 @@ export const TIER2_GLOSSARY_TERMS: readonly GlossaryTerm[] = [
   { term: 'Veil', def: 'A design principle: the game never shows you clinical labels about yourself. You see qualitative felt-sense language, not diagnoses. The Veil is what makes the game a practice rather than a test.', audience: 'player', unlockTier: 'tier2', unlockKeywords: ['veil', 'the game never shows', 'qualitative', 'felt-sense', 'contemplative frame'] },
 ];
 
-/** Advanced theoretical set — only shown with `ccrpg glossary --full` (now requires --dev).
+/** Advanced theoretical set — only shown with `mysterium glossary --full` (now requires --dev).
  *  P2-U5: These terms are engineering vocabulary, not player vocabulary.
  *  They are only accessible via `--dev --full` for developers. */
 export const ADVANCED_GLOSSARY_TERMS: readonly GlossaryTerm[] = [

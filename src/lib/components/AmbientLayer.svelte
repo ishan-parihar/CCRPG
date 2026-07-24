@@ -181,7 +181,7 @@
     width: 100%;
     height: 100%;
     pointer-events: none;
-    z-index: var(--ccrpg-z-base);
+    z-index: var(--mysterium-z-base);
     opacity: 0.6;
   }
 </style>

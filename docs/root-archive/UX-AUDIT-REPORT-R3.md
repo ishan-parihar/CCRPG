@@ -1,8 +1,8 @@
-# CCRPG Fresh-User UX Audit Report — Round 3
+# Mysterium Fresh-User UX Audit Report — Round 3
 
 > **Date:** 2026-07-06
-> **Method:** A subagent with zero knowledge of CCRPG internals role-played a brand-new user discovering the game via the CLI only. It was forbidden from reading source, docs, README, or any project file. It ran ~25 commands across all subcommands and flag combinations, captured a verbatim experiential journal, and reported its emotional and cognitive reactions. The parent agent (this report's author) then cross-referenced every reported friction point against the actual codebase to produce root-cause-attached recommendations.
-> **Objective:** Identify UX-level gaps that prevent CCRPG from being *experientially sound* and *efficacious in its stated purpose* — accelerating evolution and healing in the individual. Not just "does it run?" but "does it transform?"
+> **Method:** A subagent with zero knowledge of Mysterium internals role-played a brand-new user discovering the game via the CLI only. It was forbidden from reading source, docs, README, or any project file. It ran ~25 commands across all subcommands and flag combinations, captured a verbatim experiential journal, and reported its emotional and cognitive reactions. The parent agent (this report's author) then cross-referenced every reported friction point against the actual codebase to produce root-cause-attached recommendations.
+> **Objective:** Identify UX-level gaps that prevent Mysterium from being *experientially sound* and *efficacious in its stated purpose* — accelerating evolution and healing in the individual. Not just "does it run?" but "does it transform?"
 
 ---
 
@@ -96,7 +96,7 @@ The full journal is preserved in the worklog. Key verbatim moments:
 
 ### 2.2 The moment of awe, then irritation
 
-> **Command:** `ls /home/z/.ccrpg/` (curious peek at save files)
+> **Command:** `ls /home/z/.mysterium/` (curious peek at save files)
 >
 > **User's reaction:** *"Awe, then irritation. There's a whole WORLD under the hood — factions, NPCs with shadow quadrants, narrative roles — and I would never have known. The CLI shows me almost none of it. I'm 'playing' a game whose characters I've never met."*
 
@@ -198,7 +198,7 @@ if (DEV_MODE) {
 }
 ```
 
-So `--dev` only affects `ccrpg status --dev`, not `ccrpg --headless --dev`. The help text implies session-level dev output; the implementation only provides status-level dev output.
+So `--dev` only affects `mysterium status --dev`, not `mysterium --headless --dev`. The help text implies session-level dev output; the implementation only provides status-level dev output.
 
 **Fix:** Either (a) update `--help` to say "Developer mode: show holistic primitives in `status` output", or (b) add a `DEV_MODE` branch in `runFullSession` / `runDirectQuestioningSession` that emits primitives after each encounter.
 
@@ -247,7 +247,7 @@ async function runStatus(): Promise<void> {
 
 ### 3.4 P0-4: Interactive mode hangs silently in non-TTY environments
 
-**Experiential symptom:** The bare `npx tsx scripts/cli-game.ts` command, `ccrpg setup`, and `ccrpg session` all hang indefinitely in any non-TTY environment (CI, pipes, subagent shells, containers). No "please run me in a terminal" message. No timeout. Just silence.
+**Experiential symptom:** The bare `npx tsx scripts/cli-game.ts` command, `mysterium setup`, and `mysterium session` all hang indefinitely in any non-TTY environment (CI, pipes, subagent shells, containers). No "please run me in a terminal" message. No timeout. Just silence.
 
 **Root cause:** `@clack/prompts`'s `select()` and `text()` functions wait for stdin TTY events. When stdin isn't a TTY, they block forever. The CLI doesn't detect this case.
 
@@ -255,7 +255,7 @@ async function runStatus(): Promise<void> {
 
 ```ts
 if (!process.stdin.isTTY && !HEADLESS && !JSON_MODE) {
-  console.error('CCRPG requires an interactive terminal. Run with --headless for non-interactive use, or run in a real terminal.');
+  console.error('Mysterium requires an interactive terminal. Run with --headless for non-interactive use, or run in a real terminal.');
   process.exit(1);
 }
 ```
@@ -469,7 +469,7 @@ if (FORCE_LINE && !VALID_LINES.includes(FORCE_LINE)) {
 
 **Root cause:** No `glossary` subcommand. No `--explain` flag. No inline definitions in `--help`. The Veil of Forgetting design principle (foundations/20) argues against surfacing internal taxonomy to the user — but there's a difference between "don't reveal the player's diagnosis" and "don't explain what 'Holon' means when you print it in `diagnostic`."
 
-**Fix:** Add a `ccrpg glossary` subcommand that prints a 1-line definition per term. Add inline `(Holon: an autonomous whole that is part of a larger whole)` tooltips in `diagnostic` output. Keep the Veil for player-facing state (resonance, stage, CCI) but break it for system-facing vocabulary.
+**Fix:** Add a `mysterium glossary` subcommand that prints a 1-line definition per term. Add inline `(Holon: an autonomous whole that is part of a larger whole)` tooltips in `diagnostic` output. Keep the Veil for player-facing state (resonance, stage, CCI) but break it for system-facing vocabulary.
 
 **Blast radius:** ~80 lines for a glossary command + data file. Low.
 
@@ -527,7 +527,7 @@ This is the section R1 and R2 did not write. It is the most important section of
 
 From `AGENTS.md` §1:
 
-> *"CCRPG is a Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment... The game is designed for psychological, neurological, sociological, and biological healing and evolution."*
+> *"Mysterium is a Mysterium where every gameplay verb is a gamified developmental assessment... The game is designed for psychological, neurological, sociological, and biological healing and evolution."*
 
 From `README.md`:
 
@@ -616,7 +616,7 @@ The project has a strong "add more features" energy (64 modules, 8 modalities, 1
 
 ### 7.2 YAGNI-2: Remove TDG-Rust integration until it's needed
 
-**Problem:** The CLI mentions "TDG-Rust not running — using CCRPG-native 8 tools only" in user-facing output. The user has no idea what TDG-Rust is. The integration is a no-op in the default state. It's dead weight in the UX.
+**Problem:** The CLI mentions "TDG-Rust not running — using Mysterium-native 8 tools only" in user-facing output. The user has no idea what TDG-Rust is. The integration is a no-op in the default state. It's dead weight in the UX.
 
 **Recommendation:** Remove the TDG-Rust bridge entirely until there's a concrete reason for it. If/when graph memory is needed, add it back. Don't ship the integration stub.
 
@@ -691,7 +691,7 @@ The project has a strong "add more features" energy (64 modules, 8 modalities, 1
 
 ## 9. The Three Loops Framework — A Diagnostic for Future Audits
 
-This audit introduced the **Three Loops** framework for assessing CCRPG's efficacy. Future audits should use it.
+This audit introduced the **Three Loops** framework for assessing Mysterium's efficacy. Future audits should use it.
 
 | Loop | Description | How to test if it's closed |
 |---|---|---|

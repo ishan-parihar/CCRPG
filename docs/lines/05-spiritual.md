@@ -8,7 +8,7 @@ act from it. Spiritual intelligence is **not** religious affiliation —
 it is the developmental line that organises a person's hierarchy of
 values around what matters most.
 
-CCRPG separates *spiritual intelligence* (how we **grow up** spiritually,
+Mysterium separates *spiritual intelligence* (how we **grow up** spiritually,
 in stages) from *spiritual experience* (how we **wake up** spiritually,
 through states). Stages live here; states live in `foundations/04` and
 `progression/06`.
@@ -28,7 +28,7 @@ Synthesis:
 - **Underhill / Almaas / Vajrayana sources** — contemplative
   taxonomies of spiritual maturation.
 
-CCRPG's working definition:
+Mysterium's working definition:
 
 > Spiritual intelligence is the capacity to (a) identify what one most
 > fundamentally values, (b) hold that hierarchy stably under load,
@@ -187,7 +187,7 @@ play align with their stated hierarchy? Pure functions in
 
 ## 7. Open questions
 
-- **Religion-neutral framing.** CCRPG must be playable by atheists,
+- **Religion-neutral framing.** Mysterium must be playable by atheists,
   agnostics, and adherents of any tradition. The vocabulary must be
   sufficiently abstract — "ultimate concern" rather than "God."
 - **Cross-cultural value sets.** The Schwartz universal-values list is

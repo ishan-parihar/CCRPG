@@ -3,13 +3,13 @@
 ## 1. Purpose
 
 Map each stage and each line to its best-known neural substrates, so
-that CCRPG's mechanics can claim — *with citations* — that the in-game
+that Mysterium's mechanics can claim — *with citations* — that the in-game
 training plausibly engages those substrates. Without this document,
 "trains the brain" is rhetoric; with it, "trains [these regions /
 networks via these tasks]" is a falsifiable claim.
 
-This document does not commit CCRPG to fMRI validation studies. It does
-commit CCRPG to *not making claims* about neural training that contradict
+This document does not commit Mysterium to fMRI validation studies. It does
+commit Mysterium to *not making claims* about neural training that contradict
 this map.
 
 ## 2. Scientific basis
@@ -57,7 +57,7 @@ A simplification of developmental-cognitive-neuroscience consensus:
 | Turquoise (with practice) | DMN-FPCN integration | Practice-dependent |
 | White (with deep practice) | Long-term meditators show structural changes | Practice-dependent |
 
-CCRPG is honest about these windows: a 35-year-old playing the game is
+Mysterium is honest about these windows: a 35-year-old playing the game is
 not going to acquire 0–2y plasticity. The claim is **practice-driven
 plasticity within the adult range** — well-evidenced for FPCN tasks
 (action video games, working-memory training transfer to FPCN
@@ -67,7 +67,7 @@ recruitment).
 
 ### 3.1 Tasks → networks (the tracebook)
 
-This is the most important table in CCRPG's validity arc. Each in-game
+This is the most important table in Mysterium's validity arc. Each in-game
 task names the network it claims to engage:
 
 | In-game ability | Cognitive task | Network claimed |

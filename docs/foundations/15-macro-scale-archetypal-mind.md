@@ -10,7 +10,7 @@
 
 ## Preface (R&D framing)
 
-This document is the **theoretical substrate** for the next phase of CCRPG architecture. Up to this point, the entire R&D set (foundations 00–14, the 512 concept-drafts) has been concerned with the *lesser cycle* — how a single moment of catalyst becomes a single moment of experience for a single capacity at a single line × stage. The eight gameplay verbs, the 7 modalities, the 4-quadrant shadow model, the drive-health landscape, the staircase, the contact boundary, the catalyst→experience→integration flow — all of these mechanise the **micro-architecture of the archetypal mind** (Matrix, Potentiator, Catalyst, Experience).
+This document is the **theoretical substrate** for the next phase of Mysterium architecture. Up to this point, the entire R&D set (foundations 00–14, the 512 concept-drafts) has been concerned with the *lesser cycle* — how a single moment of catalyst becomes a single moment of experience for a single capacity at a single line × stage. The eight gameplay verbs, the 7 modalities, the 4-quadrant shadow model, the drive-health landscape, the staircase, the contact boundary, the catalyst→experience→integration flow — all of these mechanise the **micro-architecture of the archetypal mind** (Matrix, Potentiator, Catalyst, Experience).
 
 What we have *not* yet mechanised is the **macro-architecture** — the eternal lifecycle of the soul across stages, the world it inhabits, and the polarity it crystallises. The downstream documents in this series (16–22) translate the four macro archetypes — **Significator, Transformation, Great Way, Choice** — and the **Veil of Forgetting** into concrete game architecture.
 
@@ -203,11 +203,11 @@ As the entity moves majestically through this co-created illusion, navigating th
 
 ## Appendix: Archetypal-Class Typology (per HoloOS 08.8.26)
 
-> **Status:** canonical-hypothesis (CCRPG-specific extension referencing HoloOS 08.8.26).
+> **Status:** canonical-hypothesis (Mysterium-specific extension referencing HoloOS 08.8.26).
 
 The 8 functional roles (M·P·C·E·S·T·G·Ch) are not single things but **classes of things** — each manifests across 4 dimensions per HoloOS `_THEORY/02_Ontology/08.8.26_Archetypal_Component_Architecture.md`:
 
-| Dimension | Description | CCRPG Analog |
+| Dimension | Description | Mysterium Analog |
 |---|---|---|
 | **Mental** | Thought-forms, cognitive structures, imaginal patterns | UL quadrant (individual interior) |
 | **Biological** | Physical substrate, molecular/cellular processes | UR quadrant (individual exterior) |
@@ -220,6 +220,6 @@ The 8×4=32 archetypal-class matrix is defined in `src/core/domain/ArchetypalCla
 - Catalyst-in-Social = relational-perturbation (conflict, intimacy, power-dynamics)
 - Significator-in-Collective = archetypal-resonance (which collective patterns the holon embodies)
 
-**CCRPG's UserMatrixModel** tracks 4D cells (8 lines × 8 stages × 4 dimensions = 256 cells), allowing the game to model WHAT KIND of unprocessed material the user carries (cognitive vs physical vs relational vs transpersonal), not just how much.
+**Mysterium's UserMatrixModel** tracks 4D cells (8 lines × 8 stages × 4 dimensions = 256 cells), allowing the game to model WHAT KIND of unprocessed material the user carries (cognitive vs physical vs relational vs transpersonal), not just how much.
 
-**AQAL Quadrants ↔ 4 Dimensions mapping:** UL ≈ Mental, UR ≈ Biological, LL ≈ Social, LR ≈ Collective. The mapping is approximate — the 4 dimensions are holonically-universal (per HoloOS 08.8.17 Semantics Protocol), while the AQAL quadrants are D3-experiential (Wilber-specific). CCRPG retains the AQAL `Quadrant` type for backward compatibility but uses the 4 `Dimension` values for archetypal-class tracking.
+**AQAL Quadrants ↔ 4 Dimensions mapping:** UL ≈ Mental, UR ≈ Biological, LL ≈ Social, LR ≈ Collective. The mapping is approximate — the 4 dimensions are holonically-universal (per HoloOS 08.8.17 Semantics Protocol), while the AQAL quadrants are D3-experiential (Wilber-specific). Mysterium retains the AQAL `Quadrant` type for backward compatibility but uses the 4 `Dimension` values for archetypal-class tracking.

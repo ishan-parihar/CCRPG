@@ -1,4 +1,4 @@
-# CCRPG TUI/CLI Comprehensive Gap Audit
+# Mysterium TUI/CLI Comprehensive Gap Audit
 
 **Date:** June 20, 2026
 **Scope:** Exhaustive end-to-end testing of CLI/TUI across all modes, modalities, and edge cases
@@ -84,7 +84,7 @@ The CLI is **functional and compiles cleanly** (TypeScript zero errors, 439/447 
 | **I.2** | **LLM endpoint configuration fragile** | Falls back to Google API with `gemma-4-31b-it` which may not exist on Google's endpoint. | Silent failures when misconfigured. | 2 hours |
 | **I.3** | **No retry logic for LLM failures** | Single LLM failure = immediate fallback. No exponential backoff. | Transient errors cause permanent mode switch. | 2 hours |
 | **I.4** | **Headless mode selection deterministic** | `Date.now() % 4` cycling means AI agents get predictable results. | AI-agent testing isn't genuinely varied. | 2 hours |
-| **I.5** | **No multi-save support** | Single `~/.ccrpg/save.json`. No way to have multiple characters. | Limited for testing and multi-character play. | 2 hours |
+| **I.5** | **No multi-save support** | Single `~/.mysterium/save.json`. No way to have multiple characters. | Limited for testing and multi-character play. | 2 hours |
 | **I.6** | **Save file doesn't persist session history** | Only Significator state saved. Encounter history, narrative summaries lost. | Can't review past sessions. | 2 hours |
 
 ---

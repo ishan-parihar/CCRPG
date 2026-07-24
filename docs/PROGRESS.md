@@ -1,4 +1,4 @@
-# CCRPG UX Audit Implementation — Progress Tracker
+# Mysterium UX Audit Implementation — Progress Tracker
 
 > Tracking active-progress / pending-progress / completed-progress for the 18 recommendations
 > from the Fresh-User UX Audit. Updated after each iteration.

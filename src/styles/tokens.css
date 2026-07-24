@@ -1,5 +1,5 @@
 /**
- * CCRPG Design Tokens — 8-stage aesthetic system.
+ * Mysterium Design Tokens — 8-stage aesthetic system.
  *
  * Each stage has its own palette, typography, and motion language.
  * Switch stages by setting data-stage="..." on <html>.
@@ -15,248 +15,248 @@
  *   White:    "luminous silence, spacious"
  *
  * Pure-Svelte frontend: these tokens are the single source of truth.
- * The Svelte layer consumes them via var(--ccrpg-*).
+ * The Svelte layer consumes them via var(--mysterium-*).
  */
 
 :root {
   /* Stage-agnostic baseline */
-  --ccrpg-radius-sm: 4px;
-  --ccrpg-radius: 6px;
-  --ccrpg-radius-lg: 12px;
-  --ccrpg-radius-xl: 20px;
-  --ccrpg-radius-full: 9999px;
+  --mysterium-radius-sm: 4px;
+  --mysterium-radius: 6px;
+  --mysterium-radius-lg: 12px;
+  --mysterium-radius-xl: 20px;
+  --mysterium-radius-full: 9999px;
 
-  --ccrpg-ease: cubic-bezier(0.22, 1, 0.36, 1);
-  --ccrpg-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
-  --ccrpg-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
-  --ccrpg-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
-  --ccrpg-duration-instant: 80ms;
-  --ccrpg-duration-fast: 180ms;
-  --ccrpg-duration-base: 320ms;
-  --ccrpg-duration-slow: 540ms;
-  --ccrpg-duration-glacial: 1200ms;
+  --mysterium-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --mysterium-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --mysterium-ease-in: cubic-bezier(0.7, 0, 0.84, 0);
+  --mysterium-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --mysterium-duration-instant: 80ms;
+  --mysterium-duration-fast: 180ms;
+  --mysterium-duration-base: 320ms;
+  --mysterium-duration-slow: 540ms;
+  --mysterium-duration-glacial: 1200ms;
 
   /* ─── Spacing scale (8-step, 4px base) ─── */
-  --ccrpg-space-0: 0;
-  --ccrpg-space-1: 0.25rem;   /* 4px */
-  --ccrpg-space-2: 0.5rem;    /* 8px */
-  --ccrpg-space-3: 0.75rem;   /* 12px */
-  --ccrpg-space-4: 1rem;      /* 16px */
-  --ccrpg-space-5: 1.5rem;    /* 24px */
-  --ccrpg-space-6: 2rem;      /* 32px */
-  --ccrpg-space-7: 3rem;      /* 48px */
-  --ccrpg-space-8: 4rem;      /* 64px */
+  --mysterium-space-0: 0;
+  --mysterium-space-1: 0.25rem;   /* 4px */
+  --mysterium-space-2: 0.5rem;    /* 8px */
+  --mysterium-space-3: 0.75rem;   /* 12px */
+  --mysterium-space-4: 1rem;      /* 16px */
+  --mysterium-space-5: 1.5rem;    /* 24px */
+  --mysterium-space-6: 2rem;      /* 32px */
+  --mysterium-space-7: 3rem;      /* 48px */
+  --mysterium-space-8: 4rem;      /* 64px */
 
   /* ─── Typography scale (modular, 1.125 ratio) ─── */
-  --ccrpg-text-xs: 0.75rem;     /* 12px */
-  --ccrpg-text-sm: 0.875rem;    /* 14px */
-  --ccrpg-text-base: 1rem;      /* 16px */
-  --ccrpg-text-md: 1.125rem;    /* 18px */
-  --ccrpg-text-lg: 1.25rem;     /* 20px */
-  --ccrpg-text-xl: 1.5rem;      /* 24px */
-  --ccrpg-text-2xl: 2rem;       /* 32px */
-  --ccrpg-text-3xl: clamp(2.5rem, 6vw, 4rem); /* display */
-  --ccrpg-leading-tight: 1.2;
-  --ccrpg-leading-normal: 1.5;
-  --ccrpg-leading-relaxed: 1.7;
-  --ccrpg-tracking-tight: -0.01em;
-  --ccrpg-tracking-normal: 0;
-  --ccrpg-tracking-wide: 0.05em;
-  --ccrpg-tracking-wider: 0.1em;
-  --ccrpg-tracking-widest: 0.15em;
+  --mysterium-text-xs: 0.75rem;     /* 12px */
+  --mysterium-text-sm: 0.875rem;    /* 14px */
+  --mysterium-text-base: 1rem;      /* 16px */
+  --mysterium-text-md: 1.125rem;    /* 18px */
+  --mysterium-text-lg: 1.25rem;     /* 20px */
+  --mysterium-text-xl: 1.5rem;      /* 24px */
+  --mysterium-text-2xl: 2rem;       /* 32px */
+  --mysterium-text-3xl: clamp(2.5rem, 6vw, 4rem); /* display */
+  --mysterium-leading-tight: 1.2;
+  --mysterium-leading-normal: 1.5;
+  --mysterium-leading-relaxed: 1.7;
+  --mysterium-tracking-tight: -0.01em;
+  --mysterium-tracking-normal: 0;
+  --mysterium-tracking-wide: 0.05em;
+  --mysterium-tracking-wider: 0.1em;
+  --mysterium-tracking-widest: 0.15em;
 
   /* ─── Z-index scale ─── */
-  --ccrpg-z-base: 0;
-  --ccrpg-z-hud: 100;
-  --ccrpg-z-overlay: 500;
-  --ccrpg-z-modal: 1000;
-  --ccrpg-z-toast: 1500;
-  --ccrpg-z-sr: 9999;
+  --mysterium-z-base: 0;
+  --mysterium-z-hud: 100;
+  --mysterium-z-overlay: 500;
+  --mysterium-z-modal: 1000;
+  --mysterium-z-toast: 1500;
+  --mysterium-z-sr: 9999;
 
   /* ─── Shadow scale ─── */
-  --ccrpg-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
-  --ccrpg-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --ccrpg-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
-  --ccrpg-shadow-glow: 0 0 24px var(--ccrpg-accent-soft, #5a1318);
+  --mysterium-shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.3);
+  --mysterium-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.4);
+  --mysterium-shadow-lg: 0 12px 32px rgba(0, 0, 0, 0.5);
+  --mysterium-shadow-glow: 0 0 24px var(--mysterium-accent-soft, #5a1318);
 
   /* ─── Breakpoints (as values for JS; CSS uses @media directly) ─── */
-  --ccrpg-bp-sm: 480px;
-  --ccrpg-bp-md: 768px;
-  --ccrpg-bp-lg: 1024px;
-  --ccrpg-bp-xl: 1280px;
-  --ccrpg-bp-2xl: 1536px;
+  --mysterium-bp-sm: 480px;
+  --mysterium-bp-md: 768px;
+  --mysterium-bp-lg: 1024px;
+  --mysterium-bp-xl: 1280px;
+  --mysterium-bp-2xl: 1536px;
 
   /* ─── Semantic colors ─── */
-  --ccrpg-danger: #b8252a;
-  --ccrpg-danger-soft: #5a1318;
-  --ccrpg-danger-fg: #ffffff;
-  --ccrpg-warning: #d4a425;
-  --ccrpg-warning-soft: #6a5215;
-  --ccrpg-warning-fg: #1a1408;
-  --ccrpg-success: #5aa425;
-  --ccrpg-success-soft: #2a5215;
-  --ccrpg-success-fg: #ffffff;
-  --ccrpg-info: #2590c4;
-  --ccrpg-info-soft: #155068;
-  --ccrpg-info-fg: #ffffff;
+  --mysterium-danger: #b8252a;
+  --mysterium-danger-soft: #5a1318;
+  --mysterium-danger-fg: #ffffff;
+  --mysterium-warning: #d4a425;
+  --mysterium-warning-soft: #6a5215;
+  --mysterium-warning-fg: #1a1408;
+  --mysterium-success: #5aa425;
+  --mysterium-success-soft: #2a5215;
+  --mysterium-success-fg: #ffffff;
+  --mysterium-info: #2590c4;
+  --mysterium-info-soft: #155068;
+  --mysterium-info-fg: #ffffff;
 
   /* ─── Layout tokens ─── */
-  --ccrpg-content-max-width: 640px;
-  --ccrpg-content-max-width-narrow: 480px;
-  --ccrpg-content-max-width-wide: 960px;
-  --ccrpg-route-padding: 1rem;
-  --ccrpg-route-padding-top: calc(1rem + env(safe-area-inset-top, 0px));
-  --ccrpg-route-padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
-  --ccrpg-nav-height: 56px;
+  --mysterium-content-max-width: 640px;
+  --mysterium-content-max-width-narrow: 480px;
+  --mysterium-content-max-width-wide: 960px;
+  --mysterium-route-padding: 1rem;
+  --mysterium-route-padding-top: calc(1rem + env(safe-area-inset-top, 0px));
+  --mysterium-route-padding-bottom: calc(1rem + env(safe-area-inset-bottom, 0px));
+  --mysterium-nav-height: 56px;
 
   /* Default to Red stage (the first playable vertical slice) */
-  --ccrpg-bg: #0d0a0a;
-  --ccrpg-surface: #1a0f0f;
-  --ccrpg-surface-elevated: #261818;
-  --ccrpg-fg: #e8d4cc;
-  --ccrpg-fg-muted: #a89080;
-  --ccrpg-muted: #8a5040;
-  --ccrpg-accent: #b8252a;
-  --ccrpg-accent-soft: #5a1318;
-  --ccrpg-accent-fg: #ffffff;
-  --ccrpg-border: rgba(184, 37, 42, 0.3);
-  --ccrpg-font-display: "Big Shoulders", "Arial Narrow", sans-serif;
-  --ccrpg-font-body: "IBM Plex Mono", "Courier New", monospace;
-  --ccrpg-motion: snap;
+  --mysterium-bg: #0d0a0a;
+  --mysterium-surface: #1a0f0f;
+  --mysterium-surface-elevated: #261818;
+  --mysterium-fg: #e8d4cc;
+  --mysterium-fg-muted: #a89080;
+  --mysterium-muted: #8a5040;
+  --mysterium-accent: #b8252a;
+  --mysterium-accent-soft: #5a1318;
+  --mysterium-accent-fg: #ffffff;
+  --mysterium-border: rgba(184, 37, 42, 0.3);
+  --mysterium-font-display: "Big Shoulders", "Arial Narrow", sans-serif;
+  --mysterium-font-body: "IBM Plex Mono", "Courier New", monospace;
+  --mysterium-motion: snap;
 }
 
 /* ─── Stage 1: Infrared — "cave-dark, primal" ─── */
 [data-stage="infrared"] {
-  --ccrpg-bg: #0a0707;
-  --ccrpg-surface: #140d0d;
-  --ccrpg-surface-elevated: #1f1414;
-  --ccrpg-fg: #d8c8b4;
-  --ccrpg-fg-muted: #a08868;
-  --ccrpg-muted: #6a5040;
-  --ccrpg-accent: #c44525;
-  --ccrpg-accent-soft: #6b2415;
-  --ccrpg-accent-fg: #ffffff;
-  --ccrpg-border: rgba(196, 69, 37, 0.3);
-  --ccrpg-font-display: "Boldonse", system-ui, sans-serif;
-  --ccrpg-font-body: "DM Mono", "Courier New", monospace;
-  --ccrpg-motion: pulse;
+  --mysterium-bg: #0a0707;
+  --mysterium-surface: #140d0d;
+  --mysterium-surface-elevated: #1f1414;
+  --mysterium-fg: #d8c8b4;
+  --mysterium-fg-muted: #a08868;
+  --mysterium-muted: #6a5040;
+  --mysterium-accent: #c44525;
+  --mysterium-accent-soft: #6b2415;
+  --mysterium-accent-fg: #ffffff;
+  --mysterium-border: rgba(196, 69, 37, 0.3);
+  --mysterium-font-display: "Boldonse", system-ui, sans-serif;
+  --mysterium-font-body: "DM Mono", "Courier New", monospace;
+  --mysterium-motion: pulse;
 }
 
 /* ─── Stage 2: Magenta — "spirit-haunted, symbolic" ─── */
 [data-stage="magenta"] {
-  --ccrpg-bg: #0d0814;
-  --ccrpg-surface: #1a1028;
-  --ccrpg-surface-elevated: #261838;
-  --ccrpg-fg: #e0d4f0;
-  --ccrpg-fg-muted: #a890c0;
-  --ccrpg-muted: #6a5080;
-  --ccrpg-accent: #9440c8;
-  --ccrpg-accent-soft: #4a2068;
-  --ccrpg-accent-fg: #ffffff;
-  --ccrpg-border: rgba(148, 64, 200, 0.3);
-  --ccrpg-font-display: "Italiana", "Times New Roman", serif;
-  --ccrpg-font-body: "Lora", Georgia, serif;
-  --ccrpg-motion: drift;
+  --mysterium-bg: #0d0814;
+  --mysterium-surface: #1a1028;
+  --mysterium-surface-elevated: #261838;
+  --mysterium-fg: #e0d4f0;
+  --mysterium-fg-muted: #a890c0;
+  --mysterium-muted: #6a5080;
+  --mysterium-accent: #9440c8;
+  --mysterium-accent-soft: #4a2068;
+  --mysterium-accent-fg: #ffffff;
+  --mysterium-border: rgba(148, 64, 200, 0.3);
+  --mysterium-font-display: "Italiana", "Times New Roman", serif;
+  --mysterium-font-body: "Lora", Georgia, serif;
+  --mysterium-motion: drift;
 }
 
 /* ─── Stage 3: Red — "fortress-sharp, weapon-walls" (DEFAULT) ─── */
 [data-stage="red"] {
-  --ccrpg-bg: #0d0a0a;
-  --ccrpg-surface: #1a0f0f;
-  --ccrpg-surface-elevated: #261818;
-  --ccrpg-fg: #e8d4cc;
-  --ccrpg-fg-muted: #a89080;
-  --ccrpg-muted: #8a5040;
-  --ccrpg-accent: #b8252a;
-  --ccrpg-accent-soft: #5a1318;
-  --ccrpg-accent-fg: #ffffff;
-  --ccrpg-border: rgba(184, 37, 42, 0.3);
-  --ccrpg-font-display: "Big Shoulders", "Arial Narrow", sans-serif;
-  --ccrpg-font-body: "IBM Plex Mono", "Courier New", monospace;
-  --ccrpg-motion: snap;
+  --mysterium-bg: #0d0a0a;
+  --mysterium-surface: #1a0f0f;
+  --mysterium-surface-elevated: #261818;
+  --mysterium-fg: #e8d4cc;
+  --mysterium-fg-muted: #a89080;
+  --mysterium-muted: #8a5040;
+  --mysterium-accent: #b8252a;
+  --mysterium-accent-soft: #5a1318;
+  --mysterium-accent-fg: #ffffff;
+  --mysterium-border: rgba(184, 37, 42, 0.3);
+  --mysterium-font-display: "Big Shoulders", "Arial Narrow", sans-serif;
+  --mysterium-font-body: "IBM Plex Mono", "Courier New", monospace;
+  --mysterium-motion: snap;
 }
 
 /* ─── Stage 4: Amber — "cathedral-ordered, gold-stone" ─── */
 [data-stage="amber"] {
-  --ccrpg-bg: #0f0a05;
-  --ccrpg-surface: #1a1408;
-  --ccrpg-surface-elevated: #26200c;
-  --ccrpg-fg: #f0e4c8;
-  --ccrpg-fg-muted: #c0a878;
-  --ccrpg-muted: #806840;
-  --ccrpg-accent: #d4a425;
-  --ccrpg-accent-soft: #6a5215;
-  --ccrpg-accent-fg: #1a1408;
-  --ccrpg-border: rgba(212, 164, 37, 0.3);
-  --ccrpg-font-display: "Young Serif", Georgia, serif;
-  --ccrpg-font-body: "Libre Baskerville", Georgia, serif;
-  --ccrpg-motion: chime;
+  --mysterium-bg: #0f0a05;
+  --mysterium-surface: #1a1408;
+  --mysterium-surface-elevated: #26200c;
+  --mysterium-fg: #f0e4c8;
+  --mysterium-fg-muted: #c0a878;
+  --mysterium-muted: #806840;
+  --mysterium-accent: #d4a425;
+  --mysterium-accent-soft: #6a5215;
+  --mysterium-accent-fg: #1a1408;
+  --mysterium-border: rgba(212, 164, 37, 0.3);
+  --mysterium-font-display: "Young Serif", Georgia, serif;
+  --mysterium-font-body: "Libre Baskerville", Georgia, serif;
+  --mysterium-motion: chime;
 }
 
 /* ─── Stage 5: Orange — "mechanism-precise, steel-glass" ─── */
 [data-stage="orange"] {
-  --ccrpg-bg: #0a0d10;
-  --ccrpg-surface: #141a20;
-  --ccrpg-surface-elevated: #1f262e;
-  --ccrpg-fg: #d4e0e8;
-  --ccrpg-fg-muted: #90a8b8;
-  --ccrpg-muted: #506878;
-  --ccrpg-accent: #2590c4;
-  --ccrpg-accent-soft: #155068;
-  --ccrpg-accent-fg: #ffffff;
-  --ccrpg-border: rgba(37, 144, 196, 0.3);
-  --ccrpg-font-display: "Tektur", "Arial", sans-serif;
-  --ccrpg-font-body: "Instrument Sans", system-ui, sans-serif;
-  --ccrpg-motion: tick;
+  --mysterium-bg: #0a0d10;
+  --mysterium-surface: #141a20;
+  --mysterium-surface-elevated: #1f262e;
+  --mysterium-fg: #d4e0e8;
+  --mysterium-fg-muted: #90a8b8;
+  --mysterium-muted: #506878;
+  --mysterium-accent: #2590c4;
+  --mysterium-accent-soft: #155068;
+  --mysterium-accent-fg: #ffffff;
+  --mysterium-border: rgba(37, 144, 196, 0.3);
+  --mysterium-font-display: "Tektur", "Arial", sans-serif;
+  --mysterium-font-body: "Instrument Sans", system-ui, sans-serif;
+  --mysterium-motion: tick;
 }
 
 /* ─── Stage 6: Green — "garden-lush, earth-toned" ─── */
 [data-stage="green"] {
-  --ccrpg-bg: #080d08;
-  --ccrpg-surface: #101810;
-  --ccrpg-surface-elevated: #182218;
-  --ccrpg-fg: #d4e8c8;
-  --ccrpg-fg-muted: #90b878;
-  --ccrpg-muted: #506840;
-  --ccrpg-accent: #5aa425;
-  --ccrpg-accent-soft: #2a5215;
-  --ccrpg-accent-fg: #ffffff;
-  --ccrpg-border: rgba(90, 164, 37, 0.3);
-  --ccrpg-font-display: "Bricolage Grotesque", system-ui, sans-serif;
-  --ccrpg-font-body: "Work Sans", system-ui, sans-serif;
-  --ccrpg-motion: grow;
+  --mysterium-bg: #080d08;
+  --mysterium-surface: #101810;
+  --mysterium-surface-elevated: #182218;
+  --mysterium-fg: #d4e8c8;
+  --mysterium-fg-muted: #90b878;
+  --mysterium-muted: #506840;
+  --mysterium-accent: #5aa425;
+  --mysterium-accent-soft: #2a5215;
+  --mysterium-accent-fg: #ffffff;
+  --mysterium-border: rgba(90, 164, 37, 0.3);
+  --mysterium-font-display: "Bricolage Grotesque", system-ui, sans-serif;
+  --mysterium-font-body: "Work Sans", system-ui, sans-serif;
+  --mysterium-motion: grow;
 }
 
 /* ─── Stage 7: Turquoise — "crystalline, translucent" ─── */
 [data-stage="turquoise"] {
-  --ccrpg-bg: #08101a;
-  --ccrpg-surface: #0c1828;
-  --ccrpg-surface-elevated: #102038;
-  --ccrpg-fg: #c8e8f0;
-  --ccrpg-fg-muted: #78a8c0;
-  --ccrpg-muted: #406878;
-  --ccrpg-accent: #25c4b0;
-  --ccrpg-accent-soft: #156858;
-  --ccrpg-accent-fg: #08101a;
-  --ccrpg-border: rgba(37, 196, 176, 0.3);
-  --ccrpg-font-display: "Poiret One", "Optima", sans-serif;
-  --ccrpg-font-body: "Jura", "Optima", sans-serif;
-  --ccrpg-motion: refract;
+  --mysterium-bg: #08101a;
+  --mysterium-surface: #0c1828;
+  --mysterium-surface-elevated: #102038;
+  --mysterium-fg: #c8e8f0;
+  --mysterium-fg-muted: #78a8c0;
+  --mysterium-muted: #406878;
+  --mysterium-accent: #25c4b0;
+  --mysterium-accent-soft: #156858;
+  --mysterium-accent-fg: #08101a;
+  --mysterium-border: rgba(37, 196, 176, 0.3);
+  --mysterium-font-display: "Poiret One", "Optima", sans-serif;
+  --mysterium-font-body: "Jura", "Optima", sans-serif;
+  --mysterium-motion: refract;
 }
 
 /* ─── Stage 8: White — "luminous silence, spacious" ─── */
 [data-stage="white"] {
-  --ccrpg-bg: #f8f6f0;
-  --ccrpg-surface: #ffffff;
-  --ccrpg-surface-elevated: #f0ede4;
-  --ccrpg-fg: #2a2620;
-  --ccrpg-fg-muted: #6a6258;
-  --ccrpg-muted: #9a9080;
-  --ccrpg-accent: #b89025;
-  --ccrpg-accent-soft: #d4c068;
-  --ccrpg-accent-fg: #ffffff;
-  --ccrpg-border: rgba(184, 144, 37, 0.3);
-  --ccrpg-font-display: "Crimson Pro", Georgia, serif;
-  --ccrpg-font-body: "Erica One", system-ui, sans-serif;
-  --ccrpg-motion: dissolve;
+  --mysterium-bg: #f8f6f0;
+  --mysterium-surface: #ffffff;
+  --mysterium-surface-elevated: #f0ede4;
+  --mysterium-fg: #2a2620;
+  --mysterium-fg-muted: #6a6258;
+  --mysterium-muted: #9a9080;
+  --mysterium-accent: #b89025;
+  --mysterium-accent-soft: #d4c068;
+  --mysterium-accent-fg: #ffffff;
+  --mysterium-border: rgba(184, 144, 37, 0.3);
+  --mysterium-font-display: "Crimson Pro", Georgia, serif;
+  --mysterium-font-body: "Erica One", system-ui, sans-serif;
+  --mysterium-motion: dissolve;
 }

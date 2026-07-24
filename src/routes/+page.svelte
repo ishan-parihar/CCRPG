@@ -70,13 +70,13 @@
 
 <Seo
   title="Cognitive Combat"
-  description="A Cognitive-Capacity-Driven RPG where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness."
+  description="A Mysterium where every gameplay verb is a gamified developmental assessment across 8 lines of intelligence × 8 stages of consciousness."
 />
 
 <div class="menu-route" in:stageFade={{ duration: 500 }}>
   <div class="menu-content">
     <header class="menu-header" in:stageFly={{ y: 20, duration: 500 }}>
-      <h1 class="menu-title">CCRPG</h1>
+      <h1 class="menu-title">Mysterium</h1>
       <p class="menu-subtitle">Cognitive Combat RPG</p>
     </header>
 
@@ -142,26 +142,26 @@
   .menu-route {
     min-height: 100vh;
     min-height: 100dvh;
-    background: var(--ccrpg-bg);
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    padding: var(--ccrpg-route-padding);
-    padding-top: var(--ccrpg-route-padding-top);
-    padding-bottom: calc(var(--ccrpg-route-padding-bottom) + var(--ccrpg-nav-height));
+    background: var(--mysterium-bg);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    padding: var(--mysterium-route-padding);
+    padding-top: var(--mysterium-route-padding-top);
+    padding-bottom: calc(var(--mysterium-route-padding-bottom) + var(--mysterium-nav-height));
     overflow-y: auto;
     touch-action: pan-y;
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: var(--ccrpg-space-5);
+    gap: var(--mysterium-space-5);
   }
 
   .menu-content {
     width: 100%;
-    max-width: var(--ccrpg-content-max-width);
+    max-width: var(--mysterium-content-max-width);
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-5);
+    gap: var(--mysterium-space-5);
   }
 
   .menu-header {
@@ -169,22 +169,22 @@
   }
 
   .menu-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-3xl);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-3xl);
     font-weight: 700;
-    color: var(--ccrpg-fg);
-    letter-spacing: var(--ccrpg-tracking-wider);
+    color: var(--mysterium-fg);
+    letter-spacing: var(--mysterium-tracking-wider);
     margin: 0;
     line-height: 1;
   }
 
   .menu-subtitle {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-accent);
-    letter-spacing: var(--ccrpg-tracking-widest);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-accent);
+    letter-spacing: var(--mysterium-tracking-widest);
     text-transform: uppercase;
-    margin: var(--ccrpg-space-1) 0 0 0;
+    margin: var(--mysterium-space-1) 0 0 0;
   }
 
   .profile-card {
@@ -192,7 +192,7 @@
   }
 
   .no-save {
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
     margin: 0;
     text-align: center;
@@ -202,7 +202,7 @@
     width: 100%;
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .nav-list.secondary {
@@ -213,25 +213,25 @@
   .nav-item {
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-3);
-    padding: var(--ccrpg-space-4) var(--ccrpg-space-5);
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius-lg);
+    gap: var(--mysterium-space-3);
+    padding: var(--mysterium-space-4) var(--mysterium-space-5);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius-lg);
     text-decoration: none;
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                transform var(--ccrpg-duration-instant) var(--ccrpg-ease),
-                box-shadow var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease),
+                border-color var(--mysterium-duration-fast) var(--mysterium-ease),
+                transform var(--mysterium-duration-instant) var(--mysterium-ease),
+                box-shadow var(--mysterium-duration-fast) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .nav-item:hover {
-    background: var(--ccrpg-surface-elevated);
-    border-color: var(--ccrpg-accent);
-    box-shadow: var(--ccrpg-shadow-sm);
+    background: var(--mysterium-surface-elevated);
+    border-color: var(--mysterium-accent);
+    box-shadow: var(--mysterium-shadow-sm);
   }
 
   .nav-item:active {
@@ -239,31 +239,31 @@
   }
 
   .nav-item:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: 2px;
   }
 
   .nav-primary {
-    background: var(--ccrpg-accent);
-    border-color: var(--ccrpg-accent);
-    color: var(--ccrpg-accent-fg);
+    background: var(--mysterium-accent);
+    border-color: var(--mysterium-accent);
+    color: var(--mysterium-accent-fg);
   }
 
   .nav-primary:hover {
-    background: var(--ccrpg-accent-soft);
-    border-color: var(--ccrpg-accent);
-    box-shadow: var(--ccrpg-shadow-glow);
+    background: var(--mysterium-accent-soft);
+    border-color: var(--mysterium-accent);
+    box-shadow: var(--mysterium-shadow-glow);
   }
 
   .nav-muted {
     background: transparent;
     border-color: transparent;
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-5);
+    padding: var(--mysterium-space-3) var(--mysterium-space-5);
   }
 
   .nav-muted:hover {
-    background: var(--ccrpg-surface);
-    border-color: var(--ccrpg-border);
+    background: var(--mysterium-surface);
+    border-color: var(--mysterium-border);
   }
 
   .nav-icon {
@@ -271,11 +271,11 @@
     align-items: center;
     justify-content: center;
     flex-shrink: 0;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
   }
 
   .nav-primary .nav-icon {
-    color: var(--ccrpg-accent-fg);
+    color: var(--mysterium-accent-fg);
   }
 
   .nav-text {
@@ -287,17 +287,17 @@
   }
 
   .nav-label {
-    font-size: var(--ccrpg-text-base);
+    font-size: var(--mysterium-text-base);
     font-weight: 500;
   }
 
   .nav-desc {
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
   }
 
   .nav-primary .nav-desc {
-    color: color-mix(in srgb, var(--ccrpg-accent-fg) 80%, transparent);
+    color: color-mix(in srgb, var(--mysterium-accent-fg) 80%, transparent);
   }
 
   .nav-muted .nav-desc {
@@ -306,13 +306,13 @@
 
   .nav-arrow {
     flex-shrink: 0;
-    color: var(--ccrpg-fg-muted);
+    color: var(--mysterium-fg-muted);
     display: flex;
     align-items: center;
   }
 
   .nav-primary .nav-arrow {
-    color: var(--ccrpg-accent-fg);
+    color: var(--mysterium-accent-fg);
   }
 
   /* Desktop: hide nav-desc on primary cards to keep them compact */
@@ -330,7 +330,7 @@
     .nav-list {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
-      gap: var(--ccrpg-space-3);
+      gap: var(--mysterium-space-3);
     }
     .nav-list.secondary {
       max-width: none;

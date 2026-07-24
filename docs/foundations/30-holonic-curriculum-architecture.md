@@ -1,6 +1,6 @@
 # 30 — Holonic Curriculum Architecture
 
-> **Status:** canonical-hypothesis (CCRPG-specific application of Koestler/Wilber holonic principles to curriculum design).
+> **Status:** canonical-hypothesis (Mysterium-specific application of Koestler/Wilber holonic principles to curriculum design).
 >
 > **Lateral:** The structural principle that makes curricula self-similar, recursively composable, and resilient. No other document covers this: foundations/29 covers *how learning happens* (the process); this document covers *how knowledge is organized* (the structure). Foundations/21 (Incarnation Architecture) applies holonic thinking to the game world; this document applies it to the knowledge domain.
 >
@@ -153,9 +153,9 @@ The curriculum presents these as **analogical holons** — when the learner enco
 
 ### 3.4 The curriculum as a holonic game
 
-The curriculum plugs into CCRPG's existing architecture as follows:
+The curriculum plugs into Mysterium's existing architecture as follows:
 
-| CCRPG Component | Curriculum Extension | Holonic Relationship |
+| Mysterium Component | Curriculum Extension | Holonic Relationship |
 |---|---|---|
 | 64 developmental modules | N curriculum modules (concepts) | Each curriculum module exercises developmental lines; each developmental module can be wrapped in curriculum content |
 | Encounter Scheduler | Knowledge-state-aware scheduling | The scheduler selects curriculum encounters based on forgetting curves, depth levels, AND developmental needs |

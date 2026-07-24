@@ -17,9 +17,9 @@
   };
 
   const POSITION_COLOR: Record<string, string> = {
-    warmup: 'var(--ccrpg-info)',
-    peak: 'var(--ccrpg-accent)',
-    cooldown: 'var(--ccrpg-success)',
+    warmup: 'var(--mysterium-info)',
+    peak: 'var(--mysterium-accent)',
+    cooldown: 'var(--mysterium-success)',
   };
 </script>
 
@@ -37,15 +37,15 @@
   .session-position {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .position-bar {
     position: relative;
     width: 100%;
     height: 6px;
-    background: var(--ccrpg-surface);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-surface);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
     display: flex;
   }
@@ -53,12 +53,12 @@
   .position-zone {
     flex: 1;
     opacity: 0.3;
-    transition: opacity var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: opacity var(--mysterium-duration-fast) var(--mysterium-ease);
   }
 
-  .position-zone.warmup { background: var(--ccrpg-info); }
-  .position-zone.peak { background: var(--ccrpg-accent); }
-  .position-zone.cooldown { background: var(--ccrpg-success); }
+  .position-zone.warmup { background: var(--mysterium-info); }
+  .position-zone.peak { background: var(--mysterium-accent); }
+  .position-zone.cooldown { background: var(--mysterium-success); }
 
   .position-zone.active {
     opacity: 0.6;
@@ -70,13 +70,13 @@
     width: 4px;
     height: 10px;
     border-radius: 2px;
-    transition: left var(--ccrpg-duration-base) var(--ccrpg-ease-out);
+    transition: left var(--mysterium-duration-base) var(--mysterium-ease-out);
     z-index: 1;
   }
 
   .position-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     font-style: italic;
     text-align: center;
   }

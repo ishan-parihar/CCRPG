@@ -84,7 +84,7 @@
 
 <Seo
   title="Telemetry"
-  description="Transparency: view every telemetry event CCRPG collects, with sample payloads. Opt in or out at any time."
+  description="Transparency: view every telemetry event Mysterium collects, with sample payloads. Opt in or out at any time."
 />
 
 <RouteShell title="Telemetry" back="/">
@@ -112,7 +112,7 @@
     <Card padding="space-5">
       <Stack gap="space-3">
         <p class="intro-text">
-          CCRPG collects anonymous telemetry to understand how the game is used
+          Mysterium collects anonymous telemetry to understand how the game is used
           and to improve the developmental assessment engine. We are transparent
           about every event we send. Below is the complete list.
         </p>
@@ -151,96 +151,96 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    gap: var(--ccrpg-space-4);
+    gap: var(--mysterium-space-4);
     flex-wrap: wrap;
   }
 
   .status-label {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
 
   .status-name {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    color: var(--mysterium-fg);
     font-weight: 500;
   }
 
   .status-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     display: flex;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .intro-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 
   .section-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-sm);
     font-weight: 600;
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
-    color: var(--ccrpg-accent);
+    letter-spacing: var(--mysterium-tracking-wider);
+    color: var(--mysterium-accent);
     margin: 0;
   }
 
   .event-name {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 600;
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
     margin: 0;
   }
 
   .event-desc {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-relaxed);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-relaxed);
     margin: 0;
   }
 
   .event-payload {
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
-    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
+    padding: var(--mysterium-space-2) var(--mysterium-space-3);
   }
 
   .event-payload summary {
     cursor: pointer;
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     user-select: none;
     -webkit-tap-highlight-color: transparent;
   }
 
   .event-payload summary:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: 2px;
   }
 
   .payload-code {
-    margin: var(--ccrpg-space-2) 0 0 0;
-    padding: var(--ccrpg-space-3);
-    background: var(--ccrpg-bg);
-    border-radius: var(--ccrpg-radius);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    margin: var(--mysterium-space-2) 0 0 0;
+    padding: var(--mysterium-space-3);
+    background: var(--mysterium-bg);
+    border-radius: var(--mysterium-radius);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     overflow-x: auto;
-    line-height: var(--ccrpg-leading-normal);
+    line-height: var(--mysterium-leading-normal);
   }
 </style>

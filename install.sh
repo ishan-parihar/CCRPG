@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# CCRPG installer
+# Mysterium installer
 #
 # Installs:
-#   1. CCRPG (this repo) — Node.js + TypeScript + dependencies
+#   1. Mysterium (this repo) — Node.js + TypeScript + dependencies
 #   2. All system prerequisites (Node.js)
 #
 # After install, the user can run:
@@ -20,7 +20,7 @@
 # The CLI's --agent / PersistentAgent path was removed in YAGNI-EFF-3
 # (USE_PERSISTENT_AGENT is always false). TDG-Rust + onnxruntime was
 # ~200MB of dead weight that the CLI never activates. The install script
-# now installs ONLY CCRPG. If TDG graph memory is needed in the future,
+# now installs ONLY Mysterium. If TDG graph memory is needed in the future,
 # it can be re-added as an optional install step.
 #
 set -euo pipefail
@@ -41,19 +41,19 @@ step()  { echo -e "\n${CYAN}${BOLD}── $* ──${NC}"; }
 
 # ── Args ────────────────────────────────────────────────────────────
 UNINSTALL=false
-CCRPG_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+Mysterium_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 for arg in "$@"; do
     case "$arg" in
         --uninstall)     UNINSTALL=true ;;
         --help|-h)
             cat <<EOF
-CCRPG installer
+Mysterium installer
 
 Usage: bash install.sh [OPTIONS]
 
 Options:
-  --uninstall     Remove CCRPG artifacts (node_modules, dist, ~/.ccrpg)
+  --uninstall     Remove Mysterium artifacts (node_modules, dist, ~/.mysterium)
   --help, -h      Show this help
 
 After install:
@@ -77,13 +77,13 @@ done
 
 # ── Uninstall ───────────────────────────────────────────────────────
 if [[ "$UNINSTALL" == "true" ]]; then
-    step "Uninstalling CCRPG"
-    info "Removing CCRPG node_modules..."
-    [[ -d "$CCRPG_DIR/node_modules" ]] && rm -rf "$CCRPG_DIR/node_modules" && ok "Removed node_modules" || info "node_modules not present"
-    info "Removing CCRPG build artifacts..."
-    [[ -d "$CCRPG_DIR/dist" ]] && rm -rf "$CCRPG_DIR/dist" && ok "Removed dist" || true
-    info "Removing CCRPG save data (~/.ccrpg)..."
-    [[ -d "$HOME/.ccrpg" ]] && rm -rf "$HOME/.ccrpg" && ok "Removed ~/.ccrpg" || true
+    step "Uninstalling Mysterium"
+    info "Removing Mysterium node_modules..."
+    [[ -d "$Mysterium_DIR/node_modules" ]] && rm -rf "$Mysterium_DIR/node_modules" && ok "Removed node_modules" || info "node_modules not present"
+    info "Removing Mysterium build artifacts..."
+    [[ -d "$Mysterium_DIR/dist" ]] && rm -rf "$Mysterium_DIR/dist" && ok "Removed dist" || true
+    info "Removing Mysterium save data (~/.mysterium)..."
+    [[ -d "$HOME/.mysterium" ]] && rm -rf "$HOME/.mysterium" && ok "Removed ~/.mysterium" || true
     echo ""
     ok "Uninstall complete"
     exit 0
@@ -92,7 +92,7 @@ fi
 # ── Banner ──────────────────────────────────────────────────────────
 echo -e "${BOLD}${CYAN}"
 echo "  ╔═══════════════════════════════════════════════════════════╗"
-echo "  ║  CCRPG Installer                                          ║"
+echo "  ║  Mysterium Installer                                          ║"
 echo "  ║  Developmental RPG — accelerates healing & evolution      ║"
 echo "  ╚═══════════════════════════════════════════════════════════╝"
 echo -e "${NC}"
@@ -119,12 +119,12 @@ if ! command -v npm &>/dev/null; then
 fi
 ok "npm $(npm --version) found"
 
-# ── Step 2: Install CCRPG dependencies ──────────────────────────────
-step "Installing CCRPG dependencies (npm install)"
+# ── Step 2: Install Mysterium dependencies ──────────────────────────────
+step "Installing Mysterium dependencies (npm install)"
 
-cd "$CCRPG_DIR"
+cd "$Mysterium_DIR"
 if [[ ! -f "package.json" ]]; then
-    err "package.json not found in $CCRPG_DIR — are you running from the CCRPG repo root?"
+    err "package.json not found in $Mysterium_DIR — are you running from the Mysterium repo root?"
     exit 1
 fi
 
@@ -142,8 +142,8 @@ else
     ok "Dependencies installed via npm"
 fi
 
-# ── Step 3: Verify CCRPG builds ─────────────────────────────────────
-step "Verifying CCRPG build (tsc + invariants)"
+# ── Step 3: Verify Mysterium builds ─────────────────────────────────────
+step "Verifying Mysterium build (tsc + invariants)"
 
 info "Running tsc --noEmit..."
 if npx tsc --noEmit; then
@@ -157,10 +157,10 @@ info "Running build invariants check..."
 if npx tsx scripts/check-invariants.ts >/dev/null 2>&1; then
     ok "All build invariants pass"
 else
-    warn "Build invariants check failed (CCRPG may still run, but with warnings)"
+    warn "Build invariants check failed (Mysterium may still run, but with warnings)"
 fi
 
-# Build the CLI bundle so `ccrpg` is runnable without tsx.
+# Build the CLI bundle so `mysterium` is runnable without tsx.
 # Uses `npm run build:cli` which runs `svelte-kit sync && tsup` — the sync step
 # is REQUIRED because tsup needs the SvelteKit-generated path aliases
 # ($shared, $core, $infra) in .svelte-kit/tsconfig.json to resolve imports.
@@ -175,24 +175,24 @@ fi
 # ── Step 4: Final verification ──────────────────────────────────────
 step "Final verification"
 
-info "CCRPG CLI smoke test (--headless --no-llm)..."
+info "Mysterium CLI smoke test (--headless --no-llm)..."
 # P0-F1 fix: svelte-kit sync must run before tsx so path aliases resolve.
 if npm run cli -- session --headless --no-llm --encounters=1 --json >/dev/null 2>&1; then
-    ok "CCRPG CLI runs (headless mode)"
+    ok "Mysterium CLI runs (headless mode)"
 else
-    warn "CCRPG CLI smoke test failed — check the output above"
+    warn "Mysterium CLI smoke test failed — check the output above"
 fi
 
 # ── Post-install summary ────────────────────────────────────────────
 echo ""
 echo -e "${GREEN}${BOLD}═══════════════════════════════════════════════════════════${NC}"
-echo -e "${GREEN}${BOLD}  CCRPG installed successfully!${NC}"
+echo -e "${GREEN}${BOLD}  Mysterium installed successfully!${NC}"
 echo -e "${GREEN}${BOLD}═══════════════════════════════════════════════════════════${NC}"
 echo ""
-echo -e "  ${BOLD}CCRPG location:${NC}  $CCRPG_DIR"
+echo -e "  ${BOLD}Mysterium location:${NC}  $Mysterium_DIR"
 echo ""
 echo -e "  ${BOLD}Quick start:${NC}"
-echo -e "    cd $CCRPG_DIR"
+echo -e "    cd $Mysterium_DIR"
 echo -e "    npm run cli                                    ${CYAN}# interactive session${NC}"
 echo -e "    npm run cli -- diagnostic                      ${CYAN}# system diagnostics${NC}"
 echo -e "    npm run cli -- --help                          ${CYAN}# full help${NC}"

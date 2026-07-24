@@ -109,7 +109,7 @@ def process_module(module_dir):
 
 
 if __name__ == "__main__":
-    base = "/home/ishanp/Documents/GitHub/MY-PROJECTS/CCRPG/docs/concept-drafts"
+    base = "/home/ishanp/Documents/GitHub/MY-PROJECTS/Mysterium/docs/concept-drafts"
     
     # Find all modules that still have old-format files (have scoring.md OR have large game files)
     modules_to_process = []

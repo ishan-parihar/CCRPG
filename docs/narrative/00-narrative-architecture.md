@@ -2,7 +2,7 @@
 
 ## 1. Purpose
 
-Specify the *story-level* design of CCRPG — how narrative serves the
+Specify the *story-level* design of Mysterium — how narrative serves the
 developmental arc rather than merely decorating it. Detailed
 character arcs, dialogue trees, and quest scripts are deferred to
 implementation; this document is the *architecture*.
@@ -16,7 +16,7 @@ The slogan:
 
 ## 2. The three macro-acts (per `stages/00 §4`)
 
-CCRPG's narrative arc is shaped by the three nested arcs of the
+Mysterium's narrative arc is shaped by the three nested arcs of the
 eight-stage progression:
 
 ### 2.1 Act I — The Embodied World (Pre-personal)
@@ -153,7 +153,7 @@ the world:
   theologian.
 - And so on.
 
-These returning characters are how CCRPG *enforces* the
+These returning characters are how Mysterium *enforces* the
 transcend-and-include principle in narrative form. Choices in earlier
 stages have *legible consequences* in later stages.
 
@@ -198,10 +198,10 @@ progression."
 
 ### 6.7 No villains, only fixations
 
-Every "antagonist" in CCRPG is a fixation — a person who has
+Every "antagonist" in Mysterium is a fixation — a person who has
 over-developed one drive at the expense of its complement. They are
 defeated by completion, not destruction. This philosophy is
-non-negotiable; it is what makes CCRPG's story morally consistent
+non-negotiable; it is what makes Mysterium's story morally consistent
 with its developmental claims.
 
 ## 7. The narrative-mechanic compact
@@ -218,7 +218,7 @@ A narrative beat *is* a mechanical beat, and vice versa. Concretely:
 - The codex's player-authored entries appear as in-world *journals*
   found by other players in multiplayer.
 
-Story is mechanics; mechanics are story. CCRPG cannot have a
+Story is mechanics; mechanics are story. Mysterium cannot have a
 "narrative-only" beat that has no mechanical residue, nor a
 "mechanical-only" beat with no narrative weight. Each beat is both.
 

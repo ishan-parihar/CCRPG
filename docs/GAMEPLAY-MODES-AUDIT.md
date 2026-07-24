@@ -110,7 +110,7 @@ Encounter 3: Selection screen with 5 module options
 - Each question maps to a specific line×stage×drive
 
 **Implementation:**
-- CLI: `ccrpg --mode=direct` or menu selection
+- CLI: `mysterium --mode=direct` or menu selection
 - Each encounter presents a question that directly probes a specific line×stage
 - Options represent different developmental responses (not just correct/incorrect)
 - Scoring maps directly to the 8×8 matrix
@@ -155,7 +155,7 @@ Progress: ████░░░░░░░░░░░░ 25% (2/8 lines assess
 - Each encounter is a developmental catalyst
 
 **Implementation:**
-- CLI: `ccrpg --mode=story` or menu selection
+- CLI: `mysterium --mode=story` or menu selection
 - Each encounter is a narrative scenario with an NPC
 - Options are story choices, not assessment questions
 - Scoring happens in the background
@@ -222,7 +222,7 @@ Theme: balanced-development
 4. **Add narrative context** — wrap module identifiers in story
 
 ### Phase 2: Implement Direct Questioning Mode (3-5 days)
-1. **Mode selection** — `ccrpg --mode=direct` or menu
+1. **Mode selection** — `mysterium --mode=direct` or menu
 2. **Question generator** — create questions that probe specific line×stage
 3. **Option mapping** — each option maps to drive × polarity
 4. **Progress visualization** — radar chart of 8×8 matrix

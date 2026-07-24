@@ -1,10 +1,10 @@
 # Grounded Audit: User-Matrix/Potentiator Modelling
 
-> **Status:** canonical-hypothesis (CCRPG-specific operationalization of HoloOS `02.1_Microcosmic_Metabolic_Architecture.md` canonical).
+> **Status:** canonical-hypothesis (Mysterium-specific operationalization of HoloOS `02.1_Microcosmic_Metabolic_Architecture.md` canonical).
 >
 > **Date:** 2026-07-03
 >
-> **Scope:** Audit how the CCRPG codebase models (or fails to model) the USER's own Matrix and Potentiator — the pre-existing unprocessed developmental material the user brings to the game — vs modelling only the in-game Significator's encounter history.
+> **Scope:** Audit how the Mysterium codebase models (or fails to model) the USER's own Matrix and Potentiator — the pre-existing unprocessed developmental material the user brings to the game — vs modelling only the in-game Significator's encounter history.
 
 ---
 
@@ -32,7 +32,7 @@ The user's articulation: "nudging for the catalyst that are unprocessed in the i
 
 ### 1.1 The in-game Significator (NOT the user's Matrix/Potentiator)
 
-The CCRPG `Significator` interface (`src/core/domain/Significator.ts`) models:
+The Mysterium `Significator` interface (`src/core/domain/Significator.ts`) models:
 
 | Field | What it tracks | HoloOS analogue | Gap |
 |---|---|---|---|

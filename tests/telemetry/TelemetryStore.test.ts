@@ -42,7 +42,7 @@ describe('TelemetryStore', () => {
     await store.save(events);
 
     // Read raw value from KV store
-    const raw = await kv.get('ccrpg:telemetry');
+    const raw = await kv.get('mysterium:telemetry');
     expect(raw).not.toBeNull();
     // Raw value should NOT be valid JSON (it is encrypted)
     expect(() => JSON.parse(raw!)).toThrow();

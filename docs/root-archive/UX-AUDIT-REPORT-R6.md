@@ -1,7 +1,7 @@
-# CCRPG Fresh-User UX Audit Report — Round 6
+# Mysterium Fresh-User UX Audit Report — Round 6
 
 > **Date:** 2026-07-06
-> **Method:** A subagent with zero knowledge of CCRPG internals role-played a fresh user discovering the game via the CLI only. It ran 27 distinct commands, with special focus on the new `--answer`/`--answers` headless input mechanism (R5-CRITICAL fix). The parent agent verified all key findings.
+> **Method:** A subagent with zero knowledge of Mysterium internals role-played a fresh user discovering the game via the CLI only. It ran 27 distinct commands, with special focus on the new `--answer`/`--answers` headless input mechanism (R5-CRITICAL fix). The parent agent verified all key findings.
 > **Objective:** Measure whether the game is now **experientially sound** and **efficacious** — now that users can actually provide answers instead of the LLM hallucinating them.
 
 ---

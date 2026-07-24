@@ -4,11 +4,11 @@
 >
 > **Date:** 2026-07-04
 >
-> **Scope:** Investigation of CCRPG's current agentic loop vs. the TDG-Rust (Teleological Developmental Graph) persistent-agent architecture, and whether adopting TDG-Rust as the CCRPG backend would create a better game architecture.
+> **Scope:** Investigation of Mysterium's current agentic loop vs. the TDG-Rust (Teleological Developmental Graph) persistent-agent architecture, and whether adopting TDG-Rust as the Mysterium backend would create a better game architecture.
 
 ---
 
-## 1. Current CCRPG Agentic Loop
+## 1. Current Mysterium Agentic Loop
 
 ### 1.1 Architecture
 
@@ -74,9 +74,9 @@ TDG-Rust (Teleological Developmental Graph) is a **persistent memory infrastruct
 - **5-Gate validation** — epistemic discipline (ai-draft → canonical-hypothesis → canonical)
 - **ContextPack** — structured context retrieval for LLM prompts
 
-### 2.2 Key TDG-Rust Capabilities for CCRPG
+### 2.2 Key TDG-Rust Capabilities for Mysterium
 
-| TDG-Rust capability | CCRPG analog | Advantage |
+| TDG-Rust capability | Mysterium analog | Advantage |
 |---|---|---|
 | **`tdg_create`** — create persistent holon nodes | Significator fields stored in JSON | Nodes persist across sessions, have metabolic state, form edges |
 | **`tdg_search`** — hybrid FTS5 + embedding + graph + resonance search | EncounterScheduler priority formula | Agent can *search* its own memory for relevant patterns, not just compute priority |
@@ -87,13 +87,13 @@ TDG-Rust (Teleological Developmental Graph) is a **persistent memory infrastruct
 | **`tdg_context`** / **`tdg_fetch_context`** — ContextPack | ContextPipeline.buildContext() | Structured context with 5-Gate validation, provenance, status ladder |
 | **`tdg_health`** / **`tdg_resonance`** | GreaterCycleEngine.computeMetabolicHealth | Per-holon health + inter-holon resonance computation |
 | **`tdg_greater_cycle`** | TransformationDetector | Greater Cycle (S·T·G·Ch) execution on the knowledge graph |
-| **`tdg_validate_synthesis`** | (none — CCRPG has no epistemic validation) | 5-Gate validation of agent-generated content |
+| **`tdg_validate_synthesis`** | (none — Mysterium has no epistemic validation) | 5-Gate validation of agent-generated content |
 
 ### 2.3 What TDG-Rust Would Replace
 
-If CCRPG adopted TDG-Rust as its backend:
+If Mysterium adopted TDG-Rust as its backend:
 
-| CCRPG component | TDG-Rust replacement | LOC saved |
+| Mysterium component | TDG-Rust replacement | LOC saved |
 |---|---|---|
 | `Significator` (153 LOC) | TDG holon nodes with metabolic state | ~153 |
 | `UserMatrixModel` (479 LOC) | TDG graph with per-cell holons + metabolic cycles | ~479 |
@@ -110,23 +110,23 @@ If CCRPG adopted TDG-Rust as its backend:
 
 ### 2.4 What TDG-Rust Would NOT Replace
 
-| CCRPG component | Why it stays |
+| Mysterium component | Why it stays |
 |---|---|
 | `AgenticOrchestrator` (1913 LOC) | TDG-Rust is a memory infrastructure, not a game master. The orchestrator's tool-calling loop, budget enforcement, and UI handler are game-specific. |
 | `EncounterScheduler` + `PriorityComputation` (540 LOC) | TDG-Rust can search and retrieve, but the 7-criteria priority formula + UserMatrixModel targeting is game-specific scheduling. |
 | `ConsequenceEngine` (377 LOC) | TDG-Rust stores state, but the consequence *application* (polarity traces, shadow surfacing, drive updates, rayProfile) is game-specific. |
-| `FallbackProvider` (1161 LOC) | TDG-Rust doesn't provide game content. The deterministic content pools are CCRPG-specific. |
+| `FallbackProvider` (1161 LOC) | TDG-Rust doesn't provide game content. The deterministic content pools are Mysterium-specific. |
 | `QualitativeFeedback` (130 LOC) | Veil-compliant feedback mapping is game-specific. |
-| `VeilFilter` (92 LOC) | Veil enforcement is CCRPG-specific. |
+| `VeilFilter` (92 LOC) | Veil enforcement is Mysterium-specific. |
 | `cli-game.ts` (2001 LOC) | CLI presentation, mode selection, save/load — all game-specific. |
-| All Phaser scenes | Game rendering is CCRPG-specific. |
-| All assessment tasks (n-back, stroop, etc.) | Psychometric instruments are CCRPG-specific. |
+| All Phaser scenes | Game rendering is Mysterium-specific. |
+| All assessment tasks (n-back, stroop, etc.) | Psychometric instruments are Mysterium-specific. |
 
 ---
 
-## 3. The Architectural Question: Should CCRPG Adopt TDG-Rust?
+## 3. The Architectural Question: Should Mysterium Adopt TDG-Rust?
 
-### 3.1 What TDG-Rust Would Give CCRPG
+### 3.1 What TDG-Rust Would Give Mysterium
 
 **A persistent, self-organizing developmental memory that the agent can query via tools.**
 
@@ -144,7 +144,7 @@ This would transform the AgenticOrchestrator from a **blind presenter** into a *
 
 ### 3.2 What It Would Cost
 
-**Architecture complexity.** CCRPG currently has a clean 3-layer architecture (core/infra/game). Adding TDG-Rust introduces:
+**Architecture complexity.** Mysterium currently has a clean 3-layer architecture (core/infra/game). Adding TDG-Rust introduces:
 - A Rust binary dependency (tdg-rust)
 - An MCP transport layer (stdio or HTTP-SSE)
 - A SQLite database (graph.db)
@@ -154,13 +154,13 @@ This would transform the AgenticOrchestrator from a **blind presenter** into a *
 
 **Latency.** Every `tdg_search` / `tdg_create` / `tdg_reflect` call adds network/IPC latency. The current AgenticOrchestrator loop is already slow (20-30s per encounter with LLM). Adding 5-10 TDG tool calls per encounter could double the latency.
 
-**Ontological alignment.** TDG-Rust implements HoloOS 02.1 (canonical) — the same ontology CCRPG's docs reference. But CCRPG's *runtime* has diverged from pure HoloOS (AQAL 7-tuple, Wilber-specific Line axis, CCRPG-specific Stage enum). The mapping between CCRPG's domain types and TDG's holon types would need careful design.
+**Ontological alignment.** TDG-Rust implements HoloOS 02.1 (canonical) — the same ontology Mysterium's docs reference. But Mysterium's *runtime* has diverged from pure HoloOS (AQAL 7-tuple, Wilber-specific Line axis, Mysterium-specific Stage enum). The mapping between Mysterium's domain types and TDG's holon types would need careful design.
 
-**Maintenance.** Two codebases to maintain (CCRPG TypeScript + TDG-Rust Rust). The TDG-Rust API would need to stay backward-compatible as CCRPG evolves.
+**Maintenance.** Two codebases to maintain (Mysterium TypeScript + TDG-Rust Rust). The TDG-Rust API would need to stay backward-compatible as Mysterium evolves.
 
 ### 3.3 The Hybrid Architecture (Recommended)
 
-Rather than replacing CCRPG's backend with TDG-Rust, **integrate TDG-Rust as a memory layer** that the AgenticOrchestrator can optionally query:
+Rather than replacing Mysterium's backend with TDG-Rust, **integrate TDG-Rust as a memory layer** that the AgenticOrchestrator can optionally query:
 
 ```
 ┌─────────────────────────────────────────────┐
@@ -170,7 +170,7 @@ Rather than replacing CCRPG's backend with TDG-Rust, **integrate TDG-Rust as a m
 │  Tools: ask_user_question, complete_encounter│
 │  + NEW: tdg_search, tdg_reflect, tdg_create  │
 ├──────────────────────────┬──────────────────┤
-│   CCRPG Engines          │  TDG-Rust        │
+│   Mysterium Engines          │  TDG-Rust        │
 │  (scheduling,            │  (persistent     │
 │   consequences,          │   memory graph,  │
 │   transformation)        │   metabolic      │
@@ -188,9 +188,9 @@ Rather than replacing CCRPG's backend with TDG-Rust, **integrate TDG-Rust as a m
 4. **SessionAgent** is replaced by `tdg_reflect` — the graph-level mind does what SessionAgent's keyword-based pattern detection does, but with full graph awareness
 
 **What stays:**
-- All CCRPG engines (scheduling, consequences, transformation, CCI, AutoMode)
-- All CCRPG content (FallbackProvider, QualitativeFeedback, VeilFilter)
-- All CCRPG UI (CLI, Phaser scenes)
+- All Mysterium engines (scheduling, consequences, transformation, CCI, AutoMode)
+- All Mysterium content (FallbackProvider, QualitativeFeedback, VeilFilter)
+- All Mysterium UI (CLI, Phaser scenes)
 - All assessment tasks (n-back, stroop, etc.)
 
 ### 3.4 The Persistent Agent vs. Per-Encounter Agent Question
@@ -228,7 +228,7 @@ TDG-Rust's "graph mind" (`tdg_mind_state`, `tdg_reflect`) is the key differentia
 - Undergoes sleep replay — important memories get strengthened, irrelevant ones forgotten
 - Can be diagnosed — the graph mind detects pathologies (GoldenAllergy = resistance to growth, depolarization = loss of direction, collapse = fragmentation)
 
-This is exactly what CCRPG's `UserMatrixModel` + `GreaterCycleEngine` + `CCIEngine` + `ShadowDetector` + `SessionAgent` try to do — but TDG-Rust does it with a **unified graph-based architecture** instead of 5 separate engines with parallel data structures.
+This is exactly what Mysterium's `UserMatrixModel` + `GreaterCycleEngine` + `CCIEngine` + `ShadowDetector` + `SessionAgent` try to do — but TDG-Rust does it with a **unified graph-based architecture** instead of 5 separate engines with parallel data structures.
 
 ---
 
@@ -238,7 +238,7 @@ This is exactly what CCRPG's `UserMatrixModel` + `GreaterCycleEngine` + `CCIEngi
 - Install TDG-Rust as a dependency
 - After each encounter, call `tdg_create` to store the encounter as a holon
 - Add `tdg_search` as a tool in AgenticOrchestrator — agent can search its own memory
-- Keep all CCRPG engines unchanged
+- Keep all Mysterium engines unchanged
 
 ### Phase 2: TDG-Rust as Developmental Intelligence (2-3 weeks)
 - Replace SessionAgent with `tdg_reflect` — graph-level mind diagnosis
@@ -263,7 +263,7 @@ This is exactly what CCRPG's `UserMatrixModel` + `GreaterCycleEngine` + `CCIEngi
 
 ## 5. Recommendation
 
-**Yes, a persistent agent with TDG-Rust would be a fundamentally better CCRPG architecture.** The current per-encounter agent is structurally limited by amnesia and blindness. TDG-Rust would give the agent:
+**Yes, a persistent agent with TDG-Rust would be a fundamentally better Mysterium architecture.** The current per-encounter agent is structurally limited by amnesia and blindness. TDG-Rust would give the agent:
 
 1. **Persistent memory** — the agent remembers every encounter, every player response, every pattern
 2. **Tool-based environment interaction** — the agent can search, query, reflect, and create
@@ -271,7 +271,7 @@ This is exactly what CCRPG's `UserMatrixModel` + `GreaterCycleEngine` + `CCIEngi
 4. **Self-organization** — memories form connections through resonance, strengthen through co-activation
 5. **Graph-level mind** — the agent can diagnose the player's developmental graph and choose its own interventions
 
-**But the implementation should be phased** — start with TDG-Rust as a read-only memory layer (Phase 1), then progressively migrate CCRPG's engines to TDG-Rust's primitives (Phases 2-4). This avoids a big-bang rewrite while incrementally improving the agent's intelligence.
+**But the implementation should be phased** — start with TDG-Rust as a read-only memory layer (Phase 1), then progressively migrate Mysterium's engines to TDG-Rust's primitives (Phases 2-4). This avoids a big-bang rewrite while incrementally improving the agent's intelligence.
 
 **The biggest win is Phase 4** — the persistent agent. Removing the per-encounter amnesia and the hardcoded 4-exchange budget would transform the game from "a series of disconnected mini-games" into "a developmental practice that remembers you."
 

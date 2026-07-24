@@ -300,23 +300,23 @@
     flex-direction: column;
     align-items: center;
     justify-content: center;
-    gap: var(--ccrpg-space-4);
-    padding: var(--ccrpg-space-8) var(--ccrpg-space-4);
-    color: var(--ccrpg-fg);
+    gap: var(--mysterium-space-4);
+    padding: var(--mysterium-space-8) var(--mysterium-space-4);
+    color: var(--mysterium-fg);
     text-align: center;
   }
 
   .loading-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
   }
 
   .complete-icon {
-    font-size: var(--ccrpg-text-3xl);
-    color: var(--ccrpg-accent);
-    animation: complete-pulse 1.5s var(--ccrpg-ease) infinite;
+    font-size: var(--mysterium-text-3xl);
+    color: var(--mysterium-accent);
+    animation: complete-pulse 1.5s var(--mysterium-ease) infinite;
   }
 
   @keyframes complete-pulse {
@@ -325,28 +325,28 @@
   }
 
   .complete-text {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
+    color: var(--mysterium-fg);
   }
 
   .error-title {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-lg);
-    color: var(--ccrpg-danger);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-lg);
+    color: var(--mysterium-danger);
   }
 
   .error-detail {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     max-width: 32rem;
   }
 
   .question-view {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-4);
+    gap: var(--mysterium-space-4);
   }
 
   .question-meta {
@@ -358,35 +358,35 @@
   }
 
   .question-text {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-md);
-    line-height: var(--ccrpg-leading-relaxed);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-md);
+    line-height: var(--mysterium-leading-relaxed);
+    color: var(--mysterium-fg);
     white-space: pre-wrap;
   }
 
   .options-list {
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .option {
     display: flex;
     align-items: flex-start;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
     width: 100%;
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
+    padding: var(--mysterium-space-3) var(--mysterium-space-4);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
     cursor: pointer;
     text-align: left;
-    color: var(--ccrpg-fg);
-    font-family: var(--ccrpg-font-body);
+    color: var(--mysterium-fg);
+    font-family: var(--mysterium-font-body);
     -webkit-tap-highlight-color: transparent;
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                transform var(--ccrpg-duration-instant) var(--ccrpg-ease);
-    animation: option-enter var(--ccrpg-duration-base) var(--ccrpg-ease-out) backwards;
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease),
+                border-color var(--mysterium-duration-fast) var(--mysterium-ease),
+                transform var(--mysterium-duration-instant) var(--mysterium-ease);
+    animation: option-enter var(--mysterium-duration-base) var(--mysterium-ease-out) backwards;
   }
 
   @keyframes option-enter {
@@ -395,8 +395,8 @@
   }
 
   .option:hover {
-    background: var(--ccrpg-surface-elevated);
-    border-color: var(--ccrpg-accent);
+    background: var(--mysterium-surface-elevated);
+    border-color: var(--mysterium-accent);
   }
 
   .option:active {
@@ -404,14 +404,14 @@
   }
 
   .option:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: 2px;
   }
 
   .option.selected {
-    background: var(--ccrpg-accent-soft);
-    border-color: var(--ccrpg-accent);
-    color: var(--ccrpg-accent-fg);
+    background: var(--mysterium-accent-soft);
+    border-color: var(--mysterium-accent);
+    color: var(--mysterium-accent-fg);
   }
 
   .option-marker {
@@ -421,12 +421,12 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: var(--ccrpg-text-base);
-    color: var(--ccrpg-accent);
+    font-size: var(--mysterium-text-base);
+    color: var(--mysterium-accent);
   }
 
   .option.selected .option-marker {
-    color: var(--ccrpg-accent-fg);
+    color: var(--mysterium-accent-fg);
   }
 
   .option-content {
@@ -435,48 +435,48 @@
   }
 
   .option-label {
-    font-size: var(--ccrpg-text-base);
+    font-size: var(--mysterium-text-base);
     font-weight: 500;
-    line-height: var(--ccrpg-leading-normal);
+    line-height: var(--mysterium-leading-normal);
   }
 
   .option-desc {
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
-    margin-top: var(--ccrpg-space-1);
-    line-height: var(--ccrpg-leading-normal);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
+    margin-top: var(--mysterium-space-1);
+    line-height: var(--mysterium-leading-normal);
   }
 
   .option.selected .option-desc {
-    color: color-mix(in srgb, var(--ccrpg-accent-fg) 80%, transparent);
+    color: color-mix(in srgb, var(--mysterium-accent-fg) 80%, transparent);
   }
 
   .writein-section {
-    margin-top: var(--ccrpg-space-2);
+    margin-top: var(--mysterium-space-2);
   }
 
   .writein-toggle {
     background: transparent;
-    border: 1px dashed var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius);
-    padding: var(--ccrpg-space-3) var(--ccrpg-space-4);
-    color: var(--ccrpg-fg-muted);
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    border: 1px dashed var(--mysterium-border);
+    border-radius: var(--mysterium-radius);
+    padding: var(--mysterium-space-3) var(--mysterium-space-4);
+    color: var(--mysterium-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     cursor: pointer;
     width: 100%;
     text-align: left;
     -webkit-tap-highlight-color: transparent;
-    transition: border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                color var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: border-color var(--mysterium-duration-fast) var(--mysterium-ease),
+                color var(--mysterium-duration-fast) var(--mysterium-ease);
   }
 
   .writein-toggle:hover {
-    border-color: var(--ccrpg-accent);
-    color: var(--ccrpg-accent);
+    border-color: var(--mysterium-accent);
+    color: var(--mysterium-accent);
   }
 
   .question-actions {
-    margin-top: var(--ccrpg-space-2);
+    margin-top: var(--mysterium-space-2);
   }
 </style>

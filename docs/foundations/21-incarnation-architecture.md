@@ -16,7 +16,7 @@ Game = Significator (player) navigating Great Way (world)
      all behind the Veil of Forgetting
 ```
 
-This is CCRPG reduced to a single sentence. Every system in the codebase exists to serve one term in this equation. The remainder of this document unpacks each term and specifies how they compose into a playable structure.
+This is Mysterium reduced to a single sentence. Every system in the codebase exists to serve one term in this equation. The remainder of this document unpacks each term and specifies how they compose into a playable structure.
 
 ### 1.1 Term definitions
 
@@ -36,7 +36,7 @@ The lesser cycle (Matrix → Potentiator → Catalyst → Experience) operates *
 
 ### 1.3 Option C: the layered-world incarnation
 
-Three structural options were considered for CCRPG's world:
+Three structural options were considered for Mysterium's world:
 - **Option A:** 64 separate game-worlds (one per module) — rejected; no coherent narrative
 - **Option B:** A single flat world with gated zones — rejected; no perceptual shift at Transformation
 - **Option C:** ONE world with 8 perceptual layers — accepted; the Incarnation Architecture
@@ -608,7 +608,7 @@ Full specification of the LLM integration — context window management, prompt 
 
 ### 11.1 The principle
 
-CCRPG's content exists on a spectrum from fully-authored (hand-written, canonical, immutable) to fully-generated (LLM-produced, contextual, ephemeral). The boundary between them is precise and non-negotiable.
+Mysterium's content exists on a spectrum from fully-authored (hand-written, canonical, immutable) to fully-generated (LLM-produced, contextual, ephemeral). The boundary between them is precise and non-negotiable.
 
 ### 11.2 What is authored (hand-written, canonical)
 

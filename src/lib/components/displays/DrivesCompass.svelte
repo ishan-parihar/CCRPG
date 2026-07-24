@@ -20,9 +20,9 @@
   };
 
   function weightBand(w: number): { label: string; color: string } {
-    if (w > 0.6) return { label: 'dominant', color: 'var(--ccrpg-accent)' };
-    if (w > 0.35) return { label: 'active', color: 'var(--ccrpg-fg)' };
-    return { label: 'quiet', color: 'var(--ccrpg-fg-muted)' };
+    if (w > 0.6) return { label: 'dominant', color: 'var(--mysterium-accent)' };
+    if (w > 0.35) return { label: 'active', color: 'var(--mysterium-fg)' };
+    return { label: 'quiet', color: 'var(--mysterium-fg-muted)' };
   }
 
   function fixationLabel(fix: number): { icon: string; label: string } | null {
@@ -45,7 +45,7 @@
       <span class="drive-name">{DRIVE_LABELS[drive]}</span>
       <span class="drive-bar" aria-hidden="true">
         {#each Array(8) as _, i}
-          <span class="drive-cell" class:filled={i < filled} style="background: {i < filled ? wb.color : 'var(--ccrpg-surface)'}"></span>
+          <span class="drive-cell" class:filled={i < filled} style="background: {i < filled ? wb.color : 'var(--mysterium-surface)'}"></span>
         {/each}
       </span>
       <span class="drive-band" style="color: {wb.color}">{wb.label}</span>
@@ -62,20 +62,20 @@
   .drives-compass {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .drive-row {
     display: grid;
     grid-template-columns: 5rem 1fr 4rem 5rem;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .drive-name {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg);
     font-weight: 500;
   }
 
@@ -88,20 +88,20 @@
   .drive-cell {
     flex: 1;
     border-radius: 2px;
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease);
   }
 
   .drive-band {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
     text-align: right;
     font-style: italic;
   }
 
   .drive-fix {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-warning);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-warning);
     text-align: right;
   }
 

@@ -1,7 +1,7 @@
-# CCRPG Fresh-User UX Audit Report — Round 4
+# Mysterium Fresh-User UX Audit Report — Round 4
 
 > **Date:** 2026-07-06
-> **Method:** A subagent with zero knowledge of CCRPG internals role-played a fresh user discovering the game via the CLI only. It was forbidden from reading source/docs. The subagent's bash tooling failed after 6 commands, so the parent agent (this report's author) verified the remaining efficacy claims directly — especially the LLM-backed reflective loop, which is the experiential core the subagent couldn't reach.
+> **Method:** A subagent with zero knowledge of Mysterium internals role-played a fresh user discovering the game via the CLI only. It was forbidden from reading source/docs. The subagent's bash tooling failed after 6 commands, so the parent agent (this report's author) verified the remaining efficacy claims directly — especially the LLM-backed reflective loop, which is the experiential core the subagent couldn't reach.
 > **Objective:** Measure whether the game is now **experientially sound** and **efficacious in its stated purpose** — accelerating evolution and healing — now that the dynamic LLM config is wired (opencode.ai/zen + mimo-v2.5-free).
 
 ---
@@ -37,7 +37,7 @@ The R3 → R4 delta is the largest single-round improvement in the audit history
 
 ### The single new bug
 
-**R4-BUG-1: `ccrpg diagnostic` (without `--headless`) hangs in non-TTY mode.** The P0-4 auto-degrade fix was applied to the bare command but not to the `diagnostic` subcommand. Root cause: `runDiagnostic()` calls `createDefaultSignificator()`, which calls `runQuickCalibration()` when `!HEADLESS && !NO_LLM && !SKIP_CALIBRATION && !JSON_MODE` and there's no save. The interactive calibration launches and blocks forever. Fix: extend the auto-degrade guard to all subcommands, or make `diagnostic` skip calibration by default.
+**R4-BUG-1: `mysterium diagnostic` (without `--headless`) hangs in non-TTY mode.** The P0-4 auto-degrade fix was applied to the bare command but not to the `diagnostic` subcommand. Root cause: `runDiagnostic()` calls `createDefaultSignificator()`, which calls `runQuickCalibration()` when `!HEADLESS && !NO_LLM && !SKIP_CALIBRATION && !JSON_MODE` and there's no save. The interactive calibration launches and blocks forever. Fix: extend the auto-degrade guard to all subcommands, or make `diagnostic` skip calibration by default.
 
 ---
 
@@ -176,7 +176,7 @@ A single 8-encounter calibration session at the LLM-mode threshold (20/line) pro
 
 ### 4.1 R4-BUG-1 (P0): `diagnostic` hangs in non-TTY mode
 
-**Experiential symptom:** A fresh user running `ccrpg diagnostic` from a non-TTY context (CI, script, AI agent terminal) sees the first half of the diagnostic output, then the process hangs silently forever. The only escape is Ctrl-C / kill.
+**Experiential symptom:** A fresh user running `mysterium diagnostic` from a non-TTY context (CI, script, AI agent terminal) sees the first half of the diagnostic output, then the process hangs silently forever. The only escape is Ctrl-C / kill.
 
 **Root cause (confirmed in code):** `runDiagnostic()` at line 1174 calls `createDefaultSignificator()` at line 1194. `createDefaultSignificator()` at line 614 checks `if (!HEADLESS && !NO_LLM && !SKIP_CALIBRATION && !JSON_MODE)` and calls `runQuickCalibration()` — which launches interactive `@clack/prompts` that block forever in non-TTY.
 
@@ -209,7 +209,7 @@ Or add a legend below the status table: `[power]=Red  [order]=Amber  [reason]=Or
 
 **Fix:** Add a line to the first-run onboarding:
 ```ts
-console.log(`${chalk.dim('Run `ccrpg glossary` to learn the terminology.')}`);
+console.log(`${chalk.dim('Run `mysterium glossary` to learn the terminology.')}`);
 ```
 
 **Blast radius:** 1 line.
@@ -282,7 +282,7 @@ After a single 3-encounter LLM-backed session, the parent agent observed:
 
 ### 5.4 The "would you come back?" verdict
 
-**Yes — conditionally.** The subagent said: *"If I were a real user with a working terminal, I would absolutely run `ccrpg --headless --new-game --encounters=8` and actually answer the questions. The first question was good enough to earn that."*
+**Yes — conditionally.** The subagent said: *"If I were a real user with a working terminal, I would absolutely run `mysterium --headless --new-game --encounters=8` and actually answer the questions. The first question was good enough to earn that."*
 
 The parent agent concurs: the question quality, the LLM's contextual responses, and the NPC identity are enough to earn a second session. The open question is whether the user returns for a 5th, 10th, or 20th session — which is what's needed for Loop 3 to close. That depends on whether the progression becomes visible (R4-P2-1) and whether the encounter variety stays fresh.
 
@@ -378,7 +378,7 @@ The subagent's full journal is preserved in `/home/z/my-project/worklog.md` unde
 
 ### 10.1 Why the subagent's tooling failed
 
-The subagent's bash tool wedged after running `timeout 180 npx tsx scripts/cli-game.ts > /tmp/ccrpg_bare.txt`. The likely cause: the LLM-backed session makes long-running network calls to opencode.ai/zen, and the 180s timeout combined with the bash tool's own timeout created a resource contention that the sandbox couldn't recover from.
+The subagent's bash tool wedged after running `timeout 180 npx tsx scripts/cli-game.ts > /tmp/mysterium_bare.txt`. The likely cause: the LLM-backed session makes long-running network calls to opencode.ai/zen, and the 180s timeout combined with the bash tool's own timeout created a resource contention that the sandbox couldn't recover from.
 
 **Lesson for future audits:** Run LLM-backed sessions with shorter encounter counts (3-4 instead of 8) and shorter timeouts (60s instead of 180s) to avoid wedging the sandbox. The parent agent used `timeout 90` for verification sessions and had no issues.
 

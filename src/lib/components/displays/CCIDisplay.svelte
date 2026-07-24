@@ -30,9 +30,9 @@
   };
 
   function band(value: number): { label: string; color: string } {
-    if (value > 0.7) return { label: 'strong', color: 'var(--ccrpg-success)' };
-    if (value > 0.4) return { label: 'developing', color: 'var(--ccrpg-warning)' };
-    return { label: 'emerging', color: 'var(--ccrpg-danger)' };
+    if (value > 0.7) return { label: 'strong', color: 'var(--mysterium-success)' };
+    if (value > 0.4) return { label: 'developing', color: 'var(--mysterium-warning)' };
+    return { label: 'emerging', color: 'var(--mysterium-danger)' };
   }
 </script>
 
@@ -62,7 +62,7 @@
   .cci-display {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-3);
+    gap: var(--mysterium-space-3);
   }
 
   .cci-header {
@@ -72,73 +72,73 @@
   }
 
   .cci-label {
-    font-family: var(--ccrpg-font-display);
-    font-size: var(--ccrpg-text-md);
+    font-family: var(--mysterium-font-display);
+    font-size: var(--mysterium-text-md);
     font-weight: 700;
-    color: var(--ccrpg-accent);
-    letter-spacing: var(--ccrpg-tracking-wide);
+    color: var(--mysterium-accent);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .cci-descriptor {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
+    color: var(--mysterium-fg-muted);
     font-style: italic;
   }
 
   .cci-bar {
     width: 100%;
     height: 8px;
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
   }
 
   .cci-bar-fill {
     height: 100%;
-    background: linear-gradient(90deg, var(--ccrpg-accent-soft), var(--ccrpg-accent));
-    border-radius: var(--ccrpg-radius-full);
-    transition: width var(--ccrpg-duration-slow) var(--ccrpg-ease-out);
+    background: linear-gradient(90deg, var(--mysterium-accent-soft), var(--mysterium-accent));
+    border-radius: var(--mysterium-radius-full);
+    transition: width var(--mysterium-duration-slow) var(--mysterium-ease-out);
   }
 
   .cci-dimensions {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .dim {
     display: grid;
     grid-template-columns: 4rem 1fr 5rem;
     align-items: center;
-    gap: var(--ccrpg-space-2);
+    gap: var(--mysterium-space-2);
   }
 
   .dim-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
-    color: var(--ccrpg-fg-muted);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
+    color: var(--mysterium-fg-muted);
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wide);
+    letter-spacing: var(--mysterium-tracking-wide);
   }
 
   .dim-bar {
     height: 4px;
-    background: var(--ccrpg-surface);
-    border-radius: var(--ccrpg-radius-full);
+    background: var(--mysterium-surface);
+    border-radius: var(--mysterium-radius-full);
     overflow: hidden;
   }
 
   .dim-bar-fill {
     height: 100%;
-    border-radius: var(--ccrpg-radius-full);
-    transition: width var(--ccrpg-duration-slow) var(--ccrpg-ease-out);
+    border-radius: var(--mysterium-radius-full);
+    transition: width var(--mysterium-duration-slow) var(--mysterium-ease-out);
   }
 
   .dim-band {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
     text-align: right;
     font-style: italic;
   }

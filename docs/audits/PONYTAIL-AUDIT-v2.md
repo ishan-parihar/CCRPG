@@ -1,4 +1,4 @@
-# CCRPG Ponytail Audit v2 — CLI + WebUI both first-class
+# Mysterium Ponytail Audit v2 — CLI + WebUI both first-class
 
 > Revised after user directive: **the TUI (CLI) is retained as a fully operational first-class citizen alongside the WebUI.** All v1 findings re-classified.
 > Audit is over-engineering only, not correctness. Whole tree scanned.
@@ -26,7 +26,7 @@
 
 1. **delete** entire `src/infra/tdg/` (TDGClient, TDGHooks, TDGBridge, TDGToolAdapter — 1,454 LOC). `maybeFireHook` is a no-op when TDG isn't started; `startTDGBridge()` is called only by `scripts/cli-game.ts` optionally; there is no TDG-Rust binary, no Cargo.toml, no integration. The whole subsystem is speculative. **CLI impact: `cli-game.ts` calls `startTDGBridge()` but it gracefully no-ops — safe to delete the folder and the call site.** [src/infra/tdg/]
 
-2. **delete** entire `src/core/agent/` (PersistentAgent, PersistentAgentBridge, ToolRegistry, CCRPGTools, FallbackNarratives — 1,272 LOC). Only consumer is `src/infra/tdg/TDGBridge.ts` and `src/infra/tdg/TDGToolAdapter.ts` — which are themselves dead (cut #1). **CLI impact: none — `cli-game.ts` does not import from `src/core/agent/` directly.** [src/core/agent/]
+2. **delete** entire `src/core/agent/` (PersistentAgent, PersistentAgentBridge, ToolRegistry, MysteriumTools, FallbackNarratives — 1,272 LOC). Only consumer is `src/infra/tdg/TDGBridge.ts` and `src/infra/tdg/TDGToolAdapter.ts` — which are themselves dead (cut #1). **CLI impact: none — `cli-game.ts` does not import from `src/core/agent/` directly.** [src/core/agent/]
 
 3. **delete** 9 dead usecase files (NBackTask, StroopTask, GoNoGoTask, ReactionTimeTask, SimonTask, BreathRhythmTask, HeldInputTask, DilemmaTask, AffectRecognitionTask — ~1,475 LOC). Verified: zero importers outside `src/core/index.ts` barrel (itself dead) and 4 unit-test files. `TaskRenderers.ts` reimplements its own inline versions and does not import these. **Keep `ThresholdMaps.ts`, `FastStaircase.ts`, `Staircase.ts`, `LineCeilings.ts`, `ShadowDetector.ts`, `StageSynthesizer.ts`, `RegistryEngine.ts`, `OnboardingCalibrator.ts` — those ARE consumed.** The 4 unit tests for the dead usecases (`tests/nBackTask.test.ts`, `tests/stroopTask.test.ts`, `tests/goNoGoTask.test.ts`, `tests/simonTask.test.ts`) test pure functions — keep the tests if you want coverage of the algorithms, move them to test the `TaskRenderers` inline versions instead. [src/core/usecases/{NBackTask,StroopTask,GoNoGoTask,ReactionTimeTask,SimonTask,BreathRhythmTask,HeldInputTask,DilemmaTask,AffectRecognitionTask}.ts]
 
@@ -68,7 +68,7 @@
 
 22. **shrink** `src/core/assessments/AgenticOrchestrator.ts:166-198` — `SHADOW_KEYWORDS` is 41 lines of string arrays (30+ keywords × 4 quadrants). Used for keyword-based shadow detection when the LLM doesn't return a shadow signal. Move to a JSON data file (`src/core/data/shadowKeywords.json`) so the orchestrator is code, not data. **CLI + WebUI shared — both use the orchestrator.** [src/core/assessments/AgenticOrchestrator.ts:166-198]
 
-23. **shrink** `src/infra/llm/ProviderRegistry.ts` (454 LOC) — it resolves config from 6 sources (CLI flags, provider-specific env vars, generic LLM_* env vars, MODEL env var, legacy VITE_LLM_*, ~/.ccrpg/config.json). For a solo project, `process.env.LLM_API_KEY ?? process.env.OPENCODE_API_KEY` + the config file is enough. The 5-source resolution is over-engineered. **CLI-only consumer — `LLMClient.ts` uses it, WebUI goes through the BFF.** [src/infra/llm/ProviderRegistry.ts]
+23. **shrink** `src/infra/llm/ProviderRegistry.ts` (454 LOC) — it resolves config from 6 sources (CLI flags, provider-specific env vars, generic LLM_* env vars, MODEL env var, legacy VITE_LLM_*, ~/.mysterium/config.json). For a solo project, `process.env.LLM_API_KEY ?? process.env.OPENCODE_API_KEY` + the config file is enough. The 5-source resolution is over-engineered. **CLI-only consumer — `LLMClient.ts` uses it, WebUI goes through the BFF.** [src/infra/llm/ProviderRegistry.ts]
 
 24. **shrink** `src/infra/llm/FallbackProvider.ts` (1,465 LOC → ~600 LOC). 80% is duplicated narrative strings per (line × stage × modality). Collapse to a template + 8 line-templates. **CLI + WebUI shared — both hit fallback when LLM unavailable.** [src/infra/llm/FallbackProvider.ts]
 

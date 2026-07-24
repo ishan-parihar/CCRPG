@@ -21,7 +21,7 @@
  *    profile of the individual is crystallized, it then focuses on the patterns
  *    appropriate and relevant for the evolution of the individual"
  *
- * Status: canonical-hypothesis (CCRPG-specific operationalization of HoloOS
+ * Status: canonical-hypothesis (Mysterium-specific operationalization of HoloOS
  * 02.1 canonical).
  */
 import type { Line } from '../domain/Line.js';

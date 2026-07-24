@@ -1,7 +1,7 @@
 /**
  * Action-Layer Implementation Tests
  *
- * Tests for the action-layer systems that make CCRPG "developmentally honest":
+ * Tests for the action-layer systems that make Mysterium "developmentally honest":
  * ACTION-1: Holonic Return cadence (shouldSurfaceReturn + isShadowResolved)
  * ACTION-2: diagnoseShadows drive-health formula
  * ACTION-3: Knot-pair generation (detectKnotPairs)

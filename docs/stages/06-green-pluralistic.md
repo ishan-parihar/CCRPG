@@ -200,7 +200,7 @@ To pass Green and unlock Turquoise:
   easy failure mode; deep collaboration with practitioners is the
   prevention.
 - **Mean-green portrayal.** The Mean Green Meme shadow risks being
-  read as conservative anti-progressivism. CCRPG must clarify: this
+  read as conservative anti-progressivism. Mysterium must clarify: this
   shadow is the *failure mode* of Green, not Green itself; it appears
   *only* when the player's own play has demonstrated the pattern.
 - **Plural-without-spine.** The Equivocator boss is the central

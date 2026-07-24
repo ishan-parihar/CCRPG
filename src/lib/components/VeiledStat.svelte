@@ -32,31 +32,31 @@
   .veiled-stat {
     display: flex;
     flex-direction: column;
-    gap: var(--ccrpg-space-1);
+    gap: var(--mysterium-space-1);
   }
 
   .veiled-label {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-xs);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-xs);
     text-transform: uppercase;
-    letter-spacing: var(--ccrpg-tracking-wider);
-    color: var(--ccrpg-fg-muted);
+    letter-spacing: var(--mysterium-tracking-wider);
+    color: var(--mysterium-fg-muted);
   }
 
   .veiled-descriptor {
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-base);
-    color: var(--ccrpg-fg);
-    line-height: var(--ccrpg-leading-normal);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-base);
+    color: var(--mysterium-fg);
+    line-height: var(--mysterium-leading-normal);
   }
 
   .veiled-stat[data-variant="muted"] .veiled-descriptor {
-    color: var(--ccrpg-fg-muted);
-    font-size: var(--ccrpg-text-sm);
+    color: var(--mysterium-fg-muted);
+    font-size: var(--mysterium-text-sm);
   }
 
   .veiled-stat[data-variant="accent"] .veiled-descriptor {
-    color: var(--ccrpg-accent);
+    color: var(--mysterium-accent);
     font-weight: 500;
   }
 </style>

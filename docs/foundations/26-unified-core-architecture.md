@@ -20,7 +20,7 @@ No existing document covers this:
 
 This document bridges all of the above: it specifies how ONE module type simultaneously serves ALL game purposes, how the module lifecycle threads through the scheduler/CCI/Significator pipeline, and how the rendering layer consumes modules without coupling to their internals.
 
-**The central thesis:** There is ONE architectural unit in CCRPG -- the assessment module. Every gameplay moment is an assessment module executing in one of four modes. There is no legacy combat. There are no separate "game types." Assessment modules ARE the game.
+**The central thesis:** There is ONE architectural unit in Mysterium -- the assessment module. Every gameplay moment is an assessment module executing in one of four modes. There is no legacy combat. There are no separate "game types." Assessment modules ARE the game.
 
 ---
 

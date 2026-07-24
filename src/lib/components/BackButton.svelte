@@ -57,24 +57,24 @@
     display: inline-flex;
     align-items: center;
     gap: 0.375rem;
-    background: var(--ccrpg-surface);
-    border: 1px solid var(--ccrpg-border);
-    color: var(--ccrpg-fg);
-    padding: var(--ccrpg-space-2) var(--ccrpg-space-3);
-    border-radius: var(--ccrpg-radius);
+    background: var(--mysterium-surface);
+    border: 1px solid var(--mysterium-border);
+    color: var(--mysterium-fg);
+    padding: var(--mysterium-space-2) var(--mysterium-space-3);
+    border-radius: var(--mysterium-radius);
     cursor: pointer;
-    font-family: var(--ccrpg-font-body);
-    font-size: var(--ccrpg-text-sm);
+    font-family: var(--mysterium-font-body);
+    font-size: var(--mysterium-text-sm);
     text-decoration: none;
-    transition: background var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                border-color var(--ccrpg-duration-fast) var(--ccrpg-ease),
-                transform var(--ccrpg-duration-instant) var(--ccrpg-ease);
+    transition: background var(--mysterium-duration-fast) var(--mysterium-ease),
+                border-color var(--mysterium-duration-fast) var(--mysterium-ease),
+                transform var(--mysterium-duration-instant) var(--mysterium-ease);
     -webkit-tap-highlight-color: transparent;
   }
 
   .back-button:hover {
-    background: var(--ccrpg-surface-elevated);
-    border-color: var(--ccrpg-accent);
+    background: var(--mysterium-surface-elevated);
+    border-color: var(--mysterium-accent);
   }
 
   .back-button:active {
@@ -82,12 +82,12 @@
   }
 
   .back-button:focus-visible {
-    outline: 2px solid var(--ccrpg-accent);
+    outline: 2px solid var(--mysterium-accent);
     outline-offset: 2px;
   }
 
   .back-arrow {
-    font-size: var(--ccrpg-text-base);
+    font-size: var(--mysterium-text-base);
     line-height: 1;
   }
 

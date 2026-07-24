@@ -50,7 +50,7 @@ export function modalityOpenerTemplate(input: {
   readonly holonName: string;
   readonly holonRole: string;
 }): string {
-  return `You are composing a single opening line for a CCRPG encounter.
+  return `You are composing a single opening line for a Mysterium encounter.
 
 LINE OF INQUIRY: ${input.line}
 STAGE: ${input.stage}
@@ -316,7 +316,7 @@ export function calibrationProbeTemplate(input: {
   readonly loomInputsJson: string;
   readonly calibrationConfidence: number;
 }): string {
-  return `You are composing the NEXT onboarding probe for a CCRPG player.
+  return `You are composing the NEXT onboarding probe for a Mysterium player.
 
 You see the recent context the DirectorAgent has accumulated below. Use
 it to drive the trajectory. Two identical inputs with different Loom

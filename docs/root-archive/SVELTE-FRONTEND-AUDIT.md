@@ -1,4 +1,4 @@
-# CCRPG Svelte Frontend Audit — The Missing Web App
+# Mysterium Svelte Frontend Audit — The Missing Web App
 
 > **Date:** 2026-07-09
 > **Severity:** CRITICAL — architectural gap between promise and delivery
@@ -10,7 +10,7 @@
 
 **The Svelte web app was never built. What exists is a Phaser mobile game wrapped in a thin Svelte shell.**
 
-The `CCRPG-FRONTEND-ARCHITECTURE-PLAN.md` promised a "SvelteKit + Phaser hybrid" where 10 of 14 Phaser scenes would be migrated to Svelte routes, leaving Phaser as only the gameplay canvas. The worklog claims "Phase 1 COMPLETE" but only **1 scene** (SettingsScene → `/settings`) was actually migrated. The root route `/` and `/play` still boot the full Phaser game — a phone-portrait (1080×1920) canvas that renders as a narrow letterboxed strip on desktop.
+The `Mysterium-FRONTEND-ARCHITECTURE-PLAN.md` promised a "SvelteKit + Phaser hybrid" where 10 of 14 Phaser scenes would be migrated to Svelte routes, leaving Phaser as only the gameplay canvas. The worklog claims "Phase 1 COMPLETE" but only **1 scene** (SettingsScene → `/settings`) was actually migrated. The root route `/` and `/play` still boot the full Phaser game — a phone-portrait (1080×1920) canvas that renders as a narrow letterboxed strip on desktop.
 
 **The user's experience:** Open `localhost:5173` on a desktop browser → see a tall, narrow phone-shaped game canvas centered on a black screen. This is not a "web app optimized for all devices."
 
@@ -18,7 +18,7 @@ The `CCRPG-FRONTEND-ARCHITECTURE-PLAN.md` promised a "SvelteKit + Phaser hybrid"
 
 ## 1. The Promise — What the Architecture Plan Says
 
-Source: `CCRPG-FRONTEND-ARCHITECTURE-PLAN.md` §6 and §7
+Source: `Mysterium-FRONTEND-ARCHITECTURE-PLAN.md` §6 and §7
 
 ### Phase 1: SvelteKit Shell + Phaser Bridge (3 weeks)
 

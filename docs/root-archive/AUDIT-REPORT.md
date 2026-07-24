@@ -1,4 +1,4 @@
-# CCRPG CLI & Backend Audit Report — v6
+# Mysterium CLI & Backend Audit Report — v6
 
 **Date:** June 20, 2026  
 **Scope:** Full CLI/TUI end-to-end audit — runtime testing across all 7 modalities, 8 lines, forcing flags, LLM vs fallback paths, 20-encounter sessions  
@@ -302,7 +302,7 @@ When a player selects option [3] (partial, score=0.5):
 3. **Add narrative variety** — Expand narrative pools from 4 to 12+ per pass/fail, include line-specific flavor text.
 
 ### Sprint 4: Add Persistence & Onboarding (1.1, 1.2) — 2 days
-1. **JSON file persistence** — Save/load Significator to `~/.ccrpg/save.json`.
+1. **JSON file persistence** — Save/load Significator to `~/.mysterium/save.json`.
 2. **3-question capacity calibration** — Quick onboarding that estimates initial line altitudes.
 
 ### Sprint 5: Add Narrative Depth (1.6, 2.5, 3.4) — 2 days
