@@ -2610,6 +2610,7 @@ async function runDirectQuestioningSession(
       // fallback shape that lacks consequenceRecord. Guard all downstream code
       // that accesses cr.* to prevent crashes on the fallback path.
       const cr = encounterTimedOut ? null : (result.outcome as any).consequenceRecord ?? null;
+      if (!encounterTimedOut) {
       if (!JSON_MODE && cr) {
         // P1-1 (UX-R3): word-boundary-aware truncation; was slice(0,120)+'...'
         // R5-BUG-5 (UX-R5): If the LLM returned an empty narrative, fall back
@@ -2838,6 +2839,7 @@ async function runDirectQuestioningSession(
 
       // P0-2 (UX-R3): Honor --dev during DQ sessions.
       emitDevPrimitives(currentSig, `dq:${line}:${currentStage}`);
+      }
     } catch (err: any) {
       error(`Encounter failed: ${err.message || err}`);
       emitEvent('dq_line_error', { line, error: err.message });
