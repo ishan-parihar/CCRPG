@@ -6,10 +6,11 @@
  * generateCurriculumCandidates() returns empty and curriculum encounters
  * never appear for new players.
  *
- * The function selects 2-3 introductory concepts from the player's dominant
- * line's curriculum, initializing them at 'memorized' depth. This gives the
+ * P2-R8 (Curriculum Audit): The function selects up to 5 introductory
+ * concepts forming a prerequisite chain from the player's dominant line's
+ * curriculum, initializing them at 'memorized' depth. This gives the
  * curriculum scheduling engine enough data to generate candidates on the
- * first session.
+ * first session AND ensures the player has a coherent learning path.
  *
  * Pure function: inputs in, KnowledgeState out. No side effects.
  */
@@ -60,9 +61,10 @@ export function seedInitialKnowledge(
     }
   }
 
-  // Sort by priority (introductory concepts first), then take top 3
+  // P2-R8: Sort by priority (introductory concepts first), then build
+  // a prerequisite chain of up to 5 concepts.
   matchingConcepts.sort((a, b) => b.priority - a.priority);
-  const selected = matchingConcepts.slice(0, 3);
+  const selected = buildPrerequisiteChain(matchingConcepts, registry, 5);
 
   // If no concepts found for the dominant line, try any line at the player's stage
   if (selected.length === 0) {
@@ -77,7 +79,8 @@ export function seedInitialKnowledge(
       }
     }
     selected.sort((a, b) => b.priority - a.priority);
-    selected.splice(3); // Limit to 3
+    const fallbackSelected = buildPrerequisiteChain(selected, registry, 5);
+    selected.splice(0, selected.length, ...fallbackSelected);
   }
 
   // Build the concept states map
@@ -114,4 +117,73 @@ export function seedInitialKnowledge(
       studyEfficiency: 0.5,
     },
   };
+}
+
+/**
+ * P2-R8: Build a prerequisite chain of up to `maxCount` concepts.
+ *
+ * Given a priority-sorted list of candidate concepts, this function builds
+ * a chain where each selected concept's prerequisites are also included
+ * (up to the limit). This ensures the player starts with a coherent
+ * learning path rather than random disconnected concepts.
+ *
+ * Algorithm:
+ * 1. Start with the highest-priority concept.
+ * 2. Walk its prerequisites, adding each if not already selected.
+ * 3. Stop when we reach maxCount.
+ * 4. If we haven't reached maxCount, add the next highest-priority concept
+ *    that isn't already selected, and repeat step 2.
+ */
+function buildPrerequisiteChain(
+  candidates: readonly { id: string; priority: number }[],
+  registry: ReturnType<typeof getCurriculumRegistry>,
+  maxCount: number,
+): { id: string; priority: number }[] {
+  const selected: { id: string; priority: number }[] = [];
+  const selectedIds = new Set<string>();
+
+  // Build a quick lookup for prerequisites
+  const prereqMap = new Map<string, readonly string[]>();
+  for (const holon of registry.getAll()) {
+    if (holon.level === 'concept') {
+      prereqMap.set(holon.id, holon.prerequisites);
+    }
+  }
+
+  // Start with highest-priority candidates, building chains
+  for (const candidate of candidates) {
+    if (selectedIds.size >= maxCount) break;
+    if (selectedIds.has(candidate.id)) continue;
+
+    // Walk prerequisites depth-first, adding each unseen prereq
+    const chain: string[] = [];
+    const visited = new Set<string>();
+    const stack = [candidate.id];
+
+    while (stack.length > 0 && chain.length < maxCount) {
+      const currentId = stack.pop()!;
+      if (visited.has(currentId) || selectedIds.has(currentId)) continue;
+      visited.add(currentId);
+
+      const prereqs = prereqMap.get(currentId) ?? [];
+      // Push current, then push prereqs (so prereqs are processed first)
+      chain.unshift(currentId); // unshift so prereqs come before dependents
+      for (const prereqId of prereqs) {
+        if (!visited.has(prereqId) && !selectedIds.has(prereqId)) {
+          stack.push(prereqId);
+        }
+      }
+    }
+
+    // Add chain elements up to the limit
+    for (const id of chain) {
+      if (selectedIds.size >= maxCount) break;
+      if (selectedIds.has(id)) continue;
+      selectedIds.add(id);
+      const existing = candidates.find(c => c.id === id);
+      selected.push({ id, priority: existing?.priority ?? 0.4 });
+    }
+  }
+
+  return selected;
 }
