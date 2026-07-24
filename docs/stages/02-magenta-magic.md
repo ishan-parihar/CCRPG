@@ -92,9 +92,9 @@ Everything is suffused with imagined meaning.
   animal companion now revealed to *speak* in dream-imagery, or a
   new figure — a dream-child, a forest spirit).
 
-## 6. Bestiary at Magenta
+## 6. Encounter archetypes at Magenta
 
-### 6.1 Side-character concepts (one per line)
+### 6.1 Module-level encounters concepts (one per line)
 
 | Line | Concept |
 |---|---|
@@ -107,7 +107,7 @@ Everything is suffused with imagined meaning.
 | Willpower | **Wish-Phantom** — collapses if the player doubts; rewards belief. |
 | Interpersonal | **Phantom-Ally** — an imagined helpful presence; the player must engage *as if* it is real (proto-empathy). |
 
-### 6.2 Mini-boss concepts
+### 6.2 Cross-line encounters concepts
 
 - **Cognitive × Spiritual:** *The Rune-Weaver* — symbol-matching with
   ritual stakes; failure breaks talismans.

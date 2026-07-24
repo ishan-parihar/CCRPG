@@ -106,14 +106,14 @@ and indistinguishably. The radial chart at White is full and *quiet*.
 - **Ally:** anyone, including the formerly-defeated bosses, who
   *return* in this world transformed; communion with all.
 
-## 6. Bestiary at White
+## 6. Encounter archetypes at White
 
 The Bestiary at White is *minimal*. White content is mostly
 contemplative, ceremonial, and structurally un-confrontational. There
 are very few "enemies" — instead there are *teachers*, *mirrors*, and
 *moments*.
 
-### 6.1 Side-character concepts
+### 6.1 Module-level encounters concepts
 
 | Line | Concept |
 |---|---|
@@ -126,7 +126,7 @@ are very few "enemies" — instead there are *teachers*, *mirrors*, and
 | Willpower | **Spontaneous Other** — appears when not pursued; vanishes when chased. |
 | Interpersonal | **Communion** — fellow-being indistinguishable from self; merged action only. |
 
-### 6.2 Mini-boss concepts
+### 6.2 Cross-line encounters concepts
 
 White has effectively no mini-bosses; the dual-task structure of
 mini-bosses presupposes interference between lines, which at White is

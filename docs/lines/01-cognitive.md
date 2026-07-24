@@ -83,14 +83,14 @@ self-contained:
 
 ## 4. Game-design mapping
 
-### 4.1 Combat style associated
+### 4.1 Assessment modality affinity associated
 
 **Spellcaster, planner, controller.** A cognitive-leaning build favours
 ranged abilities, multi-step combos, and area control. Compared with
 somatic builds (which are dodge-heavy, present-moment) cognitive builds
 *plan two moves ahead*.
 
-### 4.2 Attacks / defences / skills
+### 4.2 Assessment tasks / defences / skills
 
 | Verb | Cognitive task vehicle | Mechanic | Stage gating |
 |---|---|---|---|
@@ -104,7 +104,7 @@ somatic builds (which are dodge-heavy, present-moment) cognitive builds
 | Spatial Counter (block direction) | Simon | Press direction matching strike side, not visual indicator | Red+ |
 | Phantom Feint defence | Go/No-Go | Inhibit dodge on feint, dodge on strike | Magenta+ |
 
-### 4.3 RPG attribute(s) backed
+### 4.3 Module parameters(s) backed
 
 - **Magic / Mana** — backed primarily by working-memory capacity. Spell
   cost in mana scales with n-back load.
@@ -117,7 +117,7 @@ somatic builds (which are dodge-heavy, present-moment) cognitive builds
 
 Listed in 4.2. The full library is in `combat/02-cognitive-task-library.md`.
 
-### 4.5 Progression curve
+### 4.5 Depth progression
 
 The cognitive line is the *fastest-moving* line for most players in MVP,
 because the tasks are familiar from cognitive-training apps. Expected
@@ -137,7 +137,7 @@ synthesised stage.
 
 ## 5. Enemy / encounter structure that trains this line
 
-### 5.1 Side-character archetypes (one per stage)
+### 5.1 Module-level encounters archetypes (one per stage)
 
 | Stage | Side-character | Task encoded |
 |---|---|---|
@@ -150,7 +150,7 @@ synthesised stage.
 | Turquoise | "Recursion-Wraith" — meta-rule changes mid-encounter | meta-WCST |
 | White | "Witness-Echo" — task is to *not* react (paradox) | Sustained inhibition + meta |
 
-### 5.2 Mini-boss archetypes (cognitive-line dual-task pairs)
+### 5.2 Cross-line encounters archetypes (cognitive-line dual-task pairs)
 
 - **Cognitive × Somatic:** "The Drumheart" — n-back stimuli must be
   matched on a beat. Late dropouts cost ATB.
@@ -165,7 +165,7 @@ Each stage's main boss has a cognitive phase exercising the full task
 library at that altitude. Specifically detailed in
 `stages/01-…08-…` and `enemies/03-main-bosses-synthesis.md`.
 
-### 5.4 Shadow encounter (cognitive regression)
+### 5.4 Shadow encounters (cognitive regression)
 
 **"The Cold Architect"** — at Orange stage. Cognitively perfect; emotionally
 absent. The fight is impervious to spells (they bounce). Defeating it

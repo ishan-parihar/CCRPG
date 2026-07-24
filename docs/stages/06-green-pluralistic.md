@@ -111,9 +111,9 @@ to the heart and the relational field.
 - **Ally:** a community — multiple voices, sometimes disagreeing
   among themselves, with whom the player *thinks together*.
 
-## 6. Bestiary at Green
+## 6. Encounter archetypes at Green
 
-### 6.1 Side-character concepts
+### 6.1 Module-level encounters concepts
 
 | Line | Concept |
 |---|---|
@@ -126,7 +126,7 @@ to the heart and the relational field.
 | Willpower | **Conflict-Goal** — two valid goals demanding incompatible action. |
 | Interpersonal | **Plural-Ally** — different style requiring adaptation. |
 
-### 6.2 Mini-boss concepts
+### 6.2 Cross-line encounters concepts
 
 - **Emotional × Interpersonal:** *The Crowd* — many NPCs with
   emotional states; managing one destabilises others.

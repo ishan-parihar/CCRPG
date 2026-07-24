@@ -70,7 +70,7 @@ fatigue signals appear in dACC.
 
 ## 4. Game-design mapping
 
-### 4.1 Combat style
+### 4.1 Assessment modality affinity
 
 **Goal-locker, fatigue-resistor, finisher.** Willpower-leaning builds
 gain power from *committed sequences* — once the player declares "I will
@@ -78,7 +78,7 @@ take this boss without retreating," the build's damage scales; breaking
 the commitment penalises. The build's identity is *I do what I said I
 would*.
 
-### 4.2 Attacks / defences / skills
+### 4.2 Assessment tasks / defences / skills
 
 | Verb | Task vehicle | Mechanic | Stage gating |
 |---|---|---|---|
@@ -90,7 +90,7 @@ would*.
 | Holonic Goal Tree | Sub-goals nested under super-goal | Vision-logic: completing sub-goals buffs super-goal | Turquoise+ |
 | Effortless Pursuit | Goal completes itself once initiated | Highest tier; rare scripted moments | White |
 
-### 4.3 RPG attribute(s) backed
+### 4.3 Module parameters(s) backed
 
 - **Resolve / Endurance** — fatigue resistance
 - **Commitment** — vow integrity; gates Vow-Strike
@@ -105,7 +105,7 @@ would*.
 - Goal-revision checks (when the situation changes, do you adapt or
   rigidly stick?)
 
-### 4.5 Progression curve
+### 4.5 Depth progression
 
 Willpower altitude is **gradual but durable** — once gained, regression
 is slow. The line moves with *consistent practice patterns*: setting
@@ -120,7 +120,7 @@ Mirrors the cognitive staircase.
 
 ## 5. Enemy / encounter structure
 
-### 5.1 Side-character archetypes
+### 5.1 Module-level encounters archetypes
 
 | Stage | Side-character | Encoded test |
 |---|---|---|
@@ -133,7 +133,7 @@ Mirrors the cognitive staircase.
 | Turquoise | "Holonic-Path" — nested sub-goals; misordering costs | Nested commitment |
 | White | "Spontaneous Other" — appears when not pursued, vanishes when chased | Effortless will |
 
-### 5.2 Mini-bosses
+### 5.2 Cross-line encounterses
 
 - **Willpower × Spiritual:** "The Tempter" — a value coherence + vow
   integrity challenge.
@@ -150,7 +150,7 @@ declared commitment across multiple attack patterns. Players who
 declared a strong commitment pre-fight gain damage; players who broke
 the commitment lose buffs.
 
-### 5.4 Shadow encounter
+### 5.4 Shadow encounters
 
 **"The Quitter"** — at Red stage. The shadow of bursts without
 follow-through. The fight is a long-form encounter that *cannot be won*

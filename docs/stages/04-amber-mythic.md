@@ -104,9 +104,9 @@ strongly here.
 - **Ally:** an elder figure, a mentor — someone *of* the tradition
   who walks the player into membership.
 
-## 6. Bestiary at Amber
+## 6. Encounter archetypes at Amber
 
-### 6.1 Side-character concepts
+### 6.1 Module-level encounters concepts
 
 | Line | Concept |
 |---|---|
@@ -119,7 +119,7 @@ strongly here.
 | Willpower | **Oath-Watcher** — penalises broken vows. |
 | Interpersonal | **Tribe-Member** — strict in-group conformity test. |
 
-### 6.2 Mini-boss concepts
+### 6.2 Cross-line encounters concepts
 
 - **Moral × Spiritual:** *The Inquisitor's Page* — a moral dilemma
   framed by the Code; orthodoxy and decency in tension.

@@ -108,9 +108,9 @@ spiritual.
 - **Ally:** a thinker — a peer-equal whose intellectual companionship
   is the relationship's core.
 
-## 6. Bestiary at Orange
+## 6. Encounter archetypes at Orange
 
-### 6.1 Side-character concepts
+### 6.1 Module-level encounters concepts
 
 | Line | Concept |
 |---|---|
@@ -123,7 +123,7 @@ spiritual.
 | Willpower | **Long-Path** — multi-stage objective; sustained pursuit. |
 | Interpersonal | **Contractor-Partner** — clear expectations; role coordination. |
 
-### 6.2 Mini-boss concepts
+### 6.2 Cross-line encounters concepts
 
 - **Cognitive × Emotional:** *The Sorrowful Geometer* — Stroop with
   emotional-face stimuli; reasoning under affect.

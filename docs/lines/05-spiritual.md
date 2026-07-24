@@ -70,14 +70,14 @@ insula and cingulate. See `foundations/07`.
 
 ## 4. Game-design mapping
 
-### 4.1 Combat style
+### 4.1 Assessment modality affinity
 
 **Value-bound, surrender-capable.** Spiritual-leaning builds invoke
 *ultimate concern* as a battle frame. Holding a value buffs aligned
 actions; violating it locks abilities. The combat's emotional weight
 comes from the *hierarchy of what matters now*.
 
-### 4.2 Attacks / defences / skills
+### 4.2 Assessment tasks / defences / skills
 
 | Verb | Task vehicle | Mechanic | Stage gating |
 |---|---|---|---|
@@ -88,7 +88,7 @@ comes from the *hierarchy of what matters now*.
 | Surrender | Convert defeat into unmaking | Voluntary fall to a held value; ally-revive on next turn | Turquoise+ |
 | Pathless Path | All abilities unlocked, all paths active, no hierarchy | Highest tier; rare, scripted | White |
 
-### 4.3 RPG attribute(s) backed
+### 4.3 Module parameters(s) backed
 
 - **Resolve** (spiritual variant) — value-coherence under stress
 - **Sanctity** — radius of "sacred ground" buffs
@@ -101,7 +101,7 @@ comes from the *hierarchy of what matters now*.
 - Cross-path coherence (do these two values compose?)
 - Surrender timing (when to release effort?)
 
-### 4.5 Progression curve
+### 4.5 Depth progression
 
 The spiritual line is **the most idiosyncratic** — it does not march in
 lockstep. A player can stagnate at Amber for many sessions then jump.
@@ -111,7 +111,7 @@ under temptation* in main-boss synthesis exams.
 
 ## 5. Enemy / encounter structure
 
-### 5.1 Side-character archetypes
+### 5.1 Module-level encounters archetypes
 
 | Stage | Side-character | Encoded test |
 |---|---|---|
@@ -124,7 +124,7 @@ under temptation* in main-boss synthesis exams.
 | Turquoise | "Holonic Adept" — composes tests across traditions | Integral synthesis |
 | White | "Empty Sage" — no test; the player must arrive empty-handed | Non-grasping |
 
-### 5.2 Mini-bosses
+### 5.2 Cross-line encounterses
 
 - **Spiritual × Willpower:** "The Tempter" — value coherence under
   sustained temptation; classic.
@@ -148,7 +148,7 @@ stage:
 - Turquoise: "Depth, span, or process?"
 - White: (no question; the player invokes their own)
 
-### 5.4 Shadow encounter
+### 5.4 Shadow encounters
 
 **"The Idol"** — at Amber stage. The shadow of mythic-literal faith.
 The player meets a deified self; the fight cannot be won by combat,

@@ -59,14 +59,14 @@ Default-mode network (medial PFC, posterior cingulate, precuneus); insula
 
 ## 4. Game-design mapping
 
-### 4.1 Combat style
+### 4.1 Assessment modality affinity
 
 **Slow, reflective, meta-tactical.** Intrapersonal-leaning builds excel at
 *reading the long arc* of a fight, pausing to recompute, and avoiding
 sunk-cost mistakes. They are weak in fast reflexive combat. They are
 *the ones who survive the late-game by knowing when not to fight.*
 
-### 4.2 Attacks / defences / skills
+### 4.2 Assessment tasks / defences / skills
 
 | Verb | Task vehicle | Mechanic | Stage gating |
 |---|---|---|---|
@@ -77,7 +77,7 @@ sunk-cost mistakes. They are weak in fast reflexive combat. They are
 | Multi-Self Map | Visualise current motive composition | Pie-chart mini-game; correct allocation buffs subsequent attacks | Green+ |
 | Process View | See the line's own development arc; gain insight buffs | Periodic glimpse of the radial chart with developmental commentary | Turquoise+ |
 
-### 4.3 RPG attribute(s) backed
+### 4.3 Module parameters(s) backed
 
 - **Insight** — accuracy of self-report; gates Reflection Strike scaling
 - **Witness** — meta-awareness duration in combat
@@ -90,7 +90,7 @@ sunk-cost mistakes. They are weak in fast reflexive combat. They are
 - Self-prediction (predict own next-fight performance, score accuracy)
 - Replay analysis (watch own fight, identify moves)
 
-### 4.5 Progression curve
+### 4.5 Depth progression
 
 The intrapersonal line is **fast at first, then slow**. Early gains
 (Red → Amber → Orange) come from simple labelling exercises. Late
@@ -103,7 +103,7 @@ advance intrapersonal faster.
 
 ## 5. Enemy / encounter structure
 
-### 5.1 Side-character archetypes
+### 5.1 Module-level encounters archetypes
 
 | Stage | Side-character | Encoded test |
 |---|---|---|
@@ -116,7 +116,7 @@ advance intrapersonal faster.
 | Turquoise | "Process-Witness" — narrates the player's developmental arc; misnames triggers | Catch the misnaming |
 | White | "Luminous Other" — the player's witness *as another being* | Recognition without grasping |
 
-### 5.2 Mini-bosses
+### 5.2 Cross-line encounterses
 
 - **Intrapersonal × Cognitive:** "The Self-Strategist" — n-back where
   the stimuli include the player's own past actions.
@@ -131,7 +131,7 @@ The intrapersonal phase of synthesis exams typically appears as a
 *reflection moment* — a forced stillness where the player must accurately
 self-report. Misreports cost a phase rewind.
 
-### 5.4 Shadow encounter
+### 5.4 Shadow encounters
 
 **"The Unexamined"** — at Orange stage. The shadow of running on
 identity-by-default without inquiry. The fight is unwinnable until the

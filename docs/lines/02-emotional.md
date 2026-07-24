@@ -61,14 +61,14 @@ network. See `foundations/07`.
 
 ## 4. Game-design mapping
 
-### 4.1 Combat style
+### 4.1 Assessment modality affinity
 
 **Reader, regulator, channeler.** An emotional-leaning build favours
 reading enemy emotional state to predict attacks, regulating own affect
 to avoid combat penalties under emotional load, and *channelling*
 emotion into power (rage as buff; sorrow as healing focus).
 
-### 4.2 Attacks / defences / skills
+### 4.2 Assessment tasks / defences / skills
 
 | Verb | Task vehicle | Mechanic | Stage gating |
 |---|---|---|---|
@@ -79,7 +79,7 @@ emotion into power (rage as buff; sorrow as healing focus).
 | Equanimity Stance | Reduced damage from emotional attacks | Sustained calm-affect under provocation | Green+ |
 | Compassion Burst | AoE that targets only fixated enemies | Demands accurate moral-affect read of every enemy in scene | Turquoise+ |
 
-### 4.3 RPG attribute(s) backed
+### 4.3 Module parameters(s) backed
 
 - **Empathy / Read** — recognition accuracy
 - **Resolve** — emotion regulation under stress (resists fear / charm / rage statuses)
@@ -92,7 +92,7 @@ emotion into power (rage as buff; sorrow as healing focus).
 - Emotional regulation tasks (cognitive reappraisal latency)
 - Affect-labelling under cognitive load
 
-### 4.5 Progression curve
+### 4.5 Depth progression
 
 The emotional line moves more slowly than cognitive — the tasks are
 *harder* to ground-truth (the "right answer" is not always the same
@@ -105,7 +105,7 @@ is therefore proportionally weighted to give the line room to grow.
 
 ## 5. Enemy / encounter structure
 
-### 5.1 Side-character archetypes
+### 5.1 Module-level encounters archetypes
 
 | Stage | Side-character | Task encoded |
 |---|---|---|
@@ -118,7 +118,7 @@ is therefore proportionally weighted to give the line room to grow.
 | Turquoise | "Hollow Mirror" — reflects player's own affect; misreads cause self-damage | Self-affect awareness |
 | White | "Silent Witness" — non-reactive; player must self-regulate to engage | Pure equanimity |
 
-### 5.2 Mini-bosses (emotional × other lines)
+### 5.2 Cross-line encounterses (emotional × other lines)
 
 - **Emotional × Cognitive:** "The Sorrowful Geometer" — Stroop with
   emotional faces.
@@ -136,7 +136,7 @@ phase** (after the cognitive phase, before the moral / interpersonal),
 where the player must read the boss's true affect under deception /
 masking.
 
-### 5.4 Shadow encounter
+### 5.4 Shadow encounters
 
 **"The Glacier"** — at Orange stage. The shadow of cognitive
 over-development with emotional repression. The player meets a

@@ -64,13 +64,13 @@ default-mode, and cognitive control regions.
 
 ## 4. Game-design mapping
 
-### 4.1 Combat style
+### 4.1 Assessment modality affinity
 
 **Decision-maker, oath-binder.** Moral-leaning builds gain power from
 *kept oaths* and *consistent action*. Breaking a vow breaks the buff.
 The combat is not faster or harder-hitting; it is *bound*.
 
-### 4.2 Attacks / defences / skills
+### 4.2 Assessment tasks / defences / skills
 
 | Verb | Task vehicle | Mechanic | Stage gating |
 |---|---|---|---|
@@ -82,7 +82,7 @@ The combat is not faster or harder-hitting; it is *bound*.
 | Holonic Calculus | Boss damage scales with depth-and-span analysis | Dilemma during fight: protect breadth (many allies) vs. depth (one critical) | Turquoise+ |
 | Compassion Without Object | Damage modifier scales inversely with player's identification with cause | The less ego-attached, the more clean-cutting | White |
 
-### 4.3 RPG attribute(s) backed
+### 4.3 Module parameters(s) backed
 
 - **Honour** — vow integrity; affects ally trust
 - **Conviction** — the moral-choice latency; faster = more aligned
@@ -96,7 +96,7 @@ The combat is not faster or harder-hitting; it is *bound*.
 - Vow-violation detection (mid-combat: did the player break the vow?)
 - Footbridge-style trade-offs
 
-### 4.5 Progression curve
+### 4.5 Depth progression
 
 Moral altitude is the **slowest** line to advance, and intentionally so.
 A single dilemma cannot raise altitude — only a *consistent pattern* of
@@ -112,7 +112,7 @@ the slowest of the lines.
 
 ## 5. Enemy / encounter structure
 
-### 5.1 Side-character archetypes
+### 5.1 Module-level encounters archetypes
 
 | Stage | Side-character | Encoded test |
 |---|---|---|
@@ -125,7 +125,7 @@ the slowest of the lines.
 | Turquoise | "Holonic Judge" — depth-and-span trade-off | Multi-level harm trade-off |
 | White | "Boundless Witness" — non-dual; choice as energy not action | Choice without grasping |
 
-### 5.2 Mini-bosses
+### 5.2 Cross-line encounterses
 
 - **Moral × Emotional:** "The Pleader" — genuine grief presented with a
   morally compromised request; reading affect alters the right answer.
@@ -142,7 +142,7 @@ does not lose the fight, but locks the player out of the highest-tier
 ending; the dilemma re-presents in subsequent encounters until
 patterned consistency emerges.
 
-### 5.4 Shadow encounter
+### 5.4 Shadow encounters
 
 **"The Inquisitor"** — at Amber stage. The fixated rule-keeper who
 believes their group-truth is THE truth. The fight is structured around

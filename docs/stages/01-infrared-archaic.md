@@ -91,9 +91,9 @@ Everything else is dormant or barely active.
 - **Ally:** a single primary ally — an animal-companion or a maternal
   figure — whose presence is felt before it is named.
 
-## 6. Bestiary at Infrared
+## 6. Encounter archetypes at Infrared
 
-### 6.1 Side-character concepts (one per line)
+### 6.1 Module-level encounters concepts (one per line)
 
 | Line tested | Concept |
 |---|---|
@@ -106,7 +106,7 @@ Everything else is dormant or barely active.
 | Willpower | **Inertia** — passive resistance; the player must *act* despite the world's drag. |
 | Interpersonal | **Stranger** — non-interactive presence; the player must learn that not every figure is hostile or to-be-engaged. |
 
-### 6.2 Mini-boss concepts (dual-line)
+### 6.2 Cross-line encounters concepts (dual-line)
 
 - **Somatic × Cognitive:** *The Stalker Pack* — three coordinated
   beasts; track one while dodging the others.

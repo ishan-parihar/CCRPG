@@ -100,9 +100,9 @@ by **Somatic** and **Cognitive** in their early-strategic forms.
 - **Ally:** a fellow warrior — someone whose loyalty is *earned in
   combat*, not assumed.
 
-## 6. Bestiary at Red
+## 6. Encounter archetypes at Red
 
-### 6.1 Side-character concepts
+### 6.1 Module-level encounters concepts
 
 | Line | Concept |
 |---|---|
@@ -115,7 +115,7 @@ by **Somatic** and **Cognitive** in their early-strategic forms.
 | Willpower | **Test-Strider** — rewards short bursts; punishes hesitation. |
 | Interpersonal | **Power-Ally (NPC)** — useful while convenient; turns coat under pressure. |
 
-### 6.2 Mini-boss concepts
+### 6.2 Cross-line encounters concepts
 
 - **Cognitive × Somatic:** *The Drumheart* — n-back stimuli matched
   on a war-drum beat.

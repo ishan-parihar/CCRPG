@@ -66,7 +66,7 @@ Cerebellum, premotor / SMA, primary motor, posterior insula
 
 ## 4. Game-design mapping
 
-### 4.1 Combat style
+### 4.1 Assessment modality affinity
 
 **Dodger, rhythmist, presence-fighter.** Somatic-leaning builds excel at
 real-time windows — perfect parries, tight dodges, breath-gated burst
@@ -77,7 +77,7 @@ player has *learned to feel*.
 The somatic build is the build a martial-arts-experienced player will
 gravitate to.
 
-### 4.2 Attacks / defences / skills
+### 4.2 Assessment tasks / defences / skills
 
 | Verb | Task vehicle | Mechanic | Stage gating |
 |---|---|---|---|
@@ -90,7 +90,7 @@ gravitate to.
 | Effortless Strike | Compound posture + breath + intention | All three locks held → free heavy attack | Turquoise+ |
 | Presence | Non-action "stance" | Take no action for a beat; full HP / stamina regen; only available at White | White |
 
-### 4.3 RPG attribute(s) backed
+### 4.3 Module parameters(s) backed
 
 - **Agility** — reflex windows; primary input to ATB fill rate
 - **Stamina** — posture / breath-gate budget
@@ -104,7 +104,7 @@ gravitate to.
 - Breath-paced inputs (calibrated to player's resting rate)
 - Interoceptive labelling (body-scan multiple-choice)
 
-### 4.5 Progression curve
+### 4.5 Depth progression
 
 Somatic altitude moves quickly at first (Infrared → Amber covers basic
 reflex / posture / rhythm), then plateaus until the player engages
@@ -118,7 +118,7 @@ Designed in `progression/00-progression-overview.md`.
 
 ## 5. Enemy / encounter structure
 
-### 5.1 Side-character archetypes
+### 5.1 Module-level encounters archetypes
 
 | Stage | Side-character | Encoded test |
 |---|---|---|
@@ -131,7 +131,7 @@ Designed in `progression/00-progression-overview.md`.
 | Turquoise | "Breath-Wraith" — synchronised to player's breath; out-of-sync hurts | Breath-paced inputs |
 | White | "Still One" — only damaged when player takes no action | Presence |
 
-### 5.2 Mini-bosses
+### 5.2 Cross-line encounterses
 
 - **Somatic × Cognitive:** "The Drumheart" — n-back stimuli matched on
   beat. Primary somatic mini-boss.
@@ -147,7 +147,7 @@ phase* — establish rhythm, posture, breath. Failure here costs ATB for
 the rest of the fight. Late-game synthesis exams add somatic phases at
 the climax (Turquoise / White) to test integration under exhaustion.
 
-### 5.4 Shadow encounter
+### 5.4 Shadow encounters
 
 **"The Disembodied"** — at Orange stage. The shadow of cognitive
 over-development with somatic neglect. The fight gives the player a

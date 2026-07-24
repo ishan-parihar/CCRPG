@@ -65,7 +65,7 @@ regions for self-other modelling.
 
 ## 4. Game-design mapping
 
-### 4.1 Combat style
+### 4.1 Assessment modality affinity
 
 **Coordinator, attuner, healer, conflict-resolver.** Interpersonal
 builds shine in co-op — they cannot solo high-altitude content
@@ -77,7 +77,7 @@ In single-player, interpersonal is exercised through NPC ally
 management — but the altitude ceiling is **lower in single-player than
 multiplayer**, by design.
 
-### 4.2 Attacks / defences / skills
+### 4.2 Assessment tasks / defences / skills
 
 | Verb | Task vehicle | Mechanic | Stage gating |
 |---|---|---|---|
@@ -90,7 +90,7 @@ multiplayer**, by design.
 | Cross-Style Synthesis | Compose two parties' build philosophies | Buff if both philosophies hit synergy threshold | Turquoise+ |
 | Communion | Merge action briefly | Synced inputs from both players → single super-action | White (multiplayer-only) |
 
-### 4.3 RPG attribute(s) backed
+### 4.3 Module parameters(s) backed
 
 - **Attunement** — read accuracy on partner state
 - **Coordination** — input-sync latency tolerance with partner
@@ -105,7 +105,7 @@ multiplayer**, by design.
 - Conflict-resolution mini-games (partner expresses upset; player
   selects from response options; partner rates)
 
-### 4.5 Progression curve
+### 4.5 Depth progression
 
 Single-player interpersonal advancement caps at **Orange** in MVP.
 Multiplayer is required to advance to Green and beyond. This is a hard
@@ -118,7 +118,7 @@ play, not from solo grind.
 
 ## 5. Enemy / encounter structure
 
-### 5.1 Side-character archetypes
+### 5.1 Module-level encounters archetypes
 
 | Stage | Side-character | Encoded test |
 |---|---|---|
@@ -131,7 +131,7 @@ play, not from solo grind.
 | Turquoise | "Cross-Stage Mentor" — partner at different altitude | Asymmetric attunement |
 | White | "Communion" — fellow-being indistinguishable from self | Merged action |
 
-### 5.2 Mini-bosses
+### 5.2 Cross-line encounterses
 
 - **Interpersonal × Cognitive:** "The Strategist Pair" — two enemies
   whose attacks are coordinated; player must mirror with own ally.
@@ -153,7 +153,7 @@ as:
 Late-stage bosses (Turquoise, White) cannot be defeated solo at the
 highest tier; they require multiplayer.
 
-### 5.4 Shadow encounter
+### 5.4 Shadow encounters
 
 **"The Lone Wolf"** — at Orange stage. The shadow of cognitive /
 willpower over-development with interpersonal repression. The boss

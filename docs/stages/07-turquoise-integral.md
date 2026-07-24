@@ -115,9 +115,9 @@ arc of their own development* to operate at Turquoise.
 - **Ally:** a fellow integral practitioner — peer-equal across many
   lines simultaneously, including ones the player is weaker at.
 
-## 6. Bestiary at Turquoise
+## 6. Encounter archetypes at Turquoise
 
-### 6.1 Side-character concepts
+### 6.1 Module-level encounters concepts
 
 | Line | Concept |
 |---|---|
@@ -130,7 +130,7 @@ arc of their own development* to operate at Turquoise.
 | Willpower | **Holonic-Path** — nested sub-goals; misordering costs. |
 | Interpersonal | **Cross-Stage Mentor** — partner at different altitude; asymmetric attunement required. |
 
-### 6.2 Mini-boss concepts
+### 6.2 Cross-line encounters concepts
 
 - **Cognitive × Intrapersonal:** *The Process-Strategist* — n-back
   where the stimuli include the player's own past actions.
