@@ -3546,12 +3546,21 @@ async function runFullSession(): Promise<void> {
   }
 
   // P0-R2 (Curriculum Audit): Wire integration response to next-session focus.
-  if (integrationResponse2) updateGoalsActiveFocus(integrationResponse2);
-
-  // NF-3: Persist the asked-prompts set for cross-session de-duplication.
+  if (integrationResponse2) updateGoalsActiveFocus(integrationResponse2);  // NF-3: Persist the asked-prompts set for cross-session de-duplication.
   saveAskedPrompts(getActiveProfileDir());
 
-
+  // P2-R9 (Curriculum Audit): Somatic practice after Somatic-line encounters.
+  // Story path doesn't have history[], but sessionEnd.sig.recentEncounters has line data.
+  if (sessionEnd.sig.recentEncounters.length > 0) {
+    const lastEnc = sessionEnd.sig.recentEncounters[sessionEnd.sig.recentEncounters.length - 1]!;
+    if (lastEnc.line === 'Somatic' && !JSON_MODE) {
+      const somaticHintStory = somaticPracticeHint([{ line: lastEnc.line } as ConsequenceRecord]);
+      if (somaticHintStory) {
+        console.log(`\n  ${chalk.dim('═══ Body Practice ═══')}`);
+        console.log(`  ${chalk.italic(somaticHintStory)}`);
+      }
+    }
+  }
 
   // P0-3 (Fresh-User UX Audit): Post-session summary.
   renderPostSessionSummary(currentSig, []);
