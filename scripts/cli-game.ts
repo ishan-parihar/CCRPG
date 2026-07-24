@@ -260,13 +260,8 @@ import type { SessionContext } from '../src/core/engines/PriorityComputation.js'
 import { startSession, startSessionWithTDG, tickWithStrategy, endSession, endSessionAsync, applyResponseOnly, getTDGTransformationPressure, type SessionState } from '../src/core/GameLoop.js';
 import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixModel.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
-import { PersistentAgent } from '../src/core/agent/PersistentAgent.js';
-import { runPersistentAgentEncounter } from '../src/core/agent/PersistentAgentBridge.js';
-// YAGNI-EFF-2 (Efficacy Audit): TDG bridge import removed from CLI.
-// The TDG infra files stay in src/infra/tdg/ for reference, but the CLI
-// no longer starts, stops, or references TDG. This eliminates the bug
-// surface that caused R8-BUG-1 (hang), R9-BUG-2 (process-exit), and
-// R8-BUG-3 (VeilFilter leak). TDG was always a no-op in default mode.
+// YAGNI-PHASE-4: PersistentAgent + PersistentAgentBridge imports removed.
+// USE_PERSISTENT_AGENT is always false; the DQ path is the proven architecture.
 import { createMysteriumToolRegistry } from '../src/core/agent/ToolRegistry.js';
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
@@ -475,7 +470,7 @@ const FORCE_LINE = opts.line as Line | undefined;
 const FORCE_STAGE = opts.stage as Stage | undefined;
 const FORCE_MODALITY = opts.modality as Modality | undefined;
 const FORCE_SHADOW = (opts.forceShadow ?? (opts as any).injectShadowKeyword) as string | undefined;
-const FORCE_RESPONSES = undefined; // ponytail: --responses removed, wasn't in commander spec
+// YAGNI-PHASE-4: FORCE_RESPONSES removed — --responses was never in commander spec.
 const NEW_GAME = opts.newGame ?? false;
 const SKIP_CALIBRATION = opts.skipCalibration ?? false;
 const CURRICULUM_MODE = opts.curriculum ?? false;
