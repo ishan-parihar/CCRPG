@@ -105,15 +105,15 @@ These are the canonical strings. Using `'IndividualInterior'` instead of `'UL'` 
 
 | Task | Slug | Trains | Assessment vehicle |
 |---|---|---|---|
-| n-back | `n_back` | Working memory, dlPFC | Deterministic modality — timed recall accuracy |
-| Stroop | `stroop` | Inhibitory control, ACC | Deterministic modality — interference resolution |
-| Simon | `simon` | Spatial inhibitory control | Deterministic modality — spatial conflict |
-| Go/No-Go | `go_no_go` | Behavioural inhibition | Deterministic modality — impulse suppression |
-| Corsi block-tapping | `corsi` | Visuospatial WM | Deterministic modality — sequence recall |
-| WCST | `wcst` | Cognitive flexibility | Strategic modality — rule switching |
-| Tower of London | `tol` | Planning, pre-frontal | Strategic modality — multi-step planning |
-| Complex span | `complex_span` | WM under interference | Embodied modality — dual-task |
-| Task switching | `task_switch` | Set-shifting | Strategic modality — asynchronous switching |
+| n-back | `n_back` | Working memory, dlPFC | Timed recall accuracy — measures how many items you can hold in mind |
+| Stroop | `stroop` | Inhibitory control, ACC | Interference resolution — can you suppress automatic responses? |
+| Simon | `simon` | Spatial inhibitory control | Spatial conflict — can you override spatial impulses? |
+| Go/No-Go | `go_no_go` | Behavioural inhibition | Impulse suppression — can you stop an action before it starts? |
+| Corsi block-tapping | `corsi` | Visuospatial WM | Sequence recall — can you remember spatial patterns? |
+| WCST | `wcst` | Cognitive flexibility | Rule switching — can you adapt when the rules change? |
+| Tower of London | `tol` | Planning, pre-frontal | Multi-step planning — can you think ahead before acting? |
+| Complex span | `complex_span` | WM under interference | Dual-task — can you maintain focus under distraction? |
+| Task switching | `task_switch` | Set-shifting | Asynchronous switching — can you juggle multiple goals? |
 
 ### Curriculum system
 

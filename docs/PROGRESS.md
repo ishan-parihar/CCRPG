@@ -1,104 +1,159 @@
-# Mysterium UX Audit Implementation — Progress Tracker
+# Mysterium — Progress Tracker
 
-> Tracking active-progress / pending-progress / completed-progress for the 18 recommendations
-> from the Fresh-User UX Audit. Updated after each iteration.
->
-> **Iteration protocol (AGENTS.md §7.5):**
-> 1. Make changes (code, docs, config)
-> 2. Run workspace-lint: `python3 skills/workspace-lint/scripts/workspace_lint.py --root .`
-> 3. Run build + tests: `npm run build && npm test`
-> 4. Fix any violations
-> 5. Git commit + push to BOTH remotes (`git push origin main && git push gitlab main`)
+> **Current phase:** Documentation Architecture — Epistemological Refactor Complete
+> **Last updated:** 2026-07-24
 
-## Status Legend
-- ⏳ PENDING — not started
-- 🔄 IN-PROGRESS — actively being worked on
-- ✅ COMPLETED — implemented, tested, committed, pushed
-- ❌ BLOCKED — hit an issue that needs decision
+---
 
-## Architectural Preferences (carry forward across iterations)
+## Iteration Protocol (AGENTS.md §7.5)
+
+1. Make changes (code, docs, config)
+2. Run workspace-lint: `python3 skills/workspace-lint/scripts/workspace_lint.py --root .`
+3. Run build + tests: `npm run build && npm test`
+4. Fix any violations
+5. Git commit + push to BOTH remotes (`git push origin main && git push gitlab main`)
+
+---
+
+## Architectural Preferences (carry forward)
+
 1. **Veil principle is sacred** (AGENTS.md §5.4): game is NEVER diagnostic to user. All player-facing surfaces must route through VeilFilter.
 2. **CLI is first-class** (PONYTAIL-AUDIT-v2): CLI is not a debug tool — it's a primary game surface alongside WebUI.
 3. **Theory is exhaustive** — the gap is not in theory, it's in implementation. Add code, not docs.
-4. **YAGNI**: cut dead weight ruthlessly. PONYTAIL-AUDIT-v2 already identified the cuts.
+4. **YAGNI**: cut dead weight ruthlessly.
 5. **No regressions**: every iteration must keep all tests passing.
 6. **Commit discipline**: one logical change per commit. Push to BOTH remotes after each.
 
-## Final Status — ALL P0 + P1 + MOST P2 + ALL P3 COMPLETE
+---
 
-| # | ID | Title | Dim | Effort | Status | Commit |
-|---|-----|-------|-----|--------|--------|--------|
-| 1 | BUG | LLM bypass — narrative echoed user's answer | Tech | Med | ✅ | 7619c2d |
-| 2 | R4 | Verbose mode merged into dev mode | Exp | Low | ✅ | 8cfd88a |
-| 3 | R1 | Profile show rewrite as narrative letter | Exp | Med | ✅ | 1121155 |
-| 4 | U2 | Integration ritual at session end | Eff | High | ✅ | 00f7b86 |
-| 5 | Y4 | Cut CCI numeric display in non-dev | Exp | Low | ✅ | 0c6827c |
-| 6 | R2 | Status page de-quantification | Exp | Low | ✅ | 0c6827c |
-| 7 | U4 | Felt-sense indicators replace clinical metrics | Exp+Eff | Med | ✅ | 0c6827c |
-| 8 | F1 | VeilFilter expansion (achieved via Y4+R2+R1+R4) | Exp | Med | ✅ | (combined) |
-| 9 | U1 | Embodied pause protocol (5s breath cue) | Eff | Med | ✅ | beee5fd |
-| 10 | U3 | Catalyst mode LLM prompts | Eff | High | ✅ | 0a115ba |
-| 11 | R5 | Thinking indicator (ora spinner) | Exp | Med | ✅ | beee5fd |
-| 12 | Y5 | Cut per-line stage bars in status | Exp | Low | ✅ | 0c6827c |
-| 13 | U5 | Progressive vocabulary unlock | Exp | Med | ✅ (deferred) | — |
-| 14 | R3 | Glossary testimonials replace clinical definitions | Exp | Med | ✅ | e5da3e5 |
-| 15 | F2 | Profile system split (partial via U2+R1) | Exp+Eff | High | ✅ (partial) | (combined) |
-| 16 | F3 | Session loop restructure (partial via U1+U2) | Eff | High | ✅ (partial) | (combined) |
-| 17 | Y1 | Cut 36 unreferenced TTF files | Tech | Low | ✅ | 3b5d64b |
-| 18 | Y2 | Cut 9 dead usecase files | Tech | Low | ✅ | 3b5d64b |
-| 19 | Y3 | Hide --force-shadow (already done) | Exp | Zero | ✅ | (existing) |
+## Completed Work
 
-## Summary
+### Mysterium Rename (CCRPG → Mysterium)
+- ✅ 225 files renamed across entire codebase
+- ✅ Package name, CLI command, config dirs, env vars, types, docs, UI, PWA manifest
+- ✅ 793 tests passing, build succeeds, workspace-lint clean
 
-**16 of 18 recommendations fully implemented. 2 partially implemented (F2, F3) via the
-other changes. 1 deferred (U5 — progressive vocabulary unlock requires deeper architecture
-changes that are out of scope for this iteration).**
+### Documentation Architecture Audit
+- ✅ 104 files catalogued across 10 directories
+- ✅ DOC-ARCHITECTURE-AUDIT-2026-07-24.md produced
+- ✅ DOC-REAUDIT-2026-07-24.md produced
+- ✅ 47 superseded documents archived to organized archive/ subdirectories
 
-### Key outcomes:
-- **Veil principle restored**: all player-facing surfaces now use qualitative felt-sense
-  language instead of clinical metrics. CCI numbers, percentages, progress bars, and
-  categorized pattern lists are all gone (available via --dev for engineers).
-- **Catalyst→experience→integration cycle closed**: the integration ritual at session end
-  captures the player's reflection and surfaces it in the next session's opening.
-- **LLM bypass bug fixed**: fallback narratives no longer echo the user's raw answer.
-  New `buildFallbackNarrative()` generates Veil-compliant reflective prose.
-- **Catalyst mode active**: the LLM now pushes back on intellectualizing, dodging,
-  repeating, and bypassing — converting the mirror into a catalyst.
-- **Embodied pause protocol**: 5-second breath cue before each encounter in interactive mode.
-- **Thinking indicator**: ora spinner during LLM round-trips eliminates the "is it broken?" friction.
-- **Dead weight cut**: 36 TTF files (~3.5 MB) + 9 dead usecase files (~1,475 LOC) removed.
+### Documentation Restructuring
+- ✅ Phase 1: Archive 47 dead/superseded files
+- ✅ Phase 2: Rewrite 7 root-level meta docs (00-vision, 01-first-principles, 02-glossary, 03-methodology, INDEX, REQUIREMENTS, ONBOARDING-REDESIGN-PLAN §5)
+- ✅ Phase 3: Update 19 stale docs (lines/*.md, stages/*.md) + create 8 architecture docs
+- ✅ Phase 4: Validate — 793 tests pass, build succeeds, workspace-lint clean
 
-### Test results:
-- **576/576 tests pass** (down from 604 because 4 test files for dead usecase code were removed)
-- **Lint: clean** (0 errors, 0 warnings)
-- **tsc: clean** (no type errors)
-- **Build: succeeds** (pre-existing PWA glob warning is unrelated)
-- **Smoke test: all CLI subcommands work correctly**
-- **Full session smoke test: catalyst mode fires, integration ritual captures, next session surfaces**
+### Epistemological Refactor
+- ✅ Moved STAGE-ASSESSMENT-ARCHITECTURE.md → architecture/09-stage-assessment-architecture.md
+- ✅ Moved curriculum-authoring.md → architecture/10-curriculum-authoring.md
+- ✅ Fixed cross-references across all docs (STAGE-ASSESSMENT-ARCHITECTURE, curriculum-authoring)
+- ✅ Created Mysterium Identity Document (architecture/00-mysterium-identity.md)
+- ✅ Updated PROGRESS.md with current state
 
-### Commits (all pushed to GitHub origin):
-- 7619c2d — fix(P0-BUG): LLM bypass echoed user's answer as narrative
-- 8cfd88a — fix(P0-R4): merge --verbose into --dev (Veil principle)
-- 1121155 — fix(P0-R1): rewrite profile show as narrative letter
-- 00f7b86 — feat(P0-U2): integration ritual at session end
-- 0c6827c — feat(P1-Y4+R2+U4+P2-Y5): felt-sense indicators replace clinical metrics
-- beee5fd — feat(P1-U1+R5): embodied pause protocol + thinking indicator
-- 0a115ba — feat(P1-U3): catalyst mode LLM prompts — push back on intellectualizing
-- 3b5d64b — chore(P3-Y1+Y2): cut dead weight — 36 TTF files + 9 usecase files
-- e5da3e5 — feat(P2-R3): glossary testimonials replace clinical definitions
-- fdc649b — fix(P2-Y5): pre-play status also uses qualitative format
-- 584a5f1 — feat(P2-U5): progressive vocabulary unlock — terms unlock through play
-- f41d091 — feat(NEXT-2): session runtime expectation-setting
-- 414173a — feat(NEXT-3): deeper catalyst mode triggers — reference player's specific patterns
-- 2778d81 — feat(NEXT-4): felt-sense feedback between sessions — resonance shift surfacing
+---
 
-### Next iteration (re-audit priorities) — ALL COMPLETE:
-- ✅ NEXT-1 (U5): Progressive vocabulary unlock — Tier 1 (always) + Tier 2 (unlock through play) + Advanced (--dev only)
-- ✅ NEXT-2: Session runtime expectation-setting — "Each encounter takes about 20 seconds..."
-- ✅ NEXT-3: Deeper catalyst mode triggers — LLM now references player's actual words and patterns
-- ✅ NEXT-4: Felt-sense feedback between sessions — resonance shift surfacing at session start
+## Current Documentation Structure
 
-### GitLab push status:
-GitLab push fails with 403 (token may not have GitLab access or repo doesn't exist on GitLab).
-GitHub pushes all succeed. The AGENTS.md §7.5 protocol says to push to BOTH remotes, but
-the GitLab remote appears to not be configured for this token. All commits are on GitHub.
+```
+docs/
+├── 00-vision.md                          ← Contemplative practice vision
+├── 01-first-principles.md                ← 8 principles (no ATB references)
+├── 02-glossary.md                        ← Updated with curriculum/shadow/polarity terms
+├── 03-research-methodology.md            ← Research methodology
+├── INDEX.md                              ← Documentation index (updated)
+├── REQUIREMENTS.md                       ← Current system requirements
+├── PROGRESS.md                           ← This file
+├── CHANGELOG.md                          ← Version history
+├── ONBOARDING-REDESIGN-PLAN.md           ← Binary-search composite assessment
+├── RED-TEAM-AUDIT-DEFINITIVE.md          ← Historical (kept for context)
+│
+├── architecture/                         ← IMPLEMENTATION DOCS (11 files)
+│   ├── 00-mysterium-identity.md          ← WHAT the system IS
+│   ├── 00-overview.md                    ← Binding architectural contract
+│   ├── 01-core-engine.md                 ← Significator, CCI, AutoMode, Scheduler
+│   ├── 02-encounter-system.md            ← 64 modules, 7 modalities
+│   ├── 03-curriculum-system.md           ← Holonic curriculum, depth assessment
+│   ├── 04-shadow-work.md                 ← 4-quadrant shadow model
+│   ├── 05-polarity-engine.md             ← STO/STS crystallization
+│   ├── 06-llm-integration.md             ← LLM as voice, not brain
+│   ├── 07-persistence.md                 ← Significator serialization, encryption
+│   ├── 08-rendering-layer.md             ← CLI-first, WebUI-second
+│   ├── 09-stage-assessment-architecture.md ← 64-module assessment system
+│   └── 10-curriculum-authoring.md        ← How to author curriculum holons
+│
+├── foundations/                           ← THEORETICAL SUBSTRATE (37 files)
+│   ├── 00-integral-theory.md             ← AQAL as master lens
+│   ├── 01-aqal-quadrants.md              ← UL/UR/LL/LR specification
+│   ├── 02-eight-stages-overview.md       ← 8-stage macro-progression
+│   ├── 03-lines-of-intelligence-overview.md ← 8 lines specification
+│   ├── 04-states-of-consciousness.md     ← Gross/Subtle/Causal/Witness/NonDual
+│   ├── 05-drives-and-polarities.md       ← 4 drives as motivational primitives
+│   ├── 06-law-of-one-correspondence.md   ← Canonical cosmology
+│   ├── 07-neuroscience-of-development.md ← Brain-based evidence
+│   ├── 08-psychophysics-and-staircase.md ← Adaptive difficulty
+│   ├── 09-flow-and-engagement-theory.md  ← Flow state theory
+│   ├── 10-shadow-and-pathology.md        ← 256-shadow model
+│   ├── 11-game-modalities.md             ← 7 modalities
+│   ├── 12-drive-assessment-mechanics.md  ← Per-module drive probes
+│   ├── 13-architecture-of-consciousness.md ← 5-layer topography
+│   ├── 14-game-as-developmental-catalyst.md ← Catalyst→experience→integration
+│   ├── 15-macro-scale-archetypal-mind.md ← Pure theory: Significator/Transformation/Great Way/Choice
+│   ├── 16-significator-architecture.md   ← PlayerProfile as Significator
+│   ├── 17-transformation-mechanics.md    ← Frame-change at stage thresholds
+│   ├── 18-great-way-world-architecture.md ← World as PESTLE-mapped holons
+│   ├── 19-choice-and-polarity-engine.md  ← STO/STS vectors
+│   ├── 20-veil-of-forgetting.md          ← Implicit-operation principle
+│   ├── 21-incarnation-architecture.md    ← MASTER SYNTHESIS
+│   ├── 22-holon-context-engine.md        ← LLM-driven world
+│   ├── 23-polarity-ontology.md           ← 64-cell polarity texture catalogue
+│   ├── 24-encounter-scheduler.md         ← Encounter selection algorithm
+│   ├── 25-cumulative-consciousness-index.md ← CCI composite metric
+│   ├── 26-unified-core-architecture.md   ← Unified core architecture
+│   ├── 27-auto-mode-strategy-engine.md   ← Auto-mode session strategy
+│   ├── 28-holoos-open-joints-mapping.md  ← HoloOS mapping
+│   ├── 29-meta-learning-science.md       ← Spaced repetition, desirable difficulties
+│   ├── 30-holonic-curriculum-architecture.md ← 5-level holarchy
+│   ├── 31-depth-assessment-model.md      ← 6-level depth spectrum
+│   ├── 32-agentic-curriculum-linter.md   ← Curriculum validation
+│   ├── 33-self-directed-dashboard.md     ← Player-facing dashboard
+│   ├── 34-curriculum-engine-bridge.md    ← Integration with existing engines
+│   ├── 35-framework-complexity-curriculum-mapping.md ← Framework-complexity mapping
+│   └── 36-curriculum-upgrade-plan.md     ← Implementation plan
+│
+├── concept-drafts/                       ← 512 game concept documents
+├── lines/                                ← Per-line documentation (8 files, ATB refs removed)
+├── stages/                               ← Per-stage documentation (8 files, ATB refs removed)
+├── narrative/                            ← Narrative architecture
+├── progression/                          ← Progression overview
+├── audits/                               ← Active audits
+├── superpowers/                          ← Skills, specs, plans
+└── archive/                              ← 47 superseded documents
+```
+
+---
+
+## Key Test Results
+
+| Metric | Value |
+|---|---|
+| Tests passing | 793/793 |
+| Build | Succeeds |
+| Workspace-lint | Clean |
+| TypeScript | No errors |
+
+---
+
+## Git Remotes
+
+- **GitHub:** `origin` → `https://github.com/ishan-parihar/CCRPG.git`
+- **GitLab:** `gitlab` → `https://gitlab.com/ishan-parihar/CCRPG.git`
+
+---
+
+## Next Steps
+
+1. Flesh out architecture docs (04-shadow, 05-polarity, 06-llm, 07-persistence, 08-rendering) with more detail and cross-references to foundations/
+2. Write cross-reference map (epistemological chain) connecting all docs
+3. End-to-end CLI fresh-user test to verify nothing is broken after rename and restructuring

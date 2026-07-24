@@ -1,6 +1,6 @@
 # 26 -- Unified Core Architecture
 
-> **Lateral:** The modular architecture overview -- how the 64-cell assessment module system is the SINGLE building block serving all gameplay purposes (onboarding, encounters, practice, shadow work), the module lifecycle from creation to re-scheduling, the renderer abstraction, and the relationship between the module contract, the encounter scheduler, and the CCI. This is the architectural thesis that unifies STAGE-ASSESSMENT-ARCHITECTURE's technical spec with the greater-cycle engines.
+> **Lateral:** The modular architecture overview -- how the 64-cell assessment module system is the SINGLE building block serving all gameplay purposes (onboarding, encounters, practice, shadow work), the module lifecycle from creation to re-scheduling, the renderer abstraction, and the relationship between the module contract, the encounter scheduler, and the CCI. This is the architectural thesis that unifies architecture/09-stage-assessment-architecture's technical spec with the greater-cycle engines.
 >
 > **Depends on:** 11, 12, 16, 24, 25
 > **Referenced by:** 27 (auto-mode strategy engine)
@@ -13,7 +13,7 @@ This document answers: **How does the entire system compose at the architectural
 
 No existing document covers this:
 
-- `STAGE-ASSESSMENT-ARCHITECTURE` defines the module contract, per-line stage definitions, scoring rubrics, and file structure -- but presents them as a standalone assessment system without connecting to the greater-cycle engines.
+- `architecture/09-stage-assessment-architecture` defines the module contract, per-line stage definitions, scoring rubrics, and file structure -- but presents them as a standalone assessment system without connecting to the greater-cycle engines.
 - Foundations/24 defines the encounter scheduler -- but treats modules as opaque items in a pool.
 - Foundations/16 defines the Significator -- but does not specify how modules mutate it.
 - Foundations/21 defines the incarnation architecture synthesis -- but at the conceptual/narrative level, not the code architecture level.
@@ -28,20 +28,20 @@ This document bridges all of the above: it specifies how ONE module type simulta
 
 ### 2.1 The four modes of module execution
 
-Every module in the 64-cell pool (8 lines x 8 stages; see STAGE-ASSESSMENT-ARCHITECTURE Part II for the cell structure) can execute in four modes:
+Every module in the 64-cell pool (8 lines x 8 stages; see architecture/09-stage-assessment-architecture Part II for the cell structure) can execute in four modes:
 
 | Mode | Trigger | Scoring focus | Session context |
 |---|---|---|---|
 | **Calibration** | Onboarding binary search | Pass/fail at this stage + confidence | Initial 2-3 sessions |
 | **Encounter** | Scheduler selection (foundations/24) | Full multi-parameter scoring + polarity trace + shadow detection | Regular gameplay |
 | **Practice** | Player-initiated (voluntary) | Capacity development only; no shadow scoring; theta-decay arrest | Player choice |
-| **Shadow work** | Holonic return trigger (STAGE-ASSESSMENT-ARCHITECTURE Part XII) | Drive-health scoring; shadow mode rubric | Scheduler or auto-mode initiated |
+| **Shadow work** | Holonic return trigger (architecture/09-stage-assessment-architecture Part XII) | Drive-health scoring; shadow mode rubric | Scheduler or auto-mode initiated |
 
 ```ts
 type ModuleExecutionMode = 'calibration' | 'encounter' | 'practice' | 'shadow_work';
 
 interface ModuleExecution {
-  module: StageAssessment;                  // the 64-cell module (STAGE-ASSESSMENT-ARCHITECTURE Part II)
+  module: StageAssessment;                  // the 64-cell module (architecture/09-stage-assessment-architecture Part II)
   mode: ModuleExecutionMode;
   encounterSpec: EncounterSpec | null;      // null in practice mode; from scheduler otherwise
   scoringOverride: ScoringMode;            // determines which rubric applies
@@ -55,7 +55,7 @@ type ScoringMode = 'capacity' | 'shadow' | 'calibration' | 'practice';
 The same cognitive/emotional/moral tasks reveal different information depending on what you measure:
 
 - **Capacity scoring** (calibration + encounter): Can the player perform at this stage? Measures accuracy, speed, depth, transfer.
-- **Shadow scoring** (shadow work): Does the player have a healthy relationship to this capacity? Measures drive-health probes (per foundations/12 and STAGE-ASSESSMENT-ARCHITECTURE Part XI section 11.2).
+- **Shadow scoring** (shadow work): Does the player have a healthy relationship to this capacity? Measures drive-health probes (per foundations/12 and architecture/09-stage-assessment-architecture Part XI section 11.2).
 - **Practice scoring** (practice): Is the player improving? Measures delta from previous performance. No shadow or polarity recording.
 
 The MODULE does not know which mode it is in. The ENGINE wraps it with the appropriate scoring rubric and consequence processing. This separation is the key to architectural simplicity.
@@ -100,11 +100,11 @@ All 64 modules exist in the pool. Each is registered with its metadata:
 
 ```ts
 interface RegisteredModule {
-  assessment: StageAssessment;            // from STAGE-ASSESSMENT-ARCHITECTURE Part II
+  assessment: StageAssessment;            // from architecture/09-stage-assessment-architecture Part II
   line: Line;
   stage: Stage;
   modalities: GameModality[];             // which modalities can render this module
-  driveProbes: DriveProbeSet;             // from STAGE-ASSESSMENT-ARCHITECTURE Part XI
+  driveProbes: DriveProbeSet;             // from architecture/09-stage-assessment-architecture Part XI
   cooldownUntil: number | null;           // timestamp when re-eligible (null = always eligible)
   lastExecutedAt: number | null;
   executionCount: number;
@@ -153,10 +153,10 @@ On module completion (all tasks finished or player exits at a checkpoint), the s
 
 ```ts
 interface ModuleScoring {
-  // Capacity scoring (from STAGE-ASSESSMENT-ARCHITECTURE Part IV rubrics)
+  // Capacity scoring (from architecture/09-stage-assessment-architecture Part IV rubrics)
   capacityResult: AssessmentResult;
 
-  // Shadow scoring (from STAGE-ASSESSMENT-ARCHITECTURE Part XI)
+  // Shadow scoring (from architecture/09-stage-assessment-architecture Part XI)
   shadowResult: ShadowAssessmentResult | null;  // null if mode !== 'shadow_work'
 
   // Polarity trace (from foundations/19 section 4.1)
@@ -312,7 +312,7 @@ Every component in the pipeline either reads the Significator (as immutable snap
 
 ### 5.1 The rendering layer contract
 
-The game/ layer never knows WHAT developmental assessment is running. It only knows HOW to render specific task types. This separation is specified in STAGE-ASSESSMENT-ARCHITECTURE Part IX.
+The game/ layer never knows WHAT developmental assessment is running. It only knows HOW to render specific task types. This separation is specified in architecture/09-stage-assessment-architecture Part IX.
 
 ```ts
 // The renderer abstraction (game layer)
@@ -334,7 +334,7 @@ interface AssessmentSceneContract {
 
 ### 5.2 Renderer catalogue
 
-Per STAGE-ASSESSMENT-ARCHITECTURE Part IX, the renderer set:
+Per architecture/09-stage-assessment-architecture Part IX, the renderer set:
 
 | Renderer | Task types handled | Lines primarily served |
 |---|---|---|
@@ -415,13 +415,13 @@ The complete module contract is specified across multiple documents. This sectio
 
 | Contract element | Source document | Section |
 |---|---|---|
-| `StageAssessment` interface | STAGE-ASSESSMENT-ARCHITECTURE | Part II section 2.2 |
-| Per-line stage definitions | STAGE-ASSESSMENT-ARCHITECTURE | Part III |
-| Multi-parameter scoring rubrics | STAGE-ASSESSMENT-ARCHITECTURE | Part IV (implied by rubric fields) |
-| Drive-health probes | STAGE-ASSESSMENT-ARCHITECTURE | Part XI section 11.2 |
-| Shadow scoring output | STAGE-ASSESSMENT-ARCHITECTURE | Part XI section 11.4 |
-| Dual-mode operation | STAGE-ASSESSMENT-ARCHITECTURE | Part XI section 11.1 |
-| Holonic return schedule | STAGE-ASSESSMENT-ARCHITECTURE | Part XII |
+| `StageAssessment` interface | architecture/09-stage-assessment-architecture | Part II section 2.2 |
+| Per-line stage definitions | architecture/09-stage-assessment-architecture | Part III |
+| Multi-parameter scoring rubrics | architecture/09-stage-assessment-architecture | Part IV (implied by rubric fields) |
+| Drive-health probes | architecture/09-stage-assessment-architecture | Part XI section 11.2 |
+| Shadow scoring output | architecture/09-stage-assessment-architecture | Part XI section 11.4 |
+| Dual-mode operation | architecture/09-stage-assessment-architecture | Part XI section 11.1 |
+| Holonic return schedule | architecture/09-stage-assessment-architecture | Part XII |
 | Supported modalities per module | Foundations/11 | Modality x line affinity matrix |
 | Drive probe specifications | Foundations/12 | Per-module drive probes |
 | Polarity trace extraction | Foundations/19 | Section 4.1 |
@@ -483,7 +483,7 @@ function scorePartialCompletion(
 
 ## 9. Implementation structure
 
-The unified architecture maps to the following file structure (extending STAGE-ASSESSMENT-ARCHITECTURE Part IX):
+The unified architecture maps to the following file structure (extending architecture/09-stage-assessment-architecture Part IX):
 
 ```
 src/

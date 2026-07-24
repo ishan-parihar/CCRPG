@@ -59,7 +59,7 @@ docs/
 │   ├── 00-overview.md
 │   └── 01-...08-...
 │
-├── STAGE-ASSESSMENT-ARCHITECTURE.md  ← module contract, composition rules
+├── architecture/09-stage-assessment-architecture.md  ← module contract, composition rules
 ├── ONBOARDING-REDESIGN-PLAN.md       ← binary-search composite assessment
 │
 ├── progression/                      ← how the player grows
@@ -68,7 +68,7 @@ docs/
 ├── narrative/                        ← story as developmental scaffolding
 │   └── 00-narrative-architecture.md
 │
-├── curriculum-authoring.md           ← how to author curriculum holons
+├── architecture/10-curriculum-authoring.md           ← how to author curriculum holons
 │
 ├── concept-drafts/                   ← 512 game concept documents
 │

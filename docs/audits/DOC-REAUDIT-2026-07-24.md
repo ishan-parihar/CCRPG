@@ -48,8 +48,8 @@ The naming change from CCRPG → Mysterium reflects v3. But most docs still desc
 | 14 | `RED-TEAM-AUDIT-DEFINITIVE.md` | ✅ LIVING | The definitive audit | Most accurate snapshot of system state. Should be the ONLY red-team audit kept active. |
 | 15 | `RED-TEAM-AUDIT-FULL-FLOW.md` | ❌ DEAD | Historical audit (June 21) | Superseded by DEFINITIVE. |
 | 16 | `REQUIREMENTS.md` | ⚠️ STALE | "Document of documents" — the contract | References non-existent directories (`architecture/`, `ux/`, `validation/`, `roadmap/`). References `MVP-BLUEPRINT.md` (in root-archive). Describes 87-document plan that was never completed. Still references ATB combat terminology. |
-| 17 | `STAGE-ASSESSMENT-ARCHITECTURE.md` | ✅ LIVING | Module contract, composition rules, 4 execution modes | The most important architecture doc. Partially implemented. Accurate description of the assessment module system. |
-| 18 | `curriculum-authoring.md` | ✅ LIVING | How to author curriculum holons | Accurate. References Mysterium (post-rename). |
+| 17 | `architecture/09-stage-assessment-architecture.md` | ✅ LIVING | Module contract, composition rules, 4 execution modes | The most important architecture doc. Partially implemented. Accurate description of the assessment module system. |
+| 18 | `architecture/10-curriculum-authoring.md` | ✅ LIVING | How to author curriculum holons | Accurate. References Mysterium (post-rename). |
 
 **Root-level summary:** 1 living, 12 stale/dead, 5 contradictory.
 
@@ -347,7 +347,7 @@ docs/
 │
 ├── narrative/                        ← KEEP (update ATB references)
 ├── progression/                      ← KEEP (update ATB references)
-└── curriculum-authoring.md           ← KEEP (already accurate)
+└── architecture/10-curriculum-authoring.md           ← KEEP (already accurate)
 ```
 
 ### 7.2 Files to Move to archive/ (30 files)
@@ -415,7 +415,7 @@ docs/
 
 1. **Read `00-vision.md` FIRST** — but only AFTER it's rewritten. Currently it describes a fighting game that no longer exists.
 2. **Read `foundations/` in order (00→36)** — this is the only part of the docs tree that is fully accurate and complete. The theory is the bedrock.
-3. **Don't read `lines/`, `stages/`, `narrative/`, `progression/` for game-design guidance** — they still reference ATB combat. Read `STAGE-ASSESSMENT-ARCHITECTURE.md` and `concept-drafts/README.md` instead for the actual game design.
+3. **Don't read `lines/`, `stages/`, `narrative/`, `progression/` for game-design guidance** — they still reference ATB combat. Read `architecture/09-stage-assessment-architecture.md` and `concept-drafts/README.md` instead for the actual game design.
 4. **Don't read any `RED-TEAM-AUDIT-*` except DEFINITIVE** — the others are historical and contradictory.
 5. **Don't trust `REQUIREMENTS.md` or `INDEX.md` for directory structure** — they reference directories that don't exist. Use the actual filesystem.
 

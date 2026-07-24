@@ -13,7 +13,7 @@
 5. `foundations/00-...36-...` (in order — **00-09 substrate, 10-14 lesser cycle, 15-27 greater cycle, 28-34 curriculum expansion, 35-36 curriculum upgrade plan**)
 6. `lines/00-overview-multi-line.md` then `01-...08-...` (any order)
 7. `stages/00-overview-eight-stages.md` then `01-...08-...` (in order)
-8. `STAGE-ASSESSMENT-ARCHITECTURE.md`
+8. `architecture/09-stage-assessment-architecture.md`
 9. `architecture/00-overview.md` → `architecture/08-rendering-layer.md`
 10. `concept-drafts/README.md` then a sampled module to see the lesser-cycle design briefs in concrete form
 11. `CHANGELOG.md` — what changed, and when.
@@ -110,7 +110,7 @@
 
 ### Architecture (9)
 
-- `STAGE-ASSESSMENT-ARCHITECTURE.md` — module contract, composition rules, 4 execution modes
+- `architecture/09-stage-assessment-architecture.md` — module contract, composition rules, 4 execution modes
 - `ONBOARDING-REDESIGN-PLAN.md` — binary-search composite assessment for Significator seeding
 - `architecture/00-overview.md` — the binding architectural contract
 - `architecture/01-core-engine.md` — Significator, CCI, AutoMode, Scheduler
@@ -126,7 +126,7 @@
 
 - `progression/00-progression-overview.md` — how the player ascends
 - `narrative/00-narrative-architecture.md` — story as scaffolding for development
-- `curriculum-authoring.md` — how to author curriculum holons
+- `architecture/10-curriculum-authoring.md` — how to author curriculum holons
 
 ### `concept-drafts/` (512)
 
