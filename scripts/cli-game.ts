@@ -2393,6 +2393,27 @@ async function runDirectQuestioningSession(
     } catch { /* best-effort — don't break session start */ }
   }
 
+  // UX-PHASE-2: Cross-session practice hint recall. Surface the previous
+  // session's practice invitation at the start of each new session, creating
+  // a feedback loop that connects sessions and encourages real-world practice.
+  if (!JSON_MODE) {
+    try {
+      const profileDir = getActiveProfileDir();
+      if (profileDir) {
+        const goalsPath = path.join(profileDir, 'goals.yaml');
+        if (fs.existsSync(goalsPath)) {
+          const goalsContent = fs.readFileSync(goalsPath, 'utf8');
+          const focusMatch = goalsContent.match(/active_focus:\s*"([^"]+)"/);
+          if (focusMatch && focusMatch[1] && focusMatch[1].length > 10) {
+            console.log(`\n  ${chalk.dim('Last time, you were invited to carry this practice:')}`);
+            console.log(`  ${chalk.italic(focusMatch[1])}`);
+            console.log(`  ${chalk.dim('Notice what arose. Carry it gently into today.')}\n`);
+          }
+        }
+      }
+    } catch { /* best-effort — don't break session start */ }
+  }
+
   // P1-F10 (Fresh-User UX Audit): Make the adaptive session focus perceptible.
   // The game silently shifts its session strategy based on the player's
   // surfacing shadows (e.g. from 'balanced-development' to 'shadow-integration')
