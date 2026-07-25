@@ -494,10 +494,17 @@ const USER_ANSWERS: string[] = [];
       const fileLines = content.split('\n');
       USER_ANSWERS.push(...fileLines);
       // UX-PHASE-3: Display loaded answer count for transparency.
+      // P6E: Warn if answer count is suspiciously low (< 3) — may indicate
+      // a file with excessive blank lines or a mismatch with prompt count.
       if (!JSON_MODE && !HEADLESS) {
         const answerCount = fileLines.filter(l => l.trim() !== '').length;
         if (answerCount > 0) {
           info('answers', `Loaded ${answerCount} answer${answerCount !== 1 ? 's' : ''} from file`);
+          if (answerCount < 3) {
+            warn(`Only ${answerCount} non-empty answer${answerCount !== 1 ? 's' : ''} found — add more lines to the file for richer encounters.`);
+          }
+        } else {
+          warn('No non-empty answers found in file — all lines were blank. The game will run in reflection-only mode for these encounters.');
         }
       }
     } catch (err: any) {
@@ -717,10 +724,17 @@ function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[
       const q = s.quadrant ?? 'Unknown';
       quadrantCounts[q] = (quadrantCounts[q] ?? 0) + 1;
     }
-    const shadowDesc = Object.entries(quadrantCounts)
-      .map(([q, count]) => {
-        const desc = describeShadowMovement(q);
-        return count > 1 ? `${desc} (${count}×)` : desc;
+    // Group by line to show WHERE patterns live, with unique quadrant descriptions
+    const lineDescs: Record<string, Set<string>> = {};
+    for (const s of activeShadows) {
+      const line = s.line ?? 'Unknown';
+      if (!lineDescs[line]) lineDescs[line] = new Set();
+      lineDescs[line].add(describeShadowMovement(s.quadrant ?? 'Unknown'));
+    }
+    const shadowDesc = Object.entries(lineDescs)
+      .map(([line, descs]) => {
+        const desc = [...descs].join(' / ');
+        return `${line} — ${desc}`;
       })
       .join(', ');
     info('surfaced', `${activeShadows.length} pattern${activeShadows.length !== 1 ? 's' : ''} that want attention: ${shadowDesc}`);
