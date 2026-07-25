@@ -19,6 +19,7 @@
  * surfaces the use of this content to the player.
  */
 // Audit: tighten import paths now that the file lives at src/core/fallback/
+import * as fs from 'fs';
 import type { Modality } from '../domain/enums.js';
 import type { Line } from '../domain/Line.js';
 import type { Stage } from '../domain/Stage.js';
@@ -1363,9 +1364,7 @@ export function loadAskedPrompts(profileDir: string | null): void {
   _askedPrompts.clear();
   if (!profileDir) return;
   try {
-    const fs = require('fs');
-    const path = require('path');
-    const file = path.join(profileDir, 'asked-prompts.json');
+    const file = profileDir + '/asked-prompts.json';
     if (fs.existsSync(file)) {
       const data = JSON.parse(fs.readFileSync(file, 'utf8'));
       if (Array.isArray(data.prompts)) {
@@ -1384,15 +1383,13 @@ export function loadAskedPrompts(profileDir: string | null): void {
 export function saveAskedPrompts(profileDir: string | null): void {
   if (!profileDir) return;
   try {
-    const fs = require('fs');
-    const path = require('path');
     fs.mkdirSync(profileDir, { recursive: true });
     // Cap the set to the most recent N prompts (Set preserves insertion order)
     const prompts = [..._askedPrompts];
     const capped = prompts.length > ASKED_PROMPTS_MAX
       ? prompts.slice(prompts.length - ASKED_PROMPTS_MAX)
       : prompts;
-    const file = path.join(profileDir, 'asked-prompts.json');
+    const file = profileDir + '/asked-prompts.json';
     fs.writeFileSync(file, JSON.stringify({ prompts: capped }, null, 2), 'utf8');
   } catch { /* best-effort — don't break session end */ }
 }

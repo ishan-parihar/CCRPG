@@ -918,7 +918,7 @@ export async function endSessionAsync(
   let macroEventsAdvanced = 0;
   let updatedWorld = world;
   if (world && world.activeMacroEvents.length > 0) {
-    const { advanceMacroEvent, resolveMacroEvent } = await import('./engines/MacroCatalystEngine.js');
+    const { advanceMacroEvent, resolveMacroEvent } = require('./engines/MacroCatalystEngine.js');
     const existingStates = world.macroEventStates ?? [];
     const newStates: { eventId: string; state: import('./engines/MacroCatalystEngine.js').MacroEventState }[] = [];
     const resolvedEvents: string[] = [];
