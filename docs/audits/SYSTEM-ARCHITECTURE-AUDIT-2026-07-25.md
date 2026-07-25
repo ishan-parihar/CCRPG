@@ -136,6 +136,21 @@ Document 35 defines the critical insight:
 
 **Verdict:** Doc 35 is a *design spec* that has not been implemented into the code. The type system has the building blocks (HolonLevel, DepthLevel, Isomorphism), but the framework-complexity tier as a first-class concept is absent.
 
+### 3.4 Post-Grilling Re-Analysis (2026-07-25)
+
+After a grill-me session, the audit's gap analysis was re-evaluated. The key insight: **depth IS framework complexity.** A player at "analyzed" depth IS operating at meta-systematic framework complexity. This means:
+
+**False Positives (4 of 9 gaps):**
+- `FrameworkTier` type — redundant with `DepthLevel`
+- `holonLevelToTier()` function — implicit in `CurriculumHolon.depthMeta.targetDepthRange`
+- `frameworkTier` on `ConceptState` — redundant with `ConceptState.depthLevel`
+- 17 IST stages tracking — Mysterium's 7 depth levels are the practical collapse
+
+**Real Gaps (3 of 9, reframed as depth-awareness):**
+1. ~~CurriculumBridge wiring~~ — **FIXED in commit `4e7f58f`**: bidirectional signal flow now wired
+2. Isomorphism weighting in CCI — **FIXED in commit `4e7f58f`**: integration density now weights cross-domain isomorphisms
+3. Depth-aware pedagogy — **NOT YET IMPLEMENTED**: LLM rubric should shift from direct instruction to open inquiry based on depth level
+
 ---
 
 ## 4. Architecture Analysis: Two Systems — Separate or Integrated?
