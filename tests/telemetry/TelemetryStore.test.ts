@@ -47,9 +47,12 @@ describe('TelemetryStore', () => {
     // Raw value should NOT be valid JSON (it is encrypted)
     expect(() => JSON.parse(raw!)).toThrow();
     // Raw value should NOT contain plaintext event data
+    // P0-R1: Removed 'e1' assertion — base64 alphabet includes 'e' and '1',
+    // so 'e1' can appear by chance in valid ciphertext. Only check for
+    // longer plaintext fragments that are statistically impossible in
+    // random ciphertext.
     expect(raw!).not.toContain('encounter_completed');
     expect(raw!).not.toContain('shadow_surfaced');
-    expect(raw!).not.toContain('e1');
   });
 
   it('clear removes stored data', async () => {
