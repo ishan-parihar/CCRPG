@@ -724,20 +724,23 @@ function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[
       const q = s.quadrant ?? 'Unknown';
       quadrantCounts[q] = (quadrantCounts[q] ?? 0) + 1;
     }
-    // Group by line to show WHERE patterns live, with unique quadrant descriptions
-    const lineDescs: Record<string, Set<string>> = {};
-    for (const s of activeShadows) {
-      const line = s.line ?? 'Unknown';
-      if (!lineDescs[line]) lineDescs[line] = new Set();
-      lineDescs[line].add(describeShadowMovement(s.quadrant ?? 'Unknown'));
+    info('surfaced', `${activeShadows.length} pattern${activeShadows.length !== 1 ? 's' : ''} that want attention`);
+    // P8C: Show detailed line-by-line breakdown only in VERBOSE mode
+    if (VERBOSE) {
+      const lineDescs: Record<string, Set<string>> = {};
+      for (const s of activeShadows) {
+        const line = s.line ?? 'Unknown';
+        if (!lineDescs[line]) lineDescs[line] = new Set();
+        lineDescs[line].add(describeShadowMovement(s.quadrant ?? 'Unknown'));
+      }
+      const shadowDesc = Object.entries(lineDescs)
+        .map(([line, descs]) => {
+          const desc = [...descs].join(' / ');
+          return `${line} — ${desc}`;
+        })
+        .join(', ');
+      console.log(`    ${chalk.dim(shadowDesc)}`);
     }
-    const shadowDesc = Object.entries(lineDescs)
-      .map(([line, descs]) => {
-        const desc = [...descs].join(' / ');
-        return `${line} — ${desc}`;
-      })
-      .join(', ');
-    info('surfaced', `${activeShadows.length} pattern${activeShadows.length !== 1 ? 's' : ''} that want attention: ${shadowDesc}`);
   } else {
     info('shadows', `${chalk.green('none surfacing right now — the field is clear')}`);
   }
