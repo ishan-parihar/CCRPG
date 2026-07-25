@@ -45,6 +45,7 @@ import { getCurriculumRegistry } from './curriculum/CurriculumRegistry.js';
 import { seedCurriculumRegistry } from './curriculum/CurriculumSeed.js';
 import { computeLearningAnalytics } from './curriculum/LearningAnalytics.js';
 import { migrateKnowledgeState } from './curriculum/CurriculumMigration.js';
+import { probeCurriculum } from './curriculum/MetaCognitiveProbe.js';
 import { bridgeDevelopmentalToCurriculum, type DevelopmentalNeed } from './curriculum/CurriculumBridge.js';
 
 
@@ -877,7 +878,7 @@ export function endSession(
   sessionState: SessionState,
   now: number,
   world?: WorldState,
-): { sig: Significator; world?: WorldState; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number }; harvestCheck?: { harvestable: boolean; direction: 'STO' | 'STS' | null; reason: string } | null } {
+): { sig: Significator; world?: WorldState; summary: { encountersCompleted: number; shadowsSurfaced: number; shadowsResolved: number; userMatrixSummary?: ReturnType<typeof summarizeUserMatrix>; macroEventsAdvanced?: number; curriculumProbe?: import('./curriculum/MetaCognitiveProbe.js').MetaCognitiveProbeResult }; harvestCheck?: { harvestable: boolean; direction: 'STO' | 'STS' | null; reason: string } | null } {
   const encountersCompleted = sessionState.recentOutcomes.filter(o => o.outcome === 'completed').length;
   const sessionStartMs = sessionState.sessionStartMs ?? now;
   const shadowsSurfaced = sig.shadows.entries.filter(e => e.surfacedAt >= sessionStartMs).length;
@@ -1004,6 +1005,17 @@ export function endSession(
   // Apply retention decay + persist forgetting curves via shared helper.
   finalSig = persistKnowledgeDecay(finalSig, now);
 
+  // META-PROBE: Run meta-cognitive curriculum probe at session end.
+  // This gives the agentic loop a comprehensive health check of the curriculum
+  // system — progression, rubric calibration, and content linting.
+  let curriculumProbe: import('./curriculum/MetaCognitiveProbe.js').MetaCognitiveProbeResult | undefined;
+  if (finalSig.knowledge && finalSig.knowledge.conceptStates.size > 0) {
+    const probeRegistry = getCurriculumRegistry();
+    if (probeRegistry.count() > 0) {
+      curriculumProbe = probeCurriculum(finalSig.knowledge, probeRegistry, now);
+    }
+  }
+
   // Hook 4: onSessionEnd — fire fire-and-forget for the sync path.
   // Callers that need to await the hook (e.g. CLI --agent before stopTDGBridge)
   // should use endSessionAsync() instead, which awaits the hook before returning.
@@ -1012,7 +1024,7 @@ export function endSession(
   return {
     sig: finalSig,
     ...(updatedWorld !== world ? { world: updatedWorld } : {}),
-    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced },
+    summary: { encountersCompleted, shadowsSurfaced, shadowsResolved, userMatrixSummary, macroEventsAdvanced, curriculumProbe },
     // P2-Critical: harvest check result (null unless player is at White stage)
     harvestCheck: harvestResult,
   };
