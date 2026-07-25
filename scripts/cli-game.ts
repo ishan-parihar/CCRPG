@@ -724,9 +724,11 @@ function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[
       const q = s.quadrant ?? 'Unknown';
       quadrantCounts[q] = (quadrantCounts[q] ?? 0) + 1;
     }
-    info('surfaced', `${activeShadows.length} pattern${activeShadows.length !== 1 ? 's' : ''} that want attention`);
-    // P8C: Show detailed line-by-line breakdown only in VERBOSE mode
-    if (VERBOSE) {
+    info('surfaced', `${activeShadows.length} pattern${activeShadows.length !== 1 ? 's' : ''} that want attention`);      // P1-SUMMARY (Fresh-User Re-Audit): Show qualitative shadow descriptions
+      // always, not just in VERBOSE mode. The old code gated this behind VERBOSE
+      // which meant normal players never saw what patterns the game detected.
+      // Showing the movements (in Veil-compliant language) helps the player
+      // understand what the game "saw" in them.
       const lineDescs: Record<string, Set<string>> = {};
       for (const s of activeShadows) {
         const line = s.line ?? 'Unknown';
@@ -739,8 +741,9 @@ function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[
           return `${line} — ${desc}`;
         })
         .join(', ');
-      console.log(`    ${chalk.dim(shadowDesc)}`);
-    }
+      if (shadowDesc) {
+        console.log(`    ${chalk.dim(shadowDesc)}`);
+      }
   } else {
     info('shadows', `${chalk.green('none surfacing right now — the field is clear')}`);
   }
@@ -1153,18 +1156,25 @@ async function runQuickCalibration(): Promise<Record<Line, Stage>> {
 
     altitudes[line] = stage;
 
-    const stageIdx = CAL_STAGES.indexOf(stage as typeof CAL_STAGES[number]);
+    // P1-VEIL (Fresh-User Re-Audit): Replace progress bar + confidence score
+    // with felt-sense language. The old display showed:
+    //   Cognitive ■■○○○○○ Red (confidence: 0.52)
+    // which leaked internal metrics and stage names before the player understood
+    // them. The new display uses descriptive language that preserves the
+    // information without breaking the contemplative frame.
     const color = stageColor(stage);
-    const bar = '■'.repeat(stageIdx + 1) + '○'.repeat(7 - stageIdx);
-    console.log(`  ${line.padEnd(14)} ${bar} ${color(stage)} ${chalk.dim('(confidence: ' + confidence.toFixed(2) + ')')}\n`);
+    const feltLabel = confidence > 0.7 ? 'clear' : confidence > 0.4 ? 'emerging' : 'gathering';
+    console.log(`  ${line.padEnd(14)} ${color(stage)} ${chalk.dim('— ' + feltLabel)}\n`);
   }
 
-  console.log(`\n  ${chalk.bold('Calibration complete:')}`);
+  console.log(`\n  ${chalk.bold('Your starting landscape:')}`);
   for (const line of lines) {
     const s = altitudes[line] ?? 'Red';
     const color = stageColor(s);
     console.log(`    ${line.padEnd(14)} ${color(s)}`);
   }
+  console.log('');
+  console.log(`  ${chalk.dim('These will shift as the game reflects you back to yourself.')}`);
   console.log('');
 
   return altitudes as Record<Line, Stage>;
@@ -1526,7 +1536,9 @@ interface EncounterExecutionOptions {
   readonly responsesPool?: number[];
   readonly consecutivePasses?: Map<string, number>;
   readonly agentSynthesis?: string;
-  readonly persistentAgent?: PersistentAgent | null;
+  // YAGNI-EFF-3: persistentAgent removed. USE_PERSISTENT_AGENT is always false;
+  // the DQ path is the proven architecture. Story-Driven mode can be rebuilt
+  // on top of DQ when needed.
 }
 async function executeEncounter(
   encounter: ScheduledEncounter,
@@ -3162,6 +3174,18 @@ async function runFullSession(): Promise<void> {
     ? await startSessionWithTDG(sig, session)
     : startSession(sig, session);
   applyCurriculumMode(sessionState);
+
+  // P3-CONTINUITY (Fresh-User Re-Audit): Surface previous session's practice
+  // hint at session start. The practice hint is written to goals.yaml at the
+  // end of each session but never read back at the start of the next one.
+  // This breaks the feedback loop — the game tells you what to practice but
+  // never asks if you did.
+  const prevFocus = readActiveFocus();
+  if (prevFocus && prevFocus.length > 5 && !JSON_MODE) {
+    console.log(`\n  ${chalk.italic(chalk.dim('From your last session:'))}`);
+    console.log(`  ${chalk.italic(prevFocus)}`);
+    console.log(`  ${chalk.dim('Did anything arise?')}\n`);
+  }
 
   // Declare mutable state BEFORE the banner so it can reference them
   let currentSig = sig;
