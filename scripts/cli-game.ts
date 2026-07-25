@@ -464,8 +464,7 @@ const ACTIVE_MODEL = opts.model ?? model;
 /** YAGNI-EFF-3 (Efficacy Audit): --agent path removed. USE_PERSISTENT_AGENT
  * is always false. The PersistentAgent / Story-Driven mode code stays in
  * src/core/agent/ for reference, but the CLI never activates it. */
-// YAGNI-EFF-3: USE_PERSISTENT_AGENT removed. Was always false.
-// const USE_PERSISTENT_AGENT = false;
+
 const encounterCount = parseInt(opts.encounters ?? String(fileConfig.session?.defaultEncounters ?? 20), 10);
 
 const FORCE_LINE = opts.line as Line | undefined;
@@ -3504,10 +3503,7 @@ async function runFullSession(): Promise<void> {
     // to supplement Mysterium's detectThreshold signal. This is best-effort + async —
     // no-op when TDG is not running. We emit a tdg_pressure telemetry event so
     // the session can track graph-level readiness alongside the Mysterium signal.
-    if (USE_PERSISTENT_AGENT) {
-      // YAGNI-EFF-3: getTDGTransformationPressure removed. Was always a no-op
-      // when USE_PERSISTENT_AGENT is false.
-    }
+    // YAGNI-EFF-3: getTDGTransformationPressure removed.
 
     // T-3.4: removed the `layers:` prefix + renderLayersCompact leak.
     // Bleed-through is now conveyed narratively through ConsequenceNarrator.
