@@ -92,27 +92,7 @@ const program = new Command()
   // repeatable flags. Without it, commander overwrites on each repeat,
   // keeping only the LAST value (--answer A --answer B → "B", not ["A","B"]).
   // This silently dropped all but the last inline answer.
-  .option('--answer <text...>', 'Inline answer (repeatable — one per question)')
-  .addHelpText('afterAll', `
-
-  Essentials:
-    --new-game          Start fresh (delete saved progress)
-    -e, --encounters N  Number of encounters (default: 20)
-    -l, --line LINE     Focus a specific line (e.g. Cognitive, Emotional)
-    -s, --stage STAGE   Focus a specific stage (e.g. Red, Amber, Orange)
-    --answers <file>    Read answers from a file for headless sessions
-    --answer <text>     Inline answer (repeatable)
-    --skip-calibration  Skip calibration, default all lines to Red
-
-  Advanced:
-    --dev               Developer mode (shows internals, breaks Veil)
-    --json              Machine-readable output
-    --headless          Run without user interaction
-    --no-llm            Disable LLM, use module assessments only
-    -m, --model NAME    Override LLM model name
-    --modality MOD      Force a specific modality
-    --curriculum        Knowledge study mode
-  `);
+  .option('--answer <text...>', 'Inline answer (repeatable — one per question)');
 
 program
   .command('setup')
