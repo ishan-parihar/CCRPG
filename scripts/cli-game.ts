@@ -92,7 +92,10 @@ const program = new Command()
   // repeatable flags. Without it, commander overwrites on each repeat,
   // keeping only the LAST value (--answer A --answer B → "B", not ["A","B"]).
   // This silently dropped all but the last inline answer.
-  .option('--answer <text...>', 'Inline answer (repeatable — one per question)');
+  .option('--answer <text...>', 'Inline answer (repeatable — one per question)')
+  // META-PROBE: --audit runs the MetaCognitiveProbe at session end and prints
+  // the curriculum health report. For agentic loop consumption and dev auditing.
+  .option('--audit', 'Print curriculum meta-cognitive probe after session end')
 
 program
   .command('setup')
@@ -310,6 +313,7 @@ import { seedCurriculumRegistry } from '../src/core/curriculum/CurriculumSeed.js
 import { seedInitialKnowledge } from '../src/core/curriculum/SeedInitialKnowledge.js';
 import { lintRegistry } from '../src/core/curriculum/CurriculumLinter.js';
 import { depthOrdinal, type DepthLevel } from '../src/core/curriculum/types.js';
+import { probeCurriculum, formatProbeSummary } from '../src/core/curriculum/MetaCognitiveProbe.js';
 
 /**
  * --curriculum flag: force curriculum encounters by injecting slots.
@@ -780,6 +784,21 @@ function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[
   if (activeFocus && activeFocus.length > 5) {
     console.log(`\n  ${chalk.dim('For next time:')}`);
     console.log(`  ${chalk.italic(activeFocus)}`);
+  }
+
+  // META-PROBE: Show curriculum health when --audit flag is set.
+  // This gives the agentic loop or developer a comprehensive health check
+  // of progression, rubric calibration, and content linting.
+  if (opts.audit && sig.knowledge && sig.knowledge.conceptStates.size > 0) {
+    try {
+      const registry = getCurriculumRegistry();
+      if (registry.count() > 0) {
+        const probe = probeCurriculum(sig.knowledge, registry, Date.now());
+        console.log(formatProbeSummary(probe));
+      }
+    } catch {
+      // Curriculum probe unavailable — skip silently
+    }
   }
 
   console.log('');

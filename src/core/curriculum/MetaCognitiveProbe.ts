@@ -17,6 +17,7 @@ import type { CurriculumRegistry } from './CurriculumRegistry.js';
 import { auditProgression, type ProgressionAudit } from './ProgressionValidator.js';
 import { calibrateAllRubrics, type RubricCalibrationReport } from './RubricCalibrator.js';
 import { lintRegistry } from './CurriculumLinter.js';
+import { getCachedLintResult } from './CurriculumSeed.js';
 
 // ---------------------------------------------------------------------------
 // Types
@@ -67,8 +68,11 @@ export function probeCurriculum(
     (conceptId) => registry.get(conceptId)?.depthRubric,
   );
 
-  // 3. Content lint
-  const lintResult = lintRegistry(registry);
+  // 3. Content lint — use cached result from seed time when available,
+  // fall back to fresh lint only if cache is unavailable (pre-seed).
+  const cachedLint = getCachedLintResult();
+  const freshLint = cachedLint ? null : lintRegistry(registry);
+  const lintResult = cachedLint ?? { totalErrors: freshLint!.totalErrors, totalWarnings: freshLint!.totalWarnings, overallPassed: freshLint!.overallPassed };
 
   // 4. Compute overall health
   const progressionWeight = 0.4;

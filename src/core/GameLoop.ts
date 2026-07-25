@@ -252,6 +252,16 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
   // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
   const cci = computeCCI(snapshot, migratedSig);
   const strategy = generateSessionStrategy(cci, session, null, migratedSig.knowledge);
+
+  // WIRE-BRIDGE: If the previous session's curriculum probe flagged shouldIntervene,
+  // force the consolidation theme for this session. The flag was persisted to sig
+  // by endSession() when the probe detected critical progression issues or rubric
+  // calibration errors. Clear it after consuming so the next session starts fresh.
+  const interventionReason = (migratedSig as any)._curriculumIntervention;
+  if (interventionReason) {
+    strategy.theme = 'consolidation';
+    strategy.themeRationale = `Curriculum intervention: ${interventionReason}`;
+  }
   return {
     strategy,
     cci,
@@ -495,6 +505,9 @@ export function tickWithStrategy(
   }
 
   // 9. Safety override: if player is in distress, force consolidation theme
+  // WIRE-BRIDGE: Also consume curriculum probe's shouldIntervene — when the
+  // meta-cognitive probe detects critical progression issues or rubric calibration
+  // errors, force consolidation to give the system time to heal.
   const snapshot = toSnapshot(updatedSig);
   if (checkSafetyOverride(snapshot)) {
     updatedStrategy = {
@@ -503,6 +516,11 @@ export function tickWithStrategy(
       themeRationale: 'Safety override: high fixation + unresolved shadows',
     };
   }
+  // NOTE: shouldIntervene from MetaCognitiveProbe is consumed at session end
+  // (in endSession), not per-tick. The per-tick probe was removed because
+  // probeCurriculum lints all holons + calibrates all rubrics — too expensive
+  // for every encounter tick. The session-end probe result triggers intervention
+  // via the CLI's renderPostSessionSummary and the next session's strategy.
 
   // 10. Post-transformation bias: apply weight adjustments after recent transformation
   const lastTransformation = updatedSig.transformations[updatedSig.transformations.length - 1];
@@ -1014,6 +1032,20 @@ export function endSession(
     if (probeRegistry.count() > 0) {
       curriculumProbe = probeCurriculum(finalSig.knowledge, probeRegistry, now);
     }
+  }
+
+  // WIRE-BRIDGE: shouldIntervene → next session strategy.
+  // When the probe detects critical progression issues or rubric calibration
+  // errors, flag the significator so the next session's strategy generation
+  // forces consolidation theme. This is the session-end counterpart to the
+  // safety override in tickWithStrategy.
+  if (curriculumProbe?.shouldIntervene) {
+    finalSig = {
+      ...finalSig,
+      // Persist intervention flag so next session's startSession can read it
+      // and force consolidation theme via generateSessionStrategy.
+      _curriculumIntervention: curriculumProbe.interventionReason ?? 'health below threshold',
+    } as any;
   }
 
   // Hook 4: onSessionEnd — fire fire-and-forget for the sync path.

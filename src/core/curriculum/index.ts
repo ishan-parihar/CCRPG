@@ -17,3 +17,11 @@ export { computeLearningAnalytics } from './LearningAnalytics.js';
 export type { LearningAnalyticsReport, StudyEfficiency, LearningVelocity, ModalityEffectiveness, OptimalReviewInterval } from './LearningAnalytics.js';
 export { migrateKnowledgeState, needsMigration, getSchemaVersion, CURRENT_CURRICULUM_VERSION } from './CurriculumMigration.js';
 export type { CurriculumBridgeResult, DevelopmentalNeed } from './CurriculumBridge.js';
+
+// Meta-cognitive validation tools — rubric-level progression checks for the agentic loop.
+export { auditProgression } from './ProgressionValidator.js';
+export type { ProgressionAudit, ProgressionCheck } from './ProgressionValidator.js';
+export { calibrateAllRubrics } from './RubricCalibrator.js';
+export type { RubricCalibrationReport } from './RubricCalibrator.js';
+export { probeCurriculum, formatProbeSummary } from './MetaCognitiveProbe.js';
+export type { MetaCognitiveProbeResult } from './MetaCognitiveProbe.js';

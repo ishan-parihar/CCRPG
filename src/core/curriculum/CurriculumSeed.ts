@@ -9,6 +9,14 @@ import type { CurriculumHolon } from './types.js';
 import { getCurriculumRegistry, isRegistrySeeded, markSeeded } from './CurriculumRegistry.js';
 import { lintRegistry } from './CurriculumLinter.js';
 
+/** Cached lint result from seed time. Avoids re-linting all holons at every session end. */
+let _cachedLintResult: { totalErrors: number; totalWarnings: number; overallPassed: boolean } | null = null;
+
+/** Get the cached lint result from seed time. Returns null if not yet seeded. */
+export function getCachedLintResult(): { totalErrors: number; totalWarnings: number; overallPassed: boolean } | null {
+  return _cachedLintResult;
+}
+
 // Import seed data modules
 import csFoundations from './data/cs.foundations.json';
 import csProgram from './data/cs.program.json';
@@ -61,5 +69,14 @@ export function seedCurriculumRegistry(): number {
   }
 
   markSeeded();
+
+  // Cache the lint result so MetaCognitiveProbe doesn't re-lint all holons
+  // at every session end. The registry is immutable after seeding.
+  _cachedLintResult = {
+    totalErrors: lintResult.totalErrors,
+    totalWarnings: lintResult.totalWarnings,
+    overallPassed: lintResult.overallPassed,
+  };
+
   return total;
 }
