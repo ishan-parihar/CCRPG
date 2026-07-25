@@ -3205,8 +3205,7 @@ async function runFullSession(): Promise<void> {
   }
   // M1: When --agent is set, auto-switch to Story mode (the PersistentAgent is
   // wired into the Story-Driven encounter loop, not the Direct Questioning flow).
-  // YAGNI-EFF-3: PersistentAgent mode enforcement removed. USE_PERSISTENT_AGENT
-  // is always false; the DQ path is the proven architecture.
+
   const isDirectMode = gameMode === 'direct';
 
   // ponytail: Direct Questioning gets its own session flow — 8 lines, write-in, no pass/fail
@@ -3511,23 +3510,12 @@ async function runFullSession(): Promise<void> {
   }
 
   // Session end — apply theta-decay and persist.
-  // P0-3 BUGFIX: When --agent is active, use endSessionAsync() which AWAITS the
-  // TDG onSessionEnd hook (tdg_consolidate + tdg_save_mind_state) before returning.
-  // The sync endSession() fires the hook fire-and-forget, which races with
-  // stopTDGBridge() below — the TDG-Rust process can be killed mid-call, losing
-  // the session's graph snapshot. endSessionAsync() ensures the hook completes first.
   const sessionEnd = endSession(currentSig, sessionState, now + encounterCount * 5000, currentWorld);
 
   // P1-14: If endSession advanced macro-event lifecycle, use the updated world.
   if (sessionEnd.world) {
     currentWorld = sessionEnd.world;
   }
-
-  // Phase 3: If the PersistentAgent + TDG bridge was active, stop the TDG-Rust
-  // process now. With endSessionAsync above, the onSessionEnd hook has already
-  // completed (tdg_consolidate + tdg_save_mind_state finished), so it's safe to
-  // tear down the process.
-  // YAGNI-EFF-3: stopTDGBridge removed. TDG integration was never active.
 
   // Save progress to disk (Significator + WorldState).
   // P0-5: Use atomic saveAll() — writes both sig + world to a single JSON
