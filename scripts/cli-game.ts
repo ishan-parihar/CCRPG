@@ -755,20 +755,11 @@ function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[
   }
 
   // 6. Suggested focus for next session (from goals.yaml active_focus)
-  try {
-    const profileDir = getActiveProfileDir();
-    if (profileDir) {
-      const goalsPath = path.join(profileDir, 'goals.yaml');
-      if (fs.existsSync(goalsPath)) {
-        const goalsContent = fs.readFileSync(goalsPath, 'utf8');
-        const focusMatch = goalsContent.match(/active_focus:\s*"([^"]+)"/);
-        if (focusMatch && focusMatch[1] && focusMatch[1].length > 5) {
-          console.log(`\n  ${chalk.dim('For next time:')}`);
-          console.log(`  ${chalk.italic(focusMatch[1])}`);
-        }
-      }
-    }
-  } catch { /* best-effort */ }
+  const activeFocus = readActiveFocus();
+  if (activeFocus && activeFocus.length > 5) {
+    console.log(`\n  ${chalk.dim('For next time:')}`);
+    console.log(`  ${chalk.italic(activeFocus)}`);
+  }
 
   console.log('');
 }
@@ -883,6 +874,23 @@ function updateGoalsActiveFocus(focusText: string): void {
     );
     agentWriteProfileFile('goals.yaml', updatedGoals, 'overwrite');
   } catch { /* best-effort — never break the session */ }
+}
+
+/**
+ * P0-R2 follow-up: Read the active_focus field from goals.yaml.
+ * Extracted from duplicated code in renderPostSessionSummary and session start.
+ * Best-effort — returns null on any error or if no focus is set.
+ */
+function readActiveFocus(): string | null {
+  try {
+    const profileDir = getActiveProfileDir();
+    if (!profileDir) return null;
+    const goalsPath = path.join(profileDir, 'goals.yaml');
+    if (!fs.existsSync(goalsPath)) return null;
+    const goalsContent = fs.readFileSync(goalsPath, 'utf8');
+    const focusMatch = goalsContent.match(/active_focus:\s*"([^"]+)"/);
+    return focusMatch?.[1] ?? null;
+  } catch { return null; }
 }
 
 // Interactive prompt helper — uses @clack/prompts for beautiful UI
@@ -2405,21 +2413,12 @@ async function runDirectQuestioningSession(
   // session's practice invitation at the start of each new session, creating
   // a feedback loop that connects sessions and encourages real-world practice.
   if (!JSON_MODE) {
-    try {
-      const profileDir = getActiveProfileDir();
-      if (profileDir) {
-        const goalsPath = path.join(profileDir, 'goals.yaml');
-        if (fs.existsSync(goalsPath)) {
-          const goalsContent = fs.readFileSync(goalsPath, 'utf8');
-          const focusMatch = goalsContent.match(/active_focus:\s*"([^"]+)"/);
-          if (focusMatch && focusMatch[1] && focusMatch[1].length > 10) {
-            console.log(`\n  ${chalk.dim('Last time, you were invited to carry this practice:')}`);
-            console.log(`  ${chalk.italic(focusMatch[1])}`);
-            console.log(`  ${chalk.dim('Notice what arose. Carry it gently into today.')}\n`);
-          }
-        }
-      }
-    } catch { /* best-effort — don't break session start */ }
+    const prevFocus = readActiveFocus();
+    if (prevFocus && prevFocus.length > 10) {
+      console.log(`\n  ${chalk.dim('Last time, you were invited to carry this practice:')}`);
+      console.log(`  ${chalk.italic(prevFocus)}`);
+      console.log(`  ${chalk.dim('Notice what arose. Carry it gently into today.')}\n`);
+    }
   }
 
   // P1-F10 (Fresh-User UX Audit): Make the adaptive session focus perceptible.
