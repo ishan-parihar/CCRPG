@@ -251,7 +251,7 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
   const snapshot = toSnapshot(migratedSig);
   // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
   const cci = computeCCI(snapshot, migratedSig);
-  const strategy = generateSessionStrategy(cci, session, null, migratedSig.knowledge);
+  let strategy = generateSessionStrategy(cci, session, null, migratedSig.knowledge);
 
   // WIRE-BRIDGE: If the previous session's curriculum probe flagged shouldIntervene,
   // force the consolidation theme for this session. The flag was persisted to sig
@@ -259,8 +259,14 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
   // calibration errors. Clear it after consuming so the next session starts fresh.
   const interventionReason = (migratedSig as any)._curriculumIntervention;
   if (interventionReason) {
-    strategy.theme = 'consolidation';
-    strategy.themeRationale = `Curriculum intervention: ${interventionReason}`;
+    strategy = {
+      ...strategy,
+      theme: 'consolidation',
+      themeRationale: `Curriculum intervention: ${interventionReason}`,
+    };
+    // Clear the flag so the next session doesn't re-trigger intervention.
+    migratedSig = { ...migratedSig } as any;
+    delete (migratedSig as any)._curriculumIntervention;
   }
   return {
     strategy,

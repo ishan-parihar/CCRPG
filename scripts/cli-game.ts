@@ -710,7 +710,7 @@ function emitDevPrimitives(sig: Significator, label: string): void {
  * Shows: shadows surfaced, patterns identified, suggested focus,
  * and glossary terms unlocked. All in felt-sense language.
  */
-function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[]): void {
+function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[], audit?: boolean): void {
   if (JSON_MODE) return;
 
   console.log(`\n  ${chalk.bold.cyan('═══ Session Complete ═══')}`);
@@ -789,7 +789,7 @@ function renderPostSessionSummary(sig: Significator, history: ConsequenceRecord[
   // META-PROBE: Show curriculum health when --audit flag is set.
   // This gives the agentic loop or developer a comprehensive health check
   // of progression, rubric calibration, and content linting.
-  if (opts.audit && sig.knowledge && sig.knowledge.conceptStates.size > 0) {
+  if (audit && sig.knowledge && sig.knowledge.conceptStates.size > 0) {
     try {
       const registry = getCurriculumRegistry();
       if (registry.count() > 0) {
@@ -3029,7 +3029,7 @@ async function runDirectQuestioningSession(
   // P0-3 (Fresh-User UX Audit): Post-session summary.
   // Gives the player a sense of what happened, what emerged, and what to
   // focus on next — without breaking the Veil (no metrics, no labels).
-  renderPostSessionSummary(currentSig, history);
+  renderPostSessionSummary(currentSig, history, opts.audit);
 
   emitEvent('session_ended', {
     mode: 'direct',
@@ -3580,7 +3580,7 @@ async function runFullSession(): Promise<void> {
   }
 
   // P0-3 (Fresh-User UX Audit): Post-session summary.
-  renderPostSessionSummary(currentSig, []);
+  renderPostSessionSummary(currentSig, [], opts.audit);
 
   emitEvent('session_ended', {
     encountersCompleted: completedCount,

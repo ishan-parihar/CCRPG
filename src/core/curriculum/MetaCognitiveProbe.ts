@@ -70,6 +70,8 @@ export function probeCurriculum(
 
   // 3. Content lint — use cached result from seed time when available,
   // fall back to fresh lint only if cache is unavailable (pre-seed).
+  // Use cached lint result from seed time. The freshLint path is a safety
+  // net only — cache is always populated after seedCurriculumRegistry().
   const cachedLint = getCachedLintResult();
   const freshLint = cachedLint ? null : lintRegistry(registry);
   const lintResult = cachedLint ?? { totalErrors: freshLint!.totalErrors, totalWarnings: freshLint!.totalWarnings, overallPassed: freshLint!.overallPassed };
