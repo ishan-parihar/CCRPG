@@ -257,7 +257,7 @@ import { ALL_STAGES, stageOrdinal } from '../src/core/domain/Stage.js';
 import type { ScheduledEncounter } from '../src/core/domain/EncounterSpecNew.js';
 import type { PlayerResponse } from '../src/core/engines/ConsequenceEngine.js';
 import type { SessionContext } from '../src/core/engines/PriorityComputation.js';
-import { startSession, startSessionWithTDG, tickWithStrategy, endSession, endSessionAsync, applyResponseOnly, getTDGTransformationPressure, type SessionState } from '../src/core/GameLoop.js';
+import { startSession, tickWithStrategy, endSession, endSessionAsync, applyResponseOnly, type SessionState } from '../src/core/GameLoop.js';
 import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixModel.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 // YAGNI-PHASE-4: PersistentAgent + PersistentAgentBridge imports removed.
@@ -1552,13 +1552,11 @@ async function executeEncounter(
   narrativeSummary: string;
   effectiveEncounter: ScheduledEncounter;
 }> {
-  // Route to PersistentAgent (--agent / Story-Driven) or AgenticOrchestrator (default).
-  // The LLM disable flag (setLLMDisabled) is respected inside both paths via
+  // Route to AgenticOrchestrator (default). The LLM disable flag
+  // (setLLMDisabled) is respected inside the path via
   // LLMClient.getEnabledConfig() — no need to check it here.
-  if (options.persistentAgent) {
-    const result = await runPersistentAgentEncounter(options.persistentAgent, encounter, sig, world);
-    return { ...result, effectiveEncounter: result.effectiveEncounter ?? encounter };
-  }
+  // YAGNI-EFF-3: PersistentAgent routing removed. USE_PERSISTENT_AGENT is
+  // always false; the DQ path is the proven architecture.
   const result = await runAgenticEncounter(
     encounter, sig, world, history, options.responsesPool, options.consecutivePasses, options.agentSynthesis,
   );
@@ -1974,7 +1972,8 @@ async function runSingleEncounter(): Promise<void> {
   let { tickResult } = tickWithStrategy(sig, world, session, sessionState, null, null, now);
 
   // Create a local mutable copy of FORCE_RESPONSES for this session
-  const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
+  // YAGNI-EFF-3: FORCE_RESPONSES removed — was never in commander spec.
+  const responsesPool = undefined;
 
   // If forcing and no natural encounter, create a synthetic one
   if (!tickResult.encounter && (FORCE_LINE || FORCE_STAGE || FORCE_MODALITY)) {
@@ -3170,9 +3169,9 @@ async function runFullSession(): Promise<void> {
   // TDG G_z/P_z into the CCI's metabolicHealth dimension and runs a graph-level
   // reflection to seed the session strategy. No-op (returns baseline) when TDG
   // is not running — zero regression.
-  let sessionState = USE_PERSISTENT_AGENT
-    ? await startSessionWithTDG(sig, session)
-    : startSession(sig, session);
+  // YAGNI-EFF-3: startSessionWithTDG removed. USE_PERSISTENT_AGENT is always
+  // false; the DQ path is the proven architecture.
+  let sessionState = startSession(sig, session);
   applyCurriculumMode(sessionState);
 
   // P3-CONTINUITY (Fresh-User Re-Audit): Surface previous session's practice
@@ -3262,65 +3261,8 @@ async function runFullSession(): Promise<void> {
   const now = Date.now();
   const history: ConsequenceRecord[] = [];
   const consecutivePasses = new Map<string, number>();
-  const responsesPool = FORCE_RESPONSES ? [...FORCE_RESPONSES] : undefined;
-
-  // Phase 3: If --agent is set, create a session-persistent PersistentAgent.
-  // This instance is reused across all encounters in the session — its message
-  // history accumulates, giving the agent cross-encounter memory. The TDG-Rust
-  // bridge is started best-effort (no-op if the binary isn't installed); when
-  // TDG is running, the 7 TDG-Mind tools are registered alongside the 8 Mysterium
-  // tools, giving the agent the full 15-tool surface.
-  let persistentAgent: PersistentAgent | null = null;
-  if (USE_PERSISTENT_AGENT) {
-    if (!JSON_MODE) info('agent', `${chalk.cyan('Persistent Developmental Agent')} (session-persistent)`);
-    // Best-effort TDG-Rust start — no-op if binary not installed.
-    // YAGNI-2 (UX-R3/R4): Removed the user-facing 'TDG-Rust not running'
-    // message — it confused fresh users who had no idea what TDG-Rust was
-    // and made the project look unfinished. The 'TDG-Rust active' message
-    // stays (only fires when the binary is actually installed, which is
-    // useful signal). The underlying infrastructure stays for when someone
-    // installs TDG-Rust.
-    // ponytail: TDG-Rust integration removed. USE_PERSISTENT_AGENT is always
-    // false, so this block never executes. Stub preserved for compile.
-    const tdgStatus = { running: false } as const;
-    if (tdgStatus.running && !JSON_MODE) {
-      info('tdg', `${chalk.green('TDG-Rust active')} — graph memory online`);
-    }
-    // Build the tool registry with Mysterium + TDG tools (TDG tools added only if running)
-    const toolRegistry = createMysteriumToolRegistry();
-    if (tdgStatus.running) {
-      // ponytail: registerTDGTools removed with TDG integration.
-    }
-    persistentAgent = new PersistentAgent({
-      sig: currentSig,
-      world: currentWorld,
-      sessionState: {
-        encountersSoFar: 0,
-        targetSessionLength: encounterCount,
-        recentLines: [],
-        userMatrixModel: sessionState.userMatrixModel,
-      },
-      onAskPlayer: async (params) => {
-        // Bridge the agent's ask_player to the CLI's interactive prompt
-        if (HEADLESS || JSON_MODE) {
-          // Non-interactive: return a neutral default
-          return { selectedLabel: params.options?.[0]?.label, writeInValue: undefined };
-        }
-        if (params.narrative) console.log(`\n  ${chalk.dim(params.narrative)}`);
-        const opts = params.options?.map((o: any, idx: number) => ({ value: idx, label: `${idx + 1}. ${o.label}` })) ?? [];
-        if (opts.length > 0) {
-          const choice = await select({ message: params.question, options: opts, initialValue: 0 });
-          const chosen = typeof choice === 'number' ? params.options?.[choice] : undefined;
-          return { selectedLabel: chosen?.label, writeInValue: undefined };
-        }
-        // Write-in only
-        const answer = await clackText({ message: params.question, defaultValue: '' });
-        return { selectedLabel: undefined, writeInValue: answer };
-      },
-      tdgToolRegistry: tdgStatus.running ? toolRegistry : undefined,
-    });
-    if (!JSON_MODE) info('tools', `${toolRegistry.count} tools registered (${toolRegistry.getDefinitionsBySource('mysterium').length} Mysterium + ${toolRegistry.getDefinitionsBySource('tdg').length} TDG)`);
-  }
+  // YAGNI-EFF-3: FORCE_RESPONSES removed — was never in commander spec.
+  const responsesPool = undefined;
 
   for (let i = 0; i < encounterCount; i++) {
     separator(`Encounter ${i + 1}/${encounterCount}`);
@@ -3440,12 +3382,10 @@ async function runFullSession(): Promise<void> {
     // Run encounter — YAGNI-1 (UX-R3+R4): both DQ and Story now route
     // through the unified executeEncounter dispatch. The routing logic
     // (PersistentAgent vs AgenticOrchestrator) lives in ONE place.
-    try {
-      const result = await executeEncounter(selectedEncounter, currentSig, currentWorld, history, {
-        responsesPool,
-        consecutivePasses,
-        persistentAgent,
-      });
+    try {        const result = await executeEncounter(selectedEncounter, currentSig, currentWorld, history, {
+            responsesPool,
+            consecutivePasses,
+          });
 
       // Apply consequences from the orchestrator result
       const record = result.outcome.consequenceRecord;
@@ -3463,9 +3403,8 @@ async function runFullSession(): Promise<void> {
       // agent called mysterium_select_encounter with a different moduleRef). Using
       // the wrong encounter here would update the wrong (line, stage) cell in
       // UserMatrixModel and fire shadow knot resolution on the wrong executionMode.
-      const encounterForApply = (USE_PERSISTENT_AGENT && persistentAgent && 'effectiveEncounter' in result)
-        ? (result as { effectiveEncounter: ScheduledEncounter }).effectiveEncounter
-        : selectedEncounter;
+      // YAGNI-EFF-3: PersistentAgent encounter selection removed.
+      const encounterForApply = selectedEncounter;
 
       if (result.response) {
         const applied = applyResponseOnly(
@@ -3485,17 +3424,7 @@ async function runFullSession(): Promise<void> {
       // across encounters so its tool queries reflect the latest state. Without
       // the sessionState refresh, mysterium_get_encounter_pool always saw
       // encountersSoFar:0 + recentLines:[], skewing scheduler ranking. Without
-      // the weightBias, the agent saw a different ranking than the scheduler.
-      if (persistentAgent) {
-        persistentAgent.updateSnapshot(currentSig, currentWorld);
-        persistentAgent.updateSessionState({
-          encountersSoFar: i + 1,
-          targetSessionLength: encounterCount,
-          recentLines: history.slice(-5).map(r => r.polarityTrace.line),
-          userMatrixModel: sessionState.userMatrixModel,
-          weightBias: sessionState.strategy.weightBias,
-        });
-      }
+      // the weightBias, the agent saw a different ranking than the scheduler.          // YAGNI-EFF-3: PersistentAgent state sync removed.
 
 
 
@@ -3590,13 +3519,8 @@ async function runFullSession(): Promise<void> {
     // no-op when TDG is not running. We emit a tdg_pressure telemetry event so
     // the session can track graph-level readiness alongside the Mysterium signal.
     if (USE_PERSISTENT_AGENT) {
-      const tdgPressure = await getTDGTransformationPressure(currentSig);
-      if (tdgPressure !== null) {
-        emitEvent('tdg_pressure', { pressure: tdgPressure, mysteriumReadiness: tickResult.transformation?.readiness ?? 0 });
-        if (VERBOSE && !JSON_MODE) {
-          verbose('tdg_pressure', tdgPressure.toFixed(3));
-        }
-      }
+      // YAGNI-EFF-3: getTDGTransformationPressure removed. Was always a no-op
+      // when USE_PERSISTENT_AGENT is false.
     }
 
     // T-3.4: removed the `layers:` prefix + renderLayersCompact leak.
