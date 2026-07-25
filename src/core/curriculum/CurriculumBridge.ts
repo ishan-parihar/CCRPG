@@ -237,6 +237,7 @@ export function computeDepthProgressions(
 export function computeKnowledgeHealth(
   knowledgeState: KnowledgeState,
   totalConceptsInCurriculum: number,
+  registry?: { getAll: () => readonly { id: string; isomorphisms: readonly { targetConceptId: string }[] }[]; get: (id: string) => { id: string; isomorphisms: readonly { targetConceptId: string }[] } | undefined },
 ): {
   readonly conceptCoverage: number;
   readonly averageDepth: number;
@@ -258,6 +259,8 @@ export function computeKnowledgeHealth(
   let totalDepth = 0;
   let totalRetention = 0;
   let totalMisconceptions = 0;
+  let masteredIsomorphisms = 0;
+  let totalIsomorphisms = 0;
 
   for (const state of concepts.values()) {
     totalDepth += depthOrdinal(state.depthLevel);
@@ -265,13 +268,39 @@ export function computeKnowledgeHealth(
     totalMisconceptions += state.misconceptionFlags.length;
   }
 
+  // WIRE-ISO: Weight cross-domain isomorphisms for integration density.
+  // Only count isomorphisms for concepts the player has ENCOUNTERED —
+  // counting all holons would inflate totalIsomorphisms with unencountered
+  // concepts, deflating the ratio and making integration look worse than it is.
+  if (registry) {
+    for (const [conceptId, cs] of concepts) {
+      if (depthOrdinal(cs.depthLevel) < depthOrdinal('comprehended')) continue;
+      const holon = registry.get(conceptId);
+      if (!holon) continue;
+      for (const iso of holon.isomorphisms) {
+        totalIsomorphisms++;
+        const targetCs = concepts.get(iso.targetConceptId);
+        if (targetCs && depthOrdinal(targetCs.depthLevel) >= depthOrdinal('comprehended')) {
+          masteredIsomorphisms++;
+        }
+      }
+    }
+  }
+
   const count = concepts.size;
+  // Integration density: blend transferCapacity with isomorphism mastery ratio
+  const isomorphismDensity = totalIsomorphisms > 0
+    ? masteredIsomorphisms / totalIsomorphisms
+    : 0;
+  const integrationDensity = Math.min(1,
+    knowledgeState.learningProfile.transferCapacity * 0.6 + isomorphismDensity * 0.4
+  );
 
   return {
     conceptCoverage: Math.min(1, count / totalConceptsInCurriculum),
     averageDepth: totalDepth / count / (ALL_DEPTH_LEVELS.length - 1),
     retentionHealth: totalRetention / count,
-    integrationDensity: Math.min(1, knowledgeState.learningProfile.transferCapacity),
+    integrationDensity,
     misconceptionLoad: Math.min(1, totalMisconceptions / Math.max(1, count)),
   };
 }

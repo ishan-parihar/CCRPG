@@ -740,7 +740,8 @@ export function computeCCI(snapshot: SignificatorSnapshot, sig?: Significator): 
   if (sig?.knowledge && sig.knowledge.conceptStates.size > 0 && registryCount > 0) {
     // Use the curriculum registry's total count for conceptCoverage calculation.
     // Previously this used conceptStates.size which made coverage always 1.0.
-    const kh = computeKnowledgeHealth(sig.knowledge, registryCount);
+    // P2-ISO: Pass registry so computeKnowledgeHealth can weight cross-domain isomorphisms.
+    const kh = computeKnowledgeHealth(sig.knowledge, registryCount, getCurriculumRegistry());
     const composite = (kh.conceptCoverage * KH_COVERAGE_W + kh.averageDepth * KH_DEPTH_W +
       kh.retentionHealth * KH_RETENTION_W + kh.integrationDensity * KH_INTEGRATION_W +
       (1 - kh.misconceptionLoad) * KH_MISCONCEPTION_W);

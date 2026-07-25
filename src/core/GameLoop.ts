@@ -38,13 +38,14 @@ import type { Line } from './domain/Line.js';
 import type { Stage } from './domain/Stage.js';
 import type { Modality } from './domain/enums.js';
 // Curriculum expansion: session-end retention decay and curriculum scheduling.
-import { DEFAULT_FORGETTING_PARAMS } from './curriculum/types.js';
+import { DEFAULT_FORGETTING_PARAMS, ALL_DEPTH_LEVELS } from './curriculum/types.js';
 import type { ConceptState, StudyTheme, ForgettingCurve } from './curriculum/types.js';
 import { generateCurriculumCandidates, type CurriculumCandidate } from './engines/CandidateGeneration.js';
 import { getCurriculumRegistry } from './curriculum/CurriculumRegistry.js';
 import { seedCurriculumRegistry } from './curriculum/CurriculumSeed.js';
 import { computeLearningAnalytics } from './curriculum/LearningAnalytics.js';
 import { migrateKnowledgeState } from './curriculum/CurriculumMigration.js';
+import { bridgeDevelopmentalToCurriculum, type DevelopmentalNeed } from './curriculum/CurriculumBridge.js';
 
 
 export interface TickResult {
@@ -156,6 +157,45 @@ export function applyResponseOnly(
     shadowIntegrated: previousEncounter.executionMode === 'shadow' && quality > 0.5,
   };
   const recentOutcomes = [newOutcome, ...sessionState.recentOutcomes].slice(0, 20);
+
+  // WIRE-BRIDGE: Curriculum → Developmental signal flow.
+  // When a curriculum encounter completes, update the Significator's knowledge
+  // state so the developmental system can observe curriculum progress.
+  if (previousEncounter.curriculumConceptId && updatedSig.knowledge) {
+    const conceptId = previousEncounter.curriculumConceptId;
+    const existing = updatedSig.knowledge.conceptStates.get(conceptId);
+
+    // Determine depth achieved based on response quality and current depth.
+    // WIRE-BRIDGE: Stages NEVER demote — depth only increases or stays the same.
+    const currentDepthIdx = existing ? ALL_DEPTH_LEVELS.indexOf(existing.depthLevel) : 0;
+    const qualityBoost = quality > 0.7 ? 1 : 0;
+    const newDepthIdx = Math.min(ALL_DEPTH_LEVELS.length - 1, currentDepthIdx + qualityBoost);
+    const newDepth = ALL_DEPTH_LEVELS[newDepthIdx]!;
+    // Depth advances only when quality is high enough AND new depth > current
+    const effectiveDepth = (newDepthIdx > currentDepthIdx && quality > 0.5) ? newDepth : (existing?.depthLevel ?? 'absent');
+
+    // Update concept state
+    const updatedConceptStates = new Map(updatedSig.knowledge.conceptStates);
+    updatedConceptStates.set(conceptId, {
+      depthLevel: effectiveDepth,
+      retention: Math.min(1, (existing?.retention ?? 0) + quality * 0.3),
+      lastReviewedAt: Date.now(),
+      reviewCount: (existing?.reviewCount ?? 0) + 1,
+      depthHistory: [
+        ...(existing?.depthHistory ?? []),
+        { level: effectiveDepth, timestamp: Date.now(), evidence: `Curriculum encounter: ${previousEncounter.curriculumAction ?? 'study'}` },
+      ],
+      misconceptionFlags: existing?.misconceptionFlags ?? [],
+    });
+
+    updatedSig = {
+      ...updatedSig,
+      knowledge: {
+        ...updatedSig.knowledge,
+        conceptStates: updatedConceptStates as ReadonlyMap<string, ConceptState>,
+      },
+    };
+  }
 
   return {
     sig: updatedSig,
@@ -698,12 +738,39 @@ export function generateCurriculumEncounters(
   if (remaining <= 0 || !studyTheme) return [];
 
   const registry = getCurriculumRegistry();
-  const candidates = generateCurriculumCandidates(
+  const candidates = [...generateCurriculumCandidates(
     sig.knowledge,
     studyTheme,
     remaining,
     registry,
-  );
+  )];
+
+  // WIRE-BRIDGE: Developmental → Curriculum signal flow.
+  // Detect developmental needs and add curriculum recommendations that
+  // address them (theta decay, drive imbalance, shadow surfacing).
+  if (sig.knowledge && sig.knowledge.conceptStates.size > 0 && remaining > candidates.length) {
+    const developmentalNeeds = detectDevelopmentalNeeds(sig);
+    const knowledge = sig.knowledge;
+    const concepts = new Map<string, { id: string; primaryLine: string; depthRange: { min: any; max: any } }>();
+    for (const holon of registry.getAll()) {
+      concepts.set(holon.id, {
+        id: holon.id,
+        primaryLine: holon.devMapping.primaryLine,
+        depthRange: holon.depthMeta.targetDepthRange,
+      });
+    }
+    const curves = knowledge.forgettingCurves ?? new Map();
+
+    for (const need of developmentalNeeds) {
+      if (candidates.length >= remaining) break;
+      const recommendation = bridgeDevelopmentalToCurriculum(
+        need, knowledge, concepts, curves as any, now,
+      );
+      if (recommendation && !candidates.some(c => c.conceptId === recommendation.conceptId)) {
+        candidates.push(recommendation);
+      }
+    }
+  }
 
   if (candidates.length === 0) return [];
 
@@ -713,6 +780,70 @@ export function generateCurriculumEncounters(
     progress < 0.2 ? 'warmup' : progress > 0.8 ? 'cooldown' : 'peak';
 
   return candidates.map(c => curriculumCandidateToEncounter(c, studyTheme, position, now));
+}
+
+/**
+ * WIRE-BRIDGE: Detect developmental needs that could be addressed by curriculum content.
+ * Scans the Significator for theta decay, drive imbalance, and shadow surfacing,
+ * then converts each to a DevelopmentalNeed for bridgeDevelopmentalToCurriculum.
+ */
+function detectDevelopmentalNeeds(sig: Significator): readonly DevelopmentalNeed[] {
+  const needs: DevelopmentalNeed[] = [];
+  const now = Date.now();
+
+  // 1. Theta decay: lines with stale encounters (no encounter in >7 days)
+  // Deduplicate by line — one need per line, highest urgency wins.
+  const SEVEN_DAYS = 7 * 24 * 60 * 60 * 1000;
+  const lineUrgencies = new Map<string, number>();
+  for (const [key, ts] of Object.entries(sig.theta.lastEncounter)) {
+    if (now - ts > SEVEN_DAYS && ts > 0) {
+      const [line] = key.split(':');
+      if (line) {
+        const staleness = Math.min(1, (now - ts) / (30 * SEVEN_DAYS));
+        lineUrgencies.set(line, Math.max(lineUrgencies.get(line) ?? 0, 0.5 + staleness * 0.3));
+      }
+    }
+  }
+  for (const [line, urgency] of lineUrgencies) {
+    needs.push({ type: 'theta_decay', line, urgency });
+  }
+
+  // 2. Drive imbalance: drives with high fixation risk (deduplicate by line)
+  const driveToLine: Record<string, string> = {
+    Agency: 'Cognitive', Communion: 'Interpersonal', Eros: 'Emotional', Agape: 'Spiritual',
+  };
+  const driveLineUrgencies = new Map<string, number>();
+  for (const [drive, risk] of Object.entries(sig.drives.fixationRisk)) {
+    if (risk > 0.6) {
+      const line = driveToLine[drive];
+      if (line) {
+        driveLineUrgencies.set(line, Math.max(driveLineUrgencies.get(line) ?? 0, risk));
+      }
+    }
+  }
+  for (const [line, urgency] of driveLineUrgencies) {
+    needs.push({ type: 'drive_rebalance', line, urgency });
+  }
+
+  // 3. Shadow surfacing: lines with unresolved shadows (deduplicate by line)
+  const lineShadowCounts = new Map<string, number>();
+  for (const entry of sig.shadows.entries) {
+    if (entry.resolvedAt === null) {
+      lineShadowCounts.set(entry.line, (lineShadowCounts.get(entry.line) ?? 0) + 1);
+    }
+  }
+  const shadowLineUrgencies = new Map<string, number>();
+  for (const [line, count] of lineShadowCounts) {
+    if (count >= 2) {
+      shadowLineUrgencies.set(line, Math.min(1, 0.6 + count * 0.05));
+    }
+  }
+  for (const [line, urgency] of shadowLineUrgencies) {
+    needs.push({ type: 'shadow_surface', line, urgency });
+  }
+
+  // Sort by urgency descending, limit to top 3
+  return needs.sort((a, b) => b.urgency - a.urgency).slice(0, 3);
 }
 
 /**
