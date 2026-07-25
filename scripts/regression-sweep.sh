@@ -5,7 +5,7 @@
 # Exits non-zero on any failure.
 
 set -uo pipefail
-cd /home/z/my-project/Mysterium
+cd "$(dirname "$0")/.."
 
 PASS=0
 FAIL=0

@@ -1972,10 +1972,6 @@ async function runSingleEncounter(): Promise<void> {
   const now = Date.now();
   let { tickResult } = tickWithStrategy(sig, world, session, sessionState, null, null, now);
 
-  // Create a local mutable copy of FORCE_RESPONSES for this session
-  // YAGNI-EFF-3: FORCE_RESPONSES removed — was never in commander spec.
-  const responsesPool = undefined;
-
   // If forcing and no natural encounter, create a synthetic one
   if (!tickResult.encounter && (FORCE_LINE || FORCE_STAGE || FORCE_MODALITY)) {
     const synthLine = FORCE_LINE ?? 'Cognitive' as Line;
@@ -3245,8 +3241,6 @@ async function runFullSession(): Promise<void> {
   const now = Date.now();
   const history: ConsequenceRecord[] = [];
   const consecutivePasses = new Map<string, number>();
-  // YAGNI-EFF-3: FORCE_RESPONSES removed — was never in commander spec.
-  const responsesPool = undefined;
 
   for (let i = 0; i < encounterCount; i++) {
     separator(`Encounter ${i + 1}/${encounterCount}`);
@@ -3385,18 +3379,13 @@ async function runFullSession(): Promise<void> {
       // Phase 3 bugfix: when the PersistentAgent path is active, use the agent's
       // effectiveEncounter (which may differ from the scheduler's pick if the
       // agent called mysterium_select_encounter with a different moduleRef). Using
-      // the wrong encounter here would update the wrong (line, stage) cell in
-      // UserMatrixModel and fire shadow knot resolution on the wrong executionMode.
-      // YAGNI-EFF-3: PersistentAgent encounter selection removed.
-      const encounterForApply = selectedEncounter;
-
       if (result.response) {
         const applied = applyResponseOnly(
           currentSig,
           currentWorld,
           sessionState,
           result.response,
-          encounterForApply,
+          selectedEncounter,
           Date.now(),
         );
         currentSig = applied.sig;
