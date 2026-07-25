@@ -257,12 +257,13 @@ import { ALL_STAGES, stageOrdinal } from '../src/core/domain/Stage.js';
 import type { ScheduledEncounter } from '../src/core/domain/EncounterSpecNew.js';
 import type { PlayerResponse } from '../src/core/engines/ConsequenceEngine.js';
 import type { SessionContext } from '../src/core/engines/PriorityComputation.js';
-import { startSession, tickWithStrategy, endSession, endSessionAsync, applyResponseOnly, type SessionState } from '../src/core/GameLoop.js';
+import { startSession, tickWithStrategy, endSession, applyResponseOnly, type SessionState } from '../src/core/GameLoop.js';
 import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixModel.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
 // YAGNI-PHASE-4: PersistentAgent + PersistentAgentBridge imports removed.
 // USE_PERSISTENT_AGENT is always false; the DQ path is the proven architecture.
-import { createMysteriumToolRegistry } from '../src/core/agent/ToolRegistry.js';
+// YAGNI-EFF-3: createMysteriumToolRegistry import removed — only used in
+// the deleted PersistentAgent block.
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
@@ -463,7 +464,8 @@ const ACTIVE_MODEL = opts.model ?? model;
 /** YAGNI-EFF-3 (Efficacy Audit): --agent path removed. USE_PERSISTENT_AGENT
  * is always false. The PersistentAgent / Story-Driven mode code stays in
  * src/core/agent/ for reference, but the CLI never activates it. */
-const USE_PERSISTENT_AGENT = false;
+// YAGNI-EFF-3: USE_PERSISTENT_AGENT removed. Was always false.
+// const USE_PERSISTENT_AGENT = false;
 const encounterCount = parseInt(opts.encounters ?? String(fileConfig.session?.defaultEncounters ?? 20), 10);
 
 const FORCE_LINE = opts.line as Line | undefined;
@@ -3204,24 +3206,8 @@ async function runFullSession(): Promise<void> {
   }
   // M1: When --agent is set, auto-switch to Story mode (the PersistentAgent is
   // wired into the Story-Driven encounter loop, not the Direct Questioning flow).
-  // This ensures the --agent flag actually exercises the 15-tool agent + TDG
-  // integration rather than being silently ignored. Warn the user so they know.
-  if (USE_PERSISTENT_AGENT && gameMode === 'direct') {
-    if (!JSON_MODE) {
-      info('agent', `${chalk.cyan('--agent')} requires Story-Driven mode — auto-switching.`);
-    }
-    gameMode = 'story';
-  }
-  // R8-BUG-4 (UX-R8): Warn when --agent is used with --answer. The agent path
-  // (Story-Driven mode) doesn't consume --answer flags — only DQ mode does.
-  // Previously --answer was silently ignored, confusing users who provided
-  // reflective input expecting it to shape the narrative.
-  if (USE_PERSISTENT_AGENT && USER_ANSWERS.length > 0 && !JSON_MODE) {
-    warn(`--agent uses Story-Driven mode; --answer flags will be ignored. Use Direct Questioning mode (default, without --agent) for --answer participation.`);
-  }
-  if (USE_PERSISTENT_AGENT && USER_ANSWERS.length > 0 && JSON_MODE) {
-    emitEvent('warning', { code: 'agent_ignores_answer', message: '--agent uses Story-Driven mode; --answer flags will be ignored. Use DQ mode (default) for --answer participation.' });
-  }
+  // YAGNI-EFF-3: PersistentAgent mode enforcement removed. USE_PERSISTENT_AGENT
+  // is always false; the DQ path is the proven architecture.
   const isDirectMode = gameMode === 'direct';
 
   // ponytail: Direct Questioning gets its own session flow — 8 lines, write-in, no pass/fail
@@ -3534,9 +3520,7 @@ async function runFullSession(): Promise<void> {
   // The sync endSession() fires the hook fire-and-forget, which races with
   // stopTDGBridge() below — the TDG-Rust process can be killed mid-call, losing
   // the session's graph snapshot. endSessionAsync() ensures the hook completes first.
-  const sessionEnd = USE_PERSISTENT_AGENT
-    ? await endSessionAsync(currentSig, sessionState, now + encounterCount * 5000, currentWorld)
-    : endSession(currentSig, sessionState, now + encounterCount * 5000, currentWorld);
+  const sessionEnd = endSession(currentSig, sessionState, now + encounterCount * 5000, currentWorld);
 
   // P1-14: If endSession advanced macro-event lifecycle, use the updated world.
   if (sessionEnd.world) {
@@ -3547,9 +3531,7 @@ async function runFullSession(): Promise<void> {
   // process now. With endSessionAsync above, the onSessionEnd hook has already
   // completed (tdg_consolidate + tdg_save_mind_state finished), so it's safe to
   // tear down the process.
-  if (USE_PERSISTENT_AGENT) {
-    stopTDGBridge();
-  }
+  // YAGNI-EFF-3: stopTDGBridge removed. TDG integration was never active.
 
   // Save progress to disk (Significator + WorldState).
   // P0-5: Use atomic saveAll() — writes both sig + world to a single JSON
