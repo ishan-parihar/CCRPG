@@ -1,5 +1,7 @@
 # Mysterium
 
+<!-- T2I HERO SPEC — Subject: a contemplative-assessment RPG — a lone figure on a spiraling path ascending through eight color-stages (Infrared → Magenta → Red → Amber → Orange → Green → Turquoise → White), with a 64-cell matrix grid faintly visible as the world beneath. Composition: vertical ascent, spiral path, vignette glow at the summit. Palette: stage colors flowing dark infrared → luminous white; deep charcoal #0f0f14 background, gold accent. Style: painterly game key-art, soft volumetric light, no text. 16:9. -->
+
 <p align="center">
   <img src="./assets/readme/hero.svg" width="100%" alt="Mysterium: a contemplative-assessment RPG whose encounters are validated developmental exercises and whose macro-progression is the eight-stage arc of consciousness, mapped onto a 64-cell module matrix">
 </p>
@@ -55,6 +57,21 @@ There are **two ways to play it**:
 
 Both surfaces share the same `src/core/` engine, same registries, same
 64 modules, same 1,280 assessment items. There is one game.
+
+## How it compares
+
+| Dimension | **Mysterium** | MBTI / Big Five tests | Enneagram | Spiral Dynamics (theory) |
+|---|---|---|---|---|
+| **Type** | Playable RPG — assessment *is* the game | Static questionnaire | Static questionnaire | Academic framework, no product |
+| **Coverage** | 64 cells = 8 lines × 8 stages, 1,280 items | 1 dimension per test | 9 types | Stages only, no line matrix |
+| **Trajectory** | Tracks *development over time* across stages | Snapshots a type | Snapshots a type | Descriptive stages |
+| **Intervention** | Modules *diagnose and heal* (calibration/encounter/practice/shadow-work) | Report only | Report only | None |
+| **Engine** | Deterministic TS core, TUI + WebUI, same data | Usually static | Usually static | Paper |
+
+MBTI answers *what you are today*; Mysterium plays *how you grow* — and
+it does so with a formal 8×8 matrix verified in `src/core/domain/Stage.ts`
+(8 stages) and `src/core/domain/Line.ts` (8 lines), every cell backed by
+assessment items the player actually works through.
 
 ---
 
@@ -429,6 +446,8 @@ narrative beat is a *data-and-adapter change*, never a rewrite.
 
 Per-stage world bibles are in [`docs/stages/`](./docs/stages/).
 
+---
+
 ## The eight lines of intelligence
 
 | Line | Quadrant home | Assessment style |
@@ -512,6 +531,52 @@ during Phase 5.
 ---
 
 *"Reality is not constructed; it is unfolded from a pre-existing whole."*
+
+
+## Quick Start
+
+### TUI (CLI)
+
+```bash
+# Install globally
+npm install -g mysterium
+
+# Start a new character
+mysterium new --name "Seeker"
+
+# Run the Red stage (first vertical slice)
+mysterium play --stage red
+
+# Review assessment results
+mysterium review --character "Seeker"
+```
+
+### Web UI (SvelteKit)
+
+```bash
+cd web-ui
+npm install
+npm run dev
+# Open http://localhost:5173
+```
+
+### The 64-Cell Module Matrix
+
+```
+              Stage 1   Stage 2   Stage 3   Stage 4   Stage 5   Stage 6   Stage 7   Stage 8
+              (Red)     (Orange)  (Yellow)  (Green)   (Blue)    (Indigo)  (Violet)  (Clear)
+Line 1 (Mas)  [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]
+Line 2 (Val)  [x]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]
+Line 3 (Rel)  [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]
+Line 4 (Iden) [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]
+Line 5 (Ego)  [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]
+Line 6 (Will) [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]
+Line 7 (Wis)  [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]
+Line 8 (Uni)  [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]       [ ]
+
+[x] = completed    [ ] = locked    Each cell = 20 assessment items (1,280 total)
+```
+
 
 ---
 
