@@ -1,4 +1,15 @@
-# Mysterium — Mysterium
+# Mysterium
+
+<p align="center">
+  <img src="./assets/readme/hero.svg" width="100%" alt="Mysterium: a contemplative-assessment RPG whose encounters are validated developmental exercises and whose macro-progression is the eight-stage arc of consciousness, mapped onto a 64-cell module matrix">
+</p>
+
+<p align="center">
+  <a href="https://gitlab.com/ishan-parihar/CCRPG"><img src="https://img.shields.io/badge/status-operational-brightgreen?style=flat-square" alt="status"></a>
+  <img src="https://img.shields.io/badge/modules-64-brightgreen?style=flat-square" alt="64 modules">
+  <img src="https://img.shields.io/badge/assessment%20items-1280-brightgreen?style=flat-square" alt="1280 assessment items">
+  <img src="https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square" alt="MIT">
+</p>
 
 > 🎮 **Status: Functionally operational.** Core architecture complete.
 > Full 64-cell developmental assessment (8 lines × 8 stages, 1,280
@@ -264,6 +275,8 @@ browser-side LLM calls (dev-only).
 
 ## Repository layout (current)
 
+<details><summary>Full repository tree</summary>
+
 ```
 Mysterium/
 ├── README.md                              <- you are here
@@ -353,9 +366,11 @@ Mysterium/
 ├── dist/cli/                              <- bundled CLI artifacts
 ├── .svelte-kit/output/                    <- SvelteKit build output
 │
-├── static/                                <- bundled assets
-└── public/                                <- reserved
+├── static/                                <- bundled assets└── public/                             <- reserved
 ```
+
+</details>
+
 
 ---
 
@@ -467,10 +482,9 @@ A `CONTRIBUTING.md` will be added during Phase 5.
 
 ## License
 
-License to be finalised before public deploy. The architectural
-blueprint (now archived) and the entire `docs/` tree are provided
-*as-is for study and reference*; the implementation, when complete,
-will carry an explicit OSS license (MIT or Apache-2.0, leaning MIT).
+MIT — see [`LICENSE`](LICENSE). The architectural blueprint (now
+archived) and the entire `docs/` tree are provided as-is for study and
+reference.
 
 ---
 
