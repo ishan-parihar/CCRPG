@@ -51,7 +51,6 @@ const program = new Command()
   // (enforced below). The option stays for backwards compat but is hidden.
   .addOption(new Option('--verbose', 'Show additional encounter detail (requires --dev)').hideHelp())
   .option('--dev', 'Developer mode: show internal metrics (G_z/P_z, CCI, rayProfile, phase) and enable --verbose. WARNING: breaks the experiential frame (Veil principle) — for debugging only.')
-  .option('--no-llm', 'Disable LLM, use module assessments only')
   // YAGNI-EFF-3 (Efficacy Audit): --agent / PersistentAgent path removed.
   // It was the source of every major regression (R8-BUG-1 hang, R9-BUG-2
   // process-exit, R8-BUG-1b placeholder string, R8-BUG-4 --answer ignore).
@@ -78,7 +77,7 @@ const program = new Command()
   // printHelp() banner still mentions them in the FORCED ENCOUNTERS section
   // for discoverability by developers; that section is also being trimmed
   // (see printHelp edit below).
-  .addOption(new Option('--force-shadow <quadrant>', 'Inject shadow-keyword text into the response pool for testing shadow detection (alias: --inject-shadow-keyword). Does NOT trigger shadow encounter format — use --modality shadow for that.').hideHelp())
+  .addOption(new Option('--force-shadow <quadrant>', 'Inject shadow-keyword text into the response pool for testing shadow detection (alias: --inject-shadow-keyword).').hideHelp())
   .addOption(new Option('--inject-shadow-keyword <quadrant>', 'Alias for --force-shadow (testing only)').hideHelp())
   .option('--skip-calibration', 'Skip calibration, default all lines to Red')
   // R5-CRITICAL (UX-R5): Headless input mechanism. Without this, the LLM
@@ -211,7 +210,7 @@ try {
 // (opencode.ai/zen) — the project's primary gateway — but only fires if
 // OPENCODE_API_KEY / OPENCODE_API is set; otherwise the user must configure.
 import { resolveConfig as resolveLLMConfig, isComplete as isLLMConfigComplete, type LLMConfig } from '../src/infra/llm/ProviderRegistry.js';
-import { getActiveConfig, invalidateConfigCache, setLLMDisabled, validateModelIfFresh, queryLLM } from '../src/infra/llm/LLMClient.js';
+import { getActiveConfig, invalidateConfigCache, validateModelIfFresh, queryLLM } from '../src/infra/llm/LLMClient.js';
 
 const resolvedLLM: LLMConfig = resolveLLMConfig(
   { model: earlyModelOverride },
@@ -451,19 +450,10 @@ if (DEV_MODE && !JSON_MODE) {
 // R8-BUG-3 (UX-R8): Propagate DEV_MODE to LLMClient so VeilFilter logs
 // are gated behind --dev and don't leak into normal output.
 if (DEV_MODE) process.env.Mysterium_DEV = '1';
-// Commander treats `--no-llm` as a negation of `--llm`: it creates
-// opts.llm (default true) and sets it to false when --no-llm is passed.
-// So we read opts.llm (not opts.noLlm, which is always undefined).
-// Pre-existing bug masked by the old hardcoded 'sk-placeholder' default.
-const NO_LLM = opts.llm === false;
-// Propagate --no-llm to the LLMClient so ALL call sites (including the
-// PersistentAgent path) respect it. Without this, --no-llm only affected
-// the CLI's LLM_ACTIVE flag, but the agent path would still call the LLM
-// because the config file had a valid key.
-setLLMDisabled(NO_LLM);
-// LLM_ACTIVE now uses the resolved config's completeness check, which
+// LLM_ACTIVE uses the resolved config's completeness check, which
 // accounts for the provider-specific env vars (OPENCODE_API_KEY, etc.).
-let LLM_ACTIVE = !NO_LLM && llmComplete;
+// The system requires an LLM to operate — there is no offline mode.
+let LLM_ACTIVE = llmComplete;
 const ACTIVE_MODEL = opts.model ?? model;
 /** YAGNI-EFF-3 (Efficacy Audit): --agent path removed. USE_PERSISTENT_AGENT
  * is always false. The PersistentAgent / Story-Driven mode code stays in
@@ -1222,7 +1212,7 @@ async function createDefaultSignificator(): Promise<Significator> {
 
   // Run quick calibration unless in automated/skip mode
   let altitudes: Record<Line, Stage>;
-  if (HEADLESS || NO_LLM || SKIP_CALIBRATION || JSON_MODE) {
+  if (HEADLESS || SKIP_CALIBRATION || JSON_MODE) {
     // GAP-6 (Efficacy Audit): Binary-search onboarding for headless mode.
     // Instead of defaulting all lines to Red, probe the user's developmental
     // altitude via their --answer content. If answers show Green+ vocabulary
@@ -1548,8 +1538,7 @@ function printEncounter(enc: ScheduledEncounter, world?: WorldState): void {
 // ── Unified encounter execution dispatch (YAGNI-1 / UX-R3+R4) ────────
 // Both DQ mode and Story-Driven mode call THIS function instead of
 // branching on USE_PERSISTENT_AGENT themselves. This eliminates the
-// routing divergence that let P0-1 (R3: lexical scope bug) and the
-// --no-llm bug (R4: LLM_ACTIVE not respected) hide for multiple audit
+// routing divergence that let P0-1 (R3: lexical scope bug) hide for multiple audit
 // rounds. Future execution-mode checks (new agent types, new LLM
 // routing) happen here — one place, one bug surface.
 interface EncounterExecutionOptions {
@@ -1572,9 +1561,7 @@ async function executeEncounter(
   narrativeSummary: string;
   effectiveEncounter: ScheduledEncounter;
 }> {
-  // Route to AgenticOrchestrator (default). The LLM disable flag
-  // (setLLMDisabled) is respected inside the path via
-  // LLMClient.getEnabledConfig() — no need to check it here.
+  // Route to AgenticOrchestrator (default).
   // YAGNI-EFF-3: PersistentAgent routing removed. USE_PERSISTENT_AGENT is
   // always false; the DQ path is the proven architecture.
   const result = await runAgenticEncounter(
@@ -1835,7 +1822,7 @@ async function runAgenticEncounter(
     conceptIndex: { modules: conceptModules },
     uiHandler,
     module: modRegistry?.get(FORCE_LINE ?? encLine, FORCE_STAGE ?? encStage) ?? baseModule,
-    noLlm: !LLM_ACTIVE,
+    noLlm: false,
     forceShadow: FORCE_SHADOW,
     consecutivePasses,
     agentSynthesis,
@@ -3087,10 +3074,10 @@ async function runFullSession(): Promise<void> {
     const llmUp = await checkLLMAvailability(baseUrl, apiKey);
     if (!llmUp) {
       LLM_ACTIVE = false;
-      s2?.warn('LLM unreachable — falling back to module assessments (use --no-llm to skip this check)');
+      s2?.warn('LLM unreachable — please check your connection and configuration.');
       // UX-P0-3: Emit LLM-unavailable warning in JSON mode too
       if (JSON_MODE) {
-        emitEvent('warning', { code: 'llm_unavailable', message: 'LLM unreachable — using module-only mode. Set --no-llm to suppress this check.' });
+        emitEvent('warning', { code: 'llm_unavailable', message: 'LLM unreachable — please check your connection and configuration.' });
       }
     } else {
       s2?.succeed(`LLM active: ${ACTIVE_MODEL}`);
@@ -3119,24 +3106,8 @@ async function runFullSession(): Promise<void> {
     // worse than silence — it returns the user's own words with no therapeutic
     // response, destroying trust after vulnerable disclosures.
     //
-    // --no-llm is still allowed for: status, diagnostic, glossary, new-game
-    // (non-reflective commands). But actual session play REQUIRES the LLM.
+    // Actual session play REQUIRES the LLM.
     if (subcommand === 'session' || subcommand === undefined || subcommand === 'full') {
-      if (NO_LLM) {
-        if (!JSON_MODE) {
-          error('Mysterium requires an active LLM to run reflective sessions.');
-          console.log(`\n  ${chalk.dim('The LLM is the game\'s therapeutic engine. Without it, encounters become')}`);
-          console.log(`  ${chalk.dim('echo-only — your words returned with no reflection. This is worse than silence.')}`);
-          console.log(`\n  ${chalk.bold('To configure the LLM:')}`);
-          console.log(`  ${chalk.dim('  1. Run `mysterium setup` in a real terminal, OR')}`);
-          console.log(`  ${chalk.dim('  2. Set env vars: OPENCODE_API_KEY=<key> MODEL=<model>, OR')}`);
-          console.log(`  ${chalk.dim('  3. Edit ~/.mysterium/config.json directly')}`);
-          console.log(`\n  ${chalk.dim('Non-reflective commands (status, diagnostic, glossary, new-game) still work without LLM.')}\n`);
-        } else {
-          emitEvent('fatal', { code: 'llm_required', message: 'Mysterium requires an active LLM for reflective sessions. Configure via `mysterium setup` or set OPENCODE_API_KEY + MODEL env vars.' });
-        }
-        process.exit(1);
-      }
       if (!llmComplete) {
         if (!JSON_MODE) {
           error('LLM not configured. Mysterium requires an active LLM to run sessions.');
@@ -3151,12 +3122,11 @@ async function runFullSession(): Promise<void> {
         process.exit(1);
       }
     }
-    s2?.info('LLM disabled (--no-llm) — only non-reflective commands available');
+    s2?.info('LLM not configured — only non-reflective commands available');
   }
 
   // PILOT-5.5 (Efficacy Pilot): With LLM-required mode, the saturation
-  // threshold stays at 20 (the LLM-calibrated value). The --no-llm threshold
-  // lowering to 6 is now dead code — the game refuses to run without LLM.
+  // threshold stays at 20 (the LLM-calibrated value).
   // The threshold of 20 means ~20 encounters per line × 8 lines = ~160
   // encounters for a stage transition. This is intentional — stage
   // transitions are rare, dramatic, and require sustained practice.
@@ -4836,7 +4806,7 @@ function printHelp(): void {
   // was a documented source of user confusion. The printHelp() banner should
   // not duplicate it.
   console.log(`\n${chalk.bold}${chalk.cyan}Mysterium${chalk.reset} v${VERSION}\n\n${chalk.bold}USAGE${chalk.reset}\n  mysterium                        Start an interactive session\n  mysterium session                Same as above\n  mysterium setup                  Configure LLM and preferences\n  mysterium diagnostic             Show system diagnostics
-  mysterium curriculum             Lint and list curriculum holons\n  mysterium status                 Show current save state\n  mysterium glossary               Show essential + unlocked terms\n  mysterium profile show           See what the game has noticed about you\n  mysterium new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n  --no-llm                     Disable LLM, use module assessments only\n  --dev                        Developer mode (enables --verbose, shows metrics)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.mysterium/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.mysterium/config.json or MODEL env var\n  Saves:     ~/.mysterium/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  mysterium                                       # interactive session\n  mysterium --headless --encounters=5             # headless session\n  mysterium setup                                 # configure API key\n  mysterium session --encounters=5 --json         # JSON event stream\n  mysterium glossary                              # learn the terminology\n  mysterium profile show                          # see your synthesized insights\n  mysterium diagnostic                            # system diagnostics\n`);
+  mysterium curriculum             Lint and list curriculum holons\n  mysterium status                 Show current save state\n  mysterium glossary               Show essential + unlocked terms\n  mysterium profile show           See what the game has noticed about you\n  mysterium new-game               Reset progress and start fresh\n\n${chalk.bold}SESSION OPTIONS${chalk.reset}\n  --encounters=N               Number of encounters (default: ${fileConfig.session?.defaultEncounters ?? 20})\n  --headless                   Run without user interaction\n  --json                       Machine-readable JSON output\n\n  --dev                        Developer mode (enables --verbose, shows metrics)\n  --version                    Show version\n\n${chalk.bold}FORCED ENCOUNTERS (for testing)${chalk.reset}\n  --line=LINE                  Force a specific line\n  --stage=STAGE                Force a specific stage\n  --modality=MOD               Force a specific modality\n\n${chalk.bold}CONFIGURATION${chalk.reset}\n  API key:   ~/.mysterium/config.json or OPENCODE_API_KEY env var\n  Model:     ~/.mysterium/config.json or MODEL env var\n  Saves:     ~/.mysterium/profiles/<name>/\n\n${chalk.bold}EXAMPLES${chalk.reset}\n  mysterium                                       # interactive session\n  mysterium --headless --encounters=5             # headless session\n  mysterium setup                                 # configure API key\n  mysterium session --encounters=5 --json         # JSON event stream\n  mysterium glossary                              # learn the terminology\n  mysterium profile show                          # see your synthesized insights\n  mysterium diagnostic                            # system diagnostics\n`);
 }
 
 // ── Main ──────────────────────────────────────────────────────────────
