@@ -9,6 +9,8 @@
 <p align="center">
   <a href="https://github.com/ishan-parihar/mysterium"><img src="https://img.shields.io/badge/status-operational-brightgreen?style=flat-square" alt="status"></a>
 <img src="https://img.shields.io/badge/LOC-69.9K-informational?style=flat-square" alt="LOC">
+<a href="https://github.com/ishan-parihar/mysterium/actions/workflows/ci.yml"><img src="https://github.com/ishan-parihar/mysterium/actions/workflows/ci.yml/badge.svg" alt="CI"></a>
+<img src="https://img.shields.io/badge/Python-3.11-blue?logo=python" alt="Language">
   <img src="https://img.shields.io/badge/modules-64-brightgreen?style=flat-square" alt="64 modules">
   <img src="https://img.shields.io/badge/assessment%20items-1280-brightgreen?style=flat-square" alt="1280 assessment items">
   <img src="https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square" alt="MIT">
@@ -486,19 +488,6 @@ If you want **all of it**, follow the reading order in
 
 ---
 
-## Contributing
-
-This project is **personally authored** by
-[@ishan-parihar](https://github.com/ishan-parihar) and shipped
-globally. External contributions of the cognitive content (cultural
-reviewers for affect-recognition stimuli, linguistic localisation of
-narration, accessibility expertise) are welcomed once the MVP is
-stable. Until then, please open Issues for discussion. PRs against
-the early scaffold are accepted at the maintainer's discretion.
-
-A `CONTRIBUTING.md` will be added during Phase 5.
-
----
 
 ## License
 
