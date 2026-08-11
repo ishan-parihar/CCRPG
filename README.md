@@ -8,7 +8,7 @@
 
 <p align="center">
   <a href="https://github.com/ishan-parihar/mysterium"><img src="https://img.shields.io/badge/status-operational-brightgreen?style=flat-square" alt="status"></a>
-![LOC](https://img.shields.io/badge/LOC-69.9K-informational?style=flat-square)
+<img src="https://img.shields.io/badge/LOC-69.9K-informational?style=flat-square" alt="LOC">
   <img src="https://img.shields.io/badge/modules-64-brightgreen?style=flat-square" alt="64 modules">
   <img src="https://img.shields.io/badge/assessment%20items-1280-brightgreen?style=flat-square" alt="1280 assessment items">
   <img src="https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square" alt="MIT">
