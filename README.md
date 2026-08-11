@@ -7,7 +7,8 @@
 </p>
 
 <p align="center">
-  <a href="https://gitlab.com/ishan-parihar/CCRPG"><img src="https://img.shields.io/badge/status-operational-brightgreen?style=flat-square" alt="status"></a>
+  <a href="https://github.com/ishan-parihar/mysterium"><img src="https://img.shields.io/badge/status-operational-brightgreen?style=flat-square" alt="status"></a>
+![LOC](https://img.shields.io/badge/LOC-69.9K-informational?style=flat-square)
   <img src="https://img.shields.io/badge/modules-64-brightgreen?style=flat-square" alt="64 modules">
   <img src="https://img.shields.io/badge/assessment%20items-1280-brightgreen?style=flat-square" alt="1280 assessment items">
   <img src="https://img.shields.io/badge/license-MIT-brightgreen?style=flat-square" alt="MIT">
@@ -85,7 +86,7 @@ from any directory.
 
 ```bash
 # 1. Clone the repo
-git clone https://github.com/ishan-parihar/Mysterium.git
+git clone https://github.com/ishan-parihar/mysterium.git
 cd Mysterium
 
 # 2. Install dependencies (build-time only)
