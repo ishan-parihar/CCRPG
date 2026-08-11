@@ -1,9 +1,8 @@
 name: Deploy to GitHub Pages
 on:
   push:
-    branches: [main]
+    tags: ['v*']
   workflow_dispatch:
-
 permissions:
   contents: read
   pages: write
@@ -36,7 +35,8 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
         with:
-          path: dist
+          # adapter-static (BUILD_TARGET=static) writes to build/ by default
+          path: build
 
   deploy:
     needs: build
