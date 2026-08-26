@@ -20,6 +20,14 @@ import { getRenderer } from './cli/TaskRenderers.js';
 import { computeConfidence } from './engine.js';
 // ponytail: E — shadow keywords loaded from shared data file.
 import { SHADOW_KEYWORDS as SHADOW_KEYWORDS_DATA } from '../data/shadowKeywords.js';
+import {
+  TRAINING_TOOLS,
+  TRAINING_TOOL_NAMES,
+  TRAINING_RULES_SUFFIX,
+  handleTrainingTool,
+  type TrainingIntegration,
+  type TrainingHandlerContext,
+} from './trainingTools.js';
 
 const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
 
@@ -177,6 +185,8 @@ export class AgenticOrchestrator {
   private agentSynthesis: string | undefined;
   private _lastPlayerWriteIn: string | undefined;
   private _lastQuestionText: string | undefined;
+  private training: TrainingIntegration | null = null;
+  private _trainingSignal: AbortSignal | undefined;
 
   // ponytail: E — shadow keywords extracted to src/core/data/shadowKeywords.json (shared data, not code).
   private static readonly SHADOW_KEYWORDS = SHADOW_KEYWORDS_DATA as Readonly<Record<string, readonly string[]>>;
@@ -226,6 +236,15 @@ export class AgenticOrchestrator {
     forceShadow?: string;
     consecutivePasses?: Map<string, number>;
     agentSynthesis?: string;
+    /**
+     * Optional brain-training integration. When present, the five training
+     * tools (run_brain_game, get_training_profile, recommend_workout,
+     * set_difficulty_override, complete_workout) are registered and the
+     * Game Master can execute real multi-trial games mid-encounter.
+     * Omitting it leaves the orchestrator byte-for-byte compatible with
+     * existing callers (WebUI included).
+     */
+    training?: TrainingIntegration;
   }) {
     this.encounter = params.encounter;
     this.significator = params.significator;
@@ -239,6 +258,21 @@ export class AgenticOrchestrator {
     this.forceShadow = params.forceShadow;
     this._consecutivePasses = params.consecutivePasses ?? new Map();
     this.agentSynthesis = params.agentSynthesis;
+    this.training = params.training ?? null;
+  }
+
+  /**
+   * Tools available for the main narrative loop. Training tools are appended
+   * only when a TrainingIntegration was provided at construction.
+   */
+  private toolsForRun() {
+    return this.training ? [...TOOLS, ...TRAINING_TOOLS] : TOOLS;
+  }
+
+  /** Handler context shared by all training tool calls in one encounter. */
+  private trainingContext(): TrainingHandlerContext {
+    const t = this.training!;
+    return { services: t.services, runner: t.runner, signal: this._trainingSignal, workout: t.workout };
   }
 
   /**
@@ -346,6 +380,7 @@ export class AgenticOrchestrator {
   public async run(signal?: AbortSignal): Promise<OrchestratorResult> {
     const [line, stage] = this.encounter.moduleRef.split(':') as [Line, Stage];
     const now = Date.now();
+    this._trainingSignal = signal;
 
     // Check for abort at the start of each major phase.
     if (signal?.aborted) throw new DOMException('Encounter aborted', 'AbortError');
@@ -397,7 +432,7 @@ export class AgenticOrchestrator {
 4. Keep the flow interactive, building upon prior answers.
 5. This encounter has a budget of 4 exchanges. After the player has responded to 4 questions, you MUST call 'complete_encounter'. Do NOT generate more than 4 ask_user_question calls. Each question should probe deeper based on the player's previous answers.
 6. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).
-7. If RECENT ENCOUNTERS are listed, reference them subtly — the player's journey has continuity.`;
+7. If RECENT ENCOUNTERS are listed, reference them subtly — the player's journey has continuity.${this.training ? TRAINING_RULES_SUFFIX : ''}`;
 
     if (this.messages.length === 0) {
       this.messages.push({
@@ -417,7 +452,7 @@ export class AgenticOrchestrator {
       if (signal?.aborted) throw new DOMException('Encounter aborted', 'AbortError');
 
       // Request next turn from LLM
-      const res = await queryLLMWithTools(systemPrompt, this.messages, TOOLS);
+      const res = await queryLLMWithTools(systemPrompt, this.messages, this.toolsForRun());
 
       // Detect LLM unavailability on first call — switch to fallback
       if (loopCount === 1 && res.content && res.content.trim().startsWith('{"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
@@ -456,6 +491,51 @@ export class AgenticOrchestrator {
                 content: 'The encounter budget of 4 exchanges is exhausted. You MUST now call complete_encounter with your evaluation of the player. Do NOT ask another question.'
               });
             }
+          } else if (TRAINING_TOOL_NAMES.has(tc.function.name) && this.training) {
+            const outcome = await handleTrainingTool(
+              tc.function.name,
+              tc.function.arguments,
+              this.trainingContext(),
+            );
+
+            // Workout budget enforcement mirrors the ask-budget pattern:
+            // after all planned games have run, force complete_workout.
+            if (
+              tc.function.name === 'run_brain_game' &&
+              outcome.ok &&
+              this.training.workout.plan &&
+              this.training.workout.completed >= this.training.workout.plan.items.length &&
+              !res.toolCalls!.some((t) => t.function.name === 'complete_workout')
+            ) {
+              this.messages.push({
+                role: 'user',
+                content: 'All planned games for this workout have been played. You MUST now call complete_workout with a felt-sense summary. Do NOT run another game.',
+              });
+            }
+
+            // Track recommended plans so the budget can bind.
+            if (tc.function.name === 'recommend_workout' && outcome.ok) {
+              const items = (outcome.payload.items as { paradigmId: string }[] | undefined) ?? [];
+              if (items.length > 0) {
+                this.training.workout.plan = {
+                  items: items.map((i) => ({
+                    paradigmId: i.paradigmId,
+                    targetLevel: 0.5,
+                    estimatedMinutes: 3,
+                    rationale: '',
+                  })),
+                  totalMinutes: Number(outcome.payload.totalMinutes ?? items.length * 3),
+                };
+                this.training.workout.completed = 0;
+              }
+            }
+
+            this.messages.push({
+              role: 'tool',
+              content: JSON.stringify(outcome.ok ? outcome.payload : { error: outcome.payload.error }),
+              toolCallId: tc.id,
+              name: tc.function.name,
+            });
           } else if (tc.function.name === 'complete_encounter') {
             const params = JSON.parse(tc.function.arguments) as {
               passed: boolean;

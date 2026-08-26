@@ -137,6 +137,24 @@ program
   .command('setup-profile')
   .description('Create a new user profile with onboarding questions');
 
+// Brain-training subsystem (docs/brain-game-upgrade/): guided workouts,
+// free play, and felt-sense insights over the trial telemetry store.
+// Options declared here satisfy commander; TrainingRuntime re-parses the
+// same argv with its own Command instance (earlyParser pattern).
+program
+  .command('train')
+  .description('Play brain-training games (guided workout or --free <game>)')
+  .option('--free [paradigm]', 'play one game directly, no narrative wrapper')
+  .option('--trials <n>', 'override trial count')
+  .option('--difficulty <x>', 'starting difficulty 0-1')
+  .option('--minutes <n>', 'workout length in minutes')
+  .option('--focus <line>', 'bias the workout toward one line')
+  .option('--plan', 'print the planned workout instead of playing')
+  .option('--demo [seed]', 'scripted responder for CI smoke tests');
+program
+  .command('insights')
+  .description('How your training senses have been resting and rising (--dev for metrics)');
+
 // ponytail: .action() prevents commander from showing help when no subcommand given
 program.action(() => {});
 
@@ -269,6 +287,7 @@ import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessme
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
+import { runTrainCommand, runInsightsCommand, buildTrainingIntegration } from '../src/cli/TrainingRuntime.js';
 // R11-R2: use canonical resonance from veilDescriptors instead of duplicated maps.
 import { describeStage, describePersonalResonance } from '../src/core/presentation/veilDescriptors.js';
 
@@ -1826,6 +1845,9 @@ async function runAgenticEncounter(
     forceShadow: FORCE_SHADOW,
     consecutivePasses,
     agentSynthesis,
+    // Brain-training tools: the Game Master can run real multi-trial games
+    // mid-encounter. Fails soft — if bootstrap fails we proceed without them.
+    training: await buildTrainingIntegration().catch(() => undefined),
   });
 
   // P1-R5 (Fresh-User UX Audit): Thinking indicator during LLM round-trip.
@@ -4826,7 +4848,7 @@ async function main(): Promise<void> {
   // treat ALL subcommands as potentially interactive EXCEPT the truly
   // non-interactive ones (`status`, `glossary`). This is safer than
   // enumerating interactive ones — new subcommands default to safe.
-  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary', 'profile']);
+  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary', 'profile', 'insights', 'train']);
   const needsInteractive = !NON_INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE;
   if (needsInteractive && !process.stdin.isTTY) {
     HEADLESS = true;
@@ -4852,6 +4874,8 @@ async function main(): Promise<void> {
   if (subcommand === 'profile') { await runProfile(program.args[1], program.args[2]); return; }
   if (subcommand === 'setup-profile') { await runSetupProfile(); return; }
   if (subcommand === 'curriculum') { runCurriculum(program.args[1]); return; }
+  if (subcommand === 'train') { process.exitCode = await runTrainCommand(program.args.slice(1), JSON_MODE); return; }
+  if (subcommand === 'insights') { process.exitCode = await runInsightsCommand(DEV_MODE); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
   // game doesn't inherit the old player's developmental graph.
