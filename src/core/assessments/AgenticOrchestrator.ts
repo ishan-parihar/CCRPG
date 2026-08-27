@@ -28,6 +28,13 @@ import {
   type TrainingIntegration,
   type TrainingHandlerContext,
 } from './trainingTools.js';
+import {
+  UNIFIED_PROFILE_TOOLS,
+  UNIFIED_TOOL_NAMES,
+  UNIFIED_RULES_SUFFIX,
+  handleUnifiedProfileTool,
+  type UnifiedProfileServices,
+} from './unifiedProfileTools.js';
 
 const PESTLE_DIMS: (keyof PESTLETension)[] = ['political', 'economic', 'social', 'technological', 'legal', 'environmental'];
 
@@ -187,6 +194,7 @@ export class AgenticOrchestrator {
   private _lastQuestionText: string | undefined;
   private training: TrainingIntegration | null = null;
   private _trainingSignal: AbortSignal | undefined;
+  private unifiedProfile: UnifiedProfileServices | null = null;
 
   // ponytail: E — shadow keywords extracted to src/core/data/shadowKeywords.json (shared data, not code).
   private static readonly SHADOW_KEYWORDS = SHADOW_KEYWORDS_DATA as Readonly<Record<string, readonly string[]>>;
@@ -245,6 +253,7 @@ export class AgenticOrchestrator {
      * existing callers (WebUI included).
      */
     training?: TrainingIntegration;
+    unifiedProfile?: UnifiedProfileServices;
   }) {
     this.encounter = params.encounter;
     this.significator = params.significator;
@@ -259,14 +268,18 @@ export class AgenticOrchestrator {
     this._consecutivePasses = params.consecutivePasses ?? new Map();
     this.agentSynthesis = params.agentSynthesis;
     this.training = params.training ?? null;
+    this.unifiedProfile = params.unifiedProfile ?? null;
   }
 
   /**
    * Tools available for the main narrative loop. Training tools are appended
    * only when a TrainingIntegration was provided at construction.
    */
-  private toolsForRun() {
-    return this.training ? [...TOOLS, ...TRAINING_TOOLS] : TOOLS;
+  private toolsForRun(): any[] {
+    const tools: any[] = [...(TOOLS as unknown as any[])];
+    if (this.training) tools.push(...(TRAINING_TOOLS as unknown as any[]));
+    if (this.unifiedProfile) tools.push(...(UNIFIED_PROFILE_TOOLS as unknown as any[]));
+    return tools;
   }
 
   /** Handler context shared by all training tool calls in one encounter. */
@@ -432,7 +445,7 @@ export class AgenticOrchestrator {
 4. Keep the flow interactive, building upon prior answers.
 5. This encounter has a budget of 4 exchanges. After the player has responded to 4 questions, you MUST call 'complete_encounter'. Do NOT generate more than 4 ask_user_question calls. Each question should probe deeper based on the player's previous answers.
 6. When calling 'complete_encounter', evaluate the player per the DRIVE PROBES section. Score each drive independently. Provide driveScores (0.0-1.0 per drive) and driveSignals (pathology enum per drive).
-7. If RECENT ENCOUNTERS are listed, reference them subtly — the player's journey has continuity.${this.training ? TRAINING_RULES_SUFFIX : ''}`;
+7. If RECENT ENCOUNTERS are listed, reference them subtly — the player's journey has continuity.${this.training ? TRAINING_RULES_SUFFIX : ''}${this.unifiedProfile ? UNIFIED_RULES_SUFFIX : ''}`;
 
     if (this.messages.length === 0) {
       this.messages.push({
@@ -533,6 +546,14 @@ export class AgenticOrchestrator {
             this.messages.push({
               role: 'tool',
               content: JSON.stringify(outcome.ok ? outcome.payload : { error: outcome.payload.error }),
+              toolCallId: tc.id,
+              name: tc.function.name,
+            });
+          } else if (UNIFIED_TOOL_NAMES.has(tc.function.name) && this.unifiedProfile) {
+            const outcome = await handleUnifiedProfileTool(tc.function.name, tc.function.arguments, { services: this.unifiedProfile });
+            this.messages.push({
+              role: 'tool',
+              content: JSON.stringify(outcome.ok ? outcome.payload : { error: (outcome.payload as any).error }),
               toolCallId: tc.id,
               name: tc.function.name,
             });

@@ -1,6 +1,9 @@
 /**
- * TaskRenderers — translates assessment TaskTypes into CLI-compatible MCQ prompts
- * and evaluates responses into TrialResult objects with real timing/accuracy data.
+ * TaskRenderers — (PURGED BRAIN-GAME MCQ)
+ * Canonical brain-game tasks (n_back, stroop, go_no_go, hold, pattern_prediction, reaction_time, rhythm)
+ * are now served by src/core/braingame/paradigms/* via BrainGameEngine + AdaptiveDifficultyService.
+ * This file now only serves developmental task types (dilemma, self_report, etc.).
+ * Legacy MCQ wrappers for brain games have been removed — use run_brain_game tool.
  *
  * Each renderer produces an AskUserQuestionParams-compatible prompt and a
  * response evaluator that generates TrialResult[] for the scoring engine.
@@ -44,49 +47,21 @@ function shuffle<T>(arr: T[]): T[] {
   return arr;
 }
 
-// ── Symbol sets for cognitive tasks ────────────────────────────────────
-
-const NBACK_SYMBOLS = ['◆', '●', '▲', '■', '★', '◇', '○', '△'];
-const NBACK_SYMBOLS_EXTENDED = ['◆', '●', '▲', '■', '★', '◇', '○', '△', '◈', '◉', '◎', '✧'];
-const STROOP_COLORS = [
-  { word: 'RED', render: '\x1b[31mRED\x1b[0m', short: 'Red', initial: 'R' },
-  { word: 'BLUE', render: '\x1b[34mBLUE\x1b[0m', short: 'Blue', initial: 'B' },
-  { word: 'GREEN', render: '\x1b[32mGREEN\x1b[0m', short: 'Green', initial: 'G' },
-  { word: 'YELLOW', render: '\x1b[33mYELLOW\x1b[0m', short: 'Yellow', initial: 'Y' },
-];
-const STROOP_COLORS_EXTENDED = [
-  ...STROOP_COLORS,
-  { word: 'PURPLE', render: '\x1b[35mPURPLE\x1b[0m', short: 'Purple', initial: 'P' },
-  { word: 'ORANGE', render: '\x1b[38;5;208mORANGE\x1b[0m', short: 'Orange', initial: 'O' },
-];
-const GONOGO_STIMULI = ['⚔', '🛡', '☠', '✦'];
-const GONOGO_STIMULI_EXTENDED = ['⚔', '🛡', '☠', '✦', '🔮', '💀'];
-
-/**
- * Stage-specific difficulty parameters.
- * Lower stages = simpler tasks, fewer trials, larger symbol pools.
- * Higher stages = more complex tasks, more trials, abstract symbols.
- */
-const STAGE_DIFFICULTY: Record<string, {
-  nBackN: number; nBackTrials: number; stroopTrials: number;
-  goNoGoTrials: number; holdItems: number; holdDurationMs: number;
-  patternDisks: number; patternAttempts: number;
-  symbolPool: readonly string[]; stroopColors: typeof STROOP_COLORS;
-  goStimuli: readonly string[];
-}> = {
-  Infrared: { nBackN: 1, nBackTrials: 6, stroopTrials: 4, goNoGoTrials: 8, holdItems: 2, holdDurationMs: 3000, patternDisks: 2, patternAttempts: 3, symbolPool: NBACK_SYMBOLS.slice(0, 4), stroopColors: STROOP_COLORS.slice(0, 3), goStimuli: GONOGO_STIMULI.slice(0, 2) },
-  Magenta: { nBackN: 1, nBackTrials: 8, stroopTrials: 6, goNoGoTrials: 10, holdItems: 2, holdDurationMs: 4000, patternDisks: 2, patternAttempts: 3, symbolPool: NBACK_SYMBOLS.slice(0, 5), stroopColors: STROOP_COLORS.slice(0, 3), goStimuli: GONOGO_STIMULI.slice(0, 3) },
-  Red: { nBackN: 2, nBackTrials: 10, stroopTrials: 8, goNoGoTrials: 14, holdItems: 3, holdDurationMs: 5000, patternDisks: 3, patternAttempts: 4, symbolPool: NBACK_SYMBOLS, stroopColors: STROOP_COLORS, goStimuli: GONOGO_STIMULI },
-  Amber: { nBackN: 2, nBackTrials: 12, stroopTrials: 10, goNoGoTrials: 16, holdItems: 3, holdDurationMs: 6000, patternDisks: 3, patternAttempts: 4, symbolPool: NBACK_SYMBOLS, stroopColors: STROOP_COLORS, goStimuli: GONOGO_STIMULI },
-  Orange: { nBackN: 2, nBackTrials: 14, stroopTrials: 10, goNoGoTrials: 18, holdItems: 4, holdDurationMs: 7000, patternDisks: 4, patternAttempts: 5, symbolPool: NBACK_SYMBOLS_EXTENDED, stroopColors: STROOP_COLORS_EXTENDED, goStimuli: GONOGO_STIMULI_EXTENDED },
-  Green: { nBackN: 3, nBackTrials: 16, stroopTrials: 12, goNoGoTrials: 20, holdItems: 4, holdDurationMs: 8000, patternDisks: 4, patternAttempts: 5, symbolPool: NBACK_SYMBOLS_EXTENDED, stroopColors: STROOP_COLORS_EXTENDED, goStimuli: GONOGO_STIMULI_EXTENDED },
-  Turquoise: { nBackN: 3, nBackTrials: 18, stroopTrials: 14, goNoGoTrials: 22, holdItems: 5, holdDurationMs: 9000, patternDisks: 5, patternAttempts: 6, symbolPool: NBACK_SYMBOLS_EXTENDED, stroopColors: STROOP_COLORS_EXTENDED, goStimuli: GONOGO_STIMULI_EXTENDED },
-  White: { nBackN: 3, nBackTrials: 20, stroopTrials: 16, goNoGoTrials: 24, holdItems: 5, holdDurationMs: 10000, patternDisks: 5, patternAttempts: 6, symbolPool: NBACK_SYMBOLS_EXTENDED, stroopColors: STROOP_COLORS_EXTENDED, goStimuli: GONOGO_STIMULI_EXTENDED },
+// ── Brain-game MCQ symbols/STAGE_DIFFICULTY PURGED for n_back/stroop/go_no_go/hold/pattern_prediction — use ParadigmDefinitions (src/core/braingame/paradigms/*)
+// Minimal developmental probe support retained below for line probes (Cognitive/Interpersonal etc.)
+const NBACK_SYMBOLS_DEV = ['◆', '●', '▲', '■', '★', '◇'];
+const STAGE_DIFFICULTY_DEV: Record<string, { symbolPool: readonly string[]; holdDurationMs: number; stroopColors: readonly string[]; goStimuli: readonly string[] }> = {
+  Infrared: { symbolPool: NBACK_SYMBOLS_DEV.slice(0, 3), holdDurationMs: 3000, stroopColors: ['R','G','B'], goStimuli: ['⚔','🛡'] },
+  Magenta: { symbolPool: NBACK_SYMBOLS_DEV.slice(0, 4), holdDurationMs: 4000, stroopColors: ['R','G','B'], goStimuli: ['⚔','🛡'] },
+  Red: { symbolPool: NBACK_SYMBOLS_DEV, holdDurationMs: 5000, stroopColors: ['R','G','B'], goStimuli: ['⚔','🛡'] },
+  Amber: { symbolPool: NBACK_SYMBOLS_DEV, holdDurationMs: 6000, stroopColors: ['R','G','B'], goStimuli: ['⚔','🛡'] },
+  Orange: { symbolPool: NBACK_SYMBOLS_DEV, holdDurationMs: 7000, stroopColors: ['R','G','B'], goStimuli: ['⚔','🛡'] },
+  Green: { symbolPool: NBACK_SYMBOLS_DEV, holdDurationMs: 8000, stroopColors: ['R','G','B'], goStimuli: ['⚔','🛡'] },
+  Turquoise: { symbolPool: NBACK_SYMBOLS_DEV, holdDurationMs: 9000, stroopColors: ['R','G','B'], goStimuli: ['⚔','🛡'] },
+  White: { symbolPool: NBACK_SYMBOLS_DEV, holdDurationMs: 10000, stroopColors: ['R','G','B'], goStimuli: ['⚔','🛡'] },
 };
-
-/** Get difficulty params for a stage, defaulting to Red */
-function getDifficulty(stage?: string): typeof STAGE_DIFFICULTY['Red'] {
-  return STAGE_DIFFICULTY[stage ?? 'Red'] ?? STAGE_DIFFICULTY['Red']!;
+function getDifficulty(stage?: string): { symbolPool: readonly string[]; holdDurationMs: number; stroopColors: readonly string[]; goStimuli: readonly string[] } {
+  return STAGE_DIFFICULTY_DEV[stage ?? 'Red'] ?? STAGE_DIFFICULTY_DEV['Red']!;
 }
 
 // ── Task type display names ────────────────────────────────────────────
@@ -115,96 +90,14 @@ export const TASK_TYPE_LABELS: Record<string, string> = {
  * Render an n-back task: generate a symbol sequence and ask the player
  * to identify which positions match the item from n steps back.
  */
-export function renderNBack(task: AssessmentTask): {
-  prompt: AskUserQuestionParams;
-  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
-} {
-  const diff = getDifficulty(task.parameters.stage as string | undefined);
-  const n = (task.parameters.n as number) ?? diff.nBackN;
-  const trialCount = (task.parameters.trials as number) ?? diff.nBackTrials;
-  const symbols = diff.symbolPool;
-
-  // Generate a sequence with guaranteed matches
-  const sequence: string[] = [];
-  const matchPositions: number[] = [];
-
-  for (let i = 0; i < trialCount; i++) {
-    if (i >= n && Math.random() < 0.4) {
-      sequence.push(sequence[i - n]!);
-      matchPositions.push(i);
-    } else {
-      const sym = symbols[Math.floor(Math.random() * symbols.length)]!;
-      if (i >= n && sym === sequence[i - n]) {
-        const alternatives = symbols.filter(s => s !== sequence[i - n]);
-        sequence.push(alternatives[Math.floor(Math.random() * alternatives.length)]!);
-      } else {
-        sequence.push(sym);
-      }
-    }
-  }
-
-  const expectedCount = matchPositions.length;
-
-  const displaySequence = sequence.map((s, i) => `${C.dim}[${i + 1}]${C.reset} ${s}`).join('  ');
-
-  const question = [
-    `You see a sequence of symbols. Track each one — does it match the symbol from ${n} steps back?`,
-    ``,
-    `${displaySequence}`,
-    ``,
-    `${C.bold}How many matches did you find?${C.reset}`,
-  ].join('\n');
-
-  // Build options with drive metadata, then shuffle
-  const options: DriveOption[] = [
-    { label: `${expectedCount} matches`, description: `I counted ${expectedCount} matches`, drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
-    { label: `${Math.max(0, expectedCount - 1)} matches`, description: 'I may have missed one', drive: 'communion', polarity: 'neutral', correctnessScore: 0.7 },
-    { label: `${expectedCount + 1} matches`, description: 'I may have counted an extra', drive: 'eros', polarity: 'neutral', correctnessScore: 0.5 },
-    { label: `0 matches`, description: 'I found no matching pairs', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
-  ];
-  shuffle(options);
-
+export function renderNBack(_task: AssessmentTask): { prompt: AskUserQuestionParams; evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult; } {
+  // PURGED — brain games now run via BrainGameEngine (run_brain_game tool). This stub keeps the export alive for type-checking.
   return {
-    prompt: {
-      questions: [{
-        question,
-        header: 'Working Memory',
-        options: options.map(o => ({ label: o.label, description: o.description })),
-        allowWriteIn: true,
-        multiSelect: false,
-      }],
-    },
-    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
-      const durationMs = endTimeMs - startTimeMs;
-      const numericMatch = answer.match(/\d+/);
-      const playerCount = numericMatch ? parseInt(numericMatch[0]!, 10) : -1;
-
-      const error = Math.abs(playerCount - expectedCount);
-      const accuracy = Math.max(0, 1 - error / Math.max(1, trialCount * 0.5));
-
-      const expectedTime = trialCount * ((task.parameters.stimulusDurationMs as number) ?? 1100) + 2000;
-      const timeRatio = durationMs / expectedTime;
-      const responseTime = timeRatio < 0.5 ? 0.9 : timeRatio < 1.5 ? 0.7 : timeRatio < 3 ? 0.5 : 0.3;
-      const consistency = error === 0 ? 0.95 : error === 1 ? 0.7 : 0.4;
-
-      // Match selected option to its drive metadata
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
-
-      return {
-        taskId: task.id,
-        timestamp: startTimeMs,
-        dimensions: { accuracy, response_time: responseTime, consistency },
-        rawResponse: {
-          playerCount, expectedCount, sequence: sequence.join(''), matchPositions,
-          matchedDrive: matchedOpt?.drive ?? null,
-          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
-          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
-        },
-        durationMs,
-      };
-    },
+    prompt: { questions: [{ question: '[PURGED] n_back — use run_brain_game', header: 'Working Memory', options: [{ label: 'Continue', description: 'Use brain game' }], allowWriteIn: true, multiSelect: false }] },
+    evaluate: (_answer: string, startTimeMs: number, endTimeMs: number): TrialResult => ({ taskId: _task.id, timestamp: startTimeMs, dimensions: { accuracy: 0.5 }, rawResponse: {}, durationMs: endTimeMs - startTimeMs }),
   };
 }
+
 
 // ── Stroop Renderer ───────────────────────────────────────────────────
 
@@ -212,99 +105,13 @@ export function renderNBack(task: AssessmentTask): {
  * Render a Stroop task: show a word printed in a different ink color,
  * ask the player to name the INK color (not the word).
  */
-export function renderStroop(task: AssessmentTask): {
-  prompt: AskUserQuestionParams;
-  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
-} {
-  const diff = getDifficulty(task.parameters.stage as string | undefined);
-  const trialCount = (task.parameters.trials as number) ?? diff.stroopTrials;
-  const colors = diff.stroopColors;
-
-  const trials: { wordIdx: number; inkIdx: number }[] = [];
-  for (let i = 0; i < trialCount; i++) {
-    let wordIdx = Math.floor(Math.random() * colors.length);
-    let inkIdx = Math.floor(Math.random() * colors.length);
-    while (inkIdx === wordIdx) {
-      inkIdx = Math.floor(Math.random() * colors.length);
-    }
-    trials.push({ wordIdx, inkIdx });
-  }
-
-  const trialDisplay = trials.map((t, i) => {
-    const inkColor = colors[t.inkIdx]!;
-    return `${C.dim}#${i + 1}${C.reset} ${inkColor.render}`;
-  }).join('   ');
-
-  // Generate the correct sequence
-  const correctSequence = trials.map(t => colors[t.inkIdx]!.initial).join(',');
-
-  const question = [
-    `Name the INK COLOR of each word (not the word itself).`,
-    ``,
-    `${trialDisplay}`,
-    ``,
-    `${C.bold}What is the correct ink color sequence?${C.reset}`,
-  ].join('\n');
-
-  // Build correct and incorrect options, then shuffle
-  const incorrectSequences = [
-    trials.map(t => colors[(t.inkIdx + 1) % colors.length]!.initial).join(','),
-    trials.map(t => colors[(t.inkIdx + 2) % colors.length]!.initial).join(','),
-    trials.map(t => colors[t.wordIdx]!.initial).join(','), // Word-color (Stroop error)
-  ];
-
-  const options: DriveOption[] = [
-    { label: correctSequence, description: 'Correct sequence', drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
-    { label: incorrectSequences[0]!, description: 'Partial match', drive: 'communion', polarity: 'neutral', correctnessScore: 0.5 },
-    { label: incorrectSequences[1]!, description: 'Different sequence', drive: 'eros', polarity: 'neutral', correctnessScore: 0.3 },
-    { label: incorrectSequences[2]!, description: 'Word-based (common error)', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
-  ];
-  shuffle(options);
-
+export function renderStroop(_task: AssessmentTask): { prompt: AskUserQuestionParams; evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult; } {
   return {
-    prompt: {
-      questions: [{
-        question,
-        header: 'Inhibitory Control',
-        options: options.map(o => ({ label: o.label, description: o.description })),
-        allowWriteIn: true,
-        multiSelect: false,
-      }],
-    },
-    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
-      const durationMs = endTimeMs - startTimeMs;
-      const colorMap: Record<string, number> = { r: 0, red: 0, b: 1, blue: 1, g: 2, green: 2, y: 3, yellow: 3 };
-      const parts = answer.toLowerCase().split(/[, ]+/).filter(Boolean);
-      const playerColors = parts.map(p => colorMap[p] ?? -1).filter(c => c >= 0);
-
-      const expected = trials.map(t => t.inkIdx);
-      let correct = 0;
-      for (let i = 0; i < Math.min(playerColors.length, expected.length); i++) {
-        if (playerColors[i] === expected[i]) correct++;
-      }
-
-      const accuracy = expected.length > 0 ? correct / expected.length : 0;
-      const expectedTime = trialCount * 2500;
-      const timeRatio = durationMs / expectedTime;
-      const responseTime = timeRatio < 0.5 ? 0.9 : timeRatio < 1.5 ? 0.7 : timeRatio < 3 ? 0.5 : 0.3;
-
-      const matchedOpt = options.find(o => answer.toUpperCase().includes(o.label));
-
-      return {
-        taskId: task.id,
-        timestamp: startTimeMs,
-        dimensions: { accuracy, response_time: responseTime, consistency: accuracy },
-        rawResponse: {
-          playerColors, expected, correct, total: expected.length,
-          matchedDrive: matchedOpt?.drive ?? null,
-          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
-          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
-        },
-        durationMs,
-      };
-    },
+    prompt: { questions: [{ question: '[PURGED] stroop — use run_brain_game', header: 'Inhibitory Control', options: [{ label: 'Continue', description: 'Use brain game' }], allowWriteIn: true, multiSelect: false }] },
+    evaluate: (_answer: string, startTimeMs: number, endTimeMs: number): TrialResult => ({ taskId: _task.id, timestamp: startTimeMs, dimensions: { accuracy: 0.5 }, rawResponse: {}, durationMs: endTimeMs - startTimeMs }),
   };
 }
+
 
 // ── Go/No-Go Renderer ────────────────────────────────────────────────
 
@@ -312,232 +119,36 @@ export function renderStroop(task: AssessmentTask): {
  * Render a Go/No-Go task: show stimuli and ask the player to count
  * how many "Go" (⚔) stimuli appeared vs "No-Go" (🛡) stimuli.
  */
-export function renderGoNoGo(task: AssessmentTask): {
-  prompt: AskUserQuestionParams;
-  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
-} {
-  const diff = getDifficulty(task.parameters.stage as string | undefined);
-  const goRatio = (task.parameters.goRatio as number) ?? 0.7;
-  const trialCount = (task.parameters.trials as number) ?? diff.goNoGoTrials;
-  const stimuliPool = diff.goStimuli;
-
-  const stimuli: string[] = [];
-  let goCount = 0;
-  let nogoCount = 0;
-  for (let i = 0; i < trialCount; i++) {
-    const isGo = Math.random() < goRatio;
-    stimuli.push(isGo ? stimuliPool[0]! : stimuliPool[1]!);
-    if (isGo) goCount++;
-    else nogoCount++;
-  }
-
-  const display = stimuli.map((s, i) => `${C.dim}${i + 1}:${C.reset}${s}`).join(' ');
-
-  const question = [
-    `⚔ = GO (respond)   🛡 = NO-GO (withhold)`,
-    ``,
-    `${display}`,
-    ``,
-    `${C.bold}How many GO stimuli (⚔) were there?${C.reset}`,
-  ].join('\n');
-
-  const options: DriveOption[] = [
-    { label: `${goCount} GO`, description: `I counted ${goCount} go signals`, drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
-    { label: `${Math.max(0, goCount - 1)} GO`, description: 'I may have missed one', drive: 'communion', polarity: 'neutral', correctnessScore: 0.7 },
-    { label: `${goCount + 1} GO`, description: 'I may have counted an extra', drive: 'eros', polarity: 'neutral', correctnessScore: 0.5 },
-    { label: `I lost count`, description: 'Too many stimuli to track', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
-  ];
-  shuffle(options);
-
+export function renderGoNoGo(_task: AssessmentTask): { prompt: AskUserQuestionParams; evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult; } {
   return {
-    prompt: {
-      questions: [{
-        question,
-        header: 'Impulse Regulation',
-        options: options.map(o => ({ label: o.label, description: o.description })),
-        allowWriteIn: true,
-        multiSelect: false,
-      }],
-    },
-    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
-      const durationMs = endTimeMs - startTimeMs;
-      const numericMatch = answer.match(/\d+/);
-      const playerCount = numericMatch ? parseInt(numericMatch[0]!, 10) : -1;
-
-      const error = Math.abs(playerCount - goCount);
-      const accuracy = Math.max(0, 1 - error / Math.max(1, trialCount * 0.3));
-
-      const expectedTime = trialCount * ((task.parameters.stimulusDurationMs as number) ?? 500) + 2000;
-      const timeRatio = durationMs / expectedTime;
-      const responseTime = timeRatio < 0.5 ? 0.9 : timeRatio < 1.5 ? 0.7 : timeRatio < 3 ? 0.5 : 0.3;
-
-      const matchedOpt = options.find(o => answer.includes(o.label));
-
-      return {
-        taskId: task.id,
-        timestamp: startTimeMs,
-        dimensions: {
-          accuracy,
-          response_time: responseTime,
-          consistency: error === 0 ? 0.95 : error === 1 ? 0.7 : 0.4,
-        },
-        rawResponse: {
-          playerCount, goCount, nogoCount, stimuli: stimuli.join(''),
-          matchedDrive: matchedOpt?.drive ?? null,
-          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
-          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
-        },
-        durationMs,
-      };
-    },
+    prompt: { questions: [{ question: '[PURGED] go_no_go — use run_brain_game', header: 'Impulse Regulation', options: [{ label: 'Continue', description: 'Use brain game' }], allowWriteIn: true, multiSelect: false }] },
+    evaluate: (_answer: string, startTimeMs: number, endTimeMs: number): TrialResult => ({ taskId: _task.id, timestamp: startTimeMs, dimensions: { accuracy: 0.5 }, rawResponse: {}, durationMs: endTimeMs - startTimeMs }),
   };
 }
+
 
 // ── Hold Task Renderer ───────────────────────────────────────────────
 
 /**
  * Render a Hold task: show items to remember, then ask the player to recall.
  */
-export function renderHold(task: AssessmentTask): {
-  prompt: AskUserQuestionParams;
-  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
-} {
-  const diff = getDifficulty(task.parameters.stage as string | undefined);
-  const itemCount = (task.parameters.items as number) ?? diff.holdItems;
-  const holdDurationMs = (task.parameters.holdDurationMs as number) ?? diff.holdDurationMs;
-
-  const items = diff.symbolPool.slice(0, itemCount);
-
-  const question = [
-    `Remember these ${itemCount} symbols:`,
-    ``,
-    `  ${items.join('   ')}`,
-    ``,
-    `Hold them in your mind for ${Math.round(holdDurationMs / 1000)} seconds.`,
-    `Now: ${C.bold}List the symbols in order${C.reset}`,
-  ].join('\n');
-
-  // Options: correct recall, partial, vague, forgot
-  const options: DriveOption[] = [
-    { label: `${items.join(' ')}`, description: `I remember: ${items.join(', ')}`, drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
-    { label: `${items.slice(0, -1).join(' ')}…`, description: `I remember ${items.length - 1} of them`, drive: 'communion', polarity: 'neutral', correctnessScore: 0.7 },
-    { label: `Some symbols`, description: 'I recall parts but not all', drive: 'eros', polarity: 'neutral', correctnessScore: 0.4 },
-    { label: `Slipped away`, description: 'The symbols faded from memory', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
-  ];
-  shuffle(options);
-
+export function renderHold(_task: AssessmentTask): { prompt: AskUserQuestionParams; evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult; } {
   return {
-    prompt: {
-      questions: [{
-        question,
-        header: 'Attentional Hold',
-        options: options.map(o => ({ label: o.label, description: o.description })),
-        allowWriteIn: true,
-        multiSelect: false,
-      }],
-    },
-    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
-      const durationMs = endTimeMs - startTimeMs;
-
-      const answerLower = answer.toLowerCase();
-      const matched = items.filter(item => answerLower.includes(item));
-      const accuracy = matched.length / items.length;
-
-      const responseTime = holdDurationMs > 0 ? Math.min(1, holdDurationMs / (holdDurationMs * 2)) : 0.7;
-      // Match against full label to handle shuffled options correctly
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
-
-      return {
-        taskId: task.id,
-        timestamp: startTimeMs,
-        dimensions: { accuracy, response_time: responseTime, consistency: accuracy },
-        rawResponse: {
-          items, matched, answer,
-          matchedDrive: matchedOpt?.drive ?? null,
-          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
-          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
-        },
-        durationMs,
-      };
-    },
+    prompt: { questions: [{ question: '[PURGED] hold — use run_brain_game', header: 'Attentional Hold', options: [{ label: 'Continue', description: 'Use brain game' }], allowWriteIn: true, multiSelect: false }] },
+    evaluate: (_answer: string, startTimeMs: number, endTimeMs: number): TrialResult => ({ taskId: _task.id, timestamp: startTimeMs, dimensions: { accuracy: 0.5 }, rawResponse: {}, durationMs: endTimeMs - startTimeMs }),
   };
 }
+
 
 // ── Pattern Prediction Renderer ──────────────────────────────────────
 
-export function renderPatternPrediction(task: AssessmentTask): {
-  prompt: AskUserQuestionParams;
-  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
-} {
-  const diff = getDifficulty(task.parameters.stage as string | undefined);
-  const disks = (task.parameters.disks as number) ?? diff.patternDisks;
-  const attempts = (task.parameters.attempts as number) ?? diff.patternAttempts;
-
-  const base = Math.floor(Math.random() * 5) + 1;
-  const step = Math.floor(Math.random() * 3) + 1;
-  const pattern = Array.from({ length: 4 }, (_, i) => base + step * i);
-  const nextValue = pattern[3]! + step;
-
-  const question = [
-    `Observe the pattern of ${disks} elements across ${attempts} steps:`,
-    ``,
-    `  ${pattern.map((v, i) => `${C.dim}Step ${i + 1}:${C.reset} ${'█'.repeat(v)} ${v}`).join('\n  ')}`,
-    ``,
-    `${C.bold}What is Step 5?${C.reset}`,
-  ].join('\n');
-
-  const options: DriveOption[] = [
-    { label: `${nextValue}`, description: `The next value (increasing by ${step})`, drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
-    { label: `${nextValue + step}`, description: `Larger step`, drive: 'communion', polarity: 'neutral', correctnessScore: 0.3 },
-    { label: `${nextValue - 1}`, description: `Close but not quite`, drive: 'eros', polarity: 'neutral', correctnessScore: 0.5 },
-    { label: `No pattern`, description: 'I see no clear pattern', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
-  ];
-  shuffle(options);
-
+export function renderPatternPrediction(_task: AssessmentTask): { prompt: AskUserQuestionParams; evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult; } {
   return {
-    prompt: {
-      questions: [{
-        question,
-        header: 'Pattern Recognition',
-        options: options.map(o => ({ label: o.label, description: o.description })),
-        allowWriteIn: true,
-        multiSelect: false,
-      }],
-    },
-    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
-      const durationMs = endTimeMs - startTimeMs;
-      const numericMatch = answer.match(/\d+/);
-      const playerValue = numericMatch ? parseInt(numericMatch[0]!, 10) : -1;
-
-      const error = Math.abs(playerValue - nextValue);
-      const accuracy = Math.max(0, 1 - error / Math.max(1, disks));
-
-      const expectedTime = attempts * 3000;
-      const timeRatio = durationMs / expectedTime;
-      const responseTime = timeRatio < 0.5 ? 0.9 : timeRatio < 1.5 ? 0.7 : timeRatio < 3 ? 0.5 : 0.3;
-
-      const matchedOpt = options.find(o => answer.includes(o.label));
-
-      return {
-        taskId: task.id,
-        timestamp: startTimeMs,
-        dimensions: {
-          accuracy,
-          response_time: responseTime,
-          complexity_handled: accuracy,
-          self_correction: error <= 1 ? 0.8 : 0.4,
-        },
-        rawResponse: {
-          pattern, nextValue, playerValue, step,
-          matchedDrive: matchedOpt?.drive ?? null,
-          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
-          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
-        },
-        durationMs,
-      };
-    },
+    prompt: { questions: [{ question: '[PURGED] pattern_prediction — use run_brain_game', header: 'Pattern Recognition', options: [{ label: 'Continue', description: 'Use brain game' }], allowWriteIn: true, multiSelect: false }] },
+    evaluate: (_answer: string, startTimeMs: number, endTimeMs: number): TrialResult => ({ taskId: _task.id, timestamp: startTimeMs, dimensions: { accuracy: 0.5 }, rawResponse: {}, durationMs: endTimeMs - startTimeMs }),
   };
 }
+
 
 // ── Emotion Identification Renderer ──────────────────────────────────
 
@@ -1221,135 +832,23 @@ export function renderValueRanking(task: AssessmentTask): {
 
 // ── Reaction Time Renderer ──────────────────────────────────────────
 
-export function renderReactionTime(task: AssessmentTask): {
-  prompt: AskUserQuestionParams;
-  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
-} {
-  // Generate a simple rapid-response task: identify the target number
-  const diff = getDifficulty(task.parameters.stage as string | undefined);
-  const targetRange = diff.nBackN + 4; // Higher stages = larger range
-  const target = Math.floor(Math.random() * targetRange) + 1;
-  const decoy = Math.floor(Math.random() * targetRange) + 1;
-  const decoy2 = decoy === target ? decoy + 1 : decoy;
-
-  const question = [
-    `${C.bold}${C.red}\u26a1 QUICK RESPONSE REQUIRED${C.reset}`,
-    ``,
-    `A number will be shown. Respond ${C.bold}as fast as possible${C.reset}.`,
-    ``,
-    `  Target number: ${C.bold}${C.cyan}${target}${C.reset}`,
-    `  ${C.dim}(remember this number)${C.reset}`,
-    ``,
-    `${C.bold}Which number was your target?${C.reset}`,
-  ].join('\n');
-
-  const options: DriveOption[] = [
-    { label: `${target}`, description: `Correct — the target was ${target}`, drive: 'agency', polarity: 'neutral', correctnessScore: 1.0 },
-    { label: `${target + 1}`, description: 'Close but one off', drive: 'communion', polarity: 'neutral', correctnessScore: 0.4 },
-    { label: `${decoy2}`, description: 'A different number', drive: 'eros', polarity: 'neutral', correctnessScore: 0.2 },
-    { label: `I forgot`, description: 'The number slipped away', drive: 'agape', polarity: 'neutral', correctnessScore: 0.0 },
-  ];
-  shuffle(options);
-
+export function renderReactionTime(_task: AssessmentTask): { prompt: AskUserQuestionParams; evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult; } {
   return {
-    prompt: {
-      questions: [{
-        question,
-        header: 'Reflex Test',
-        options: options.map(o => ({ label: o.label, description: o.description })),
-        allowWriteIn: true,
-        multiSelect: false,
-      }],
-    },
-    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
-      const durationMs = endTimeMs - startTimeMs;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
-      const isCorrect = matchedOpt?.correctnessScore === 1.0;
-
-      // Actual response time scoring: faster = better (uses real wall-clock timing)
-      const responseTime = durationMs < 3000 ? 0.95
-        : durationMs < 8000 ? 0.8
-        : durationMs < 15000 ? 0.6
-        : durationMs < 30000 ? 0.4
-        : 0.2;
-
-      // Accuracy from correctnessScore (deterministic option match)
-      const accuracy = matchedOpt?.correctnessScore ?? 0.5;
-
-      return {
-        taskId: task.id,
-        timestamp: startTimeMs,
-        dimensions: {
-          accuracy,
-          response_time: responseTime,
-          consistency: isCorrect ? 0.8 : 0.4,
-        },
-        rawResponse: {
-          target, answer, isCorrect, durationMs,
-          matchedDrive: matchedOpt?.drive ?? null,
-          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
-          correctnessScore: matchedOpt?.correctnessScore ?? 0.5,
-        },
-        durationMs,
-      };
-    },
+    prompt: { questions: [{ question: '[PURGED] reaction_time — use run_brain_game', header: 'Reaction Speed', options: [{ label: 'Continue', description: 'Use brain game' }], allowWriteIn: true, multiSelect: false }] },
+    evaluate: (_answer: string, startTimeMs: number, endTimeMs: number): TrialResult => ({ taskId: _task.id, timestamp: startTimeMs, dimensions: { accuracy: 0.5 }, rawResponse: {}, durationMs: endTimeMs - startTimeMs }),
   };
 }
+
 
 // ── Rhythm Renderer ──────────────────────────────────────────────────
 
-export function renderRhythm(task: AssessmentTask): {
-  prompt: AskUserQuestionParams;
-  evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult;
-} {
-  const question = [
-    `A war-drum beats a steady rhythm. Feel the pulse.`,
-    ``,
-    `${C.dim}♩ ♩ ♩ ♩ — ♩ ♩ ♩ ♩ — ♩ ♩ ♩ ♩${C.reset}`,
-    ``,
-    `${C.bold}How do you respond to the rhythm?${C.reset}`,
-  ].join('\n');
-
-  const options: DriveOption[] = [
-    { label: 'Move with it', description: 'Let the rhythm guide your body', drive: 'communion', polarity: 'sto', correctnessScore: 0.8 },
-    { label: 'Syncopate', description: 'Add your own counter-rhythm', drive: 'agency', polarity: 'sts', correctnessScore: 0.6 },
-    { label: 'Feel it internally', description: 'Let the rhythm resonate within', drive: 'eros', polarity: 'neutral', correctnessScore: 0.7 },
-    { label: 'Stillness', description: 'Find the silence between beats', drive: 'agape', polarity: 'sto', correctnessScore: 0.5 },
-  ];
-  shuffle(options);
-
+export function renderRhythm(_task: AssessmentTask): { prompt: AskUserQuestionParams; evaluate: (answer: string, startTimeMs: number, endTimeMs: number) => TrialResult; } {
   return {
-    prompt: {
-      questions: [{
-        question,
-        header: 'Rhythmic Attunement',
-        options: options.map(o => ({ label: o.label, description: o.description })),
-        allowWriteIn: true,
-        multiSelect: false,
-      }],
-    },
-    evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
-      const durationMs = endTimeMs - startTimeMs;
-      const matchedOpt = options.find(o => answer.toLowerCase().includes(o.label.toLowerCase()));
-
-      return {
-        taskId: task.id,
-        timestamp: startTimeMs,
-        dimensions: {
-          accuracy: matchedOpt?.correctnessScore ?? 0.5,
-          response_time: durationMs < 15000 ? 0.7 : 0.5,
-          coherence: matchedOpt ? 0.7 : 0.4,
-        },
-        rawResponse: {
-          answer,
-          matchedDrive: matchedOpt?.drive ?? null,
-          matchedPolarity: matchedOpt?.polarity ?? 'neutral',
-        },
-        durationMs,
-      };
-    },
+    prompt: { questions: [{ question: '[PURGED] rhythm — use run_brain_game', header: 'Rhythmic Attunement', options: [{ label: 'Continue', description: 'Use brain game' }], allowWriteIn: true, multiSelect: false }] },
+    evaluate: (_answer: string, startTimeMs: number, endTimeMs: number): TrialResult => ({ taskId: _task.id, timestamp: startTimeMs, dimensions: { accuracy: 0.5 }, rawResponse: {}, durationMs: endTimeMs - startTimeMs }),
   };
 }
+
 
 // ── Cooperation Renderer ─────────────────────────────────────────────
 
@@ -1726,7 +1225,7 @@ export function renderCognitiveProbe(task: AssessmentTask): {
   // Generate a rapid pattern-recognition sequence
   const targetIdx = Math.floor(Math.random() * symbols.length);
   const target = symbols[targetIdx]!;
-  const distractors = symbols.filter((_, i) => i !== targetIdx);
+  const distractors = symbols.filter((_: string, i: number) => i !== targetIdx);
   const distractor = distractors[Math.floor(Math.random() * distractors.length)]!;
 
   const decoy = distractor + distractor;
@@ -1736,7 +1235,7 @@ export function renderCognitiveProbe(task: AssessmentTask): {
     ``,
     `Find the ${C.bold}matching pair${C.reset} in the sequence below:`,
     ``,
-    `  ${symbols.slice(0, 6).map((s, i) => `${C.dim}${i + 1}:${C.reset}${s}`).join('  ')}`,
+    `  ${symbols.slice(0, 6).map((s: string, i: number) => `${C.dim}${i + 1}:${C.reset}${s}`).join('  ')}`,
     ``,
     `${C.bold}Which pair of identical symbols appeared?${C.reset}`,
   ].join('\n');
@@ -2231,7 +1730,7 @@ export function renderWillpowerProbe(task: AssessmentTask): {
     evaluate: (answer: string, startTimeMs: number, endTimeMs: number): TrialResult => {
       const durationMs = endTimeMs - startTimeMs;
       const answerLower = answer.toLowerCase();
-      const matched = items.filter(item => answerLower.includes(item));
+      const matched = items.filter((item: string) => answerLower.includes(item));
       const accuracy = matched.length / items.length;
 
       // Willpower-specific: reward appropriate timing (not too fast = didn't hold)

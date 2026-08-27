@@ -286,37 +286,6 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
 }
 
 /**
- * M4 (TDG→Mysterium feedback): Async session start that augments the baseline CCI
- * with TDG-Rust graph-level health (G_z/P_z) when TDG is running.
- *
- * When TDG-Rust is NOT running, this returns the exact same SessionState as
- * the sync startSession() — zero regression. When TDG IS running, it blends
- * TDG's metabolic health into the CCI's metabolicHealth dimension and runs
- * a graph-level reflection to seed the session strategy with developmental
- * insights from the player's cross-session history.
- *
- * Callers that don't need TDG augmentation should use the sync startSession().
- */
-export async function startSessionWithTDG(
-  sig: Significator,
-  session: SessionContext,
-): Promise<SessionState> {
-  // ponytail: TDG-Rust integration removed. This now delegates to the sync
-  // startSession — same behavior, no dynamic TDG import. Signature preserved
-  // so the CLI's USE_PERSISTENT_AGENT branch still compiles (it's always false).
-  return startSession(sig, session);
-}
-
-/**
- * ponytail: TDG-Rust integration removed. Always returns null — no
- * graph-level transformation pressure without TDG. Mysterium's own
- * detectThreshold remains the authoritative signal.
- */
-export async function getTDGTransformationPressure(_sig: Significator): Promise<number | null> {
-  return null;
-}
-
-/**
  * Enhanced tick that uses session strategy for weight biasing.
  * Call this instead of tick() when auto-mode is active.
  *

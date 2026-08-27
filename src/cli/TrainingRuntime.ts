@@ -27,6 +27,8 @@ import {
 import { runInteractiveGame } from './BrainGameCli.js';
 import { createTrialAdjuster, initAdaptiveState, strategyForParadigm } from '../core/adaptive/AdaptiveDifficultyService.js';
 import { runExportCommand as runExportImpl, setServicesGetter } from './ExportRuntime.js';
+import type { UnifiedProfileServices } from '../core/assessments/unifiedProfileTools.js';
+import { loadSave } from '../infra/persistence/SaveRepository.js';
 
 const INDEX_KEY = 'cogidx:v1';
 
@@ -130,6 +132,24 @@ export async function buildTrainingIntegration(): Promise<TrainingIntegration> {
     services: { ...s, fatigue: new FatigueMonitor() },
     runner,
     workout: { plan: null, completed: 0 },
+  };
+}
+
+export async function buildUnifiedProfileServices(): Promise<UnifiedProfileServices> {
+  const s = await services();
+  return {
+    getSignificator: async () => {
+      try {
+        const saved = await loadSave();
+        return (saved as any) ?? null;
+      } catch {
+        return null;
+      }
+    },
+    cognitiveIndex: s.index,
+    trials: s.trials,
+    calibration: s.calibration,
+    now: () => Date.now(),
   };
 }
 

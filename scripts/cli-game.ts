@@ -305,7 +305,7 @@ import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessme
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
-import { runTrainCommand, runInsightsCommand, runExportCommand, runCalibrateCommand, buildTrainingIntegration } from '../src/cli/TrainingRuntime.js';
+import { runTrainCommand, runInsightsCommand, runExportCommand, runCalibrateCommand, buildTrainingIntegration, buildUnifiedProfileServices } from '../src/cli/TrainingRuntime.js';
 // R11-R2: use canonical resonance from veilDescriptors instead of duplicated maps.
 import { describeStage, describePersonalResonance } from '../src/core/presentation/veilDescriptors.js';
 
@@ -1863,9 +1863,9 @@ async function runAgenticEncounter(
     forceShadow: FORCE_SHADOW,
     consecutivePasses,
     agentSynthesis,
-    // Brain-training tools: the Game Master can run real multi-trial games
-    // mid-encounter. Fails soft — if bootstrap fails we proceed without them.
+    // Brain-training + unified profile tools: Game Master can run games and orchestrate across psych/cog/education.
     training: await buildTrainingIntegration().catch(() => undefined),
+    unifiedProfile: await buildUnifiedProfileServices().catch(() => undefined),
   });
 
   // P1-R5 (Fresh-User UX Audit): Thinking indicator during LLM round-trip.
