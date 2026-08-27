@@ -14,6 +14,8 @@ export interface WorkoutItem {
   readonly paradigmId: string;
   readonly targetLevel: number;
   readonly estimatedMinutes: number;
+  /** Lines this paradigm trains (used for player-facing felt-sense mapping). */
+  readonly domains: readonly Line[];
   /** Why this item — agent-facing context (never shown raw to players). */
   readonly rationale: string;
 }
@@ -79,7 +81,7 @@ export function planWorkout(index: CognitiveIndex, opts: PlanOptions): WorkoutPl
       Math.max(0.15, ...p.domains.map((d) => snapshot.get(d)?.score01 ?? 0.5)),
     );
     const minutes = Math.min(4, Math.max(2, Math.round(AVG_MINUTES_PER_GAME)));
-    items.push({ paradigmId: p.id, targetLevel: level, estimatedMinutes: minutes, rationale });
+    items.push({ paradigmId: p.id, targetLevel: level, estimatedMinutes: minutes, domains: p.domains, rationale });
     totalMinutes += minutes;
     for (const d of p.domains) seenLines.add(d);
     void score;

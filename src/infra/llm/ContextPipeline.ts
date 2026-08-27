@@ -47,6 +47,27 @@ export interface ContextPipelineInput {
    * focus). This enables the recursive catalyst trajectory.
    */
   readonly agentSynthesis?: string;
+  /**
+   * P1-QW6 (Architecture Audit Phase A): Optional cognitive snapshot for
+   * the player. When provided, the LLM sees a per-line felt-sense summary
+   * of recent brain-game performance (readiness, trend, lastPlayedDaysAgo).
+   */
+  readonly cognitiveSnapshot?: ReadonlyArray<{
+    readonly line: Line;
+    readonly score01: number;
+    readonly trend: 'rising' | 'stable' | 'decaying';
+    readonly lastPlayedDaysAgo: number;
+  }>;
+  /**
+   * P1-QW6 (Architecture Audit Phase A): Optional educational knowledge
+   * state. When provided, the LLM sees the player's studied concepts,
+   * depth distribution, and review candidates.
+   */
+  readonly knowledgeState?: {
+    readonly conceptCount: number;
+    readonly avgRetention: number;
+    readonly reviewCandidates: ReadonlyArray<{ readonly conceptId: string; readonly urgency: number }>;
+  };
 }
 
 export interface ContextPipelineOutput {
@@ -263,12 +284,20 @@ function assembleSystemPrompt(
   consequenceContext: string,
   veilFilteredSig: VeilFilteredSignificator,
   agentSynthesis?: string,
+  cognitiveSnapshot?: ReadonlyArray<{ readonly line: Line; readonly score01: number; readonly trend: 'rising' | 'stable' | 'decaying'; readonly lastPlayedDaysAgo: number }>,
+  knowledgeState?: { readonly conceptCount: number; readonly avgRetention: number; readonly reviewCandidates: ReadonlyArray<{ readonly conceptId: string; readonly urgency: number }> },
 ): string {
   const holonDescriptions = formatHolonDescriptions(holonSelection);
   const playerStateSignals = formatPlayerState(veilFilteredSig);
   const outputFormat = getOutputFormat(encounterContext.modality);
   const synthesisBlock = agentSynthesis
     ? `\n[SESSION SYNTHESIS] ${agentSynthesis}`
+    : '';
+  const cognitiveBlock = cognitiveSnapshot && cognitiveSnapshot.length > 0
+    ? `\n[COGNITIVE STATE] ${formatCognitiveState(cognitiveSnapshot)}`
+    : '';
+  const knowledgeBlock = knowledgeState && knowledgeState.conceptCount > 0
+    ? `\n[KNOWLEDGE STATE] ${formatKnowledgeState(knowledgeState)}`
     : '';
 
   return `[ROLE] You are the manifestation layer of Mysterium.
@@ -279,9 +308,38 @@ ${frequencySpec.crossAltitudeDirective}
 [ENCOUNTER] lines=${encounterContext.lines.join(',')}; stage=${encounterContext.stage}; modality=${encounterContext.modality}; purpose=${encounterContext.catalyticPurpose}; module=${encounterContext.moduleRef}
 [MODALITY] ${modalityRubric}
 [CONTINUITY] ${consequenceContext}
-[PLAYER STATE] ${playerStateSignals}${synthesisBlock}
+[PLAYER STATE] ${playerStateSignals}${synthesisBlock}${cognitiveBlock}${knowledgeBlock}
 [OUTPUT FORMAT] ${outputFormat}
 [RULES] No Veil violations. No clinical language. No scoring references. No frame-breaking. Stay in frequency. Scale cognitive complexity to the player's altitude, not the encounter's stage.`;
+}
+
+// P1-QW6 (Architecture Audit Phase A): Felt-sense rendering of cognitive
+// snapshot. The LLM needs to know which lines are "sharp lately" vs
+// "resting fallow" so it can calibrate cognitive complexity. We never
+// expose raw scores; only the qualitative felt-sense.
+function formatCognitiveState(snapshot: ReadonlyArray<{ readonly line: Line; readonly score01: number; readonly trend: 'rising' | 'stable' | 'decaying'; readonly lastPlayedDaysAgo: number }>): string {
+  const parts = snapshot.map(s => {
+    const felt = s.trend === 'rising' && s.score01 > 0.65
+      ? 'sharp lately'
+      : s.trend === 'rising'
+      ? 'quietly strengthening'
+      : s.trend === 'decaying'
+      ? 'a little distant'
+      : s.score01 < 0.4
+      ? 'resting fallow'
+      : 'steady';
+    return `${s.line.toLowerCase()}=${felt} (last played ${s.lastPlayedDaysAgo.toFixed(1)}d ago)`;
+  });
+  return parts.join('; ');
+}
+
+// P1-QW6 (Architecture Audit Phase A): Felt-sense rendering of knowledge state.
+function formatKnowledgeState(state: { readonly conceptCount: number; readonly avgRetention: number; readonly reviewCandidates: ReadonlyArray<{ readonly conceptId: string; readonly urgency: number }> }): string {
+  const retentionFelt = state.avgRetention > 0.7 ? 'well-held' : state.avgRetention > 0.4 ? 'developing' : 'fading';
+  const reviewPart = state.reviewCandidates.length > 0
+    ? `; threads asking attention=${state.reviewCandidates.slice(0, 3).map(c => c.conceptId).join(',')}`
+    : '';
+  return `concepts=${state.conceptCount}; retention=${retentionFelt}${reviewPart}`;
 }
 
 function formatHolonDescriptions(holonSelection: HolonSelection): string {
@@ -419,6 +477,8 @@ export function buildContext(input: ContextPipelineInput): ContextPipelineOutput
     consequenceContext,
     veilFilteredSig,
     input.agentSynthesis,
+    input.cognitiveSnapshot,
+    input.knowledgeState,
   );
 
   // Collect selected holons for output

@@ -411,6 +411,35 @@ export class AgenticOrchestrator {
 
     // 1. Build context system prompt
     const continuityContext = this.buildContinuityContext();
+    // P1-QW6 (Architecture Audit Phase A): Pass cognitive + knowledge state
+    // to ContextPipeline so the LLM sees felt-sense summaries of the
+    // player's brain-game performance and educational progress. Optional:
+    // only present if the integration is wired.
+    const cognitiveSnapshot = this.training
+      ? this.training.services.index.snapshot(Date.now())
+      : undefined;
+    const knowledgeState = this.significator.knowledge && this.significator.knowledge.conceptStates.size > 0
+      ? {
+          conceptCount: this.significator.knowledge.conceptStates.size,
+          avgRetention: (() => {
+            const states = [...this.significator.knowledge.conceptStates.values()];
+            return states.length > 0 ? states.reduce((s, c) => s + c.retention, 0) / states.length : 0;
+          })(),
+          reviewCandidates: (() => {
+            try {
+              // computeReviewCandidates is imported via dynamic import to avoid circular deps
+              // We compute a simple proxy here: top concepts with lowest retention
+              const states = [...this.significator.knowledge.conceptStates.entries()];
+              return states
+                .map(([conceptId, c]) => ({ conceptId, urgency: 1 - c.retention }))
+                .sort((a, b) => b.urgency - a.urgency)
+                .slice(0, 5);
+            } catch {
+              return [];
+            }
+          })(),
+        }
+      : undefined;
     const contextInput = {
       encounter: this.encounter,
       significator: this.significator,
@@ -418,6 +447,8 @@ export class AgenticOrchestrator {
       conceptIndex: this.conceptIndex,
       recentConsequences: this.history,
       sessionContext: { energy: 'high' as const },
+      ...(cognitiveSnapshot ? { cognitiveSnapshot } : {}),
+      ...(knowledgeState ? { knowledgeState } : {}),
     };
     const context = buildContext(contextInput);
 
@@ -535,6 +566,7 @@ export class AgenticOrchestrator {
                     paradigmId: i.paradigmId,
                     targetLevel: 0.5,
                     estimatedMinutes: 3,
+                    domains: [],
                     rationale: '',
                   })),
                   totalMinutes: Number(outcome.payload.totalMinutes ?? items.length * 3),
@@ -631,6 +663,20 @@ export class AgenticOrchestrator {
   private async runLanguageReflective(line: Line, stage: Stage, now: number): Promise<OrchestratorResult> {
     const isSelfReflection = this.encounter.holonSource === 'self-reflection';
     const continuityContext = this.buildContinuityContext();
+    // P1-QW6 (Architecture Audit Phase A): include cognitive + knowledge state.
+    const cognitiveSnapshot = this.training
+      ? this.training.services.index.snapshot(Date.now())
+      : undefined;
+    const knowledgeState = this.significator.knowledge && this.significator.knowledge.conceptStates.size > 0
+      ? {
+          conceptCount: this.significator.knowledge.conceptStates.size,
+          avgRetention: (() => {
+            const states = [...this.significator.knowledge.conceptStates.values()];
+            return states.length > 0 ? states.reduce((s, c) => s + c.retention, 0) / states.length : 0;
+          })(),
+          reviewCandidates: [],
+        }
+      : undefined;
     const contextInput = {
       encounter: this.encounter,
       significator: this.significator,
@@ -638,6 +684,8 @@ export class AgenticOrchestrator {
       conceptIndex: this.conceptIndex,
       recentConsequences: this.history,
       sessionContext: { energy: 'high' as const },
+      ...(cognitiveSnapshot ? { cognitiveSnapshot } : {}),
+      ...(knowledgeState ? { knowledgeState } : {}),
     };
     const context = buildContext(contextInput);
     const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';

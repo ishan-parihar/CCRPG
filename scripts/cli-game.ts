@@ -172,6 +172,12 @@ program
   .option('--paradigm <id>', 'paradigm to calibrate (default: all)')
   .option('--trials <n>', 'trials per calibration block')
   .option('--demo [seed]', 'scripted responder for CI');
+// P1-QW3 (Architecture Audit Phase A): CLI telemetry inspector. Opt-in only;
+// shows the buffered events from the active session.
+program
+  .command('events')
+  .description('Show recent CLI telemetry events (opt-in). Enable via ~/.mysterium/config.json: { "telemetry": true }')
+  .option('--tail <n>', 'show only the most recent N events', (v) => parseInt(v, 10), 20);
 
 // ponytail: .action() prevents commander from showing help when no subcommand given
 program.action(() => {});
@@ -306,6 +312,8 @@ import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
 import { runTrainCommand, runInsightsCommand, runExportCommand, runCalibrateCommand, buildTrainingIntegration, buildUnifiedProfileServices } from '../src/cli/TrainingRuntime.js';
+// P1-QW3 (Architecture Audit Phase A): CLI telemetry — opt-in only, no behaviour change when off.
+import { buildCLITelemetry, recordCLITelemetry, flushCLITelemetry } from '../src/cli/CLITelemetry.js';
 // R11-R2: use canonical resonance from veilDescriptors instead of duplicated maps.
 import { describeStage, describePersonalResonance } from '../src/core/presentation/veilDescriptors.js';
 
@@ -1885,6 +1893,12 @@ async function runAgenticEncounter(
     spinner = ora({ text: chalk.dim(phrase + '...'), color: 'cyan' }).start();
   }
 
+  // P1-QW3 (Architecture Audit Phase A): CLI telemetry. Opt-in via
+  // ~/.mysterium/config.json.telemetry=true. When enabled, records
+  // session_started + encounter_completed events. No-op when disabled.
+  const telemetry = await buildCLITelemetry().catch(() => null);
+  recordCLITelemetry(telemetry, 'encounter_started', { moduleRef: encounter.moduleRef, line: encounter.targetLines[0] ?? null, stage: encounter.stage });
+
   let outcome;
   try {
     outcome = await orchestrator.run();
@@ -3100,6 +3114,11 @@ async function runFullSession(): Promise<void> {
   // profile directory (asked-prompts.json).
   loadAskedPrompts(getActiveProfileDir());
 
+  // P1-QW3 (Architecture Audit Phase A): CLI telemetry (opt-in via ~/.mysterium/config.json).
+  // No-op when disabled. Used throughout the session to record lifecycle events.
+  const cliTelemetry = await buildCLITelemetry().catch(() => null);
+  recordCLITelemetry(cliTelemetry, 'session_started', { profileName: activeProfileName, sessionLength: encounterCount, line: FORCE_LINE ?? null, stage: FORCE_STAGE ?? null });
+
   // Boot with ora spinners for clean loading UX
   const s1 = JSON_MODE ? null : ora('Booting registries...').start();
   bootRegistries();
@@ -3273,6 +3292,7 @@ async function runFullSession(): Promise<void> {
   let completedCount = 0;
   let passedCount = 0;
   const now = Date.now();
+  const sessionStartedAt = now;
   const history: ConsequenceRecord[] = [];
   const consecutivePasses = new Map<string, number>();
 
@@ -3367,6 +3387,12 @@ async function runFullSession(): Promise<void> {
       renderLinesProgress(currentSig, history);
     }
     tickResult = { ...tickResult, encounter: selectedEncounter };
+
+    // P1-QW8 (Architecture Audit Phase A): Show prerequisite gaps on every
+    // encounter with a curriculumConceptId, not just in --curriculum mode.
+    if (selectedEncounter.curriculumConceptId && currentSig?.knowledge && !JSON_MODE) {
+      renderPrerequisiteGaps(selectedEncounter.curriculumConceptId, currentSig.knowledge);
+    }
 
     // ── Training beat interlude: native brain game, no LLM ──
     if ((selectedEncounter as any).isTrainingBeat) {
@@ -3564,6 +3590,9 @@ async function runFullSession(): Promise<void> {
 
       completedCount++;
       if (result.outcome.finalResult.passed) passedCount++;
+      // P1-QW3 (Architecture Audit Phase A): record encounter_completed event.
+      // opt-in; no-op when telemetry is disabled.
+      recordCLITelemetry(cliTelemetry, 'encounter_completed', { moduleRef: selectedEncounter.moduleRef, line: selectedEncounter.targetLines[0] ?? null, stage: selectedEncounter.stage, passed: result.outcome.finalResult.passed });
     } catch (err: any) {
       error(`Encounter failed: ${err.message || err}`);
       emitEvent('encounter_error', { encounter: selectedEncounter.id, error: err.message });
@@ -3602,6 +3631,16 @@ async function runFullSession(): Promise<void> {
   // still made inside saveAll() for backward compat with older code paths.
   saveAll(sessionEnd.sig, currentWorld);
   if (!JSON_MODE) info('save', `${chalk.green('Progress saved')}`);
+
+  // P1-QW3 (Architecture Audit Phase A): Record session_ended event + flush.
+  // The telemetry is opt-in (read from ~/.mysterium/config.json.telemetry).
+  // No-op when disabled; never blocks or throws.
+  // (cliTelemetry is already instantiated at session start.)
+  recordCLITelemetry(cliTelemetry, 'session_ended', { encounterCount, durationMs: Date.now() - sessionStartedAt });
+  await flushCLITelemetry(cliTelemetry);
+
+  // P1-QW3 (Architecture Audit Phase A): flush any agentic-encounter telemetry.
+  await flushCLITelemetry(telemetry);
 
   banner('SESSION END');
 
@@ -4813,9 +4852,9 @@ function runCurriculum(action?: string): void {
   const registry = getCurriculumRegistry();
 
   // Route based on action argument
-  if (action && !['lint', 'list', 'progress'].includes(action)) {
+  if (action && !['lint', 'list', 'progress', 'status'].includes(action)) {
     console.log(`
-  ${chalk.red("Unknown action:")} ${action}. Use ${chalk.bold("lint")}, ${chalk.bold("list")}, or ${chalk.bold("progress")}
+  ${chalk.red("Unknown action:")} ${action}. Use ${chalk.bold("lint")}, ${chalk.bold("list")}, ${chalk.bold("progress")}, or ${chalk.bold("status")}
 `);
     return;
   }
@@ -4896,6 +4935,79 @@ function runCurriculum(action?: string): void {
       }
     }
   }
+
+  // P1-QW1 (Architecture Audit Phase A): `mysterium curriculum status`
+  // surfaces the lint health + player's progress + rubric calibration
+  // + a felt-sense summary in one place. Surfaces the hidden curriculum
+  // stream that the player couldn't see before.
+  if (action === 'status') {
+    const lint = lintRegistry(registry);
+    const sig = hasSave() ? loadSave() : null;
+    const probe = sig?.knowledge ? probeCurriculum(sig.knowledge, registry, Date.now()) : null;
+
+    console.log(`\n  ${chalk.bold('Curriculum Health')}`);
+    const lintFelt = lint.totalErrors + lint.totalWarnings === 0
+      ? chalk.green('all healthy')
+      : chalk.yellow(`${lint.totalErrors} errors, ${lint.totalWarnings} warnings`);
+    info('holons', `${lintFelt} (${count} total)`);
+    if (probe) {
+      info('progression audit', probe.shouldIntervene ? chalk.red('intervention needed') : chalk.green('on track'));
+      info('rubric calibration', probe.rubricCalibration.length > 0
+        ? `${probe.rubricCalibration.length} rubrics (${(probe.overallHealth * 100).toFixed(0)}% health)`
+        : chalk.dim('none yet'));
+    } else {
+      info('audit', chalk.dim('no save — play a session to see audit'));
+    }
+    if (sig?.knowledge) {
+      const states = [...sig.knowledge.conceptStates.entries()];
+      const avg = states.length > 0
+        ? states.reduce((s, [_, cs]) => s + cs.retention, 0) / states.length
+        : 0;
+      const retentionFelt = avg > 0.7 ? 'resting well' : avg > 0.4 ? 'still consolidating' : 'asking for attention';
+      info('concepts studied', String(states.length));
+      info('avg retention', `${retentionFelt} (${Math.round(avg * 100)}%)`);
+    } else {
+      info('concepts studied', chalk.dim('none yet — start a session to seed'));
+    }
+    const felt = lint.totalErrors === 0 && (!probe || !probe.shouldIntervene)
+      ? chalk.cyan('curriculum is humming')
+      : chalk.yellow('curriculum asks for tending');
+    console.log(`\n  ${felt}`);
+  }
+  console.log('');
+}
+
+// P1-QW3 (Architecture Audit Phase A): CLI telemetry inspector.
+// Reads the persisted telemetry events from the active profile directory and
+// shows the most recent N (default 20). Opt-in only: if telemetry was never
+// enabled the KV key is absent and we report that explicitly.
+async function runEvents(args: string[]): Promise<void> {
+  banner('Telemetry Events');
+  let tail = 20;
+  for (const a of args) {
+    const m = a.match(/^--tail=(\d+)$/);
+    if (m) tail = Math.max(1, parseInt(m[1]!, 10));
+  }
+  const telemetry = await buildCLITelemetry().catch(() => null);
+  if (!telemetry) {
+    console.log(`\n  ${chalk.dim('Telemetry is disabled. Enable via ~/.mysterium/config.json: { "telemetry": true }')}`);
+    console.log(`  ${chalk.dim('No data is recorded unless you opt in.')}`);
+    return;
+  }
+  // Force the collector to drain to store by flushing.
+  await flushCLITelemetry(telemetry);
+  const events = telemetry.getCollector().getEvents();
+  if (events.length === 0) {
+    console.log(`\n  ${chalk.dim('No telemetry events buffered in this session. Play a session, then run this command.')}`);
+    return;
+  }
+  const recent = events.slice(-tail);
+  console.log(`\n  ${chalk.bold(`Recent ${recent.length} of ${events.length} event(s):`)}\n`);
+  for (const e of recent) {
+    const ts = new Date(e.timestamp).toISOString().replace('T', ' ').slice(0, 19);
+    const data = JSON.stringify(e.data);
+    console.log(`  ${chalk.dim(ts)}  ${chalk.cyan(e.type.padEnd(22))}  ${chalk.dim(data)}`);
+  }
   console.log('');
 }
 
@@ -4926,7 +5038,7 @@ async function main(): Promise<void> {
   // treat ALL subcommands as potentially interactive EXCEPT the truly
   // non-interactive ones (`status`, `glossary`). This is safer than
   // enumerating interactive ones — new subcommands default to safe.
-  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary', 'profile', 'insights', 'train', 'export']);
+  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary', 'profile', 'insights', 'train', 'export', 'events', 'calibrate']);
   const needsInteractive = !NON_INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE;
   if (needsInteractive && !process.stdin.isTTY) {
     HEADLESS = true;
@@ -4956,6 +5068,7 @@ async function main(): Promise<void> {
   if (subcommand === 'insights') { process.exitCode = await runInsightsCommand(DEV_MODE, program.args.slice(1), JSON_MODE); return; }
   if (subcommand === 'calibrate') { process.exitCode = await runCalibrateCommand(program.args.slice(1)); return; }
   if (subcommand === 'export') { process.exitCode = await runExportCommand(program.args.slice(1)); return; }
+  if (subcommand === 'events') { await runEvents(program.args.slice(1)); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
   // game doesn't inherit the old player's developmental graph.

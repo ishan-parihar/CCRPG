@@ -18,6 +18,9 @@ import { toSnapshot } from '../domain/SignificatorSnapshot.js';
 import { planWorkout } from '../training/WorkoutPlanner.js';
 import { computeReviewCandidates } from '../curriculum/ForgettingCurve.js';
 import { getCurriculumRegistry } from '../curriculum/CurriculumRegistry.js';
+import { bridgeDevelopmentalToCurriculum } from '../curriculum/CurriculumBridge.js';
+import { detectDevelopmentalNeeds } from '../curriculum/DevelopmentalNeedsDetector.js';
+import { getCurriculumRegistry as getCurriculumRegistryForBridge } from '../curriculum/CurriculumRegistry.js';
 import type { Line } from '../domain/Line.js';
 
 // ── Service context ──────────────────────────────────────────────────
@@ -73,11 +76,27 @@ export const RECOMMEND_TRAJECTORY_TOOL = {
   },
 };
 
+export const STUDY_CONCEPT_TOOL = {
+  type: 'function' as const,
+  function: {
+    name: 'study_concept',
+    description: 'Schedule a curriculum study encounter on a specific concept. Returns the schedule details (concept, action, estimated minutes, rationale) so the agent can present it via ask_user_question. If no conceptId is given, the next most-relevant concept is selected from the player\'s review queue.',
+    parameters: {
+      type: 'object',
+      properties: {
+        conceptId: { type: 'string', description: 'Specific concept id from the curriculum registry; omit to use the next review candidate.' },
+      },
+      required: [] as string[],
+    },
+  },
+};
+
 export const UNIFIED_PROFILE_TOOLS = [
   GET_DEVELOPMENTAL_SNAPSHOT_TOOL,
   GET_KNOWLEDGE_SNAPSHOT_TOOL,
   GET_UNIFIED_PROFILE_TOOL,
   RECOMMEND_TRAJECTORY_TOOL,
+  STUDY_CONCEPT_TOOL,
 ] as const;
 
 export const UNIFIED_TOOL_NAMES: ReadonlySet<string> = new Set(UNIFIED_PROFILE_TOOLS.map(t => t.function.name));
@@ -100,6 +119,7 @@ export async function handleUnifiedProfileTool(name: string, argsJson: string, c
       case 'get_knowledge_snapshot': return await getKnowledgeSnapshot(ctx.services);
       case 'get_unified_profile': return await getUnifiedProfile(ctx.services);
       case 'recommend_trajectory': return await recommendTrajectory(args, ctx.services);
+      case 'study_concept': return await studyConcept(args, ctx.services);
       default: return { ok: false, payload: { error: `Unknown unified tool: ${name}` } };
     }
   } catch (err) {
@@ -171,22 +191,91 @@ async function recommendTrajectory(args: Record<string, unknown>, services: Unif
   const focusLine = typeof args.focusLine === 'string' ? (args.focusLine as Line) : undefined;
   const cogPlan = planWorkout(services.cognitiveIndex, { minutes: Math.max(5, Math.min(12, Math.round(minutes * 0.4))), focusLine });
   const sig = await services.getSignificator();
-  // Note: developmental needs surfaced via get_developmental_snapshot; trajectory adds growth edge step unconditionally.
-  // Future: bridgeDevelopmentalToCurriculum will wire theta/drive needs to curriculum when KnowledgeState has retention data.
-  const trajectory: { kind: 'developmental' | 'cognitive' | 'educational'; id: string; rationale: string; estimatedMinutes: number }[] = [];
-  // Developmental: 1 growth-edge encounter (2 min framing)
-  trajectory.push({ kind: 'developmental', id: focusLine ? `growth:${focusLine}` : 'growth:edge', rationale: 'growth edge — where altitude meets horizon', estimatedMinutes: 3 });
-  // Cognitive: 1-2 workout items
-  for (const item of cogPlan.items.slice(0, 2)) {
-    trajectory.push({ kind: 'cognitive', id: item.paradigmId, rationale: item.rationale, estimatedMinutes: item.estimatedMinutes });
+  // P1-QW5 (Architecture Audit Phase A): Wire bridgeDevelopmentalToCurriculum
+  // so the educational step uses real KnowledgeState + retention data instead
+  // of a generic 'growth:edge' placeholder. The bridge converts theta/drive
+  // needs into concrete curriculum recommendations.
+  const trajectory: { kind: 'developmental' | 'cognitive' | 'educational'; id: string; rationale: string; feltSense: string; estimatedMinutes: number }[] = [];
+  // Developmental: 1 growth-edge encounter.
+  // Use detectDevelopmentalNeeds to surface an actual developmental need.
+  let devStep: { kind: 'developmental'; id: string; rationale: string; feltSense: string; estimatedMinutes: number };
+  if (sig) {
+    const topNeed = detectDevelopmentalNeeds(sig as any)[0];
+    if (topNeed) {
+      devStep = {
+        kind: 'developmental',
+        id: `growth:${topNeed.line}`,
+        rationale: `${topNeed.type}: ${topNeed.line} asking for attention`,
+        feltSense: 'a quiet edge where the next step wants to form',
+        estimatedMinutes: 3,
+      };
+    } else {
+      devStep = {
+        kind: 'developmental',
+        id: focusLine ? `growth:${focusLine}` : 'growth:edge',
+        rationale: 'growth edge — where altitude meets horizon',
+        feltSense: 'a quiet edge where the next step wants to form',
+        estimatedMinutes: 3,
+      };
+    }
+  } else {
+    devStep = {
+      kind: 'developmental',
+      id: 'growth:edge',
+      rationale: 'growth edge — where altitude meets horizon',
+      feltSense: 'a quiet edge where the next step wants to form',
+      estimatedMinutes: 3,
+    };
   }
-  // Educational: 1 review or new material if knowledge exists
+  trajectory.push(devStep);
+  // Cognitive: 1-2 workout items with felt-sense (player-facing) + rationale (agent context)
+  for (const item of cogPlan.items.slice(0, 2)) {
+    const felt = item.domains.length > 0
+      ? services.cognitiveIndex.feltSenseFor(item.domains[0]!)
+      : 'mind settling into focus';
+    trajectory.push({ kind: 'cognitive', id: item.paradigmId, rationale: item.rationale, feltSense: felt, estimatedMinutes: item.estimatedMinutes });
+  }
+  // Educational: prefer the bridge-recommended concept if available; else review; else new material.
   const know = await getKnowledgeSnapshot(services);
   const review = (know.payload.reviewCandidates as any[])?.[0];
-  if (review) {
-    trajectory.push({ kind: 'educational', id: review.conceptId, rationale: 'retention tugging — revisit before decay', estimatedMinutes: 4 });
+  let bridgeRec: { conceptId: string; rationale: string } | null = null;
+  if (sig && sig.knowledge) {
+    const needs = detectDevelopmentalNeeds(sig as any);
+    const registry = (() => { try { return getCurriculumRegistryForBridge(); } catch { return null; } })();
+    if (registry && needs.length > 0) {
+      const concepts = new Map<string, { id: string; primaryLine: string; depthRange: { min: any; max: any } }>();
+      for (const h of registry.getAll()) {
+        concepts.set(h.id, {
+          id: h.id,
+          primaryLine: h.devMapping.primaryLine,
+          depthRange: h.depthMeta.targetDepthRange,
+        });
+      }
+      const curves = sig.knowledge.forgettingCurves ?? new Map();
+      for (const need of needs) {
+        const rec = bridgeDevelopmentalToCurriculum(need, sig.knowledge, concepts, curves as any, services.now());
+        if (rec) { bridgeRec = { conceptId: rec.conceptId, rationale: rec.rationale }; break; }
+      }
+    }
+  }
+  if (bridgeRec) {
+    trajectory.push({
+      kind: 'educational',
+      id: bridgeRec.conceptId,
+      rationale: bridgeRec.rationale,
+      feltSense: 'a study thread pulling at your attention',
+      estimatedMinutes: 4,
+    });
+  } else if (review) {
+    trajectory.push({
+      kind: 'educational',
+      id: review.conceptId,
+      rationale: 'retention tugging — revisit before decay',
+      feltSense: 'a quiet thread wanting attention',
+      estimatedMinutes: 4,
+    });
   } else if (sig) {
-    trajectory.push({ kind: 'educational', id: 'new_material', rationale: 'foundations steady — new material beckons', estimatedMinutes: 4 });
+    trajectory.push({ kind: 'educational', id: 'new_material', rationale: 'foundations steady — new material beckons', feltSense: 'fresh material waiting to be met', estimatedMinutes: 4 });
   }
   const total = trajectory.reduce((s, t) => s + t.estimatedMinutes, 0);
   // Trim to minutes budget (keep developmental + at least one cognitive)
@@ -204,9 +293,55 @@ async function recommendTrajectory(args: Record<string, unknown>, services: Unif
     payload: {
       minutes,
       focusLine: focusLine ?? null,
-      steps: trimmed.map(s => ({ kind: s.kind, id: s.id, minutes: s.estimatedMinutes, rationale: s.rationale })),
+      steps: trimmed.map(s => ({ kind: s.kind, id: s.id, minutes: s.estimatedMinutes, rationale: s.rationale, feltSense: s.feltSense })),
       totalMinutes: trimmed.reduce((s, t) => s + t.estimatedMinutes, 0),
       feltSense: 'a balanced arc — psyche, mind, and study in one movement',
+    },
+  };
+}
+
+// P1-QW7 (Architecture Audit Phase A): study_concept tool. Lets the LLM
+// request a study encounter on a specific concept (or the next review
+// candidate). Returns a ScheduledEncounter-like shape so the agent can
+// present it via ask_user_question and then dispatch the encounter.
+async function studyConcept(args: Record<string, unknown>, services: UnifiedProfileServices) {
+  const sig = await services.getSignificator();
+  if (!sig?.knowledge) {
+    return { ok: false, payload: { error: 'No knowledge state — play a session first' } };
+  }
+  const conceptId = typeof args.conceptId === 'string' ? args.conceptId : undefined;
+  let target: { conceptId: string; action: 'review' | 'new_material' | 'deepen'; rationale: string; estimatedMinutes: number; feltSense: string } | null = null;
+  if (conceptId) {
+    const cs = sig.knowledge.conceptStates.get(conceptId);
+    const action: 'review' | 'new_material' | 'deepen' = cs ? 'review' : 'new_material';
+    target = {
+      conceptId,
+      action,
+      rationale: cs ? `Player-requested review of ${conceptId}` : `Player-requested study of ${conceptId}`,
+      estimatedMinutes: 5,
+      feltSense: 'a thread of study drawing your attention',
+    };
+  } else {
+    // Pick the highest-urgency review candidate.
+    const review = computeReviewCandidates(sig.knowledge.conceptStates as any, sig.knowledge.forgettingCurves as any, services.now())[0];
+    if (review) {
+      target = {
+        conceptId: review.conceptId,
+        action: 'review',
+        rationale: `Highest-urgency review: retention ${(review.currentRetention * 100).toFixed(0)}%`,
+        estimatedMinutes: 5,
+        feltSense: 'a quiet thread wanting attention',
+      };
+    }
+  }
+  if (!target) {
+    return { ok: false, payload: { error: 'No concept available — study something new material first' } };
+  }
+  return {
+    ok: true as const,
+    payload: {
+      encounter: { ...target, kind: 'curriculum' as const },
+      feltSense: 'a study encounter waiting to be met',
     },
   };
 }

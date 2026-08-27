@@ -25,3 +25,5 @@ export { calibrateAllRubrics } from './RubricCalibrator.js';
 export type { RubricCalibrationReport } from './RubricCalibrator.js';
 export { probeCurriculum, formatProbeSummary } from './MetaCognitiveProbe.js';
 export type { MetaCognitiveProbeResult } from './MetaCognitiveProbe.js';
+export { detectDevelopmentalNeeds } from './DevelopmentalNeedsDetector.js';
+export { seedInitialKnowledge } from './SeedInitialKnowledge.js';

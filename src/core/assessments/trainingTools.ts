@@ -319,11 +319,19 @@ async function recommendWorkout(args: Record<string, unknown>, services: Trainin
   return {
     ok: true,
     payload: {
-      items: plan.items.map((i) => ({
-        paradigmId: i.paradigmId,
-        estimatedMinutes: i.estimatedMinutes,
-        rationale: i.rationale,
-      })),
+      items: plan.items.map((i) => {
+        // Veil: surface the player-facing felt-sense rather than the clinical rationale.
+        // The agent sees the clinical rationale; the player sees the felt sense.
+        const felt = i.domains.length > 0
+          ? services.index.feltSenseFor(i.domains[0]!)
+          : 'your mind settling into focus';
+        return {
+          paradigmId: i.paradigmId,
+          estimatedMinutes: i.estimatedMinutes,
+          rationale: i.rationale, // agent context
+          feltSense: felt, // player-facing
+        };
+      }),
       totalMinutes: plan.totalMinutes,
     },
   };
