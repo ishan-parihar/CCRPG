@@ -16,6 +16,7 @@ import type { FrequencySpec } from './FrequencyConditioner.js';
 import { ALL_LINES } from '../../core/domain/Line.js';
 import { getHolon, queryByLine } from '../../core/data/HolonRegistry.js';
 import { queryByLineStage } from '../../core/data/ConceptDraftIndex.js';
+import { type PolarityTexture } from '../../core/data/PolarityOntology.js';
 import { generateFrequencySpec } from './FrequencyConditioner.js';
 
 // ---------------------------------------------------------------------------
@@ -68,6 +69,17 @@ export interface ContextPipelineInput {
     readonly avgRetention: number;
     readonly reviewCandidates: ReadonlyArray<{ readonly conceptId: string; readonly urgency: number }>;
   };
+  /**
+   * P1-B2 (Architecture Audit Phase B): Optional per-line×stage polarity
+   * textures. When provided, the LLM sees the STO/STS/exploratory texture
+   * for the encounter's (line, stage) so it can frame polarity precisely
+   * instead of guessing from the 4-drive model.
+   */
+  readonly polarityTextures?: ReadonlyArray<{
+    readonly line: Line;
+    readonly stage: Stage;
+    readonly texture: PolarityTexture;
+  }>;
 }
 
 export interface ContextPipelineOutput {
@@ -286,6 +298,7 @@ function assembleSystemPrompt(
   agentSynthesis?: string,
   cognitiveSnapshot?: ReadonlyArray<{ readonly line: Line; readonly score01: number; readonly trend: 'rising' | 'stable' | 'decaying'; readonly lastPlayedDaysAgo: number }>,
   knowledgeState?: { readonly conceptCount: number; readonly avgRetention: number; readonly reviewCandidates: ReadonlyArray<{ readonly conceptId: string; readonly urgency: number }> },
+  polarityTextures?: ReadonlyArray<{ readonly line: Line; readonly stage: Stage; readonly texture: PolarityTexture }>,
 ): string {
   const holonDescriptions = formatHolonDescriptions(holonSelection);
   const playerStateSignals = formatPlayerState(veilFilteredSig);
@@ -299,6 +312,9 @@ function assembleSystemPrompt(
   const knowledgeBlock = knowledgeState && knowledgeState.conceptCount > 0
     ? `\n[KNOWLEDGE STATE] ${formatKnowledgeState(knowledgeState)}`
     : '';
+  const polarityBlock = polarityTextures && polarityTextures.length > 0
+    ? `\n[POLARITY TEXTURES] ${formatPolarityTextures(polarityTextures)}`
+    : '';
 
   return `[ROLE] You are the manifestation layer of Mysterium.
 [COSMOLOGY] Third Density constraints. Veil enforced. Free will absolute.
@@ -308,9 +324,20 @@ ${frequencySpec.crossAltitudeDirective}
 [ENCOUNTER] lines=${encounterContext.lines.join(',')}; stage=${encounterContext.stage}; modality=${encounterContext.modality}; purpose=${encounterContext.catalyticPurpose}; module=${encounterContext.moduleRef}
 [MODALITY] ${modalityRubric}
 [CONTINUITY] ${consequenceContext}
-[PLAYER STATE] ${playerStateSignals}${synthesisBlock}${cognitiveBlock}${knowledgeBlock}
+[PLAYER STATE] ${playerStateSignals}${synthesisBlock}${cognitiveBlock}${knowledgeBlock}${polarityBlock}
 [OUTPUT FORMAT] ${outputFormat}
 [RULES] No Veil violations. No clinical language. No scoring references. No frame-breaking. Stay in frequency. Scale cognitive complexity to the player's altitude, not the encounter's stage.`;
+}
+
+// P1-B2 (Architecture Audit Phase B): felt-sense rendering of polarity textures.
+// STO/STS/exploratory terms are qualitative (no clinical labels) and grounded
+// in the per-line×stage ontology so the LLM can frame polarity precisely.
+function formatPolarityTextures(textures: ReadonlyArray<{ readonly line: Line; readonly stage: Stage; readonly texture: PolarityTexture }>): string {
+  const parts = textures.map(t => {
+    const { sto, sts, exploratory } = t.texture;
+    return `${t.line.toLowerCase()}:${t.stage.toLowerCase()}=offering=${sto}, clinging=${sts}, exploring=${exploratory}`;
+  });
+  return parts.join('; ');
 }
 
 // P1-QW6 (Architecture Audit Phase A): Felt-sense rendering of cognitive
@@ -479,6 +506,7 @@ export function buildContext(input: ContextPipelineInput): ContextPipelineOutput
     input.agentSynthesis,
     input.cognitiveSnapshot,
     input.knowledgeState,
+    input.polarityTextures,
   );
 
   // Collect selected holons for output

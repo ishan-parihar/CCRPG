@@ -25,10 +25,11 @@ export async function runExportCommand(args: string[]): Promise<number> {
     .option('--format <fmt>', 'json or csv', 'json')
     .option('--paradigm <id>', 'filter to one paradigm')
     .option('--days <n>', 'limit to last N days', parseIntSafe)
-    .option('--out <path>', 'write to file instead of stdout');
+    .option('--out <path>', 'write to file instead of stdout')
+    .option('--analytics', 'include LearningAnalytics (studyEfficiency, learningVelocity, modalityEffectiveness) in JSON output');
   parser.exitOverride();
   try { parser.parse(args, { from: 'user' }); } catch { /* help */ }
-  const o = parser.opts<{ format?: string; paradigm?: string; days?: number; out?: string }>();
+  const o = parser.opts<{ format?: string; paradigm?: string; days?: number; out?: string; analytics?: boolean }>();
   const format = (o.format ?? 'json').toLowerCase() === 'csv' ? 'csv' : 'json';
   if (!servicesGetter) {
     console.error('Export services not initialized');
@@ -58,7 +59,28 @@ export async function runExportCommand(args: string[]): Promise<number> {
   if (format === 'csv') {
     output = toCsv(sorted, filteredSessions);
   } else {
-    output = JSON.stringify({ exportedAt: Date.now(), days: o.days ?? null, paradigm: o.paradigm ?? null, trials: sorted.map(serializeTrialForExport), sessions: filteredSessions }, null, 2);
+    // P1-B5 (Architecture Audit Phase B): --analytics flag includes
+    // LearningAnalytics in the JSON export. The analytics is computed from
+    // the player's saved KnowledgeState (if any) and provides per-subject
+    // studyEfficiency, learningVelocity, modalityEffectiveness, and
+    // optimal review intervals. Surfaces the educational stream's progress
+    // in the same envelope as the brain-game telemetry.
+    const payload: Record<string, unknown> = { exportedAt: Date.now(), days: o.days ?? null, paradigm: o.paradigm ?? null, trials: sorted.map(serializeTrialForExport), sessions: filteredSessions };
+    if (o.analytics) {
+      try {
+        const { computeLearningAnalytics } = await import('../core/curriculum/LearningAnalytics.js');
+        const { loadSave } = await import('../infra/persistence/SaveRepository.js');
+        const sig = loadSave();
+        if (sig && (sig as any).knowledge) {
+          payload.learningAnalytics = computeLearningAnalytics((sig as any).knowledge);
+        } else {
+          payload.learningAnalytics = null;
+        }
+      } catch (e) {
+        payload.learningAnalytics = { error: (e as Error).message };
+      }
+    }
+    output = JSON.stringify(payload, null, 2);
   }
   if (o.out) {
     const fs = await import('fs');

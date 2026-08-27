@@ -31,6 +31,7 @@ import type { UnifiedProfileServices } from '../core/assessments/unifiedProfileT
 import { loadSave } from '../infra/persistence/SaveRepository.js';
 
 const INDEX_KEY = 'cogidx:v1';
+const PLAN_KEY = 'workout-plan:v1';
 
 let cached: TrainingServices & { kv: KeyValueStore } | null = null;
 
@@ -112,6 +113,10 @@ async function persistIndex(): Promise<void> {
  */
 export async function buildTrainingIntegration(): Promise<TrainingIntegration> {
   const s = await services();
+  // P1-B4 (Architecture Audit Phase B): expire stale difficulty overrides.
+  // Called at every session start so an override from >7 days ago doesn't
+  // silently suppress the player's calibrated baseline.
+  await s.calibration.expireOverrides().catch(() => undefined);
   const runner: GameRunnerPort = {
     async runGame(paradigmId, opts) {
       const paradigm = getParadigm(paradigmId);
@@ -272,7 +277,31 @@ export async function runTrainCommand(args: string[], jsonMode = false): Promise
   const s = await services();
   s.index.applyDecay();
   const focusLine = o.focus as Line | undefined;
-  const plan = planWorkout(s.index, { minutes: o.minutes ?? 12, focusLine });
+  // P1-B3 (Architecture Audit Phase B): resume a persisted plan if it exists
+  // and is still fresh (≤24h). Otherwise build a fresh plan and persist it.
+  const RESUME_WINDOW_MS = 24 * 60 * 60 * 1000;
+  let plan = planWorkout(s.index, { minutes: o.minutes ?? 12, focusLine });
+  let resumeContext: { completed: number; startedAt: number } | null = null;
+  if (!o.minutes && !o.focus) {
+    try {
+      const raw = await s.kv.get(PLAN_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw) as { plan: typeof plan; completed: number; startedAt: number };
+        if (Date.now() - parsed.startedAt < RESUME_WINDOW_MS && parsed.completed < parsed.plan.items.length) {
+          plan = parsed.plan;
+          resumeContext = { completed: parsed.completed, startedAt: parsed.startedAt };
+          if (!jsonMode) console.log(`  ${chalk.dim(`Resuming workout — ${parsed.completed}/${parsed.plan.items.length} done`)}`);
+        }
+      }
+    } catch { /* no plan or corrupt — ignore */ }
+  }
+  // Persist the (fresh or resumed) plan immediately so a crash mid-workout
+  // doesn't lose progress.
+  if (!resumeContext) {
+    try {
+      await s.kv.set(PLAN_KEY, JSON.stringify({ plan, completed: 0, startedAt: Date.now() }));
+    } catch { /* best-effort */ }
+  }
 
   if (o.plan || jsonMode) {
     const payload = {
@@ -339,8 +368,14 @@ export async function runTrainCommand(args: string[], jsonMode = false): Promise
       sessionsPlayed: (prev?.sessionsPlayed ?? 0) + 1,
     });
     const verdict = fatigue.record(summary.overallAccuracy, summary.rtMedianMs);
+    // P1-B3: persist plan progress after each item so resume survives a crash.
+    try {
+      await s.kv.set(PLAN_KEY, JSON.stringify({ plan: remainingPlan, completed: i + 1, startedAt: resumeContext?.startedAt ?? Date.now() }));
+    } catch { /* best-effort */ }
     if (verdict === 'break') {
       console.log(`\n${chalk.yellow.dim('Rest now. The exercises will keep.')}`);
+      // Clear the plan on early break — they should pick a new shape next time.
+      try { await s.kv.remove(PLAN_KEY); } catch { /* best-effort */ }
       break;
     }
     if (verdict === 'lighter') {
@@ -357,6 +392,8 @@ export async function runTrainCommand(args: string[], jsonMode = false): Promise
     }
   }
   await persistIndex();
+  // P1-B3: clear the plan on natural completion.
+  try { await s.kv.remove(PLAN_KEY); } catch { /* best-effort */ }
   const doneLine = plainTrain
     ? 'The practice is complete. Carry the stillness with you.'
     : `${chalk.green.dim('The practice is complete. Carry the stillness with you.')}`;
@@ -371,6 +408,10 @@ export async function runInsightsCommand(devMode: boolean, rawArgs: string[] = [
   const jsonMode = jsonModeExplicit || rawArgs.includes('--json');
   const daysIdx = rawArgs.indexOf('--days');
   const days = daysIdx >= 0 ? Math.max(1, parseInt(String(rawArgs[daysIdx + 1]), 10) || 14) : 14;
+  // P1-B7 (Architecture Audit Phase B): --trend flag prints a per-day
+  // accuracy series so the player can see the curve, not just the
+  // current snapshot. Default: still the felt-sense view.
+  const trendMode = rawArgs.includes('--trend');
   const cutoff = Date.now() - days * 86_400_000;
 
   const s = await services();
@@ -421,6 +462,28 @@ export async function runInsightsCommand(devMode: boolean, rawArgs: string[] = [
     const devSuffix = devMode ? (plain ? ` (${entry.score01.toFixed(2)}, ${entry.lastPlayedDaysAgo}d)` : chalk.dim(` (${entry.score01.toFixed(2)}, ${entry.lastPlayedDaysAgo}d)`)) : '';
     const phraseOut = plain ? phrase : chalk.dim(phrase);
     console.log(`  ${glyph} ${entry.line.padEnd(14)} ${bar}  ${phraseOut}${devSuffix}`);
+  }
+
+  // P1-B7: --trend prints the per-day accuracy curve.
+  if (trendMode && recent.length >= 2) {
+    console.log(`\n  ${chalk.dim('Daily accuracy trend:')}`);
+    const series: { day: string; accuracy: number; trials: number }[] = [];
+    const byDay = new Map<string, { accSum: number; count: number; trials: number }>();
+    for (const r of recent) {
+      const day = new Date(r.startedAt).toISOString().slice(0, 10);
+      const cur = byDay.get(day) ?? { accSum: 0, count: 0, trials: 0 };
+      cur.accSum += r.accuracy;
+      cur.count += 1;
+      cur.trials += r.trialsCompleted;
+      byDay.set(day, cur);
+    }
+    for (const [day, v] of [...byDay.entries()].sort()) {
+      series.push({ day, accuracy: Math.round((v.accSum / v.count) * 100) / 100, trials: v.trials });
+    }
+    for (const s of series) {
+      const bar = plain ? renderBarPlain(s.accuracy) : renderBar(s.accuracy);
+      console.log(`  ${chalk.dim(s.day)} ${bar}  ${chalk.dim(`${Math.round(s.accuracy * 100)}% · ${s.trials} trials`)}`);
+    }
   }
 
   if (recent.length > 0) {

@@ -91,12 +91,25 @@ export const STUDY_CONCEPT_TOOL = {
   },
 };
 
+// P1-B1 (Architecture Audit Phase B): expose ShadowDetector's deterministic
+// detection as an LLM-callable tool. The LLM can use this to ground its
+// shadow framing in real signals rather than guessing from 14 keywords.
+export const DETECT_SHADOW_SIGNALS_TOOL = {
+  type: 'function' as const,
+  function: {
+    name: 'detect_shadow_signals',
+    description: 'Run deterministic shadow detection over the player\'s profile. Returns per-line addiction/allergy risk, unresolved shadow entries, behavioral patterns (avoidance, failure streaks), and Atman Project defense signals. Use to ground shadow framing in real signals rather than guessing. Output is felt-sense-shaped (qualitative descriptions, not raw numbers).',
+    parameters: { type: 'object', properties: {}, required: [] as string[] },
+  },
+};
+
 export const UNIFIED_PROFILE_TOOLS = [
   GET_DEVELOPMENTAL_SNAPSHOT_TOOL,
   GET_KNOWLEDGE_SNAPSHOT_TOOL,
   GET_UNIFIED_PROFILE_TOOL,
   RECOMMEND_TRAJECTORY_TOOL,
   STUDY_CONCEPT_TOOL,
+  DETECT_SHADOW_SIGNALS_TOOL,
 ] as const;
 
 export const UNIFIED_TOOL_NAMES: ReadonlySet<string> = new Set(UNIFIED_PROFILE_TOOLS.map(t => t.function.name));
@@ -120,6 +133,7 @@ export async function handleUnifiedProfileTool(name: string, argsJson: string, c
       case 'get_unified_profile': return await getUnifiedProfile(ctx.services);
       case 'recommend_trajectory': return await recommendTrajectory(args, ctx.services);
       case 'study_concept': return await studyConcept(args, ctx.services);
+      case 'detect_shadow_signals': return await detectShadowSignals(ctx.services);
       default: return { ok: false, payload: { error: `Unknown unified tool: ${name}` } };
     }
   } catch (err) {
@@ -344,4 +358,72 @@ async function studyConcept(args: Record<string, unknown>, services: UnifiedProf
       feltSense: 'a study encounter waiting to be met',
     },
   };
+}
+
+// P1-B1 (Architecture Audit Phase B): detect_shadow_signals handler.
+// Wraps ShadowDetector's deterministic detection (drive-health formula +
+// behavioral patterns + Atman Project defenses) into a single tool call.
+// Output is felt-sense-shaped: qualitative descriptions, not raw scores.
+async function detectShadowSignals(services: UnifiedProfileServices) {
+  const sig = await services.getSignificator();
+  if (!sig) return { ok: true, payload: { empty: true, feltSense: 'no profile yet' } };
+  // Dynamic imports to avoid a circular dependency (unifiedProfileTools is
+  // imported by AgenticOrchestrator, and ShadowDetector imports Significator).
+  const { detectShadows, diagnoseShadows, assessAtmanProject, computeBehavioralPatterns } = await import('../usecases/ShadowDetector.js');
+  const encounters = (sig as any).encounters ?? [];
+  const patterns = computeBehavioralPatterns(encounters);
+  const shadows = detectShadows(sig as any, patterns);
+  const diagnoses = diagnoseShadows(sig as any);
+  const atman = assessAtmanProject(sig as any, encounters);
+
+  return {
+    ok: true as const,
+    payload: {
+      shadowSignals: shadows.map((s: any) => ({
+        type: s.type,
+        line: s.line,
+        feltSense: shadowFeltSenseFor(s.type),
+      })),
+      diagnoses: diagnoses.slice(0, 5).map((d: any) => ({
+        line: d.line,
+        stage: d.stage,
+        pathology: d.dominantPathology,
+        feltSense: d.dominantPathology === 'addiction'
+          ? 'a familiar pull that clings'
+          : 'a flinching-away from contact',
+      })),
+      atmanDefenses: atman.defenses.map((d: any) => ({
+        defense: d.defense,
+        intensity: Math.round(d.intensity * 100) / 100,
+        feltSense: atmanFeltSenseFor(d.defense),
+      })),
+      jonahComplex: atman.jonahComplex.detected
+        ? { feltSense: atman.jonahComplex.description }
+        : null,
+      overallAtmanPressure: Math.round(atman.overallAtmanPressure * 100) / 100,
+      feltSense: atman.overallAtmanPressure > 0.5
+        ? 'shadows pressing in — old patterns wanting attention'
+        : 'shadows resting easy',
+    },
+  };
+}
+
+function shadowFeltSenseFor(type: string): string {
+  switch (type) {
+    case 'fixation': return 'a familiar pull that clings';
+    case 'repression': return 'a flinching-away from contact';
+    case 'regression': return 'a defensive shutdown';
+    case 'goldenAllergy': return 'a resistance to what wants to emerge';
+    default: return 'an undertone seeking attention';
+  }
+}
+
+function atmanFeltSenseFor(defense: string): string {
+  switch (defense) {
+    case 'rationalization': return 'treating transcendence as impossible';
+    case 'isolation': return 'maintaining a rigid self-boundary';
+    case 'desacralizing': return 'stripping meaning from experience';
+    case 'substitution': return 'substituting finite gratification for growth';
+    default: return 'a defense against emergence';
+  }
 }

@@ -349,22 +349,27 @@ async function setDifficultyOverride(args: Record<string, unknown>, services: Tr
     return { ok: false, payload: { error: 'Provide direction or level.' } };
   }
 
+  // P1-B4 (Architecture Audit Phase B): overrides now carry an explicit
+  // expiresAt so a stale override doesn't outlive its welcome. 7-day TTL
+  // by default; the player can call set_difficulty_override again to extend.
+  const now = services.now();
   const override: NonNullable<CalibrationRecord['override']> = {
     ...(absoluteLevel !== undefined ? { level: absoluteLevel } : {}),
     ...(direction !== undefined ? { direction } : {}),
-    at: services.now(),
+    at: now,
+    expiresAt: now + 7 * 24 * 60 * 60 * 1000,
   };
   const record: CalibrationRecord = {
     paradigmId,
     baselineLevel: prev?.baselineLevel ?? 0.35,
     lastLevel: prev?.lastLevel ?? 0.35,
-    calibratedAt: prev?.calibratedAt ?? services.now(),
+    calibratedAt: prev?.calibratedAt ?? now,
     lastPlayedAt: prev?.lastPlayedAt ?? 0,
     sessionsPlayed: prev?.sessionsPlayed ?? 0,
     override,
   };
   await services.calibration.put(record);
-  return { ok: true, payload: { paradigmId, applied: true } };
+  return { ok: true, payload: { paradigmId, applied: true, expiresInDays: 7 } };
 }
 
 async function completeWorkout(args: Record<string, unknown>, ctx: TrainingHandlerContext): Promise<TrainingToolResult> {

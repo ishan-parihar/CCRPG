@@ -97,10 +97,11 @@ function makeMockUI(answers: any[] = []) {
 }
 
 describe('Agentic Loop Integration — tools across dimensions', () => {
-  it('inventory: 12 total tools (2 core + 5 training + 5 unified)', () => {
-    // P1-QW7 (Architecture Audit Phase A): added study_concept (5th unified tool).
+  it('inventory: 13 total tools (2 core + 5 training + 6 unified)', () => {
+    // P1-QW7 (Architecture Audit Phase A): added study_concept.
+    // P1-B1 (Architecture Audit Phase B): added detect_shadow_signals.
     const total = 2 + TRAINING_TOOLS.length + UNIFIED_PROFILE_TOOLS.length;
-    expect(total).toBe(12);
+    expect(total).toBe(13);
   });
 
   it('every tool schema is valid OpenAI function format', () => {
@@ -249,8 +250,9 @@ describe('Agentic Loop Integration — tools across dimensions', () => {
       expect(tools.length).toBe(7);
     });
 
-    it('with both training + unified: 12 tools (2+5+5)', () => {
-      // P1-QW7 (Architecture Audit Phase A): study_concept added to unified tools.
+    it('with both training + unified: 13 tools (2+5+6)', () => {
+      // P1-QW7 (Architecture Audit Phase A): study_concept added.
+      // P1-B1 (Architecture Audit Phase B): detect_shadow_signals added.
       const orch = new AgenticOrchestrator({
         encounter: dummyEncounter(), significator: SIG as any, world: makeWorld(),
         history: [], conceptIndex: {}, uiHandler: makeMockUI(), noLlm: true,
@@ -258,7 +260,7 @@ describe('Agentic Loop Integration — tools across dimensions', () => {
         unifiedProfile: unifiedServices as any,
       });
       const tools = (orch as any).toolsForRun();
-      expect(tools.length).toBe(12);
+      expect(tools.length).toBe(13);
     });
 
     it('fallback path (noLlm) completes encounter with finalResult', async () => {

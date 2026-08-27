@@ -266,6 +266,22 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
     migratedSig = { ...migratedSig, knowledge: seeded };
   }
 
+  // P1-B6 (Architecture Audit Phase B): re-calibration trigger. If the
+  // player has been away > 30 days, lower the starting session strategy
+  // by 5% so the first encounter back isn't too aggressive. Pure
+  // heuristic — measured by sig's `lastSessionAt` (added as a Sig
+  // extension) or, falling back, the highest theta.lastEncounter ts.
+  const lastSessionTs = (migratedSig as any).lastSessionAt as number | undefined;
+  const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
+  if (lastSessionTs && Date.now() - lastSessionTs > THIRTY_DAYS_MS) {
+    // Soft cap: lower targetSessionLength by 1 if > 3, so the player
+    // can ease back in.
+    const target = session.targetSessionLength;
+    if (target > 3) {
+      session = { ...session, targetSessionLength: Math.max(3, target - 1) };
+    }
+  }
+
   const snapshot = toSnapshot(migratedSig);
   // P1-15: Pass sig so CCI delegates G_z/P_z to GreaterCycleEngine.
   const cci = computeCCI(snapshot, migratedSig);

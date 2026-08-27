@@ -440,6 +440,24 @@ export class AgenticOrchestrator {
           })(),
         }
       : undefined;
+    // P1-B2 (Architecture Audit Phase B): polarity textures per (line, stage).
+    // Grounds the LLM's polarity framing in the real ontology.
+    const polarityTextures = (() => {
+      try {
+        // Import lazily to avoid the cli-game.js startup bloat.
+        // PolarityOntology is small (~8KB) and pure data.
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { DEFAULT_POLARITY_ONTOLOGY, getTexture } = require('../data/PolarityOntology.js');
+        return this.encounter.targetLines
+          .map((line) => {
+            const texture = getTexture(DEFAULT_POLARITY_ONTOLOGY, line as any, this.encounter.stage);
+            return texture ? { line, stage: this.encounter.stage, texture } : null;
+          })
+          .filter((t): t is { line: Line; stage: Stage; texture: any } => t !== null);
+      } catch {
+        return [];
+      }
+    })();
     const contextInput = {
       encounter: this.encounter,
       significator: this.significator,
@@ -449,6 +467,7 @@ export class AgenticOrchestrator {
       sessionContext: { energy: 'high' as const },
       ...(cognitiveSnapshot ? { cognitiveSnapshot } : {}),
       ...(knowledgeState ? { knowledgeState } : {}),
+      ...(polarityTextures.length > 0 ? { polarityTextures } : {}),
     };
     const context = buildContext(contextInput);
 
@@ -677,6 +696,18 @@ export class AgenticOrchestrator {
           reviewCandidates: [],
         }
       : undefined;
+    // P1-B2 (Architecture Audit Phase B): polarity textures for the
+    // (line, stage) of the current encounter.
+    const polarityTextures = (() => {
+      try {
+        // eslint-disable-next-line @typescript-eslint/no-var-requires
+        const { DEFAULT_POLARITY_ONTOLOGY, getTexture } = require('../data/PolarityOntology.js');
+        const texture = getTexture(DEFAULT_POLARITY_ONTOLOGY, line as any, stage as any);
+        return texture ? [{ line, stage, texture }] : [];
+      } catch {
+        return [];
+      }
+    })();
     const contextInput = {
       encounter: this.encounter,
       significator: this.significator,
@@ -686,6 +717,7 @@ export class AgenticOrchestrator {
       sessionContext: { energy: 'high' as const },
       ...(cognitiveSnapshot ? { cognitiveSnapshot } : {}),
       ...(knowledgeState ? { knowledgeState } : {}),
+      ...(polarityTextures.length > 0 ? { polarityTextures } : {}),
     };
     const context = buildContext(contextInput);
     const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';

@@ -158,7 +158,8 @@ program
   .command('insights')
   .description('How your training senses have been resting and rising (--dev for metrics)')
   .option('--days <n>', 'limit to last N days (default 14)')
-  .option('--json', 'machine-readable JSON output');
+  .option('--json', 'machine-readable JSON output')
+  .option('--trend', 'show per-day accuracy curve (P1-B7)');
 program
   .command('export')
   .description('Export trial telemetry (local-only, opt-in) — JSON or CSV')

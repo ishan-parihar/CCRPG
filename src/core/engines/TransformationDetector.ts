@@ -293,3 +293,49 @@ export function commitTransformation(state: TransformationState): { targetStage:
     newState: createInitialTransformationState(),
   };
 }
+
+// P1-B8 (Architecture Audit Phase B): per-line transformation tracking.
+// A line-level transformation is detected when ALL 3 lines in a
+// 'line-cluster' reach the next stage together. Clusters are heuristic
+// (Cognitive/Emotional share a stage-axis, Moral/Intrapersonal share
+// another, etc). This supplements the single global `currentStage` and
+// unlocks a richer "per-line development" narrative.
+const LINE_CLUSTERS: ReadonlyArray<ReadonlyArray<Line>> = [
+  ['Cognitive', 'Emotional'],
+  ['Moral', 'Intrapersonal'],
+  ['Spiritual', 'Somatic'],
+  ['Interpersonal', 'Willpower'],
+];
+
+export interface PerLineTransformationSignal {
+  readonly cluster: readonly Line[];
+  readonly lineAltitudes: Readonly<Record<Line, Stage>>;
+  readonly candidateTarget: Stage | null;
+  readonly readiness: number; // 0-1
+}
+
+export function detectPerLineTransformation(
+  sig: Significator,
+  targetStage: Stage,
+): readonly PerLineTransformationSignal[] {
+  const signals: PerLineTransformationSignal[] = [];
+  for (const cluster of LINE_CLUSTERS) {
+    // A cluster is "ready" when ALL its lines are at the same stage (the
+    // pre-target stage). readiness is the proportion of lines already at
+    // the target.
+    const altitudes: Record<Line, Stage> = {} as any;
+    for (const line of cluster) altitudes[line] = sig.altitudes[line] ?? sig.currentStage;
+    const targetOrd = stageOrdinal(targetStage);
+    const atTarget = cluster.filter((l) => stageOrdinal(sig.altitudes[l] ?? sig.currentStage) >= targetOrd).length;
+    const readiness = atTarget / cluster.length;
+    if (readiness > 0 && readiness < 1) {
+      signals.push({
+        cluster,
+        lineAltitudes: altitudes,
+        candidateTarget: targetStage,
+        readiness,
+      });
+    }
+  }
+  return signals;
+}
