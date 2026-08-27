@@ -642,7 +642,7 @@ export class AgenticOrchestrator {
     const context = buildContext(contextInput);
     const assessmentContext = this.module ? this.buildAssessmentContext(this.module) : '';
 
-    const systemPrompt = isSelfReflection
+    const systemPromptBase = isSelfReflection
       ? `${context.systemPrompt}${assessmentContext}${continuityContext}
 [DIRECT QUESTIONING — SELF-REFLECTION]
 You are a developmental mirror. The player is exploring their inner landscape across 8 lines of intelligence.
@@ -753,7 +753,8 @@ INSTRUCTIONS:
    - Golden-Addiction: bypassing, spiritualizing away difficulty
    - Golden-Allergy: resistance to growth, "I'm fine as I am"
 
-6. Keep the response to 2-3 sentences maximum. Be precise and developmental.`;
+ 6. Keep the response to 2-3 sentences maximum. Be precise and developmental.`;
+    const systemPrompt = `${systemPromptBase}${this.training ? TRAINING_RULES_SUFFIX : ''}${this.unifiedProfile ? UNIFIED_RULES_SUFFIX : ''}`;
 
     if (this.messages.length === 0) {
       this.messages.push({
@@ -768,7 +769,7 @@ INSTRUCTIONS:
     while (loopCount < maxLoops) {
       loopCount++;
 
-      const res = await queryLLMWithTools(systemPrompt, this.messages, TOOLS);
+      const res = await queryLLMWithTools(systemPrompt, this.messages, this.toolsForRun());
 
       if (loopCount === 1 && res.content && res.content.trim().startsWith('{"error"') && (!res.toolCalls || res.toolCalls.length === 0)) {
         return this.runFallback(line, stage, now);
@@ -803,6 +804,24 @@ INSTRUCTIONS:
             this.messages.push({
               role: 'user',
               content: 'The player has responded. Now evaluate their reflection using complete_encounter. Score depth, coherence, metacognition, and integration. Do NOT ask another question.'
+            });
+          } else if (TRAINING_TOOL_NAMES.has(tc.function.name) && this.training) {
+            const outcome = await handleTrainingTool(tc.function.name, tc.function.arguments, {
+              services: this.training.services, runner: this.training.runner, signal: undefined, workout: this.training.workout,
+            });
+            this.messages.push({
+              role: 'tool',
+              content: JSON.stringify(outcome.ok ? outcome.payload : { error: (outcome.payload as any).error }),
+              toolCallId: tc.id,
+              name: tc.function.name,
+            });
+          } else if (UNIFIED_TOOL_NAMES.has(tc.function.name) && this.unifiedProfile) {
+            const outcome = await handleUnifiedProfileTool(tc.function.name, tc.function.arguments, { services: this.unifiedProfile });
+            this.messages.push({
+              role: 'tool',
+              content: JSON.stringify(outcome.ok ? outcome.payload : { error: (outcome.payload as any).error }),
+              toolCallId: tc.id,
+              name: tc.function.name,
             });
           } else if (tc.function.name === 'complete_encounter') {
             const params = JSON.parse(tc.function.arguments) as {

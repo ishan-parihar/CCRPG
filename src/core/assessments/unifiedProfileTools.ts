@@ -17,7 +17,6 @@ import { computeCCI } from '../engines/CCIEngine.js';
 import { toSnapshot } from '../domain/SignificatorSnapshot.js';
 import { planWorkout } from '../training/WorkoutPlanner.js';
 import { computeReviewCandidates } from '../curriculum/ForgettingCurve.js';
-import { bridgeDevelopmentalToCurriculum } from '../curriculum/CurriculumBridge.js';
 import { getCurriculumRegistry } from '../curriculum/CurriculumRegistry.js';
 import type { Line } from '../domain/Line.js';
 
@@ -150,6 +149,7 @@ async function getKnowledgeSnapshot(services: UnifiedProfileServices) {
 }
 
 async function getUnifiedProfile(services: UnifiedProfileServices) {
+  services.cognitiveIndex.applyDecay(services.now());
   const [dev, know] = await Promise.all([getDevelopmentalSnapshot(services), getKnowledgeSnapshot(services)]);
   const cogSnap = services.cognitiveIndex.snapshot(services.now());
   const stalest = [...cogSnap].sort((a, b) => b.lastPlayedDaysAgo - a.lastPlayedDaysAgo)[0];
@@ -171,8 +171,8 @@ async function recommendTrajectory(args: Record<string, unknown>, services: Unif
   const focusLine = typeof args.focusLine === 'string' ? (args.focusLine as Line) : undefined;
   const cogPlan = planWorkout(services.cognitiveIndex, { minutes: Math.max(5, Math.min(12, Math.round(minutes * 0.4))), focusLine });
   const sig = await services.getSignificator();
-  void sig; // developmental needs are already surfaced via get_developmental_snapshot; trajectory adds a growth edge step unconditionally
-  void bridgeDevelopmentalToCurriculum; // reserved for future deep integration (needs KnowledgeState + curves)
+  // Note: developmental needs surfaced via get_developmental_snapshot; trajectory adds growth edge step unconditionally.
+  // Future: bridgeDevelopmentalToCurriculum will wire theta/drive needs to curriculum when KnowledgeState has retention data.
   const trajectory: { kind: 'developmental' | 'cognitive' | 'educational'; id: string; rationale: string; estimatedMinutes: number }[] = [];
   // Developmental: 1 growth-edge encounter (2 min framing)
   trajectory.push({ kind: 'developmental', id: focusLine ? `growth:${focusLine}` : 'growth:edge', rationale: 'growth edge — where altitude meets horizon', estimatedMinutes: 3 });
