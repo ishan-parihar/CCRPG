@@ -166,6 +166,12 @@ program
   .option('--paradigm <id>', 'filter to one paradigm')
   .option('--days <n>', 'limit to last N days')
   .option('--out <path>', 'write to file instead of stdout');
+program
+  .command('calibrate')
+  .description('Calibrate brain-game difficulty (wide exploration → narrow)')
+  .option('--paradigm <id>', 'paradigm to calibrate (default: all)')
+  .option('--trials <n>', 'trials per calibration block')
+  .option('--demo [seed]', 'scripted responder for CI');
 
 // ponytail: .action() prevents commander from showing help when no subcommand given
 program.action(() => {});
@@ -299,7 +305,7 @@ import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessme
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
-import { runTrainCommand, runInsightsCommand, runExportCommand, buildTrainingIntegration } from '../src/cli/TrainingRuntime.js';
+import { runTrainCommand, runInsightsCommand, runExportCommand, runCalibrateCommand, buildTrainingIntegration } from '../src/cli/TrainingRuntime.js';
 // R11-R2: use canonical resonance from veilDescriptors instead of duplicated maps.
 import { describeStage, describePersonalResonance } from '../src/core/presentation/veilDescriptors.js';
 
@@ -3193,6 +3199,11 @@ async function runFullSession(): Promise<void> {
   // false; the DQ path is the proven architecture.
   let sessionState = startSession(sig, session);
   applyCurriculumMode(sessionState);
+  // Training decay: narrative-only sessions still age cognitive skills
+  try {
+    const tDecay = await buildTrainingIntegration().catch(() => undefined);
+    if (tDecay) { tDecay.services.index.applyDecay(); await tDecay.services.persistIndex(); }
+  } catch { /* best-effort */ }
 
   // P3-CONTINUITY (Fresh-User Re-Audit): Surface previous session's practice
   // hint at session start. The practice hint is written to goals.yaml at the
@@ -3356,6 +3367,61 @@ async function runFullSession(): Promise<void> {
       renderLinesProgress(currentSig, history);
     }
     tickResult = { ...tickResult, encounter: selectedEncounter };
+
+    // ── Training beat interlude: native brain game, no LLM ──
+    if ((selectedEncounter as any).isTrainingBeat) {
+      const paradigmId = (selectedEncounter as any).trainingParadigmId ?? 'stroop';
+      const { getParadigm } = await import('../src/core/braingame/registry.js');
+      const paradigm = getParadigm(paradigmId);
+      const label = paradigm?.label ?? paradigmId;
+      if (!JSON_MODE) {
+        console.log(`\n  ${chalk.dim('The world grows quiet. A practice arises —')} ${chalk.cyan(label)}`);
+        console.log(`  ${chalk.dim('A brief remembering exercise surfaces within the journey.')}`);
+      }
+      try {
+        const tBeat = await buildTrainingIntegration().catch(() => undefined);
+        if (tBeat) {
+          const outcome = await tBeat.runner.runGame(paradigmId, {});
+          // Persistence is handled by the training tool handler for agentic beats,
+          // but session beats use the runner directly — persist here.
+          const sPersist = tBeat.services;
+          // Reuse the same persistence path as handleTrainingTool: appendSession + index + calibration
+          const { levelFromParadigm } = await import('../src/core/adaptive/AdaptiveDifficultyService.js');
+          await sPersist.trials.appendSession(outcome.trials as any, {
+            sessionId: outcome.summary.sessionId,
+            paradigmId: outcome.summary.paradigmId,
+            startedAt: Date.now(),
+            trialsCompleted: outcome.summary.trialsCompleted,
+            accuracy: outcome.summary.overallAccuracy,
+            rtMedianMs: outcome.summary.rtMedianMs,
+            performance: outcome.summary.performance,
+          });
+          const pDef = getParadigm(paradigmId)!;
+          sPersist.index.recordGame([...pDef.domains] as any, outcome.summary.performance);
+          const prev = await sPersist.calibration.get(paradigmId);
+          const endLevel = levelFromParadigm(pDef, outcome.summary.paramsEnd as any);
+          await sPersist.calibration.put({
+            paradigmId,
+            baselineLevel: prev ? prev.baselineLevel * 0.7 + endLevel * 0.3 : endLevel,
+            lastLevel: endLevel,
+            calibratedAt: prev?.calibratedAt ?? Date.now(),
+            lastPlayedAt: Date.now(),
+            sessionsPlayed: (prev?.sessionsPlayed ?? 0) + 1,
+          });
+          await sPersist.persistIndex();
+          if (!JSON_MODE) {
+            console.log(`  ${chalk.dim(outcome.summary.feltSenseHint)}`);
+          }
+          emitEvent('training_beat_completed', { paradigmId, feltSense: outcome.summary.feltSenseHint, trialsCompleted: outcome.summary.trialsCompleted });
+        }
+      } catch (err: any) {
+        if (!JSON_MODE) warn(`Practice stumbled: ${err?.message ?? err}`);
+        emitEvent('training_beat_error', { paradigmId, error: String(err?.message ?? err) });
+      }
+      completedCount++;
+      // Training beats do not advance narrative polarity/shadow; just continue
+      continue;
+    }
 
     // Show session position and encounter header
     const encProgress = (selectedEncounter.sessionPosition === 'warmup' ? 0.1
@@ -4888,6 +4954,7 @@ async function main(): Promise<void> {
   if (subcommand === 'curriculum') { runCurriculum(program.args[1]); return; }
   if (subcommand === 'train') { process.exitCode = await runTrainCommand(program.args.slice(1), JSON_MODE); return; }
   if (subcommand === 'insights') { process.exitCode = await runInsightsCommand(DEV_MODE, program.args.slice(1), JSON_MODE); return; }
+  if (subcommand === 'calibrate') { process.exitCode = await runCalibrateCommand(program.args.slice(1)); return; }
   if (subcommand === 'export') { process.exitCode = await runExportCommand(program.args.slice(1)); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new

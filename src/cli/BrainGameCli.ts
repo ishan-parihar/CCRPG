@@ -22,7 +22,6 @@ import type {
   TrialRecord,
 } from '../core/braingame/types.js';
 import { createRng } from '../core/braingame/types.js';
-import { getParadigm } from '../core/braingame/registry.js';
 import type { ParadigmDefinition } from '../core/braingame/types.js';
 
 const C = {
@@ -270,6 +269,8 @@ export interface RunGameOptions {
   jsonEvents?: boolean;
   /** Collects the engine's real TrialRecords for telemetry. */
   sink?: (record: TrialRecord) => void;
+  /** Per-trial difficulty adaptation (staircase). */
+  adjustDifficulty?: (params: NumericParams, correct: boolean, latencyScore?: number) => NumericParams;
 }
 
 /** Execute one full game session against the terminal. */
@@ -318,6 +319,7 @@ export async function runInteractiveGame(
     ui,
     clock,
     sink: engineSink,
+    adjustDifficulty: opts.adjustDifficulty,
   });
 
   try {
@@ -362,18 +364,4 @@ function sanitizeSummary(s: GameSummary): Record<string, unknown> {
   };
 }
 
-/** Free-play entry used by `train --free <id>` */
-export async function trainFree(paradigmId: string, opts: RunGameOptions & { trials?: number }): Promise<number> {
-  const paradigm = getParadigm(paradigmId);
-  if (!paradigm) {
-    console.error(`Unknown game '${paradigmId}'. Available: n_back, stroop, go_no_go, reaction_time, pattern_prediction`);
-    return 1;
-  }
-  const summary = await runInteractiveGame(paradigm, { ...opts, trialCount: opts.trials ?? paradigm.defaultTrials });
-  const plain = !process.stdout.isTTY || opts.jsonEvents;
-  const summaryLine = plain
-    ? `trials ${summary.trialsCompleted} · ${summary.feltSenseHint}`
-    : `trials ${summary.trialsCompleted} · focus ${Math.round(summary.overallAccuracy * 100)}%`;
-  console.log(plain ? `\n  ${summaryLine}` : `\n  ${chalk.dim(summaryLine)}`);
-  return 0;
-}
+

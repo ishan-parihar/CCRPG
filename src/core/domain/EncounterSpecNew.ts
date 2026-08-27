@@ -29,6 +29,10 @@ export interface ScheduledEncounter {
   readonly curriculumConceptId?: string;
   /** Curriculum action: review, deepen, new_material, or connect. */
   readonly curriculumAction?: 'review' | 'deepen' | 'new_material' | 'connect';
+  /** Training beat: when true this encounter is a brain-training game rather than a narrative assessment. */
+  readonly isTrainingBeat?: boolean;
+  /** Paradigm id for training beats (e.g. 'n_back'). */
+  readonly trainingParadigmId?: string;
   /**
    * Curriculum expansion: when present, the depth rubric for the concept
    * being studied. Used by DepthAssessment to classify response quality

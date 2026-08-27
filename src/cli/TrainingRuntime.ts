@@ -25,6 +25,7 @@ import {
   type TrainingServices,
 } from '../core/assessments/trainingTools.js';
 import { runInteractiveGame } from './BrainGameCli.js';
+import { createTrialAdjuster, initAdaptiveState, strategyForParadigm } from '../core/adaptive/AdaptiveDifficultyService.js';
 import { runExportCommand as runExportImpl, setServicesGetter } from './ExportRuntime.js';
 
 const INDEX_KEY = 'cogidx:v1';
@@ -53,6 +54,50 @@ export async function runExportCommand(args: string[]): Promise<number> {
   return runExportImpl(args);
 }
 
+export async function runCalibrateCommand(args: string[]): Promise<number> {
+  const parser = new Command();
+  parser.option('--paradigm <id>', 'paradigm to calibrate (default: all)').option('--trials <n>', 'trials per calibration block', parseIntSafe).option('--demo [seed]', 'scripted responder', parseIntSafe);
+  parser.exitOverride();
+  try { parser.parse(args, { from: 'user' }); } catch { /* help */ }
+  const o = parser.opts<{ paradigm?: string; trials?: number; demo?: number | boolean }>();
+  const s = await services();
+  s.index.applyDecay();
+  const targets = o.paradigm ? [o.paradigm] : ['n_back', 'stroop', 'go_no_go', 'reaction_time', 'pattern_prediction'];
+  const demoSeed = o.demo !== undefined ? (typeof o.demo === 'number' ? o.demo : 9) : undefined;
+  const demoCorrectRate = demoSeed !== undefined ? 0.6 : undefined;
+  for (const pid of targets) {
+    const paradigm = getParadigm(pid);
+    if (!paradigm) { console.error(`Unknown paradigm '${pid}'`); continue; }
+    console.log(`\n  Calibrating ${paradigm.label} — wide exploration…`);
+    const trials: TrialRecord[] = [];
+    const adj = createTrialAdjuster(paradigm, initAdaptiveState(0.5), strategyForParadigm(paradigm.id));
+    const summary = await runInteractiveGame(paradigm, {
+      trialCount: o.trials ?? 12,
+      difficultyHint: 0.5,
+      demoSeed,
+      demoCorrectRate,
+      sink: (r) => trials.push(r),
+      adjustDifficulty: adj.adjust,
+      quiet: true,
+    });
+    const { levelFromParadigm } = await import('../core/adaptive/AdaptiveDifficultyService.js');
+    const endLevel = levelFromParadigm(paradigm, summary.paramsEnd as import('../core/braingame/types.js').NumericParams);
+    await s.calibration.put({
+      paradigmId: paradigm.id,
+      baselineLevel: endLevel,
+      lastLevel: endLevel,
+      calibratedAt: Date.now(),
+      lastPlayedAt: Date.now(),
+      sessionsPlayed: (await s.calibration.get(paradigm.id))?.sessionsPlayed ?? 0,
+    });
+    // Do not credit index — calibration is exploration, not training
+    console.log(`  ${paradigm.label}: baseline ${Math.round(endLevel * 100) / 100} · ${summary.feltSenseHint}`);
+  }
+  await persistIndex();
+  console.log(`\n  Calibration complete.`);
+  return 0;
+}
+
 /** Persist the index after mutations (called by tool handlers). */
 async function persistIndex(): Promise<void> {
   if (!cached) return;
@@ -70,11 +115,13 @@ export async function buildTrainingIntegration(): Promise<TrainingIntegration> {
       const paradigm = getParadigm(paradigmId);
       if (!paradigm) throw new Error(`Unknown paradigm '${paradigmId}'`);
       const start = await resolveStartLevel(s, paradigmId, opts.difficultyHint);
+      const adjuster = createTrialAdjuster(paradigm, initAdaptiveState(start.level), strategyForParadigm(paradigmId));
       const trials: TrialRecord[] = [];
       const summary = await runInteractiveGame(paradigm, {
         trialCount: opts.trialCount,
         difficultyHint: start.level,
         sink: (r) => trials.push(r),
+        adjustDifficulty: adjuster.adjust,
       });
       return { summary, trials };
     },
@@ -126,7 +173,36 @@ export async function runTrainCommand(args: string[], jsonMode = false): Promise
     }
     const sFree = await services();
     sFree.index.applyDecay();
+    // First-exposure calibration block: when no baseline exists, seed it with a
+    // short 6-trial exploration so the scored block starts near the player's band.
+    const needsCalibration = !o.difficulty && !(await sFree.calibration.get(p.id));
+    if (needsCalibration) {
+      const calibTrials: TrialRecord[] = [];
+      const calibAdj = createTrialAdjuster(p, initAdaptiveState(0.4), strategyForParadigm(p.id));
+      const calibSummary = await runInteractiveGame(p, {
+        trialCount: 6,
+        difficultyHint: 0.4,
+        ...demoOpts,
+        ...accessibilityOpts,
+        quiet: true,
+        sink: (r) => calibTrials.push(r),
+        adjustDifficulty: calibAdj.adjust,
+      });
+      const { levelFromParadigm } = await import('../core/adaptive/AdaptiveDifficultyService.js');
+      const calibLevel = levelFromParadigm(p, calibSummary.paramsEnd as import('../core/braingame/types.js').NumericParams);
+      // Seed calibration without crediting the index — this was exploration, not training.
+      await sFree.calibration.put({
+        paradigmId: p.id,
+        baselineLevel: calibLevel,
+        lastLevel: calibLevel,
+        calibratedAt: Date.now(),
+        lastPlayedAt: Date.now(),
+        sessionsPlayed: 0,
+      });
+      void calibTrials;
+    }
     const start = await resolveStartLevel(sFree, p.id, o.difficulty);
+    const freeAdjuster = createTrialAdjuster(p, initAdaptiveState(start.level), strategyForParadigm(p.id));
     const trials: TrialRecord[] = [];
     const summary = await runInteractiveGame(p, {
       trialCount: o.trials ?? p.defaultTrials,
@@ -134,6 +210,7 @@ export async function runTrainCommand(args: string[], jsonMode = false): Promise
       ...demoOpts,
       ...accessibilityOpts,
       sink: (r) => trials.push(r),
+      adjustDifficulty: freeAdjuster.adjust,
     });
     // Persist telemetry and index (Veil-safe).
     await sFree.trials.appendSession(trials, {
@@ -201,17 +278,24 @@ export async function runTrainCommand(args: string[], jsonMode = false): Promise
     : `${chalk.bold.magenta('A sequence of challenges awaits')} ${chalk.dim(`— about ${plan.totalMinutes} minutes`)}`;
   console.log(`\n${header}`);
   const fatigue = new FatigueMonitor();
-  for (const item of plan.items) {
+  // Mutate plan in place when fatigue suggests lighter — track excluded lines
+  let excludeLines: Line[] = [];
+  let remainingPlan = plan;
+  for (let i = 0; i < remainingPlan.items.length; i++) {
+    const item = remainingPlan.items[i]!;
     const paradigm = getParadigm(item.paradigmId);
     if (!paradigm) continue;
     const start = await resolveStartLevel(s, item.paradigmId, item.targetLevel);
+    const effectiveLevel = excludeLines.length ? Math.max(0.15, start.level - 0.15) : start.level;
+    const adjuster = createTrialAdjuster(paradigm, initAdaptiveState(effectiveLevel), strategyForParadigm(paradigm.id));
     const trials: TrialRecord[] = [];
     const summary = await runInteractiveGame(paradigm, {
       trialCount: o.trials,
-      difficultyHint: start.level,
+      difficultyHint: effectiveLevel,
       ...demoOpts,
       ...accessibilityOpts,
       sink: (r) => trials.push(r),
+      adjustDifficulty: adjuster.adjust,
     });
     await s.trials.appendSession(trials, {
       sessionId: summary.sessionId,
@@ -238,6 +322,18 @@ export async function runTrainCommand(args: string[], jsonMode = false): Promise
     if (verdict === 'break') {
       console.log(`\n${chalk.yellow.dim('Rest now. The exercises will keep.')}`);
       break;
+    }
+    if (verdict === 'lighter') {
+      // Swap-to-lighter: bias remaining items away from fatigued lines and ease difficulty.
+      console.log(`\n${chalk.yellow.dim('A gentler rhythm now — easing the next challenge.')}`);
+      excludeLines = [...paradigm.domains] as Line[];
+      // Re-plan the remainder with exclusion so the next games touch fresh ground.
+      const remainingMinutes = remainingPlan.items.slice(i + 1).reduce((s, it) => s + it.estimatedMinutes, 0);
+      if (remainingMinutes > 0) {
+        const lighterPlan = planWorkout(s.index, { minutes: remainingMinutes, focusLine, excludeLines });
+        // Splice lighter items in place of the remaining tail
+        remainingPlan = { items: [...remainingPlan.items.slice(0, i + 1), ...lighterPlan.items], totalMinutes: remainingPlan.totalMinutes };
+      }
     }
   }
   await persistIndex();

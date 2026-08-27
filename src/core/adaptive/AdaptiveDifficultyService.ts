@@ -141,13 +141,18 @@ export function createTrialAdjuster(
   p: ParadigmDefinition,
   initialState: AdaptiveState,
   strategy: AdaptiveStrategy = 'weighted_up_down',
-): { adjust: (params: NumericParams, correct: boolean) => NumericParams; state: () => AdaptiveState } {
+): { adjust: (params: NumericParams, correct: boolean, latencyScore?: number) => NumericParams; state: () => AdaptiveState } {
   let s = initialState;
   return {
-    adjust: (_params, correct) => {
-      s = adapt(s, correct, DEFAULT_ADAPTIVE_CONFIG, undefined, strategy === 'composite_accuracy_rt' ? 'composite_accuracy_rt' : 'weighted_up_down');
+    adjust: (_params, correct, latencyScore) => {
+      s = adapt(s, correct, DEFAULT_ADAPTIVE_CONFIG, latencyScore, strategy === 'composite_accuracy_rt' ? 'composite_accuracy_rt' : 'weighted_up_down');
       return levelForParadigm(p, s);
     },
     state: () => s,
   };
+}
+
+/** Strategy selection per paradigm (timed paradigms use composite). */
+export function strategyForParadigm(paradigmId: string): AdaptiveStrategy {
+  return paradigmId === 'go_no_go' || paradigmId === 'reaction_time' ? 'composite_accuracy_rt' : 'weighted_up_down';
 }

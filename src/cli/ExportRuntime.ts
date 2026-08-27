@@ -69,6 +69,8 @@ export async function runExportCommand(args: string[]): Promise<number> {
     const plain = !process.stdout.isTTY;
     console.log(plain ? `Exported ${sorted.length} trials to ${outPath}` : `${chalk.green('✓')} Exported ${sorted.length} trials to ${chalk.bold(outPath)}`);
   } else {
+    // Veil watch-item: raw telemetry to stdout is local-only; warn on stderr (doesn't pollute stdout JSON/CSV)
+    console.error(chalk.yellow('Note: exporting raw telemetry to stdout — keep private. Use --out <path> to write to a file.'));
     console.log(output);
   }
   return 0;

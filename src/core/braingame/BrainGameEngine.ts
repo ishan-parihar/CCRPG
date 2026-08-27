@@ -48,7 +48,7 @@ export interface EngineOptions {
   /** Receives every completed trial (persist + adapt). */
   readonly sink?: (record: TrialRecord) => void;
   /** Called after each trial with the params used — returns adjusted params for the NEXT trial. */
-  readonly adjustDifficulty?: (params: NumericParams, correct: boolean) => NumericParams;
+  readonly adjustDifficulty?: (params: NumericParams, correct: boolean, latencyScore?: number) => NumericParams;
 }
 
 export class BrainGameEngine {
@@ -140,7 +140,7 @@ export class BrainGameEngine {
       if (hasNext && this.opts.adjustDifficulty) {
         this.params = clampParams(
           p.paramSpace,
-          this.opts.adjustDifficulty(this.params, evaluation.correct),
+          this.opts.adjustDifficulty(this.params, evaluation.correct, evaluation.latencyScore),
         );
       }
     }

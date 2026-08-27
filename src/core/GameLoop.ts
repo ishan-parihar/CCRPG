@@ -47,6 +47,7 @@ import { computeLearningAnalytics } from './curriculum/LearningAnalytics.js';
 import { migrateKnowledgeState } from './curriculum/CurriculumMigration.js';
 import { probeCurriculum } from './curriculum/MetaCognitiveProbe.js';
 import { bridgeDevelopmentalToCurriculum, type DevelopmentalNeed } from './curriculum/CurriculumBridge.js';
+import { allParadigms } from './braingame/registry.js';
 
 
 export interface TickResult {
@@ -226,6 +227,8 @@ export interface SessionState {
    * Used to enforce the curriculum slot budget from AutoModeStrategy.
    */
   readonly curriculumEncountersThisSession?: number;
+  /** Training expansion: number of brain-game beats consumed this session. */
+  readonly trainingEncountersThisSession?: number;
 }
 
 /**
@@ -277,6 +280,8 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
     transformationState: reconstructTransformationState(sig),
     userMatrixModel: createInitialUserMatrixModel(),
     sessionStartMs: Date.now(),
+    curriculumEncountersThisSession: 0,
+    trainingEncountersThisSession: 0,
   };
 }
 
@@ -396,6 +401,24 @@ export function tickWithStrategy(
     const curriculumEnc = curriculumEncounters[0]!;
     scheduled = [scheduled[0]!, curriculumEnc, ...scheduled.slice(1)].slice(0, 5);
     curriculumEncountersConsumed++;
+  }
+
+  // 5b. Training beats: weave brain-game interludes into narrative sessions.
+  // Fires at most 1 per tick, respecting the session's trainingSlots budget.
+  let trainingEncountersConsumed = sessionState.trainingEncountersThisSession ?? 0;
+  const trainingSlots = sessionState.strategy.trainingSlots ?? 0;
+  const isThresholdPhase = tsPhase === 'unravelling' || tsPhase === 'crucible' || tsPhase === 'emergence';
+  const shouldWeaveTraining = trainingSlots > trainingEncountersConsumed
+    && scheduled.length > 0
+    && !isThresholdPhase
+    && encountersSinceRefresh >= 2
+    && (trainingEncountersConsumed === 0 || encountersSinceRefresh % 3 === 0);
+  if (shouldWeaveTraining) {
+    const paradigm = pickTrainingParadigm(trainingEncountersConsumed);
+    const beat = makeTrainingBeat(paradigm, updatedSig, now);
+    // Make the training beat the next encounter (primary), with narrative offers behind it.
+    scheduled = [beat, ...scheduled].slice(0, 5);
+    trainingEncountersConsumed++;
   }
 
   const encounter = scheduled[0] ?? null;
@@ -566,9 +589,39 @@ export function tickWithStrategy(
     transformationState: updatedTransformationState,
     userMatrixModel: updatedUserMatrix,
     curriculumEncountersThisSession: curriculumEncountersConsumed,
+    trainingEncountersThisSession: trainingEncountersConsumed,
   };
 
   return { tickResult, sessionState: newSessionState };
+}
+
+function pickTrainingParadigm(offset: number): string {
+  const all = allParadigms();
+  if (all.length === 0) return 'stroop';
+  return all[offset % all.length]!.id;
+}
+
+function makeTrainingBeat(paradigmId: string, sig: Significator, now: number): ScheduledEncounter {
+  const paradigm = allParadigms().find((p) => p.id === paradigmId);
+  const lines = (paradigm?.domains ?? ['Cognitive']) as Line[];
+  const stage = sig.currentStage;
+  return {
+    id: `training:${paradigmId}:${now}:${Math.floor(Math.random() * 10000)}`,
+    moduleRef: `Training:${paradigmId}`,
+    modality: 'Deterministic',
+    targetLines: lines,
+    stage,
+    holonSource: 'training-dojo',
+    shadowTarget: null,
+    polarityMode: 'Exploring',
+    difficulty: 0.5,
+    sessionPosition: 'peak',
+    priority: 0.95,
+    driveTarget: null,
+    executionMode: 'capacity',
+    isTrainingBeat: true,
+    trainingParadigmId: paradigmId,
+  };
 }
 
 /**

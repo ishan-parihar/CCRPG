@@ -91,6 +91,8 @@ export interface SessionStrategy {
   studyTheme?: StudyTheme;
   /** Curriculum encounter slots within the session budget. */
   curriculumSlots?: number;
+  /** Training-beat slots: brain-game interludes woven into narrative sessions. */
+  trainingSlots?: number;
 }
 
 export interface SessionStrategyAdjustment {
@@ -133,6 +135,7 @@ export function generateSessionStrategy(
   // 6. Derive curriculum study theme and slots from knowledge health
   const studyTheme = selectStudyTheme(cci);
   const curriculumSlots = computeCurriculumSlots(session, cci);
+  const trainingSlots = computeTrainingSlots(session);
 
   // Phase 4C: Apply modality effectiveness bias from LearningAnalytics.
   // When the player's learning profile has modality effectiveness data,
@@ -150,6 +153,7 @@ export function generateSessionStrategy(
     adjustmentThresholds,
     studyTheme,
     curriculumSlots,
+    trainingSlots,
   };
 }
 
@@ -218,6 +222,16 @@ export function computeCurriculumSlots(
 
   // Clamp to reasonable bounds (at most 3 curriculum encounters per session)
   return Math.max(0, Math.min(3, scaledSlots));
+}
+
+export function computeTrainingSlots(session: SessionContext): number {
+  const total = session.targetSessionLength;
+  if (total < 4) return 0;
+  // Cadence: ~15% of the session, at least 1 for 8+, 2 for 14+, cap 2
+  if (total >= 14) return 2;
+  if (total >= 8) return 1;
+  if (total >= 4 && session.inferredEnergy !== 'low') return 1;
+  return 0;
 }
 
 // ---------------------------------------------------------------------------
