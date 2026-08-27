@@ -2,7 +2,7 @@
 
 > **Goal:** Upgrade Mysterium's agentic loop so the in-game agent can **execute, orchestrate, and deploy** real brain-training games to the player at the CLI level — turning the existing narrative-assessment loop into a full cognitive training platform for mental development.
 
-**Status:** Planning (not yet implemented)
+**Status:** Implemented — Phases A–E shipped (06-as-built-architecture.md) · 2026-08-27
 **Created:** 2026-08-26
 **Grounding:** `docs/references/` (4 brain-training platform analyses) + full audit of `src/` as of this date.
 

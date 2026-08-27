@@ -150,10 +150,22 @@ program
   .option('--minutes <n>', 'workout length in minutes')
   .option('--focus <line>', 'bias the workout toward one line')
   .option('--plan', 'print the planned workout instead of playing')
-  .option('--demo [seed]', 'scripted responder for CI smoke tests');
+  .option('--demo [seed]', 'scripted responder for CI smoke tests')
+  .option('--practice', 'non-timed practice mode: no time pressure')
+  .option('--window <ms>', 'override response window in ms (configurable stimulus duration)')
+  .option('--accessible', 'accessible presentation: symbol/text fallbacks for color-dependent stimuli');
 program
   .command('insights')
-  .description('How your training senses have been resting and rising (--dev for metrics)');
+  .description('How your training senses have been resting and rising (--dev for metrics)')
+  .option('--days <n>', 'limit to last N days (default 14)')
+  .option('--json', 'machine-readable JSON output');
+program
+  .command('export')
+  .description('Export trial telemetry (local-only, opt-in) — JSON or CSV')
+  .option('--format <fmt>', 'json or csv', 'json')
+  .option('--paradigm <id>', 'filter to one paradigm')
+  .option('--days <n>', 'limit to last N days')
+  .option('--out <path>', 'write to file instead of stdout');
 
 // ponytail: .action() prevents commander from showing help when no subcommand given
 program.action(() => {});
@@ -287,7 +299,7 @@ import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessme
 import type { ModuleRegistry } from '../src/core/assessments/registry.js';
 import type { AskUserQuestionParams, AskUserQuestionResult, UserAnswer } from '../src/core/assessments/agentTypes.js';
 import { loadSave, saveGame, hasSave, deleteSave, saveWorldState, loadWorldState, deleteWorldSave, saveAll, deleteAllSaves } from '../src/infra/persistence/SaveRepository.js';
-import { runTrainCommand, runInsightsCommand, buildTrainingIntegration } from '../src/cli/TrainingRuntime.js';
+import { runTrainCommand, runInsightsCommand, runExportCommand, buildTrainingIntegration } from '../src/cli/TrainingRuntime.js';
 // R11-R2: use canonical resonance from veilDescriptors instead of duplicated maps.
 import { describeStage, describePersonalResonance } from '../src/core/presentation/veilDescriptors.js';
 
@@ -4848,7 +4860,7 @@ async function main(): Promise<void> {
   // treat ALL subcommands as potentially interactive EXCEPT the truly
   // non-interactive ones (`status`, `glossary`). This is safer than
   // enumerating interactive ones — new subcommands default to safe.
-  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary', 'profile', 'insights', 'train']);
+  const NON_INTERACTIVE_SUBCOMMANDS = new Set(['status', 'glossary', 'profile', 'insights', 'train', 'export']);
   const needsInteractive = !NON_INTERACTIVE_SUBCOMMANDS.has(subcommand) && !HEADLESS && !JSON_MODE;
   if (needsInteractive && !process.stdin.isTTY) {
     HEADLESS = true;
@@ -4875,7 +4887,8 @@ async function main(): Promise<void> {
   if (subcommand === 'setup-profile') { await runSetupProfile(); return; }
   if (subcommand === 'curriculum') { runCurriculum(program.args[1]); return; }
   if (subcommand === 'train') { process.exitCode = await runTrainCommand(program.args.slice(1), JSON_MODE); return; }
-  if (subcommand === 'insights') { process.exitCode = await runInsightsCommand(DEV_MODE); return; }
+  if (subcommand === 'insights') { process.exitCode = await runInsightsCommand(DEV_MODE, program.args.slice(1), JSON_MODE); return; }
+  if (subcommand === 'export') { process.exitCode = await runExportCommand(program.args.slice(1)); return; }
   // P0-5 + P0-6: Use deleteAllSaves (clears sig + world + atomic envelope).
   // P0-6: Also clear TDG graph state if the TDG bridge is running, so a new
   // game doesn't inherit the old player's developmental graph.

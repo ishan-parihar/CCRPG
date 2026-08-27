@@ -43,14 +43,15 @@ function colorFor(name: string | undefined): string {
   }
 }
 
-export function renderDescriptor(d: StimulusDescriptor): string {
+export function renderDescriptor(d: StimulusDescriptor, opts: { accessible?: boolean } = {}): string {
   switch (d.kind) {
     case 'symbol': {
-      const col = colorFor(d.color);
+      const col = opts.accessible ? '' : colorFor(d.color);
       const glyph = d.glyph.length <= 2
         ? d.glyph.split('').join(' ')
         : d.glyph;
-      return `\n${C.bold}${col}      ${glyph}      ${C.reset}\n`;
+      const suffix = opts.accessible && d.color ? `  [${d.color}]` : '';
+      return `\n${C.bold}${col}      ${glyph}${suffix}      ${C.reset}\n`;
     }
     case 'grid': {
       const rows: string[] = [];
@@ -88,9 +89,18 @@ export class CliGameUi implements GameUiPort {
   private readonly interactive: boolean;
   /** Demo policy: [probCorrect, seeded rng] used when non-interactive. */
   private readonly demo?: { correctRate: number; rng: Rng };
+  private readonly practice: boolean;
+  private readonly windowMsOverride: number | null;
+  private readonly accessible: boolean;
+  private readonly jsonEvents: boolean;
 
-  constructor(opts: { demoSeed?: number; demoCorrectRate?: number } = {}) {
+  constructor(opts: { demoSeed?: number; demoCorrectRate?: number; practice?: boolean; windowMsOverride?: number; accessible?: boolean; jsonEvents?: boolean } = {}) {
     this.interactive = Boolean(process.stdin.isTTY) && opts.demoSeed === undefined;
+    this.practice = Boolean(opts.practice);
+    this.windowMsOverride = typeof opts.windowMsOverride === 'number' ? opts.windowMsOverride : null;
+    this.accessible = Boolean(opts.accessible);
+    this.jsonEvents = Boolean(opts.jsonEvents);
+    void this.jsonEvents;
     if (!this.interactive) {
       this.demo = {
         correctRate: opts.demoCorrectRate ?? 0.7,
@@ -150,34 +160,49 @@ export class CliGameUi implements GameUiPort {
   }
 
   public async runTrial(plan: TrialPlan): Promise<CollectedResponse> {
+    // Apply accessibility / practice / window overrides to the plan's window
+    // without mutating the paradigm's TrialPlan (engine owns trial semantics; UI only stretches the collection window).
+    const effectiveWindow = this.windowMsOverride !== null
+      ? this.windowMsOverride
+      : this.practice
+        ? Math.max(plan.windowMs * 3, 8000)
+        : plan.windowMs;
+    const effectivePlan = effectiveWindow !== plan.windowMs ? { ...plan, windowMs: effectiveWindow } : plan;
+
     // Preamble beat.
-    if (plan.preamble) {
-      console.log(renderDescriptor(plan.preamble));
-      await sleep(Math.max(0, plan.preambleMs ?? 0));
+    if (effectivePlan.preamble) {
+      console.log(renderDescriptor(effectivePlan.preamble, { accessible: this.accessible }));
+      await sleep(Math.max(0, effectivePlan.preambleMs ?? 0));
       if (this.aborted) return timedOut();
     }
 
     // Stimulus: write WITHOUT trailing newline so the response line can
     // share the row for reflex tasks; flush before starting the clock.
-    process.stdout.write(renderDescriptor(plan.stimulus));
+    process.stdout.write(renderDescriptor(effectivePlan.stimulus, { accessible: this.accessible }));
 
-    if (plan.response.mode === 'none' || plan.windowMs <= 0) {
+    if (effectivePlan.response.mode === 'none' || effectivePlan.windowMs <= 0) {
       return timedOut();
     }
 
     // Choice mode renders options under the stimulus.
-    if (plan.response.mode === 'choice') {
-      plan.response.choices.forEach((c, i) => {
+    if (effectivePlan.response.mode === 'choice') {
+      effectivePlan.response.choices.forEach((c: { label: string }, i: number) => {
         console.log(`   ${C.cyan}[${i + 1}]${C.reset} ${c.label}`);
       });
-    } else if (plan.response.labels?.length) {
-      console.log(`   ${C.dim}(keys: ${plan.response.labels.join(' · ')})${C.reset}`);
+    } else if (effectivePlan.response.mode === 'key' && effectivePlan.response.labels?.length) {
+      console.log(`   ${C.dim}(keys: ${effectivePlan.response.labels.join(' · ')})${C.reset}`);
+      if (this.accessible && effectivePlan.response.mode === 'key') {
+        console.log(`   ${C.dim}(accessible: letter keys map to initials shown in brackets above)${C.reset}`);
+      }
+    }
+    if (this.practice) {
+      console.log(`   ${C.dim}(practice — no time pressure)${C.reset}`);
     }
 
     const validKeys =
-      plan.response.mode === 'key'
-        ? new Set(plan.response.keys)
-        : new Set(plan.response.choices.map((_, i) => String(i + 1)));
+      effectivePlan.response.mode === 'key'
+        ? new Set(effectivePlan.response.keys)
+        : new Set((effectivePlan.response as { choices: readonly { id: string }[] }).choices.map((_: { id: string }, i: number) => String(i + 1)));
 
     // Demo / non-TTY path: seeded synthetic responder.
     if (this.demo) {
@@ -185,9 +210,9 @@ export class CliGameUi implements GameUiPort {
       await sleep(thinkMs);
       const correct = this.demo.rng() < this.demo.correctRate;
       let value: string | null;
-      if (plan.response.mode === 'key') {
-        value = correct ? plan.response.keys[0]! : plan.response.keys[Math.min(1, plan.response.keys.length - 1)]!;
-        if (plan.response.keys.includes('y') || plan.response.keys.includes('n')) {
+      if (effectivePlan.response.mode === 'key') {
+        value = correct ? effectivePlan.response.keys[0]! : effectivePlan.response.keys[Math.min(1, effectivePlan.response.keys.length - 1)]!;
+        if (effectivePlan.response.keys.includes('y') || effectivePlan.response.keys.includes('n')) {
           value = correct ? 'y' : 'n';
         }
       } else {
@@ -196,13 +221,14 @@ export class CliGameUi implements GameUiPort {
       return { value, latencyNs: BigInt(thinkMs) * 1_000_000n, timedOut: false };
     }
 
+    // Pipe-safe: when jsonEvents is true, suppress the interactive validKeys hint already rendered above — no extra output here.
     return new Promise<CollectedResponse>((resolve) => {
       const startNs = process.hrtime.bigint();
       const waiter: Waiter = { resolve, startNs, timer: null };
       waiter.timer = setTimeout(() => {
         this.currentWaiter = null;
         resolve({ value: null, latencyNs: null, timedOut: true });
-      }, plan.windowMs);
+      }, effectivePlan.windowMs);
       this.currentWaiter = waiter;
       void validKeys; // validation happens at evaluation; keys map 1:1
     });
@@ -238,6 +264,10 @@ export interface RunGameOptions {
   demoSeed?: number;
   demoCorrectRate?: number;
   quiet?: boolean;
+  practice?: boolean;
+  windowMsOverride?: number;
+  accessible?: boolean;
+  jsonEvents?: boolean;
   /** Collects the engine's real TrialRecords for telemetry. */
   sink?: (record: TrialRecord) => void;
 }
@@ -247,11 +277,38 @@ export async function runInteractiveGame(
   paradigm: ParadigmDefinition,
   opts: RunGameOptions,
 ): Promise<GameSummary> {
-  const ui = new CliGameUi({ demoSeed: opts.demoSeed, demoCorrectRate: opts.demoCorrectRate });
+  const ui = new CliGameUi({
+    demoSeed: opts.demoSeed,
+    demoCorrectRate: opts.demoCorrectRate,
+    practice: opts.practice,
+    windowMsOverride: opts.windowMsOverride,
+    accessible: opts.accessible,
+    jsonEvents: opts.jsonEvents,
+  });
   const clock = new TrialClock();
 
   if (!opts.quiet) {
-    console.log(`\n${C.bold}${C.magenta}◆ ${paradigm.label}${C.reset} ${C.dim}— ${paradigm.domains.join(', ')}${C.reset}`);
+    const tags: string[] = [];
+    if (opts.practice) tags.push('practice');
+    if (opts.accessible) tags.push('accessible');
+    const tagStr = tags.length ? ` ${C.dim}[${tags.join(', ')}]${C.reset}` : '';
+    const maybeNoColor = opts.jsonEvents || !process.stdout.isTTY
+      ? `${paradigm.label} — ${paradigm.domains.join(', ')}${tags.length ? ` [${tags.join(', ')}]` : ''}`
+      : `${C.bold}${C.magenta}◆ ${paradigm.label}${C.reset} ${C.dim}— ${paradigm.domains.join(', ')}${C.reset}${tagStr}`;
+    console.log(opts.jsonEvents || !process.stdout.isTTY ? `\n${maybeNoColor}` : `\n${maybeNoColor}`);
+    if (opts.jsonEvents) {
+      console.log(JSON.stringify({ type: 'game_start', paradigmId: paradigm.id, label: paradigm.label, practice: Boolean(opts.practice) }));
+    }
+  }
+
+  // Build the telemetry sink; when jsonEvents is on, also emit per-trial JSON lines.
+  let engineSink: ((r: TrialRecord) => void) | undefined = opts.sink;
+  if (opts.jsonEvents) {
+    const base = opts.sink;
+    engineSink = (r: TrialRecord) => {
+      if (base) base(r);
+      console.log(JSON.stringify({ type: 'game_trial', paradigmId: r.paradigmId, trialIndex: r.trialIndex, correct: r.correct, latencyMs: r.adjustedLatencyMs }));
+    };
   }
 
   const engine = new BrainGameEngine({
@@ -260,13 +317,22 @@ export async function runInteractiveGame(
     trialCount: opts.trialCount,
     ui,
     clock,
-    sink: opts.sink,
+    sink: engineSink,
   });
 
   try {
     const summary = await engine.run();
     if (!opts.quiet && !ui.isAborted()) {
-      console.log(`\n  ${C.green}◆${C.reset} ${chalk.dim(summary.feltSenseHint)}`);
+      const line = opts.jsonEvents || !process.stdout.isTTY
+        ? `  ${summary.feltSenseHint}`
+        : `\n  ${C.green}◆${C.reset} ${chalk.dim(summary.feltSenseHint)}`;
+      console.log(line);
+      if (opts.jsonEvents) {
+        console.log(JSON.stringify({ type: 'game_summary', ...sanitizeSummary(summary) }));
+      }
+    } else if (opts.jsonEvents && !ui.isAborted()) {
+      // Quiet mode still emits the summary event for automation.
+      console.log(JSON.stringify({ type: 'game_summary', ...sanitizeSummary(summary) }));
     }
     return summary;
   } finally {
@@ -283,6 +349,19 @@ function levelishToParams(p: ParadigmDefinition, level: number): NumericParams {
   return out;
 }
 
+function sanitizeSummary(s: GameSummary): Record<string, unknown> {
+  return {
+    sessionId: s.sessionId,
+    paradigmId: s.paradigmId,
+    label: s.label,
+    trialsCompleted: s.trialsCompleted,
+    aborted: s.aborted,
+    overallAccuracy: Math.round(s.overallAccuracy * 100) / 100,
+    rtMedianMs: s.rtMedianMs,
+    feltSenseHint: s.feltSenseHint,
+  };
+}
+
 /** Free-play entry used by `train --free <id>` */
 export async function trainFree(paradigmId: string, opts: RunGameOptions & { trials?: number }): Promise<number> {
   const paradigm = getParadigm(paradigmId);
@@ -291,6 +370,10 @@ export async function trainFree(paradigmId: string, opts: RunGameOptions & { tri
     return 1;
   }
   const summary = await runInteractiveGame(paradigm, { ...opts, trialCount: opts.trials ?? paradigm.defaultTrials });
-  console.log(`\n  ${chalk.dim(`trials ${summary.trialsCompleted} · focus ${Math.round(summary.overallAccuracy * 100)}%`)}`);
+  const plain = !process.stdout.isTTY || opts.jsonEvents;
+  const summaryLine = plain
+    ? `trials ${summary.trialsCompleted} · ${summary.feltSenseHint}`
+    : `trials ${summary.trialsCompleted} · focus ${Math.round(summary.overallAccuracy * 100)}%`;
+  console.log(plain ? `\n  ${summaryLine}` : `\n  ${chalk.dim(summaryLine)}`);
   return 0;
 }
