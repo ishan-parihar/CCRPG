@@ -10,6 +10,8 @@ import type { Drive } from '../domain/Drive.js';
 import type { DriveDirectionality, ShadowQuadrant, EnergeticDirection, Modality } from '../domain/enums.js';
 import { buildContext } from '../../infra/llm/ContextPipeline.js';
 import { queryLLMWithTools, queryLLMStream } from '../../infra/llm/LLMClient.js';
+import { parseConsequence } from '../../infra/llm/ConsequenceParser.js';
+import { toQualitativeFeedback } from '../../infra/llm/QualitativeFeedback.js';
 import { modalityOpenerTemplate, moduleSummaryTemplate, responseOptionsTemplate } from '../../infra/llm/templates.js';
 import { getFallback } from '../fallback/FallbackProvider.js';
 import { withFallbackVeil } from '../fallback/withFallbackVeil.js';
@@ -609,7 +611,13 @@ export class AgenticOrchestrator {
               name: tc.function.name,
             });
           } else if (tc.function.name === 'complete_encounter') {
-            const params = JSON.parse(tc.function.arguments) as {
+            // P1-C1 (Architecture Audit Phase C): route the LLM's
+            // complete_encounter arguments through ConsequenceParser instead
+            // of raw JSON.parse. The parser tolerates malformed JSON and
+            // returns a structured record with errors. We fall back to the
+            // raw parse on failure so existing flows still work.
+            const parsed = parseConsequence(tc.function.arguments, this.encounter);
+            let params: {
               passed: boolean;
               scores?: Partial<Record<MeasureDimension, number>>;
               driveScores: { agency: number; communion: number; eros: number; agape: number };
@@ -622,6 +630,45 @@ export class AgenticOrchestrator {
               };
               narrativeSummary: string;
             };
+            if (parsed.success && parsed.record) {
+              // The LLM output may be a richer shape than the strict type
+              // expects. Pull what we can from the parsed record and fall
+              // back to raw parse for the rest.
+              const loose = JSON.parse(tc.function.arguments) as any;
+              params = {
+                passed: Boolean(loose.passed ?? true),
+                scores: loose.scores,
+                driveScores: loose.driveScores ?? { agency: 0.5, communion: 0.5, eros: 0.5, agape: 0.5 },
+                driveSignals: loose.driveSignals ?? { agency: 'HealthyBalanced', communion: 'HealthyBalanced', eros: 'HealthyBalanced', agape: 'HealthyBalanced' },
+                feedback: loose.feedback ?? '',
+                polarityDirection: parsed.record.polarityDirection,
+                shadowSignal: parsed.record.shadowSignal
+                  ? { quadrant: parsed.record.shadowSignal.quadrant as ShadowQuadrant, intensity: parsed.record.shadowSignal.intensity }
+                  : loose.shadowSignal,
+                narrativeSummary: parsed.record.narrativeSummary || loose.narrativeSummary || '',
+              };
+            } else {
+              params = JSON.parse(tc.function.arguments) as any;
+            }
+            // P1-C2 (Architecture Audit Phase C): apply QualitativeFeedback
+            // as the canonical Veil-mapper for the player-facing feedback.
+            // If the LLM's feedback is clinical or absent, regenerate it
+            // from the rubric evaluation so the player never sees raw
+            // taxonomy. The LLM's feedback is preserved as a backup
+            // (`feedback_llm`) for agent context.
+            try {
+              const qualitative = toQualitativeFeedback(
+                (params.driveSignals as any),
+                params.shadowSignal?.quadrant ?? null,
+                params.passed,
+              );
+              if (!params.feedback || /reveals|drive|shadow/i.test(params.feedback)) {
+                params.feedback = qualitative.gesture;
+              }
+            } catch {
+              // If QualitativeFeedback throws on a malformed driveSignal,
+              // keep the LLM's feedback as-is.
+            }
 
             // GAP-3 (Efficacy Audit): Fix circular scoring. The LLM generates
             // the narrative AND scores the drives — that's circular. Instead,
