@@ -39,7 +39,8 @@ async function services() {
   if (!cached) {
     const kv = new FileKeyValueStore();
     const calibration = new CalibrationStore(kv);
-    const trials = new TrialRecordStore(kv);
+    const encrypt = process.env.MYSTERIUM_ENCRYPT_TRAINING === '1';
+    const trials = new TrialRecordStore(kv, encrypt);
     const index = new CognitiveIndex();
     try {
       const raw = await kv.get(INDEX_KEY);

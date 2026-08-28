@@ -60,11 +60,11 @@ const program = new Command()
   .option('--new-game', 'Start fresh (delete saved progress)')
   .option('-e, --encounters <n>', 'Number of encounters', '20')
   .option('-m, --model <name>', 'Override LLM model name')
-  .option('-l, --line <line>', 'Force a specific line')
-  .option('-s, --stage <stage>', 'Force a specific stage')
-  .option('--modality <mod>', 'Force a specific modality')
-  .option('--curriculum', 'Force curriculum encounters (knowledge study mode)')
-  .option('--llm', 'Enable live LLM in headless mode (headless defaults to FallbackProvider for deterministic CI)')
+  .addOption(new Option('-l, --line <line>', 'Force a specific line (dev)').hideHelp())
+  .addOption(new Option('-s, --stage <stage>', 'Force a specific stage (dev)').hideHelp())
+  .addOption(new Option('--modality <mod>', 'Force a specific modality (dev)').hideHelp())
+  .addOption(new Option('--curriculum', 'Force curriculum encounters (knowledge study mode — dev)').hideHelp())
+  .addOption(new Option('--llm', 'Enable live LLM in headless mode (headless defaults to FallbackProvider for deterministic CI)').hideHelp())
   // P1-6 (UX-R3): Clarify what --force-shadow actually does. The audit found
   // users confused about the difference between --modality shadow (which
   // triggers the shadow encounter format) and --force-shadow (which injects
@@ -80,22 +80,10 @@ const program = new Command()
   // (see printHelp edit below).
   .addOption(new Option('--force-shadow <quadrant>', 'Inject shadow-keyword text into the response pool for testing shadow detection (alias: --inject-shadow-keyword).').hideHelp())
   .addOption(new Option('--inject-shadow-keyword <quadrant>', 'Alias for --force-shadow (testing only)').hideHelp())
-  .option('--skip-calibration', 'Skip calibration, default all lines to Red')
-  // R5-CRITICAL (UX-R5): Headless input mechanism. Without this, the LLM
-  // hallucinates user answers in --headless mode (the game's core promise
-  // "your answers shape your developmental profile" is unfulfillable).
-  // --answers reads a file with one answer per line, consumed per question.
-  // --answer is a repeatable flag for inline answers. Both feed the
-  // writeInValue that the LLM actually sees.
-  .option('--answers <file>', 'Read answers from a file (one per line, consumed per question) — enables real user participation in --headless mode')
-  // R6-BUG-1 (UX-R6): The variadic '<text...>' syntax is REQUIRED for
-  // repeatable flags. Without it, commander overwrites on each repeat,
-  // keeping only the LAST value (--answer A --answer B → "B", not ["A","B"]).
-  // This silently dropped all but the last inline answer.
-  .option('--answer <text...>', 'Inline answer (repeatable — one per question)')
-  // META-PROBE: --audit runs the MetaCognitiveProbe at session end and prints
-  // the curriculum health report. For agentic loop consumption and dev auditing.
-  .option('--audit', 'Print curriculum meta-cognitive probe after session end')
+  .addOption(new Option('--skip-calibration', 'Skip calibration, default all lines to Red (dev)').hideHelp())
+  .addOption(new Option('--answers <file>', 'Read answers from a file (one per line, dev)').hideHelp())
+  .addOption(new Option('--answer <text...>', 'Inline answer (repeatable, dev)').hideHelp())
+  .addOption(new Option('--audit', 'Print curriculum meta-cognitive probe after session end (dev)').hideHelp())
 
 program
   .command('setup')

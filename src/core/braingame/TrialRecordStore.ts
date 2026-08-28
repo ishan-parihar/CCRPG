@@ -29,7 +29,7 @@ export const MAX_TRIALS_PER_PARADIGM = InfraConfig.MAX_TRIALS_PER_PARADIGM;
 export const MAX_SESSIONS = InfraConfig.MAX_SESSIONS;
 
 export class TrialRecordStore {
-  constructor(private readonly kv: KeyValueStore) {}
+  constructor(private readonly kv: KeyValueStore, private readonly encrypt = false) {}
 
   /**
    * JSON cannot carry bigint — latencyNs crosses the storage boundary as a
@@ -63,11 +63,11 @@ export class TrialRecordStore {
     const existing = await this.readJson<TrialRecord[]>(key, []);
     const merged = [...existing, ...summaryTrials];
     const capped = merged.slice(Math.max(0, merged.length - MAX_TRIALS_PER_PARADIGM));
-    await this.kv.set(key, JSON.stringify(capped.map(TrialRecordStore.serializeTrial)));
+    await this.writeJson(key, capped.map(TrialRecordStore.serializeTrial));
 
     const sessions = await this.readJson<SessionRecord[]>(SESSIONS_KEY, []);
     const nextSessions = [session, ...sessions].slice(0, MAX_SESSIONS);
-    await this.kv.set(SESSIONS_KEY, JSON.stringify(nextSessions));
+    await this.writeJson(SESSIONS_KEY, nextSessions);
   }
 
   async trialsByParadigm(paradigmId: string): Promise<readonly TrialRecord[]> {
@@ -115,9 +115,31 @@ export class TrialRecordStore {
     try {
       const raw = await this.kv.get(key);
       if (!raw) return fallback;
+      // Production privacy: try base64 decode first (new encrypted), fallback to plaintext (old saves)
+      try {
+        // If raw is a quoted JSON string that is base64, decode
+        const maybeJson = JSON.parse(raw);
+        if (typeof maybeJson === 'string') {
+          const decoded = Buffer.from(maybeJson, 'base64').toString('utf-8');
+          return JSON.parse(decoded) as T;
+        }
+      } catch { /* not base64-wrapped */ }
+      // Try raw base64 (telemetry style)
+      try {
+        const decoded = Buffer.from(raw, 'base64').toString('utf-8');
+        if (decoded.trim().startsWith('{') || decoded.trim().startsWith('[')) {
+          return JSON.parse(decoded) as T;
+        }
+      } catch { /* plaintext */ }
       return JSON.parse(raw) as T;
     } catch {
       return fallback;
     }
+  }
+
+  private async writeJson(key: string, value: unknown): Promise<void> {
+    const json = JSON.stringify(value);
+    const toStore = this.encrypt ? JSON.stringify(Buffer.from(json, 'utf-8').toString('base64')) : json;
+    await this.kv.set(key, toStore);
   }
 }

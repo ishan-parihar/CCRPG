@@ -176,7 +176,9 @@
         selectedIndex: selectedIndex as 0 | 1 | 2 | 3,
         freeInput: freeText,
       };
-      polarityLog.push({ line: 'Cognitive', polarity: opt.polarity });
+      // FIX: distribute probes across 8 lines (was hardcoded to Cognitive for all)
+      const lineForThisProbe = ALL_LINES[probeCount % ALL_LINES.length]!;
+      polarityLog.push({ line: lineForThisProbe, polarity: opt.polarity });
 
       const obsRes = await fetch('/api/agent/observe', {
         method: 'POST',
@@ -212,16 +214,16 @@
   }
 
   function rollupLineFromPolarities(line: Line): Stage {
-    // Deterministic roll-up: count second-tier polarities (integrative
-    // and communion) as the upper half, action+reflective as the lower.
-    const count = polarityLog.filter((p) => p.line === line).length;
-    const ratios = polarityLog.reduce((acc, p) => {
+    const forLine = polarityLog.filter((p) => p.line === line);
+    // If this line had a probe, use its own polarity; otherwise fall back
+    // to global distribution so early exit (probeCount <8) still seeds sensibly.
+    const source = forLine.length > 0 ? forLine : polarityLog;
+    const ratios = source.reduce((acc, p) => {
       acc[p.polarity] = (acc[p.polarity] ?? 0) + 1;
       return acc;
     }, {} as Record<ProbePolarity, number>);
-    void count;
     const upper = (ratios['integrative'] ?? 0) + (ratios['communion'] ?? 0);
-    const total = polarityLog.length || 1;
+    const total = source.length || 1;
     const upperRatio = upper / total;
     // Map upperRatio through 5 stages. Mid stage always plays 0.4–0.6.
     if (upperRatio >= 0.66) return 'Green';
@@ -229,6 +231,26 @@
     if (upperRatio >= 0.34) return 'Amber';
     if (upperRatio >= 0.17) return 'Red';
     return 'Red';
+  }
+
+  async function completeOffline() {
+    phase = 'creating';
+    const altitudes: Record<Line, Stage> = {} as Record<Line, Stage>;
+    for (const line of ALL_LINES) altitudes[line] = 'Red';
+    const id = `sig-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
+    const sig = createSignificator(id, altitudes, 'Red');
+    try {
+      if (browser) localStorage.setItem('profile:v1', JSON.stringify(sig));
+    } catch (err) {
+      console.error('[onboarding] offline save failed:', err);
+      showToast('Failed to save progress', 'danger');
+      phase = 'welcome';
+      return;
+    }
+    setSignificator(sig);
+    showToast('Starting from Red — the game will learn as you play', 'success', 3000);
+    phase = 'done';
+    setTimeout(() => goto('/play'), 1200);
   }
 
   async function completeCalibration() {
@@ -351,13 +373,14 @@
         <Stack gap="space-4" align="center">
           <h2 class="calibration-title">Director is silent</h2>
           <p class="welcome-text">
-            The Background-Agentic runtime could not generate the next probe.
-            Connect a working LLM configuration and return; until then, we
-            will not surface a deterministic fallback.
+            The calibration service is offline. You can continue with a gentle
+            starting point and the game will learn as you play — or connect
+            an LLM and return for a richer calibration.
           </p>
           <p class="error-detail">{offlineReason}</p>
           <Cluster gap="space-3">
-            <Button variant="primary" onclick={() => goto('/setup')}>Open /setup</Button>
+            <Button variant="primary" onclick={completeOffline}>Continue offline</Button>
+            <Button variant="ghost" onclick={() => goto('/setup')}>Open /setup</Button>
             <Button variant="ghost" onclick={() => goto('/')}>Back</Button>
           </Cluster>
         </Stack>
