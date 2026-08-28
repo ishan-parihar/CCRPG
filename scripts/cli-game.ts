@@ -166,7 +166,8 @@ program
   .option('--format <fmt>', 'json or csv', 'json')
   .option('--paradigm <id>', 'filter to one paradigm')
   .option('--days <n>', 'limit to last N days')
-  .option('--out <path>', 'write to file instead of stdout');
+  .option('--out <path>', 'write to file instead of stdout')
+  .option('--analytics', 'include LearningAnalytics (studyEfficiency, learningVelocity) in JSON');
 program
   .command('calibrate')
   .description('Calibrate brain-game difficulty (wide exploration → narrow)')
@@ -1243,6 +1244,20 @@ async function createDefaultSignificator(): Promise<Significator> {
     const saved = loadSave();
     if (saved) {
       if (!JSON_MODE) console.log(`  ${chalk.green('✓')} Loaded saved progress (${saved.totalEncounters} encounters, stage: ${saved.currentStage})`);
+      // FIX-PERSIST (Audit): existing saves with 0 concepts (from pre-fix) need
+      // backfill. Without this, players who played before the Red-seed fix
+      // remain stuck at 0 concepts forever (DQ path never calls GameLoop.startSession).
+      if (!saved.knowledge || saved.knowledge.conceptStates.size === 0) {
+        const seedLine = (Object.entries(saved.altitudes).find(([_, s]) => s === saved.currentStage)?.[0] ?? 'Cognitive') as Line;
+        const seeded = seedInitialKnowledge(seedLine, saved.currentStage);
+        if (seeded.conceptStates.size > 0) {
+          const patched = { ...saved, knowledge: seeded };
+          // Persist the backfill so next load is correct
+          try { saveGame(patched as Significator); } catch { /* best-effort */ }
+          if (!JSON_MODE) console.log(`  ${chalk.dim(`Curriculum backfill: seeded ${seeded.conceptStates.size} concepts`)}`);
+          return patched as Significator;
+        }
+      }
       return saved;
     }
   } else {
@@ -3081,6 +3096,11 @@ async function runDirectQuestioningSession(
     shadowsSurfaced: currentSig.shadows.activeCount,
     finalStage: currentSig.currentStage,
   });
+  // FIX-A3 (Audit): flush the shared telemetry collector so the parent
+  // FullSession's session_started event (recorded before DQ was called)
+  // and any DQ encounter events are persisted. Without this, DQ sessions
+  // return before FullSession's flush and no events are saved.
+  try { const tel = await buildCLITelemetry().catch(() => null); await flushCLITelemetry(tel); } catch { /* best-effort */ }
 }
 
 // ── Full session mode ─────────────────────────────────────────────────
@@ -4870,7 +4890,21 @@ async function runEvents(args: string[]): Promise<void> {
   }
   // Force the collector to drain to store by flushing.
   await flushCLITelemetry(telemetry);
-  const events = telemetry.getCollector().getEvents();
+  // FIX-A3 (Audit): Load persisted events from the store, not just the
+  // in-memory collector. Each CLI invocation gets a fresh collector; without
+  // loading the store, events from prior sessions are invisible.
+  const { loadPersistedTelemetry } = await import('../src/cli/CLITelemetry.js');
+  const persisted = await loadPersistedTelemetry().catch(() => []);
+  const buffered = telemetry.getCollector().getEvents();
+  // Merge: persisted (from prior processes) + buffered (current process not yet flushed), deduped by id
+  const seen = new Set<string>();
+  const events: typeof persisted = [];
+  for (const e of [...persisted, ...buffered]) {
+    const id = (e as unknown as Record<string, unknown>).id as string | undefined;
+    if (id && seen.has(id)) continue;
+    if (id) seen.add(id);
+    events.push(e);
+  }
   if (events.length === 0) {
     console.log(`\n  ${chalk.dim('No telemetry events buffered in this session. Play a session, then run this command.')}`);
     return;

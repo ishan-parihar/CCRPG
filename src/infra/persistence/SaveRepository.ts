@@ -98,7 +98,7 @@ export class SaveRepository {
   }
 
   async saveProfile(sig: Significator): Promise<void> {
-    await this.store.set(PROFILE_KEY, JSON.stringify(sig));
+    await this.store.set(PROFILE_KEY, JSON.stringify(serializeSignificator(sig)));
   }
 
   async resetProfile(): Promise<void> {
@@ -179,6 +179,27 @@ function getAtomicSaveFile(): string {
   return path.join(getSaveDir(), 'save-all.json');
 }
 
+// FIX-PERSIST (Audit): Maps serialize to {} via JSON.stringify. KnowledgeState
+// holds 2-3 Maps (conceptStates, subjectProgress, forgettingCurves).
+// Without conversion, curriculum progress is lost on every save — the
+// curriculum_status bug (0 concepts after seed) was actually a persistence bug.
+function serializeSignificator(sig: Significator): Record<string, unknown> {
+  const out: Record<string, unknown> = { ...sig } as unknown as Record<string, unknown>;
+  if (sig.knowledge) {
+    const k = sig.knowledge as unknown as Record<string, unknown>;
+    const conceptStates = k.conceptStates as unknown as Map<string, unknown> | Record<string, unknown>;
+    const subjectProgress = k.subjectProgress as unknown as Map<string, unknown> | Record<string, unknown>;
+    const forgettingCurves = (k as Record<string, unknown>).forgettingCurves as unknown as Map<string, unknown> | Record<string, unknown> | undefined;
+    out.knowledge = {
+      ...k,
+      conceptStates: conceptStates instanceof Map ? Object.fromEntries(conceptStates) : conceptStates,
+      subjectProgress: subjectProgress instanceof Map ? Object.fromEntries(subjectProgress) : subjectProgress,
+      ...(forgettingCurves !== undefined ? { forgettingCurves: forgettingCurves instanceof Map ? Object.fromEntries(forgettingCurves) : forgettingCurves } : {}),
+    };
+  }
+  return out;
+}
+
 // Keep old constants for backward compat (tests etc.)
 // const CLI_SAVE_DIR — replaced by getSaveDir()
 // const CLI_SAVE_FILE — replaced by getSaveFile()
@@ -210,7 +231,7 @@ export function saveGame(sig: Significator): void {
   try {
     const saveFile = getSaveFile();
     fs.mkdirSync(path.dirname(saveFile), { recursive: true });
-    fs.writeFileSync(saveFile, JSON.stringify(sig, null, 2));
+    fs.writeFileSync(saveFile, JSON.stringify(serializeSignificator(sig), null, 2));
   } catch { /* ignore write errors in headless mode */ }
 }
 
@@ -314,11 +335,11 @@ export function saveAll(sig: Significator, world: WorldState): void {
     const worldFile = getWorldFile();
     fs.mkdirSync(path.dirname(atomicFile), { recursive: true });
 
-    // Build the combined envelope
+    // Build the combined envelope — serialize sig's Maps so JSON round-trips.
     const envelope = {
       version: 2,
       savedAt: Date.now(),
-      sig,
+      sig: serializeSignificator(sig),
       world,
     };
     const json = JSON.stringify(envelope, null, 2);
@@ -339,7 +360,7 @@ export function saveAll(sig: Significator, world: WorldState): void {
     // Also write the individual files for backward compat (older code reads
     // save.json / world.json directly). These are non-atomic individually but
     // the atomic envelope above is the source of truth for new code.
-    fs.writeFileSync(saveFile, JSON.stringify(sig, null, 2));
+    fs.writeFileSync(saveFile, JSON.stringify(serializeSignificator(sig), null, 2));
     fs.writeFileSync(worldFile, JSON.stringify(world, null, 2));
   } catch { /* ignore write errors in headless mode */ }
 }

@@ -52,12 +52,18 @@ export function seedInitialKnowledge(
     const minStageOrd = stageOrdinal(holon.devMapping.stageRange.min);
     const maxStageOrd = stageOrdinal(holon.devMapping.stageRange.max);
 
-    // Prefer concepts at or just below the player's stage (foundational material)
-    if (stageOrd >= minStageOrd && stageOrd <= maxStageOrd + 1) {
+    // Prefer concepts at or just below/above the player's stage (foundational material).
+    // FIX-A1 (Audit): Red players (stageOrd=2) had 0 matches because all concepts
+    // start at Amber (3). Widen to allow concepts where player's stage is one
+    // below the concept's minimum — those are the "next material" for Red.
+    // This gives every Red player a coherent starting curriculum.
+    if ((stageOrd >= minStageOrd && stageOrd <= maxStageOrd + 1) || stageOrd + 1 === minStageOrd) {
       // Priority: concepts with no prerequisites are preferred (true introductory material)
       const hasPrereqs = holon.prerequisites.length > 0;
       const priority = hasPrereqs ? 0.5 : 0.8;
-      matchingConcepts.push({ id: holon.id, priority });
+      // Slight penalty for concepts one stage above (still valid, just less immediate)
+      const adjustedPriority = stageOrd + 1 === minStageOrd ? priority * 0.7 : priority;
+      matchingConcepts.push({ id: holon.id, priority: adjustedPriority });
     }
   }
 
@@ -71,10 +77,11 @@ export function seedInitialKnowledge(
       if (holon.level !== 'concept') continue;
       const minStageOrd = stageOrdinal(holon.devMapping.stageRange.min);
       const maxStageOrd = stageOrdinal(holon.devMapping.stageRange.max);
-      if (stageOrd >= minStageOrd && stageOrd <= maxStageOrd + 1) {
+      if ((stageOrd >= minStageOrd && stageOrd <= maxStageOrd + 1) || stageOrd + 1 === minStageOrd) {
         const hasPrereqs = holon.prerequisites.length > 0;
         const priority = hasPrereqs ? 0.3 : 0.6;
-        selected.push({ id: holon.id, priority });
+        const adjustedPriority = stageOrd + 1 === minStageOrd ? priority * 0.7 : priority;
+        selected.push({ id: holon.id, priority: adjustedPriority });
       }
     }
     selected.sort((a, b) => b.priority - a.priority);

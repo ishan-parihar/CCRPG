@@ -6,7 +6,7 @@ import type { Significator } from './domain/Significator.js';
 import type { ScheduledEncounter } from './domain/EncounterSpecNew.js';
 import { scheduleNextWithHolonicReturn, scheduleThresholdMode, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from './engines/ConsequenceEngine.js';
-import { detectThreshold, advanceTransformation, commitTransformation, recordKnotResolution, reconstructTransformationState, type TransformationSignal, type TransformationState } from './engines/TransformationDetector.js';
+import { detectThreshold, advanceTransformation, commitTransformation, recordKnotResolution, reconstructTransformationState, detectPerLineTransformation, type TransformationSignal, type TransformationState, type PerLineTransformationSignal } from './engines/TransformationDetector.js';
 import { detectBleedThrough } from './engines/ThetaDecay.js';
 import { toSnapshot } from './domain/SignificatorSnapshot.js';
 import { computeCCI, type CCIScore } from './engines/CCIEngine.js';
@@ -231,6 +231,8 @@ export interface SessionState {
   readonly curriculumEncountersThisSession?: number;
   /** Training expansion: number of brain-game beats consumed this session. */
   readonly trainingEncountersThisSession?: number;
+  /** P1-B8 (Architecture Audit Phase B): per-line transformation readiness signals. */
+  readonly perLineTransformations?: readonly PerLineTransformationSignal[];
 }
 
 /**
@@ -271,7 +273,14 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
   // by 5% so the first encounter back isn't too aggressive. Pure
   // heuristic — measured by sig's `lastSessionAt` (added as a Sig
   // extension) or, falling back, the highest theta.lastEncounter ts.
-  const lastSessionTs = (migratedSig as any).lastSessionAt as number | undefined;
+  let lastSessionTs = (migratedSig as any).lastSessionAt as number | undefined;
+  // FIX-B6 (Audit): fallback to highest theta timestamp when lastSessionAt is missing.
+  // The audit doc says to use theta as fallback but the code never did — so
+  // recalibration never triggered for saves that predate lastSessionAt.
+  if (!lastSessionTs) {
+    const thetaTimes = Object.values(migratedSig.theta.lastEncounter).filter((t): t is number => typeof t === 'number' && t > 0);
+    if (thetaTimes.length > 0) lastSessionTs = Math.max(...thetaTimes);
+  }
   const THIRTY_DAYS_MS = 30 * 24 * 60 * 60 * 1000;
   if (lastSessionTs && Date.now() - lastSessionTs > THIRTY_DAYS_MS) {
     // Soft cap: lower targetSessionLength by 1 if > 3, so the player
@@ -302,6 +311,17 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
     migratedSig = { ...migratedSig } as any;
     delete (migratedSig as any)._curriculumIntervention;
   }
+  // P1-B8 (Architecture Audit Phase B): per-line transformation readiness.
+  // Supplements the single global currentStage with cluster-based signals so the
+  // scheduler and Veil descriptors can surface line-specific movement.
+  let perLineTransformations: readonly PerLineTransformationSignal[] = [];
+  try {
+    // Detect readiness for the next stage above currentStage.
+    const nextStageOrd = stageOrdinal(migratedSig.currentStage) + 1;
+    const allStages = ['Infrared','Magenta','Red','Amber','Orange','Green','Turquoise','White'] as const;
+    const nextStage = allStages[nextStageOrd] as Stage | undefined;
+    if (nextStage) perLineTransformations = detectPerLineTransformation(migratedSig as any, nextStage);
+  } catch { /* best-effort */ }
   return {
     strategy,
     cci,
@@ -313,6 +333,7 @@ export function startSession(sig: Significator, session: SessionContext): Sessio
     sessionStartMs: Date.now(),
     curriculumEncountersThisSession: 0,
     trainingEncountersThisSession: 0,
+    perLineTransformations,
   };
 }
 
@@ -581,6 +602,14 @@ export function tickWithStrategy(
     bleedThrough,
   };
 
+  // P1-B8: refresh per-line transformation signals as altitudes shift.
+  let perLineTransformations = sessionState.perLineTransformations ?? [];
+  try {
+    const nextOrd = stageOrdinal(updatedSig.currentStage) + 1;
+    const allStages = ['Infrared','Magenta','Red','Amber','Orange','Green','Turquoise','White'] as const;
+    const nextStage = allStages[nextOrd] as Stage | undefined;
+    if (nextStage) perLineTransformations = detectPerLineTransformation(updatedSig as any, nextStage);
+  } catch { /* best-effort */ }
   const newSessionState: SessionState = {
     strategy: updatedStrategy,
     cci: updatedCCI,
@@ -588,8 +617,10 @@ export function tickWithStrategy(
     encountersSinceRefresh,
     transformationState: updatedTransformationState,
     userMatrixModel: updatedUserMatrix,
+    sessionStartMs: sessionState.sessionStartMs,
     curriculumEncountersThisSession: curriculumEncountersConsumed,
     trainingEncountersThisSession: trainingEncountersConsumed,
+    perLineTransformations,
   };
 
   return { tickResult, sessionState: newSessionState };
