@@ -27,8 +27,8 @@
 import { filterInput, filterOutput } from '$shared/llm/VeilFilter.js';
 import { env } from '$env/dynamic/private';
 
-/** Timeout for LLM fetch calls (30 seconds). */
-const LLM_TIMEOUT_MS = 30_000;
+import { InfraConfig } from '$core/config/InfraConfig.js';
+const LLM_TIMEOUT_MS = InfraConfig.LLM_TIMEOUT_MS;
 
 export interface LLMProviderConfig {
   readonly baseUrl: string;

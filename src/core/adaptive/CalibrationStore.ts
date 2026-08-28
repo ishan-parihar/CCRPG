@@ -4,6 +4,7 @@
  * the same port; the CLI uses FileKeyValueStore).
  */
 import type { KeyValueStore } from '../../infra/persistence/KeyValueStore.js';
+import { InfraConfig } from '../config/InfraConfig.js';
 
 export interface CalibrationRecord {
   readonly paradigmId: string;
@@ -24,12 +25,7 @@ export interface CalibrationRecord {
   };
 }
 
-/** P1-B4: how long a set_difficulty_override sticks before it decays.
- *  The override persists across sessions; after 7 days of inactivity the
- *  CalibrationStore.expireOverrides() helper removes it so the player's
- *  baseline takes over again.
- */
-export const OVERRIDE_TTL_MS = 7 * 24 * 60 * 60 * 1000;
+export const OVERRIDE_TTL_MS = InfraConfig.CALIBRATION_OVERRIDE_TTL_MS;
 
 const KEY_PREFIX = 'calib:v1:';
 const INDEX_KEY = 'calib:v1:index';

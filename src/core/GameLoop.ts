@@ -6,6 +6,7 @@ import type { Significator } from './domain/Significator.js';
 import type { ScheduledEncounter } from './domain/EncounterSpecNew.js';
 import { scheduleNextWithHolonicReturn, scheduleThresholdMode, type WorldState, type SessionContext } from './engines/EncounterScheduler.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from './engines/ConsequenceEngine.js';
+import { InfraConfig } from './config/InfraConfig.js';
 import { detectThreshold, advanceTransformation, commitTransformation, recordKnotResolution, reconstructTransformationState, detectPerLineTransformation, type TransformationSignal, type TransformationState, type PerLineTransformationSignal } from './engines/TransformationDetector.js';
 import { detectBleedThrough } from './engines/ThetaDecay.js';
 import { toSnapshot } from './domain/SignificatorSnapshot.js';
@@ -432,8 +433,8 @@ export function tickWithStrategy(
   const shouldWeaveTraining = trainingSlots > trainingEncountersConsumed
     && scheduled.length > 0
     && !isThresholdPhase
-    && encountersSinceRefresh >= 2
-    && (trainingEncountersConsumed === 0 || encountersSinceRefresh % 3 === 0);
+    && encountersSinceRefresh >= InfraConfig.TRAINING_WEAVE_FIRST_AT
+    && (trainingEncountersConsumed === 0 || encountersSinceRefresh % InfraConfig.TRAINING_WEAVE_EVERY === 0);
   if (shouldWeaveTraining) {
     const paradigm = pickTrainingParadigm(trainingEncountersConsumed);
     const beat = makeTrainingBeat(paradigm, updatedSig, now);

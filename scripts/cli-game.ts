@@ -64,6 +64,7 @@ const program = new Command()
   .option('-s, --stage <stage>', 'Force a specific stage')
   .option('--modality <mod>', 'Force a specific modality')
   .option('--curriculum', 'Force curriculum encounters (knowledge study mode)')
+  .option('--llm', 'Enable live LLM in headless mode (headless defaults to FallbackProvider for deterministic CI)')
   // P1-6 (UX-R3): Clarify what --force-shadow actually does. The audit found
   // users confused about the difference between --modality shadow (which
   // triggers the shadow encounter format) and --force-shadow (which injects
@@ -173,7 +174,8 @@ program
   .description('Calibrate brain-game difficulty (wide exploration → narrow)')
   .option('--paradigm <id>', 'paradigm to calibrate (default: all)')
   .option('--trials <n>', 'trials per calibration block')
-  .option('--demo [seed]', 'scripted responder for CI');
+  .option('--demo [seed]', 'scripted responder for CI')
+  .option('--onboard', 'Seed per-line altitudes via OnboardingCalibrator (binary-search onboarding)');
 // P1-QW3 (Architecture Audit Phase A): CLI telemetry inspector. Opt-in only;
 // shows the buffered events from the active session.
 program
@@ -306,6 +308,7 @@ import type { SessionContext } from '../src/core/engines/PriorityComputation.js'
 import { startSession, tickWithStrategy, endSession, applyResponseOnly, type SessionState } from '../src/core/GameLoop.js';
 import { createInitialUserMatrixModel } from '../src/core/engines/UserMatrixModel.js';
 import { AgenticOrchestrator, type AgenticUIHandler } from '../src/core/assessments/AgenticOrchestrator.js';
+import { InfraConfig } from '../src/core/config/InfraConfig.js';
 // YAGNI-PHASE-4: PersistentAgent + PersistentAgentBridge imports removed.
 // USE_PERSISTENT_AGENT is always false; the DQ path is the proven architecture.
 // YAGNI-EFF-3: createMysteriumToolRegistry import removed — only used in
@@ -694,7 +697,7 @@ function cciToFeltSense(cci: number): string {
 
 function saturationToFeltSense(saturation: number): string {
   if (saturation < 0.3) return 'holding';
-  if (saturation < 0.6) return 'opening';
+  if (saturation < InfraConfig.SATURATION_THRESHOLD) return 'opening';
   if (saturation < 0.9) return 'deepening';
   return 'ready to shift';
 }
@@ -1883,7 +1886,7 @@ async function runAgenticEncounter(
     conceptIndex: { modules: conceptModules },
     uiHandler,
     module: modRegistry?.get(FORCE_LINE ?? encLine, FORCE_STAGE ?? encStage) ?? baseModule,
-    noLlm: false,
+    noLlm: HEADLESS && !program.opts().llm,
     forceShadow: FORCE_SHADOW,
     consecutivePasses,
     agentSynthesis,

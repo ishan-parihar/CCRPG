@@ -15,42 +15,30 @@ import { TelemetryService } from '../infra/telemetry/TelemetryService.js';
 import { TelemetryStore } from '../infra/telemetry/TelemetryStore.js';
 import { TelemetryCollector } from '../core/telemetry/TelemetryCollector.js';
 import type { TelemetryEventType, TelemetryEvent } from '../core/telemetry/TelemetryEvent.js';
-import * as os from 'os';
-import * as path from 'path';
+import { getMysteriumLegacyDir } from '../infra/persistence/mysteriumDir.js';
 
 const TELEMETRY_OPT_IN_KEY = 'mysterium:cli-telemetry-opt-in';
 
 let cached: TelemetryService | null = null;
 
 async function readOptIn(kv: FileKeyValueStore): Promise<boolean> {
-  // Check KV first (programmatic opt-in via kv.set)
   try {
     const raw = await kv.get(TELEMETRY_OPT_IN_KEY);
     if (raw === 'true') return true;
-  } catch { /* fall through to file check */ }
-  // FIX-A3 (Audit): Also check ~/.mysterium/config.json { telemetry: true }
-  // so the documented opt-in path actually works. KV is per-profile dir,
-  // config.json is at ~/.mysterium/ legacy dir — check both.
+  } catch { /* fall through */ }
   try {
     const fs = await import('fs');
     const path = await import('path');
-    const os = await import('os');
-    const home = typeof (os as any).homedir === 'function' ? (os as any).homedir() : '/tmp/.mysterium';
-    const configPath = path.join(home, '.mysterium', 'config.json');
+    const configPath = path.join(getMysteriumLegacyDir(), 'config.json');
     const raw = await fs.promises.readFile(configPath, 'utf8');
     const parsed = JSON.parse(raw) as Record<string, unknown>;
     if (parsed.telemetry === true) return true;
-  } catch { /* no config or invalid */ }
+  } catch { /* no config */ }
   return false;
 }
 
 function legacyKV(): FileKeyValueStore {
-  // Telemetry is global, not per-profile — always use ~/.mysterium legacy dir
-  // so events from all profiles and sessions are visible together.
-  // This fixes the bug where defaultDir flips between legacy and profile
-  // depending on whether _active symlink exists at call time.
-  const home = typeof (os as unknown as { homedir?: () => string }).homedir === 'function' ? (os as unknown as { homedir: () => string }).homedir!() : '/tmp/.mysterium';
-  return new FileKeyValueStore(path.join(home, '.mysterium'));
+  return new FileKeyValueStore(getMysteriumLegacyDir());
 }
 
 export async function buildCLITelemetry(): Promise<TelemetryService | null> {

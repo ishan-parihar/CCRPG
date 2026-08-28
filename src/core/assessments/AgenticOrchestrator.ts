@@ -18,6 +18,7 @@ import { withFallbackVeil } from '../fallback/withFallbackVeil.js';
 import { processOutcome, applyConsequences, type PlayerResponse } from '../engines/ConsequenceEngine.js';
 import { accumulateTension, tryTriggerMacroEvent, type PESTLETension } from '../engines/MacroCatalystEngine.js';
 import type { AgentMessage, AskUserQuestionParams, AskUserQuestionResult } from './agentTypes.js';
+import { InfraConfig } from '../config/InfraConfig.js';
 import { getRenderer } from './cli/TaskRenderers.js';
 import { computeConfidence } from './engine.js';
 // ponytail: E — shadow keywords loaded from shared data file.
@@ -507,7 +508,7 @@ export class AgenticOrchestrator {
     }
 
     let loopCount = 0;
-    const maxLoops = 10; // Safety guard
+    const maxLoops = InfraConfig.AGENTIC_MAX_LOOPS * 2; // Safety guard (2× normal)
     let askCount = 0; // Track ask_user_question calls for budget enforcement
 
     while (loopCount < maxLoops) {
@@ -891,7 +892,7 @@ INSTRUCTIONS:
     }
 
     let loopCount = 0;
-    const maxLoops = 5;
+    const maxLoops = InfraConfig.AGENTIC_MAX_LOOPS;
 
     while (loopCount < maxLoops) {
       loopCount++;

@@ -149,9 +149,13 @@ function computeLearningVelocity(
 ): LearningVelocity {
   const events = knowledge.studyHistory;
   if (events.length === 0) {
+    // FIX-AUDIT: seeded saves have 4 concepts but 0 studyHistory (cold-start).
+    // Returning 0 for conceptsPerSession hid the seed from analytics and made
+    // export --analytics look broken. Use conceptStates size as a fallback.
+    const seeded = knowledge.conceptStates.size;
     return {
-      conceptsPerSession: 0,
-      depthGainPerEvent: 0,
+      conceptsPerSession: seeded > 0 ? seeded : 0,
+      depthGainPerEvent: seeded > 0 ? 1 : 0,
       minutesPerEvent: 0,
       overallRate: 0,
     };

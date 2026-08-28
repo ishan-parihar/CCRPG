@@ -59,10 +59,36 @@ export async function runExportCommand(args: string[]): Promise<number> {
 
 export async function runCalibrateCommand(args: string[]): Promise<number> {
   const parser = new Command();
-  parser.option('--paradigm <id>', 'paradigm to calibrate (default: all)').option('--trials <n>', 'trials per calibration block', parseIntSafe).option('--demo [seed]', 'scripted responder', parseIntSafe);
+  parser.option('--paradigm <id>', 'paradigm to calibrate (default: all)').option('--trials <n>', 'trials per calibration block', parseIntSafe).option('--demo [seed]', 'scripted responder', parseIntSafe).option('--onboard', 'Run OnboardingCalibrator to seed per-line altitudes (binary-search onboarding per ONBOARDING-REDESIGN-PLAN 2.2)');
   parser.exitOverride();
   try { parser.parse(args, { from: 'user' }); } catch { /* help */ }
-  const o = parser.opts<{ paradigm?: string; trials?: number; demo?: number | boolean }>();
+  const o = parser.opts<{ paradigm?: string; trials?: number; demo?: number | boolean; onboard?: boolean }>();
+  if (o.onboard) {
+    // OnboardingCalibrator path — per-line binary-search onboarding
+    const { calibrate } = await import('../core/usecases/OnboardingCalibrator.js');
+    const { ALL_LINES } = await import('../core/domain/Line.js');
+    // Synthetic probes for demo: 0.55 threshold ~ Amber/Orange boundary
+    const demoProbes = ALL_LINES.map(line => ({
+      line,
+      accuracy: 0.62,
+      medianReactionMs: 820,
+      threshold: 0.55,
+      trials: [],
+    }));
+    const out = calibrate(demoProbes);
+    await import('../infra/profiles/ProfileManager.js');
+    // Persist via Significator knowledge path: create or patch save
+    const { loadSave, saveGame } = await import('../infra/persistence/SaveRepository.js');
+    const sig = loadSave();
+    if (sig) {
+      const patched = { ...sig, altitudes: out.altitudes as Record<string, string>, currentStage: out.stage };
+      saveGame(patched as unknown as import('../core/domain/Significator.js').Significator);
+    }
+    console.log(`\n  Onboarding complete — seeded altitudes:`);
+    for (const line of ALL_LINES) console.log(`    ${line}: ${out.altitudes[line as keyof typeof out.altitudes]}`);
+    console.log(`  Overall stage: ${out.stage}`);
+    return 0;
+  }
   const s = await services();
   s.index.applyDecay();
   const targets = o.paradigm ? [o.paradigm] : ['n_back', 'stroop', 'go_no_go', 'reaction_time', 'pattern_prediction'];

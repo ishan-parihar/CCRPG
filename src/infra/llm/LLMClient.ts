@@ -48,17 +48,13 @@ export interface LLMEvaluation {
   readonly confidence?: number;
 }
 
+import { InfraConfig } from '../../core/config/InfraConfig.js';
+
 const FALLBACK: LLMEvaluation = { score: 0.5, feedback: 'LLM unavailable' };
 
-/** Timeout for LLM fetch calls (30 seconds) */
-const LLM_TIMEOUT_MS = 30_000;
-
-/** NF-2 (Fresh-User Re-Audit): Retry count for transient LLM failures.
- * The re-audit found a 44% narrative success rate — many failures were
- * transient (rate limits, momentary unavailability) that a single retry
- * would have recovered. We retry once on any fetch error or 5xx/429. */
-const LLM_RETRY_COUNT = 1;
-const LLM_RETRY_BACKOFF_MS = 1500;
+const LLM_TIMEOUT_MS = InfraConfig.LLM_TIMEOUT_MS;
+const LLM_RETRY_COUNT = InfraConfig.LLM_RETRY_COUNT;
+const LLM_RETRY_BACKOFF_MS = InfraConfig.LLM_RETRY_BACKOFF_MS;
 
 /** Fetch with AbortController timeout to prevent hangs */
 async function fetchWithTimeout(url: string, init: RequestInit, timeoutMs = LLM_TIMEOUT_MS): Promise<Response> {

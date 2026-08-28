@@ -8,6 +8,7 @@
  */
 import type { TrialRecord } from './types.js';
 import type { KeyValueStore } from '../../infra/persistence/KeyValueStore.js';
+import { InfraConfig } from '../config/InfraConfig.js';
 
 export interface SessionRecord {
   readonly sessionId: string;
@@ -24,9 +25,8 @@ export interface SessionRecord {
 
 const SESSIONS_KEY = 'trials:v1:sessions';
 const TRIALS_KEY_PREFIX = 'trials:v1:data:';
-/** Ring-buffer cap per paradigm — oldest trials evicted on append. */
-export const MAX_TRIALS_PER_PARADIGM = 400;
-export const MAX_SESSIONS = 100;
+export const MAX_TRIALS_PER_PARADIGM = InfraConfig.MAX_TRIALS_PER_PARADIGM;
+export const MAX_SESSIONS = InfraConfig.MAX_SESSIONS;
 
 export class TrialRecordStore {
   constructor(private readonly kv: KeyValueStore) {}

@@ -6,19 +6,10 @@
 import type { KeyValueStore } from './KeyValueStore.js';
 import * as fs from 'fs';
 import * as path from 'path';
-import * as os from 'os';
+import { getMysteriumProfileDir } from './mysteriumDir.js';
 
 function defaultDir(): string {
-  const home = typeof os.homedir === 'function' ? os.homedir() : '/tmp/.mysterium';
-  const legacy = path.join(home, '.mysterium');
-  try {
-    const activeSymlink = path.join(legacy, 'profiles', '_active');
-    if (fs.existsSync(activeSymlink)) {
-      const resolved = fs.realpathSync(activeSymlink);
-      if (fs.existsSync(resolved)) return resolved;
-    }
-  } catch { /* fall through to legacy */ }
-  return legacy;
+  return getMysteriumProfileDir();
 }
 
 const SAFE_KEY = /^[A-Za-z0-9._:-]+$/;

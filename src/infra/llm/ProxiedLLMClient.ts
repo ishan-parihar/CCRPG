@@ -13,9 +13,8 @@
  * without redeploying the client.
  */
 
-/** Timeout for BFF fetch calls (45 seconds — longer than LLM_TIMEOUT_MS
- * to allow for proxy overhead). */
-const BFF_TIMEOUT_MS = 45_000;
+import { InfraConfig } from '../../core/config/InfraConfig.js';
+const BFF_TIMEOUT_MS = InfraConfig.LLM_BFF_TIMEOUT_MS;
 
 async function fetchWithTimeout(
   url: string,

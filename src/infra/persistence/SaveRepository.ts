@@ -19,7 +19,7 @@ import { validateSignificator } from './validateSignificator.js';
 
 import * as fs from 'fs';
 import * as path from 'path';
-import * as os from 'os';
+import { getMysteriumProfileDir } from './mysteriumDir.js';
 
 const SAVE_KEY = 'save:v1';
 const PROFILE_KEY = 'profile:v1';
@@ -142,30 +142,7 @@ function migrate(input: Partial<SaveData>): SaveData {
 // per-profile. Falls back to ~/.mysterium/ for legacy saves.
 // ═══════════════════════════════════════════════════════════════════════
 
-function getCliLegacyDir(): string {
-  type OsLike = { homedir?: () => string };
-  const osMod = os as unknown as OsLike;
-  const home =
-    typeof osMod.homedir === 'function' ? osMod.homedir() : '/tmp/.mysterium';
-  return path.join(home, '.mysterium');
-}
-
-/**
- * QA-FIX-1: Resolve save directory based on active profile.
- * If a profile is active, saves go to ~/.mysterium/profiles/<name>/
- * If no profile, falls back to ~/.mysterium/ (legacy).
- */
-function getSaveDir(): string {
-  try {
-    const legacy = getCliLegacyDir();
-    const activeSymlink = path.join(legacy, 'profiles', '_active');
-    if (fs.existsSync(activeSymlink)) {
-      const resolved = fs.realpathSync(activeSymlink);
-      if (fs.existsSync(resolved)) return resolved;
-    }
-  } catch { /* fall through to legacy */ }
-  return getCliLegacyDir();
-}
+function getSaveDir(): string { return getMysteriumProfileDir(); }
 
 function getSaveFile(): string {
   return path.join(getSaveDir(), 'save.json');

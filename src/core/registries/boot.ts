@@ -1,5 +1,9 @@
 /**
  * Boot all registries. Called once at app startup.
+ * NOTE (Infra refactor 2026-08-28): these 5 registries (Line/Stage/Ray/Drive/Encounter)
+ * are now vestigial for the CLI agentic loop (orchestrator uses ModuleRegistry
+ * + CurriculumRegistry). Kept for `mysterium diagnostic` and WebUI diagnostic
+ * page; not on the hot path. Do not add new consumers — use assessments/registry.
  * ponytail: tasks/abilities/narrative registries removed — registered but never queried.
  */
 import { register as cognitive } from './lines/01-cognitive.module.js';

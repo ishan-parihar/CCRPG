@@ -122,6 +122,15 @@ export class CognitiveIndex {
     });
   }
 
+  /** Cross-paradigm correlation (audit P1-C6). Returns 0..1 similarity between two
+   *  lines' current scores. Used by WorkoutPlanner to avoid scheduling two highly
+   *  correlated paradigms back-to-back. Simple 1 − abs(score diff). */
+  public correlate(lineA: Line, lineB: Line): number {
+    const a = this.state.skills[lineA]!;
+    const b = this.state.skills[lineB]!;
+    return Math.max(0, 1 - Math.abs(a.score - b.score));
+  }
+
   /** Felt-sense phrase per line — the ONLY index text shown to players. */
   public feltSenseFor(line: Line): string {
     const entry = this.snapshot().find((s) => s.line === line)!;
